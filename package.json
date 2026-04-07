@@ -16,7 +16,7 @@
     "lucide-react": "latest",
     "clsx": "^2.1.0",
     "tailwind-merge": "^2.2.1"
-  }
+  },
   "devDependencies": {
     "@eslint/js": "^9.9.0",
     "@types/react": "^18.3.3",
