@@ -1,15 +1,34 @@
+import React, { Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-// 1. 在這裡引入你的新作品
-import Project1 from './pages/Project1'; 
+
+// 1. 自動化核心：掃描 ./pages 目錄下所有的 .jsx 檔案
+const pages = import.meta.glob('./pages/*.jsx');
+
+// 2. 處理檔案路徑，生成組件列表
+const routes = Object.keys(pages).map((path) => {
+  const name = path.match(/\.\/pages\/(.*)\.jsx$/)[1];
+  return {
+    name,
+    path: `/${name.toLowerCase()}`,
+    component: lazy(pages[path]),
+  };
+});
 
 function Home() {
   return (
-    <div style={{ padding: '2rem', fontFamily: 'sans-serif' }}>
-      <h1>🚀 我的 Canvas 作品集</h1>
-      <ul>
-        {/* 2. 在這裡新增作品連結 */}
-        <li><Link to="/p1">第一個互動網頁</Link></li>
-      </ul>
+    <div style={{ padding: '2rem', fontFamily: 'system-ui' }}>
+      <h1>🚀 我的 Canvas 自動化實驗室</h1>
+      <div style={{ display: 'grid', gap: '10px' }}>
+        {routes.map((route) => (
+          <Link 
+            key={route.path} 
+            to={route.path}
+            style={{ padding: '10px', border: '1px solid #ccc', borderRadius: '8px', textDecoration: 'none', color: '#333' }}
+          >
+            📂 專案：{route.name}
+          </Link>
+        ))}
+      </div>
     </div>
   );
 }
@@ -17,11 +36,14 @@ function Home() {
 export default function App() {
   return (
     <Router>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        {/* 3. 在這裡定義網址路徑 */}
-        <Route path="/p1" element={<Project1 />} />
-      </Routes>
+      <Suspense fallback={<div>Loading...</div>}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          {routes.map((route) => (
+            <Route key={route.path} path={route.path} element={<route.component />} />
+          ))}
+        </Routes>
+      </Suspense>
     </Router>
   );
 }
