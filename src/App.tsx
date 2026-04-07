@@ -1,35 +1,27 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+// 1. 在這裡引入你的新作品
+import Project1 from './pages/Project1'; 
 
-function App() {
-  const [count, setCount] = useState(0)
-
+function Home() {
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div style={{ padding: '2rem', fontFamily: 'sans-serif' }}>
+      <h1>🚀 我的 Canvas 作品集</h1>
+      <ul>
+        {/* 2. 在這裡新增作品連結 */}
+        <li><Link to="/p1">第一個互動網頁</Link></li>
+      </ul>
+    </div>
+  );
 }
 
-export default App
+export default function App() {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        {/* 3. 在這裡定義網址路徑 */}
+        <Route path="/p1" element={<Project1 />} />
+      </Routes>
+    </Router>
+  );
+}
