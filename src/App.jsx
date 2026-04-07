@@ -1,6 +1,6 @@
 import React, { Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
-import { LayoutGrid, Rocket, ChevronRight, Github, ExternalLink } from 'lucide-react';
+import { LayoutGrid, Rocket, ChevronRight, GitHub, ExternalLink } from 'lucide-react';
 
 // 自動掃描 pages
 const pages = import.meta.glob('./pages/*.{jsx,tsx}');
