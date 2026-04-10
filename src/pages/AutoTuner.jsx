@@ -40,7 +40,7 @@ const INSTRUMENTS = {
 
 const VOLUME_THRESHOLD = 0.001;
 const AUTO_CORRELATE_RMS_THRESHOLD = 0.0008;
-const SMOOTHING_FACTOR = 0.18;
+const SMOOTHING_FACTOR = 0.12;
 const PERFECT_RANGE_CENTS = 6;
 const NOTE_HOLD_TIME = 900;
 const MAX_DETECTION_CENTS = 300;
@@ -52,6 +52,10 @@ const HARMONIC_MATCH_TOLERANCE = 18;
 const ATTACK_IGNORE_MS = 140;
 const STABLE_FRAME_COUNT = 3;
 const STABLE_CENTS_WINDOW = 18;
+const LOCK_RELEASE_CENTS = 34;
+const NOTE_SWITCH_FRAME_COUNT = 6;
+const DISPLAY_FREEZE_CENTS = 1.8;
+const DISPLAY_SLEW_LIMIT_CENTS = 3.2;
 
 function getMediaDevices() {
   return navigator.mediaDevices;
@@ -279,6 +283,7 @@ export default function AutoTuner() {
   const currentNotesRef = useRef([]);
   const noteAttackStartRef = useRef(0);
   const stableCandidateRef = useRef({ noteId: null, frames: 0, cents: 0 });
+  const lockedNoteRef = useRef({ noteId: null, frames: 0 });
 
   const currentNotes = useMemo(() => {
     const halfDownFactor = isHalfDown ? Math.pow(2, -1 / 12) : 1;
@@ -308,6 +313,7 @@ export default function AutoTuner() {
     lastDiffRef.current = 0;
     noteAttackStartRef.current = 0;
     stableCandidateRef.current = { noteId: null, frames: 0, cents: 0 };
+    lockedNoteRef.current = { noteId: null, frames: 0 };
     setIsTooQuiet(true);
     setInputLevel(0);
     setDetectedNoteKey(null);
@@ -449,7 +455,19 @@ export default function AutoTuner() {
 
     const detectedPitch = median(pitchHistoryRef.current);
     const closestNote = getClosestNote(notes, detectedPitch);
-    const centsOff = frequencyToCents(detectedPitch, closestNote.targetFreq);
+    const lockedCandidate = lockedNoteRef.current.noteId
+      ? notes.find((note) => note.id === lockedNoteRef.current.noteId) ?? null
+      : null;
+    const lockedCentsOff = lockedCandidate
+      ? frequencyToCents(detectedPitch, lockedCandidate.targetFreq)
+      : null;
+    const useLockedNote =
+      lockedCandidate &&
+      Math.abs(lockedCentsOff) <= LOCK_RELEASE_CENTS &&
+      closestNote.id !== lockedCandidate.id;
+
+    const targetNote = useLockedNote ? lockedCandidate : closestNote;
+    const centsOff = useLockedNote ? lockedCentsOff : frequencyToCents(detectedPitch, closestNote.targetFreq);
 
     if (Math.abs(centsOff) > MAX_DETECTION_CENTS) {
       rafRef.current = requestAnimationFrame(updateLoop);
@@ -463,35 +481,52 @@ export default function AutoTuner() {
 
     const stableCandidate = stableCandidateRef.current;
     const isSameStableTarget =
-      stableCandidate.noteId === closestNote.id &&
+      stableCandidate.noteId === targetNote.id &&
       Math.abs(stableCandidate.cents - centsOff) <= STABLE_CENTS_WINDOW;
 
     if (isSameStableTarget) {
       stableCandidateRef.current = {
-        noteId: closestNote.id,
+        noteId: targetNote.id,
         frames: stableCandidate.frames + 1,
         cents: centsOff,
       };
     } else {
       stableCandidateRef.current = {
-        noteId: closestNote.id,
+        noteId: targetNote.id,
         frames: 1,
         cents: centsOff,
       };
     }
 
-    if (stableCandidateRef.current.frames < STABLE_FRAME_COUNT) {
+    const framesNeeded =
+      lockedNoteRef.current.noteId && lockedNoteRef.current.noteId !== targetNote.id
+        ? NOTE_SWITCH_FRAME_COUNT
+        : STABLE_FRAME_COUNT;
+
+    if (stableCandidateRef.current.frames < framesNeeded) {
       rafRef.current = requestAnimationFrame(updateLoop);
       return;
     }
 
-    setNoteInfo({ note: closestNote.displayNote, label: closestNote.label });
-    setDetectedNoteKey(closestNote.id);
+    lockedNoteRef.current = { noteId: targetNote.id, frames: stableCandidateRef.current.frames };
+    setNoteInfo({ note: targetNote.displayNote, label: targetNote.label });
+    setDetectedNoteKey(targetNote.id);
 
     const smoothed =
       lastDiffRef.current * (1 - SMOOTHING_FACTOR) + centsOff * SMOOTHING_FACTOR;
-    lastDiffRef.current = smoothed;
-    setDisplayDiffCents(smoothed);
+    const deltaFromLast = smoothed - lastDiffRef.current;
+    const limitedDiff =
+      Math.abs(deltaFromLast) > DISPLAY_SLEW_LIMIT_CENTS
+        ? lastDiffRef.current + Math.sign(deltaFromLast) * DISPLAY_SLEW_LIMIT_CENTS
+        : smoothed;
+
+    const stabilizedDisplay =
+      Math.abs(limitedDiff - lastDiffRef.current) < DISPLAY_FREEZE_CENTS
+        ? lastDiffRef.current
+        : limitedDiff;
+
+    lastDiffRef.current = stabilizedDisplay;
+    setDisplayDiffCents(stabilizedDisplay);
 
     rafRef.current = requestAnimationFrame(updateLoop);
   }, [resetDisplay]);
@@ -824,12 +859,6 @@ export default function AutoTuner() {
         </div>
 
         <div className="mb-8">
-          {isSweetened && detectedNote && (
-            <div className="mb-3 text-center text-[10px] font-black uppercase tracking-[0.2em] text-[#8d9e8c]">
-              Sweetened target {detectedNote.sweeten > 0 ? '+' : ''}
-              {detectedNote.sweeten ?? 0} cents
-            </div>
-          )}
           <div className="rounded-[1.25rem] border border-[#eadad8] bg-white/70 px-4 py-3">
             <div className="flex min-h-[20px] items-center justify-between gap-3">
               <span className="shrink-0 text-[10px] font-black uppercase tracking-[0.25em] text-[#b09e9c]">
