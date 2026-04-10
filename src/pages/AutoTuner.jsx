@@ -276,6 +276,7 @@ export default function AutoTuner() {
   const pitchHistoryRef = useRef([]);
   const lastNoteTimeRef = useRef(0);
   const mountedRef = useRef(true);
+  const currentNotesRef = useRef([]);
 
   const currentNotes = useMemo(() => {
     const halfDownFactor = mode === MODES.HALF_DOWN ? Math.pow(2, -1 / 12) : 1;
@@ -295,6 +296,10 @@ export default function AutoTuner() {
       };
     });
   }, [instrument, mode]);
+
+  useEffect(() => {
+    currentNotesRef.current = currentNotes;
+  }, [currentNotes]);
 
   const resetDisplay = useCallback(() => {
     pitchHistoryRef.current = [];
@@ -381,8 +386,9 @@ export default function AutoTuner() {
   const updateLoop = useCallback(() => {
     const analyser = analyserRef.current;
     const audioCtx = audioCtxRef.current;
+    const notes = currentNotesRef.current;
 
-    if (!analyser || !audioCtx || !mountedRef.current) return;
+    if (!analyser || !audioCtx || !mountedRef.current || !notes.length) return;
 
     const buffer = new Float32Array(analyser.fftSize);
     analyser.getFloatTimeDomainData(buffer);
@@ -410,12 +416,12 @@ export default function AutoTuner() {
       return;
     }
 
-    const stabilizedPitch = resolveHarmonic(rawPitch, currentNotes);
+    const stabilizedPitch = resolveHarmonic(rawPitch, notes);
     pitchHistoryRef.current.push(stabilizedPitch);
     if (pitchHistoryRef.current.length > HISTORY_SIZE) pitchHistoryRef.current.shift();
 
     const detectedPitch = median(pitchHistoryRef.current);
-    const closestNote = getClosestNote(currentNotes, detectedPitch);
+    const closestNote = getClosestNote(notes, detectedPitch);
     const centsOff = frequencyToCents(detectedPitch, closestNote.targetFreq);
 
     if (Math.abs(centsOff) > MAX_DETECTION_CENTS) {
@@ -432,7 +438,7 @@ export default function AutoTuner() {
     setDisplayDiffCents(smoothed);
 
     rafRef.current = requestAnimationFrame(updateLoop);
-  }, [currentNotes, resetDisplay]);
+  }, [resetDisplay]);
 
   const startMic = useCallback(async () => {
     try {
@@ -546,14 +552,14 @@ export default function AutoTuner() {
 
   const handleInstrumentChange = useCallback(
     (key) => {
-      stopAll();
+      stopReference();
+      resetDisplay();
       setInstrument(key);
-      setMode(MODES.STANDARD);
       setShowMenu(false);
       setInfoOverlay(null);
       setErrorMessage('');
     },
-    [stopAll],
+    [resetDisplay, stopReference],
   );
 
   useEffect(() => {
@@ -603,7 +609,7 @@ export default function AutoTuner() {
   const detectedNote = currentNotes.find((note) => note.id === detectedNoteKey) ?? null;
   const sweetenedMarkerOffset =
     mode === MODES.SWEETENED && detectedNote
-      ? clamp(-(detectedNote.sweeten ?? 0), -DISPLAY_CENT_CLAMP, DISPLAY_CENT_CLAMP)
+      ? clamp(detectedNote.sweeten ?? 0, -DISPLAY_CENT_CLAMP, DISPLAY_CENT_CLAMP)
       : null;
 
   return (
