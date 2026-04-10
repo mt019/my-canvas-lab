@@ -391,7 +391,7 @@ export default function AutoTuner() {
     for (let i = 0; i < buffer.length; i += 1) sumSquares += buffer[i] * buffer[i];
     const rms = Math.sqrt(sumSquares / buffer.length);
     const now = Date.now();
-    setInputLevel((prev) => prev * 0.7 + clamp(rms * 120, 0, 1) * 0.3);
+    setInputLevel((prev) => prev * 0.78 + clamp(rms * 260, 0, 1) * 0.22);
 
     if (rms < VOLUME_THRESHOLD) {
       if (now - lastNoteTimeRef.current > NOTE_HOLD_TIME) {
@@ -600,6 +600,11 @@ export default function AutoTuner() {
 
   const isPerfect = !isTooQuiet && Math.abs(displayDiffCents) < PERFECT_RANGE_CENTS;
   const clampedMeterOffset = clamp(displayDiffCents, -DISPLAY_CENT_CLAMP, DISPLAY_CENT_CLAMP);
+  const detectedNote = currentNotes.find((note) => note.id === detectedNoteKey) ?? null;
+  const sweetenedMarkerOffset =
+    mode === MODES.SWEETENED && detectedNote
+      ? clamp(-(detectedNote.sweeten ?? 0), -DISPLAY_CENT_CLAMP, DISPLAY_CENT_CLAMP)
+      : null;
 
   return (
     <div className="min-h-screen bg-[#f5eceb] px-4 py-8 text-slate-800 flex flex-col items-center justify-center font-sans">
@@ -702,9 +707,20 @@ export default function AutoTuner() {
         <div className="relative mb-14 flex h-1.5 items-center px-2">
           <div className="relative h-full w-full rounded-full bg-[#f5eceb]">
             <div
-              className="absolute left-1/2 top-1/2 h-6 w-0.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#e8d3d1]"
+              className={`absolute left-1/2 top-1/2 h-6 w-0.5 -translate-x-1/2 -translate-y-1/2 rounded-full ${
+                mode === MODES.SWEETENED ? 'border-l border-dashed border-[#d8c1bf] bg-transparent' : 'bg-[#e8d3d1]'
+              }`}
               style={{ zIndex: 10 }}
             />
+            {sweetenedMarkerOffset !== null && (
+              <div
+                className="absolute top-1/2 h-7 w-0.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#8d9e8c]"
+                style={{
+                  left: `calc(50% + ${(sweetenedMarkerOffset / DISPLAY_CENT_CLAMP) * 48}% )`,
+                  zIndex: 15,
+                }}
+              />
+            )}
             <div
               className={`absolute top-1/2 z-30 h-10 w-2.5 -translate-y-1/2 rounded-full shadow-sm transition-all duration-150 ${
                 isPerfect
@@ -721,17 +737,32 @@ export default function AutoTuner() {
         </div>
 
         <div className="mb-8">
-          <div className="mb-2 flex items-center justify-between text-[10px] font-black uppercase tracking-[0.25em] text-[#b09e9c]">
-            <span>Mic Input</span>
-            <span>{Math.round(inputLevel * 100)}%</span>
-          </div>
-          <div className="h-2 overflow-hidden rounded-full bg-[#f5eceb]">
-            <div
-              className={`h-full rounded-full transition-all duration-150 ${
-                inputLevel > 0.08 ? 'bg-[#8d9e8c]' : 'bg-[#d4a373]'
-              }`}
-              style={{ width: `${Math.max(4, inputLevel * 100)}%` }}
-            />
+          {mode === MODES.SWEETENED && detectedNote && (
+            <div className="mb-3 text-center text-[10px] font-black uppercase tracking-[0.2em] text-[#8d9e8c]">
+              Sweetened target {detectedNote.sweeten > 0 ? '+' : ''}
+              {detectedNote.sweeten ?? 0} cents
+            </div>
+          )}
+          <div className="rounded-[1.25rem] border border-[#eadad8] bg-white/70 px-4 py-3">
+            <div className="flex items-center justify-between gap-4">
+              <span className="text-[10px] font-black uppercase tracking-[0.25em] text-[#b09e9c]">
+                Microphone
+              </span>
+              <span className="flex items-center gap-2">
+                <span
+                  className={`h-2.5 w-2.5 rounded-full transition-all duration-150 ${
+                    inputLevel > 0.08 ? 'bg-[#8d9e8c] shadow-[0_0_0_6px_rgba(141,158,140,0.16)]' : 'bg-[#d8c9c7]'
+                  }`}
+                />
+                <span
+                  className={`text-[10px] font-black uppercase tracking-[0.2em] ${
+                    inputLevel > 0.08 ? 'text-[#8d9e8c]' : 'text-[#c5b4b2]'
+                  }`}
+                >
+                  {inputLevel > 0.08 ? 'Signal Detected' : 'Waiting Input'}
+                </span>
+              </span>
+            </div>
           </div>
         </div>
 
