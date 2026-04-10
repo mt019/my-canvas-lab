@@ -44,12 +44,12 @@ const MODES = {
   HALF_DOWN: 'HALF_DOWN',
 };
 
-const VOLUME_THRESHOLD = 0.0025;
-const AUTO_CORRELATE_RMS_THRESHOLD = 0.002;
+const VOLUME_THRESHOLD = 0.001;
+const AUTO_CORRELATE_RMS_THRESHOLD = 0.0008;
 const SMOOTHING_FACTOR = 0.18;
 const PERFECT_RANGE_CENTS = 6;
 const NOTE_HOLD_TIME = 900;
-const MAX_DETECTION_CENTS = 45;
+const MAX_DETECTION_CENTS = 300;
 const HISTORY_SIZE = 9;
 const DISPLAY_CENT_CLAMP = 50;
 const MIN_PITCH = 40;
@@ -80,6 +80,33 @@ function getMediaErrorMessage(error) {
   }
 
   return '無法存取麥克風，請確認權限與裝置狀態。';
+}
+
+async function requestMicStream(mediaDevices) {
+  const preferredConstraints = {
+    audio: {
+      echoCancellation: false,
+      noiseSuppression: false,
+      autoGainControl: false,
+    },
+  };
+
+  try {
+    return await mediaDevices.getUserMedia(preferredConstraints);
+  } catch (error) {
+    const recoverableNames = new Set([
+      'OverconstrainedError',
+      'ConstraintNotSatisfiedError',
+      'NotReadableError',
+      'AbortError',
+    ]);
+
+    if (!recoverableNames.has(error?.name)) {
+      throw error;
+    }
+  }
+
+  return mediaDevices.getUserMedia({ audio: true });
 }
 
 function clamp(value, min, max) {
@@ -230,6 +257,7 @@ export default function AutoTuner() {
   const [showMenu, setShowMenu] = useState(false);
   const [activeRefNote, setActiveRefNote] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
+  const [inputLevel, setInputLevel] = useState(0);
 
   const menuRef = useRef(null);
   const audioCtxRef = useRef(null);
@@ -267,6 +295,7 @@ export default function AutoTuner() {
     pitchHistoryRef.current = [];
     lastDiffRef.current = 0;
     setIsTooQuiet(true);
+    setInputLevel(0);
     setDetectedNoteKey(null);
     setDisplayDiffCents(0);
     setNoteInfo({ note: '--', label: '--' });
@@ -357,6 +386,7 @@ export default function AutoTuner() {
     for (let i = 0; i < buffer.length; i += 1) sumSquares += buffer[i] * buffer[i];
     const rms = Math.sqrt(sumSquares / buffer.length);
     const now = Date.now();
+    setInputLevel((prev) => prev * 0.75 + clamp(rms * 18, 0, 1) * 0.25);
 
     if (rms < VOLUME_THRESHOLD) {
       if (now - lastNoteTimeRef.current > NOTE_HOLD_TIME) {
@@ -383,15 +413,18 @@ export default function AutoTuner() {
     const closestNote = getClosestNote(currentNotes, detectedPitch);
     const centsOff = frequencyToCents(detectedPitch, closestNote.targetFreq);
 
-    if (Math.abs(centsOff) <= MAX_DETECTION_CENTS) {
-      setNoteInfo({ note: closestNote.displayNote, label: closestNote.label });
-      setDetectedNoteKey(closestNote.id);
-
-      const smoothed =
-        lastDiffRef.current * (1 - SMOOTHING_FACTOR) + centsOff * SMOOTHING_FACTOR;
-      lastDiffRef.current = smoothed;
-      setDisplayDiffCents(smoothed);
+    if (Math.abs(centsOff) > MAX_DETECTION_CENTS) {
+      rafRef.current = requestAnimationFrame(updateLoop);
+      return;
     }
+
+    setNoteInfo({ note: closestNote.displayNote, label: closestNote.label });
+    setDetectedNoteKey(closestNote.id);
+
+    const smoothed =
+      lastDiffRef.current * (1 - SMOOTHING_FACTOR) + centsOff * SMOOTHING_FACTOR;
+    lastDiffRef.current = smoothed;
+    setDisplayDiffCents(smoothed);
 
     rafRef.current = requestAnimationFrame(updateLoop);
   }, [currentNotes, resetDisplay]);
@@ -408,13 +441,7 @@ export default function AutoTuner() {
       const audioCtx = await ensureAudioContext();
       await resumeAudioContext();
 
-      const stream = await mediaDevices.getUserMedia({
-        audio: {
-          echoCancellation: false,
-          noiseSuppression: false,
-          autoGainControl: false,
-        },
-      });
+      const stream = await requestMicStream(mediaDevices);
 
       stream.getAudioTracks().forEach((track) => {
         track.onended = () => {
@@ -684,6 +711,21 @@ export default function AutoTuner() {
                 transform: 'translate(-50%, -50%)',
                 opacity: isTooQuiet ? 0.2 : 1,
               }}
+            />
+          </div>
+        </div>
+
+        <div className="mb-8">
+          <div className="mb-2 flex items-center justify-between text-[10px] font-black uppercase tracking-[0.25em] text-[#b09e9c]">
+            <span>Mic Input</span>
+            <span>{Math.round(inputLevel * 100)}%</span>
+          </div>
+          <div className="h-2 overflow-hidden rounded-full bg-[#f5eceb]">
+            <div
+              className={`h-full rounded-full transition-all duration-150 ${
+                inputLevel > 0.08 ? 'bg-[#8d9e8c]' : 'bg-[#d4a373]'
+              }`}
+              style={{ width: `${Math.max(4, inputLevel * 100)}%` }}
             />
           </div>
         </div>
