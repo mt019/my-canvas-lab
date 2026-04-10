@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { Mic, MicOff, ChevronDown, Heart, Zap, Music, Info, X } from 'lucide-react';
+import { Mic, MicOff, ChevronDown, Heart, Zap, Music, Info } from 'lucide-react';
 
 const INSTRUMENTS = {
   UKULELE: {
     name: '烏克麗麗',
-    desc: '針對 C 弦微降補償，修正按壓張力導致的偏高，使常用和弦聽起來更和諧。',
+    desc: '甜蜜模式：針對 C 弦微降補償。修正按壓張力導致的偏高，使常用和弦聽起來更和諧。',
     notes: [
       { note: 'G4', freq: 392.00, label: '4', sweeten: -1.0 },
       { note: 'C4', freq: 261.63, label: '3', sweeten: -2.0 },
@@ -38,10 +38,10 @@ const INSTRUMENTS = {
   }
 };
 
-const VOLUME_THRESHOLD = 0.01; 
-const SMOOTHING_FACTOR = 0.22;  // 平衡響應速度與穩定性
-const PERFECT_RANGE = 2.8;      // Perfect 綠色感應範圍
-const NOTE_HOLD_TIME = 1000;    // 音符在畫面上停留的時間 (ms)
+const VOLUME_THRESHOLD = 0.006; // 更靈敏，捕捉微弱基頻
+const SMOOTHING_FACTOR = 0.12;  // 大幅增加平滑，消除指針抖動
+const PERFECT_RANGE = 2.8;
+const NOTE_HOLD_TIME = 1000;
 
 export default function AutoTuner() {
   const [instrument, setInstrument] = useState('UKULELE');
@@ -79,25 +79,24 @@ export default function AutoTuner() {
 
   useEffect(() => () => stopAll(), []);
 
-  // --- 專業參考音：消除爆音與數位雜訊 ---
-  const playReference = (n) => {
+  const initAudio = () => {
     if (!audioCtx.current) audioCtx.current = new (window.AudioContext || window.webkitAudioContext)();
+  };
+
+  const playReference = (n) => {
+    initAudio();
     if (audioCtx.current.state === 'suspended') audioCtx.current.resume();
-    
     stopReference();
     setActiveRefNote(n.note);
 
     const g = audioCtx.current.createGain();
     const o = audioCtx.current.createOscillator();
-    
-    o.type = 'triangle'; // 較暖的音色
+    o.type = 'triangle';
     o.frequency.setValueAtTime(n.targetFreq, audioCtx.current.currentTime);
     
-    // 安全音量設定 (0.08 - 0.1)
+    // 降噪增益：極低音量，消除破音
     const vol = n.targetFreq < 150 ? 0.12 : 0.08;
-    
     g.gain.setValueAtTime(0, audioCtx.current.currentTime);
-    // 漸進式進入 (Attack: 0.15s) 徹底修復破音感
     g.gain.linearRampToValueAtTime(vol, audioCtx.current.currentTime + 0.15); 
     g.gain.exponentialRampToValueAtTime(0.001, audioCtx.current.currentTime + 2.0);
 
@@ -116,15 +115,15 @@ export default function AutoTuner() {
   };
 
   const startMic = async () => {
-    if (!audioCtx.current) audioCtx.current = new (window.AudioContext || window.webkitAudioContext)();
+    initAudio();
     try {
       stream.current = await navigator.mediaDevices.getUserMedia({ audio: true });
       analyser.current = audioCtx.current.createAnalyser();
-      analyser.current.fftSize = 2048;
+      analyser.current.fftSize = 4096; // 提升分辨率，更好區分泛音
       audioCtx.current.createMediaStreamSource(stream.current).connect(analyser.current);
       setIsListening(true);
       updateLoop();
-    } catch (e) { alert("麥克風存取失敗，請檢查權限設定。"); }
+    } catch (e) { alert("麥克風存取失敗。"); }
   };
 
   const updateLoop = () => {
@@ -146,10 +145,24 @@ export default function AutoTuner() {
       lastNoteTime.current = now;
       const p = autoCorrelate(buffer, audioCtx.current.sampleRate);
       
-      // 加入低通濾波過濾：忽略高於 1000Hz 的極高頻雜訊
-      if (p > 50 && p < 1000) {
-        pitchBuffer.current.push(p);
-        if (pitchBuffer.current.length > 12) pitchBuffer.current.shift(); // 深度緩衝
+      // --- 泛音過濾核心邏輯 ---
+      if (p > 40 && p < 1100) {
+        let detectedPitch = p;
+
+        // 如果偵測到 220Hz 左右，但 110Hz 的能量也存在，強迫拉回基頻 (Sub-harmonic checking)
+        // 這是防止吉他麗麗低音 A 跳高音 A 的關鍵
+        const subHarmonic = p / 2;
+        const tripleHarmonic = p / 3;
+        
+        // 尋找當前樂器中是否有匹配的低頻目標
+        const hasLowTarget = currentNotes.some(n => Math.abs(n.targetFreq - subHarmonic) < 15);
+        const hasTripleLowTarget = currentNotes.some(n => Math.abs(n.targetFreq - tripleHarmonic) < 15);
+
+        if (hasLowTarget) detectedPitch = subHarmonic;
+        else if (hasTripleLowTarget) detectedPitch = tripleHarmonic;
+
+        pitchBuffer.current.push(detectedPitch);
+        if (pitchBuffer.current.length > 15) pitchBuffer.current.shift(); // 加深濾波
         
         const sorted = [...pitchBuffer.current].sort((a,b)=>a-b);
         const med = sorted[Math.floor(sorted.length/2)];
@@ -158,8 +171,7 @@ export default function AutoTuner() {
           Math.abs(curr.targetFreq - med) < Math.abs(prev.targetFreq - med) ? curr : prev
         );
 
-        // 只有當偵測頻率與目標音符非常接近時才更新，防止泛音跳轉
-        if (Math.abs(closest.targetFreq - med) < 35) {
+        if (Math.abs(closest.targetFreq - med) < 45) {
           setNoteInfo({ note: closest.displayNote, label: closest.label });
           const diff = med - closest.targetFreq;
           const smoothed = (lastDiff.current * (1 - SMOOTHING_FACTOR)) + (diff * SMOOTHING_FACTOR);
@@ -196,40 +208,30 @@ export default function AutoTuner() {
   return (
     <div className="min-h-screen bg-[#f5eceb] text-slate-800 p-4 flex flex-col items-center justify-center font-sans overflow-hidden">
       
-      {/* 沉浸式說明遮罩 */}
       {infoOverlay && (
         <div className="fixed inset-0 z-[200] bg-white/40 backdrop-blur-md flex items-center justify-center p-8 animate-in fade-in duration-300" onClick={() => setInfoOverlay(null)}>
           <div className="max-w-xs text-center">
-            <div className="flex justify-center mb-6">
-              {infoOverlay === 'SWEETENED' ? (
-                <div className="p-4 bg-rose-100 rounded-full text-rose-500 shadow-sm"><Heart size={32} fill="currentColor" /></div>
-              ) : (
-                <div className="p-4 bg-amber-100 rounded-full text-amber-500 shadow-sm"><Zap size={32} fill="currentColor" /></div>
-              )}
-            </div>
             <h3 className="text-lg font-black text-slate-700 mb-4 uppercase tracking-widest">{infoOverlay === 'SWEETENED' ? 'Sweetened Mode' : 'Half-Step Down'}</h3>
-            <p className="text-sm leading-relaxed text-slate-500 font-medium">{infoOverlay === 'SWEETENED' ? INSTRUMENTS[instrument].desc : '將琴弦調低半音，適合追求柔軟手感與溫暖共鳴的場景。'}</p>
+            <p className="text-sm leading-relaxed text-slate-500 font-medium">{infoOverlay === 'SWEETENED' ? INSTRUMENTS[instrument].desc : '將全弦音調降低半音。'}</p>
           </div>
         </div>
       )}
 
       <div className="w-full max-w-md bg-white/70 backdrop-blur-xl rounded-[3rem] p-8 border border-[#e8d3d1] shadow-2xl relative shadow-rose-200/50">
         
-        {/* 工具欄 */}
         <div className="flex justify-between items-center mb-10 relative z-[100]">
           <button onClick={() => setShowMenu(!showMenu)} className="bg-[#e8d3d1] px-4 py-2 rounded-2xl text-[11px] font-black text-[#8a7a78] flex items-center gap-2">
             {INSTRUMENTS[instrument].name} <ChevronDown size={14} className={showMenu ? 'rotate-180' : ''} />
           </button>
           <div className="flex gap-2">
-            <button onClick={() => { const next = mode==='SWEETENED'?'STANDARD':'SWEETENED'; setMode(next); if (next==='SWEETENED') setInfoOverlay('SWEETENED'); stopReference(); }} className={`p-2.5 rounded-xl border transition-all ${mode==='SWEETENED'?'bg-[#d8e2dc] text-[#8d9e8c]':'bg-white text-[#b09e9c]'}`}><Heart size={18} fill={mode==='SWEETENED'?"currentColor":"none"}/></button>
-            <button onClick={() => { const next = mode==='HALF_DOWN'?'STANDARD':'HALF_DOWN'; setMode(next); if (next==='HALF_DOWN') setInfoOverlay('HALF_DOWN'); stopReference(); }} className={`p-2.5 rounded-xl border transition-all ${mode==='HALF_DOWN'?'bg-[#f0e4d7] text-[#d4a373]':'bg-white text-[#b09e9c]'}`}><Zap size={18} fill={mode==='HALF_DOWN'?"currentColor":"none"}/></button>
+            <button onClick={() => { setMode(mode==='SWEETENED'?'STANDARD':'SWEETENED'); setInfoOverlay(mode==='SWEETENED'?null:'SWEETENED'); stopReference(); }} className={`p-2.5 rounded-xl border transition-all ${mode==='SWEETENED'?'bg-[#d8e2dc] text-[#8d9e8c]':'bg-white text-[#b09e9c]'}`}><Heart size={18} fill={mode==='SWEETENED'?"currentColor":"none"}/></button>
+            <button onClick={() => { setMode(mode==='HALF_DOWN'?'STANDARD':'HALF_DOWN'); setInfoOverlay(mode==='HALF_DOWN'?null:'HALF_DOWN'); stopReference(); }} className={`p-2.5 rounded-xl border transition-all ${mode==='HALF_DOWN'?'bg-[#f0e4d7] text-[#d4a373]':'bg-white text-[#b09e9c]'}`}><Zap size={18} fill={mode==='HALF_DOWN'?"currentColor":"none"}/></button>
           </div>
-          {showMenu && <div className="absolute left-0 top-12 w-44 bg-white border border-[#e8d3d1] rounded-2xl shadow-xl z-[110] py-2">
+          {showMenu && <div className="absolute left-0 top-12 w-44 bg-white border border-[#e8d3d1] rounded-2xl shadow-xl z-[110] py-2 animate-in fade-in zoom-in duration-200">
             {Object.keys(INSTRUMENTS).map(k => <button key={k} className={`w-full px-5 py-3 text-left text-xs font-bold ${instrument === k ? 'bg-[#e8d3d1] text-[#8a7a78]' : 'text-slate-400'}`} onClick={() => {setInstrument(k);setShowMenu(false);stopAll();}}>{INSTRUMENTS[k].name}</button>)}
           </div>}
         </div>
 
-        {/* 顯示主體 */}
         <div className="text-center mb-10">
           <div className="h-6 text-[10px] font-black text-[#b09e9c] tracking-widest uppercase">{isTooQuiet ? 'Acoustic Tuning' : `${noteInfo.label} String`}</div>
           <div className={`text-9xl font-black tabular-nums transition-all ${isTooQuiet ? 'text-[#e8d3d1]' : (Math.abs(displayDiff) < PERFECT_RANGE ? 'text-[#8d9e8c]' : 'text-[#b09e9c]')}`}>
@@ -237,21 +239,16 @@ export default function AutoTuner() {
           </div>
         </div>
 
-        {/* 儀表盤 */}
-        <div className="px-2 mb-14">
-          <div className="h-1.5 bg-[#f5eceb] rounded-full relative">
-            <div className="absolute left-1/2 -top-1 w-0.5 h-3.5 bg-[#e8d3d1]" />
-            <div className={`absolute -top-4 w-2 h-10 rounded-full transition-all duration-150 shadow-sm ${Math.abs(displayDiff) < PERFECT_RANGE ? 'bg-[#8d9e8c]' : 'bg-[#d4a373]'}`}
-              style={{ left: `calc(50% + ${Math.max(-48, Math.min(48, displayDiff * 3.8))}% )`, opacity: isTooQuiet ? 0.2 : 1 }}
-            />
-          </div>
+        <div className="h-1.5 bg-[#f5eceb] rounded-full relative mb-14">
+          <div className={`absolute -top-4 w-2 h-10 rounded-full bg-[#d4a373] transition-all duration-150 shadow-sm`}
+            style={{ left: `calc(50% + ${Math.max(-48, Math.min(48, displayDiff * 3.8))}% )`, opacity: isTooQuiet ? 0.2 : 1 }}
+          />
         </div>
 
-        {/* 弦按鈕 */}
         <div className="flex justify-between items-center gap-2 mb-10 bg-[#f5eceb]/50 p-3 rounded-[2rem]">
           {currentNotes.map(n => (
             <button key={n.note} onClick={() => playReference(n)} className={`flex-1 aspect-[4/5] rounded-[1rem] border-2 transition-all flex flex-col items-center justify-center gap-1 ${activeRefNote === n.note ? 'bg-[#e8d3d1] border-white text-white shadow-lg' : 'bg-white border-transparent text-[#b09e9c]'}`}>
-              <span className="text-[9px] font-black">{n.label}</span>
+              <span className="text-[9px] font-black opacity-60">{n.label}</span>
               <span className="text-sm font-black">{n.displayNote}</span>
             </button>
           ))}
