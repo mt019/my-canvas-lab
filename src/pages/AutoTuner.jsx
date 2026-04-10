@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { Mic, MicOff, ChevronDown, Heart, Zap, Info, Play } from 'lucide-react';
+import { Mic, MicOff, ChevronDown, Heart, Zap, Info } from 'lucide-react';
 
 const INSTRUMENTS = {
   UKULELE: {
@@ -14,7 +14,7 @@ const INSTRUMENTS = {
   },
   GUITARLELE: {
     name: '吉他麗麗',
-    desc: '甜蜜模式：校正 C 弦與低音 A 弦的物理音準誤差，確保這把精緻的小琴在各個音域都能保持出色的音色平衡。',
+    desc: '甜蜜模式：校正 C 弦與低音 A 弦的物理音準誤差，確保各音域音色平衡。',
     notes: [
       { note: 'A2', freq: 110.00, label: '6', sweeten: -1.5 },
       { note: 'D3', freq: 146.83, label: '5', sweeten: -1.0 },
@@ -39,8 +39,8 @@ const INSTRUMENTS = {
 };
 
 const VOLUME_THRESHOLD = 0.006; 
-const PERFECT_RANGE = 2.8;
-const REF_PLAY_DURATION = 1500;
+const SMOOTHING_FACTOR = 0.15;  
+const PERFECT_RANGE = 2.8;      
 const NOTE_HOLD_TIME = 1000;
 
 export default function AutoTuner() {
@@ -57,11 +57,9 @@ export default function AutoTuner() {
   const audioCtx = useRef(null);
   const analyser = useRef(null);
   const osc = useRef(null);
-  const gainNode = useRef(null);
   const stream = useRef(null);
   const animId = useRef(null);
   const lastDiff = useRef(0);
-  const stopTimeout = useRef(null);
   const pitchBuffer = useRef([]);
   const lastNoteTime = useRef(0);
 
@@ -80,82 +78,31 @@ export default function AutoTuner() {
     if (!audioCtx.current) audioCtx.current = new (window.AudioContext || window.webkitAudioContext)();
   };
 
-  // --- ① 引擎 A：FFT 峰值偵測 (頻域驗證) ---
-  const fftPeak = (analyser, sampleRate) => {
-    const buffer = new Uint8Array(analyser.frequencyBinCount);
-    analyser.getByteFrequencyData(buffer);
-    let max = -1;
-    let index = -1;
-    for (let i = 1; i < buffer.length; i++) {
-      if (buffer[i] > max) { max = buffer[i]; index = i; }
-    }
-    return (index / buffer.length) * (sampleRate / 2);
-  };
-
-  // --- ② 引擎 B：YIN 算法 (時域基音找尋) ---
-  const yin = (buf, sr) => {
-    const thres = 0.15;
-    const len = buf.length / 2;
-    const d = new Float32Array(len);
-    for (let tau = 0; tau < len; tau++) {
-      for (let i = 0; i < len; i++) {
-        const diff = buf[i] - buf[i + tau];
-        d[tau] += diff * diff;
-      }
-    }
-    let cmnd = new Float32Array(len);
-    cmnd[0] = 1;
-    let runningSum = 0;
-    for (let tau = 1; tau < len; tau++) {
-      runningSum += d[tau];
-      cmnd[tau] = d[tau] / (runningSum / tau);
-    }
-    let tau = -1;
-    for (let t = 1; t < len; t++) {
-      if (cmnd[t] < thres) { tau = t; break; }
-    }
-    if (tau === -1) {
-      let minVal = 1;
-      for (let t = 1; t < len; t++) {
-        if (cmnd[t] < minVal) { minVal = cmnd[t]; tau = t; }
-      }
-    }
-    const confidence = 1 - cmnd[tau];
-    return { freq: sr / tau, conf: confidence };
-  };
-
-  const playReference = (n) => {
-    initAudio();
-    if (audioCtx.current.state === 'suspended') audioCtx.current.resume();
-    stopReference();
-    setActiveRefNote(n.note);
-    const g = audioCtx.current.createGain();
-    const o = audioCtx.current.createOscillator();
-    o.type = 'triangle';
-    o.frequency.setValueAtTime(n.targetFreq, audioCtx.current.currentTime);
-    g.gain.setValueAtTime(0, audioCtx.current.currentTime);
-    g.gain.linearRampToValueAtTime(0.12, audioCtx.current.currentTime + 0.1); 
-    g.gain.exponentialRampToValueAtTime(0.001, audioCtx.current.currentTime + 1.8);
-    o.connect(g).connect(audioCtx.current.destination);
-    o.start();
-    osc.current = o; gainNode.current = g;
-  };
-
-  const stopReference = () => {
-    if (osc.current) { try { osc.current.stop(); osc.current.disconnect(); } catch(e) {} osc.current = null; }
-    setActiveRefNote(null);
-  };
-
   const startMic = async () => {
     initAudio();
     try {
       stream.current = await navigator.mediaDevices.getUserMedia({ audio: true });
       analyser.current = audioCtx.current.createAnalyser();
-      analyser.current.fftSize = 2048;
+      analyser.current.fftSize = 4096;
       audioCtx.current.createMediaStreamSource(stream.current).connect(analyser.current);
       setIsListening(true);
       updateLoop();
-    } catch (e) { alert("麥克風啟動失敗。"); }
+    } catch (e) { alert("麥克風存取失敗。"); }
+  };
+
+  const autoCorrelate = (buf, sr) => {
+    let r1 = 0, r2 = buf.length-1, thres = 0.2;
+    for (let i=0; i<buf.length/2; i++) if (Math.abs(buf[i])<thres) { r1=i; break; }
+    for (let i=1; i<buf.length/2; i++) if (Math.abs(buf[buf.length-i])<thres) { r2=buf.length-i; break; }
+    const b = buf.slice(r1, r2);
+    const c = new Array(b.length).fill(0);
+    for (let i=0; i<b.length; i++) {
+      for (let j=0; j<b.length-i; j++) c[i] = c[i] + b[j]*b[j+i];
+    }
+    let d=0; while(c[d]>c[d+1]) d++;
+    let maxv=-1, maxp=-1;
+    for(let i=d; i<b.length; i++) if(c[i]>maxv) { maxv=c[i]; maxp=i; }
+    return sr/maxp;
   };
 
   const updateLoop = () => {
@@ -168,60 +115,79 @@ export default function AutoTuner() {
     
     if (rms < VOLUME_THRESHOLD) {
       if (now - lastNoteTime.current > NOTE_HOLD_TIME) {
-        setIsTooQuiet(true); pitchBuffer.current = [];
+        setIsTooQuiet(true);
+        pitchBuffer.current = [];
       }
     } else {
       setIsTooQuiet(false);
       lastNoteTime.current = now;
+      const p = autoCorrelate(buffer, audioCtx.current.sampleRate);
+      
+      if (p > 40 && p < 1100) {
+        let detectedPitch = p;
+        const subHarmonic = p / 2;
+        const tripleHarmonic = p / 3;
+        if (currentNotes.some(n => Math.abs(n.targetFreq - subHarmonic) < 15)) detectedPitch = subHarmonic;
+        else if (currentNotes.some(n => Math.abs(n.targetFreq - tripleHarmonic) < 15)) detectedPitch = tripleHarmonic;
 
-      // --- ③ 核心融合：雙引擎驗證 ---
-      const { freq: yinFreq, conf } = yin(buffer, audioCtx.current.sampleRate);
-      const fftFreq = fftPeak(analyser.current, audioCtx.current.sampleRate);
-      let finalFreq = 0;
-
-      if (conf > 0.7 && yinFreq > 50) {
-        finalFreq = yinFreq;
-        // 泛音修正：如果 YIN 抓到的是 FFT 的 2 倍或 3 倍，則除回去
-        if (yinFreq > 200 && Math.abs(yinFreq/2 - fftFreq) < 40) finalFreq = yinFreq / 2;
-        if (yinFreq > 350 && Math.abs(yinFreq/3 - fftFreq) < 40) finalFreq = yinFreq / 3;
-        
-        // 如果 YIN 信心不足但 FFT 很強
-        if (conf < 0.6 && fftFreq > 50 && fftFreq < 1000) finalFreq = fftFreq;
-
-        pitchBuffer.current.push(finalFreq);
-        if (pitchBuffer.current.length > 8) pitchBuffer.current.shift();
+        pitchBuffer.current.push(detectedPitch);
+        if (pitchBuffer.current.length > 10) pitchBuffer.current.shift();
         const sorted = [...pitchBuffer.current].sort((a,b)=>a-b);
         const med = sorted[Math.floor(sorted.length/2)];
         
-        const closest = currentNotes.reduce((p,c) => Math.abs(c.targetFreq - med) < Math.abs(p.targetFreq - med) ? c : p);
+        const closest = currentNotes.reduce((prev, curr) => 
+          Math.abs(curr.targetFreq - med) < Math.abs(prev.targetFreq - med) ? curr : prev
+        );
 
         if (Math.abs(closest.targetFreq - med) < 45) {
           setNoteInfo({ note: closest.displayNote, label: closest.label });
           const diff = med - closest.targetFreq;
-          const smooth = lastDiff.current * 0.7 + diff * 0.3;
-          lastDiff.current = smooth;
-          setDisplayDiff(smooth);
+          const smoothed = (lastDiff.current * (1 - SMOOTHING_FACTOR)) + (diff * SMOOTHING_FACTOR);
+          lastDiff.current = smoothed;
+          setDisplayDiff(smoothed);
         }
       }
     }
     animId.current = requestAnimationFrame(updateLoop);
   };
 
+  const playReference = (n) => {
+    initAudio();
+    if (audioCtx.current.state === 'suspended') audioCtx.current.resume();
+    stopReference();
+    setActiveRefNote(n.note);
+    const g = audioCtx.current.createGain();
+    const o = audioCtx.current.createOscillator();
+    o.type = 'triangle';
+    o.frequency.setValueAtTime(n.targetFreq, audioCtx.current.currentTime);
+    g.gain.setValueAtTime(0, audioCtx.current.currentTime);
+    g.gain.linearRampToValueAtTime(0.1, audioCtx.current.currentTime + 0.1); 
+    g.gain.exponentialRampToValueAtTime(0.001, audioCtx.current.currentTime + 1.5);
+    o.connect(g).connect(audioCtx.current.destination);
+    o.start();
+    osc.current = o;
+  };
+
+  const stopReference = () => {
+    if (osc.current) { try { osc.current.stop(); osc.current.disconnect(); } catch(e) {} osc.current = null; }
+    setActiveRefNote(null);
+  };
+
   const stopAll = () => {
-    setIsListening(false); stopReference();
+    setIsListening(false);
+    stopReference();
     cancelAnimationFrame(animId.current);
     if (stream.current) stream.current.getTracks().forEach(t => t.stop());
   };
 
   return (
-    <div className="min-h-screen bg-[#f5eceb] text-slate-800 p-4 flex flex-col items-center justify-center font-sans">
+    <div className="min-h-screen bg-[#f5eceb] text-slate-800 p-4 flex flex-col items-center justify-center font-sans overflow-hidden">
       
-      {/* 沉浸式說明遮罩 */}
       {infoOverlay && (
         <div className="fixed inset-0 z-[200] bg-white/40 backdrop-blur-md flex items-center justify-center p-8 animate-in fade-in duration-300" onClick={() => setInfoOverlay(null)}>
           <div className="max-w-xs text-center">
             <h3 className="text-lg font-black text-slate-700 mb-4 uppercase tracking-widest">{infoOverlay === 'SWEETENED' ? 'Sweetened Mode' : 'Half-Step Down'}</h3>
-            <p className="text-sm leading-relaxed text-slate-500 font-medium">{infoOverlay === 'SWEETENED' ? INSTRUMENTS[instrument].desc : '將全弦音調降低半音，獲得溫暖、柔軟的音色表現。'}</p>
+            <p className="text-sm leading-relaxed text-slate-500 font-medium">{infoOverlay === 'SWEETENED' ? INSTRUMENTS[instrument].desc : '將全弦音調降低半音。'}</p>
             <div className="mt-12 text-[10px] font-black text-[#b09e9c] uppercase tracking-[0.3em] animate-pulse">Click anywhere to continue</div>
           </div>
         </div>
@@ -235,10 +201,10 @@ export default function AutoTuner() {
             {INSTRUMENTS[instrument].name} <ChevronDown size={14} className={showMenu ? 'rotate-180' : ''} />
           </button>
           <div className="flex gap-2">
-            <button onClick={() => { const next = mode==='SWEETENED'?'STANDARD':'SWEETENED'; setMode(next); if (next==='SWEETENED') setInfoOverlay('SWEETENED'); stopReference(); }} className={`p-2.5 rounded-xl border transition-all ${mode==='SWEETENED'?'bg-[#d8e2dc] text-[#8d9e8c]':'bg-white text-[#b09e9c]'}`}><Heart size={18} fill={mode==='SWEETENED'?"currentColor":"none"}/></button>
-            <button onClick={() => { const next = mode==='HALF_DOWN'?'STANDARD':'HALF_DOWN'; setMode(next); if (next==='HALF_DOWN') setInfoOverlay('HALF_DOWN'); stopReference(); }} className={`p-2.5 rounded-xl border transition-all ${mode==='HALF_DOWN'?'bg-[#f0e4d7] text-[#d4a373]':'bg-white text-[#b09e9c]'}`}><Zap size={18} fill={mode==='HALF_DOWN'?"currentColor":"none"}/></button>
+            <button onClick={() => { setMode(mode==='SWEETENED'?'STANDARD':'SWEETENED'); setInfoOverlay(mode==='SWEETENED'?null:'SWEETENED'); stopReference(); }} className={`p-2.5 rounded-xl border transition-all ${mode==='SWEETENED'?'bg-[#d8e2dc] text-[#8d9e8c]':'bg-white text-[#b09e9c]'}`}><Heart size={18} fill={mode==='SWEETENED'?"currentColor":"none"}/></button>
+            <button onClick={() => { setMode(mode==='HALF_DOWN'?'STANDARD':'HALF_DOWN'); setInfoOverlay(mode==='HALF_DOWN'?null:'HALF_DOWN'); stopReference(); }} className={`p-2.5 rounded-xl border transition-all ${mode==='HALF_DOWN'?'bg-[#f0e4d7] text-[#d4a373]':'bg-white text-[#b09e9c]'}`}><Zap size={18} fill={mode==='HALF_DOWN'?"currentColor":"none"}/></button>
           </div>
-          {showMenu && <div className="absolute left-0 top-12 w-44 bg-white border border-[#e8d3d1] rounded-2xl shadow-xl z-[110] py-2">
+          {showMenu && <div className="absolute left-0 top-12 w-44 bg-white border border-[#e8d3d1] rounded-2xl shadow-xl z-[110] py-2 animate-in fade-in zoom-in duration-200">
             {Object.keys(INSTRUMENTS).map(k => <button key={k} className={`w-full px-5 py-3 text-left text-xs font-bold ${instrument === k ? 'bg-[#e8d3d1] text-[#8a7a78]' : 'text-slate-400'}`} onClick={() => {setInstrument(k);setShowMenu(false);stopAll();}}>{INSTRUMENTS[k].name}</button>)}
           </div>}
         </div>
@@ -246,20 +212,36 @@ export default function AutoTuner() {
         {/* 顯示主體 */}
         <div className="text-center mb-10">
           <div className="h-6 text-[10px] font-black tracking-widest uppercase text-[#b09e9c]">
-            {isTooQuiet ? 'Acoustic Tuning' : (Math.abs(displayDiff) < PERFECT_RANGE ? <span className="text-[#8d9e8c] animate-pulse">Perfectly Tuned</span> : `${noteInfo.label} String`)}
+            {isTooQuiet ? 'Acoustic Tuning' : (Math.abs(displayDiff) < PERFECT_RANGE ? <span className="text-[#8d9e8c] animate-pulse font-bold">PERFECT</span> : `${noteInfo.label} String`)}
           </div>
-          <div className={`text-9xl font-black tabular-nums transition-all ${isTooQuiet ? 'text-[#e8d3d1]' : (Math.abs(displayDiff) < PERFECT_RANGE ? 'text-[#8d9e8c]' : 'text-[#b09e9c]')}`}>
+          <div className={`text-9xl font-black transition-all ${isTooQuiet ? 'text-[#e8d3d1]' : (Math.abs(displayDiff) < PERFECT_RANGE ? 'text-[#8d9e8c]' : 'text-[#b09e9c]')}`}>
             {isTooQuiet ? '--' : noteInfo.note}
           </div>
         </div>
 
-        {/* 儀表盤：強化中心豎線視覺 */}
-        <div className="px-2 mb-14 relative h-1.5 flex items-center">
-          <div className="w-full h-full bg-[#f5eceb] rounded-full relative overflow-visible">
-            <div className="absolute left-1/2 -top-1.5 w-0.5 h-4.5 bg-[#e8d3d1] z-20" />
+        {/* 數軸儀表盤：修復中心小豎線 */}
+        <div className="px-2 mb-14 relative">
+          <div className="h-1.5 bg-[#f5eceb] rounded-full relative">
+            
+            {/* ⭐ 正中心的小豎線 (基準線) */}
             <div 
-              className={`absolute -top-4 w-2.5 h-10 rounded-full transition-all duration-150 shadow-sm z-30 ${Math.abs(displayDiff) < PERFECT_RANGE ? 'bg-[#8d9e8c] shadow-[#8d9e8c]/50' : 'bg-[#d4a373]'}`}
-              style={{ left: `calc(50% + ${Math.max(-48, Math.min(48, displayDiff * 3.8))}% )`, transform: 'translateX(-50%)', opacity: isTooQuiet ? 0.2 : 1 }}
+              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-0.5 h-6 bg-[#e8d3d1] rounded-full" 
+              style={{ zIndex: 10 }}
+            />
+            
+            {/* ⭐ 兩側範圍標記 (可選，增加專業感) */}
+            <div className="absolute left-0 top-0 text-[8px] font-bold text-[#e8d3d1] -mt-5">♭</div>
+            <div className="absolute right-0 top-0 text-[8px] font-bold text-[#e8d3d1] -mt-5">♯</div>
+
+            {/* 活動指針 */}
+            <div 
+              className={`absolute top-1/2 -translate-y-1/2 w-2.5 h-10 rounded-full transition-all duration-150 shadow-sm ${Math.abs(displayDiff) < PERFECT_RANGE ? 'bg-[#8d9e8c] shadow-[#8d9e8c]/50' : 'bg-[#d4a373]'}`}
+              style={{ 
+                left: `calc(50% + ${Math.max(-48, Math.min(48, displayDiff * 3.8))}% )`, 
+                transform: 'translate(-50%, -50%)', 
+                opacity: isTooQuiet ? 0.2 : 1,
+                zIndex: 20
+              }} 
             />
           </div>
         </div>
@@ -267,7 +249,7 @@ export default function AutoTuner() {
         <div className="flex justify-between items-center gap-2 mb-10 bg-[#f5eceb]/50 p-3 rounded-[2rem]">
           {currentNotes.map(n => (
             <button key={n.note} onClick={() => playReference(n)} className={`flex-1 aspect-[4/5] rounded-[1rem] border-2 transition-all flex flex-col items-center justify-center gap-1 ${activeRefNote === n.note ? 'bg-[#e8d3d1] border-white text-white shadow-lg' : 'bg-white border-transparent text-[#b09e9c]'}`}>
-              <span className="text-[9px] font-black">{n.label}</span>
+              <span className="text-[9px] font-black opacity-60">{n.label}</span>
               <span className="text-sm font-black">{n.displayNote}</span>
             </button>
           ))}
