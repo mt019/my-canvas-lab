@@ -744,22 +744,22 @@ export default function AutoTuner() {
             </div>
           )}
           <div className="rounded-[1.25rem] border border-[#eadad8] bg-white/70 px-4 py-3">
-            <div className="flex items-center justify-between gap-4">
-              <span className="text-[10px] font-black uppercase tracking-[0.25em] text-[#b09e9c]">
-                Microphone
+            <div className="flex min-h-[20px] items-center justify-between gap-3">
+              <span className="shrink-0 text-[10px] font-black uppercase tracking-[0.25em] text-[#b09e9c]">
+                MIC
               </span>
-              <span className="flex items-center gap-2">
+              <span className="flex min-w-0 items-center gap-2">
                 <span
-                  className={`h-2.5 w-2.5 rounded-full transition-all duration-150 ${
+                  className={`h-2.5 w-2.5 shrink-0 rounded-full transition-all duration-150 ${
                     inputLevel > 0.08 ? 'bg-[#8d9e8c] shadow-[0_0_0_6px_rgba(141,158,140,0.16)]' : 'bg-[#d8c9c7]'
                   }`}
                 />
                 <span
-                  className={`text-[10px] font-black uppercase tracking-[0.2em] ${
+                  className={`truncate text-[10px] font-black uppercase tracking-[0.16em] ${
                     inputLevel > 0.08 ? 'text-[#8d9e8c]' : 'text-[#c5b4b2]'
                   }`}
                 >
-                  {inputLevel > 0.08 ? 'Signal Detected' : 'Waiting Input'}
+                  {inputLevel > 0.08 ? 'Signal On' : 'Standby'}
                 </span>
               </span>
             </div>
