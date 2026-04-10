@@ -6,34 +6,34 @@ const INSTRUMENTS = {
     name: '烏克麗麗',
     desc: '甜蜜模式：針對 C 弦進行微降補償，修正因琴弦張力產生的音準偏差，使常用和弦共鳴更加純淨。',
     notes: [
-      { note: 'G4', freq: 392.00, label: '4', sweeten: -1.0 },
-      { note: 'C4', freq: 261.63, label: '3', sweeten: -2.0 },
-      { note: 'E4', freq: 329.63, label: '2', sweeten: -1.0 },
-      { note: 'A4', freq: 440.00, label: '1', sweeten: -0.5 },
+      { note: 'G', freq: 392.00, label: '4', sweeten: -1.0 },
+      { note: 'C', freq: 261.63, label: '3', sweeten: -2.0 },
+      { note: 'E', freq: 329.63, label: '2', sweeten: -1.0 },
+      { note: 'A', freq: 440.00, label: '1', sweeten: -0.5 },
     ]
   },
   GUITARLELE: {
     name: '吉他麗麗',
     desc: '甜蜜模式：校正 C 弦與低音 A 弦的物理音準誤差，確保各音域音色平衡。',
     notes: [
-      { note: 'A2', freq: 110.00, label: '6', sweeten: -1.5 },
-      { note: 'D3', freq: 146.83, label: '5', sweeten: -1.0 },
-      { note: 'G3', freq: 196.00, label: '4', sweeten: -1.0 },
-      { note: 'C4', freq: 261.63, label: '3', sweeten: -2.0 },
-      { note: 'E4', freq: 329.63, label: '2', sweeten: -1.0 },
-      { note: 'A4', freq: 440.00, label: '1', sweeten: -0.5 },
+      { note: 'A', freq: 110.00, label: '6', sweeten: -1.5 },
+      { note: 'D', freq: 146.83, label: '5', sweeten: -1.0 },
+      { note: 'G', freq: 196.00, label: '4', sweeten: -1.0 },
+      { note: 'C', freq: 261.63, label: '3', sweeten: -2.0 },
+      { note: 'E', freq: 329.63, label: '2', sweeten: -1.0 },
+      { note: 'A', freq: 440.00, label: '1', sweeten: -0.5 },
     ]
   },
   GUITAR: {
     name: '吉他 (標準)',
     desc: '甜蜜模式：補償 B 弦與低音 E 弦在平均律下的生硬感，釋放木吉他自然的泛音與共鳴。',
     notes: [
-      { note: 'E2', freq: 82.41,  label: '6', sweeten: -2.0 },
-      { note: 'A2', freq: 110.00, label: '5', sweeten: -1.5 },
-      { note: 'D3', freq: 146.83, label: '4', sweeten: -1.0 },
-      { note: 'G3', freq: 196.00, label: '3', sweeten: -1.5 },
-      { note: 'B3', freq: 246.94, label: '2', sweeten: -1.2 },
-      { note: 'E4', freq: 329.63, label: '1', sweeten: -0.5 },
+      { note: 'E', freq: 82.41,  label: '6', sweeten: -2.0 },
+      { note: 'A', freq: 110.00, label: '5', sweeten: -1.5 },
+      { note: 'D', freq: 146.83, label: '4', sweeten: -1.0 },
+      { note: 'G', freq: 196.00, label: '3', sweeten: -1.5 },
+      { note: 'B', freq: 246.94, label: '2', sweeten: -1.2 },
+      { note: 'E', freq: 329.63, label: '1', sweeten: -0.5 },
     ]
   }
 };
@@ -63,12 +63,20 @@ export default function AutoTuner() {
   const pitchBuffer = useRef([]);
   const lastNoteTime = useRef(0);
 
+  // --- 修正後的字母邏輯 ---
   const currentNotes = useMemo(() => {
     const factor = mode === 'HALF_DOWN' ? Math.pow(2, -1/12) : 1;
     return INSTRUMENTS[instrument].notes.map(n => {
       let f = n.freq * factor;
       if (mode === 'SWEETENED' && n.sweeten) f *= Math.pow(2, n.sweeten / 1200);
-      return { ...n, targetFreq: f, displayNote: mode === 'HALF_DOWN' ? n.note.replace(/\d/,'') + '♭' : n.note.replace(/\d/,'') };
+      
+      // 根據模式決定顯示的字母
+      let displayNote = n.note;
+      if (mode === 'HALF_DOWN') {
+        displayNote = n.note + '♭';
+      }
+
+      return { ...n, targetFreq: f, displayNote };
     });
   }, [instrument, mode]);
 
@@ -125,6 +133,7 @@ export default function AutoTuner() {
       
       if (p > 40 && p < 1100) {
         let detectedPitch = p;
+        // 泛音濾波核心
         const subHarmonic = p / 2;
         const tripleHarmonic = p / 3;
         if (currentNotes.some(n => Math.abs(n.targetFreq - subHarmonic) < 15)) detectedPitch = subHarmonic;
@@ -155,7 +164,7 @@ export default function AutoTuner() {
     initAudio();
     if (audioCtx.current.state === 'suspended') audioCtx.current.resume();
     stopReference();
-    setActiveRefNote(n.note);
+    setActiveRefNote(n.note + n.label); // 唯一標識按鈕
     const g = audioCtx.current.createGain();
     const o = audioCtx.current.createOscillator();
     o.type = 'triangle';
@@ -204,7 +213,7 @@ export default function AutoTuner() {
             <button onClick={() => { setMode(mode==='SWEETENED'?'STANDARD':'SWEETENED'); setInfoOverlay(mode==='SWEETENED'?null:'SWEETENED'); stopReference(); }} className={`p-2.5 rounded-xl border transition-all ${mode==='SWEETENED'?'bg-[#d8e2dc] text-[#8d9e8c]':'bg-white text-[#b09e9c]'}`}><Heart size={18} fill={mode==='SWEETENED'?"currentColor":"none"}/></button>
             <button onClick={() => { setMode(mode==='HALF_DOWN'?'STANDARD':'HALF_DOWN'); setInfoOverlay(mode==='HALF_DOWN'?null:'HALF_DOWN'); stopReference(); }} className={`p-2.5 rounded-xl border transition-all ${mode==='HALF_DOWN'?'bg-[#f0e4d7] text-[#d4a373]':'bg-white text-[#b09e9c]'}`}><Zap size={18} fill={mode==='HALF_DOWN'?"currentColor":"none"}/></button>
           </div>
-          {showMenu && <div className="absolute left-0 top-12 w-44 bg-white border border-[#e8d3d1] rounded-2xl shadow-xl z-[110] py-2 animate-in fade-in zoom-in duration-200">
+          {showMenu && <div className="absolute left-0 top-12 w-44 bg-white border border-[#e8d3d1] rounded-2xl shadow-xl z-[110] py-2">
             {Object.keys(INSTRUMENTS).map(k => <button key={k} className={`w-full px-5 py-3 text-left text-xs font-bold ${instrument === k ? 'bg-[#e8d3d1] text-[#8a7a78]' : 'text-slate-400'}`} onClick={() => {setInstrument(k);setShowMenu(false);stopAll();}}>{INSTRUMENTS[k].name}</button>)}
           </div>}
         </div>
@@ -214,41 +223,26 @@ export default function AutoTuner() {
           <div className="h-6 text-[10px] font-black tracking-widest uppercase text-[#b09e9c]">
             {isTooQuiet ? 'Acoustic Tuning' : (Math.abs(displayDiff) < PERFECT_RANGE ? <span className="text-[#8d9e8c] animate-pulse font-bold">PERFECT</span> : `${noteInfo.label} String`)}
           </div>
-          <div className={`text-9xl font-black transition-all ${isTooQuiet ? 'text-[#e8d3d1]' : (Math.abs(displayDiff) < PERFECT_RANGE ? 'text-[#8d9e8c]' : 'text-[#b09e9c]')}`}>
+          <div className={`text-9xl font-black tabular-nums transition-all ${isTooQuiet ? 'text-[#e8d3d1]' : (Math.abs(displayDiff) < PERFECT_RANGE ? 'text-[#8d9e8c]' : 'text-[#b09e9c]')}`}>
             {isTooQuiet ? '--' : noteInfo.note}
           </div>
         </div>
 
-        {/* 數軸儀表盤：修復中心小豎線 */}
-        <div className="px-2 mb-14 relative">
-          <div className="h-1.5 bg-[#f5eceb] rounded-full relative">
-            
-            {/* ⭐ 正中心的小豎線 (基準線) */}
-            <div 
-              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-0.5 h-6 bg-[#e8d3d1] rounded-full" 
-              style={{ zIndex: 10 }}
-            />
-            
-            {/* ⭐ 兩側範圍標記 (可選，增加專業感) */}
-            <div className="absolute left-0 top-0 text-[8px] font-bold text-[#e8d3d1] -mt-5">♭</div>
-            <div className="absolute right-0 top-0 text-[8px] font-bold text-[#e8d3d1] -mt-5">♯</div>
-
-            {/* 活動指針 */}
+        {/* 數軸儀表盤 */}
+        <div className="px-2 mb-14 relative h-1.5 flex items-center">
+          <div className="w-full h-full bg-[#f5eceb] rounded-full relative">
+            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-0.5 h-6 bg-[#e8d3d1] rounded-full" style={{ zIndex: 10 }} />
             <div 
               className={`absolute top-1/2 -translate-y-1/2 w-2.5 h-10 rounded-full transition-all duration-150 shadow-sm ${Math.abs(displayDiff) < PERFECT_RANGE ? 'bg-[#8d9e8c] shadow-[#8d9e8c]/50' : 'bg-[#d4a373]'}`}
-              style={{ 
-                left: `calc(50% + ${Math.max(-48, Math.min(48, displayDiff * 3.8))}% )`, 
-                transform: 'translate(-50%, -50%)', 
-                opacity: isTooQuiet ? 0.2 : 1,
-                zIndex: 20
-              }} 
+              style={{ left: `calc(50% + ${Math.max(-48, Math.min(48, displayDiff * 3.8))}% )`, transform: 'translate(-50%, -50%)', opacity: isTooQuiet ? 0.2 : 1, zIndex: 20 }} 
             />
           </div>
         </div>
 
+        {/* 弦選擇按鈕 */}
         <div className="flex justify-between items-center gap-2 mb-10 bg-[#f5eceb]/50 p-3 rounded-[2rem]">
           {currentNotes.map(n => (
-            <button key={n.note} onClick={() => playReference(n)} className={`flex-1 aspect-[4/5] rounded-[1rem] border-2 transition-all flex flex-col items-center justify-center gap-1 ${activeRefNote === n.note ? 'bg-[#e8d3d1] border-white text-white shadow-lg' : 'bg-white border-transparent text-[#b09e9c]'}`}>
+            <button key={n.note + n.label} onClick={() => playReference(n)} className={`flex-1 aspect-[4/5] rounded-[1rem] border-2 transition-all flex flex-col items-center justify-center gap-1 ${activeRefNote === n.note + n.label ? 'bg-[#e8d3d1] border-white text-white shadow-lg' : 'bg-white border-transparent text-[#b09e9c]'}`}>
               <span className="text-[9px] font-black opacity-60">{n.label}</span>
               <span className="text-sm font-black">{n.displayNote}</span>
             </button>
