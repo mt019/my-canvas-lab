@@ -6,42 +6,36 @@ const INSTRUMENTS = {
     name: '烏克麗麗',
     desc: '甜蜜模式：針對 C 弦進行微降補償，修正因琴弦張力產生的音準偏差，使常用和弦共鳴更加純淨。',
     notes: [
-      { note: 'G', freq: 392.0, label: '4', sweeten: -1.0, halfDown: 'G♭' },
-      { note: 'C', freq: 261.63, label: '3', sweeten: -2.0, halfDown: 'B' },
-      { note: 'E', freq: 329.63, label: '2', sweeten: -1.0, halfDown: 'E♭' },
-      { note: 'A', freq: 440.0, label: '1', sweeten: -0.5, halfDown: 'A♭' },
+      { note: 'G4', short: 'G', freq: 392.0, label: '4', sweeten: -1.0, halfDown: 'G♭4' },
+      { note: 'C4', short: 'C', freq: 261.63, label: '3', sweeten: -2.0, halfDown: 'B3' },
+      { note: 'E4', short: 'E', freq: 329.63, label: '2', sweeten: -1.0, halfDown: 'E♭4' },
+      { note: 'A4', short: 'A', freq: 440.0, label: '1', sweeten: -0.5, halfDown: 'A♭4' },
     ],
   },
   GUITARLELE: {
     name: '吉他麗麗',
-    desc: '甜蜜模式：校正 A 弦與 C 弦偏差。這是吉他麗麗專屬的 ADGCEA 定弦。',
+    desc: '甜蜜模式：校正 A 弦與 C 弦偏差。這是吉他麗麗專屬的 A2 D3 G3 C4 E4 A4 定弦。',
     notes: [
-      { note: 'A', freq: 110.0, label: '6', sweeten: -1.5, halfDown: 'A♭' },
-      { note: 'D', freq: 146.83, label: '5', sweeten: -1.0, halfDown: 'D♭' },
-      { note: 'G', freq: 196.0, label: '4', sweeten: -1.0, halfDown: 'G♭' },
-      { note: 'C', freq: 261.63, label: '3', sweeten: -2.0, halfDown: 'B' },
-      { note: 'E', freq: 329.63, label: '2', sweeten: -1.0, halfDown: 'E♭' },
-      { note: 'A', freq: 440.0, label: '1', sweeten: -0.5, halfDown: 'A♭' },
+      { note: 'A2', short: 'A', freq: 110.0, label: '6', sweeten: -1.5, halfDown: 'A♭2' },
+      { note: 'D3', short: 'D', freq: 146.83, label: '5', sweeten: -1.0, halfDown: 'D♭3' },
+      { note: 'G3', short: 'G', freq: 196.0, label: '4', sweeten: -1.0, halfDown: 'G♭3' },
+      { note: 'C4', short: 'C', freq: 261.63, label: '3', sweeten: -2.0, halfDown: 'B3' },
+      { note: 'E4', short: 'E', freq: 329.63, label: '2', sweeten: -1.0, halfDown: 'E♭4' },
+      { note: 'A4', short: 'A', freq: 440.0, label: '1', sweeten: -0.5, halfDown: 'A♭4' },
     ],
   },
   GUITAR: {
-    name: '吉他（標準）',
-    desc: '甜蜜模式：補償 B 弦與低音 E 弦生硬感，釋放木吉他自然的泛音。',
+    name: '吉他 (標準)',
+    desc: '甜蜜模式：補償 B 弦與低音 E 弦生硬感，釋放木吉他自然的泛音。這是 E2 A2 D3 G3 B3 E4 標準定弦。',
     notes: [
-      { note: 'E', freq: 82.41, label: '6', sweeten: -2.0, halfDown: 'E♭' },
-      { note: 'A', freq: 110.0, label: '5', sweeten: -1.5, halfDown: 'A♭' },
-      { note: 'D', freq: 146.83, label: '4', sweeten: -1.0, halfDown: 'D♭' },
-      { note: 'G', freq: 196.0, label: '3', sweeten: -1.5, halfDown: 'G♭' },
-      { note: 'B', freq: 246.94, label: '2', sweeten: -1.2, halfDown: 'B♭' },
-      { note: 'E', freq: 329.63, label: '1', sweeten: -0.5, halfDown: 'E♭' },
+      { note: 'E2', short: 'E', freq: 82.41, label: '6', sweeten: -2.0, halfDown: 'E♭2' },
+      { note: 'A2', short: 'A', freq: 110.0, label: '5', sweeten: -1.5, halfDown: 'A♭2' },
+      { note: 'D3', short: 'D', freq: 146.83, label: '4', sweeten: -1.0, halfDown: 'D♭3' },
+      { note: 'G3', short: 'G', freq: 196.0, label: '3', sweeten: -1.5, halfDown: 'G♭3' },
+      { note: 'B3', short: 'B', freq: 246.94, label: '2', sweeten: -1.2, halfDown: 'B♭3' },
+      { note: 'E4', short: 'E', freq: 329.63, label: '1', sweeten: -0.5, halfDown: 'E♭4' },
     ],
   },
-};
-
-const MODES = {
-  STANDARD: 'STANDARD',
-  SWEETENED: 'SWEETENED',
-  HALF_DOWN: 'HALF_DOWN',
 };
 
 const VOLUME_THRESHOLD = 0.006;
@@ -53,6 +47,13 @@ const HISTORY_SIZE = 9;
 const DISPLAY_CENT_CLAMP = 50;
 const MIN_PITCH = 40;
 const MAX_PITCH = 1100;
+const HARMONIC_MATCH_TOLERANCE = 18;
+
+const MODES = {
+  STANDARD: 'STANDARD',
+  SWEETENED: 'SWEETENED',
+  HALF_DOWN: 'HALF_DOWN',
+};
 
 function clamp(value, min, max) {
   return Math.min(max, Math.max(min, value));
@@ -143,7 +144,9 @@ function autoCorrelate(buffer, sampleRate) {
 }
 
 function resolveHarmonic(detectedPitch, notes) {
-  const candidates = [detectedPitch, detectedPitch / 2, detectedPitch / 3, detectedPitch * 2];
+  const candidates = [detectedPitch, detectedPitch / 2, detectedPitch / 3, detectedPitch * 2]
+    .filter((value) => value >= MIN_PITCH && value <= MAX_PITCH);
+
   let bestPitch = detectedPitch;
   let bestDelta = Infinity;
 
@@ -157,7 +160,7 @@ function resolveHarmonic(detectedPitch, notes) {
     }
   }
 
-  return bestPitch;
+  return bestDelta <= HARMONIC_MATCH_TOLERANCE ? bestPitch : detectedPitch;
 }
 
 function InfoOverlay({ type, instrument, onClose }) {
@@ -165,7 +168,7 @@ function InfoOverlay({ type, instrument, onClose }) {
   const desc =
     type === MODES.SWEETENED
       ? INSTRUMENTS[instrument].desc
-      : '將全弦音調降低半音，適合需要降半音配置的曲目與伴奏。';
+      : '將全弦音調降低半音。';
 
   return (
     <div
@@ -217,17 +220,12 @@ export default function AutoTuner() {
   const currentNotes = useMemo(() => {
     const halfDownFactor = mode === MODES.HALF_DOWN ? Math.pow(2, -1 / 12) : 1;
 
-    return INSTRUMENTS[instrument].notes.map((note) => {
-      const sweetenedCents = mode === MODES.SWEETENED ? note.sweeten ?? 0 : 0;
-      const targetFreq = centsToFrequency(note.freq * halfDownFactor, sweetenedCents);
-      const displayNote = mode === MODES.HALF_DOWN ? note.halfDown : note.note;
-
-      return {
-        ...note,
-        displayNote,
-        targetFreq,
-        id: `${note.note}${note.label}`,
-      };
+    return INSTRUMENTS[instrument].notes.map((n) => {
+      const sweetenedCents = mode === MODES.SWEETENED ? n.sweeten ?? 0 : 0;
+      const targetFreq = centsToFrequency(n.freq * halfDownFactor, sweetenedCents);
+      const displayNote = mode === MODES.HALF_DOWN ? n.halfDown : n.note;
+      const displayShort = mode === MODES.HALF_DOWN ? n.halfDown.replace(/\d+/g, '') : n.short;
+      return { ...n, targetFreq, displayNote, displayShort, id: `${n.note}${n.label}` };
     });
   }, [instrument, mode]);
 
@@ -247,22 +245,16 @@ export default function AutoTuner() {
       try {
         gainRef.current.gain.cancelScheduledValues(now);
         gainRef.current.gain.setTargetAtTime(0.0001, now, 0.03);
-      } catch {
-        // noop
-      }
+      } catch {}
     }
 
     if (oscillatorRef.current) {
       try {
         oscillatorRef.current.stop(now + 0.08);
-      } catch {
-        // noop
-      }
+      } catch {}
       try {
         oscillatorRef.current.disconnect();
-      } catch {
-        // noop
-      }
+      } catch {}
     }
 
     oscillatorRef.current = null;
@@ -296,14 +288,12 @@ export default function AutoTuner() {
     if (sourceRef.current) {
       try {
         sourceRef.current.disconnect();
-      } catch {
-        // noop
-      }
+      } catch {}
       sourceRef.current = null;
     }
 
     if (streamRef.current) {
-      streamRef.current.getTracks().forEach((track) => track.stop());
+      streamRef.current.getTracks().forEach((t) => t.stop());
       streamRef.current = null;
     }
 
@@ -315,7 +305,6 @@ export default function AutoTuner() {
   const updateLoop = useCallback(() => {
     const analyser = analyserRef.current;
     const audioCtx = audioCtxRef.current;
-
     if (!analyser || !audioCtx || !mountedRef.current) return;
 
     const buffer = new Float32Array(analyser.fftSize);
@@ -348,12 +337,12 @@ export default function AutoTuner() {
     if (pitchHistoryRef.current.length > HISTORY_SIZE) pitchHistoryRef.current.shift();
 
     const detectedPitch = median(pitchHistoryRef.current);
-    const closestNote = getClosestNote(currentNotes, detectedPitch);
-    const centsOff = frequencyToCents(detectedPitch, closestNote.targetFreq);
+    const closest = getClosestNote(currentNotes, detectedPitch);
+    const centsOff = frequencyToCents(detectedPitch, closest.targetFreq);
 
     if (Math.abs(centsOff) <= MAX_DETECTION_CENTS) {
-      setNoteInfo({ note: closestNote.displayNote, label: closestNote.label });
-      setDetectedNoteKey(closestNote.id);
+      setNoteInfo({ note: closest.displayNote, label: closest.label });
+      setDetectedNoteKey(closest.id);
 
       const smoothed =
         lastDiffRef.current * (1 - SMOOTHING_FACTOR) + centsOff * SMOOTHING_FACTOR;
@@ -397,77 +386,43 @@ export default function AutoTuner() {
     }
   }, [ensureAudioContext, resetDisplay, stopAll, updateLoop]);
 
-  const playReference = useCallback(
-    async (note) => {
-      try {
-        setErrorMessage('');
-        const audioCtx = await ensureAudioContext();
-        stopReference();
-
-        const oscillator = audioCtx.createOscillator();
-        const gainNode = audioCtx.createGain();
-
-        oscillator.type = 'triangle';
-        oscillator.frequency.setValueAtTime(note.targetFreq, audioCtx.currentTime);
-
-        gainNode.gain.setValueAtTime(0.0001, audioCtx.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.08, audioCtx.currentTime + 0.06);
-        gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 1.2);
-
-        oscillator.connect(gainNode);
-        gainNode.connect(audioCtx.destination);
-        oscillator.start();
-        oscillator.stop(audioCtx.currentTime + 1.25);
-        oscillator.onended = () => {
-          if (oscillatorRef.current === oscillator) {
-            oscillatorRef.current = null;
-            gainRef.current = null;
-            setActiveRefNote(null);
-          }
-        };
-
-        oscillatorRef.current = oscillator;
-        gainRef.current = gainNode;
-        setActiveRefNote(note.id);
-      } catch (error) {
-        console.error(error);
-        setErrorMessage('參考音播放失敗。');
-      }
-    },
-    [ensureAudioContext, stopReference],
-  );
-
-  const toggleSweetened = useCallback(() => {
-    stopReference();
-    setMode((prev) => {
-      const next = prev === MODES.SWEETENED ? MODES.STANDARD : MODES.SWEETENED;
-      setInfoOverlay(next === MODES.SWEETENED ? MODES.SWEETENED : null);
-      return next;
-    });
-    resetDisplay();
-  }, [resetDisplay, stopReference]);
-
-  const toggleHalfDown = useCallback(() => {
-    stopReference();
-    setMode((prev) => {
-      const next = prev === MODES.HALF_DOWN ? MODES.STANDARD : MODES.HALF_DOWN;
-      setInfoOverlay(next === MODES.HALF_DOWN ? MODES.HALF_DOWN : null);
-      return next;
-    });
-    resetDisplay();
-  }, [resetDisplay, stopReference]);
-
-  const handleInstrumentChange = useCallback(
-    (key) => {
-      stopAll();
-      setInstrument(key);
-      setMode(MODES.STANDARD);
-      setShowMenu(false);
-      setInfoOverlay(null);
+  const playReference = useCallback(async (n) => {
+    try {
       setErrorMessage('');
-    },
-    [stopAll],
-  );
+      const audioCtx = await ensureAudioContext();
+      stopReference();
+
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(n.targetFreq, audioCtx.currentTime);
+
+      gain.gain.setValueAtTime(0.0001, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.08, audioCtx.currentTime + 0.06);
+      gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 1.2);
+
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + 1.25);
+
+      osc.onended = () => {
+        if (oscillatorRef.current === osc) {
+          oscillatorRef.current = null;
+          gainRef.current = null;
+          setActiveRefNote(null);
+        }
+      };
+
+      oscillatorRef.current = osc;
+      gainRef.current = gain;
+      setActiveRefNote(n.id);
+    } catch (error) {
+      console.error(error);
+      setErrorMessage('參考音播放失敗。');
+    }
+  }, [ensureAudioContext, stopReference]);
 
   useEffect(() => {
     mountedRef.current = true;
@@ -486,7 +441,6 @@ export default function AutoTuner() {
         setShowMenu(false);
       }
     };
-
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
@@ -495,7 +449,7 @@ export default function AutoTuner() {
   const clampedMeterOffset = clamp(displayDiffCents, -DISPLAY_CENT_CLAMP, DISPLAY_CENT_CLAMP);
 
   return (
-    <div className="min-h-screen bg-[#f5eceb] px-4 py-8 text-slate-800 flex items-center justify-center font-sans overflow-hidden">
+    <div className="min-h-screen bg-[#f5eceb] px-4 py-8 text-slate-800 flex flex-col items-center justify-center font-sans">
       {infoOverlay && (
         <InfoOverlay
           type={infoOverlay}
@@ -504,106 +458,81 @@ export default function AutoTuner() {
         />
       )}
 
-      <div className="w-full max-w-md rounded-[3rem] border border-[#e8d3d1] bg-white/70 p-8 shadow-2xl shadow-rose-200/50 backdrop-blur-xl relative">
-        <div className="mb-10 flex items-center justify-between relative z-[100]" ref={menuRef}>
-          <div className="relative">
-            <button
-              onClick={() => setShowMenu((prev) => !prev)}
-              className="flex items-center gap-2 rounded-2xl bg-[#e8d3d1] px-4 py-2 text-[11px] font-black text-[#8a7a78] transition-all active:scale-95"
-              aria-expanded={showMenu}
-              aria-haspopup="menu"
-            >
-              {INSTRUMENTS[instrument].name}
-              <ChevronDown size={14} className={`transition-transform ${showMenu ? 'rotate-180' : ''}`} />
-            </button>
-
-            {showMenu && (
-              <div className="absolute left-0 top-12 z-[110] w-44 rounded-2xl border border-[#e8d3d1] bg-white py-2 shadow-xl animate-in fade-in zoom-in duration-200">
-                {Object.keys(INSTRUMENTS).map((key) => (
-                  <button
-                    key={key}
-                    className={`w-full px-5 py-3 text-left text-xs font-bold transition-colors ${
-                      instrument === key
-                        ? 'bg-[#e8d3d1] text-[#8a7a78]'
-                        : 'text-slate-400 hover:bg-[#faf4f3]'
-                    }`}
-                    onClick={() => handleInstrumentChange(key)}
-                  >
-                    {INSTRUMENTS[key].name}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
+      <div className="w-full max-w-md bg-white/70 backdrop-blur-xl rounded-[3rem] p-8 border border-[#e8d3d1] shadow-2xl relative shadow-rose-200/50">
+        <div className="flex justify-between items-center mb-10 relative z-[100]" ref={menuRef}>
+          <button
+            onClick={() => setShowMenu(!showMenu)}
+            className="bg-[#e8d3d1] px-4 py-2 rounded-2xl text-[11px] font-black text-[#8a7a78] flex items-center gap-2 transition-all active:scale-95"
+          >
+            {INSTRUMENTS[instrument].name}
+            <ChevronDown size={14} className={showMenu ? 'rotate-180' : ''} />
+          </button>
 
           <div className="flex gap-2">
             <button
-              onClick={toggleSweetened}
-              className={`rounded-xl border p-2.5 transition-all ${
-                mode === MODES.SWEETENED
-                  ? 'bg-[#d8e2dc] text-[#8d9e8c]'
-                  : 'bg-white text-[#b09e9c] hover:bg-[#fafafa]'
+              onClick={() => {
+                setMode(mode === 'SWEETENED' ? 'STANDARD' : 'SWEETENED');
+                setInfoOverlay(mode === 'SWEETENED' ? null : 'SWEETENED');
+                stopReference();
+                resetDisplay();
+              }}
+              className={`p-2.5 rounded-xl border transition-all ${
+                mode === 'SWEETENED' ? 'bg-[#d8e2dc] text-[#8d9e8c]' : 'bg-white text-[#b09e9c]'
               }`}
-              aria-label="切換甜蜜模式"
             >
-              <Heart size={18} fill={mode === MODES.SWEETENED ? 'currentColor' : 'none'} />
+              <Heart size={18} fill={mode === 'SWEETENED' ? 'currentColor' : 'none'} />
             </button>
+
             <button
-              onClick={toggleHalfDown}
-              className={`rounded-xl border p-2.5 transition-all ${
-                mode === MODES.HALF_DOWN
-                  ? 'bg-[#f0e4d7] text-[#d4a373]'
-                  : 'bg-white text-[#b09e9c] hover:bg-[#fafafa]'
+              onClick={() => {
+                setMode(mode === 'HALF_DOWN' ? 'STANDARD' : 'HALF_DOWN');
+                setInfoOverlay(mode === 'HALF_DOWN' ? null : 'HALF_DOWN');
+                stopReference();
+                resetDisplay();
+              }}
+              className={`p-2.5 rounded-xl border transition-all ${
+                mode === 'HALF_DOWN' ? 'bg-[#f0e4d7] text-[#d4a373]' : 'bg-white text-[#b09e9c]'
               }`}
-              aria-label="切換降半音模式"
             >
-              <Zap size={18} fill={mode === MODES.HALF_DOWN ? 'currentColor' : 'none'} />
+              <Zap size={18} fill={mode === 'HALF_DOWN' ? 'currentColor' : 'none'} />
             </button>
           </div>
-        </div>
 
-        <div className="mb-10 text-center">
-          <div className="h-6 text-[10px] font-black uppercase tracking-widest text-[#b09e9c]">
-            {isTooQuiet ? (
-              'Acoustic Tuning'
-            ) : isPerfect ? (
-              <span className="animate-pulse font-bold text-[#8d9e8c]">PERFECT</span>
-            ) : (
-              `${noteInfo.label} String`
-            )}
-          </div>
-
-          <div
-            className={`text-9xl font-black transition-all ${
-              isTooQuiet
-                ? 'text-[#e8d3d1]'
-                : isPerfect
-                  ? 'text-[#8d9e8c]'
-                  : 'text-[#b09e9c]'
-            }`}
-          >
-            {isTooQuiet ? '--' : noteInfo.note}
-          </div>
-
-          {!isTooQuiet && (
-            <div className="mt-3 text-xs font-bold tracking-[0.2em] text-[#b09e9c]">
-              {displayDiffCents > 0 ? '偏高' : '偏低'} {Math.abs(displayDiffCents).toFixed(1)} cents
+          {showMenu && (
+            <div className="absolute left-0 top-12 w-44 bg-white border border-[#e8d3d1] rounded-2xl shadow-xl z-[110] py-2">
+              {Object.keys(INSTRUMENTS).map((k) => (
+                <button
+                  key={k}
+                  className={`w-full px-5 py-3 text-left text-xs font-bold ${
+                    instrument === k ? 'bg-[#e8d3d1] text-[#8a7a78]' : 'text-slate-400'
+                  }`}
+                  onClick={() => {
+                    setInstrument(k);
+                    setShowMenu(false);
+                    stopAll();
+                  }}
+                >
+                  {INSTRUMENTS[k].name}
+                </button>
+              ))}
             </div>
           )}
         </div>
 
-        <div className="relative mb-14 flex h-1.5 items-center px-2">
-          <div className="relative h-full w-full rounded-full bg-[#f5eceb]">
+        <div className="text-center mb-10">
+          <div className="h-6 text-[10px] font-black tracking-widest uppercase text-[#b09e9c]">
+            {isTooQuiet ? 'Acoustic Tuning' : (isPerfect ? <span className="text-[#8d9e8c] animate-pulse font-bold">PERFECT</span> : `${noteInfo.label} String`)}
+          </div>
+          <div className={`text-8xl sm:text-9xl font-black transition-all ${isTooQuiet ? 'text-[#e8d3d1]' : (isPerfect ? 'text-[#8d9e8c]' : 'text-[#b09e9c]')}`}>
+            {isTooQuiet ? '--' : noteInfo.note}
+          </div>
+        </div>
+
+        <div className="px-2 mb-14 relative h-1.5 flex items-center">
+          <div className="w-full h-full bg-[#f5eceb] rounded-full relative">
+            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-0.5 h-6 bg-[#e8d3d1] rounded-full" style={{ zIndex: 10 }} />
             <div
-              className="absolute left-1/2 top-1/2 h-6 w-0.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#e8d3d1]"
-              style={{ zIndex: 10 }}
-            />
-            <div
-              className={`absolute top-1/2 z-30 h-10 w-2.5 -translate-y-1/2 rounded-full shadow-sm transition-all duration-150 ${
-                isPerfect
-                  ? 'bg-[#8d9e8c] shadow-[#8d9e8c]/50'
-                  : 'bg-[#d4a373]'
-              }`}
+              className={`absolute top-1/2 -translate-y-1/2 w-2.5 h-10 rounded-full transition-all duration-150 shadow-sm z-30 ${isPerfect ? 'bg-[#8d9e8c] shadow-[#8d9e8c]/50' : 'bg-[#d4a373]'}`}
               style={{
                 left: `calc(50% + ${(clampedMeterOffset / DISPLAY_CENT_CLAMP) * 48}% )`,
                 transform: 'translate(-50%, -50%)',
@@ -613,29 +542,29 @@ export default function AutoTuner() {
           </div>
         </div>
 
-        <div className="mb-10 flex items-center justify-between gap-2 rounded-[2rem] bg-[#f5eceb]/50 p-3">
-          {currentNotes.map((note) => {
-            const isDetected = detectedNoteKey === note.id && isListening && !isTooQuiet;
-            const isActive = activeRefNote === note.id;
+        <div className="flex justify-between items-center gap-2 mb-10 bg-[#f5eceb]/50 p-3 rounded-[2rem]">
+          {currentNotes.map((n) => {
+            const isDetected = detectedNoteKey === n.id && isListening && !isTooQuiet;
+            const isActive = activeRefNote === n.id;
 
             return (
               <button
-                key={note.id}
-                onClick={() => playReference(note)}
-                className={`relative flex flex-1 aspect-[4/5] flex-col items-center justify-center gap-1 rounded-[1rem] border-2 transition-all duration-300 ${
+                key={n.id}
+                onClick={() => playReference(n)}
+                className={`flex-1 aspect-[4/5] rounded-[1rem] border-2 transition-all duration-300 flex flex-col items-center justify-center gap-1 relative ${
                   isActive
                     ? 'bg-[#e8d3d1] border-white text-white shadow-lg -translate-y-1'
                     : isDetected
                       ? 'bg-white border-[#e8d3d1] text-[#8a7a78] shadow-md scale-105'
-                      : 'bg-white border-transparent text-[#b09e9c] opacity-80 hover:opacity-100'
+                      : 'bg-white border-transparent text-[#b09e9c] opacity-80'
                 }`}
-                aria-label={`播放 ${note.displayNote} 參考音`}
               >
                 {isDetected && (
                   <span className="absolute inset-0 rounded-[1rem] border border-[#e8d3d1] animate-ping opacity-20" />
                 )}
-                <span className="text-[9px] font-black opacity-60">{note.label}</span>
-                <span className="text-sm font-black">{note.displayNote}</span>
+                <span className="text-[9px] font-black opacity-60">{n.label}</span>
+                <span className="text-sm font-black">{n.displayShort}</span>
+                <span className="text-[9px] font-bold opacity-60">{n.displayNote}</span>
               </button>
             );
           })}
@@ -643,10 +572,8 @@ export default function AutoTuner() {
 
         <button
           onClick={isListening ? stopAll : startMic}
-          className={`flex w-full items-center justify-center gap-3 rounded-[2rem] py-5 text-xs font-black tracking-[0.3em] transition-all ${
-            isListening
-              ? 'bg-[#b09e9c] text-white shadow-inner'
-              : 'border border-[#e8d3d1] bg-white text-[#8a7a78] shadow-xl hover:bg-[#fcf7f6]'
+          className={`w-full py-5 rounded-[2rem] font-black text-xs tracking-[0.3em] transition-all flex items-center justify-center gap-3 ${
+            isListening ? 'bg-[#b09e9c] text-white shadow-inner' : 'bg-white text-[#8a7a78] border border-[#e8d3d1] shadow-xl hover:bg-[#fcf7f6]'
           }`}
         >
           {isListening ? <MicOff size={18} /> : <Mic size={18} />}
@@ -660,7 +587,7 @@ export default function AutoTuner() {
         )}
       </div>
 
-      <p className="absolute bottom-6 left-1/2 -translate-x-1/2 text-[10px] font-black uppercase tracking-[0.5em] text-[#b09e9c] text-center">
+      <p className="mt-8 px-4 text-center text-[10px] font-black uppercase tracking-[0.5em] text-[#b09e9c]">
         Pukanala • Professional Acoustic Solution
       </p>
     </div>
