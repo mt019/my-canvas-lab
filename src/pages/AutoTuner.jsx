@@ -38,12 +38,6 @@ const INSTRUMENTS = {
   },
 };
 
-const MODES = {
-  STANDARD: 'STANDARD',
-  SWEETENED: 'SWEETENED',
-  HALF_DOWN: 'HALF_DOWN',
-};
-
 const VOLUME_THRESHOLD = 0.001;
 const AUTO_CORRELATE_RMS_THRESHOLD = 0.0008;
 const SMOOTHING_FACTOR = 0.18;
@@ -226,9 +220,9 @@ function resolveHarmonic(detectedPitch, notes) {
 }
 
 function InfoOverlay({ type, instrument, onClose }) {
-  const title = type === MODES.SWEETENED ? 'Sweetened Mode' : 'Half-Step Down';
+  const title = type === 'SWEETENED' ? 'Sweetened Mode' : 'Half-Step Down';
   const desc =
-    type === MODES.SWEETENED
+    type === 'SWEETENED'
       ? INSTRUMENTS[instrument].desc
       : '將全弦音調降低半音，適合需要降半音配置的曲目與伴奏。';
 
@@ -255,7 +249,8 @@ function InfoOverlay({ type, instrument, onClose }) {
 
 export default function AutoTuner() {
   const [instrument, setInstrument] = useState('UKULELE');
-  const [mode, setMode] = useState(MODES.STANDARD);
+  const [isSweetened, setIsSweetened] = useState(false);
+  const [isHalfDown, setIsHalfDown] = useState(false);
   const [infoOverlay, setInfoOverlay] = useState(null);
   const [isListening, setIsListening] = useState(false);
   const [noteInfo, setNoteInfo] = useState({ note: '--', label: '--' });
@@ -286,13 +281,13 @@ export default function AutoTuner() {
   const stableCandidateRef = useRef({ noteId: null, frames: 0, cents: 0 });
 
   const currentNotes = useMemo(() => {
-    const halfDownFactor = mode === MODES.HALF_DOWN ? Math.pow(2, -1 / 12) : 1;
+    const halfDownFactor = isHalfDown ? Math.pow(2, -1 / 12) : 1;
 
     return INSTRUMENTS[instrument].notes.map((note) => {
-      const sweetenedCents = mode === MODES.SWEETENED ? note.sweeten ?? 0 : 0;
+      const sweetenedCents = isSweetened ? note.sweeten ?? 0 : 0;
       const targetFreq = centsToFrequency(note.freq * halfDownFactor, sweetenedCents);
-      const displayNote = mode === MODES.HALF_DOWN ? note.halfDown : note.note;
-      const displayShort = mode === MODES.HALF_DOWN ? note.halfDown.replace(/\d+/g, '') : note.short;
+      const displayNote = isHalfDown ? note.halfDown : note.note;
+      const displayShort = isHalfDown ? note.halfDown.replace(/\d+/g, '') : note.short;
 
       return {
         ...note,
@@ -302,7 +297,7 @@ export default function AutoTuner() {
         id: `${note.note}${note.label}`,
       };
     });
-  }, [instrument, mode]);
+  }, [instrument, isHalfDown, isSweetened]);
 
   useEffect(() => {
     currentNotesRef.current = currentNotes;
@@ -618,9 +613,9 @@ export default function AutoTuner() {
 
   const toggleSweetened = useCallback(() => {
     stopReference();
-    setMode((prev) => {
-      const next = prev === MODES.SWEETENED ? MODES.STANDARD : MODES.SWEETENED;
-      setInfoOverlay(next === MODES.SWEETENED ? MODES.SWEETENED : null);
+    setIsSweetened((prev) => {
+      const next = !prev;
+      setInfoOverlay(next ? 'SWEETENED' : null);
       return next;
     });
     resetDisplay();
@@ -628,9 +623,9 @@ export default function AutoTuner() {
 
   const toggleHalfDown = useCallback(() => {
     stopReference();
-    setMode((prev) => {
-      const next = prev === MODES.HALF_DOWN ? MODES.STANDARD : MODES.HALF_DOWN;
-      setInfoOverlay(next === MODES.HALF_DOWN ? MODES.HALF_DOWN : null);
+    setIsHalfDown((prev) => {
+      const next = !prev;
+      setInfoOverlay(next ? 'HALF_DOWN' : null);
       return next;
     });
     resetDisplay();
@@ -694,7 +689,7 @@ export default function AutoTuner() {
   const clampedMeterOffset = clamp(displayDiffCents, -DISPLAY_CENT_CLAMP, DISPLAY_CENT_CLAMP);
   const detectedNote = currentNotes.find((note) => note.id === detectedNoteKey) ?? null;
   const sweetenedMarkerOffset =
-    mode === MODES.SWEETENED && detectedNote
+    isSweetened && detectedNote
       ? clamp(detectedNote.sweeten ?? 0, -DISPLAY_CENT_CLAMP, DISPLAY_CENT_CLAMP)
       : null;
 
@@ -744,24 +739,24 @@ export default function AutoTuner() {
             <button
               onClick={toggleSweetened}
               className={`rounded-xl border p-2.5 transition-all ${
-                mode === MODES.SWEETENED
+                isSweetened
                   ? 'bg-[#d8e2dc] text-[#8d9e8c]'
                   : 'bg-white text-[#b09e9c] hover:bg-[#fafafa]'
               }`}
               aria-label="切換甜蜜模式"
             >
-              <Heart size={18} fill={mode === MODES.SWEETENED ? 'currentColor' : 'none'} />
+              <Heart size={18} fill={isSweetened ? 'currentColor' : 'none'} />
             </button>
             <button
               onClick={toggleHalfDown}
               className={`rounded-xl border p-2.5 transition-all ${
-                mode === MODES.HALF_DOWN
+                isHalfDown
                   ? 'bg-[#f0e4d7] text-[#d4a373]'
                   : 'bg-white text-[#b09e9c] hover:bg-[#fafafa]'
               }`}
               aria-label="切換降半音模式"
             >
-              <Zap size={18} fill={mode === MODES.HALF_DOWN ? 'currentColor' : 'none'} />
+              <Zap size={18} fill={isHalfDown ? 'currentColor' : 'none'} />
             </button>
           </div>
         </div>
@@ -800,7 +795,7 @@ export default function AutoTuner() {
           <div className="relative h-full w-full rounded-full bg-[#f5eceb]">
             <div
               className={`absolute left-1/2 top-1/2 h-6 w-0.5 -translate-x-1/2 -translate-y-1/2 rounded-full ${
-                mode === MODES.SWEETENED ? 'border-l border-dashed border-[#d8c1bf] bg-transparent' : 'bg-[#e8d3d1]'
+                isSweetened ? 'border-l border-dashed border-[#d8c1bf] bg-transparent' : 'bg-[#e8d3d1]'
               }`}
               style={{ zIndex: 10 }}
             />
@@ -829,7 +824,7 @@ export default function AutoTuner() {
         </div>
 
         <div className="mb-8">
-          {mode === MODES.SWEETENED && detectedNote && (
+          {isSweetened && detectedNote && (
             <div className="mb-3 text-center text-[10px] font-black uppercase tracking-[0.2em] text-[#8d9e8c]">
               Sweetened target {detectedNote.sweeten > 0 ? '+' : ''}
               {detectedNote.sweeten ?? 0} cents
