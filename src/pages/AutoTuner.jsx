@@ -4,7 +4,7 @@ import { Mic, MicOff, ChevronDown, Play, Heart, Zap, X, Music } from 'lucide-rea
 const INSTRUMENTS = {
   UKULELE: {
     name: '烏克麗麗',
-    desc: 'Pukanala 甜蜜模式：針對 C 弦微降補償。修正按壓張力導致的偏高，使常用和弦聽起來更加清澈和諧。',
+    desc: '甜蜜模式：針對 C 弦微降補償。修正按壓張力導致的偏高，使常用和弦聽起來更加清澈和諧。',
     notes: [
       { note: 'G4', freq: 392.00, label: '4', sweeten: -1.0 },
       { note: 'C4', freq: 261.63, label: '3', sweeten: -2.0 },
@@ -14,7 +14,7 @@ const INSTRUMENTS = {
   },
   GUITARLELE: {
     name: '吉他麗麗',
-    desc: 'Pukanala 甜蜜模式：修正 C 弦與低音 A 弦的物理偏差，讓這把精緻的小吉他在各個音域的表現更為平衡。',
+    desc: '甜蜜模式：修正 C 弦與低音 A 弦的物理偏差，讓這把精緻的小吉他在各個音域的表現更為平衡。',
     notes: [
       { note: 'A2', freq: 110.00, label: '6', sweeten: -1.5 },
       { note: 'D3', freq: 146.83, label: '5', sweeten: -1.0 },
@@ -26,7 +26,7 @@ const INSTRUMENTS = {
   },
   GUITAR: {
     name: '吉他 (標準)',
-    desc: 'Pukanala 甜蜜模式：針對 B 弦與低音 E 弦進行補償，消除平均律在粗弦上的生硬感，釋放木吉他的自然共鳴。',
+    desc: '甜蜜模式：針對 B 弦與低音 E 弦進行補償，消除平均律在粗弦上的生硬感，釋放木吉他的自然共鳴。',
     notes: [
       { note: 'E2', freq: 82.41,  label: '6', sweeten: -2.0 },
       { note: 'A2', freq: 110.00, label: '5', sweeten: -1.5 },
