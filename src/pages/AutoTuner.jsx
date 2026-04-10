@@ -56,6 +56,32 @@ const MIN_PITCH = 40;
 const MAX_PITCH = 1100;
 const HARMONIC_MATCH_TOLERANCE = 18;
 
+function getMediaDevices() {
+  return navigator.mediaDevices;
+}
+
+function getMediaErrorMessage(error) {
+  const name = error?.name;
+
+  if (name === 'NotAllowedError' || name === 'PermissionDeniedError') {
+    return '無法存取麥克風，請確認瀏覽器麥克風權限已開啟。';
+  }
+
+  if (name === 'NotFoundError' || name === 'DevicesNotFoundError') {
+    return '找不到可用麥克風，請確認裝置已連接。';
+  }
+
+  if (name === 'NotReadableError' || name === 'TrackStartError') {
+    return '麥克風目前被其他程式占用，請先關閉後再試一次。';
+  }
+
+  if (name === 'AbortError') {
+    return '麥克風初始化失敗，請重新嘗試。';
+  }
+
+  return '無法存取麥克風，請確認權限與裝置狀態。';
+}
+
 function clamp(value, min, max) {
   return Math.min(max, Math.max(min, value));
 }
@@ -285,6 +311,14 @@ export default function AutoTuner() {
     return audioCtxRef.current;
   }, []);
 
+  const resumeAudioContext = useCallback(async () => {
+    if (!audioCtxRef.current) return;
+
+    if (audioCtxRef.current.state === 'suspended' || audioCtxRef.current.state === 'interrupted') {
+      await audioCtxRef.current.resume();
+    }
+  }, []);
+
   const stopAll = useCallback(() => {
     if (rafRef.current) {
       cancelAnimationFrame(rafRef.current);
@@ -365,13 +399,29 @@ export default function AutoTuner() {
   const startMic = useCallback(async () => {
     try {
       setErrorMessage('');
+      const mediaDevices = getMediaDevices();
+      if (!mediaDevices?.getUserMedia) {
+        throw new Error('unsupported-media-devices');
+      }
+
+      stopAll();
       const audioCtx = await ensureAudioContext();
-      const stream = await navigator.mediaDevices.getUserMedia({
+      await resumeAudioContext();
+
+      const stream = await mediaDevices.getUserMedia({
         audio: {
           echoCancellation: false,
           noiseSuppression: false,
           autoGainControl: false,
         },
+      });
+
+      stream.getAudioTracks().forEach((track) => {
+        track.onended = () => {
+          if (!mountedRef.current) return;
+          setErrorMessage('麥克風連線已中斷，請重新啟動。');
+          stopAll();
+        };
       });
 
       streamRef.current = stream;
@@ -382,9 +432,7 @@ export default function AutoTuner() {
       sourceRef.current = audioCtx.createMediaStreamSource(stream);
       sourceRef.current.connect(analyserRef.current);
 
-      if (audioCtx.state === 'suspended') {
-        await audioCtx.resume();
-      }
+      await resumeAudioContext();
 
       lastNoteTimeRef.current = Date.now();
       setIsListening(true);
@@ -394,16 +442,21 @@ export default function AutoTuner() {
       rafRef.current = requestAnimationFrame(updateLoop);
     } catch (error) {
       console.error(error);
-      setErrorMessage('無法存取麥克風，請確認權限已開啟。');
+      setErrorMessage(
+        error?.message === 'unsupported-media-devices'
+          ? '此瀏覽器或目前環境不支援麥克風功能。'
+          : getMediaErrorMessage(error),
+      );
       stopAll();
     }
-  }, [ensureAudioContext, resetDisplay, stopAll, updateLoop]);
+  }, [ensureAudioContext, resetDisplay, resumeAudioContext, stopAll, updateLoop]);
 
   const playReference = useCallback(
     async (note) => {
       try {
         setErrorMessage('');
         const audioCtx = await ensureAudioContext();
+        await resumeAudioContext();
         stopReference();
 
         const oscillator = audioCtx.createOscillator();
@@ -433,10 +486,10 @@ export default function AutoTuner() {
         setActiveRefNote(note.id);
       } catch (error) {
         console.error(error);
-        setErrorMessage('參考音播放失敗。');
+        setErrorMessage('參考音播放失敗，請確認喇叭輸出與瀏覽器音訊權限。');
       }
     },
-    [ensureAudioContext, stopReference],
+    [ensureAudioContext, resumeAudioContext, stopReference],
   );
 
   const toggleSweetened = useCallback(() => {
@@ -492,6 +545,26 @@ export default function AutoTuner() {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState !== 'visible') return;
+
+      resumeAudioContext().catch(() => {});
+    };
+
+    const handleWindowFocus = () => {
+      resumeAudioContext().catch(() => {});
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('focus', handleWindowFocus);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('focus', handleWindowFocus);
+    };
+  }, [resumeAudioContext]);
 
   const isPerfect = !isTooQuiet && Math.abs(displayDiffCents) < PERFECT_RANGE_CENTS;
   const clampedMeterOffset = clamp(displayDiffCents, -DISPLAY_CENT_CLAMP, DISPLAY_CENT_CLAMP);
