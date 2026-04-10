@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { Mic, MicOff, ChevronDown, Play, Heart, Zap, X, Music } from 'lucide-react';
+import { Mic, MicOff, ChevronDown, Play, Heart, Zap, Music } from 'lucide-react';
 
 const INSTRUMENTS = {
   UKULELE: {
     name: '烏克麗麗',
-    desc: '甜蜜模式：針對 C 弦微降補償。修正按壓張力導致的偏高，使常用和弦聽起來更加清澈和諧。',
+    desc: '甜蜜模式：針對 C 弦進行微降補償，修正因琴弦張力產生的音準偏差，使常用和弦共鳴更加純淨。',
     notes: [
       { note: 'G4', freq: 392.00, label: '4', sweeten: -1.0 },
       { note: 'C4', freq: 261.63, label: '3', sweeten: -2.0 },
@@ -14,7 +14,7 @@ const INSTRUMENTS = {
   },
   GUITARLELE: {
     name: '吉他麗麗',
-    desc: '甜蜜模式：修正 C 弦與低音 A 弦的物理偏差，讓這把精緻的小吉他在各個音域的表現更為平衡。',
+    desc: '甜蜜模式：校正 C 弦與低音 A 弦的物理音準誤差，確保在各音域彈奏時均能保持出色的音色平衡。',
     notes: [
       { note: 'A2', freq: 110.00, label: '6', sweeten: -1.5 },
       { note: 'D3', freq: 146.83, label: '5', sweeten: -1.0 },
@@ -26,7 +26,7 @@ const INSTRUMENTS = {
   },
   GUITAR: {
     name: '吉他 (標準)',
-    desc: '甜蜜模式：針對 B 弦與低音 E 弦進行補償，消除平均律在粗弦上的生硬感，釋放木吉他的自然共鳴。',
+    desc: '甜蜜模式：補償 B 弦與低音 E 弦在平均律下的生硬感，釋放木吉他自然的泛音與共鳴。',
     notes: [
       { note: 'E2', freq: 82.41,  label: '6', sweeten: -2.0 },
       { note: 'A2', freq: 110.00, label: '5', sweeten: -1.5 },
@@ -38,15 +38,16 @@ const INSTRUMENTS = {
   }
 };
 
-const VOLUME_THRESHOLD = 0.012; 
-const SMOOTHING_FACTOR = 0.28;  
-const PERFECT_RANGE = 2.8;      
+const VOLUME_THRESHOLD = 0.008; 
+const SMOOTHING_FACTOR = 0.15;  
+const PERFECT_RANGE = 2.8;
 const REF_PLAY_DURATION = 1500;
+const NOTE_HOLD_TIME = 800; 
 
 export default function AutoTuner() {
   const [instrument, setInstrument] = useState('UKULELE');
   const [mode, setMode] = useState('STANDARD'); 
-  const [infoOverlay, setInfoOverlay] = useState(null); // 'SWEETENED' | 'HALF_DOWN' | null
+  const [infoOverlay, setInfoOverlay] = useState(null);
   const [isListening, setIsListening] = useState(false);
   const [pitch, setPitch] = useState(0);
   const [noteInfo, setNoteInfo] = useState({ note: '--', label: '--' });
@@ -58,12 +59,13 @@ export default function AutoTuner() {
   const audioCtx = useRef(null);
   const analyser = useRef(null);
   const osc = useRef(null);
-  const gain = useRef(null);
+  const gainNode = useRef(null);
   const stream = useRef(null);
   const animId = useRef(null);
   const lastDiff = useRef(0);
   const stopTimeout = useRef(null);
   const pitchBuffer = useRef([]);
+  const lastNoteTime = useRef(0);
 
   const currentNotes = useMemo(() => {
     const halfStepFactor = mode === 'HALF_DOWN' ? Math.pow(2, -1/12) : 1;
@@ -83,38 +85,61 @@ export default function AutoTuner() {
   const initAudio = () => {
     if (!audioCtx.current) {
       audioCtx.current = new (window.AudioContext || window.webkitAudioContext)();
-      gain.current = audioCtx.current.createGain();
-      gain.current.connect(audioCtx.current.destination);
     }
   };
 
   const playReference = (n) => {
     initAudio();
     if (audioCtx.current.state === 'suspended') audioCtx.current.resume();
-    stopReference();
+    
+    // 徹底停止並釋放舊的節點，防止殘留能量造成破音
+    if (osc.current) {
+      try {
+        osc.current.stop();
+        osc.current.disconnect();
+      } catch (e) {}
+    }
     if (stopTimeout.current) clearTimeout(stopTimeout.current);
+
     setActiveRefNote(n.note);
-    osc.current = audioCtx.current.createOscillator();
-    osc.current.type = 'triangle'; 
-    osc.current.frequency.setValueAtTime(n.targetFreq, audioCtx.current.currentTime);
-    const baseVolume = n.targetFreq < 120 ? 0.22 : 0.14;
-    osc.current.connect(gain.current);
+
+    // 建立全新的 GainNode
+    const g = audioCtx.current.createGain();
+    g.connect(audioCtx.current.destination);
+    gainNode.current = g;
+
+    const o = audioCtx.current.createOscillator();
+    o.type = 'triangle'; 
+    o.frequency.setValueAtTime(n.targetFreq, audioCtx.current.currentTime);
+    o.connect(g);
+    osc.current = o;
+
     const now = audioCtx.current.currentTime;
-    gain.current.gain.cancelScheduledValues(now);
-    gain.current.gain.setValueAtTime(0, now);
-    gain.current.gain.linearRampToValueAtTime(baseVolume, now + 0.06); 
-    gain.current.gain.exponentialRampToValueAtTime(0.001, now + REF_PLAY_DURATION / 1000);
-    osc.current.start();
+    // 降低增益至 0.1-0.15 區間，徹底防止數位破音
+    const safeVolume = n.targetFreq < 120 ? 0.15 : 0.1;
+    
+    g.gain.cancelScheduledValues(now);
+    g.gain.setValueAtTime(0, now);
+    // 柔化 Attack (0.1s)，消除切換瞬間的卡噠聲
+    g.gain.linearRampToValueAtTime(safeVolume, now + 0.1); 
+    g.gain.exponentialRampToValueAtTime(0.001, now + REF_PLAY_DURATION / 1000);
+    
+    o.start();
     stopTimeout.current = setTimeout(() => stopReference(), REF_PLAY_DURATION);
   };
 
   const stopReference = () => {
-    if (osc.current && gain.current) {
+    if (osc.current && gainNode.current) {
       const now = audioCtx.current.currentTime;
-      gain.current.gain.cancelScheduledValues(now);
-      gain.current.gain.exponentialRampToValueAtTime(0.001, now + 0.25); 
+      gainNode.current.gain.cancelScheduledValues(now);
+      gainNode.current.gain.exponentialRampToValueAtTime(0.001, now + 0.3); 
       const tempOsc = osc.current;
-      setTimeout(() => { try { tempOsc.stop(); tempOsc.disconnect(); } catch(e) {} }, 300);
+      setTimeout(() => { 
+        try { 
+          tempOsc.stop(); 
+          tempOsc.disconnect(); 
+        } catch(e) {} 
+      }, 400);
       osc.current = null;
     }
     setActiveRefNote(null);
@@ -140,19 +165,28 @@ export default function AutoTuner() {
     let sum = 0;
     for (let i = 0; i < buffer.length; i++) sum += buffer[i] * buffer[i];
     const rms = Math.sqrt(sum / buffer.length);
+    const now = Date.now();
+    
     if (rms < VOLUME_THRESHOLD) {
-      setIsTooQuiet(true);
-      pitchBuffer.current = [];
+      if (now - lastNoteTime.current > NOTE_HOLD_TIME) {
+        setIsTooQuiet(true);
+        pitchBuffer.current = [];
+      }
     } else {
       setIsTooQuiet(false);
+      lastNoteTime.current = now;
       const p = autoCorrelate(buffer, audioCtx.current.sampleRate);
+      
       if (p > 50 && p < 1200) {
         pitchBuffer.current.push(p);
-        if (pitchBuffer.current.length > 3) pitchBuffer.current.shift();
+        if (pitchBuffer.current.length > 8) pitchBuffer.current.shift();
+        
         const sortedPitches = [...pitchBuffer.current].sort((a, b) => a - b);
         const medianPitch = sortedPitches[Math.floor(sortedPitches.length / 2)];
+
         setPitch(medianPitch);
         const closest = findClosest(medianPitch);
+        
         if (Math.abs(closest.diff) < 45) {
             setNoteInfo({ note: closest.displayNote, label: closest.label });
             const smoothed = (lastDiff.current * (1 - SMOOTHING_FACTOR)) + (closest.diff * SMOOTHING_FACTOR);
@@ -203,7 +237,6 @@ export default function AutoTuner() {
   return (
     <div className="min-h-screen bg-[#f5eceb] text-slate-800 p-4 flex flex-col items-center justify-center font-sans overflow-hidden">
       
-      {/* 沉浸式說明遮罩 */}
       {infoOverlay && (
         <div 
           className="fixed inset-0 z-[200] bg-white/40 backdrop-blur-md flex items-center justify-center p-8 animate-in fade-in duration-300"
@@ -225,18 +258,14 @@ export default function AutoTuner() {
               {infoOverlay === 'SWEETENED' ? 'Sweetened Mode' : 'Half-Step Down'}
             </h3>
             <p className="text-sm leading-relaxed text-slate-500 font-medium">
-              {infoOverlay === 'SWEETENED' ? INSTRUMENTS[instrument].desc : '降半音模式：將琴弦調低半音，獲得更溫暖、柔軟的音色表現，常見於民謠與藍調彈奏。'}
+              {infoOverlay === 'SWEETENED' ? INSTRUMENTS[instrument].desc : '降半音模式：將琴弦調低半音，獲得更溫暖、柔軟的音色表現，適合特定曲風的彈奏需求。'}
             </p>
-            <div className="mt-8 text-[10px] font-bold text-slate-400 uppercase tracking-widest animate-pulse">
-              Click anywhere to continue
-            </div>
           </div>
         </div>
       )}
 
       <div className="w-full max-w-md bg-white/70 backdrop-blur-xl rounded-[3rem] p-8 border border-[#e8d3d1] shadow-2xl shadow-rose-200/50 relative">
         
-        {/* 工具欄 */}
         <div className="flex justify-between items-center mb-10 relative z-[100]">
           <button 
             onClick={() => setShowMenu(!showMenu)} 
@@ -247,9 +276,10 @@ export default function AutoTuner() {
           
           <div className="flex gap-2">
             <button 
-              onClick={(e) => { 
-                setMode(mode === 'SWEETENED' ? 'STANDARD' : 'SWEETENED'); 
-                if (mode !== 'SWEETENED') setInfoOverlay('SWEETENED');
+              onClick={() => { 
+                const next = mode === 'SWEETENED' ? 'STANDARD' : 'SWEETENED';
+                setMode(next); 
+                if (next === 'SWEETENED') setInfoOverlay('SWEETENED');
                 stopAll(); 
               }}
               className={`p-2.5 rounded-xl border transition-all ${mode === 'SWEETENED' ? 'bg-[#d8e2dc] border-[#8d9e8c] text-[#8d9e8c]' : 'bg-white border-[#e8d3d1] text-[#b09e9c]'}`}
@@ -258,8 +288,9 @@ export default function AutoTuner() {
             </button>
             <button 
               onClick={() => { 
-                setMode(mode === 'HALF_DOWN' ? 'STANDARD' : 'HALF_DOWN'); 
-                if (mode !== 'HALF_DOWN') setInfoOverlay('HALF_DOWN');
+                const next = mode === 'HALF_DOWN' ? 'STANDARD' : 'HALF_DOWN';
+                setMode(next); 
+                if (next === 'HALF_DOWN') setInfoOverlay('HALF_DOWN');
                 stopAll(); 
               }}
               className={`p-2.5 rounded-xl border transition-all ${mode === 'HALF_DOWN' ? 'bg-[#f0e4d7] border-[#d4a373] text-[#d4a373]' : 'bg-white border-[#e8d3d1] text-[#b09e9c]'}`}
@@ -271,11 +302,8 @@ export default function AutoTuner() {
           {showMenu && (
             <div className="absolute left-0 top-12 w-44 bg-white border border-[#e8d3d1] rounded-2xl shadow-xl z-[110] py-2">
               {Object.keys(INSTRUMENTS).map(k => (
-                <button 
-                  key={k} 
-                  className={`w-full px-5 py-3 text-left text-xs font-bold ${instrument === k ? 'bg-[#e8d3d1] text-[#8a7a78]' : 'text-slate-400'}`}
-                  onClick={() => { setInstrument(k); setShowMenu(false); stopAll(); }}
-                >
+                <button key={k} className={`w-full px-5 py-3 text-left text-xs font-bold ${instrument === k ? 'bg-[#e8d3d1] text-[#8a7a78]' : 'text-slate-400'}`}
+                  onClick={() => { setInstrument(k); setShowMenu(false); stopAll(); }}>
                   {INSTRUMENTS[k].name}
                 </button>
               ))}
@@ -283,11 +311,10 @@ export default function AutoTuner() {
           )}
         </div>
 
-        {/* 顯示主體 */}
         <div className="text-center mb-10">
           <div className="h-6 flex items-center justify-center gap-2 mb-2">
             <span className="text-[10px] font-black text-[#b09e9c] tracking-widest uppercase">
-              {isTooQuiet ? 'Pukanala Aesthetic' : `${noteInfo.label} String`}
+              {isTooQuiet ? 'Precise Tuning' : `${noteInfo.label} String`}
             </span>
           </div>
           <div className={`text-9xl font-black tabular-nums transition-all ${isTooQuiet ? 'text-[#e8d3d1]' : (Math.abs(displayDiff) < PERFECT_RANGE ? 'text-[#8d9e8c]' : 'text-[#b09e9c]')}`}>
@@ -295,7 +322,6 @@ export default function AutoTuner() {
           </div>
         </div>
 
-        {/* 儀表指針 */}
         <div className="px-2 mb-14">
           <div className="h-1.5 bg-[#f5eceb] rounded-full relative">
             <div className="absolute left-1/2 -top-1 w-0.5 h-3.5 bg-[#e8d3d1]" />
@@ -306,7 +332,6 @@ export default function AutoTuner() {
           </div>
         </div>
 
-        {/* 弦按鈕 */}
         <div className="flex justify-between items-center gap-2 mb-10 bg-[#f5eceb]/50 p-3 rounded-[2rem]">
           {currentNotes.map(n => (
             <button 
