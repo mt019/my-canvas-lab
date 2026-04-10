@@ -198,23 +198,28 @@ function autoCorrelate(buffer, sampleRate) {
 }
 
 function resolveHarmonic(detectedPitch, notes) {
-  const candidates = [detectedPitch, detectedPitch / 2, detectedPitch / 3, detectedPitch * 2]
-    .filter((value) => value >= MIN_PITCH && value <= MAX_PITCH);
+  const candidates = [
+    { pitch: detectedPitch, penalty: 0 },
+    { pitch: detectedPitch / 2, penalty: 45 },
+    { pitch: detectedPitch * 2, penalty: 30 },
+  ].filter((candidate) => candidate.pitch >= MIN_PITCH && candidate.pitch <= MAX_PITCH);
 
   let bestPitch = detectedPitch;
-  let bestDelta = Infinity;
+  let bestScore = Infinity;
 
   for (const candidate of candidates) {
     for (const note of notes) {
-      const delta = Math.abs(candidate - note.targetFreq);
-      if (delta < bestDelta) {
-        bestDelta = delta;
-        bestPitch = candidate;
+      const centsDelta = Math.abs(frequencyToCents(candidate.pitch, note.targetFreq));
+      const score = centsDelta + candidate.penalty;
+
+      if (score < bestScore) {
+        bestScore = score;
+        bestPitch = candidate.pitch;
       }
     }
   }
 
-  return bestDelta <= HARMONIC_MATCH_TOLERANCE ? bestPitch : detectedPitch;
+  return bestScore <= HARMONIC_MATCH_TOLERANCE ? bestPitch : detectedPitch;
 }
 
 function InfoOverlay({ type, instrument, onClose }) {
@@ -386,7 +391,7 @@ export default function AutoTuner() {
     for (let i = 0; i < buffer.length; i += 1) sumSquares += buffer[i] * buffer[i];
     const rms = Math.sqrt(sumSquares / buffer.length);
     const now = Date.now();
-    setInputLevel((prev) => prev * 0.75 + clamp(rms * 18, 0, 1) * 0.25);
+    setInputLevel((prev) => prev * 0.7 + clamp(rms * 120, 0, 1) * 0.3);
 
     if (rms < VOLUME_THRESHOLD) {
       if (now - lastNoteTimeRef.current > NOTE_HOLD_TIME) {
