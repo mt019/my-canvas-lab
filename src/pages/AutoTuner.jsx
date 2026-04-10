@@ -55,6 +55,9 @@ const DISPLAY_CENT_CLAMP = 50;
 const MIN_PITCH = 40;
 const MAX_PITCH = 1100;
 const HARMONIC_MATCH_TOLERANCE = 18;
+const ATTACK_IGNORE_MS = 140;
+const STABLE_FRAME_COUNT = 3;
+const STABLE_CENTS_WINDOW = 18;
 
 function getMediaDevices() {
   return navigator.mediaDevices;
@@ -271,12 +274,16 @@ export default function AutoTuner() {
   const streamRef = useRef(null);
   const rafRef = useRef(null);
   const oscillatorRef = useRef(null);
+  const overtoneOscRef = useRef(null);
   const gainRef = useRef(null);
+  const toneFilterRef = useRef(null);
   const lastDiffRef = useRef(0);
   const pitchHistoryRef = useRef([]);
   const lastNoteTimeRef = useRef(0);
   const mountedRef = useRef(true);
   const currentNotesRef = useRef([]);
+  const noteAttackStartRef = useRef(0);
+  const stableCandidateRef = useRef({ noteId: null, frames: 0, cents: 0 });
 
   const currentNotes = useMemo(() => {
     const halfDownFactor = mode === MODES.HALF_DOWN ? Math.pow(2, -1 / 12) : 1;
@@ -304,6 +311,8 @@ export default function AutoTuner() {
   const resetDisplay = useCallback(() => {
     pitchHistoryRef.current = [];
     lastDiffRef.current = 0;
+    noteAttackStartRef.current = 0;
+    stableCandidateRef.current = { noteId: null, frames: 0, cents: 0 };
     setIsTooQuiet(true);
     setInputLevel(0);
     setDetectedNoteKey(null);
@@ -330,8 +339,25 @@ export default function AutoTuner() {
       } catch {}
     }
 
+    if (overtoneOscRef.current) {
+      try {
+        overtoneOscRef.current.stop(now + 0.08);
+      } catch {}
+      try {
+        overtoneOscRef.current.disconnect();
+      } catch {}
+    }
+
+    if (toneFilterRef.current) {
+      try {
+        toneFilterRef.current.disconnect();
+      } catch {}
+    }
+
     oscillatorRef.current = null;
+    overtoneOscRef.current = null;
     gainRef.current = null;
+    toneFilterRef.current = null;
     setActiveRefNote(null);
   }, []);
 
@@ -407,6 +433,12 @@ export default function AutoTuner() {
       return;
     }
 
+    if (!noteAttackStartRef.current || now - lastNoteTimeRef.current > NOTE_HOLD_TIME) {
+      noteAttackStartRef.current = now;
+      stableCandidateRef.current = { noteId: null, frames: 0, cents: 0 };
+      pitchHistoryRef.current = [];
+    }
+
     setIsTooQuiet(false);
     lastNoteTimeRef.current = now;
 
@@ -425,6 +457,35 @@ export default function AutoTuner() {
     const centsOff = frequencyToCents(detectedPitch, closestNote.targetFreq);
 
     if (Math.abs(centsOff) > MAX_DETECTION_CENTS) {
+      rafRef.current = requestAnimationFrame(updateLoop);
+      return;
+    }
+
+    if (now - noteAttackStartRef.current < ATTACK_IGNORE_MS) {
+      rafRef.current = requestAnimationFrame(updateLoop);
+      return;
+    }
+
+    const stableCandidate = stableCandidateRef.current;
+    const isSameStableTarget =
+      stableCandidate.noteId === closestNote.id &&
+      Math.abs(stableCandidate.cents - centsOff) <= STABLE_CENTS_WINDOW;
+
+    if (isSameStableTarget) {
+      stableCandidateRef.current = {
+        noteId: closestNote.id,
+        frames: stableCandidate.frames + 1,
+        cents: centsOff,
+      };
+    } else {
+      stableCandidateRef.current = {
+        noteId: closestNote.id,
+        frames: 1,
+        cents: centsOff,
+      };
+    }
+
+    if (stableCandidateRef.current.frames < STABLE_FRAME_COUNT) {
       rafRef.current = requestAnimationFrame(updateLoop);
       return;
     }
@@ -498,29 +559,54 @@ export default function AutoTuner() {
         stopReference();
 
         const oscillator = audioCtx.createOscillator();
+        const overtoneOsc = audioCtx.createOscillator();
         const gainNode = audioCtx.createGain();
+        const toneFilter = audioCtx.createBiquadFilter();
+        const lowShelf = audioCtx.createBiquadFilter();
+        const noteFreq = note.targetFreq;
+        const loudnessBoost = clamp(220 / noteFreq, 0.9, 2.2);
+        const attackGain = clamp(0.045 * loudnessBoost, 0.045, 0.11);
 
-        oscillator.type = 'triangle';
-        oscillator.frequency.setValueAtTime(note.targetFreq, audioCtx.currentTime);
+        oscillator.type = 'sine';
+        oscillator.frequency.setValueAtTime(noteFreq, audioCtx.currentTime);
+        overtoneOsc.type = 'triangle';
+        overtoneOsc.frequency.setValueAtTime(noteFreq * 2, audioCtx.currentTime);
+
+        toneFilter.type = 'lowpass';
+        toneFilter.frequency.setValueAtTime(Math.min(2200, noteFreq * 6), audioCtx.currentTime);
+        toneFilter.Q.setValueAtTime(0.7, audioCtx.currentTime);
+
+        lowShelf.type = 'lowshelf';
+        lowShelf.frequency.setValueAtTime(180, audioCtx.currentTime);
+        lowShelf.gain.setValueAtTime(noteFreq < 180 ? 6 : 2, audioCtx.currentTime);
 
         gainNode.gain.setValueAtTime(0.0001, audioCtx.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.08, audioCtx.currentTime + 0.06);
-        gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 1.2);
+        gainNode.gain.exponentialRampToValueAtTime(attackGain, audioCtx.currentTime + 0.08);
+        gainNode.gain.exponentialRampToValueAtTime(0.0015, audioCtx.currentTime + 1.45);
 
         oscillator.connect(gainNode);
-        gainNode.connect(audioCtx.destination);
+        overtoneOsc.connect(gainNode);
+        gainNode.connect(lowShelf);
+        lowShelf.connect(toneFilter);
+        toneFilter.connect(audioCtx.destination);
         oscillator.start();
-        oscillator.stop(audioCtx.currentTime + 1.25);
+        overtoneOsc.start();
+        oscillator.stop(audioCtx.currentTime + 1.5);
+        overtoneOsc.stop(audioCtx.currentTime + 1.38);
         oscillator.onended = () => {
           if (oscillatorRef.current === oscillator) {
             oscillatorRef.current = null;
+            overtoneOscRef.current = null;
             gainRef.current = null;
+            toneFilterRef.current = null;
             setActiveRefNote(null);
           }
         };
 
         oscillatorRef.current = oscillator;
+        overtoneOscRef.current = overtoneOsc;
         gainRef.current = gainNode;
+        toneFilterRef.current = toneFilter;
         setActiveRefNote(note.id);
       } catch (error) {
         console.error(error);
