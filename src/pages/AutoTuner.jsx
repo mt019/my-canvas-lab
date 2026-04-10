@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { Mic, MicOff, Activity, ShieldCheck, VolumeX, ChevronDown, Play, Music } from 'lucide-react';
+import { Mic, MicOff, Activity, ShieldCheck, VolumeX, ChevronDown, Play, Music, Zap, Heart } from 'lucide-react';
 
-// --- 樂器配置：區分八度音階 ---
+// --- 樂器配置 ---
 const INSTRUMENTS = {
   UKULELE: {
     name: '烏克麗麗 (GCEA)',
     notes: [
       { note: 'G4', freq: 392.00, label: '4弦' },
-      { note: 'C4', freq: 261.63, label: '3弦' },
+      { note: 'C4', freq: 261.63, label: '3弦', sweeten: -2 }, // C 弦通常降 2 cents 最好聽
       { note: 'E4', freq: 329.63, label: '2弦' },
       { note: 'A4', freq: 440.00, label: '1弦' },
     ]
@@ -18,7 +18,7 @@ const INSTRUMENTS = {
       { note: 'A2', freq: 110.00, label: '6弦' },
       { note: 'D3', freq: 146.83, label: '5弦' },
       { note: 'G3', freq: 196.00, label: '4弦' },
-      { note: 'C4', freq: 261.63, label: '3弦' },
+      { note: 'C4', freq: 261.63, label: '3弦', sweeten: -2 },
       { note: 'E4', freq: 329.63, label: '2弦' },
       { note: 'A4', freq: 440.00, label: '1弦' },
     ]
@@ -30,7 +30,7 @@ const INSTRUMENTS = {
       { note: 'A2', freq: 110.00, label: '5弦' },
       { note: 'D3', freq: 146.83, label: '4弦' },
       { note: 'G3', freq: 196.00, label: '3弦' },
-      { note: 'B3', freq: 246.94, label: '2弦' },
+      { note: 'B3', freq: 246.94, label: '2弦', sweeten: -1 }, // 吉他 B 弦也常微降
       { note: 'E4', freq: 329.63, label: '1弦' },
     ]
   }
@@ -38,10 +38,11 @@ const INSTRUMENTS = {
 
 const VOLUME_THRESHOLD = 0.015;
 const SMOOTHING_FACTOR = 0.18;
-const REF_PLAY_DURATION = 1500; // 參考音播放時間 (毫秒)
+const REF_PLAY_DURATION = 1500;
 
 export default function AutoTuner() {
   const [instrument, setInstrument] = useState('UKULELE');
+  const [mode, setMode] = useState('STANDARD'); // STANDARD, HALF_DOWN, SWEETENED
   const [isListening, setIsListening] = useState(false);
   const [pitch, setPitch] = useState(0);
   const [noteInfo, setNoteInfo] = useState({ note: '--', label: '--' });
@@ -59,13 +60,30 @@ export default function AutoTuner() {
   const lastDiff = useRef(0);
   const stopTimeout = useRef(null);
 
-  const currentNotes = useMemo(() => INSTRUMENTS[instrument].notes, [instrument]);
+  // --- 核心邏輯：計算補償後的目標頻率 ---
+  const currentNotes = useMemo(() => {
+    let globalFactor = 1;
+    if (mode === 'HALF_DOWN') globalFactor = Math.pow(2, -1/12);
+
+    return INSTRUMENTS[instrument].notes.map(n => {
+      let targetFreq = n.freq * globalFactor;
+      
+      // 如果是感性模式且該弦有定義 sweeten (單位為 cents)
+      if (mode === 'SWEETENED' && n.sweeten) {
+        // 1 cent = 2^(1/1200)
+        targetFreq *= Math.pow(2, n.sweeten / 1200);
+      }
+
+      return {
+        ...n,
+        targetFreq,
+        displayNote: mode === 'HALF_DOWN' ? `${n.note}♭` : n.note
+      };
+    });
+  }, [instrument, mode]);
 
   useEffect(() => {
-    return () => {
-      stopAll();
-      if (stopTimeout.current) clearTimeout(stopTimeout.current);
-    };
+    return () => { stopAll(); if (stopTimeout.current) clearTimeout(stopTimeout.current); };
   }, []);
 
   const initAudio = () => {
@@ -76,47 +94,33 @@ export default function AutoTuner() {
     }
   };
 
-  // --- 播放標準參考音 (短暫播放並自動停止) ---
   const playReference = (n) => {
     initAudio();
-    stopReference(); // 先停止當前正在響的
+    stopReference();
     if (stopTimeout.current) clearTimeout(stopTimeout.current);
-
     setActiveRefNote(n.note);
-    
     osc.current = audioCtx.current.createOscillator();
     osc.current.type = 'sine';
-    osc.current.frequency.setValueAtTime(n.freq, audioCtx.current.currentTime);
+    osc.current.frequency.setValueAtTime(n.targetFreq, audioCtx.current.currentTime);
     osc.current.connect(gain.current);
-    
-    // 淡入
     gain.current.gain.setValueAtTime(0, audioCtx.current.currentTime);
-    gain.current.gain.linearRampToValueAtTime(0.3, audioCtx.current.currentTime + 0.05);
-    
+    gain.current.gain.linearRampToValueAtTime(0.2, audioCtx.current.currentTime + 0.05);
     osc.current.start();
-
-    // 設定定時器：播放一段時間後淡出並停止
-    stopTimeout.current = setTimeout(() => {
-      stopReference();
-    }, REF_PLAY_DURATION);
+    stopTimeout.current = setTimeout(() => stopReference(), REF_PLAY_DURATION);
   };
 
   const stopReference = () => {
     if (osc.current && gain.current) {
       const now = audioCtx.current.currentTime;
       gain.current.gain.setValueAtTime(gain.current.gain.value, now);
-      gain.current.gain.exponentialRampToValueAtTime(0.001, now + 0.3); // 0.3秒淡出
-      
+      gain.current.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
       const tempOsc = osc.current;
-      setTimeout(() => {
-        try { tempOsc.stop(); tempOsc.disconnect(); } catch(e) {}
-      }, 400);
+      setTimeout(() => { try { tempOsc.stop(); tempOsc.disconnect(); } catch(e) {} }, 400);
       osc.current = null;
     }
     setActiveRefNote(null);
   };
 
-  // --- 自動偵測邏輯 ---
   const startMic = async () => {
     initAudio();
     if (audioCtx.current.state === 'suspended') await audioCtx.current.resume();
@@ -128,13 +132,12 @@ export default function AutoTuner() {
       source.connect(analyser.current);
       setIsListening(true);
       updateLoop();
-    } catch (err) { alert("麥克風存取失敗"); }
+    } catch (err) { alert("麥克風開啟失敗"); }
   };
 
   const updateLoop = () => {
     const buffer = new Float32Array(analyser.current.fftSize);
     analyser.current.getFloatTimeDomainData(buffer);
-    
     let sum = 0;
     for (let i = 0; i < buffer.length; i++) sum += buffer[i] * buffer[i];
     const rms = Math.sqrt(sum / buffer.length);
@@ -147,7 +150,7 @@ export default function AutoTuner() {
       if (p > 50 && p < 1200) {
         setPitch(p);
         const closest = findClosest(p);
-        setNoteInfo({ note: closest.note, label: closest.label });
+        setNoteInfo({ note: closest.displayNote, label: closest.label });
         const smoothed = (lastDiff.current * (1 - SMOOTHING_FACTOR)) + (closest.diff * SMOOTHING_FACTOR);
         lastDiff.current = smoothed;
         setDisplayDiff(smoothed);
@@ -175,7 +178,7 @@ export default function AutoTuner() {
     let minD = Infinity;
     let target = currentNotes[0];
     currentNotes.forEach(n => {
-      const d = f - n.freq;
+      const d = f - n.targetFreq;
       if (Math.abs(d) < Math.abs(minD)) { minD = d; target = n; }
     });
     return { ...target, diff: minD };
@@ -191,26 +194,37 @@ export default function AutoTuner() {
   };
 
   return (
-    <div className="min-h-screen bg-[#020617] text-slate-100 p-4 flex flex-col items-center justify-center font-sans selection:bg-blue-500/30">
+    <div className="min-h-screen bg-[#020617] text-slate-100 p-4 flex flex-col items-center justify-center font-sans">
       <div className="w-full max-w-md bg-slate-900/90 backdrop-blur-3xl rounded-[3rem] p-8 border border-slate-800 shadow-2xl relative overflow-hidden">
         
-        {/* 背景裝飾 */}
-        <div className="absolute -top-20 -right-20 w-40 h-40 bg-blue-600/10 rounded-full blur-[80px]" />
-
-        <div className="flex justify-between items-center mb-10 relative z-10">
-          <div className="flex items-center gap-2">
-            <div className="p-1.5 bg-blue-600 rounded-lg">
-               <Music size={14} className="text-white" />
-            </div>
-            <span className="text-[10px] font-black tracking-widest text-slate-400 uppercase">Pro Tuner</span>
-          </div>
+        {/* 頂部選單 */}
+        <div className="flex justify-between items-center mb-6 relative z-10">
           <button onClick={() => setShowMenu(!showMenu)} className="bg-slate-800/80 px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 hover:bg-slate-700 transition-all border border-slate-700">
             {INSTRUMENTS[instrument].name} <ChevronDown size={14} />
           </button>
+          
+          <div className="flex gap-2">
+            {/* 模式切換按鈕 */}
+            <button 
+              onClick={() => { setMode(mode === 'SWEETENED' ? 'STANDARD' : 'SWEETENED'); stopAll(); }}
+              className={`p-2 rounded-xl transition-all border ${mode === 'SWEETENED' ? 'bg-rose-500/20 border-rose-500 text-rose-500' : 'bg-slate-800 border-slate-700 text-slate-500'}`}
+              title="感性模式 (微調特定弦使和弦更和諧)"
+            >
+              <Heart size={16} fill={mode === 'SWEETENED' ? "currentColor" : "none"} />
+            </button>
+            <button 
+              onClick={() => { setMode(mode === 'HALF_DOWN' ? 'STANDARD' : 'HALF_DOWN'); stopAll(); }}
+              className={`p-2 rounded-xl transition-all border ${mode === 'HALF_DOWN' ? 'bg-amber-500/20 border-amber-500 text-amber-500' : 'bg-slate-800 border-slate-700 text-slate-500'}`}
+              title="降半音模式"
+            >
+              <Zap size={16} fill={mode === 'HALF_DOWN' ? "currentColor" : "none"} />
+            </button>
+          </div>
+
           {showMenu && (
-            <div className="absolute right-0 top-12 w-48 bg-slate-800 border border-slate-700 rounded-xl shadow-2xl z-50 py-1 overflow-hidden">
+            <div className="absolute left-0 top-12 w-48 bg-slate-800 border border-slate-700 rounded-xl shadow-2xl z-50 py-1 overflow-hidden">
               {Object.keys(INSTRUMENTS).map(k => (
-                <button key={k} className="w-full px-4 py-3 text-left text-xs font-bold hover:bg-blue-600 transition-colors" onClick={() => {setInstrument(k); setShowMenu(false); stopAll();}}>
+                <button key={k} className="w-full px-4 py-3 text-left text-xs font-bold hover:bg-blue-600" onClick={() => {setInstrument(k); setShowMenu(false); stopAll();}}>
                   {INSTRUMENTS[k].name}
                 </button>
               ))}
@@ -218,29 +232,33 @@ export default function AutoTuner() {
           )}
         </div>
 
+        {/* 狀態顯示 */}
         <div className="text-center mb-8 relative z-10">
-          <div className="text-xs font-bold text-blue-400 mb-2 h-4">{isTooQuiet ? '' : noteInfo.label}</div>
-          <div className={`text-8xl font-black tabular-nums transition-all duration-300 ${isTooQuiet ? 'text-slate-800' : (Math.abs(displayDiff) < 1.5 ? 'text-emerald-400 scale-110' : 'text-white')}`}>
+          <div className="flex items-center justify-center gap-2 mb-2 h-4">
+             {mode !== 'STANDARD' && (
+               <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-800 text-slate-400 uppercase tracking-widest">
+                 {mode}
+               </span>
+             )}
+             <span className="text-xs font-bold text-blue-400">{isTooQuiet ? '' : noteInfo.label}</span>
+          </div>
+          <div className={`text-8xl font-black tabular-nums transition-all duration-300 ${isTooQuiet ? 'text-slate-800' : (Math.abs(displayDiff) < 1.5 ? 'text-emerald-400' : 'text-white')}`}>
             {isTooQuiet ? '--' : noteInfo.note}
           </div>
         </div>
 
-        <div className="px-4 mb-12 relative z-10">
+        {/* 儀表指針 */}
+        <div className="px-4 mb-10 relative z-10">
           <div className="h-1 bg-slate-800 rounded-full relative">
             <div className="absolute left-1/2 -top-1 w-0.5 h-3 bg-slate-700" />
             <div 
               className={`absolute -top-3.5 w-1.5 h-8 rounded-full transition-all duration-75 ${Math.abs(displayDiff) < 1.5 ? 'bg-emerald-400 shadow-[0_0_20px_rgba(52,211,153,0.6)]' : 'bg-blue-500 shadow-[0_0_20px_rgba(59,130,246,0.5)]'}`}
-              style={{ left: `calc(50% + ${Math.max(-48, Math.min(48, displayDiff * 3.8))}% )`, opacity: isTooQuiet ? 0.1 : 1 }}
+              style={{ left: `calc(50% + ${Math.max(-48, Math.min(48, displayDiff * 4))}% )`, opacity: isTooQuiet ? 0.1 : 1 }}
             />
-          </div>
-          <div className="flex justify-between mt-5 text-[9px] font-black text-slate-500 uppercase tracking-widest">
-            <span>Too Low</span>
-            <span className={!isTooQuiet && Math.abs(displayDiff) < 1.5 ? 'text-emerald-400' : ''}>Perfect</span>
-            <span>Too High</span>
           </div>
         </div>
 
-        {/* 參考音按鈕 (輕觸一下播放 1.5 秒) */}
+        {/* 弦按鈕 */}
         <div className="grid grid-cols-3 gap-2 mb-8 relative z-10">
           {currentNotes.map(n => (
             <button 
@@ -248,34 +266,27 @@ export default function AutoTuner() {
               onClick={() => playReference(n)}
               className={`py-3 px-1 rounded-2xl border transition-all duration-200 flex flex-col items-center gap-1 ${
                 activeRefNote === n.note 
-                ? 'bg-blue-600 border-transparent shadow-lg scale-105 -translate-y-1' 
+                ? 'bg-blue-600 border-transparent shadow-lg scale-105' 
                 : 'bg-slate-950/40 border-slate-800 hover:border-slate-600'
               }`}
             >
               <span className={`text-[9px] font-bold ${activeRefNote === n.note ? 'text-blue-100' : 'text-slate-500'}`}>{n.label}</span>
-              <span className="text-sm font-black tracking-tighter">{n.note}</span>
+              <span className="text-sm font-black">{n.displayNote}</span>
               <Play size={10} className={activeRefNote === n.note ? 'fill-white text-white' : 'text-slate-600'} />
             </button>
           ))}
         </div>
 
-        <div className="flex gap-3 relative z-10">
-          <button 
-            onClick={isListening ? stopAll : startMic}
-            className={`flex-1 py-5 rounded-[2rem] font-black transition-all flex items-center justify-center gap-3 ${
-              isListening ? 'bg-slate-800 text-rose-400 border border-rose-400/20' : 'bg-white text-black hover:bg-slate-100 shadow-2xl shadow-white/10'
-            }`}
-          >
-            {isListening ? <MicOff size={18} /> : <Mic size={18} />}
-            {isListening ? 'STOP' : 'AUTO DETECT'}
-          </button>
-        </div>
-
+        <button 
+          onClick={isListening ? stopAll : startMic}
+          className={`w-full py-5 rounded-[2rem] font-black transition-all flex items-center justify-center gap-3 ${
+            isListening ? 'bg-slate-800 text-rose-400 border border-rose-400/20' : 'bg-white text-black hover:bg-slate-100 shadow-2xl'
+          }`}
+        >
+          {isListening ? <MicOff size={18} /> : <Mic size={18} />}
+          {isListening ? 'STOP' : 'AUTO DETECT'}
+        </button>
       </div>
-      
-      <p className="mt-8 text-slate-600 text-[10px] font-bold uppercase tracking-[0.2em]">
-        Web Audio Engine • Auto Octave Correction
-      </p>
     </div>
   );
 }
