@@ -232,14 +232,14 @@ function InfoOverlay({ type, instrument, onClose }) {
 
   return (
     <div
-      className="fixed inset-0 z-[200] bg-white/40 backdrop-blur-md flex items-center justify-center p-8 animate-in fade-in duration-300"
+      className="fixed inset-0 z-[200] bg-white/40 backdrop-blur-md flex items-center justify-center p-4 sm:p-6 animate-in fade-in duration-300"
       onClick={onClose}
       role="dialog"
       aria-modal="true"
     >
       <div className="max-w-xs text-center" onClick={(e) => e.stopPropagation()}>
-        <h3 className="text-lg font-black text-slate-700 mb-4 uppercase tracking-widest">{title}</h3>
-        <p className="text-sm leading-relaxed text-slate-500 font-medium">{desc}</p>
+        <h3 className="text-base sm:text-lg font-black text-slate-700 mb-3 sm:mb-4 uppercase tracking-[0.18em]">{title}</h3>
+        <p className="text-xs sm:text-sm leading-6 sm:leading-relaxed text-slate-500 font-medium">{desc}</p>
         <button
           onClick={onClose}
           className="mt-10 rounded-2xl border border-[#e8d3d1] bg-white px-5 py-2 text-[11px] font-black tracking-[0.2em] text-[#8a7a78]"
@@ -257,6 +257,9 @@ export default function AutoTuner() {
   const [isHalfDown, setIsHalfDown] = useState(false);
   const [infoOverlay, setInfoOverlay] = useState(null);
   const [isListening, setIsListening] = useState(false);
+  const [viewportHeight, setViewportHeight] = useState(() =>
+    typeof window !== 'undefined' ? window.innerHeight : 0,
+  );
   const [noteInfo, setNoteInfo] = useState({ note: '--', label: '--' });
   const [detectedNoteKey, setDetectedNoteKey] = useState(null);
   const [displayDiffCents, setDisplayDiffCents] = useState(0);
@@ -594,7 +597,6 @@ export default function AutoTuner() {
         const toneFilter = audioCtx.createBiquadFilter();
         const lowShelf = audioCtx.createBiquadFilter();
         const noteFreq = note.targetFreq;
-        // PATCH: update loudnessBoost and attackGain
         const loudnessBoost = clamp(240 / noteFreq, 1.2, 3.2);
         const attackGain = clamp(0.09 * loudnessBoost, 0.09, 0.24);
 
@@ -609,10 +611,8 @@ export default function AutoTuner() {
 
         lowShelf.type = 'lowshelf';
         lowShelf.frequency.setValueAtTime(180, audioCtx.currentTime);
-        // PATCH: update lowshelf gain
         lowShelf.gain.setValueAtTime(noteFreq < 180 ? 9 : 4, audioCtx.currentTime);
 
-        // PATCH: update gain envelope
         gainNode.gain.setValueAtTime(0.0001, audioCtx.currentTime);
         gainNode.gain.exponentialRampToValueAtTime(attackGain, audioCtx.currentTime + 0.06);
         gainNode.gain.exponentialRampToValueAtTime(Math.max(attackGain * 0.28, 0.006), audioCtx.currentTime + 1.45);
@@ -693,6 +693,27 @@ export default function AutoTuner() {
   }, [stopAll]);
 
   useEffect(() => {
+    if (typeof window === 'undefined') return undefined;
+
+    const updateViewportHeight = () => {
+      setViewportHeight(window.innerHeight);
+    };
+
+    const previousTitle = document.title;
+    document.title = `${INSTRUMENTS[instrument].name} Auto Tuner`;
+
+    updateViewportHeight();
+    window.addEventListener('resize', updateViewportHeight);
+    window.addEventListener('orientationchange', updateViewportHeight);
+
+    return () => {
+      document.title = previousTitle;
+      window.removeEventListener('resize', updateViewportHeight);
+      window.removeEventListener('orientationchange', updateViewportHeight);
+    };
+  }, [instrument]);
+
+  useEffect(() => {
     const handleClickOutside = (event) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
         setShowMenu(false);
@@ -734,8 +755,19 @@ export default function AutoTuner() {
       ? clamp(detectedNote.sweeten ?? 0, -DISPLAY_CENT_CLAMP, DISPLAY_CENT_CLAMP)
       : null;
 
+  const compactViewport = viewportHeight > 0 && viewportHeight < 780;
+  const ultraCompactViewport = viewportHeight > 0 && viewportHeight < 680;
+
   return (
-    <div className="min-h-screen bg-[#f5eceb] px-4 py-8 text-slate-800 flex flex-col items-center justify-center font-sans">
+    <div
+      className="bg-[#f5eceb] px-3 sm:px-4 text-slate-800 flex flex-col items-center justify-center font-sans overflow-hidden"
+      style={{
+        minHeight: '100dvh',
+        height: viewportHeight || undefined,
+        paddingTop: compactViewport ? 12 : 20,
+        paddingBottom: compactViewport ? 12 : 20,
+      }}
+    >
       {infoOverlay && (
         <InfoOverlay
           type={infoOverlay}
@@ -744,12 +776,15 @@ export default function AutoTuner() {
         />
       )}
 
-      <div className="w-full max-w-md rounded-[3rem] border border-[#e8d3d1] bg-white/70 p-8 shadow-2xl shadow-rose-200/50 backdrop-blur-xl relative">
-        <div className="mb-10 flex items-center justify-between relative z-[100]" ref={menuRef}>
+      <div
+        className="w-full max-w-md rounded-[2.25rem] sm:rounded-[3rem] border border-[#e8d3d1] bg-white/70 shadow-2xl shadow-rose-200/50 backdrop-blur-xl relative overflow-hidden"
+        style={{ padding: ultraCompactViewport ? 18 : compactViewport ? 22 : 32 }}
+      >
+        <div className={`${compactViewport ? 'mb-5' : 'mb-10'} flex items-center justify-between relative z-[100]`} ref={menuRef}>
           <div className="relative">
             <button
               onClick={() => setShowMenu((prev) => !prev)}
-              className="flex items-center gap-2 rounded-2xl bg-[#e8d3d1] px-4 py-2 text-[11px] font-black text-[#8a7a78] transition-all active:scale-95"
+              className="flex items-center gap-2 rounded-2xl bg-[#e8d3d1] px-3 sm:px-4 py-2 text-[10px] sm:text-[11px] font-black text-[#8a7a78] transition-all active:scale-95"
               aria-expanded={showMenu}
               aria-haspopup="menu"
             >
@@ -776,10 +811,10 @@ export default function AutoTuner() {
             )}
           </div>
 
-          <div className="flex gap-2">
+          <div className="flex gap-1.5 sm:gap-2">
             <button
               onClick={toggleSweetened}
-              className={`rounded-xl border p-2.5 transition-all ${
+              className={`rounded-xl border p-2 sm:p-2.5 transition-all ${
                 isSweetened
                   ? 'bg-[#d8e2dc] text-[#8d9e8c]'
                   : 'bg-white text-[#b09e9c] hover:bg-[#fafafa]'
@@ -790,7 +825,7 @@ export default function AutoTuner() {
             </button>
             <button
               onClick={toggleHalfDown}
-              className={`rounded-xl border p-2.5 transition-all ${
+              className={`rounded-xl border p-2 sm:p-2.5 transition-all ${
                 isHalfDown
                   ? 'bg-[#f0e4d7] text-[#d4a373]'
                   : 'bg-white text-[#b09e9c] hover:bg-[#fafafa]'
@@ -802,8 +837,8 @@ export default function AutoTuner() {
           </div>
         </div>
 
-        <div className="mb-10 text-center">
-          <div className="h-6 text-[10px] font-black uppercase tracking-widest text-[#b09e9c]">
+        <div className={`${compactViewport ? 'mb-5' : 'mb-10'} text-center`}>
+          <div className={`${compactViewport ? 'h-5' : 'h-6'} text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-[#b09e9c]`}>
             {isTooQuiet ? (
               'Acoustic Tuning'
             ) : isPerfect ? (
@@ -814,7 +849,7 @@ export default function AutoTuner() {
           </div>
 
           <div
-            className={`text-8xl sm:text-9xl font-black transition-all ${
+            className={`${ultraCompactViewport ? 'text-6xl sm:text-7xl' : compactViewport ? 'text-7xl sm:text-8xl' : 'text-8xl sm:text-9xl'} font-black transition-all ${
               isTooQuiet
                 ? 'text-[#e8d3d1]'
                 : isPerfect
@@ -826,7 +861,7 @@ export default function AutoTuner() {
           </div>
 
           <div
-            className={`mt-3 min-h-[1.25rem] text-xs font-bold tracking-[0.2em] transition-opacity text-[#b09e9c] ${
+            className={`${compactViewport ? 'mt-2' : 'mt-3'} min-h-[1.1rem] sm:min-h-[1.25rem] text-[10px] sm:text-xs font-bold tracking-[0.16em] sm:tracking-[0.2em] transition-opacity text-[#b09e9c] ${
               isTooQuiet ? 'opacity-0' : 'opacity-100'
             }`}
             aria-live="polite"
@@ -835,7 +870,7 @@ export default function AutoTuner() {
           </div>
         </div>
 
-        <div className="relative mb-14 flex h-1.5 items-center px-2">
+        <div className={`relative ${compactViewport ? 'mb-6' : 'mb-14'} flex h-1.5 items-center px-1 sm:px-2`}>
           <div className="relative h-full w-full rounded-full bg-[#f5eceb]">
             <div
               className={`absolute left-1/2 top-1/2 h-6 w-0.5 -translate-x-1/2 -translate-y-1/2 rounded-full ${
@@ -853,7 +888,7 @@ export default function AutoTuner() {
               />
             )}
             <div
-              className={`absolute top-1/2 z-30 h-10 w-2.5 -translate-y-1/2 rounded-full shadow-sm transition-all duration-150 ${
+              className={`absolute top-1/2 z-30 ${compactViewport ? 'h-8 w-2' : 'h-10 w-2.5'} -translate-y-1/2 rounded-full shadow-sm transition-all duration-150 ${
                 isPerfect
                   ? 'bg-[#8d9e8c] shadow-[#8d9e8c]/50'
                   : 'bg-[#d4a373]'
@@ -867,8 +902,8 @@ export default function AutoTuner() {
           </div>
         </div>
 
-        <div className="mb-8">
-          <div className="rounded-[1.25rem] border border-[#eadad8] bg-white/70 px-4 py-3">
+        <div className={`${compactViewport ? 'mb-5' : 'mb-8'}`}>
+          <div className="rounded-[1.25rem] border border-[#eadad8] bg-white/70 px-3 sm:px-4 py-2.5 sm:py-3">
             <div className="flex min-h-[20px] items-center justify-between gap-3">
               <span className="shrink-0 text-[10px] font-black uppercase tracking-[0.25em] text-[#b09e9c]">
                 MIC
@@ -891,7 +926,7 @@ export default function AutoTuner() {
           </div>
         </div>
 
-        <div className="mb-10 flex items-center justify-between gap-2 rounded-[2rem] bg-[#f5eceb]/50 p-3">
+        <div className={`${compactViewport ? 'mb-5' : 'mb-10'} flex items-center justify-between gap-1.5 sm:gap-2 rounded-[1.5rem] sm:rounded-[2rem] bg-[#f5eceb]/50 p-2 sm:p-3`}>
           {currentNotes.map((note) => {
             const isDetected = detectedNoteKey === note.id && isListening && !isTooQuiet;
             const isActive = activeRefNote === note.id;
@@ -900,7 +935,7 @@ export default function AutoTuner() {
               <button
                 key={note.id}
                 onClick={() => playReference(note)}
-                className={`relative flex flex-1 aspect-[4/5] flex-col items-center justify-center gap-1 rounded-[1rem] border-2 transition-all duration-300 ${
+                className={`relative flex flex-1 aspect-[4/5] min-h-[76px] sm:min-h-[92px] flex-col items-center justify-center gap-0.5 sm:gap-1 rounded-[0.9rem] sm:rounded-[1rem] border-2 transition-all duration-300 ${
                   isActive
                     ? 'bg-[#e8d3d1] border-white text-white shadow-lg -translate-y-1'
                     : isDetected
@@ -912,9 +947,9 @@ export default function AutoTuner() {
                 {isDetected && (
                   <span className="absolute inset-0 rounded-[1rem] border border-[#e8d3d1] animate-ping opacity-20" />
                 )}
-                <span className="text-[9px] font-black opacity-60">{note.label}</span>
-                <span className="text-sm font-black">{note.displayShort}</span>
-                <span className="text-[9px] font-bold opacity-60">{note.displayNote}</span>
+                <span className="text-[8px] sm:text-[9px] font-black opacity-60">{note.label}</span>
+                <span className="text-xs sm:text-sm font-black">{note.displayShort}</span>
+                <span className="text-[8px] sm:text-[9px] font-bold opacity-60">{note.displayNote}</span>
               </button>
             );
           })}
@@ -922,7 +957,7 @@ export default function AutoTuner() {
 
         <button
           onClick={isListening ? stopAll : startMic}
-          className={`flex w-full items-center justify-center gap-3 rounded-[2rem] py-5 text-xs font-black tracking-[0.3em] transition-all ${
+          className={`flex w-full items-center justify-center gap-2.5 sm:gap-3 rounded-[1.5rem] sm:rounded-[2rem] py-4 sm:py-5 text-[11px] sm:text-xs font-black tracking-[0.24em] sm:tracking-[0.3em] transition-all ${
             isListening
               ? 'bg-[#b09e9c] text-white shadow-inner'
               : 'border border-[#e8d3d1] bg-white text-[#8a7a78] shadow-xl hover:bg-[#fcf7f6]'
@@ -933,13 +968,13 @@ export default function AutoTuner() {
         </button>
 
         {errorMessage && (
-          <div className="mt-4 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-medium text-rose-500">
+          <div className="mt-3 sm:mt-4 rounded-2xl border border-rose-200 bg-rose-50 px-3 sm:px-4 py-2.5 sm:py-3 text-xs sm:text-sm font-medium text-rose-500">
             {errorMessage}
           </div>
         )}
       </div>
 
-      <p className="mt-8 px-4 text-center text-[10px] font-black uppercase tracking-[0.5em] text-[#b09e9c]">
+      <p className={`${compactViewport ? 'mt-4' : 'mt-8'} px-4 text-center text-[9px] sm:text-[10px] font-black uppercase tracking-[0.32em] sm:tracking-[0.5em] text-[#b09e9c]`}>
         Phenom • Professional Acoustic Solution
       </p>
     </div>
