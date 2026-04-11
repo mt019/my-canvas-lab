@@ -25,7 +25,7 @@ const INSTRUMENTS = {
     ],
   },
   GUITAR: {
-    name: '吉他（標準）',
+    name: '吉他',
     desc: '甜蜜模式會針對 E2 A2 D3 G3 B3 E4 標準定弦加入細小 offsets，讓空弦、開放和弦與部分常用把位的整體聽感更平順。它不是把吉他調成「更準的唯一答案」，而是接受吉他在平均律、品絲補償與實際按弦之間本來就存在折衷，改以更悅耳的結果為目標。',
     notes: [
       { note: 'E2', short: 'E', freq: 82.41, label: '6', sweeten: -2.0, halfDown: 'E♭2' },
