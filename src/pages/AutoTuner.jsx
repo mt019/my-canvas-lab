@@ -926,7 +926,10 @@ export default function AutoTuner() {
           </div>
         </div>
 
-        <div className={`${compactViewport ? 'mb-5' : 'mb-10'} flex items-center justify-between gap-1.5 sm:gap-2 rounded-[1.5rem] sm:rounded-[2rem] bg-[#f5eceb]/50 p-2 sm:p-3`}>
+        <div
+          className={`${compactViewport ? 'mb-5' : 'mb-10'} grid gap-1.5 sm:gap-2 rounded-[1.5rem] sm:rounded-[2rem] bg-[#f5eceb]/50 p-2 sm:p-3`}
+          style={{ gridTemplateColumns: `repeat(${currentNotes.length}, minmax(0, 1fr))` }}
+        >
           {currentNotes.map((note) => {
             const isDetected = detectedNoteKey === note.id && isListening && !isTooQuiet;
             const isActive = activeRefNote === note.id;
@@ -935,7 +938,7 @@ export default function AutoTuner() {
               <button
                 key={note.id}
                 onClick={() => playReference(note)}
-                className={`relative flex flex-1 aspect-[4/5] min-h-[76px] sm:min-h-[92px] flex-col items-center justify-center gap-0.5 sm:gap-1 rounded-[0.9rem] sm:rounded-[1rem] border-2 transition-all duration-300 ${
+                className={`relative flex w-full min-w-0 aspect-[4/5] min-h-[76px] sm:min-h-[92px] flex-col items-center justify-center gap-0.5 sm:gap-1 rounded-[0.9rem] sm:rounded-[1rem] border-2 transition-all duration-300 ${
                   isActive
                     ? 'bg-[#e8d3d1] border-white text-white shadow-lg -translate-y-1'
                     : isDetected
@@ -948,8 +951,8 @@ export default function AutoTuner() {
                   <span className="absolute inset-0 rounded-[1rem] border border-[#e8d3d1] animate-ping opacity-20" />
                 )}
                 <span className="text-[8px] sm:text-[9px] font-black opacity-60">{note.label}</span>
-                <span className="text-xs sm:text-sm font-black">{note.displayShort}</span>
-                <span className="text-[8px] sm:text-[9px] font-bold opacity-60">{note.displayNote}</span>
+                <span className="truncate px-1 text-xs sm:text-sm font-black">{note.displayShort}</span>
+                <span className="truncate px-1 text-[8px] sm:text-[9px] font-bold opacity-60">{note.displayNote}</span>
               </button>
             );
           })}
