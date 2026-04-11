@@ -865,14 +865,6 @@ export default function AutoTuner() {
             {isTooQuiet ? '--' : noteInfo.note}
           </div>
 
-          <div
-            className={`${compactViewport ? 'mt-2' : 'mt-3'} min-h-[1.1rem] sm:min-h-[1.25rem] text-[10px] sm:text-xs font-bold tracking-[0.16em] sm:tracking-[0.2em] transition-opacity text-[#b09e9c] ${
-              isTooQuiet ? 'opacity-0' : 'opacity-100'
-            }`}
-            aria-live="polite"
-          >
-            {!isTooQuiet ? `${displayDiffCents > 0 ? '偏高' : '偏低'} ${Math.abs(displayDiffCents).toFixed(1)} cents` : '偏低 0.0 cents'}
-          </div>
         </div>
 
         <div className={`relative ${compactViewport ? 'mb-6' : 'mb-14'} flex h-1.5 items-center px-1 sm:px-2`}>
