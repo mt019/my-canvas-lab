@@ -1,0 +1,14 @@
+AutoTuner
+
+
+- 調音時顯示的「偏高、偏低」的文字會導致行高跳動
+- 標準音音量太小！！！
+
+<!-- 
+	先把 MAX_DETECTION_CENTS 從 300 降到 45 或 60
+	•	重寫 resolveHarmonic() 的 scoring 邏輯
+	•	降低 React 每幀 state 更新次數，特別是 inputLevel
+	•	讓 pitch analysis 不必每個 animation frame 都做一次
+	•	重新整理 note id 與 note 資料模型
+	•	手機版改成可滾動而不是永遠硬置中
+ -->

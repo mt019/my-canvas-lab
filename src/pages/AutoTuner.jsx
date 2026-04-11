@@ -931,7 +931,7 @@ export default function AutoTuner() {
       </div>
 
       <p className="mt-8 px-4 text-center text-[10px] font-black uppercase tracking-[0.5em] text-[#b09e9c]">
-        Pukanala • Professional Acoustic Solution
+        Phenom • Professional Acoustic Solution
       </p>
     </div>
   );
