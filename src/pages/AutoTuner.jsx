@@ -4,7 +4,7 @@ import { ChevronDown, Heart, Mic, MicOff, Zap } from 'lucide-react';
 const INSTRUMENTS = {
   UKULELE: {
     name: '烏克麗麗',
-    desc: '甜蜜模式：針對 C 弦進行微降補償，修正因琴弦張力產生的音準偏差，使常用和弦共鳴更加純淨。',
+    desc: '甜蜜模式會在標準 G4 C4 E4 A4 的基礎上，對各弦加入極小的 cents 級補償，不是追求每條弦都嚴格落在平均律正中央，而是讓開放和弦與常用按法的整體聽感更和諧。這類補償屬於一種調音取向，是否更好聽仍與琴的設定、弦況與演奏習慣有關。',
     notes: [
       { note: 'G4', short: 'G', freq: 392.0, label: '4', sweeten: -1.0, halfDown: 'G♭4' },
       { note: 'C4', short: 'C', freq: 261.63, label: '3', sweeten: -2.0, halfDown: 'B3' },
@@ -14,7 +14,7 @@ const INSTRUMENTS = {
   },
   GUITARLELE: {
     name: '吉他麗麗',
-    desc: '甜蜜模式：校正 A 弦與 C 弦偏差。這是吉他麗麗專屬的 A2 D3 G3 C4 E4 A4 定弦。',
+    desc: '甜蜜模式會依吉他麗麗的 A2 D3 G3 C4 E4 A4 定弦，為各弦加入細微補償，目標是讓這組定弦下常見和弦與音程在實際彈奏時更順耳。它本質上不是另一套音名系統，而是對平均律做很小的偏移，用來折衷品絲、弦張力與和弦聽感之間的落差。',
     notes: [
       { note: 'A2', short: 'A', freq: 110.0, label: '6', sweeten: -1.5, halfDown: 'A♭2' },
       { note: 'D3', short: 'D', freq: 146.83, label: '5', sweeten: -1.0, halfDown: 'D♭3' },
@@ -26,7 +26,7 @@ const INSTRUMENTS = {
   },
   GUITAR: {
     name: '吉他（標準）',
-    desc: '甜蜜模式：補償 B 弦與低音 E 弦生硬感，釋放木吉他自然的泛音。這是 E2 A2 D3 G3 B3 E4 標準定弦。',
+    desc: '甜蜜模式會針對 E2 A2 D3 G3 B3 E4 標準定弦加入細小 offsets，讓空弦、開放和弦與部分常用把位的整體聽感更平順。它不是把吉他調成「更準的唯一答案」，而是接受吉他在平均律、品絲補償與實際按弦之間本來就存在折衷，改以更悅耳的結果為目標。',
     notes: [
       { note: 'E2', short: 'E', freq: 82.41, label: '6', sweeten: -2.0, halfDown: 'E♭2' },
       { note: 'A2', short: 'A', freq: 110.0, label: '5', sweeten: -1.5, halfDown: 'A♭2' },
@@ -705,23 +705,26 @@ export default function AutoTuner() {
 
   useEffect(() => {
     const handleVisibilityChange = () => {
-      if (document.visibilityState !== 'visible') return;
+      if (document.visibilityState === 'hidden') {
+        stopAll();
+        return;
+      }
 
       resumeAudioContext().catch(() => {});
     };
 
-    const handleWindowFocus = () => {
-      resumeAudioContext().catch(() => {});
+    const handlePageHide = () => {
+      stopAll();
     };
 
     document.addEventListener('visibilitychange', handleVisibilityChange);
-    window.addEventListener('focus', handleWindowFocus);
+    window.addEventListener('pagehide', handlePageHide);
 
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
-      window.removeEventListener('focus', handleWindowFocus);
+      window.removeEventListener('pagehide', handlePageHide);
     };
-  }, [resumeAudioContext]);
+  }, [resumeAudioContext, stopAll]);
 
   const isPerfect = !isTooQuiet && Math.abs(displayDiffCents) < PERFECT_RANGE_CENTS;
   const clampedMeterOffset = clamp(displayDiffCents, -DISPLAY_CENT_CLAMP, DISPLAY_CENT_CLAMP);
