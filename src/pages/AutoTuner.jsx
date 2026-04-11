@@ -982,8 +982,13 @@ export default function AutoTuner() {
         )}
       </div>
 
-      <p className={`${compactViewport ? 'mt-4' : 'mt-8'} px-4 text-center text-[9px] sm:text-[10px] font-black uppercase tracking-[0.32em] sm:tracking-[0.5em] text-[#b09e9c]`}>
-        Phenom • Professional Acoustic Solution
+      <p className={`${compactViewport ? 'mt-4' : 'mt-8'} px-4 text-center text-[9px] sm:text-[10px] font-black uppercase tracking-[0.24em] sm:tracking-[0.5em] text-[#b09e9c] leading-relaxed`}>
+        <span className="whitespace-nowrap">Phenom</span>
+        <span className="hidden sm:inline"> • Professional Acoustic Solution</span>
+        <span className="sm:hidden">
+          <br />
+          Professional <span className="whitespace-nowrap">Acoustic Solution</span>
+        </span>
       </p>
     </div>
   );
