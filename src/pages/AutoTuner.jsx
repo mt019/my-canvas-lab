@@ -229,6 +229,8 @@ function InfoOverlay({ type, instrument, onClose }) {
     type === 'SWEETENED'
       ? INSTRUMENTS[instrument].desc
       : '將全弦音調降低半音，適合需要降半音配置的曲目與伴奏。';
+  const isSweetenedOverlay = type === 'SWEETENED';
+  const panelTextAlign = isSweetenedOverlay ? 'text-left' : 'text-center';
 
   return (
     <div
@@ -237,12 +239,15 @@ function InfoOverlay({ type, instrument, onClose }) {
       role="dialog"
       aria-modal="true"
     >
-      <div className="max-w-xs text-center" onClick={(e) => e.stopPropagation()}>
-        <h3 className="text-base sm:text-lg font-black text-slate-700 mb-3 sm:mb-4 uppercase tracking-[0.18em]">{title}</h3>
-        <p className="text-xs sm:text-sm leading-6 sm:leading-relaxed text-slate-500 font-medium">{desc}</p>
+      <div
+        className={`w-full max-w-xs sm:max-w-sm ${panelTextAlign}`}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <h3 className={`text-base sm:text-lg font-black text-slate-700 mb-3 sm:mb-4 uppercase tracking-[0.18em] ${isSweetenedOverlay ? 'text-left' : 'text-center'}`}>{title}</h3>
+        <p className={`text-xs sm:text-sm leading-6 sm:leading-relaxed text-slate-500 font-medium ${isSweetenedOverlay ? 'text-left' : 'text-center'}`}>{desc}</p>
         <button
           onClick={onClose}
-          className="mt-10 rounded-2xl border border-[#e8d3d1] bg-white px-5 py-2 text-[11px] font-black tracking-[0.2em] text-[#8a7a78]"
+          className={`mt-8 sm:mt-10 rounded-2xl border border-[#e8d3d1] bg-white px-5 py-2 text-[11px] font-black tracking-[0.2em] text-[#8a7a78] ${isSweetenedOverlay ? 'block mr-auto' : 'mx-auto block'}`}
         >
           CLOSE
         </button>
