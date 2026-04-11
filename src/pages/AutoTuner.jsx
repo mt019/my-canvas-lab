@@ -594,8 +594,9 @@ export default function AutoTuner() {
         const toneFilter = audioCtx.createBiquadFilter();
         const lowShelf = audioCtx.createBiquadFilter();
         const noteFreq = note.targetFreq;
-        const loudnessBoost = clamp(220 / noteFreq, 0.9, 2.2);
-        const attackGain = clamp(0.045 * loudnessBoost, 0.045, 0.11);
+        // PATCH: update loudnessBoost and attackGain
+        const loudnessBoost = clamp(240 / noteFreq, 1.2, 3.2);
+        const attackGain = clamp(0.09 * loudnessBoost, 0.09, 0.24);
 
         oscillator.type = 'sine';
         oscillator.frequency.setValueAtTime(noteFreq, audioCtx.currentTime);
@@ -608,11 +609,13 @@ export default function AutoTuner() {
 
         lowShelf.type = 'lowshelf';
         lowShelf.frequency.setValueAtTime(180, audioCtx.currentTime);
-        lowShelf.gain.setValueAtTime(noteFreq < 180 ? 6 : 2, audioCtx.currentTime);
+        // PATCH: update lowshelf gain
+        lowShelf.gain.setValueAtTime(noteFreq < 180 ? 9 : 4, audioCtx.currentTime);
 
+        // PATCH: update gain envelope
         gainNode.gain.setValueAtTime(0.0001, audioCtx.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(attackGain, audioCtx.currentTime + 0.08);
-        gainNode.gain.exponentialRampToValueAtTime(0.0015, audioCtx.currentTime + 1.45);
+        gainNode.gain.exponentialRampToValueAtTime(attackGain, audioCtx.currentTime + 0.06);
+        gainNode.gain.exponentialRampToValueAtTime(Math.max(attackGain * 0.28, 0.006), audioCtx.currentTime + 1.45);
 
         oscillator.connect(gainNode);
         overtoneOsc.connect(gainNode);
@@ -819,11 +822,14 @@ export default function AutoTuner() {
             {isTooQuiet ? '--' : noteInfo.note}
           </div>
 
-          {!isTooQuiet && (
-            <div className="mt-3 text-xs font-bold tracking-[0.2em] text-[#b09e9c]">
-              {displayDiffCents > 0 ? '偏高' : '偏低'} {Math.abs(displayDiffCents).toFixed(1)} cents
-            </div>
-          )}
+          <div
+            className={`mt-3 min-h-[1.25rem] text-xs font-bold tracking-[0.2em] transition-opacity text-[#b09e9c] ${
+              isTooQuiet ? 'opacity-0' : 'opacity-100'
+            }`}
+            aria-live="polite"
+          >
+            {!isTooQuiet ? `${displayDiffCents > 0 ? '偏高' : '偏低'} ${Math.abs(displayDiffCents).toFixed(1)} cents` : '偏低 0.0 cents'}
+          </div>
         </div>
 
         <div className="relative mb-14 flex h-1.5 items-center px-2">
