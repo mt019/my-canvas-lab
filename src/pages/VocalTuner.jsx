@@ -326,7 +326,6 @@ export default function VocalTuner() {
   const [targetNote, setTargetNote] = useState(null);
   const [keyOctave, setKeyOctave] = useState(4); // for keyboard shortcut reference
   const [error, setError] = useState('');
-  const [touchPreview, setTouchPreview] = useState(null); // { name, octave, midi, clientX, clientY }
 
   const canvasRef = useRef(null);
   const audioCtxRef = useRef(null);
@@ -346,6 +345,7 @@ export default function VocalTuner() {
   const pianoGainRef = useRef(null);
   const pianoOscRef = useRef(null);
   const rollSemitonesRef = useRef(ROLL_SEMITONES_DEFAULT);
+  const dragRef = useRef(null); // { startY, startCenter, moved }
 
   useEffect(() => { targetNoteRef.current = targetNote; }, [targetNote]);
 
@@ -697,72 +697,34 @@ export default function VocalTuner() {
 
         {/* Piano Roll Canvas — vertical keys on left + pitch trail */}
         <div
-          className="relative h-[220px] sm:h-[320px] lg:h-[460px]"
-          onMouseDown={(e) => handleCanvasPointer(e.clientX, e.clientY)}
-          onTouchStart={(e) => {
-            e.preventDefault();
-            const t = e.touches[0];
-            const canvas = canvasRef.current;
-            if (!canvas) return;
-            const rect = canvas.getBoundingClientRect();
-            const x = t.clientX - rect.left;
-            const y = t.clientY - rect.top;
-            if (x <= KEY_W) {
-              const rs = rollSemitonesRef.current;
-              const topMidi = viewCenterRef.current + rs / 2;
-              const midi = Math.round(topMidi - (y / rect.height) * rs);
-              if (midi >= 28 && midi <= 100) {
-                const oct = Math.floor(midi / 12) - 1;
-                const nm = NOTE_NAMES[((midi % 12) + 12) % 12];
-                setTouchPreview({ name: nm, octave: oct, midi, clientX: t.clientX, clientY: t.clientY });
-              }
-            } else {
-              handleCanvasPointer(t.clientX, t.clientY);
+          className="relative h-[220px] sm:h-[320px] lg:h-[460px] cursor-grab active:cursor-grabbing"
+          onPointerDown={(e) => {
+            const rect = canvasRef.current?.getBoundingClientRect();
+            if (!rect) return;
+            dragRef.current = { startY: e.clientY, startCenter: viewCenterRef.current, moved: false };
+            e.currentTarget.setPointerCapture(e.pointerId);
+          }}
+          onPointerMove={(e) => {
+            const drag = dragRef.current;
+            if (!drag) return;
+            const deltaY = e.clientY - drag.startY;
+            if (Math.abs(deltaY) > 6) drag.moved = true;
+            if (drag.moved) {
+              const rect = canvasRef.current?.getBoundingClientRect();
+              if (!rect) return;
+              viewCenterRef.current = drag.startCenter + (deltaY / rect.height) * rollSemitonesRef.current;
+              redrawCanvas();
             }
           }}
-          onTouchMove={(e) => {
-            e.preventDefault();
-            if (!touchPreview) return;
-            const t = e.touches[0];
-            const canvas = canvasRef.current;
-            if (!canvas) return;
-            const rect = canvas.getBoundingClientRect();
-            const y = t.clientY - rect.top;
-            const rs = rollSemitonesRef.current;
-            const topMidi = viewCenterRef.current + rs / 2;
-            const midi = Math.round(topMidi - (y / rect.height) * rs);
-            if (midi >= 28 && midi <= 100) {
-              const oct = Math.floor(midi / 12) - 1;
-              const nm = NOTE_NAMES[((midi % 12) + 12) % 12];
-              setTouchPreview({ name: nm, octave: oct, midi, clientX: t.clientX, clientY: t.clientY });
-            }
+          onPointerUp={(e) => {
+            const drag = dragRef.current;
+            dragRef.current = null;
+            if (drag && !drag.moved) handleCanvasPointer(e.clientX, e.clientY);
           }}
-          onTouchEnd={(e) => {
-            e.preventDefault();
-            if (touchPreview) {
-              handlePianoPress(touchPreview.midi);
-              setTouchPreview(null);
-            }
-          }}
-          onTouchCancel={() => setTouchPreview(null)}
+          onPointerCancel={() => { dragRef.current = null; }}
         >
           <canvas ref={canvasRef} className="w-full h-full block" />
         </div>
-
-        {/* Touch preview bubble — appears above finger when dragging piano keys on mobile */}
-        {touchPreview && (
-          <div
-            className="fixed z-50 pointer-events-none select-none"
-            style={{ left: touchPreview.clientX - 44, top: touchPreview.clientY - 80 }}
-          >
-            <div className="bg-[#8d9e8c] text-white rounded-2xl px-4 py-2 text-center shadow-2xl shadow-black/30 min-w-[88px]">
-              <div className="text-3xl font-black leading-tight">{touchPreview.name}</div>
-              <div className="text-sm font-bold opacity-80">{touchPreview.octave}</div>
-              <div className="text-[10px] opacity-60">{midiToFreq(touchPreview.midi).toFixed(0)} Hz</div>
-            </div>
-            <div className="mx-auto mt-[-6px]" style={{ width: 0, height: 0, borderLeft: '7px solid transparent', borderRight: '7px solid transparent', borderTop: '8px solid #8d9e8c' }} />
-          </div>
-        )}
 
         {/* Bottom bar */}
         <div className="px-7 pt-3 pb-5">
