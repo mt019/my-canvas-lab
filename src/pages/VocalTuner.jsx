@@ -15,10 +15,10 @@ const STABLE_WINDOW = 25;
 
 // Piano roll visual settings
 const TRAIL_FRAMES = 600;    // ~20s of history at ~30fps
-const ROLL_SEMITONES_DEFAULT = 14;
-const MIN_ROW_H = 22;        // minimum px per semitone row — drives dynamic count
-const MAX_ROLL_SEMITONES = 28;
-const KEY_W = 50;            // px: vertical piano keys column
+const ROLL_SEMITONES_DEFAULT = 28;
+const MIN_ROW_H = 11;        // minimum px per semitone row — drives dynamic count
+const MAX_ROLL_SEMITONES = 40;
+const KEY_W = 38;            // px: vertical piano keys column
 const CURSOR_X = 0.65;       // current-position fraction inside the plot area (leaves 1/3 right)
 
 const NOTE_NAMES = ['C', 'C♯', 'D', 'D♯', 'E', 'F', 'F♯', 'G', 'G♯', 'A', 'A♯', 'B'];
@@ -641,66 +641,34 @@ export default function VocalTuner() {
   const isPerfect = !isTooQuiet && detectedNote && Math.abs(activeCents) < PERFECT_CENTS;
 
   return (
-    <div className="min-h-screen bg-[#f5eceb] px-4 py-6 text-slate-800 flex flex-col items-center justify-center font-sans">
-      <div className="w-full max-w-md sm:max-w-xl lg:max-w-3xl xl:max-w-4xl rounded-[3rem] border border-[#e8d3d1] bg-white/70 shadow-2xl shadow-rose-200/50 backdrop-blur-xl overflow-hidden">
+    <div className="h-screen bg-[#f5eceb] flex flex-col items-center font-sans overflow-hidden">
+      <div className="w-full max-w-md sm:max-w-xl lg:max-w-3xl xl:max-w-4xl flex flex-col h-full sm:h-[calc(100vh-2rem)] sm:my-4 sm:rounded-[2.5rem] border-0 sm:border border-[#e8d3d1] bg-white/70 shadow-2xl shadow-rose-200/50 backdrop-blur-xl overflow-hidden">
 
-        {/* Header */}
-        <div className="px-7 pt-6 pb-3 flex items-start justify-between">
-          <div>
-            <div className="text-[11px] font-black uppercase tracking-[0.24em] text-[#8a7a78]">VOCAL TUNER</div>
-            <div className="mt-1 text-sm font-bold text-[#b09e9c]">Chromatic · C2 – B5</div>
+        {/* Compact header strip */}
+        <div className="flex items-center justify-between px-5 pt-3 pb-1 shrink-0">
+          <div className="flex items-center gap-3">
+            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#8a7a78]">VOCAL TUNER</span>
+            <span className={`h-1.5 w-1.5 rounded-full transition-all ${inputLevel > 0.08 ? 'bg-[#8d9e8c] shadow-[0_0_0_3px_rgba(141,158,140,0.22)]' : 'bg-[#d8c9c7]'}`} />
           </div>
-          <div className="rounded-2xl bg-[#e8d3d1] px-3 py-2 text-[11px] font-black text-[#8a7a78]">VOICE</div>
-        </div>
-
-        {/* Note + deviation display */}
-        <div className="px-7 pb-3 flex items-end justify-between">
-          <div>
-            <div className={`text-7xl font-black leading-none transition-all ${
-              isTooQuiet ? 'text-[#e8d3d1]' : isPerfect ? 'text-[#8d9e8c]' : 'text-[#b09e9c]'
-            }`}>
-              {isTooQuiet || !detectedNote ? '--' : `${detectedNote.name}${detectedNote.octave}`}
-            </div>
-            <div className={`mt-1 text-[11px] font-bold text-[#b09e9c] transition-opacity ${isTooQuiet ? 'opacity-0' : 'opacity-100'}`}>
-              {!isTooQuiet && detectedFreq ? `${detectedFreq.toFixed(1)} Hz` : ''}
-            </div>
-          </div>
-
-          <div className="text-right">
-            {isTooQuiet ? (
-              <div className="text-[10px] font-black uppercase tracking-[0.15em] text-[#d8c9c7]">點左側琴鍵設目標</div>
-            ) : isPerfect ? (
-              <div className="text-[10px] font-black uppercase tracking-[0.2em] text-[#8d9e8c] animate-pulse">PERFECT ✓</div>
-            ) : targetCentsOff !== null ? (
-              <div className={`text-sm font-black ${Math.abs(targetCentsOff) > 50 ? 'text-rose-400' : 'text-[#d4a373]'}`}>
-                {Math.abs(targetCentsOff) > 50
-                  ? (targetCentsOff > 0 ? '↑ ' : '↓ ') + Math.abs(targetCentsOff).toFixed(0) + ' ¢'
-                  : (targetCentsOff > 0 ? '+' : '') + targetCentsOff.toFixed(1) + ' ¢'
-                }
-              </div>
-            ) : (
-              <div className="text-sm font-black text-[#b09e9c]">
-                {(detectedNote?.cents ?? 0) > 0 ? '+' : ''}{(detectedNote?.cents ?? 0).toFixed(1)} ¢
-              </div>
-            )}
+          <div className="flex items-center gap-3">
             {targetNote && (
-              <div className="mt-1 flex items-center justify-end gap-2">
+              <div className="flex items-center gap-1.5">
                 <span className="text-[9px] font-black text-[#8d9e8c] uppercase">▶ {targetNote.name}{targetNote.octave}</span>
-                <button
-                  onClick={() => { setTargetNote(null); targetNoteRef.current = null; redrawCanvas(); }}
-                  className="text-[8px] font-black text-[#c5b4b2] hover:text-[#8a7a78] uppercase"
-                >✕</button>
+                <button onClick={() => { setTargetNote(null); targetNoteRef.current = null; redrawCanvas(); }} className="text-[8px] font-black text-[#c5b4b2] hover:text-[#8a7a78]">✕</button>
               </div>
             )}
+            <div className="flex items-center gap-1">
+              <button onClick={() => setKeyOctave(o => Math.max(2, o - 1))} className="w-5 h-5 rounded-full border border-[#eadad8] text-[#b09e9c] text-xs flex items-center justify-center hover:bg-[#faf4f3]">‹</button>
+              <span className="text-[9px] font-black text-[#b09e9c] w-8 text-center">Oct {keyOctave}</span>
+              <button onClick={() => setKeyOctave(o => Math.min(5, o + 1))} className="w-5 h-5 rounded-full border border-[#eadad8] text-[#b09e9c] text-xs flex items-center justify-center hover:bg-[#faf4f3]">›</button>
+            </div>
           </div>
         </div>
 
-        {/* Piano Roll Canvas — vertical keys on left + pitch trail */}
+        {/* Piano Roll Canvas — fills all remaining space */}
         <div
-          className="relative h-[220px] sm:h-[320px] lg:h-[460px] cursor-grab active:cursor-grabbing"
+          className="relative flex-1 min-h-0 cursor-grab active:cursor-grabbing"
           onPointerDown={(e) => {
-            const rect = canvasRef.current?.getBoundingClientRect();
-            if (!rect) return;
             dragRef.current = { startY: e.clientY, startCenter: viewCenterRef.current, moved: false };
             e.currentTarget.setPointerCapture(e.pointerId);
           }}
@@ -724,47 +692,40 @@ export default function VocalTuner() {
           onPointerCancel={() => { dragRef.current = null; }}
         >
           <canvas ref={canvasRef} className="w-full h-full block" />
+
+          {/* Note overlay — top-right corner of canvas */}
+          <div className="absolute top-2 right-3 text-right pointer-events-none select-none">
+            <div className={`text-5xl font-black leading-none transition-all ${
+              isTooQuiet ? 'text-[#e8d3d1]/60' : isPerfect ? 'text-[#8d9e8c]' : 'text-[#b09e9c]'
+            }`}>
+              {isTooQuiet || !detectedNote ? '--' : `${detectedNote.name}${detectedNote.octave}`}
+            </div>
+            <div className="mt-0.5 text-[10px] font-bold text-[#b09e9c]/70">
+              {!isTooQuiet && detectedFreq ? `${detectedFreq.toFixed(1)} Hz` : ''}
+            </div>
+            {!isTooQuiet && (
+              <div className={`text-xs font-black mt-0.5 ${isPerfect ? 'text-[#8d9e8c]' : Math.abs(activeCents) > 50 ? 'text-rose-400' : 'text-[#d4a373]'}`}>
+                {isPerfect ? 'PERFECT ✓' : `${activeCents > 0 ? '+' : ''}${activeCents.toFixed(1)} ¢`}
+              </div>
+            )}
+          </div>
         </div>
 
-        {/* Bottom bar */}
-        <div className="px-7 pt-3 pb-5">
-          <div className="flex items-center justify-between mb-4">
-            {/* Mic status */}
-            <div className="flex items-center gap-2">
-              <span className={`h-2 w-2 rounded-full transition-all ${inputLevel > 0.08 ? 'bg-[#8d9e8c] shadow-[0_0_0_4px_rgba(141,158,140,0.18)]' : 'bg-[#d8c9c7]'}`} />
-              <span className={`text-[10px] font-black uppercase tracking-[0.15em] ${inputLevel > 0.08 ? 'text-[#8d9e8c]' : 'text-[#c5b4b2]'}`}>
-                {inputLevel > 0.08 ? 'Signal On' : 'Standby'}
-              </span>
-            </div>
-            {/* Keyboard octave (for keyboard shortcut users) */}
-            <div className="flex items-center gap-1.5">
-              <button onClick={() => setKeyOctave(o => Math.max(2, o - 1))} className="w-5 h-5 rounded-full border border-[#eadad8] text-[#b09e9c] text-xs flex items-center justify-center hover:bg-[#faf4f3]">‹</button>
-              <span className="text-[9px] font-black text-[#b09e9c] uppercase tracking-[0.15em]">Key Oct {keyOctave}</span>
-              <button onClick={() => setKeyOctave(o => Math.min(5, o + 1))} className="w-5 h-5 rounded-full border border-[#eadad8] text-[#b09e9c] text-xs flex items-center justify-center hover:bg-[#faf4f3]">›</button>
-            </div>
-          </div>
-
+        {/* Compact bottom strip */}
+        <div className="flex items-center gap-3 px-5 py-2.5 shrink-0">
           <button
             onClick={isListening ? stopAll : startMic}
-            className={`flex w-full items-center justify-center gap-3 rounded-[2rem] py-4 text-xs font-black tracking-[0.3em] transition-all ${
-              isListening ? 'bg-[#b09e9c] text-white shadow-inner' : 'border border-[#e8d3d1] bg-white text-[#8a7a78] shadow-xl hover:bg-[#fcf7f6]'
+            className={`flex flex-1 items-center justify-center gap-2 rounded-[2rem] py-2.5 text-[10px] font-black tracking-[0.25em] transition-all ${
+              isListening ? 'bg-[#b09e9c] text-white shadow-inner' : 'border border-[#e8d3d1] bg-white text-[#8a7a78] shadow-lg hover:bg-[#fcf7f6]'
             }`}
           >
-            {isListening ? <MicOff size={16} /> : <Mic size={16} />}
-            {isListening ? 'STOP' : 'START LISTENING'}
+            {isListening ? <MicOff size={13} /> : <Mic size={13} />}
+            {isListening ? 'STOP' : 'START'}
           </button>
-
-          {error && (
-            <div className="mt-3 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-medium text-rose-500">
-              {error}
-            </div>
-          )}
+          {error && <div className="text-[9px] font-bold text-rose-400 flex-1">{error}</div>}
         </div>
-      </div>
 
-      <p className="mt-5 text-center text-[9px] font-black uppercase tracking-[0.5em] text-[#b09e9c]">
-        Phenom · Vocal Training Solution
-      </p>
+      </div>
     </div>
   );
 }
