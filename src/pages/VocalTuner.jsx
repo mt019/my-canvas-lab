@@ -15,8 +15,11 @@ const STABLE_WINDOW = 25;
 
 // Piano roll visual settings
 const TRAIL_FRAMES = 600;    // ~20s of history at ~30fps
-const ROLL_SEMITONES = 14;   // visible semitone rows (just over an octave)
+const ROLL_SEMITONES_DEFAULT = 14;
+const MIN_ROW_H = 22;        // minimum px per semitone row — drives dynamic count
+const MAX_ROLL_SEMITONES = 28;
 const KEY_W = 50;            // px: vertical piano keys column
+const CURSOR_X = 0.65;       // current-position fraction inside the plot area (leaves 1/3 right)
 const VIEW_FOLLOW_SLOW = 0.03;
 const VIEW_FOLLOW_FAST = 0.22;
 
@@ -116,16 +119,16 @@ function getMicError(err) {
 
 // ─── Piano Roll + Vertical Keys Renderer ─────────────────────────────────────
 // cssW / cssH are display (CSS) pixel dimensions, independent of devicePixelRatio
-function drawPianoRoll(canvas, cssW, cssH, trail, viewCenter, targetMidi, detectedMidi) {
+function drawPianoRoll(canvas, cssW, cssH, trail, viewCenter, targetMidi, detectedMidi, rollSemitones) {
   const ctx = canvas.getContext('2d');
   const plotW = cssW - KEY_W;
-  const rowH = cssH / ROLL_SEMITONES;
-  const halfRange = ROLL_SEMITONES / 2;
+  const rowH = cssH / rollSemitones;
+  const halfRange = rollSemitones / 2;
   const topMidi = viewCenter + halfRange;
   const bottomMidi = viewCenter - halfRange;
 
   function midiToY(midi) {
-    return cssH - ((midi - bottomMidi) / ROLL_SEMITONES) * cssH;
+    return cssH - ((midi - bottomMidi) / rollSemitones) * cssH;
   }
 
   // Background
@@ -180,7 +183,23 @@ function drawPianoRoll(canvas, cssW, cssH, trail, viewCenter, targetMidi, detect
     ctx.stroke();
   }
 
-  // ── Pitch trail ──
+  // ── "Now" cursor line at CURSOR_X position ──
+  const nowX = KEY_W + plotW * CURSOR_X;
+  ctx.strokeStyle = 'rgba(176,158,156,0.25)';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([3, 4]);
+  ctx.beginPath();
+  ctx.moveTo(nowX, 0);
+  ctx.lineTo(nowX, cssH);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // ── Pitch trail (history scrolls left of nowX) ──
+  // Map frame index → x: newest frame (TRAIL_FRAMES-1) lands at nowX
+  function frameToX(idx) {
+    return KEY_W + (idx / (TRAIL_FRAMES - 1)) * plotW * CURSOR_X;
+  }
+
   if (trail.length >= 2) {
     let seg = [];
     const segments = [];
@@ -199,7 +218,7 @@ function drawPianoRoll(canvas, cssW, cssH, trail, viewCenter, targetMidi, detect
       // Glow
       ctx.beginPath();
       group.forEach((pt, i) => {
-        const x = KEY_W + (pt.idx / (TRAIL_FRAMES - 1)) * plotW;
+        const x = frameToX(pt.idx);
         const y = midiToY(pt.midi);
         if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
       });
@@ -212,7 +231,7 @@ function drawPianoRoll(canvas, cssW, cssH, trail, viewCenter, targetMidi, detect
       // Main line
       ctx.beginPath();
       group.forEach((pt, i) => {
-        const x = KEY_W + (pt.idx / (TRAIL_FRAMES - 1)) * plotW;
+        const x = frameToX(pt.idx);
         const y = midiToY(pt.midi);
         if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
       });
@@ -221,11 +240,11 @@ function drawPianoRoll(canvas, cssW, cssH, trail, viewCenter, targetMidi, detect
       ctx.stroke();
     }
 
-    // Current dot
-    const lastIdx = trail.length - 1 - [...trail].reverse().findIndex(v => v !== null);
+    // Current dot at nowX
+    const lastRevIdx = [...trail].reverse().findIndex(v => v !== null);
+    const lastIdx = trail.length - 1 - lastRevIdx;
     const lastVal = trail[lastIdx];
     if (lastVal !== null && lastVal !== undefined) {
-      const x = KEY_W + (lastIdx / (TRAIL_FRAMES - 1)) * plotW;
       const y = midiToY(lastVal);
       const centsOff = (lastVal - Math.round(lastVal)) * 100;
       const color = Math.abs(centsOff) < PERFECT_CENTS ? '#8d9e8c'
@@ -233,7 +252,7 @@ function drawPianoRoll(canvas, cssW, cssH, trail, viewCenter, targetMidi, detect
       ctx.shadowColor = color;
       ctx.shadowBlur = 12;
       ctx.beginPath();
-      ctx.arc(x, y, 6, 0, Math.PI * 2);
+      ctx.arc(nowX, y, 6, 0, Math.PI * 2);
       ctx.fillStyle = color;
       ctx.fill();
       ctx.shadowBlur = 0;
@@ -309,6 +328,7 @@ export default function VocalTuner() {
   const [targetNote, setTargetNote] = useState(null);
   const [keyOctave, setKeyOctave] = useState(4); // for keyboard shortcut reference
   const [error, setError] = useState('');
+  const [touchPreview, setTouchPreview] = useState(null); // { name, octave, midi, clientX, clientY }
 
   const canvasRef = useRef(null);
   const audioCtxRef = useRef(null);
@@ -327,6 +347,7 @@ export default function VocalTuner() {
   const detectedMidiRef = useRef(null);
   const pianoGainRef = useRef(null);
   const pianoOscRef = useRef(null);
+  const rollSemitonesRef = useRef(ROLL_SEMITONES_DEFAULT);
 
   useEffect(() => { targetNoteRef.current = targetNote; }, [targetNote]);
 
@@ -334,7 +355,7 @@ export default function VocalTuner() {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const { cssW, cssH } = getCanvasCSS(canvas);
-    drawPianoRoll(canvas, cssW, cssH, midiTrailRef.current, viewCenterRef.current, targetNoteRef.current?.midi ?? null, detectedMidiRef.current);
+    drawPianoRoll(canvas, cssW, cssH, midiTrailRef.current, viewCenterRef.current, targetNoteRef.current?.midi ?? null, detectedMidiRef.current, rollSemitonesRef.current);
   }, []);
 
   const resetDisplay = useCallback(() => {
@@ -432,9 +453,9 @@ export default function VocalTuner() {
     const x = clientX - rect.left;
     const y = clientY - rect.top;
     if (x > KEY_W) return;
-    const halfRange = ROLL_SEMITONES / 2;
-    const topMidi = viewCenterRef.current + halfRange;
-    const midi = Math.round(topMidi - (y / rect.height) * ROLL_SEMITONES);
+    const rs = rollSemitonesRef.current;
+    const topMidi = viewCenterRef.current + rs / 2;
+    const midi = Math.round(topMidi - (y / rect.height) * rs);
     handlePianoPress(midi);
   }, [handlePianoPress]);
 
@@ -567,7 +588,9 @@ export default function VocalTuner() {
       canvas.height = cssH * dpr;
       const ctx2d = canvas.getContext('2d');
       ctx2d.scale(dpr, dpr);
-      drawPianoRoll(canvas, cssW, cssH, midiTrailRef.current, viewCenterRef.current, targetNoteRef.current?.midi ?? null, detectedMidiRef.current);
+      const dynamicSemitones = Math.max(9, Math.min(MAX_ROLL_SEMITONES, Math.floor(cssH / MIN_ROW_H)));
+      rollSemitonesRef.current = dynamicSemitones;
+      drawPianoRoll(canvas, cssW, cssH, midiTrailRef.current, viewCenterRef.current, targetNoteRef.current?.midi ?? null, detectedMidiRef.current, dynamicSemitones);
     });
     ro.observe(canvas.parentElement);
     return () => ro.disconnect();
@@ -627,7 +650,7 @@ export default function VocalTuner() {
 
   return (
     <div className="min-h-screen bg-[#f5eceb] px-4 py-6 text-slate-800 flex flex-col items-center justify-center font-sans">
-      <div className="w-full max-w-md rounded-[3rem] border border-[#e8d3d1] bg-white/70 shadow-2xl shadow-rose-200/50 backdrop-blur-xl overflow-hidden">
+      <div className="w-full max-w-md sm:max-w-xl lg:max-w-3xl xl:max-w-4xl rounded-[3rem] border border-[#e8d3d1] bg-white/70 shadow-2xl shadow-rose-200/50 backdrop-blur-xl overflow-hidden">
 
         {/* Header */}
         <div className="px-7 pt-6 pb-3 flex items-start justify-between">
@@ -682,12 +705,72 @@ export default function VocalTuner() {
 
         {/* Piano Roll Canvas — vertical keys on left + pitch trail */}
         <div
-          style={{ height: 280 }}
+          className="relative h-[220px] sm:h-[320px] lg:h-[460px]"
           onMouseDown={(e) => handleCanvasPointer(e.clientX, e.clientY)}
-          onTouchStart={(e) => { e.preventDefault(); const t = e.touches[0]; handleCanvasPointer(t.clientX, t.clientY); }}
+          onTouchStart={(e) => {
+            e.preventDefault();
+            const t = e.touches[0];
+            const canvas = canvasRef.current;
+            if (!canvas) return;
+            const rect = canvas.getBoundingClientRect();
+            const x = t.clientX - rect.left;
+            const y = t.clientY - rect.top;
+            if (x <= KEY_W) {
+              const rs = rollSemitonesRef.current;
+              const topMidi = viewCenterRef.current + rs / 2;
+              const midi = Math.round(topMidi - (y / rect.height) * rs);
+              if (midi >= 28 && midi <= 100) {
+                const oct = Math.floor(midi / 12) - 1;
+                const nm = NOTE_NAMES[((midi % 12) + 12) % 12];
+                setTouchPreview({ name: nm, octave: oct, midi, clientX: t.clientX, clientY: t.clientY });
+              }
+            } else {
+              handleCanvasPointer(t.clientX, t.clientY);
+            }
+          }}
+          onTouchMove={(e) => {
+            e.preventDefault();
+            if (!touchPreview) return;
+            const t = e.touches[0];
+            const canvas = canvasRef.current;
+            if (!canvas) return;
+            const rect = canvas.getBoundingClientRect();
+            const y = t.clientY - rect.top;
+            const rs = rollSemitonesRef.current;
+            const topMidi = viewCenterRef.current + rs / 2;
+            const midi = Math.round(topMidi - (y / rect.height) * rs);
+            if (midi >= 28 && midi <= 100) {
+              const oct = Math.floor(midi / 12) - 1;
+              const nm = NOTE_NAMES[((midi % 12) + 12) % 12];
+              setTouchPreview({ name: nm, octave: oct, midi, clientX: t.clientX, clientY: t.clientY });
+            }
+          }}
+          onTouchEnd={(e) => {
+            e.preventDefault();
+            if (touchPreview) {
+              handlePianoPress(touchPreview.midi);
+              setTouchPreview(null);
+            }
+          }}
+          onTouchCancel={() => setTouchPreview(null)}
         >
           <canvas ref={canvasRef} className="w-full h-full block" />
         </div>
+
+        {/* Touch preview bubble — appears above finger when dragging piano keys on mobile */}
+        {touchPreview && (
+          <div
+            className="fixed z-50 pointer-events-none select-none"
+            style={{ left: touchPreview.clientX - 44, top: touchPreview.clientY - 80 }}
+          >
+            <div className="bg-[#8d9e8c] text-white rounded-2xl px-4 py-2 text-center shadow-2xl shadow-black/30 min-w-[88px]">
+              <div className="text-3xl font-black leading-tight">{touchPreview.name}</div>
+              <div className="text-sm font-bold opacity-80">{touchPreview.octave}</div>
+              <div className="text-[10px] opacity-60">{midiToFreq(touchPreview.midi).toFixed(0)} Hz</div>
+            </div>
+            <div className="mx-auto mt-[-6px]" style={{ width: 0, height: 0, borderLeft: '7px solid transparent', borderRight: '7px solid transparent', borderTop: '8px solid #8d9e8c' }} />
+          </div>
+        )}
 
         {/* Bottom bar */}
         <div className="px-7 pt-3 pb-5">
