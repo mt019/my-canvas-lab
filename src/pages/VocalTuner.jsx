@@ -20,8 +20,6 @@ const MIN_ROW_H = 22;        // minimum px per semitone row — drives dynamic c
 const MAX_ROLL_SEMITONES = 28;
 const KEY_W = 50;            // px: vertical piano keys column
 const CURSOR_X = 0.65;       // current-position fraction inside the plot area (leaves 1/3 right)
-const VIEW_FOLLOW_SLOW = 0.03;
-const VIEW_FOLLOW_FAST = 0.22;
 
 const NOTE_NAMES = ['C', 'C♯', 'D', 'D♯', 'E', 'F', 'F♯', 'G', 'G♯', 'A', 'A♯', 'B'];
 const BLACK_KEY_INDICES = new Set([1, 3, 6, 8, 10]);
@@ -441,7 +439,6 @@ export default function VocalTuner() {
     const note = { midi, name, octave, freq: midiToFreq(midi) };
     setTargetNote(note);
     targetNoteRef.current = note;
-    viewCenterRef.current = midi;
     redrawCanvas();
   }, [playPianoNote, redrawCanvas]);
 
@@ -532,11 +529,6 @@ export default function VocalTuner() {
 
     midiTrailRef.current.shift();
     midiTrailRef.current.push(info.midiExact);
-
-    const target = targetNoteRef.current;
-    const wantCenter = target ? target.midi : info.midiExact;
-    const followSpeed = target ? VIEW_FOLLOW_FAST : VIEW_FOLLOW_SLOW;
-    viewCenterRef.current = viewCenterRef.current * (1 - followSpeed) + wantCenter * followSpeed;
 
     redrawCanvas();
     rafRef.current = requestAnimationFrame(updateLoop);
