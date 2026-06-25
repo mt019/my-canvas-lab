@@ -13,21 +13,18 @@ const ATTACK_MS = 100;
 const STABLE_FRAMES = 2;
 const STABLE_WINDOW = 25;
 
-// Piano roll canvas settings
-const TRAIL_FRAMES = 200;   // ~6s of history
-const ROLL_SEMITONES = 9;   // visible semitone rows
-const LABEL_W = 30;         // px for left note labels
-const VIEW_FOLLOW_SLOW = 0.04;
-const VIEW_FOLLOW_FAST = 0.25;
+// Piano roll visual settings
+const TRAIL_FRAMES = 600;    // ~20s of history at ~30fps
+const ROLL_SEMITONES = 14;   // visible semitone rows (just over an octave)
+const KEY_W = 50;            // px: vertical piano keys column
+const VIEW_FOLLOW_SLOW = 0.03;
+const VIEW_FOLLOW_FAST = 0.22;
 
 const NOTE_NAMES = ['C', 'C♯', 'D', 'D♯', 'E', 'F', 'F♯', 'G', 'G♯', 'A', 'A♯', 'B'];
 const BLACK_KEY_INDICES = new Set([1, 3, 6, 8, 10]);
 
 // Keyboard layout: A-K = C to C+1, W E T Y U = black keys
 const KEY_TO_SEMITONE = { a:0, w:1, s:2, e:3, d:4, f:5, t:6, g:7, y:8, h:9, u:10, j:11, k:12 };
-const WHITE_SEMITONES = [0, 2, 4, 5, 7, 9, 11];
-const BLACK_SEMITONES = [1, 3, 6, 8, 10];
-const BLACK_AFTER_WHITE_IDX = [0, 1, 3, 4, 5]; // position between white keys
 
 // ─── Utils ────────────────────────────────────────────────────────────────────
 function freqToMidi(freq) { return 69 + 12 * Math.log2(freq / 440); }
@@ -117,216 +114,189 @@ function getMicError(err) {
   return '無法存取麥克風，請確認權限與裝置狀態。';
 }
 
-// ─── Piano Roll Canvas Renderer ───────────────────────────────────────────────
-function drawPianoRoll(canvas, trail, viewCenter, targetMidi) {
-  const W = canvas.width;
-  const H = canvas.height;
+// ─── Piano Roll + Vertical Keys Renderer ─────────────────────────────────────
+// cssW / cssH are display (CSS) pixel dimensions, independent of devicePixelRatio
+function drawPianoRoll(canvas, cssW, cssH, trail, viewCenter, targetMidi, detectedMidi) {
   const ctx = canvas.getContext('2d');
-  const plotW = W - LABEL_W;
-  const rowH = H / ROLL_SEMITONES;
-
+  const plotW = cssW - KEY_W;
+  const rowH = cssH / ROLL_SEMITONES;
   const halfRange = ROLL_SEMITONES / 2;
   const topMidi = viewCenter + halfRange;
   const bottomMidi = viewCenter - halfRange;
 
   function midiToY(midi) {
-    return H - ((midi - bottomMidi) / ROLL_SEMITONES) * H;
+    return cssH - ((midi - bottomMidi) / ROLL_SEMITONES) * cssH;
   }
 
   // Background
   ctx.fillStyle = '#f8f2f1';
-  ctx.fillRect(0, 0, W, H);
+  ctx.fillRect(0, 0, cssW, cssH);
 
-  // Semitone rows
+  // ── Semitone rows (right of keys) ──
   for (let m = Math.floor(bottomMidi) - 1; m <= Math.ceil(topMidi) + 1; m++) {
     const noteIdx = ((m % 12) + 12) % 12;
     const isBlack = BLACK_KEY_INDICES.has(noteIdx);
     const centerY = midiToY(m);
+    const topY = centerY - rowH / 2;
 
-    // Row background
-    ctx.fillStyle = isBlack ? '#f0e8e7' : '#faf5f4';
-    ctx.fillRect(LABEL_W, centerY - rowH / 2, plotW, rowH);
+    ctx.fillStyle = isBlack ? '#ede5e3' : '#faf5f4';
+    ctx.fillRect(KEY_W, topY, plotW, rowH);
 
-    // ±8 cent "in tune" zone highlight
+    // In-tune green zone
     const zoneH = (PERFECT_CENTS / 100) * rowH;
-    ctx.fillStyle = 'rgba(141,158,140,0.12)';
-    ctx.fillRect(LABEL_W, centerY - zoneH, plotW, zoneH * 2);
+    ctx.fillStyle = 'rgba(141,158,140,0.11)';
+    ctx.fillRect(KEY_W, centerY - zoneH, plotW, zoneH * 2);
 
-    // Semitone boundary lines
-    ctx.strokeStyle = '#e8d3d1';
+    // Row boundary
+    ctx.strokeStyle = '#e4d4d2';
     ctx.lineWidth = 0.5;
     ctx.beginPath();
-    ctx.moveTo(LABEL_W, centerY - rowH / 2);
-    ctx.lineTo(W, centerY - rowH / 2);
+    ctx.moveTo(KEY_W, topY);
+    ctx.lineTo(cssW, topY);
     ctx.stroke();
 
-    // Center reference line (slightly stronger)
+    // Center dashed line
     ctx.strokeStyle = '#ddd0ce';
-    ctx.lineWidth = 0.8;
-    ctx.setLineDash([4, 4]);
+    ctx.lineWidth = 0.5;
+    ctx.setLineDash([3, 4]);
     ctx.beginPath();
-    ctx.moveTo(LABEL_W, centerY);
-    ctx.lineTo(W, centerY);
+    ctx.moveTo(KEY_W, centerY);
+    ctx.lineTo(cssW, centerY);
     ctx.stroke();
     ctx.setLineDash([]);
   }
 
-  // Target note: bright horizontal band
+  // ── Target band ──
   if (targetMidi !== null) {
     const ty = midiToY(targetMidi);
-    const bandH = (PERFECT_CENTS / 100) * rowH * 2.5;
+    const bandH = (PERFECT_CENTS / 100) * rowH * 3;
     ctx.fillStyle = 'rgba(141,158,140,0.22)';
-    ctx.fillRect(LABEL_W, ty - bandH / 2, plotW, bandH);
-
+    ctx.fillRect(KEY_W, ty - bandH / 2, plotW, bandH);
     ctx.strokeStyle = '#8d9e8c';
     ctx.lineWidth = 1.5;
     ctx.beginPath();
-    ctx.moveTo(LABEL_W, ty);
-    ctx.lineTo(W, ty);
+    ctx.moveTo(KEY_W, ty);
+    ctx.lineTo(cssW, ty);
     ctx.stroke();
   }
 
   // ── Pitch trail ──
   if (trail.length >= 2) {
-    // Build segments: break line at null (silence) gaps
-    let segment = [];
+    let seg = [];
     const segments = [];
     for (let i = 0; i < trail.length; i++) {
-      const entry = trail[i];
-      if (entry === null) {
-        if (segment.length > 0) { segments.push(segment); segment = []; }
+      if (trail[i] === null) {
+        if (seg.length > 0) { segments.push(seg); seg = []; }
       } else {
-        segment.push({ idx: i, midi: entry });
+        seg.push({ idx: i, midi: trail[i] });
       }
     }
-    if (segment.length > 0) segments.push(segment);
+    if (seg.length > 0) segments.push(seg);
 
-    for (const seg of segments) {
-      if (seg.length < 1) continue;
+    for (const group of segments) {
+      if (group.length < 1) continue;
 
-      // Draw thick glow line
+      // Glow
       ctx.beginPath();
-      seg.forEach((pt, si) => {
-        const x = LABEL_W + (pt.idx / (TRAIL_FRAMES - 1)) * plotW;
+      group.forEach((pt, i) => {
+        const x = KEY_W + (pt.idx / (TRAIL_FRAMES - 1)) * plotW;
         const y = midiToY(pt.midi);
-        if (si === 0) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
+        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
       });
-      ctx.strokeStyle = 'rgba(176, 158, 156, 0.3)';
-      ctx.lineWidth = 6;
+      ctx.strokeStyle = 'rgba(176,158,156,0.22)';
+      ctx.lineWidth = 9;
       ctx.lineJoin = 'round';
       ctx.lineCap = 'round';
       ctx.stroke();
 
-      // Draw main colored line
+      // Main line
       ctx.beginPath();
-      seg.forEach((pt, si) => {
-        const x = LABEL_W + (pt.idx / (TRAIL_FRAMES - 1)) * plotW;
+      group.forEach((pt, i) => {
+        const x = KEY_W + (pt.idx / (TRAIL_FRAMES - 1)) * plotW;
         const y = midiToY(pt.midi);
-        if (si === 0) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
+        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
       });
-      ctx.strokeStyle = '#d4a373';
-      ctx.lineWidth = 2;
+      ctx.strokeStyle = '#c4906a';
+      ctx.lineWidth = 2.5;
       ctx.stroke();
     }
 
-    // Current position dot
-    const lastValid = [...trail].reverse().find(v => v !== null);
-    if (lastValid !== undefined) {
-      const lastEntry = { idx: trail.lastIndexOf(lastValid), midi: lastValid };
-      const x = LABEL_W + (lastEntry.idx / (TRAIL_FRAMES - 1)) * plotW;
-      const y = midiToY(lastEntry.midi);
-      const centsOff = (lastEntry.midi - Math.round(lastEntry.midi)) * 100;
-      const dotColor = Math.abs(centsOff) < PERFECT_CENTS ? '#8d9e8c'
+    // Current dot
+    const lastIdx = trail.length - 1 - [...trail].reverse().findIndex(v => v !== null);
+    const lastVal = trail[lastIdx];
+    if (lastVal !== null && lastVal !== undefined) {
+      const x = KEY_W + (lastIdx / (TRAIL_FRAMES - 1)) * plotW;
+      const y = midiToY(lastVal);
+      const centsOff = (lastVal - Math.round(lastVal)) * 100;
+      const color = Math.abs(centsOff) < PERFECT_CENTS ? '#8d9e8c'
         : Math.abs(centsOff) < 25 ? '#d4a373' : '#e08080';
-
-      ctx.shadowColor = dotColor;
-      ctx.shadowBlur = 10;
+      ctx.shadowColor = color;
+      ctx.shadowBlur = 12;
       ctx.beginPath();
-      ctx.arc(x, y, 5.5, 0, Math.PI * 2);
-      ctx.fillStyle = dotColor;
+      ctx.arc(x, y, 6, 0, Math.PI * 2);
+      ctx.fillStyle = color;
       ctx.fill();
       ctx.shadowBlur = 0;
     }
   }
 
-  // ── Left label panel ──
-  ctx.fillStyle = 'rgba(248,242,241,0.94)';
-  ctx.fillRect(0, 0, LABEL_W, H);
-
-  // Vertical separator
-  ctx.strokeStyle = '#e8d3d1';
-  ctx.lineWidth = 1;
-  ctx.beginPath();
-  ctx.moveTo(LABEL_W, 0);
-  ctx.lineTo(LABEL_W, H);
-  ctx.stroke();
+  // ── Vertical piano keys (left column) ──
+  ctx.fillStyle = '#f5eeec';
+  ctx.fillRect(0, 0, KEY_W, cssH);
 
   for (let m = Math.floor(bottomMidi) - 1; m <= Math.ceil(topMidi) + 1; m++) {
     const noteIdx = ((m % 12) + 12) % 12;
+    const isBlack = BLACK_KEY_INDICES.has(noteIdx);
+    const isC = noteIdx === 0;
     const octave = Math.floor(m / 12) - 1;
     const centerY = midiToY(m);
-    if (centerY < -10 || centerY > H + 10) continue;
+    const topY = centerY - rowH / 2;
+    const isTarget = targetMidi !== null && Math.round(targetMidi) === m;
+    const isDetected = detectedMidi !== null && detectedMidi === m;
 
-    const isC = noteIdx === 0;
-    ctx.fillStyle = isC ? '#8a7a78' : '#c5b4b2';
-    ctx.font = `${isC ? 'bold' : ''} 9px system-ui,sans-serif`.trim();
-    ctx.textAlign = 'center';
-    ctx.fillText(isC ? `C${octave}` : NOTE_NAMES[noteIdx], LABEL_W / 2, centerY + 3.5);
+    if (isBlack) {
+      // Black key: narrower, occupies left 60%
+      const kw = KEY_W * 0.6;
+      ctx.fillStyle = isTarget ? '#5d8e7c' : isDetected ? '#7a6a68' : '#2e1e1c';
+      ctx.fillRect(0, topY + 0.5, kw, rowH - 0.5);
+      // Thin right section matches background
+      ctx.fillStyle = '#f5eeec';
+      ctx.fillRect(kw, topY, KEY_W - kw, rowH);
+    } else {
+      // White key: full width
+      ctx.fillStyle = isTarget ? '#d0ddd4' : isDetected ? '#ead8d4' : '#f8f2f1';
+      ctx.fillRect(0, topY + 0.5, KEY_W, rowH - 0.5);
+    }
+
+    // Key bottom border
+    ctx.strokeStyle = isBlack ? '#1a0e0c' : '#ddd0ce';
+    ctx.lineWidth = 0.5;
+    ctx.beginPath();
+    ctx.moveTo(0, topY + rowH);
+    ctx.lineTo(isBlack ? KEY_W * 0.6 : KEY_W, topY + rowH);
+    ctx.stroke();
+
+    // C note label (right-aligned inside white key)
+    if (isC && centerY > -4 && centerY < cssH + 4) {
+      ctx.fillStyle = isTarget ? '#5d8e7c' : '#8a7a78';
+      ctx.font = 'bold 8px system-ui,sans-serif';
+      ctx.textAlign = 'right';
+      ctx.fillText(`C${octave}`, KEY_W - 3, centerY + 3.5);
+    }
   }
+
+  // Divider line between keys and roll
+  ctx.strokeStyle = '#c8b8b6';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(KEY_W, 0);
+  ctx.lineTo(KEY_W, cssH);
+  ctx.stroke();
 }
 
-// ─── Piano Keyboard ───────────────────────────────────────────────────────────
-function PianoKeyboard({ octave, detectedMidi, targetMidi, onPress }) {
-  return (
-    <div className="relative flex select-none" style={{ height: 68 }}>
-      {/* White keys */}
-      {WHITE_SEMITONES.map((semi) => {
-        const midi = (octave + 1) * 12 + semi;
-        const isTarget = targetMidi === midi;
-        const isDetected = detectedMidi === midi;
-        return (
-          <button
-            key={semi}
-            onMouseDown={() => onPress(midi)}
-            onTouchStart={(e) => { e.preventDefault(); onPress(midi); }}
-            className={`flex-1 flex flex-col items-center justify-end pb-1 border border-[#e8d3d1] rounded-b-xl transition-colors active:scale-95 ${
-              isTarget ? 'bg-[#d8e2dc] border-[#8d9e8c]' : isDetected ? 'bg-[#eadad8]' : 'bg-white hover:bg-[#faf4f3]'
-            }`}
-            aria-label={`${NOTE_NAMES[semi]}${octave}`}
-          >
-            <span className={`text-[7px] font-black leading-none ${isTarget ? 'text-[#8d9e8c]' : 'text-[#c5b4b2]'}`}>
-              {NOTE_NAMES[semi]}{octave}
-            </span>
-          </button>
-        );
-      })}
-      {/* Black keys */}
-      {BLACK_SEMITONES.map((semi, idx) => {
-        const midi = (octave + 1) * 12 + semi;
-        const isTarget = targetMidi === midi;
-        const isDetected = detectedMidi === midi;
-        const afterIdx = BLACK_AFTER_WHITE_IDX[idx];
-        return (
-          <button
-            key={semi}
-            onMouseDown={() => onPress(midi)}
-            onTouchStart={(e) => { e.preventDefault(); onPress(midi); }}
-            className={`absolute top-0 z-10 rounded-b-md transition-colors active:scale-95 ${
-              isTarget ? 'bg-[#8d9e8c]' : isDetected ? 'bg-[#7a6a68]' : 'bg-[#3a2a28] hover:bg-[#5a4a48]'
-            }`}
-            style={{
-              left: `calc(${(afterIdx + 0.64) / 7 * 100}%)`,
-              width: `calc(100% / 7 * 0.68)`,
-              height: '60%',
-            }}
-            aria-label={`${NOTE_NAMES[semi]}${octave}`}
-          />
-        );
-      })}
-    </div>
-  );
+// Helper: get CSS dimensions from canvas element
+function getCanvasCSS(canvas) {
+  return { cssW: canvas.offsetWidth, cssH: canvas.offsetHeight };
 }
 
 // ─── Main Component ───────────────────────────────────────────────────────────
@@ -337,7 +307,7 @@ export default function VocalTuner() {
   const [isTooQuiet, setIsTooQuiet] = useState(true);
   const [inputLevel, setInputLevel] = useState(0);
   const [targetNote, setTargetNote] = useState(null);
-  const [pianoOctave, setPianoOctave] = useState(4);
+  const [keyOctave, setKeyOctave] = useState(4); // for keyboard shortcut reference
   const [error, setError] = useState('');
 
   const canvasRef = useRef(null);
@@ -352,24 +322,33 @@ export default function VocalTuner() {
   const attackStartRef = useRef(0);
   const stableMatchRef = useRef({ midi: null, frames: 0, cents: 0 });
   const midiTrailRef = useRef(new Array(TRAIL_FRAMES).fill(null));
-  const viewCenterRef = useRef(69); // A4 default
+  const viewCenterRef = useRef(60); // C4 default
   const targetNoteRef = useRef(null);
+  const detectedMidiRef = useRef(null);
   const pianoGainRef = useRef(null);
   const pianoOscRef = useRef(null);
 
-  // Keep ref in sync for use inside RAF loop
   useEffect(() => { targetNoteRef.current = targetNote; }, [targetNote]);
+
+  const redrawCanvas = useCallback(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const { cssW, cssH } = getCanvasCSS(canvas);
+    drawPianoRoll(canvas, cssW, cssH, midiTrailRef.current, viewCenterRef.current, targetNoteRef.current?.midi ?? null, detectedMidiRef.current);
+  }, []);
 
   const resetDisplay = useCallback(() => {
     pitchHistoryRef.current = [];
     attackStartRef.current = 0;
     stableMatchRef.current = { midi: null, frames: 0, cents: 0 };
     midiTrailRef.current = new Array(TRAIL_FRAMES).fill(null);
+    detectedMidiRef.current = null;
     setIsTooQuiet(true);
     setInputLevel(0);
     setDetectedNote(null);
     setDetectedFreq(0);
-  }, []);
+    redrawCanvas();
+  }, [redrawCanvas]);
 
   const ensureCtx = useCallback(async () => {
     const AC = window.AudioContext || window.webkitAudioContext;
@@ -394,7 +373,6 @@ export default function VocalTuner() {
     resetDisplay();
   }, [resetDisplay]);
 
-  // Play reference tone (piano-like)
   const playPianoNote = useCallback(async (midi) => {
     try {
       const ctx = await ensureCtx();
@@ -429,21 +407,36 @@ export default function VocalTuner() {
       toneFilter.connect(gain); gain.connect(ctx.destination);
       osc1.start(now); osc2.start(now);
       osc1.stop(now + 1.5); osc2.stop(now + 1.5);
-
       pianoOscRef.current = osc1;
       pianoGainRef.current = gain;
     } catch {}
   }, [ensureCtx, resumeCtx]);
 
   const handlePianoPress = useCallback((midi) => {
+    if (midi < 28 || midi > 100) return;
     playPianoNote(midi);
     const octave = Math.floor(midi / 12) - 1;
     const name = NOTE_NAMES[((midi % 12) + 12) % 12];
     const note = { midi, name, octave, freq: midiToFreq(midi) };
     setTargetNote(note);
     targetNoteRef.current = note;
-    viewCenterRef.current = midi; // snap view to target
-  }, [playPianoNote]);
+    viewCenterRef.current = midi;
+    redrawCanvas();
+  }, [playPianoNote, redrawCanvas]);
+
+  // Canvas click → play key
+  const handleCanvasPointer = useCallback((clientX, clientY) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const rect = canvas.getBoundingClientRect();
+    const x = clientX - rect.left;
+    const y = clientY - rect.top;
+    if (x > KEY_W) return;
+    const halfRange = ROLL_SEMITONES / 2;
+    const topMidi = viewCenterRef.current + halfRange;
+    const midi = Math.round(topMidi - (y / rect.height) * ROLL_SEMITONES);
+    handlePianoPress(midi);
+  }, [handlePianoPress]);
 
   const updateLoop = useCallback(() => {
     const analyser = analyserRef.current;
@@ -463,10 +456,9 @@ export default function VocalTuner() {
       if (now - lastNoteTimeRef.current > HOLD_TIME) {
         resetDisplay();
       } else {
-        // push silence frame
         midiTrailRef.current.shift();
         midiTrailRef.current.push(null);
-        if (canvasRef.current) drawPianoRoll(canvasRef.current, midiTrailRef.current, viewCenterRef.current, targetNoteRef.current?.midi ?? null);
+        redrawCanvas();
       }
       rafRef.current = requestAnimationFrame(updateLoop);
       return;
@@ -485,7 +477,7 @@ export default function VocalTuner() {
     if (raw < MIN_FREQ || raw > MAX_FREQ) {
       midiTrailRef.current.shift();
       midiTrailRef.current.push(null);
-      if (canvasRef.current) drawPianoRoll(canvasRef.current, midiTrailRef.current, viewCenterRef.current, targetNoteRef.current?.midi ?? null);
+      redrawCanvas();
       rafRef.current = requestAnimationFrame(updateLoop);
       return;
     }
@@ -515,23 +507,19 @@ export default function VocalTuner() {
 
     setDetectedNote(info);
     setDetectedFreq(pitch);
+    detectedMidiRef.current = info.midiNote;
 
-    // Update canvas trail
     midiTrailRef.current.shift();
     midiTrailRef.current.push(info.midiExact);
 
-    // Smoothly pan view toward detected pitch (or lock to target)
     const target = targetNoteRef.current;
     const wantCenter = target ? target.midi : info.midiExact;
     const followSpeed = target ? VIEW_FOLLOW_FAST : VIEW_FOLLOW_SLOW;
     viewCenterRef.current = viewCenterRef.current * (1 - followSpeed) + wantCenter * followSpeed;
 
-    if (canvasRef.current) {
-      drawPianoRoll(canvasRef.current, midiTrailRef.current, viewCenterRef.current, target?.midi ?? null);
-    }
-
+    redrawCanvas();
     rafRef.current = requestAnimationFrame(updateLoop);
-  }, [resetDisplay]);
+  }, [resetDisplay, redrawCanvas]);
 
   const startMic = useCallback(async () => {
     try {
@@ -567,17 +555,19 @@ export default function VocalTuner() {
     }
   }, [ensureCtx, resumeCtx, stopAll, resetDisplay, updateLoop]);
 
-  // Size canvas to container
+  // Size canvas to container with device pixel ratio
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ro = new ResizeObserver(() => {
-      canvas.width = canvas.offsetWidth * window.devicePixelRatio;
-      canvas.height = canvas.offsetHeight * window.devicePixelRatio;
-      const ctx = canvas.getContext('2d');
-      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
-      canvas.style.width = canvas.offsetWidth + 'px';
-      drawPianoRoll(canvas, midiTrailRef.current, viewCenterRef.current, targetNoteRef.current?.midi ?? null);
+      const dpr = window.devicePixelRatio || 1;
+      const cssW = canvas.offsetWidth;
+      const cssH = canvas.offsetHeight;
+      canvas.width = cssW * dpr;
+      canvas.height = cssH * dpr;
+      const ctx2d = canvas.getContext('2d');
+      ctx2d.scale(dpr, dpr);
+      drawPianoRoll(canvas, cssW, cssH, midiTrailRef.current, viewCenterRef.current, targetNoteRef.current?.midi ?? null, detectedMidiRef.current);
     });
     ro.observe(canvas.parentElement);
     return () => ro.disconnect();
@@ -591,12 +581,11 @@ export default function VocalTuner() {
       const key = e.key.toLowerCase();
       if (pressed.has(key)) return;
       pressed.add(key);
-      if (key === 'z') { setPianoOctave(o => Math.max(2, o - 1)); return; }
-      if (key === 'x') { setPianoOctave(o => Math.min(5, o + 1)); return; }
+      if (key === 'z') { setKeyOctave(o => Math.max(2, o - 1)); return; }
+      if (key === 'x') { setKeyOctave(o => Math.min(5, o + 1)); return; }
       if (key in KEY_TO_SEMITONE) {
-        setPianoOctave(oct => {
-          const midi = (oct + 1) * 12 + KEY_TO_SEMITONE[key];
-          handlePianoPress(midi);
+        setKeyOctave(oct => {
+          handlePianoPress((oct + 1) * 12 + KEY_TO_SEMITONE[key]);
           return oct;
         });
       }
@@ -629,7 +618,7 @@ export default function VocalTuner() {
     };
   }, [resumeCtx, stopAll]);
 
-  // Derived values for header display
+  // Derived display values
   const targetCentsOff = targetNote && detectedNote && !isTooQuiet && detectedFreq
     ? (freqToMidi(detectedFreq) - freqToMidi(targetNote.freq)) * 100
     : null;
@@ -641,16 +630,16 @@ export default function VocalTuner() {
       <div className="w-full max-w-md rounded-[3rem] border border-[#e8d3d1] bg-white/70 shadow-2xl shadow-rose-200/50 backdrop-blur-xl overflow-hidden">
 
         {/* Header */}
-        <div className="px-8 pt-7 pb-4 flex items-start justify-between">
+        <div className="px-7 pt-6 pb-3 flex items-start justify-between">
           <div>
             <div className="text-[11px] font-black uppercase tracking-[0.24em] text-[#8a7a78]">VOCAL TUNER</div>
             <div className="mt-1 text-sm font-bold text-[#b09e9c]">Chromatic · C2 – B5</div>
           </div>
-          <div className="rounded-2xl bg-[#e8d3d1] px-4 py-2 text-[11px] font-black text-[#8a7a78]">VOICE</div>
+          <div className="rounded-2xl bg-[#e8d3d1] px-3 py-2 text-[11px] font-black text-[#8a7a78]">VOICE</div>
         </div>
 
-        {/* Note + cents status bar */}
-        <div className="px-8 pb-4 flex items-end justify-between">
+        {/* Note + deviation display */}
+        <div className="px-7 pb-3 flex items-end justify-between">
           <div>
             <div className={`text-7xl font-black leading-none transition-all ${
               isTooQuiet ? 'text-[#e8d3d1]' : isPerfect ? 'text-[#8d9e8c]' : 'text-[#b09e9c]'
@@ -661,100 +650,63 @@ export default function VocalTuner() {
               {!isTooQuiet && detectedFreq ? `${detectedFreq.toFixed(1)} Hz` : ''}
             </div>
           </div>
+
           <div className="text-right">
             {isTooQuiet ? (
-              <div className="text-[10px] font-black uppercase tracking-[0.2em] text-[#d8c9c7]">Start Singing</div>
+              <div className="text-[10px] font-black uppercase tracking-[0.15em] text-[#d8c9c7]">點左側琴鍵設目標</div>
             ) : isPerfect ? (
               <div className="text-[10px] font-black uppercase tracking-[0.2em] text-[#8d9e8c] animate-pulse">PERFECT ✓</div>
             ) : targetCentsOff !== null ? (
-              <div className={`text-[11px] font-black ${Math.abs(targetCentsOff) > 50 ? 'text-rose-400' : Math.abs(targetCentsOff) < 20 ? 'text-[#d4a373]' : 'text-rose-400'}`}>
+              <div className={`text-sm font-black ${Math.abs(targetCentsOff) > 50 ? 'text-rose-400' : 'text-[#d4a373]'}`}>
                 {Math.abs(targetCentsOff) > 50
-                  ? (targetCentsOff > 0 ? '↑ HIGH ' : '↓ LOW ') + Math.abs(targetCentsOff).toFixed(0) + ' ¢'
+                  ? (targetCentsOff > 0 ? '↑ ' : '↓ ') + Math.abs(targetCentsOff).toFixed(0) + ' ¢'
                   : (targetCentsOff > 0 ? '+' : '') + targetCentsOff.toFixed(1) + ' ¢'
                 }
               </div>
             ) : (
-              <div className="text-[11px] font-black text-[#b09e9c]">
+              <div className="text-sm font-black text-[#b09e9c]">
                 {(detectedNote?.cents ?? 0) > 0 ? '+' : ''}{(detectedNote?.cents ?? 0).toFixed(1)} ¢
               </div>
             )}
             {targetNote && (
-              <div className="mt-1 text-[9px] font-black uppercase tracking-[0.15em] text-[#8d9e8c]">
-                ▶ {targetNote.name}{targetNote.octave}
+              <div className="mt-1 flex items-center justify-end gap-2">
+                <span className="text-[9px] font-black text-[#8d9e8c] uppercase">▶ {targetNote.name}{targetNote.octave}</span>
+                <button
+                  onClick={() => { setTargetNote(null); targetNoteRef.current = null; redrawCanvas(); }}
+                  className="text-[8px] font-black text-[#c5b4b2] hover:text-[#8a7a78] uppercase"
+                >✕</button>
               </div>
             )}
           </div>
         </div>
 
-        {/* Piano Roll Canvas */}
-        <div className="relative mx-0" style={{ height: 180 }}>
-          <canvas
-            ref={canvasRef}
-            className="w-full h-full block"
-            style={{ imageRendering: 'pixelated' }}
-          />
+        {/* Piano Roll Canvas — vertical keys on left + pitch trail */}
+        <div
+          style={{ height: 280 }}
+          onMouseDown={(e) => handleCanvasPointer(e.clientX, e.clientY)}
+          onTouchStart={(e) => { e.preventDefault(); const t = e.touches[0]; handleCanvasPointer(t.clientX, t.clientY); }}
+        >
+          <canvas ref={canvasRef} className="w-full h-full block" />
         </div>
 
-        {/* Mic + Piano section */}
-        <div className="px-8 pt-4 pb-3">
-          {/* Mic level */}
-          <div className="mb-4 rounded-[1.25rem] border border-[#eadad8] bg-white/70 px-4 py-2.5">
-            <div className="flex items-center justify-between">
-              <span className="text-[10px] font-black uppercase tracking-[0.25em] text-[#b09e9c]">MIC</span>
-              <span className="flex items-center gap-2">
-                <span className={`h-2 w-2 rounded-full transition-all ${inputLevel > 0.08 ? 'bg-[#8d9e8c] shadow-[0_0_0_4px_rgba(141,158,140,0.18)]' : 'bg-[#d8c9c7]'}`} />
-                <span className={`text-[10px] font-black uppercase tracking-[0.15em] ${inputLevel > 0.08 ? 'text-[#8d9e8c]' : 'text-[#c5b4b2]'}`}>
-                  {inputLevel > 0.08 ? 'Signal On' : 'Standby'}
-                </span>
+        {/* Bottom bar */}
+        <div className="px-7 pt-3 pb-5">
+          <div className="flex items-center justify-between mb-4">
+            {/* Mic status */}
+            <div className="flex items-center gap-2">
+              <span className={`h-2 w-2 rounded-full transition-all ${inputLevel > 0.08 ? 'bg-[#8d9e8c] shadow-[0_0_0_4px_rgba(141,158,140,0.18)]' : 'bg-[#d8c9c7]'}`} />
+              <span className={`text-[10px] font-black uppercase tracking-[0.15em] ${inputLevel > 0.08 ? 'text-[#8d9e8c]' : 'text-[#c5b4b2]'}`}>
+                {inputLevel > 0.08 ? 'Signal On' : 'Standby'}
               </span>
             </div>
-          </div>
-
-          {/* Piano keyboard */}
-          <div className="mb-3 rounded-[1.5rem] border border-[#eadad8] bg-white/60 p-3">
-            {/* Octave controls + target label */}
-            <div className="flex items-center justify-between mb-2.5">
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => setPianoOctave(o => Math.max(2, o - 1))}
-                  className="w-6 h-6 rounded-full border border-[#eadad8] text-[#b09e9c] text-xs font-black flex items-center justify-center hover:bg-[#faf4f3]"
-                  aria-label="下移八度 (Z)"
-                >‹</button>
-                <span className="text-[10px] font-black text-[#8a7a78] uppercase tracking-[0.18em]">Oct {pianoOctave}</span>
-                <button
-                  onClick={() => setPianoOctave(o => Math.min(5, o + 1))}
-                  className="w-6 h-6 rounded-full border border-[#eadad8] text-[#b09e9c] text-xs font-black flex items-center justify-center hover:bg-[#faf4f3]"
-                  aria-label="上移八度 (X)"
-                >›</button>
-              </div>
-              <div className="flex items-center gap-2">
-                {targetNote ? (
-                  <>
-                    <span className="text-[10px] font-black text-[#8d9e8c] uppercase">▶ {targetNote.name}{targetNote.octave}</span>
-                    <button
-                      onClick={() => { setTargetNote(null); targetNoteRef.current = null; }}
-                      className="rounded-lg border border-[#eadad8] px-2 py-0.5 text-[9px] font-black text-[#b09e9c] hover:bg-[#faf4f3]"
-                    >CLEAR</button>
-                  </>
-                ) : (
-                  <span className="text-[9px] text-[#d8c9c7] font-bold uppercase tracking-[0.1em]">點鍵盤設目標音</span>
-                )}
-              </div>
-            </div>
-
-            <PianoKeyboard
-              octave={pianoOctave}
-              detectedMidi={!isTooQuiet && detectedNote ? detectedNote.midiNote : null}
-              targetMidi={targetNote?.midi ?? null}
-              onPress={handlePianoPress}
-            />
-
-            <div className="mt-2 text-center text-[8px] font-bold text-[#d8c9c7] uppercase tracking-[0.15em]">
-              A–K 彈奏 · Z/X 換八度
+            {/* Keyboard octave (for keyboard shortcut users) */}
+            <div className="flex items-center gap-1.5">
+              <button onClick={() => setKeyOctave(o => Math.max(2, o - 1))} className="w-5 h-5 rounded-full border border-[#eadad8] text-[#b09e9c] text-xs flex items-center justify-center hover:bg-[#faf4f3]">‹</button>
+              <span className="text-[9px] font-black text-[#b09e9c] uppercase tracking-[0.15em]">Key Oct {keyOctave}</span>
+              <button onClick={() => setKeyOctave(o => Math.min(5, o + 1))} className="w-5 h-5 rounded-full border border-[#eadad8] text-[#b09e9c] text-xs flex items-center justify-center hover:bg-[#faf4f3]">›</button>
             </div>
           </div>
 
-          {/* Start / Stop */}
           <button
             onClick={isListening ? stopAll : startMic}
             className={`flex w-full items-center justify-center gap-3 rounded-[2rem] py-4 text-xs font-black tracking-[0.3em] transition-all ${
@@ -773,7 +725,7 @@ export default function VocalTuner() {
         </div>
       </div>
 
-      <p className="mt-6 text-center text-[9px] font-black uppercase tracking-[0.5em] text-[#b09e9c]">
+      <p className="mt-5 text-center text-[9px] font-black uppercase tracking-[0.5em] text-[#b09e9c]">
         Phenom · Vocal Training Solution
       </p>
     </div>
