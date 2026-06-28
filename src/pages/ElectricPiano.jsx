@@ -301,7 +301,7 @@ const SOLFEGE_BLACK = { 'C#':'1♯', 'D#':'2♯', 'F#':'4♯', 'G#':'5♯', 'A#'
 export default function ElectricPiano() {
   const [timbre, setTimbre] = useState('GRAND');
   // kbOct = the octave that QWERTY 'A' maps to (C{kbOct})
-  const [kbOct, setKbOct] = useState(3);
+  const [kbOct, setKbOct] = useState(4); // A key = C4 (Middle C)
   // labelMode cycles: 'name' → 'solfege' → 'none' → 'name'
   const [labelMode, setLabelMode] = useState('name');
   const [activeIds, setActiveIds] = useState(new Set());
