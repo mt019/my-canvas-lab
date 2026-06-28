@@ -278,10 +278,10 @@ const EVASION_DATA = [
 
 export default function AirPollutionFee() {
   const [section, setSection] = useState('elements');
-  const [openEl, setOpenEl] = useState(new Set(['subject']));
-  const [openProc, setOpenProc] = useState(new Set(['01']));
-  const [openEffect, setOpenEffect] = useState(new Set(['duty']));
-  const [openEvasion, setOpenEvasion] = useState(new Set(['types']));
+  const [openEl, setOpenEl] = useState(() => new Set(ELEMENTS_DATA.map(e => e.id)));
+  const [openProc, setOpenProc] = useState(() => new Set(PROCEDURE_STEPS.map(p => p.step)));
+  const [openEffect, setOpenEffect] = useState(() => new Set(EFFECTS_DATA.map(e => e.id)));
+  const [openEvasion, setOpenEvasion] = useState(() => new Set(EVASION_DATA.map(e => e.id)));
   const toggle = (setter, id) => setter(prev => {
     const next = new Set(prev);
     next.has(id) ? next.delete(id) : next.add(id);
