@@ -12,12 +12,12 @@ const BLACK_POS = { 'C#': 0.60, 'D#': 1.40, 'F#': 3.60, 'G#': 4.50, 'A#': 5.40 }
 const MIN_START_OCT = 1;
 const MAX_START_OCT = 6;
 
-// QWERTY → noteId (always anchored to C4 area)
-const KEY_MAP = {
-  a:'C4', w:'C#4', s:'D4', e:'D#4', d:'E4',
-  f:'F4', t:'F#4', g:'G4', y:'G#4', h:'A4',
-  u:'A#4', j:'B4', k:'C5', o:'C#5', l:'D5', p:'D#5',
-};
+// QWERTY layout (key → note name offset from startOct)
+const QWERTY_LAYOUT = [
+  ['a','C',0], ['w','C#',0], ['s','D',0], ['e','D#',0], ['d','E',0],
+  ['f','F',0], ['t','F#',0], ['g','G',0], ['y','G#',0], ['h','A',0],
+  ['u','A#',0],['j','B',0],  ['k','C',1], ['o','C#',1], ['l','D',1], ['p','D#',1],
+];
 
 const TIMBRES = {
   GRAND:      { name: '鋼琴',  sub: 'Grand Piano' },
@@ -301,6 +301,15 @@ export default function ElectricPiano() {
     () => typeof window !== 'undefined' && window.innerHeight > window.innerWidth,
   );
 
+  // Dynamic QWERTY map — follows startOct so Z/X actually changes played notes
+  const keyMap = useMemo(() => {
+    const map = {};
+    for (const [key, note, octOffset] of QWERTY_LAYOUT) {
+      map[key] = `${note}${startOct + octOffset}`;
+    }
+    return map;
+  }, [startOct]);
+
   const audioCtxRef = useRef(null);
   const masterGainRef = useRef(null);
   const voicesRef = useRef(new Map()); // pointerId → { noteId, stop }
@@ -499,17 +508,21 @@ export default function ElectricPiano() {
   useEffect(() => {
     const held = new Set();
     const down = (e) => {
-      // Spacebar = sustain pedal (hold)
       if (e.key === ' ') { e.preventDefault(); activateSustain(); return; }
-      // Z / X = octave shift
       if (e.key === 'z' || e.key === 'Z') {
-        setStartOct(o => Math.max(MIN_START_OCT, o - 1)); return;
+        releaseAll();
+        setStartOct(o => Math.max(MIN_START_OCT, o - 1));
+        held.clear();
+        return;
       }
       if (e.key === 'x' || e.key === 'X') {
-        setStartOct(o => Math.min(MAX_START_OCT, o + 1)); return;
+        releaseAll();
+        setStartOct(o => Math.min(MAX_START_OCT, o + 1));
+        held.clear();
+        return;
       }
       if (e.repeat || held.has(e.key)) return;
-      const id = KEY_MAP[e.key.toLowerCase()];
+      const id = keyMap[e.key.toLowerCase()];
       if (!id) return;
       held.add(e.key);
       pressKey(id, `kb:${e.key}`);
@@ -517,7 +530,7 @@ export default function ElectricPiano() {
     const up = (e) => {
       if (e.key === ' ') { releaseSustain(); return; }
       held.delete(e.key);
-      const id = KEY_MAP[e.key.toLowerCase()];
+      const id = keyMap[e.key.toLowerCase()];
       if (id) releaseKey(`kb:${e.key}`);
     };
     window.addEventListener('keydown', down);
@@ -530,7 +543,7 @@ export default function ElectricPiano() {
       window.removeEventListener('mouseup', onMouseUp);
       window.removeEventListener('blur', releaseAll);
     };
-  }, [pressKey, releaseKey, onMouseUp, releaseAll, activateSustain, releaseSustain]);
+  }, [keyMap, pressKey, releaseKey, onMouseUp, releaseAll, activateSustain, releaseSustain]);
 
   // Cleanup on unmount
   useEffect(() => {
@@ -652,7 +665,7 @@ export default function ElectricPiano() {
               {whites.map(({ note, oct, id, wi }) => {
                 const isActive = activeIds.has(id);
                 const top = (totalWhite - 1 - wi) * wkh_v + 1;
-                const kbKey = Object.entries(KEY_MAP).find(([, v]) => v === id)?.[0];
+                const kbKey = Object.entries(keyMap).find(([, v]) => v === id)?.[0];
                 return (
                   <div
                     key={id}
@@ -706,7 +719,7 @@ export default function ElectricPiano() {
               {/* Horizontal layout: standard piano keyboard */}
               {whites.map(({ note, oct, id, wi }) => {
                 const isActive = activeIds.has(id);
-                const kbKey = Object.entries(KEY_MAP).find(([, v]) => v === id)?.[0];
+                const kbKey = Object.entries(keyMap).find(([, v]) => v === id)?.[0];
                 return (
                   <div
                     key={id}
@@ -738,7 +751,7 @@ export default function ElectricPiano() {
               })}
               {blacks.map(({ note, oct, id, pos }) => {
                 const isActive = activeIds.has(id);
-                const kbKey = Object.entries(KEY_MAP).find(([, v]) => v === id)?.[0];
+                const kbKey = Object.entries(keyMap).find(([, v]) => v === id)?.[0];
                 return (
                   <div
                     key={id}
