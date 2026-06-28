@@ -373,6 +373,37 @@ export default function ElectricPiano() {
     return audioCtxRef.current;
   }, []);
 
+  // ── Sustain pedal (declared early so all callbacks below can reference it) ──
+
+  const [sustain, setSustain] = useState(false);
+  const sustainRef = useRef(false);
+  const sustainedRef = useRef(new Map()); // noteId → stop
+
+  const updateActiveIds = useCallback(() => {
+    setActiveIds(new Set([
+      ...[...voicesRef.current.values()].map(v => v.noteId),
+      ...sustainedRef.current.keys(),
+    ]));
+  }, []);
+
+  const activateSustain = useCallback(() => {
+    sustainRef.current = true;
+    setSustain(true);
+  }, []);
+
+  const releaseSustain = useCallback(() => {
+    sustainRef.current = false;
+    setSustain(false);
+    for (const stop of sustainedRef.current.values()) stop();
+    sustainedRef.current.clear();
+    updateActiveIds();
+  }, [updateActiveIds]);
+
+  const toggleSustain = useCallback(() => {
+    if (sustainRef.current) releaseSustain();
+    else activateSustain();
+  }, [activateSustain, releaseSustain]);
+
   // ── Note press/release ─────────────────────────────────────────────────────
 
   const pressKey = useCallback(async (noteId, pointerId) => {
@@ -508,36 +539,6 @@ export default function ElectricPiano() {
       audioCtxRef.current?.close().catch(() => {});
     };
   }, [releaseAll]);
-
-  // ── Sustain pedal ─────────────────────────────────────────────────────────
-  const [sustain, setSustain] = useState(false);
-  const sustainRef = useRef(false);
-  const sustainedRef = useRef(new Map()); // noteId → stop
-
-  const updateActiveIds = useCallback(() => {
-    setActiveIds(new Set([
-      ...[...voicesRef.current.values()].map(v => v.noteId),
-      ...sustainedRef.current.keys(),
-    ]));
-  }, []);
-
-  const activateSustain = useCallback(() => {
-    sustainRef.current = true;
-    setSustain(true);
-  }, []);
-
-  const releaseSustain = useCallback(() => {
-    sustainRef.current = false;
-    setSustain(false);
-    for (const stop of sustainedRef.current.values()) stop();
-    sustainedRef.current.clear();
-    updateActiveIds();
-  }, [updateActiveIds]);
-
-  const toggleSustain = useCallback(() => {
-    if (sustainRef.current) releaseSustain();
-    else activateSustain();
-  }, [activateSustain, releaseSustain]);
 
   // ── Derived display ────────────────────────────────────────────────────────
 
