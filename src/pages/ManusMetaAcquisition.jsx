@@ -696,10 +696,18 @@ const SOURCES = {
 export default function ManusMetaAcquisition() {
   const [lang, setLang] = useState('zh');
   const [tab, setTab] = useState(0);
-  const [openPhase, setOpenPhase] = useState(null);
-  const [openLegal, setOpenLegal] = useState(null);
-  const [openLegalItem, setOpenLegalItem] = useState({});
-  const [openRQ, setOpenRQ] = useState(null);
+  const [openPhase, setOpenPhase] = useState(() => new Set(PHASES.map((_, i) => i)));
+  const [openLegal, setOpenLegal] = useState(() => new Set(LEGAL.map(d => d.id)));
+  const [openLegalItem, setOpenLegalItem] = useState(() => {
+    const obj = {};
+    LEGAL.forEach(dim => dim.items.forEach((_, j) => { obj[`${dim.id}-${j}`] = true; }));
+    return obj;
+  });
+  const [openRQ, setOpenRQ] = useState(() => new Set([
+    ...RESEARCH_QS.map((_, i) => i),
+    ...SCHOLARS.map(sc => `sc-${sc.id}`),
+  ]));
+  const tog = (setFn, key) => setFn(prev => { const s = new Set(prev); s.has(key) ? s.delete(key) : s.add(key); return s; });
 
   const iZh = lang === 'zh';
 
@@ -796,12 +804,12 @@ export default function ManusMetaAcquisition() {
             </div>
 
             {PHASES.map((ph, i) => {
-              const open = openPhase === i;
+              const open = openPhase.has(i);
               return (
                 <div key={ph.no} className="rounded-2xl border overflow-hidden" style={{ borderColor: ph.color, background: P.card }}>
                   <button
                     className="w-full flex items-center gap-3 px-4 py-3 text-left"
-                    onClick={() => setOpenPhase(open ? null : i)}
+                    onClick={() => tog(setOpenPhase, i)}
                   >
                     <div
                       className="shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-[11px] font-black"
@@ -990,12 +998,12 @@ export default function ManusMetaAcquisition() {
             </div>
 
             {LEGAL.map((dim) => {
-              const open = openLegal === dim.id;
+              const open = openLegal.has(dim.id);
               return (
                 <div key={dim.id} className="rounded-2xl border overflow-hidden" style={{ borderColor: dim.color, background: P.card }}>
                   <button
                     className="w-full flex items-center gap-3 px-4 py-3 text-left"
-                    onClick={() => setOpenLegal(open ? null : dim.id)}
+                    onClick={() => tog(setOpenLegal, dim.id)}
                   >
                     <div className="shrink-0 w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: dim.color }}>
                       <dim.Icon size={16} style={{ color: dim.tc }} />
@@ -1077,12 +1085,12 @@ export default function ManusMetaAcquisition() {
             {/* Research questions */}
             <div className="flex flex-col gap-2.5">
               {RESEARCH_QS.map((rq, i) => {
-                const open = openRQ === i;
+                const open = openRQ.has(i);
                 return (
                   <div key={rq.no} className="rounded-2xl border overflow-hidden" style={{ borderColor: rq.color, background: P.card }}>
                     <button
                       className="w-full flex items-center gap-3 px-4 py-3 text-left"
-                      onClick={() => setOpenRQ(open ? null : i)}
+                      onClick={() => tog(setOpenRQ, i)}
                     >
                       <div
                         className="shrink-0 w-9 h-7 rounded-lg flex items-center justify-center text-[10px] font-black"
@@ -1159,12 +1167,12 @@ export default function ManusMetaAcquisition() {
             {SCHOLARS.map((sc) => {
               const s = iZh ? sc.zh : sc.en;
               const isJoint = sc.id === 'joint';
-              const openSc = openRQ === `sc-${sc.id}`;
+              const openSc = openRQ.has(`sc-${sc.id}`);
               return (
                 <div key={sc.id} className="rounded-2xl border overflow-hidden" style={{ borderColor: sc.color, background: P.card }}>
                   <button
                     className="w-full flex items-center gap-3 px-4 py-3 text-left"
-                    onClick={() => setOpenRQ(openSc ? null : `sc-${sc.id}`)}
+                    onClick={() => tog(setOpenRQ, `sc-${sc.id}`)}
                   >
                     <div
                       className="shrink-0 w-10 h-10 rounded-xl flex items-center justify-center text-[11px] font-black"
