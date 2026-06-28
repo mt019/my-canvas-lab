@@ -3,7 +3,7 @@ import {
   Wind, Factory, Car, Building2, Scale, Calculator,
   ChevronRight, Info, Shield, BookOpen, TrendingUp,
   ClipboardList, AlertTriangle, Gavel, CheckCircle,
-  ArrowRight,
+  ArrowRight, History,
 } from 'lucide-react';
 
 // ─── Fee rate data ──────────────────────────────────────────────────────────
@@ -96,9 +96,10 @@ const ELEMENTS_DATA = [
     id: 'basis', no: '03', title: '計費基準',
     icon: Calculator, color: '#e8e0c8', textColor: '#686030', badge: '累進費率',
     content: [
-      '基本公式：費額 = 【Σ（各級排放量 × 各級費率）】× 優惠係數(D)',
-      '三層分級結構：①防制區等級（二級 vs. 一三級，依當地空品等級；一三級費率較高）②季節差別（Q1/Q4 冬季費率高於 Q2/Q3 夏季）③排放量累進分級（排放量越大適用費率越高）。',
-      '優惠係數 D（40%～100%）：裝設控制設備使排放濃度低於管制限值50%以下，依符合條件排放量比率適用最低四折優惠。目的：鼓勵超前合規、投資防制設備。',
+      '基本公式：費額 = 【Σ（各級排放量 × 各級費率）】× D × E',
+      '三層費率結構：①防制區等級（二級 vs. 一三級，依當地空品等級；一三級費率較高）②季節差別（Q1/Q4 冬季費率高於 Q2/Q3 夏季）③排放量累進分級（排放量越大適用費率越高）。',
+      '優惠係數 D（40%～100%）：裝設控制設備使排放濃度低於管制限值 50% 以下，依符合條件之排放量佔全廠比率，最低可享四折優惠（D = 40%）；條件不符者 D = 100%（無折扣）。',
+      '減量係數 E（70%～100%，僅 Q1/Q4）：當季實際排放量較前三年同季基準平均減少達 30% 以上者，E = 70%（費額打七折）；減量比例愈低，E 愈趨近 100%；線性內插計算。Q2/Q3 不適用（E 恆為 1）。',
     ],
   },
 ];
@@ -153,29 +154,20 @@ const PROCEDURE_STEPS = [
 
 const EFFECTS_DATA = [
   {
-    id: 'fund', title: '空氣污染防制基金',
-    icon: TrendingUp, color: '#d0e8d8', textColor: '#3a6848',
+    id: 'duty', title: '繳費義務之成立',
+    icon: Scale, color: '#d0dce8', textColor: '#3a5878',
     content: [
-      '費款全數存入「空氣污染防制基金」（依預算法規定之特別收入基金），專款專用，不得挪作一般行政支出，此為特別公課有別於一般稅捐的核心特徵。',
-      '基金管理：由環境部設置管理委員會監督運用，每年編列附屬單位預算，向立法院報告收支情形，具一定民主課責機制。',
+      '空污費屬「金錢給付公法義務」。主管機關依義務人申報之排放量核算費額，作成行政處分（繳費通知），義務人須於期限內依通知金額繳納，逾期不發生使義務消滅之效果。',
+      '法律關係特徵：義務人自行申報排放量（具公示效）→ 機關核算費額（核課處分）→ 義務人依限履行（給付義務）。核課處分送達即生拘束力，義務人如有不服須依行政救濟途徑，不得以不服為由拒繳。',
     ],
   },
   {
-    id: 'reduction', title: '減量係數 E：季節性減量誘因',
-    icon: Shield, color: '#d0dce8', textColor: '#3a5878',
+    id: 'enforce', title: '未履行之強制效果',
+    icon: Gavel, color: '#e8e0c8', textColor: '#686030',
     content: [
-      '僅適用於第一、四季（冬季）。依當季排放量與基準年同季平均相比：排放未明顯減少者 E = 100%（不折扣）；減少超過30%者 E = 70%（費率打七折）；介於其間者線性計算。',
-      '基準年 = 本費率修正生效後，前三年同季申報之平均排放量，使減量比較具個廠基礎，避免「排放量本就少的小廠」無法受惠。',
-      '設計邏輯：D 係數（優惠係數）鼓勵裝設防制設備；E 係數（減量係數）鼓勵實際減排——兩者形成雙軌誘因，對應「行政管制」與「經濟誘因」並行的政策架構。',
-    ],
-  },
-  {
-    id: 'outcomes', title: '空品改善成效',
-    icon: CheckCircle, color: '#e0e8d0', textColor: '#488038',
-    content: [
-      '1995至2008年累計徵收逾355億元；以1999年為基準，至2005年SOx 已削減 86,761 公噸、NOx 削減 63,880 公噸，減量成效顯著。',
-      '開徵後主要空氣污染物濃度改善：SO₂年均濃度由1994年8.07 ppb降至2008年4.35 ppb（降46%）；NO₂由24.3 ppb降至16.9 ppb（降31%）；PM₁₀由71.8 μg/m³降至58.1 μg/m³（降19%）。',
-      '反面警示：O₃（臭氧）反由1994年20.9 ppb上升至2008年29.1 ppb（升39%），顯示移動源管制與 VOCs 削減（前驅物）之成效有待加強，此亦為2007年新徵VOCs空污費的政策背景。',
+      '逾期未繳費：每逾一日加徵滯納金（依法定比率計算，累計可達本金之一定倍數）。滯納金性質上為行政加給，不同於稅法「利息」，旨在促使義務人迅速履行，並彌補國庫或基金之資金成本。',
+      '長期欠繳：主管機關得移送行政執行署依《行政執行法》執行，手段包括：命義務人報告財產狀況、扣押動產不動產、限制出境，直至拍賣財產以清償費額及滯納金。',
+      '情節重大者另可依空污法罰則處以罰鍰（罰鍰與補繳費額並行，互不取代），構成「雙重行政制裁」——但罰鍰之裁量需符合比例原則，不得逾越法律所定上限。',
     ],
   },
 ];
@@ -196,6 +188,54 @@ const FINANCE_DATA = {
     { label: '一般行政建設', pct: 0.8, color: '#d4c4b8' },
   ],
 };
+
+const HISTORY_TIMELINE = [
+  {
+    year: '1975', label: '空污法制定',
+    color: '#d0dce8', textColor: '#3a5878',
+    desc: '《空氣污染防制法》首次制定，確立基本管制框架，但尚無空污費條款；管制手段以行政許可為主。',
+  },
+  {
+    year: '1992', label: '費徵授權入法',
+    color: '#d0e8d8', textColor: '#3a6848',
+    desc: '空污法大幅修正，第10條明定主管機關得依排放種類及排放量徵收空氣污染防制費，確立「污染者付費」法律依據；同年確立設置「空氣污染防制基金」，專款專用，為特別公課立法模式之先例。',
+  },
+  {
+    year: '1995', label: 'SOx 費開徵',
+    color: '#e0d8c8', textColor: '#685830',
+    desc: '固定污染源空污費正式實施，首先徵收硫氧化物（SOx）排放費；移動污染源費同步開辦，依汽柴油含硫量三級計費，由燃料銷售商代繳。此為台灣最早以經濟誘因工具管制空污的實踐。',
+  },
+  {
+    year: '1996–1998', label: 'NOx 納入徵收',
+    color: '#e0d0e8', textColor: '#683878',
+    desc: '氮氧化物（NOx）納入固定源徵收範圍，擴大污染物覆蓋；費率首度調整，並引入季節差別費率雛形（夏季臭氧問題較冬季嚴重，費率設計開始分化）。',
+  },
+  {
+    year: '2002', label: '費率首次全面調整',
+    color: '#d8e8d0', textColor: '#487840',
+    desc: '對 SOx、NOx 費率進行系統性調整，提高費率以強化減量誘因；同步評估 VOCs 徵費可行性，為後續開徵奠基。',
+  },
+  {
+    year: '2007', label: 'VOCs 費開徵',
+    color: '#e8e0c8', textColor: '#686030',
+    desc: '揮發性有機物（VOCs）正式納入固定源徵費範圍，成為繼 SOx、NOx 之後第三類主要課徵污染物；此政策背景為：1990年代以來 O₃（臭氧）濃度不降反升，顯示前驅物 VOCs 管制不足。',
+  },
+  {
+    year: '2010', label: '費率結構大幅改革',
+    color: '#d8d0e8', textColor: '#504878',
+    desc: '引入三層累進費率結構：①防制區等級（一三級vs二級）②季節差別（Q1/Q4冬季高於Q2/Q3夏季）③排放量累進分級。同時建立優惠係數D（裝設防制設備可享四至十折優惠）及減量係數E（冬季實際減排享費率折扣），形成雙軌誘因機制。',
+  },
+  {
+    year: '2018', label: '空污法全面修正',
+    color: '#d0e8e8', textColor: '#306870',
+    desc: '空污法修正，空污費條文由舊法第10條改為現行第16條（條次重新編排）；強化 PM2.5 獨立管制規範，PM 類費率計費基準細化；徵收機關由環保署（現環境部）統一督導，固定源由直轄市/縣市政府徵收，移動源由中央統一辦理。',
+  },
+  {
+    year: '2020–迄今', label: '持續精進',
+    color: '#e8d8d0', textColor: '#785048',
+    desc: '配合國家空品改善方案（AQMP）定期檢討費率，移動源費率隨燃料品質提升動態調整；積極推動以 CEMS 即時數據取代估算申報，提高課徵精確度；並研議將戴奧辛、重金屬費率接軌實際毒性危害，反映環境成本。',
+  },
+];
 
 const EVASION_DATA = [
   {
@@ -240,7 +280,7 @@ export default function AirPollutionFee() {
   const [section, setSection] = useState('elements');
   const [openEl, setOpenEl] = useState('subject');
   const [openProc, setOpenProc] = useState('01');
-  const [openEffect, setOpenEffect] = useState('fund');
+  const [openEffect, setOpenEffect] = useState('duty');
   const [openEvasion, setOpenEvasion] = useState('types');
   const [activeTab, setActiveTab] = useState('SOx');
   const [zone, setZone] = useState('zone2');
@@ -256,8 +296,9 @@ export default function AirPollutionFee() {
   const SECTIONS = [
     { id: 'elements',  label: '構成要件', icon: BookOpen },
     { id: 'procedure', label: '稽徵程序', icon: ClipboardList },
-    { id: 'effects',   label: '法律效果', icon: TrendingUp },
+    { id: 'effects',   label: '法律效果', icon: Scale },
     { id: 'evasion',   label: '逃漏',     icon: AlertTriangle },
+    { id: 'history',   label: '制度沿革', icon: History },
   ];
 
   return (
@@ -277,7 +318,7 @@ export default function AirPollutionFee() {
       <div className="max-w-2xl mx-auto px-4 pt-5">
 
         {/* Section nav */}
-        <div className="grid grid-cols-4 gap-1.5 mb-5">
+        <div className="grid grid-cols-5 gap-1 mb-5">
           {SECTIONS.map(s => {
             const Icon = s.icon;
             return (
@@ -321,7 +362,7 @@ export default function AirPollutionFee() {
                 <Accordion
                   key={el.id}
                   isOpen={isOpen}
-                  onToggle={() => setOpenEl(isOpen ? null : el.id)}
+                  onToggle={() => setOpenEl(el.id)}
                   header={
                     <div className="flex items-center gap-3">
                       <div className="shrink-0 w-9 h-9 rounded-xl flex items-center justify-center" style={{ backgroundColor: el.color }}>
@@ -462,7 +503,7 @@ export default function AirPollutionFee() {
                 <Accordion
                   key={proc.step}
                   isOpen={isOpen}
-                  onToggle={() => setOpenProc(isOpen ? null : proc.step)}
+                  onToggle={() => setOpenProc(proc.step)}
                   header={
                     <div className="flex items-center gap-3">
                       <div className="shrink-0 w-9 h-9 rounded-xl flex items-center justify-center" style={{ backgroundColor: proc.color }}>
@@ -488,48 +529,9 @@ export default function AirPollutionFee() {
         {section === 'effects' && (
           <div className="space-y-3">
             <InfoBox
-              title="正向法律效果"
-              text="空污費的法律效果分為「直接效果」（繳費義務→空污基金）與「誘因效果」（優惠係數D、減量係數E→廠商主動減排）。兩者合力形成比純行政管制更有彈性的環境治理工具。"
+              title="對義務人之法律效果"
+              text="空污費的法律效果聚焦於「對義務人個別規制關係」：費額核課→繳費義務成立→履行（消滅）或未履行（延滯金→強制執行）。空污基金之財政收支為制度層面效果，見「制度沿革」。"
             />
-
-            {/* 財政收支 — 獨立呈現 */}
-            <div className="rounded-[1.5rem] border border-[#e8d3d1] bg-white/70 backdrop-blur-xl overflow-hidden shadow-sm shadow-rose-100/60">
-              <div className="px-5 py-3 border-b border-[#f5eceb]">
-                <p className="text-[9px] font-black uppercase tracking-[0.35em] text-[#b09e9c]">空污基金 · 財政收支</p>
-              </div>
-              <div className="grid grid-cols-2 divide-x divide-[#f5eceb]">
-                {/* 收入面 */}
-                <div className="px-4 py-4">
-                  <p className="text-[9px] font-black text-[#8a7a78] uppercase tracking-wider mb-3">收入來源</p>
-                  {FINANCE_DATA.revenue.map(item => (
-                    <div key={item.label} className="mb-3">
-                      <div className="flex items-baseline justify-between mb-1">
-                        <p className="text-[11px] font-black text-[#6b5b58]">{item.label}</p>
-                        <p className="text-[11px] font-black text-[#8a7a78]">~{item.pct}%</p>
-                      </div>
-                      <div className="h-1.5 rounded-full bg-[#f0e8e6]">
-                        <div className="h-full rounded-full" style={{ width: `${item.pct}%`, backgroundColor: item.color }} />
-                      </div>
-                      <p className="text-[9px] text-[#b09e9c] mt-0.5">{item.note}</p>
-                    </div>
-                  ))}
-                  <p className="mt-2 text-[10px] text-[#a09088] leading-relaxed">累計徵收（1995–2008）：逾 <span className="font-black text-[#6b5b58]">355 億元</span></p>
-                </div>
-                {/* 支出面 */}
-                <div className="px-4 py-4">
-                  <p className="text-[9px] font-black text-[#8a7a78] uppercase tracking-wider mb-3">基金支出</p>
-                  {FINANCE_DATA.expenditure.map(item => (
-                    <div key={item.label} className="flex items-center gap-2 mb-2">
-                      <p className="text-[10px] text-[#6b5b58] w-[88px] shrink-0 leading-tight">{item.label}</p>
-                      <div className="flex-1 h-1.5 rounded-full bg-[#f0e8e6]">
-                        <div className="h-full rounded-full" style={{ width: `${item.pct}%`, backgroundColor: item.color }} />
-                      </div>
-                      <p className="text-[10px] font-black text-[#8a7a78] w-7 text-right shrink-0">{item.pct}%</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
 
             {EFFECTS_DATA.map(ef => {
               const Icon = ef.icon;
@@ -538,7 +540,7 @@ export default function AirPollutionFee() {
                 <Accordion
                   key={ef.id}
                   isOpen={isOpen}
-                  onToggle={() => setOpenEffect(isOpen ? null : ef.id)}
+                  onToggle={() => setOpenEffect(ef.id)}
                   header={
                     <div className="flex items-center gap-3">
                       <div className="shrink-0 w-9 h-9 rounded-xl flex items-center justify-center" style={{ backgroundColor: ef.color }}>
@@ -570,7 +572,7 @@ export default function AirPollutionFee() {
                 <Accordion
                   key={ev.id}
                   isOpen={isOpen}
-                  onToggle={() => setOpenEvasion(isOpen ? null : ev.id)}
+                  onToggle={() => setOpenEvasion(ev.id)}
                   header={
                     <div className="flex items-center gap-3">
                       <div className="shrink-0 w-9 h-9 rounded-xl flex items-center justify-center" style={{ backgroundColor: ev.color }}>
@@ -596,6 +598,71 @@ export default function AirPollutionFee() {
                 </Accordion>
               );
             })}
+          </div>
+        )}
+
+        {/* ── 制度沿革 ──────────────────────────────────────────── */}
+        {section === 'history' && (
+          <div className="space-y-3">
+            <InfoBox
+              title="制度流變"
+              text="台灣空污費制度從 1975 年純行政管制出發，歷經 1992 年授權立法、1995 年首次開徵，到 2010 年引入累進費率與雙重係數誘因機制，逐步從命令管制走向經濟誘因並行的現代環境治理模式。"
+            />
+
+            {/* 時間軸 */}
+            <div className="relative pl-6">
+              <div className="absolute left-[11px] top-2 bottom-2 w-0.5 bg-[#e8d3d1]" />
+              {HISTORY_TIMELINE.map((item, i) => (
+                <div key={item.year} className="relative mb-4 last:mb-0">
+                  <div className="absolute -left-6 top-3 w-4 h-4 rounded-full border-2 border-white shadow-sm"
+                    style={{ backgroundColor: item.color }} />
+                  <div className="rounded-[1.25rem] border border-[#e8d3d1] bg-white/70 backdrop-blur-xl px-4 py-3.5 shadow-sm">
+                    <div className="flex items-baseline gap-2 mb-1.5">
+                      <span className="text-[11px] font-black" style={{ color: item.textColor }}>{item.year}</span>
+                      <span className="text-[11px] font-black text-[#6b5b58]">{item.label}</span>
+                    </div>
+                    <p className="text-[11px] text-[#7a6a68] leading-relaxed">{item.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* 財政收支 — 制度整體成效 */}
+            <div className="rounded-[1.5rem] border border-[#e8d3d1] bg-white/70 backdrop-blur-xl overflow-hidden shadow-sm shadow-rose-100/60 mt-2">
+              <div className="px-5 py-3 border-b border-[#f5eceb]">
+                <p className="text-[9px] font-black uppercase tracking-[0.35em] text-[#b09e9c]">空污基金 · 財政收支結構</p>
+              </div>
+              <div className="grid grid-cols-2 divide-x divide-[#f5eceb]">
+                <div className="px-4 py-4">
+                  <p className="text-[9px] font-black text-[#8a7a78] uppercase tracking-wider mb-3">收入來源</p>
+                  {FINANCE_DATA.revenue.map(item => (
+                    <div key={item.label} className="mb-3">
+                      <div className="flex items-baseline justify-between mb-1">
+                        <p className="text-[11px] font-black text-[#6b5b58]">{item.label}</p>
+                        <p className="text-[11px] font-black text-[#8a7a78]">~{item.pct}%</p>
+                      </div>
+                      <div className="h-1.5 rounded-full bg-[#f0e8e6]">
+                        <div className="h-full rounded-full" style={{ width: `${item.pct}%`, backgroundColor: item.color }} />
+                      </div>
+                      <p className="text-[9px] text-[#b09e9c] mt-0.5">{item.note}</p>
+                    </div>
+                  ))}
+                  <p className="mt-2 text-[10px] text-[#a09088] leading-relaxed">累計徵收（1995–2008）：逾 <span className="font-black text-[#6b5b58]">355 億元</span></p>
+                </div>
+                <div className="px-4 py-4">
+                  <p className="text-[9px] font-black text-[#8a7a78] uppercase tracking-wider mb-3">基金支出</p>
+                  {FINANCE_DATA.expenditure.map(item => (
+                    <div key={item.label} className="flex items-center gap-2 mb-2">
+                      <p className="text-[10px] text-[#6b5b58] w-[88px] shrink-0 leading-tight">{item.label}</p>
+                      <div className="flex-1 h-1.5 rounded-full bg-[#f0e8e6]">
+                        <div className="h-full rounded-full" style={{ width: `${item.pct}%`, backgroundColor: item.color }} />
+                      </div>
+                      <p className="text-[10px] font-black text-[#8a7a78] w-7 text-right shrink-0">{item.pct}%</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
         )}
 
