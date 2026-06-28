@@ -1,6 +1,6 @@
 import React, { Suspense, lazy, useEffect, useMemo } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import { ArrowRight, Droplets, Mic, Music, Music2, Piano, Wind } from 'lucide-react';
+import { ArrowRight, Droplets, Landmark, Mic, Music, Music2, Piano, Wind } from 'lucide-react';
 
 const pages = import.meta.glob('./pages/*.{jsx,tsx}');
 
@@ -51,6 +51,14 @@ const PAGE_META = {
     Icon: Droplets,
     accent: '#f0e8d8',
     accentText: '#9a7e5a',
+    group: 'analysis',
+  },
+  GovernmentDebt: {
+    name: '政府債務研究',
+    desc: '全球主要國家債務現況、中國 LGFV 城投深度分析與六層次國際學術研究架構',
+    Icon: Landmark,
+    accent: '#c8d8e8',
+    accentText: '#305878',
     group: 'analysis',
   },
 };
