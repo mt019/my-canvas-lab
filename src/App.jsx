@@ -1,6 +1,6 @@
 import React, { Suspense, lazy, useEffect, useMemo } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import { ArrowRight, Droplets, Mic, Music, Music2 } from 'lucide-react';
+import { ArrowRight, Droplets, Mic, Music, Music2, Piano } from 'lucide-react';
 
 const pages = import.meta.glob('./pages/*.{jsx,tsx}');
 
@@ -25,6 +25,13 @@ const PAGE_META = {
     Icon: Mic,
     accent: '#dde0f0',
     accentText: '#7a7ea8',
+  },
+  ElectricPiano: {
+    name: 'Klavier',
+    desc: '六種音色合成音源，支援多指和弦與電腦鍵盤彈奏',
+    Icon: Piano,
+    accent: '#dde0f0',
+    accentText: '#6a6fa0',
   },
   FuelTaxBreakdown: {
     name: '台灣油稅分析',
