@@ -1,21 +1,39 @@
-# React + TypeScript + Vite
+# Phenom Canvas Lab
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+音樂創作工具與法律、財稅、政策研究視覺化的互動實驗場。
 
-While this project uses React, Vite supports many popular JS frameworks. [See all the supported frameworks](https://vitejs.dev/guide/#scaffolding-your-first-vite-project).
+## 專案
 
-## Deploy Your Own
+| 分類 | 頁面 | 說明 |
+| --- | --- | --- |
+| 音樂工具 | 自動調音器 | 吉他／烏克麗麗／吉他麗麗，含 Open G、DADGAD 等特殊定弦 |
+| 音樂工具 | 烏克麗麗調音器 | 視覺化品格指引，適合初學者 |
+| 音樂工具 | 聲音調音器 | 即時音高偵測，鋼琴捲軸呈現聲線走向 |
+| 音樂工具 | Klavier | 六種音色合成音源，支援多指和弦與電腦鍵盤彈奏 |
+| 分析工具 | 空氣污染防制費 | 空污法§16 構成要件、稽徵程序、法律效果、逃漏、財政收支、制度沿革 |
+| 分析工具 | 日本油稅分析 | 逐層拆解油價中的稅費結構，含二重課稅可視化 |
+| 分析工具 | 政府債務研究 | 全球主要國家債務現況、中國 LGFV 城投深度分析 |
+| 分析工具 | Manus–Meta 跨境收購 | AI 新創跨境退出 × 投資審查 × 技術管制 × 國際稅法 |
 
-Deploy your own Vite project with Vercel.
+## 技術棧
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/vercel/examples/tree/main/framework-boilerplates/vite-react&template=vite-react)
+- **框架**：React 18 + Vite
+- **樣式**：Tailwind CSS
+- **路由**：React Router v6（`import.meta.glob` 自動探索 `src/pages/`）
+- **圖示**：lucide-react
+- **部署**：Vercel
 
-_Live Example: https://vite-react-example.vercel.app_
+## 本地開發
 
-### Deploying From Your Terminal
-
-You can deploy your new Vite project with a single command from your terminal using [Vercel CLI](https://vercel.com/download):
-
-```shell
-$ vercel
+```bash
+npm install
+npm run dev
 ```
+
+## 新增頁面
+
+在 `src/pages/` 新增一個 `.jsx` 檔，路由自動生效（路徑為 `/{檔名小寫}`）。若要在首頁顯示卡片，在 `src/App.jsx` 的 `PAGE_META` 補上對應設定。
+
+## 待辦
+
+見 [TODO.md](./TODO.md)。
