@@ -1,6 +1,6 @@
 import React, { Suspense, lazy, useEffect, useMemo } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import { ArrowRight, Droplets, Landmark, Mic, Music, Music2, Piano, Wind } from 'lucide-react';
+import { ArrowRight, Droplets, Landmark, Mic, Music, Music2, Piano, Scale, Wind } from 'lucide-react';
 
 const pages = import.meta.glob('./pages/*.{jsx,tsx}');
 
@@ -59,6 +59,14 @@ const PAGE_META = {
     Icon: Landmark,
     accent: '#c8d8e8',
     accentText: '#305878',
+    group: 'analysis',
+  },
+  ManusMetaAcquisition: {
+    name: 'Manus–Meta 跨境收購',
+    desc: 'AI 新創跨境退出 · 投資審查 × 技術管制 × 國際稅法 · 事實查核 · 中英雙語',
+    Icon: Scale,
+    accent: '#d8dff0',
+    accentText: '#3b4f78',
     group: 'analysis',
   },
 };
