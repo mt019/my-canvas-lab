@@ -7,7 +7,8 @@ const CHROMATIC = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
 const WHITE_NOTES = ['C','D','E','F','G','A','B'];
 const IS_BLACK = new Set(['C#','D#','F#','G#','A#']);
 // Black key center position (in white-key-width units from start of octave)
-const BLACK_POS = { 'C#': 0.60, 'D#': 1.40, 'F#': 3.60, 'G#': 4.50, 'A#': 5.40 };
+// C center = 0.5*wkw, D center = 1.5*wkw → C# midpoint at 1.0*wkw, etc.
+const BLACK_POS = { 'C#': 1.0, 'D#': 2.0, 'F#': 4.0, 'G#': 5.0, 'A#': 6.0 };
 
 const MIN_START_OCT = 1;
 const MAX_START_OCT = 6;
