@@ -888,11 +888,11 @@ export default function GovernmentDebt() {
               </div>
 
               {RESEARCH_LAYERS.map(layer => {
-                const isOpen = openLayer === layer.id;
+                const isOpen = openLayer.has(layer.id);
                 const layerPapers = LITERATURE_DB.filter(p => p.topics.includes(layer.id));
                 return (
                   <div key={layer.id} className="rounded-2xl border border-white/60 bg-white/80 shadow-sm overflow-hidden">
-                    <button className="w-full text-left px-5 py-4 flex items-center gap-3" onClick={() => setOpenLayer(isOpen ? null : layer.id)}>
+                    <button className="w-full text-left px-5 py-4 flex items-center gap-3" onClick={() => tog(setOpenLayer, layer.id)}>
                       <div className="shrink-0 w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: layer.color }}>
                         <layer.Icon size={16} style={{ color: layer.textColor }} strokeWidth={2.2} />
                       </div>
@@ -983,16 +983,16 @@ export default function GovernmentDebt() {
               </div>
               {GLOSSARY.map((g, i) => (
                 <div key={g.term} className="rounded-xl border border-white/60 bg-white/80 overflow-hidden">
-                  <button className="w-full text-left px-4 py-3 flex items-center gap-3" onClick={() => setOpenGlossary(openGlossary === i ? null : i)}>
+                  <button className="w-full text-left px-4 py-3 flex items-center gap-3" onClick={() => tog(setOpenGlossary, i)}>
                     <Hash size={12} style={{ color: '#a0aec0', flexShrink: 0 }} />
                     <div className="flex-1 min-w-0">
                       <span className="text-xs font-black" style={{ color: '#2d3748' }}>{g.term}</span>
                       <span className="text-[10px] ml-2" style={{ color: '#a0aec0' }}>{g.en}</span>
                     </div>
                     {g.src && <span className="text-[9px] font-bold shrink-0" style={{ color: '#b0bec5' }}>{g.src}</span>}
-                    <ChevronDown size={13} style={{ color: '#a0aec0', transform: openGlossary === i ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s', flexShrink: 0 }} />
+                    <ChevronDown size={13} style={{ color: '#a0aec0', transform: openGlossary.has(i) ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s', flexShrink: 0 }} />
                   </button>
-                  {openGlossary === i && (
+                  {openGlossary.has(i) && (
                     <div className="border-t px-4 py-3" style={{ borderColor: '#f0f4f8' }}>
                       <p className="text-[11px] leading-relaxed" style={{ color: '#4a5568' }}>{g.def}</p>
                     </div>
@@ -1108,7 +1108,7 @@ export default function GovernmentDebt() {
               </div>
               {CASE_STUDIES.map((cs, i) => (
                 <div key={cs.title} className="rounded-2xl border border-white/60 bg-white/80 shadow-sm overflow-hidden">
-                  <button className="w-full text-left px-5 py-4 flex items-center gap-3" onClick={() => setOpenCase(openCase === i ? null : i)}>
+                  <button className="w-full text-left px-5 py-4 flex items-center gap-3" onClick={() => tog(setOpenCase, i)}>
                     <div className="shrink-0 w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: cs.color }}>
                       <Clock size={16} style={{ color: cs.textColor }} strokeWidth={2.2} />
                     </div>
@@ -1119,9 +1119,9 @@ export default function GovernmentDebt() {
                       </div>
                       <p className="text-[10px] mt-0.5" style={{ color: '#718096' }}>{cs.year}　債務峰值：{cs.peak}</p>
                     </div>
-                    <ChevronDown size={15} style={{ color: '#a0aec0', transform: openCase === i ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s', flexShrink: 0 }} />
+                    <ChevronDown size={15} style={{ color: '#a0aec0', transform: openCase.has(i) ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s', flexShrink: 0 }} />
                   </button>
-                  {openCase === i && (
+                  {openCase.has(i) && (
                     <div className="border-t px-5 py-4 flex flex-col gap-3" style={{ borderColor: '#f0f4f8' }}>
                       {[
                         { label: '觸發因素', text: cs.trigger },
