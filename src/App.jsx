@@ -132,6 +132,11 @@ function RouteCard({ route }) {
   );
 }
 
+const GROUP_META = {
+  music:    { emoji: '♩', desc: '調音、音高偵測與鍵盤合成器' },
+  analysis: { emoji: '◈', desc: '法律、財稅與政策的互動視覺化' },
+};
+
 function HomePage({ routes }) {
   useEffect(() => {
     document.title = 'Phenom Canvas Lab';
@@ -139,37 +144,47 @@ function HomePage({ routes }) {
 
   const known = routes.filter((r) => r.meta);
   const unknown = routes.filter((r) => !r.meta);
+  const total = known.length + unknown.length;
 
   return (
     <div
       className="min-h-screen bg-[#f5eceb] font-sans flex flex-col items-center px-4 sm:px-6"
-      style={{ paddingTop: 48, paddingBottom: 60 }}
+      style={{ paddingTop: 52, paddingBottom: 64 }}
     >
       <div className="w-full max-w-xl">
 
         {/* Header */}
-        <header className="mb-10 text-center">
-          <p className="text-[10px] font-black uppercase tracking-[0.4em] text-[#b09e9c] mb-4">
+        <header className="mb-11 text-center">
+          <p className="text-[10px] font-black uppercase tracking-[0.4em] text-[#c5b4b2] mb-5">
             Phenom&nbsp;&nbsp;·&nbsp;&nbsp;Canvas Lab
           </p>
-          <h1 className="text-4xl sm:text-5xl font-black text-[#6b5b58] tracking-tight mb-2">
+          <h1 className="text-[2.75rem] sm:text-5xl font-black text-[#6b5b58] tracking-tight leading-none mb-3">
             數位實驗室
           </h1>
-          <p className="text-sm text-[#b09e9c] font-medium">
-            互動式工具與實驗專案的集合地。
+          <p className="text-[13px] text-[#b09e9c] font-medium leading-relaxed">
+            音樂創作工具，與法律、財稅、政策研究的視覺化實驗場。
           </p>
+          <div className="mt-4 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/60 border border-[#e8d3d1]">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#c5b4b2]" />
+            <span className="text-[10px] font-black text-[#b09e9c] tracking-wide">{total} 個專案</span>
+          </div>
         </header>
 
         {/* Grouped pages */}
-        <div className="flex flex-col gap-8">
+        <div className="flex flex-col gap-9">
           {GROUPS.map(({ key, label }) => {
             const items = known.filter((r) => r.meta.group === key);
             if (items.length === 0) return null;
+            const gm = GROUP_META[key];
             return (
               <section key={key}>
-                <p className="text-[9px] font-black uppercase tracking-[0.35em] text-[#c5b4b2] mb-2.5 px-0.5">
-                  {label}
-                </p>
+                <div className="flex items-baseline gap-2 mb-3 px-0.5">
+                  <span className="text-[11px] text-[#c5b4b2]">{gm?.emoji}</span>
+                  <p className="text-[9px] font-black uppercase tracking-[0.35em] text-[#c5b4b2]">{label}</p>
+                  <span className="text-[9px] text-[#d4bcb9]">·</span>
+                  <p className="text-[9px] text-[#d4bcb9] font-medium">{gm?.desc}</p>
+                  <span className="ml-auto text-[9px] font-black text-[#d4bcb9]">{items.length}</span>
+                </div>
                 <div className="flex flex-col gap-2">
                   {items.map((route) => <RouteCard key={route.path} route={route} />)}
                 </div>
@@ -212,9 +227,15 @@ function HomePage({ routes }) {
         </div>
 
         {/* Footer */}
-        <p className="mt-14 text-center text-[9px] font-black uppercase tracking-[0.4em] text-[#c5b4b2]">
-          Phenom&nbsp;&nbsp;·&nbsp;&nbsp;Professional Acoustic Solution
-        </p>
+        <div className="mt-14 flex flex-col items-center gap-1.5">
+          <p className="text-[9px] font-black uppercase tracking-[0.4em] text-[#c5b4b2]">
+            Phenom&nbsp;&nbsp;·&nbsp;&nbsp;Canvas Lab
+          </p>
+          <p className="text-[9px] text-[#d4bcb9] font-medium tracking-wide">
+            音樂 · 研究 · 實驗
+          </p>
+        </div>
+
       </div>
     </div>
   );
