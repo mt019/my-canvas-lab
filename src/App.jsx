@@ -1,4 +1,4 @@
-import React, { Suspense, lazy, useMemo } from 'react';
+import React, { Suspense, lazy, useEffect, useMemo } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { ArrowRight, Droplets, Mic, Music, Music2 } from 'lucide-react';
 
@@ -67,6 +67,10 @@ export default function App() {
 }
 
 function HomePage({ routes }) {
+  useEffect(() => {
+    document.title = 'Phenom Canvas Lab';
+  }, []);
+
   const known = routes.filter((r) => r.meta);
   const unknown = routes.filter((r) => !r.meta);
 
