@@ -278,10 +278,15 @@ const EVASION_DATA = [
 
 export default function AirPollutionFee() {
   const [section, setSection] = useState('elements');
-  const [openEl, setOpenEl] = useState('subject');
-  const [openProc, setOpenProc] = useState('01');
-  const [openEffect, setOpenEffect] = useState('duty');
-  const [openEvasion, setOpenEvasion] = useState('types');
+  const [openEl, setOpenEl] = useState(new Set(['subject']));
+  const [openProc, setOpenProc] = useState(new Set(['01']));
+  const [openEffect, setOpenEffect] = useState(new Set(['duty']));
+  const [openEvasion, setOpenEvasion] = useState(new Set(['types']));
+  const toggle = (setter, id) => setter(prev => {
+    const next = new Set(prev);
+    next.has(id) ? next.delete(id) : next.add(id);
+    return next;
+  });
   const [activeTab, setActiveTab] = useState('SOx');
   const [zone, setZone] = useState('zone2');
   const [season, setSeason] = useState('q23');
@@ -357,12 +362,12 @@ export default function AirPollutionFee() {
 
             {ELEMENTS_DATA.map(el => {
               const Icon = el.icon;
-              const isOpen = openEl === el.id;
+              const isOpen = openEl.has(el.id);
               return (
                 <Accordion
                   key={el.id}
                   isOpen={isOpen}
-                  onToggle={() => setOpenEl(el.id)}
+                  onToggle={() => toggle(setOpenEl, el.id)}
                   header={
                     <div className="flex items-center gap-3">
                       <div className="shrink-0 w-9 h-9 rounded-xl flex items-center justify-center" style={{ backgroundColor: el.color }}>
@@ -498,12 +503,12 @@ export default function AirPollutionFee() {
 
             {PROCEDURE_STEPS.map(proc => {
               const Icon = proc.icon;
-              const isOpen = openProc === proc.step;
+              const isOpen = openProc.has(proc.step);
               return (
                 <Accordion
                   key={proc.step}
                   isOpen={isOpen}
-                  onToggle={() => setOpenProc(proc.step)}
+                  onToggle={() => toggle(setOpenProc, proc.step)}
                   header={
                     <div className="flex items-center gap-3">
                       <div className="shrink-0 w-9 h-9 rounded-xl flex items-center justify-center" style={{ backgroundColor: proc.color }}>
@@ -535,12 +540,12 @@ export default function AirPollutionFee() {
 
             {EFFECTS_DATA.map(ef => {
               const Icon = ef.icon;
-              const isOpen = openEffect === ef.id;
+              const isOpen = openEffect.has(ef.id);
               return (
                 <Accordion
                   key={ef.id}
                   isOpen={isOpen}
-                  onToggle={() => setOpenEffect(ef.id)}
+                  onToggle={() => toggle(setOpenEffect, ef.id)}
                   header={
                     <div className="flex items-center gap-3">
                       <div className="shrink-0 w-9 h-9 rounded-xl flex items-center justify-center" style={{ backgroundColor: ef.color }}>
@@ -567,12 +572,12 @@ export default function AirPollutionFee() {
 
             {EVASION_DATA.map(ev => {
               const Icon = ev.icon;
-              const isOpen = openEvasion === ev.id;
+              const isOpen = openEvasion.has(ev.id);
               return (
                 <Accordion
                   key={ev.id}
                   isOpen={isOpen}
-                  onToggle={() => setOpenEvasion(ev.id)}
+                  onToggle={() => toggle(setOpenEvasion, ev.id)}
                   header={
                     <div className="flex items-center gap-3">
                       <div className="shrink-0 w-9 h-9 rounded-xl flex items-center justify-center" style={{ backgroundColor: ev.color }}>
