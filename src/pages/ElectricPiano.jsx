@@ -149,12 +149,13 @@ function createOrgan(ctx, freq, dest) {
   const now = ctx.currentTime;
   const master = ctx.createGain();
   master.gain.setValueAtTime(0.0001, now);
-  master.gain.exponentialRampToValueAtTime(0.18, now + 0.007);
+  master.gain.exponentialRampToValueAtTime(0.10, now + 0.007); // lower overall level
   master.connect(dest);
 
+  // Removed suboctave (0.5x) — it adds low-frequency mud with chords
+  // Reduced amplitudes to keep chords cleaner
   const drawbars = [
-    [0.5, 0.5], [1, 1.0], [1.5, 0.8], [2, 0.9],
-    [3, 0.35],  [4, 0.4], [5, 0.08],  [8, 0.12],
+    [1, 0.7], [2, 0.6], [3, 0.25], [4, 0.20], [5, 0.05],
   ];
   const oscs = [];
   for (const [r, amp] of drawbars) {
@@ -389,10 +390,19 @@ export default function ElectricPiano() {
     const Ctx = window.AudioContext || window.webkitAudioContext;
     if (!Ctx) return null;
     if (!audioCtxRef.current) {
-      audioCtxRef.current = new Ctx({ latencyHint: 'interactive' });
-      masterGainRef.current = audioCtxRef.current.createGain();
-      masterGainRef.current.gain.value = 1.8;
-      masterGainRef.current.connect(audioCtxRef.current.destination);
+      const ac = new Ctx({ latencyHint: 'interactive' });
+      audioCtxRef.current = ac;
+      // Compressor prevents clipping and muddiness when many notes play together
+      const comp = ac.createDynamicsCompressor();
+      comp.threshold.value = -12;
+      comp.knee.value = 8;
+      comp.ratio.value = 5;
+      comp.attack.value = 0.004;
+      comp.release.value = 0.22;
+      comp.connect(ac.destination);
+      masterGainRef.current = ac.createGain();
+      masterGainRef.current.gain.value = 1.6;
+      masterGainRef.current.connect(comp);
     }
     if (audioCtxRef.current.state === 'suspended') await audioCtxRef.current.resume();
     return audioCtxRef.current;
@@ -621,14 +631,14 @@ export default function ElectricPiano() {
             )}
             <button
               onClick={toggleSustain}
-              className={`rounded-xl border px-3 py-2 text-[10px] font-black uppercase tracking-wider transition-all active:scale-95 ${
+              className={`rounded-xl border px-3 py-2 text-[10px] font-black tracking-wider transition-all active:scale-95 ${
                 sustain
                   ? 'bg-[#d8e2dc] border-[#b8ccb4] text-[#6d8b74]'
                   : 'bg-white/70 border-[#e8d3d1] text-[#b09e9c] hover:bg-white'
               }`}
               aria-label="延音踏板"
             >
-              延音
+              {sustain ? '延音 ●' : '延音'}
             </button>
           </div>
         </div>
