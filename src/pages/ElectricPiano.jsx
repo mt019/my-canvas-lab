@@ -374,10 +374,9 @@ export default function ElectricPiano() {
     [displayStartOct, numOct],
   );
 
-  // Landscape dimensions
+  // Landscape dimensions (keyH derived later from container height)
   const wkw  = cw > 0 ? Math.floor(cw / totalWhite) : 44;
   const bkw  = Math.max(14, Math.round(wkw * 0.58));
-  const bkh  = Math.round(wkh * 0.62);
 
   // Portrait (vertical) dimensions
   const wkh_v = Math.max(28, ch > 0 ? Math.floor(ch / totalWhite) : 36);
