@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { ChevronDown, Heart, Mic, MicOff, Zap } from 'lucide-react';
+import { ChevronDown, Heart, Info, Mic, MicOff, Zap } from 'lucide-react';
 
 const INSTRUMENTS = {
   UKULELE: {
@@ -36,7 +36,64 @@ const INSTRUMENTS = {
       { note: 'E4', short: 'E', freq: 329.63, label: '1', sweeten: -0.5, halfDown: 'E♭4' },
     ],
   },
+  GUITAR_OPEN_G: {
+    name: 'Open G',
+    desc: '甜蜜模式會針對 Open G（D G D G B D）定弦各弦加入細小補償，讓開放 G 大調和弦與滑音常用位置的整體聽感更平順。',
+    story: 'Open G（D G D G B D）是搖滾史上最具傳奇色彩的定弦之一。Keith Richards 在 1969 年錄製《Honky Tonk Women》時開始使用，從此成為他的招牌。Rolling Stones 的《Brown Sugar》、《Start Me Up》、《Tumbling Dice》都以這個定弦寫成。Richards 甚至習慣拆掉第六弦、只用五弦演奏，他說低音弦的聲音「太滿了」。空弦按下即是 G 大調三和弦，也是 Delta Blues 滑音吉他的經典定弦；Robert Johnson、Blind Willie McTell 早在 1930 年代就已廣泛使用。',
+    notes: [
+      { note: 'D2', short: 'D', freq: 73.42,  label: '6', sweeten: -2.0, halfDown: 'D♭2' },
+      { note: 'G2', short: 'G', freq: 98.00,  label: '5', sweeten: -1.5, halfDown: 'G♭2' },
+      { note: 'D3', short: 'D', freq: 146.83, label: '4', sweeten: -1.0, halfDown: 'D♭3' },
+      { note: 'G3', short: 'G', freq: 196.0,  label: '3', sweeten: -1.5, halfDown: 'G♭3' },
+      { note: 'B3', short: 'B', freq: 246.94, label: '2', sweeten: -1.2, halfDown: 'B♭3' },
+      { note: 'D4', short: 'D', freq: 293.66, label: '1', sweeten: -0.5, halfDown: 'D♭4' },
+    ],
+  },
+  GUITAR_OPEN_D: {
+    name: 'Open D',
+    desc: '甜蜜模式會針對 Open D（D A D F# A D）定弦各弦加入細小補償，讓開放 D 大調和弦與滑音常用位置的整體聽感更平順。',
+    story: 'Open D（D A D F# A D）空弦奏出 D 大調和弦，是瓶頸滑音（slide guitar）最重要的定弦之一。Robert Johnson、Muddy Waters 等 Delta Blues 先驅用它建立了藍調的根基。Joni Mitchell 在整個 1960–70 年代偏好 Open D，代表作包括《Big Yellow Taxi》與《A Case of You》。Bob Dylan 也多次使用，《Oxford Town》是其中一例。空弦高音三弦疊出純五度與大三度，讓和弦按法極度簡化，一根手指橫按即可換調。',
+    notes: [
+      { note: 'D2',  short: 'D',  freq: 73.42,  label: '6', sweeten: -2.0, halfDown: 'D♭2' },
+      { note: 'A2',  short: 'A',  freq: 110.0,  label: '5', sweeten: -1.5, halfDown: 'A♭2' },
+      { note: 'D3',  short: 'D',  freq: 146.83, label: '4', sweeten: -1.0, halfDown: 'D♭3' },
+      { note: 'F#3', short: 'F#', freq: 185.00, label: '3', sweeten: -1.5, halfDown: 'F3'  },
+      { note: 'A3',  short: 'A',  freq: 220.0,  label: '2', sweeten: -1.2, halfDown: 'A♭3' },
+      { note: 'D4',  short: 'D',  freq: 293.66, label: '1', sweeten: -0.5, halfDown: 'D♭4' },
+    ],
+  },
+  GUITAR_DADGAD: {
+    name: 'DADGAD',
+    desc: '甜蜜模式會針對 DADGAD（D A D G A D）定弦各弦加入細小補償，讓這組懸置和弦的空弦聽感更加飽滿一致。',
+    story: 'DADGAD（D A D G A D）由英國吉他手 Davy Graham 在 1964 年前往摩洛哥旅行途中發明。他在當地聆聽 Oud 演奏，嘗試讓吉他發出相近的中東音色，回國後把這套定弦帶入英國民謠圈，Bert Jansch、John Renbourn 先後使用並推廣。空弦奏出 Dsus4——一個介於大小調之間、帶有懸置感的和弦——成為愛爾蘭、蘇格蘭傳統音樂的理想媒介。Jimmy Page 在 Led Zeppelin 的《Kashmir》使用 DADGAD，賦予這首曲子獨特的東方神秘感。',
+    notes: [
+      { note: 'D2', short: 'D', freq: 73.42,  label: '6', sweeten: -2.0, halfDown: 'D♭2' },
+      { note: 'A2', short: 'A', freq: 110.0,  label: '5', sweeten: -1.5, halfDown: 'A♭2' },
+      { note: 'D3', short: 'D', freq: 146.83, label: '4', sweeten: -1.0, halfDown: 'D♭3' },
+      { note: 'G3', short: 'G', freq: 196.0,  label: '3', sweeten: -1.5, halfDown: 'G♭3' },
+      { note: 'A3', short: 'A', freq: 220.0,  label: '2', sweeten: -1.2, halfDown: 'A♭3' },
+      { note: 'D4', short: 'D', freq: 293.66, label: '1', sweeten: -0.5, halfDown: 'D♭4' },
+    ],
+  },
+  GUITAR_DROP_D: {
+    name: 'Drop D',
+    desc: '甜蜜模式會針對 Drop D（D A D G B E）定弦各弦加入細小補償，讓低音 D 根音與開放和弦的整體聽感更平順一致。',
+    story: 'Drop D（D A D G B E）是最易入門的替代定弦：只需把第六弦降低一個全音。這個小小的改動，讓吉他手能用一根手指橫按整個低音 D 大調或小調和弦，同時解放其他手指做更複雜的音型。1990 年代的另類搖滾與重金屬大量採用 Drop D，Nirvana 的《Heart-Shaped Box》、Soundgarden 的《Black Hole Sun》、Tool 的多首作品都出自這個定弦。Neil Young 的民謠錄音也常見 Drop D 蹤跡。',
+    notes: [
+      { note: 'D2', short: 'D', freq: 73.42,  label: '6', sweeten: -2.0, halfDown: 'D♭2' },
+      { note: 'A2', short: 'A', freq: 110.0,  label: '5', sweeten: -1.5, halfDown: 'A♭2' },
+      { note: 'D3', short: 'D', freq: 146.83, label: '4', sweeten: -1.0, halfDown: 'D♭3' },
+      { note: 'G3', short: 'G', freq: 196.0,  label: '3', sweeten: -1.5, halfDown: 'G♭3' },
+      { note: 'B3', short: 'B', freq: 246.94, label: '2', sweeten: -1.2, halfDown: 'B♭3' },
+      { note: 'E4', short: 'E', freq: 329.63, label: '1', sweeten: -0.5, halfDown: 'E♭4' },
+    ],
+  },
 };
+
+const INSTRUMENT_GROUPS = [
+  { label: null, keys: ['UKULELE', 'GUITARLELE', 'GUITAR'] },
+  { label: '吉他・特殊定弦', keys: ['GUITAR_OPEN_G', 'GUITAR_OPEN_D', 'GUITAR_DADGAD', 'GUITAR_DROP_D'] },
+];
 
 const VOLUME_THRESHOLD = 0.001;
 const AUTO_CORRELATE_RMS_THRESHOLD = 0.0008;
@@ -224,13 +281,22 @@ function resolveHarmonic(detectedPitch, notes) {
 }
 
 function InfoOverlay({ type, instrument, onClose }) {
-  const title = type === 'SWEETENED' ? 'Sweetened Mode' : 'Half-Step Down';
-  const desc =
-    type === 'SWEETENED'
+  const isStory = type === 'STORY';
+  const isHalfDown = type === 'HALF_DOWN';
+
+  const title = isStory
+    ? INSTRUMENTS[instrument].name
+    : type === 'SWEETENED'
+      ? 'Sweetened Mode'
+      : 'Half-Step Down';
+
+  const desc = isStory
+    ? INSTRUMENTS[instrument].story
+    : type === 'SWEETENED'
       ? INSTRUMENTS[instrument].desc
       : '將全弦音調降低半音，適合需要降半音配置的曲目與伴奏。';
-  const isSweetenedOverlay = type === 'SWEETENED';
-  const panelTextAlign = isSweetenedOverlay ? 'text-left' : 'text-center';
+
+  const alignLeft = type === 'SWEETENED' || isStory;
 
   return (
     <div
@@ -240,14 +306,14 @@ function InfoOverlay({ type, instrument, onClose }) {
       aria-modal="true"
     >
       <div
-        className={`w-full max-w-xs sm:max-w-sm ${panelTextAlign}`}
+        className={`w-full max-w-xs sm:max-w-sm ${alignLeft ? 'text-left' : 'text-center'}`}
         onClick={(e) => e.stopPropagation()}
       >
-        <h3 className={`text-base sm:text-lg font-black text-slate-700 mb-3 sm:mb-4 uppercase tracking-[0.18em] ${isSweetenedOverlay ? 'text-left' : 'text-center'}`}>{title}</h3>
-        <p className={`text-xs sm:text-sm leading-6 sm:leading-relaxed text-slate-500 font-medium ${isSweetenedOverlay ? 'text-left' : 'text-center'}`}>{desc}</p>
+        <h3 className={`text-base sm:text-lg font-black text-slate-700 mb-3 sm:mb-4 uppercase tracking-[0.18em] ${alignLeft ? 'text-left' : 'text-center'}`}>{title}</h3>
+        <p className={`text-xs sm:text-sm leading-6 sm:leading-relaxed text-slate-500 font-medium ${alignLeft ? 'text-left' : 'text-center'}`}>{desc}</p>
         <button
           onClick={onClose}
-          className={`mt-8 sm:mt-10 rounded-2xl border border-[#e8d3d1] bg-white px-5 py-2 text-[11px] font-black tracking-[0.2em] text-[#8a7a78] ${isSweetenedOverlay ? 'block mr-auto' : 'mx-auto block'}`}
+          className={`mt-8 sm:mt-10 rounded-2xl border border-[#e8d3d1] bg-white px-5 py-2 text-[11px] font-black tracking-[0.2em] text-[#8a7a78] ${alignLeft ? 'block mr-auto' : 'mx-auto block'}`}
         >
           CLOSE
         </button>
@@ -786,33 +852,56 @@ export default function AutoTuner() {
         style={{ padding: ultraCompactViewport ? 18 : compactViewport ? 22 : 32 }}
       >
         <div className={`${compactViewport ? 'mb-5' : 'mb-10'} flex items-center justify-between relative z-[100]`} ref={menuRef}>
-          <div className="relative">
-            <button
-              onClick={() => setShowMenu((prev) => !prev)}
-              className="flex items-center gap-2 rounded-2xl bg-[#e8d3d1] px-3 sm:px-4 py-2 text-[10px] sm:text-[11px] font-black text-[#8a7a78] transition-all active:scale-95"
-              aria-expanded={showMenu}
-              aria-haspopup="menu"
-            >
-              {INSTRUMENTS[instrument].name}
-              <ChevronDown size={14} className={`transition-transform ${showMenu ? 'rotate-180' : ''}`} />
-            </button>
+          <div className="flex items-center gap-1.5">
+            <div className="relative">
+              <button
+                onClick={() => setShowMenu((prev) => !prev)}
+                className="flex items-center gap-2 rounded-2xl bg-[#e8d3d1] px-3 sm:px-4 py-2 text-[10px] sm:text-[11px] font-black text-[#8a7a78] transition-all active:scale-95"
+                aria-expanded={showMenu}
+                aria-haspopup="menu"
+              >
+                {INSTRUMENTS[instrument].name}
+                <ChevronDown size={14} className={`transition-transform ${showMenu ? 'rotate-180' : ''}`} />
+              </button>
 
-            {showMenu && (
-              <div className="absolute left-0 top-12 z-[110] w-44 rounded-2xl border border-[#e8d3d1] bg-white py-2 shadow-xl animate-in fade-in zoom-in duration-200">
-                {Object.keys(INSTRUMENTS).map((key) => (
-                  <button
-                    key={key}
-                    className={`w-full px-5 py-3 text-left text-xs font-bold transition-colors ${
-                      instrument === key
-                        ? 'bg-[#e8d3d1] text-[#8a7a78]'
-                        : 'text-slate-400 hover:bg-[#faf4f3]'
-                    }`}
-                    onClick={() => handleInstrumentChange(key)}
-                  >
-                    {INSTRUMENTS[key].name}
-                  </button>
-                ))}
-              </div>
+              {showMenu && (
+                <div className="absolute left-0 top-12 z-[110] w-48 rounded-2xl border border-[#e8d3d1] bg-white py-2 shadow-xl animate-in fade-in zoom-in duration-200">
+                  {INSTRUMENT_GROUPS.map((group, gi) => (
+                    <div key={gi}>
+                      {group.label && (
+                        <div className="px-5 pt-2 pb-1 text-[9px] font-black uppercase tracking-[0.2em] text-[#c5b4b2]">
+                          {group.label}
+                        </div>
+                      )}
+                      {gi > 0 && !group.label && <div className="mx-4 my-1 border-t border-[#f0e4e3]" />}
+                      {gi > 0 && group.label && <div className="mx-4 mb-1 border-t border-[#f0e4e3]" />}
+                      {group.keys.map((key) => (
+                        <button
+                          key={key}
+                          className={`w-full px-5 py-2.5 text-left text-xs font-bold transition-colors ${
+                            instrument === key
+                              ? 'bg-[#e8d3d1] text-[#8a7a78]'
+                              : 'text-slate-400 hover:bg-[#faf4f3]'
+                          }`}
+                          onClick={() => handleInstrumentChange(key)}
+                        >
+                          {INSTRUMENTS[key].name}
+                        </button>
+                      ))}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {INSTRUMENTS[instrument].story && (
+              <button
+                onClick={() => setInfoOverlay('STORY')}
+                className="rounded-xl border border-[#e8d3d1] bg-white p-1.5 text-[#b09e9c] transition-all hover:bg-[#faf4f3] active:scale-95"
+                aria-label="查看定弦故事"
+              >
+                <Info size={14} />
+              </button>
             )}
           </div>
 
