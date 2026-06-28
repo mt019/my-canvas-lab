@@ -292,23 +292,44 @@ const SYNTHS = { GRAND: createGrand, RHODES: createRhodes, ORGAN: createOrgan,
 
 // ─── MAIN COMPONENT ────────────────────────────────────────────────────────────
 
+// Solfège numbers for white notes (sharps omitted — shown on black keys indirectly)
+const SOLFEGE = { C:'1', D:'2', E:'3', F:'4', G:'5', A:'6', B:'7' };
+const SOLFEGE_BLACK = { 'C#':'1♯', 'D#':'2♯', 'F#':'4♯', 'G#':'5♯', 'A#':'6♯' };
+
 export default function ElectricPiano() {
   const [timbre, setTimbre] = useState('GRAND');
-  const [startOct, setStartOct] = useState(3);
+  // kbOct = the octave that QWERTY 'A' maps to (C{kbOct})
+  const [kbOct, setKbOct] = useState(3);
+  // labelMode cycles: 'name' → 'solfege' → 'none' → 'name'
+  const [labelMode, setLabelMode] = useState('name');
   const [activeIds, setActiveIds] = useState(new Set());
   const [containerSize, setContainerSize] = useState({ w: 0, h: 0 });
   const [isPortrait, setIsPortrait] = useState(
     () => typeof window !== 'undefined' && window.innerHeight > window.innerWidth,
   );
 
-  // Dynamic QWERTY map — follows startOct so Z/X actually changes played notes
+  const { w: cw, h: ch } = containerSize;
+
+  // Auto octave count: portrait=2, desktop fills screen with ~38px/key target
+  const numOct = isPortrait ? 2 : Math.max(2, Math.min(5, Math.floor((cw || 800) / 280)));
+
+  // Display always re-centers around kbOct
+  const displayStartOct = Math.max(
+    MIN_START_OCT,
+    Math.min(MAX_START_OCT - numOct + 1, kbOct - Math.floor(numOct / 2)),
+  );
+
+  // Dynamic QWERTY map — follows kbOct
   const keyMap = useMemo(() => {
     const map = {};
     for (const [key, note, octOffset] of QWERTY_LAYOUT) {
-      map[key] = `${note}${startOct + octOffset}`;
+      map[key] = `${note}${kbOct + octOffset}`;
     }
     return map;
-  }, [startOct]);
+  }, [kbOct]);
+
+  // Set of noteIds reachable by QWERTY (used for highlight + label logic)
+  const kbZone = useMemo(() => new Set(Object.values(keyMap)), [keyMap]);
 
   const audioCtxRef = useRef(null);
   const masterGainRef = useRef(null);
@@ -347,18 +368,13 @@ export default function ElectricPiano() {
     return () => obs.disconnect();
   }, []);
 
-  const { w: cw, h: ch } = containerSize;
-
-  // Portrait always 2 octaves; landscape responsive by width
-  const numOct = isPortrait ? 2 : (cw >= 560 ? 2 : 1);
   const { whites, blacks, totalWhite } = useMemo(
-    () => buildKeys(startOct, numOct),
-    [startOct, numOct],
+    () => buildKeys(displayStartOct, numOct),
+    [displayStartOct, numOct],
   );
 
   // Landscape dimensions
   const wkw  = cw > 0 ? Math.floor(cw / totalWhite) : 44;
-  const wkh  = 148;
   const bkw  = Math.max(14, Math.round(wkw * 0.58));
   const bkh  = Math.round(wkh * 0.62);
 
@@ -511,13 +527,13 @@ export default function ElectricPiano() {
       if (e.key === ' ') { e.preventDefault(); activateSustain(); return; }
       if (e.key === 'z' || e.key === 'Z') {
         releaseAll();
-        setStartOct(o => Math.max(MIN_START_OCT, o - 1));
+        setKbOct(o => Math.max(MIN_START_OCT, o - 1));
         held.clear();
         return;
       }
       if (e.key === 'x' || e.key === 'X') {
         releaseAll();
-        setStartOct(o => Math.min(MAX_START_OCT, o + 1));
+        setKbOct(o => Math.min(MAX_START_OCT, o + 1));
         held.clear();
         return;
       }
@@ -556,11 +572,22 @@ export default function ElectricPiano() {
   // ── Derived display ────────────────────────────────────────────────────────
 
   const activeList = [...activeIds].sort();
-  const octLabel = numOct === 1
-    ? `C${startOct} – B${startOct}`
-    : `C${startOct} – B${startOct + 1}`;
-
+  const octLabel = `C${kbOct} – B${kbOct + 1}`;
   const keyH = Math.max(140, ch - 12); // landscape white key height
+
+  const LABEL_MODES = ['name', 'solfege', 'none'];
+  const LABEL_MODE_NAMES = { name: '音名', solfege: '簡譜', none: '隱藏' };
+  const cycleLabel = () => {
+    setLabelMode(m => LABEL_MODES[(LABEL_MODES.indexOf(m) + 1) % LABEL_MODES.length]);
+  };
+
+  const getNoteLabel = (note, id) => {
+    if (labelMode === 'none') return null;
+    const isBlack = IS_BLACK.has(note);
+    if (labelMode === 'name') return isBlack ? note : note;
+    if (labelMode === 'solfege') return isBlack ? SOLFEGE_BLACK[note] : SOLFEGE[note];
+    return null;
+  };
 
   // ── Render ────────────────────────────────────────────────────────────────
 
@@ -613,7 +640,7 @@ export default function ElectricPiano() {
           {Object.entries(TIMBRES).map(([key, { name, sub }]) => (
             <button
               key={key}
-              onClick={() => { releaseAll(); sustainedRef.current.clear(); setTimbre(key); }}
+              onClick={() => { releaseAll(); setTimbre(key); }}
               className={`flex flex-col items-center px-3 py-1.5 rounded-2xl border transition-all active:scale-95 ${
                 timbre === key
                   ? 'bg-[#e8d3d1] border-[#d4bcb9] text-[#8a7a78]'
@@ -627,23 +654,33 @@ export default function ElectricPiano() {
         </div>
       </div>
 
-      {/* ── Octave nav ── */}
-      <div className="flex-none flex items-center justify-between px-4 pb-2">
+      {/* ── Octave nav + label toggle ── */}
+      <div className="flex-none flex items-center justify-between px-4 pb-2 gap-2">
         <button
-          onClick={() => { releaseAll(); sustainedRef.current.clear(); setStartOct(o => Math.max(MIN_START_OCT, o - 1)); }}
-          disabled={startOct <= MIN_START_OCT}
+          onClick={() => { releaseAll(); setKbOct(o => Math.max(MIN_START_OCT, o - 1)); }}
+          disabled={kbOct <= MIN_START_OCT}
           className="flex items-center gap-1 rounded-xl border border-[#e8d3d1] bg-white/70 px-3 py-1.5 text-[#8a7a78] transition-all active:scale-95 disabled:opacity-30 hover:bg-white"
         >
           <ChevronLeft size={13} />
-          <span className="text-[9px] font-black uppercase tracking-wider">低音</span>
+          <span className="text-[9px] font-black uppercase tracking-wider">低</span>
         </button>
-        <span className="text-[9px] font-black uppercase tracking-[0.25em] text-[#b09e9c]">{octLabel}</span>
+
+        <div className="flex items-center gap-2">
+          <span className="text-[9px] font-black tracking-[0.2em] text-[#b09e9c]">{octLabel}</span>
+          <button
+            onClick={cycleLabel}
+            className="rounded-lg border border-[#e8d3d1] bg-white/70 px-2.5 py-1 text-[9px] font-black text-[#b09e9c] hover:bg-white transition-all active:scale-95"
+          >
+            {LABEL_MODE_NAMES[labelMode]}
+          </button>
+        </div>
+
         <button
-          onClick={() => { releaseAll(); sustainedRef.current.clear(); setStartOct(o => Math.min(MAX_START_OCT, o + 1)); }}
-          disabled={startOct >= MAX_START_OCT}
+          onClick={() => { releaseAll(); setKbOct(o => Math.min(MAX_START_OCT, o + 1)); }}
+          disabled={kbOct >= MAX_START_OCT}
           className="flex items-center gap-1 rounded-xl border border-[#e8d3d1] bg-white/70 px-3 py-1.5 text-[#8a7a78] transition-all active:scale-95 disabled:opacity-30 hover:bg-white"
         >
-          <span className="text-[9px] font-black uppercase tracking-wider">高音</span>
+          <span className="text-[9px] font-black uppercase tracking-wider">高</span>
           <ChevronRight size={13} />
         </button>
       </div>
@@ -719,31 +756,48 @@ export default function ElectricPiano() {
               {/* Horizontal layout: standard piano keyboard */}
               {whites.map(({ note, oct, id, wi }) => {
                 const isActive = activeIds.has(id);
-                const kbKey = Object.entries(keyMap).find(([, v]) => v === id)?.[0];
+                const inZone = kbZone.has(id);
+                const kbKey = inZone ? Object.entries(keyMap).find(([, v]) => v === id)?.[0] : null;
+                const noteLabel = getNoteLabel(note, id);
+                // Zone highlight: subtle warm tint on QWERTY-reachable keys
+                const bg = isActive
+                  ? '#f5e8e5'
+                  : inZone ? '#fffaf9' : 'white';
                 return (
                   <div
                     key={id}
                     data-noteid={id}
                     onMouseDown={e => onMouseDown(id, e)}
                     onMouseEnter={() => onMouseEnter(id)}
-                    className={`absolute bottom-1 rounded-b-xl border cursor-pointer transition-colors duration-75 ${
-                      isActive ? 'border-[#d4bcb9] bg-[#f5e8e5]' : 'border-[#ddd0ce] bg-white hover:bg-[#fefcfc]'
-                    }`}
+                    className="absolute bottom-1 rounded-b-xl border cursor-pointer transition-colors duration-75"
                     style={{
                       left: wi * wkw + 1, width: wkw - 2, height: keyH, zIndex: 1,
+                      borderColor: isActive ? '#d4bcb9' : inZone ? '#e0ceca' : '#ddd0ce',
+                      background: bg,
                       boxShadow: isActive
                         ? 'inset 0 3px 8px rgba(180,140,130,0.25)'
                         : '0 4px 10px rgba(0,0,0,0.10), inset 0 -2px 0 rgba(0,0,0,0.05)',
                     }}
                   >
-                    {note === 'C' && (
-                      <span className="absolute bottom-2 left-0 right-0 text-center text-[8px] sm:text-[9px] font-black text-[#c5b4b2] pointer-events-none" data-noteid={id}>
-                        C{oct}
+                    {/* Note label (name or solfège) */}
+                    {noteLabel && (
+                      <span className="absolute bottom-6 left-0 right-0 text-center text-[8px] font-black pointer-events-none"
+                        style={{ color: isActive ? '#a08a88' : inZone ? '#c0a8a5' : '#d0b8b5' }}
+                        data-noteid={id}
+                      >
+                        {noteLabel}
                       </span>
                     )}
+                    {/* QWERTY shortcut hint */}
                     {kbKey && (
-                      <span className="absolute bottom-7 left-0 right-0 text-center text-[7px] font-bold text-[#d4c0be] pointer-events-none" data-noteid={id}>
+                      <span className="absolute bottom-1.5 left-0 right-0 text-center text-[7px] font-bold text-[#d4c0be] pointer-events-none" data-noteid={id}>
                         {kbKey.toUpperCase()}
+                      </span>
+                    )}
+                    {/* Octave marker */}
+                    {note === 'C' && (
+                      <span className="absolute top-2 left-0 right-0 text-center text-[7px] font-black text-[#ddd0ce] pointer-events-none" data-noteid={id}>
+                        {oct}
                       </span>
                     )}
                   </div>
@@ -751,7 +805,9 @@ export default function ElectricPiano() {
               })}
               {blacks.map(({ note, oct, id, pos }) => {
                 const isActive = activeIds.has(id);
-                const kbKey = Object.entries(keyMap).find(([, v]) => v === id)?.[0];
+                const inZone = kbZone.has(id);
+                const kbKey = inZone ? Object.entries(keyMap).find(([, v]) => v === id)?.[0] : null;
+                const noteLabel = getNoteLabel(note, id);
                 return (
                   <div
                     key={id}
@@ -763,14 +819,23 @@ export default function ElectricPiano() {
                       left: pos * wkw - bkw / 2 + 1, width: bkw, height: Math.round(keyH * 0.62), zIndex: 2,
                       background: isActive
                         ? 'linear-gradient(to bottom, #7a6560, #5c4a47)'
-                        : 'linear-gradient(to bottom, #4a3835, #2e201e)',
+                        : inZone
+                          ? 'linear-gradient(to bottom, #5a4542, #372420)'
+                          : 'linear-gradient(to bottom, #4a3835, #2e201e)',
                       boxShadow: isActive
                         ? 'inset 0 3px 6px rgba(0,0,0,0.5)'
                         : '0 5px 12px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.08)',
                     }}
                   >
+                    {noteLabel && (
+                      <span className="absolute bottom-5 left-0 right-0 text-center text-[6px] font-black pointer-events-none"
+                        style={{ color: 'rgba(220,190,180,0.75)' }} data-noteid={id}>
+                        {noteLabel}
+                      </span>
+                    )}
                     {kbKey && (
-                      <span className="absolute bottom-2 left-0 right-0 text-center text-[7px] font-bold pointer-events-none" style={{ color: 'rgba(200,170,160,0.7)' }} data-noteid={id}>
+                      <span className="absolute bottom-1.5 left-0 right-0 text-center text-[6px] font-bold pointer-events-none"
+                        style={{ color: 'rgba(200,170,160,0.7)' }} data-noteid={id}>
                         {kbKey.toUpperCase()}
                       </span>
                     )}
