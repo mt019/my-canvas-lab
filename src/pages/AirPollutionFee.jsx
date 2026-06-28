@@ -3,7 +3,7 @@ import {
   Wind, Factory, Car, Building2, Scale, Calculator,
   ChevronRight, Info, Shield, BookOpen, TrendingUp,
   ClipboardList, AlertTriangle, Gavel, CheckCircle,
-  ArrowRight, History,
+  ArrowRight, History, Landmark,
 } from 'lucide-react';
 
 // ─── Fee rate data ──────────────────────────────────────────────────────────
@@ -104,50 +104,69 @@ const ELEMENTS_DATA = [
   },
 ];
 
+const QUARTERLY_DEADLINES = [
+  { q: 'Q1', period: '1–3 月', deadline: '4 月 30 日', season: 'q23' },
+  { q: 'Q2', period: '4–6 月', deadline: '7 月 31 日', season: 'q23' },
+  { q: 'Q3', period: '7–9 月', deadline: '10 月 31 日', season: 'q23' },
+  { q: 'Q4', period: '10–12 月', deadline: '次年 1 月 31 日', season: 'q14' },
+];
+
 const PROCEDURE_STEPS = [
   {
-    step: '01', title: '申報義務',
+    step: '01', title: '申報義務與截止日',
     icon: ClipboardList, color: '#d0dce8', textColor: '#3a5878',
     items: [
-      '固定源業者每季（1-3月、4-6月、7-9月、10-12月）申報排放量，並於規定期限內繳納費額。',
-      '申報方式：登入環境部「固定污染源空污費申報系統」線上申報，逾期申報除補繳費用外，另有罰則。',
-      '達重大排放門檻之固定源（如排放量達一定規模）須裝設連續自動監測設施（CEMS），數據即時上傳主管機關，不得以手動申報替代。',
+      '固定源業者須於每季結束後次月底前，向直轄市或縣市主管機關申報當季排放量（Q1→4月30日；Q2→7月31日；Q3→10月31日；Q4→次年1月31日）。',
+      '逾期申報：未於截止日前完成申報者，主管機關得依空污法第76條裁處罰鍰，並按查核方式核算費額補繳；不得以「尚未計算完畢」為由延後。',
+      '申報方式：登入環境部「固定污染源空污費申報系統」線上申報，系統自動計費；達重大排放門檻者，CEMS 數據由系統直接匯入，不得改以手動數值替代。',
+      '移動源（燃料端）：燃料進口商或煉製廠於進口或出廠時即觸發繳費義務，免季末申報，由海關或能源主管機關協助稽核數量。',
     ],
   },
   {
-    step: '02', title: '排放量計量',
+    step: '02', title: '排放量計量方式',
     icon: Calculator, color: '#d0e8d8', textColor: '#3a6848',
     items: [
-      '連續自動監測（CEMS）：排放量大之固定源須設置，數值具最高公信力，主管機關可即時掌握。',
-      '質量平衡法：依原料投入量、產品產出量及廢棄物推估排放量，適用 VOCs 等具逸散特性之污染物；計算精度較 CEMS 低，但成本低廉。',
-      '公告排放係數法：環境部公告各行業製程排放係數，乘以生產量計算排放量，適用中小型固定源；可申請「自廠排放係數」替代，反映個廠實際排放情況。',
+      '連續自動監測（CEMS）：達法定規模之固定源強制安裝，數據即時傳輸，為最高位階之排放量認定依據；設備異常期間不得自行免報，應依環境部公告之「異常期間推估方式」補算。',
+      '質量平衡法：依原料投入量、製程產出量及廢棄物量推估排放，為 VOCs 等逸散型污染物之主要計量方式；申報時須檢附原料購入憑證及盤點紀錄供查核。',
+      '公告排放係數法：乘以生產量計算，適用中小型固定源；業者可另提具代表性之自廠實測數據申請認可「自廠排放係數」，經主管機關核定後替代公告值使用，有效期限通常三年，期滿須重新申請。',
     ],
   },
   {
-    step: '03', title: '計費與繳納',
+    step: '03', title: '核算、繳費與延滯金',
     icon: Scale, color: '#e8e0c8', textColor: '#686030',
     items: [
-      '計費流程：確認各季排放量 → 依防制區等級及季別選定適用費率 → 套用累進分級公式 → 乘以優惠係數(D) → 第一、四季另乘減量係數(E)。',
-      '繳費期限：環境部發出繳費通知後，業者應於期限內繳納。逾期繳納加計延滯金（每逾一日按應繳費額之一定比率加計）。',
-      '分期繳納：費額龐大者得申請分期繳納，惟需提供擔保。',
+      '費額核算：主管機關收到申報後核算費額，作成核課處分（繳費通知），送達義務人。義務人應於繳費通知所載期限（通常為送達後 30 日）內繳納。',
+      '延滯金：逾繳費期限起，每逾 1 日加徵應繳費額之千分之三（0.3%／日），無上限累計。實務上長期欠繳者延滯金可超過本金；繳清本金後延滯金方停止計算。',
+      '分期繳納：費額龐大（通常逾一定金額門檻）者，得事前申請分期繳納，最多分 __ 期，惟須提供相當之擔保（如銀行保證書），且各期仍需依期付款，遲誤一期視同全部到期。',
+      '優惠係數 D 申請：需於申報同時或申報前提出，不得事後補申請；主管機關審核防制設備符合條件後方予適用，生效溯及當季。',
     ],
   },
   {
-    step: '04', title: '稽查機制',
+    step: '04', title: '核課時效與追繳',
     icon: Shield, color: '#e0d0e8', textColor: '#683878',
     items: [
-      '書面稽查：主管機關審核申報資料與監測紀錄，核對是否與生產量、燃料使用量相符；異常者列為現場稽查對象。',
-      '現場稽查：稽查人員可要求業者提供生產紀錄、燃料採購憑證及防制設備運轉紀錄，並得委託機關或技術服務機構執行排放量查核。',
-      '比對交叉查核：以海關進出口燃料量、電力使用量、原料消耗等外部資料交叉驗證申報數據，降低低報空間。',
+      '核課時效（追徵期間）：依行政程序法第131條，公法上請求權原則上自得行使起 5 年間不行使而消滅。主管機關對已申報但核算有誤、或查獲低報者，得於 5 年內補徵差額費額。',
+      '故意逃漏（虛偽申報）之例外：若義務人有詐欺、虛偽申報等故意行為，核課時效延長至行為終了後 10 年，防止惡意業者藉時效規避追繳。',
+      '強制執行時效：核課處分確定（義務人未申請救濟或救濟確定）後，行政執行之執行時效為 5 年（行政執行法第7條）；逾期未移送執行則請求權消滅，義務人即免責。',
+      '行政罰鍰時效：違反申報義務等行政罰，依行政罰法第27條，裁處權時效為 3 年，自違規行為終了日起算；違規行為繼續者（如持續不申報），自行為終了時起算。',
     ],
   },
   {
-    step: '05', title: '爭議救濟',
+    step: '05', title: '稽查機制',
+    icon: Info, color: '#d8e8d0', textColor: '#487840',
+    items: [
+      '書面稽查：主管機關定期審核申報資料與 CEMS 監測紀錄，比對生產量、燃料使用量是否相符；異常申報列為現場稽查優先對象。稽查選案以排放量高、歷年申報波動異常者為主。',
+      '現場稽查：稽查人員可至廠區要求業者提供生產紀錄、燃料採購憑證、防制設備運轉日誌；得委託環境檢測機構進行實地排放量量測，量測費用由業者承擔。',
+      '外部資料交叉比對：以海關進出口燃料量、電力使用量（台電提供）、工廠登記產能等外部資料交叉驗證，偵測異常低報；近年亦引入衛星遙測輔助大面積工業區排放監控。',
+    ],
+  },
+  {
+    step: '06', title: '爭議救濟與期限',
     icon: Gavel, color: '#e8d8d0', textColor: '#784030',
     items: [
-      '申請復查：對費額有異議者，得於繳費通知送達後一定期間內，向徵收機關申請復查（相當於稅法之復查申請）。',
-      '訴願：對復查決定不服者，依訴願法提起訴願，向主管機關上級機關或訴願管轄機關聲明不服。',
-      '行政訴訟：對訴願決定仍不服者，得向行政法院提起撤銷訴訟或課予義務訴訟，為最終司法救濟途徑。',
+      '申請復查：對費額核課處分不服者，應於處分書送達後 30 日內向原處分機關申請復查（類稅法復查，非行政訴訟前置程序，但為訴願前置）；逾期不申請，處分即確定，不得再爭執費額。',
+      '訴願：對復查決定不服者，應於決定書送達後 30 日內提起訴願（訴願法第14條）；訴願機關為上級主管機關或訴願管轄機關，通常在 3 個月內作成決定（得延長 2 個月）。',
+      '行政訴訟：對訴願決定不服者，應於決定書送達後 2 個月內向行政法院提起撤銷訴訟（行政訴訟法第106條）；逾期起訴，法院以裁定駁回，處分確定。行政訴訟進行中，原則上仍須先繳費（暫停執行需聲請停止執行）。',
     ],
   },
 ];
@@ -173,11 +192,25 @@ const EFFECTS_DATA = [
 ];
 
 const FINANCE_DATA = {
+  // 收入來源與徵收主體（附中央地方分工）
   revenue: [
-    { label: '固定污染源費', pct: 72, color: '#a8c4b4', note: '工廠、電廠等每季申報繳費' },
-    { label: '移動污染源費', pct: 24, color: '#b8a8d4', note: '燃料銷售商代繳，隨油品含硫量計費' },
-    { label: '營建工程費', pct: 4,  color: '#d4c4a8', note: '達規模工程依面積/工期計費' },
+    {
+      label: '固定污染源費', pct: 72, color: '#a8c4b4',
+      collector: '地方', collectorNote: '直轄市、縣（市）主管機關徵收',
+      fund: '地方空污基金', note: '工廠、電廠每季申報繳費',
+    },
+    {
+      label: '移動污染源費', pct: 24, color: '#b8a8d4',
+      collector: '中央', collectorNote: '環境部統一徵收（燃料供應端）',
+      fund: '中央空污基金', note: '依各縣市車輛數、空品等因子回分配地方',
+    },
+    {
+      label: '營建工程費', pct: 4, color: '#d4c4a8',
+      collector: '地方', collectorNote: '直轄市、縣（市）主管機關徵收',
+      fund: '地方空污基金', note: '達規模工程依施工面積與工期計費',
+    },
   ],
+  // 基金支出結構
   expenditure: [
     { label: '移動源管制', pct: 37.5, color: '#a8c4b4' },
     { label: '空品淨化區設置', pct: 19.6, color: '#b8a8d4' },
@@ -186,6 +219,29 @@ const FINANCE_DATA = {
     { label: '策略推動/研發', pct: 9.3, color: '#c4b4a4' },
     { label: '空品監測', pct: 1.4, color: '#b4c4d4' },
     { label: '一般行政建設', pct: 0.8, color: '#d4c4b8' },
+  ],
+  // 中央地方基金關係
+  centralLocal: [
+    {
+      title: '中央空污基金',
+      color: '#d0dce8', textColor: '#3a5878',
+      items: [
+        '來源：移動源費（燃料供應端全數繳入）',
+        '管理：環境部空污基金管理委員會',
+        '用途：全國性空污防制計畫、研發、跨縣市空品管制、補助地方防制工作',
+        '撥付地方：依各縣市車輛數、空品狀況、防制績效等公式分配，不直接由地方留存',
+      ],
+    },
+    {
+      title: '地方空污基金',
+      color: '#d0e8d8', textColor: '#3a6848',
+      items: [
+        '來源：固定源費及營建工程費（由縣市政府徵收，直接入地方基金）',
+        '管理：各直轄市、縣（市）政府設管理委員會',
+        '用途：地方固定源管制、空品淨化區設置、地方空品監測站維護',
+        '中央監督：地方基金用途須符合空污法及環境部核定計畫，非地方可自由運用',
+      ],
+    },
   ],
 };
 
@@ -303,6 +359,7 @@ export default function AirPollutionFee() {
     { id: 'procedure', label: '稽徵程序', icon: ClipboardList },
     { id: 'effects',   label: '法律效果', icon: Scale },
     { id: 'evasion',   label: '逃漏',     icon: AlertTriangle },
+    { id: 'finance',   label: '財政收支', icon: Landmark },
     { id: 'history',   label: '制度沿革', icon: History },
   ];
 
@@ -323,7 +380,7 @@ export default function AirPollutionFee() {
       <div className="max-w-2xl mx-auto px-4 pt-5">
 
         {/* Section nav */}
-        <div className="grid grid-cols-5 gap-1 mb-5">
+        <div className="grid grid-cols-3 gap-1.5 mb-5">
           {SECTIONS.map(s => {
             const Icon = s.icon;
             return (
@@ -632,40 +689,83 @@ export default function AirPollutionFee() {
               ))}
             </div>
 
-            {/* 財政收支 — 制度整體成效 */}
-            <div className="rounded-[1.5rem] border border-[#e8d3d1] bg-white/70 backdrop-blur-xl overflow-hidden shadow-sm shadow-rose-100/60 mt-2">
+          </div>
+        )}
+
+        {/* ── 財政收支 ──────────────────────────────────────────── */}
+        {section === 'finance' && (
+          <div className="space-y-3">
+            <InfoBox
+              title="財政收支劃分特殊性"
+              text="空污費不適用《財政收支劃分法》，費款不歸國庫統收統支，而是依義務人類型分流入「中央空污基金」或「地方空污基金」，形成平行的雙層基金結構，各有其徵收主體、管理機關與用途限制。"
+            />
+
+            {/* 中央地方徵收分工 */}
+            <div className="rounded-[1.5rem] border border-[#e8d3d1] bg-white/70 backdrop-blur-xl overflow-hidden shadow-sm">
               <div className="px-5 py-3 border-b border-[#f5eceb]">
-                <p className="text-[9px] font-black uppercase tracking-[0.35em] text-[#b09e9c]">空污基金 · 財政收支結構</p>
+                <p className="text-[9px] font-black uppercase tracking-[0.35em] text-[#b09e9c]">收入來源 · 徵收主體</p>
               </div>
-              <div className="grid grid-cols-2 divide-x divide-[#f5eceb]">
-                <div className="px-4 py-4">
-                  <p className="text-[9px] font-black text-[#8a7a78] uppercase tracking-wider mb-3">收入來源</p>
-                  {FINANCE_DATA.revenue.map(item => (
-                    <div key={item.label} className="mb-3">
-                      <div className="flex items-baseline justify-between mb-1">
-                        <p className="text-[11px] font-black text-[#6b5b58]">{item.label}</p>
-                        <p className="text-[11px] font-black text-[#8a7a78]">~{item.pct}%</p>
-                      </div>
-                      <div className="h-1.5 rounded-full bg-[#f0e8e6]">
+              <div className="divide-y divide-[#f8f4f3]">
+                {FINANCE_DATA.revenue.map(item => (
+                  <div key={item.label} className="px-5 py-3.5">
+                    <div className="flex items-center gap-3 mb-1.5">
+                      <div className="shrink-0 w-2 h-2 rounded-full" style={{ backgroundColor: item.color }} />
+                      <p className="text-[12px] font-black text-[#6b5b58] flex-1">{item.label}</p>
+                      <span className={`text-[9px] font-black px-2 py-0.5 rounded-full ${item.collector === '中央' ? 'bg-[#d0dce8] text-[#3a5878]' : 'bg-[#d0e8d8] text-[#3a6848]'}`}>
+                        {item.collector}徵收
+                      </span>
+                      <span className="text-[11px] font-black text-[#8a7a78]">~{item.pct}%</span>
+                    </div>
+                    <div className="ml-5">
+                      <div className="h-1.5 rounded-full bg-[#f0e8e6] mb-1">
                         <div className="h-full rounded-full" style={{ width: `${item.pct}%`, backgroundColor: item.color }} />
                       </div>
-                      <p className="text-[9px] text-[#b09e9c] mt-0.5">{item.note}</p>
+                      <p className="text-[10px] text-[#a09088]">{item.collectorNote}　→　存入 <span className="font-bold text-[#6b5b58]">{item.fund}</span></p>
+                      <p className="text-[10px] text-[#b09e9c] mt-0.5">{item.note}</p>
                     </div>
-                  ))}
-                  <p className="mt-2 text-[10px] text-[#a09088] leading-relaxed">累計徵收（1995–2008）：逾 <span className="font-black text-[#6b5b58]">355 億元</span></p>
-                </div>
-                <div className="px-4 py-4">
-                  <p className="text-[9px] font-black text-[#8a7a78] uppercase tracking-wider mb-3">基金支出</p>
-                  {FINANCE_DATA.expenditure.map(item => (
-                    <div key={item.label} className="flex items-center gap-2 mb-2">
-                      <p className="text-[10px] text-[#6b5b58] w-[88px] shrink-0 leading-tight">{item.label}</p>
-                      <div className="flex-1 h-1.5 rounded-full bg-[#f0e8e6]">
-                        <div className="h-full rounded-full" style={{ width: `${item.pct}%`, backgroundColor: item.color }} />
+                  </div>
+                ))}
+              </div>
+              <div className="px-5 py-2.5 bg-[#faf6f5] border-t border-[#f0e8e6]">
+                <p className="text-[10px] text-[#a09088]">累計徵收（1995–2008）：逾 <span className="font-black text-[#6b5b58]">355 億元</span>；費款全數入各級空污基金，不納入一般財政預算。</p>
+              </div>
+            </div>
+
+            {/* 中央地方基金結構 */}
+            <div className="grid grid-cols-2 gap-2">
+              {FINANCE_DATA.centralLocal.map(fund => (
+                <div key={fund.title} className="rounded-[1.5rem] border border-[#e8d3d1] bg-white/70 backdrop-blur-xl px-4 py-4 shadow-sm">
+                  <div className="w-7 h-7 rounded-xl mb-2 flex items-center justify-center" style={{ backgroundColor: fund.color }}>
+                    <Landmark size={13} style={{ color: fund.textColor }} strokeWidth={2.2} />
+                  </div>
+                  <p className="text-[11px] font-black text-[#6b5b58] mb-2">{fund.title}</p>
+                  <div className="space-y-1.5">
+                    {fund.items.map((item, i) => (
+                      <div key={i} className="flex gap-1.5">
+                        <span className="shrink-0 w-1 h-1 rounded-full mt-1.5 bg-[#c5b4b2]" />
+                        <p className="text-[10px] text-[#7a6a68] leading-relaxed">{item}</p>
                       </div>
-                      <p className="text-[10px] font-black text-[#8a7a78] w-7 text-right shrink-0">{item.pct}%</p>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
+              ))}
+            </div>
+
+            {/* 基金支出結構 */}
+            <div className="rounded-[1.5rem] border border-[#e8d3d1] bg-white/70 backdrop-blur-xl overflow-hidden shadow-sm">
+              <div className="px-5 py-3 border-b border-[#f5eceb]">
+                <p className="text-[9px] font-black uppercase tracking-[0.35em] text-[#b09e9c]">基金支出用途結構</p>
+              </div>
+              <div className="px-5 py-4">
+                {FINANCE_DATA.expenditure.map(item => (
+                  <div key={item.label} className="flex items-center gap-3 mb-2.5">
+                    <p className="text-[11px] text-[#6b5b58] w-28 shrink-0">{item.label}</p>
+                    <div className="flex-1 h-2 rounded-full bg-[#f0e8e6]">
+                      <div className="h-full rounded-full transition-all" style={{ width: `${item.pct}%`, backgroundColor: item.color }} />
+                    </div>
+                    <p className="text-[11px] font-black text-[#8a7a78] w-10 text-right shrink-0">{item.pct}%</p>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
