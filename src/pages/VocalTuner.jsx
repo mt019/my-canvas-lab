@@ -25,7 +25,13 @@ const NOTE_NAMES = ['C', 'C♯', 'D', 'D♯', 'E', 'F', 'F♯', 'G', 'G♯', 'A'
 const BLACK_KEY_INDICES = new Set([1, 3, 6, 8, 10]);
 
 // Keyboard layout: A-K = C to C+1, W E T Y U = black keys
-const KEY_TO_SEMITONE = { a:0, w:1, s:2, e:3, d:4, f:5, t:6, g:7, y:8, h:9, u:10, j:11, k:12 };
+// Home row: white keys  |  Top row: black keys (sharps)
+// Octave n:  a s d f g h j  |  w e t y u
+// Octave n+1: k l ; '       |  i o p [ ] \
+const KEY_TO_SEMITONE = {
+  a:0, w:1, s:2, e:3, d:4, f:5, t:6, g:7, y:8, h:9, u:10, j:11,
+  k:12, i:13, l:14, o:15, ';':16, "'":17, p:18, '[':19, ']':20, '\\':21,
+};
 
 // ─── Utils ────────────────────────────────────────────────────────────────────
 function freqToMidi(freq) { return 69 + 12 * Math.log2(freq / 440); }
@@ -356,18 +362,24 @@ export default function VocalTuner() {
     drawPianoRoll(canvas, cssW, cssH, midiTrailRef.current, viewCenterRef.current, targetNoteRef.current?.midi ?? null, detectedMidiRef.current, rollSemitonesRef.current);
   }, []);
 
-  const resetDisplay = useCallback(() => {
+  // Resets pitch detection state only — never clears trail history
+  const resetDetection = useCallback(() => {
     pitchHistoryRef.current = [];
     attackStartRef.current = 0;
     stableMatchRef.current = { midi: null, frames: 0, cents: 0 };
-    midiTrailRef.current = new Array(TRAIL_FRAMES).fill(null);
     detectedMidiRef.current = null;
     setIsTooQuiet(true);
-    setInputLevel(0);
     setDetectedNote(null);
     setDetectedFreq(0);
+  }, []);
+
+  // Full reset (stop/unmount): also clears trail
+  const resetDisplay = useCallback(() => {
+    resetDetection();
+    midiTrailRef.current = new Array(TRAIL_FRAMES).fill(null);
+    setInputLevel(0);
     redrawCanvas();
-  }, [redrawCanvas]);
+  }, [resetDetection, redrawCanvas]);
 
   const ensureCtx = useCallback(async () => {
     const AC = window.AudioContext || window.webkitAudioContext;
@@ -472,12 +484,11 @@ export default function VocalTuner() {
 
     if (rms < VOLUME_THRESHOLD) {
       if (now - lastNoteTimeRef.current > HOLD_TIME) {
-        resetDisplay();
-      } else {
-        midiTrailRef.current.shift();
-        midiTrailRef.current.push(null);
-        redrawCanvas();
+        resetDetection();   // clears detection state only — trail keeps scrolling
       }
+      midiTrailRef.current.shift();
+      midiTrailRef.current.push(null);
+      redrawCanvas();
       rafRef.current = requestAnimationFrame(updateLoop);
       return;
     }
@@ -532,7 +543,7 @@ export default function VocalTuner() {
 
     redrawCanvas();
     rafRef.current = requestAnimationFrame(updateLoop);
-  }, [resetDisplay, redrawCanvas]);
+  }, [resetDetection, resetDisplay, redrawCanvas]);
 
   const startMic = useCallback(async () => {
     try {
