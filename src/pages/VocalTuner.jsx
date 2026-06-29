@@ -345,7 +345,7 @@ export default function VocalTuner() {
   const attackStartRef = useRef(0);
   const stableMatchRef = useRef({ midi: null, frames: 0, cents: 0 });
   const midiTrailRef = useRef(new Array(TRAIL_FRAMES).fill(null));
-  const viewCenterRef = useRef(60); // C4 default
+  const viewCenterRef = useRef(67); // G4 — puts F3 at bottom edge of default 28-semitone view
   const targetNoteRef = useRef(null);
   const detectedMidiRef = useRef(null);
   const pianoGainRef = useRef(null);
