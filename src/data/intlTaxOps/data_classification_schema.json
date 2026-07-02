@@ -1,0 +1,239 @@
+{
+  "version": "0.2.0",
+  "principle": "Use multi-axis classification. Do not force a document or claim into a single bucket.",
+  "axes": {
+    "materialType": [
+      {
+        "id": "treaty-or-convention",
+        "zh": "條約/公約文本",
+        "en": "Treaty or convention text",
+        "use": "Binding or potentially binding legal instrument."
+      },
+      {
+        "id": "model-or-commentary",
+        "zh": "模型/註釋/官方評論",
+        "en": "Model, commentary, or official commentary",
+        "use": "Interpretive authority or soft-law reference."
+      },
+      {
+        "id": "administrative-guidance",
+        "zh": "行政指引",
+        "en": "Administrative guidance",
+        "use": "Implementation guidance, safe harbour, reporting or compliance procedure."
+      },
+      {
+        "id": "agenda-or-workplan",
+        "zh": "議程/工作計畫",
+        "en": "Agenda or workplan",
+        "use": "Future-facing institutional signal."
+      },
+      {
+        "id": "implementation-toolkit",
+        "zh": "執行工具包",
+        "en": "Implementation toolkit",
+        "use": "Operational guidance for administrations or taxpayers."
+      },
+      {
+        "id": "research-paper",
+        "zh": "研究論文",
+        "en": "Research paper",
+        "use": "Academic or policy analysis; not legal authority by itself."
+      },
+      {
+        "id": "dataset-or-statistics",
+        "zh": "資料集/統計",
+        "en": "Dataset or statistics",
+        "use": "Evidence for empirical or policy claims."
+      },
+      {
+        "id": "event-or-network-signal",
+        "zh": "活動/社群訊號",
+        "en": "Event or network signal",
+        "use": "Shows frontier agenda, actor network, and emerging debate."
+      },
+      {
+        "id": "social-signal",
+        "zh": "社群媒體訊號",
+        "en": "Social signal",
+        "use": "Early clue only; requires independent verification."
+      }
+    ],
+    "epistemicLayer": [
+      {
+        "id": "normative-rule",
+        "zh": "規範命題",
+        "en": "Normative rule",
+        "question": "規則說了什麼？"
+      },
+      {
+        "id": "implementation-reality",
+        "zh": "實然運作",
+        "en": "Implementation reality",
+        "question": "制度實際如何運作？"
+      },
+      {
+        "id": "observable-trend",
+        "zh": "已觀察趨勢",
+        "en": "Observable trend",
+        "question": "現在已經能看出什麼方向？"
+      },
+      {
+        "id": "future-development",
+        "zh": "未來發展",
+        "en": "Future development",
+        "question": "接下來會發生什麼、何時檢查？"
+      },
+      {
+        "id": "research-hotspot",
+        "zh": "研究熱點",
+        "en": "Research hotspot",
+        "question": "學界/實務界正密集討論什麼？"
+      },
+      {
+        "id": "controversy",
+        "zh": "爭議焦點",
+        "en": "Controversy",
+        "question": "分歧在哪裡，雙方論點是什麼？"
+      },
+      {
+        "id": "actor-ecosystem",
+        "zh": "學者機構生態",
+        "en": "Actor ecosystem",
+        "question": "誰在推動、誰有影響力？"
+      },
+      {
+        "id": "data-evidence",
+        "zh": "資料證據",
+        "en": "Data evidence",
+        "question": "數據或案例支持什麼？限制是什麼？"
+      }
+    ],
+    "authorityTier": [
+      {
+        "id": "binding-law",
+        "zh": "拘束性法源",
+        "en": "Binding law"
+      },
+      {
+        "id": "official-soft-law",
+        "zh": "官方軟法/官方解釋",
+        "en": "Official soft law or interpretation"
+      },
+      {
+        "id": "official-process",
+        "zh": "官方程序文件",
+        "en": "Official process document"
+      },
+      {
+        "id": "academic-peer",
+        "zh": "學術/同儕研究",
+        "en": "Academic or peer research"
+      },
+      {
+        "id": "professional-analysis",
+        "zh": "實務分析",
+        "en": "Professional analysis"
+      },
+      {
+        "id": "secondary-signal",
+        "zh": "次級線索",
+        "en": "Secondary signal"
+      }
+    ],
+    "temporalStatus": [
+      {
+        "id": "current-final",
+        "zh": "現行/定稿",
+        "en": "Current or final"
+      },
+      {
+        "id": "current-draft",
+        "zh": "現行草案",
+        "en": "Current draft"
+      },
+      {
+        "id": "scheduled",
+        "zh": "已排程",
+        "en": "Scheduled"
+      },
+      {
+        "id": "emerging",
+        "zh": "新興",
+        "en": "Emerging"
+      },
+      {
+        "id": "historical",
+        "zh": "歷史背景",
+        "en": "Historical background"
+      },
+      {
+        "id": "stale-check-required",
+        "zh": "需重新核實",
+        "en": "Refresh required"
+      }
+    ],
+    "topicDomain": [
+      "pillar-two",
+      "pillar-one",
+      "tax-treaties",
+      "transfer-pricing",
+      "tax-certainty-and-disputes",
+      "un-tax-cooperation",
+      "beneficial-ownership-and-abuse",
+      "tax-transparency",
+      "hnwi-wealth-taxation",
+      "tax-incentives",
+      "investment-arbitration-and-tax",
+      "developing-country-taxation",
+      "swiss-international-tax",
+      "data-and-measurement"
+    ],
+    "workflowState": [
+      {
+        "id": "seeded",
+        "zh": "已列入",
+        "en": "Seeded"
+      },
+      {
+        "id": "download-needed",
+        "zh": "待下載",
+        "en": "Download needed"
+      },
+      {
+        "id": "parsed",
+        "zh": "已解析",
+        "en": "Parsed"
+      },
+      {
+        "id": "claim-extraction-needed",
+        "zh": "待抽取命題",
+        "en": "Claim extraction needed"
+      },
+      {
+        "id": "verified",
+        "zh": "已核實",
+        "en": "Verified"
+      },
+      {
+        "id": "monitoring",
+        "zh": "監測中",
+        "en": "Monitoring"
+      }
+    ]
+  },
+  "recommendedRecordShape": {
+    "id": "string",
+    "title": "bilingual or source title",
+    "url": "string",
+    "materialType": ["string"],
+    "epistemicLayer": ["string"],
+    "authorityTier": "string",
+    "temporalStatus": "string",
+    "topicDomain": ["string"],
+    "workflowState": "string",
+    "sourceDate": "YYYY-MM-DD or null",
+    "dateChecked": "YYYY-MM-DD",
+    "nextCheckDate": "YYYY-MM-DD",
+    "verificationNotes": "string"
+  }
+}
