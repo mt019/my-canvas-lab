@@ -557,7 +557,7 @@ export default function AirPollutionFee() {
                 </div>
 
                 {season === 'q14' && (
-                  <InfoBox text="第一、四季（冬季）費率較高，另乘減量係數E（詳見「法律效果」分頁）。" warn />
+                  <InfoBox text="第一、四季（冬季）費率較高，另乘減量係數E。" warn />
                 )}
 
                 <div className="rounded-[1.5rem] border border-[#e8d3d1] bg-white/70 backdrop-blur-xl overflow-hidden shadow-sm">

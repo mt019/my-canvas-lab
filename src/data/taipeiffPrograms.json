@@ -1,0 +1,4296 @@
+{
+  "metadata": {
+    "updated_at": "2026-06-30T17:44:02.237Z",
+    "source": "OpenTix search and program APIs",
+    "query": "台北電影節",
+    "program_count": 108,
+    "layer": "ticketing_index",
+    "completeness": "Not the full official program catalog. Use as deduplicated ticketing index; merge with official website and program-book film index for complete festival catalog.",
+    "note": "One row per OpenTix program id. Availability is volatile and should be refreshed before purchase."
+  },
+  "programs": [
+    {
+      "id": "2057053567638904833",
+      "title": "令人討厭的郵差的一生",
+      "englishTitle": "The Postman",
+      "creator": "達里希．梅赫朱伊 Dariush MEHRJUI",
+      "production": "伊朗 Iran / 1972 / 109min",
+      "synopsis": "北伊朗的窮鄉僻壤，一名郵差不但在妻子面前難振雄風，更是阮囊羞澀，只能寄居在地主家幫傭。豈料，隨著地主的姪子留歐歸國，他不但帶來眾人難以消化的洋派思想與作風，還勾引了郵差的妻子，三人命運自此驟變。改編自經典劇作，導演將草根小人物的無力感，巧妙轉化為辛辣的政治諷刺劇。 Taghi, a postman, lives with his beautiful young wife on his master’s land. He is sexually weak.The master’s nephew is a young engineer who aims to establish a pig breeding farm on his uncle’s land. The young engineer sleeps with Taghi’s wife.",
+      "year": "1972",
+      "minutes": "109min",
+      "rating": "輔12級",
+      "categories": [
+        "外國片",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779274742246s36AvwAXyf.jpeg",
+      "url": "https://www.opentix.life/event/2057053567638904833",
+      "screenings": [
+        {
+          "eventId": "2057053571693215746",
+          "start": 1782886800,
+          "end": 1782893340,
+          "venue": "誠品 B",
+          "note": "",
+          "guest": "",
+          "remaining": 82,
+          "totalRemaining": 88,
+          "hiddenOrGuestRemaining": 6,
+          "status": "available",
+          "ticketType": "平日日場 180"
+        },
+        {
+          "eventId": "2057053569819418625",
+          "start": 1782886800,
+          "end": 1782893340,
+          "venue": "誠品 C",
+          "note": "",
+          "guest": "",
+          "remaining": 89,
+          "totalRemaining": 89,
+          "hiddenOrGuestRemaining": 0,
+          "status": "available",
+          "ticketType": "平日日場 180"
+        },
+        {
+          "eventId": "2057056949783437313",
+          "start": 1783151400,
+          "end": 1783157940,
+          "venue": "誠品 C",
+          "note": "",
+          "guest": "",
+          "remaining": 56,
+          "totalRemaining": 60,
+          "hiddenOrGuestRemaining": 4,
+          "status": "available",
+          "ticketType": "學生 220"
+        }
+      ],
+      "availableScreeningCount": 3,
+      "screeningCount": 3,
+      "firstStart": 1782886800
+    },
+    {
+      "id": "2056705720054296577",
+      "title": "一個夜晚與三個夏天",
+      "englishTitle": "Linka Linka",
+      "creator": "崗珍 Kangdrun",
+      "production": "中國 China / 2025 / 100min",
+      "synopsis": "桑吉回到故鄉拉薩，開始拍攝關於自己童年的電影，同時面對自己的創作迷惘，以及他與父親的隔閡。旅程中，塵封往事和情感心結一一隨著久別重逢，重新在他的生命中掀起漣漪。導演崗珍以三個夏天構築成一篇詩意散文，亦描繪著在拉薩這座城市的歲月流轉之中，新生代青年男女在去與留之間的掙扎，展現女性視角下的拉薩青春物語。 Samgyi returns to her hometown of Lhasa to make a film about bitter memories of her childhood friend, Lhamo. As long-buried memories resurface, an unexpected reunion with Lhamo creates quiet ripples.",
+      "year": "2025",
+      "minutes": "100min",
+      "rating": "普遍級",
+      "categories": [
+        "外國片",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779191808793mURRZOyMvW.jpeg",
+      "url": "https://www.opentix.life/event/2056705720054296577",
+      "screenings": [
+        {
+          "eventId": "2056705725010092033",
+          "start": 1782889800,
+          "end": 1782895800,
+          "venue": "光點 1",
+          "note": "",
+          "guest": "",
+          "remaining": 112,
+          "totalRemaining": 114,
+          "hiddenOrGuestRemaining": 2,
+          "status": "available",
+          "ticketType": "平日日場 180"
+        },
+        {
+          "eventId": "2056708371713171457",
+          "start": 1783418400,
+          "end": 1783424400,
+          "venue": "光點 1",
+          "note": "",
+          "guest": "",
+          "remaining": 105,
+          "totalRemaining": 113,
+          "hiddenOrGuestRemaining": 8,
+          "status": "available",
+          "ticketType": "學生 220"
+        }
+      ],
+      "availableScreeningCount": 2,
+      "screeningCount": 2,
+      "firstStart": 1782889800
+    },
+    {
+      "id": "2059206350664228865",
+      "title": "港都舊事",
+      "englishTitle": "Alexandria... Why?",
+      "creator": "尤瑟夫．夏因 Youssef CHAHINE",
+      "production": "埃及 Egypt / 1979 / 131min",
+      "synopsis": "沉迷電影的少年，幻想成為好萊塢演員，同時見證盟軍駐軍、民族衝突與旁人的愛慾與政治覺醒，在現實與夢想間自我探索與成長。導演融合自身經歷、幻想與歷史片段，打破寫實邊界，交織不同文化的亞歷山卓港，也匯聚了世代的記憶。本片作為其自傳性四部曲的開端，藉由少年的電影夢，回應殖民語境中西方電影對身分認同的形塑。 Living in Alexandria amid the harsh reality of World War II, teenager Yehia retreats into a world of fantasy. Obsessed with Hollywood, he dreams of studying filmmaking in America. However, when he falls in love and discovers the lies of the European occupation, he begins to reevaluate his identity.",
+      "year": "1979",
+      "minutes": "131min",
+      "rating": "保護級",
+      "categories": [
+        "外國片",
+        "尤瑟夫・夏因",
+        "港都舊事",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779787996834TT0Ck1YErj.png",
+      "url": "https://www.opentix.life/event/2059206350664228865",
+      "screenings": [
+        {
+          "eventId": "2059206354108289026",
+          "start": 1782891000,
+          "end": 1782898860,
+          "venue": "光點 2",
+          "note": "",
+          "guest": "",
+          "remaining": 41,
+          "totalRemaining": 48,
+          "hiddenOrGuestRemaining": 7,
+          "status": "available",
+          "ticketType": "平日日場 180"
+        }
+      ],
+      "availableScreeningCount": 1,
+      "screeningCount": 1,
+      "firstStart": 1782891000
+    },
+    {
+      "id": "2059851638187614208",
+      "title": "左撇子女孩",
+      "englishTitle": "Left-Handed Girl",
+      "creator": "鄒時擎 Shih-Ching TSOU",
+      "production": "台灣、法國、英國、美國 Taiwan, France, UK, USA / 2025 / 108min",
+      "synopsis": "五歲的宜靜是個左撇子女孩，因外公説「左手是魔鬼的手」強迫改用右手。她與母親淑芬、姐姐宜安在台北夜市相依為命，面對生活壓力與傳統價值的束縛。透過孩子純真的視角，影片描繪女性在不同生命階段承受的壓抑與期待，並在夜市的喧囂與煙火之間，尋找屬於自己的聲音與出口。 Five-year-old I-Jing, born left-handed, is scolded by her grandfather, who calls it the “devil’s hand.” Set in a bustling Taipei night market, the film follows a child’s perspective to reveal how women across generations quietly resist and navigate the constraints of a conservative Taiwanese family.",
+      "year": "2025",
+      "minutes": "108min",
+      "rating": "輔12級",
+      "categories": [
+        "外國片",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779941845186oNGtBGc0mi.jpeg",
+      "url": "https://www.opentix.life/event/2059851638187614208",
+      "screenings": [
+        {
+          "eventId": "2059851641278197761",
+          "start": 1782892800,
+          "end": 1782899280,
+          "venue": "中山堂",
+          "note": "★ 映後座談",
+          "guest": "映後",
+          "remaining": 451,
+          "totalRemaining": 462,
+          "hiddenOrGuestRemaining": 11,
+          "status": "available",
+          "ticketType": "平日日場 180"
+        }
+      ],
+      "availableScreeningCount": 1,
+      "screeningCount": 1,
+      "firstStart": 1782892800
+    },
+    {
+      "id": "2058869718750568449",
+      "title": "永恆的特里斯坦",
+      "englishTitle": "Tristan Forever",
+      "creator": "托比亞斯．諾雷 Tobias NÖLLE、羅宏．伯納多 Loran BONNARDOT",
+      "production": "瑞士 Switzerland / 2026 / 90min",
+      "synopsis": "年屆知天命的醫生重返被稱作「全球最偏遠孤島」的特里斯坦庫涅，打算永居於此。他在島上落腳謀生，與島民閒話家常，努力融入市井日常。但置身遺世之境，他能否真正獲得島民信任，卸下過客身分？本片共同導演羅宏．伯納多亦是片中主角，影像在自我書寫與現實之間游移，既捕捉島嶼明媚與海光粼粼，亦溫柔凝視靈魂深處的孤獨與依存。 For 30 years, a doctor from Paris maintained a friendship with a fisherman from Tristan da Cunha, the most isolated, inhabited island in the world. Now he travels back one more time, with the plan to stay there for good.",
+      "year": "2026",
+      "minutes": "90min",
+      "rating": "普遍級",
+      "categories": [
+        "外國片",
+        "電影-紀錄片",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779707725690dcobaJSgL7.jpeg",
+      "url": "https://www.opentix.life/event/2058869718750568449",
+      "screenings": [
+        {
+          "eventId": "2058869720721776640",
+          "start": 1782895200,
+          "end": 1782900600,
+          "venue": "誠品 B",
+          "note": "",
+          "guest": "",
+          "remaining": 98,
+          "totalRemaining": 103,
+          "hiddenOrGuestRemaining": 5,
+          "status": "available",
+          "ticketType": "平日日場 180"
+        },
+        {
+          "eventId": "2058869721705603073",
+          "start": 1782895200,
+          "end": 1782900600,
+          "venue": "誠品 C",
+          "note": "",
+          "guest": "",
+          "remaining": 66,
+          "totalRemaining": 66,
+          "hiddenOrGuestRemaining": 0,
+          "status": "available",
+          "ticketType": "平日日場 180"
+        },
+        {
+          "eventId": "2058875367167483905",
+          "start": 1783171800,
+          "end": 1783177200,
+          "venue": "誠品 C",
+          "note": "",
+          "guest": "",
+          "remaining": 33,
+          "totalRemaining": 37,
+          "hiddenOrGuestRemaining": 4,
+          "status": "available",
+          "ticketType": "學生 220"
+        }
+      ],
+      "availableScreeningCount": 3,
+      "screeningCount": 3,
+      "firstStart": 1782895200
+    },
+    {
+      "id": "2057375564328812545",
+      "title": "青春轉圈圈",
+      "englishTitle": "Vanitas",
+      "creator": "內山拓也 UCHIYAMA Takuya",
+      "production": "日本 Japan / 2016 / 105min",
+      "synopsis": "大學入學日，四個男孩在體育館裡相遇。他們揮霍青春，共享課餘閒暇。然而，這份親密僅止於校園。校門之外，他們的生活是四條平行線。被生計壓迫的日常、遊走灰色地帶的差事，以及那些無法對任何人訴說的寂寞，原本緊密的四人關係開始剝落瓦解。內山拓也初試啼聲便嶄露鋒芒，以獨特空間調度，精準捕捉了世代的疏離與孤寂。 What is life like at a Japanese university? Four “friends” drift in and out of their friendships and face boredom, uncertainty, and disengagement. And something more dangerous.",
+      "year": "2016",
+      "minutes": "105min",
+      "rating": "保護級",
+      "categories": [
+        "外國片",
+        "青春轉圈圈",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/17793515060309GVD1pqKxC.jpeg",
+      "url": "https://www.opentix.life/event/2057375564328812545",
+      "screenings": [
+        {
+          "eventId": "2057375566375632897",
+          "start": 1782898200,
+          "end": 1782904500,
+          "venue": "光點 1",
+          "note": "★ 映後座談",
+          "guest": "映後",
+          "remaining": 23,
+          "totalRemaining": 31,
+          "hiddenOrGuestRemaining": 8,
+          "status": "available",
+          "ticketType": "平日日場 180"
+        },
+        {
+          "eventId": "2057375566386573312",
+          "start": 1783137000,
+          "end": 1783143300,
+          "venue": "光點 1",
+          "note": "",
+          "guest": "",
+          "remaining": 57,
+          "totalRemaining": 65,
+          "hiddenOrGuestRemaining": 8,
+          "status": "available",
+          "ticketType": "學生 220"
+        },
+        {
+          "eventId": "2057379639941210113",
+          "start": 1783328400,
+          "end": 1783334700,
+          "venue": "光點 1",
+          "note": "",
+          "guest": "",
+          "remaining": 73,
+          "totalRemaining": 81,
+          "hiddenOrGuestRemaining": 8,
+          "status": "available",
+          "ticketType": "平日日場 180"
+        }
+      ],
+      "availableScreeningCount": 3,
+      "screeningCount": 3,
+      "firstStart": 1782898200
+    },
+    {
+      "id": "2057346408144650241",
+      "title": "暴雨之後",
+      "englishTitle": "Downpour",
+      "creator": "巴赫拉姆．貝扎伊 Bahram BEYZAIE",
+      "production": "伊朗 Iran / 1971 / 130min",
+      "synopsis": "新上任的年輕教師處處碰壁，不只孩童調皮，他還對學生的姊姊動了心，且難以適應滿城的流言蜚語。理想與熱忱雖為他贏得孩子喜愛，但知識份子仍不見容於舊時代的錢與權。以獨立製作撐出創作空間，幽默捕捉伊斯蘭革命前伊朗的社會氛圍，尖銳筆鋒背後是導演休戚與共之心。本片僅存的拷貝損壞嚴重，終獲馬丁．史柯西斯推動修復。 As Mr. Hekmati embarks on a new role as a school teacher in an unfamiliar neighborhood, he soon discovers that he is a complete misfit in his surroundings.",
+      "year": "1971",
+      "minutes": "130min",
+      "rating": "普遍級",
+      "categories": [
+        "外國片",
+        "暴雨之後",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779344560507fxBrWDC6tE.jpeg",
+      "url": "https://www.opentix.life/event/2057346408144650241",
+      "screenings": [
+        {
+          "eventId": "2057346411884670977",
+          "start": 1782902400,
+          "end": 1782910200,
+          "venue": "誠品 B",
+          "note": "",
+          "guest": "",
+          "remaining": 66,
+          "totalRemaining": 71,
+          "hiddenOrGuestRemaining": 5,
+          "status": "available",
+          "ticketType": "學生 220"
+        },
+        {
+          "eventId": "2057346411880132609",
+          "start": 1783228800,
+          "end": 1783236600,
+          "venue": "誠品 C",
+          "note": "",
+          "guest": "",
+          "remaining": 35,
+          "totalRemaining": 39,
+          "hiddenOrGuestRemaining": 4,
+          "status": "available",
+          "ticketType": "學生 220"
+        },
+        {
+          "eventId": "2057346411322744833",
+          "start": 1783410000,
+          "end": 1783417800,
+          "venue": "誠品 B",
+          "note": "",
+          "guest": "",
+          "remaining": 82,
+          "totalRemaining": 89,
+          "hiddenOrGuestRemaining": 7,
+          "status": "available",
+          "ticketType": "平日日場 180"
+        },
+        {
+          "eventId": "2057346411540324353",
+          "start": 1783410000,
+          "end": 1783417800,
+          "venue": "誠品 C",
+          "note": "",
+          "guest": "",
+          "remaining": 84,
+          "totalRemaining": 84,
+          "hiddenOrGuestRemaining": 0,
+          "status": "available",
+          "ticketType": "平日日場 180"
+        }
+      ],
+      "availableScreeningCount": 4,
+      "screeningCount": 4,
+      "firstStart": 1782902400
+    },
+    {
+      "id": "2059557253091631104",
+      "title": "神偷．獵人．斷指客",
+      "englishTitle": "The Good, the Bad, the Weird",
+      "creator": "金知雲 KIM Jee-woon",
+      "production": "南韓 South Korea / 2008 / 130min",
+      "synopsis": "列車橫越滿洲荒漠，怪盜劫財之際，竟意外得手一張藏寶圖。盜匪頭目截路而來，賞金獵人亦聞風而至。法外之境，日軍與馬賊環伺，來自朝鮮的三人狹路相逢，各藏殺機。在煙硝瀰漫的黃土上，只有異鄉人，沒有自己人。宋康昊、李炳憲、鄭雨盛不靠替身，騎馬持槍親身上陣，角色的狡黠、冷酷與痞氣，在拳腳槍火間一覽無遺。 In 1930s Manchuria, a treasure map sparks a frantic chase between three outlaws: the Weird, a robber; the Bad, a ruthless hitman; and the Good, a bounty hunter. As the Japanese Army and bandits close in, the trio engages in a spectacular, high-stakes desert pursuit for the ultimate prize.",
+      "year": "2008",
+      "minutes": "130min",
+      "rating": "輔12級",
+      "categories": [
+        "外國片",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779871657854dEzZgercIs.jpeg",
+      "url": "https://www.opentix.life/event/2059557253091631104",
+      "screenings": [
+        {
+          "eventId": "2059557257527664641",
+          "start": 1782903000,
+          "end": 1782910800,
+          "venue": "誠品 A",
+          "note": "★ 映後座談",
+          "guest": "映後",
+          "remaining": 92,
+          "totalRemaining": 98,
+          "hiddenOrGuestRemaining": 6,
+          "status": "available",
+          "ticketType": "學生 220"
+        },
+        {
+          "eventId": "2059558616979238913",
+          "start": 1783248000,
+          "end": 1783255800,
+          "venue": "誠品 A",
+          "note": "",
+          "guest": "",
+          "remaining": 126,
+          "totalRemaining": 134,
+          "hiddenOrGuestRemaining": 8,
+          "status": "available",
+          "ticketType": "學生 220"
+        }
+      ],
+      "availableScreeningCount": 2,
+      "screeningCount": 2,
+      "firstStart": 1782903000
+    },
+    {
+      "id": "2057058109428408321",
+      "title": "鐵道盡頭",
+      "englishTitle": "Still Life",
+      "creator": "索赫拉布．沙希德．薩雷斯 Sohrab SHAHID SALESS",
+      "production": "伊朗 Iran / 1974 / 94min",
+      "synopsis": "荒野平交道看守員在30年日復一日的工作後，因一封退休信打破沉默。導演沙希德．薩雷斯摒棄煽情，以固定長鏡頭與非職業演員捕捉時間流逝，在冷靜凝視中，看見平凡生活最沉重且美麗的本質。此一風格形式啟發往後阿巴斯等大師的「詩意寫實主義」，是伊朗電影新浪潮承先啟後的關鍵作品。 *本拷貝為現存最好之版本，保留原始拷貝的硬性字幕，若影響觀影品質，敬請包涵。 A cornerstone of the first Iranian New Wave, Still Life depicts an elderly railway guard's repetitive life disrupted by forced retirement. Shahid Saless uses static long takes and a minimalist style to capture the passage of time, profoundly influencing global cinema with his raw, meditative realism. *Please note that this version is the best copy available. It contains hard-coded subtitles from the original print. Thank you for your understanding.",
+      "year": "1974",
+      "minutes": "94min",
+      "rating": "普遍級",
+      "categories": [
+        "外國片",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779275825817mEe6cyvsAI.jpeg",
+      "url": "https://www.opentix.life/event/2057058109428408321",
+      "screenings": [
+        {
+          "eventId": "2057059630478589953",
+          "start": 1782903600,
+          "end": 1782909240,
+          "venue": "誠品 C",
+          "note": "",
+          "guest": "",
+          "remaining": 17,
+          "totalRemaining": 20,
+          "hiddenOrGuestRemaining": 3,
+          "status": "available",
+          "ticketType": "學生 220"
+        },
+        {
+          "eventId": "2057058113299226624",
+          "start": 1783329600,
+          "end": 1783335240,
+          "venue": "誠品 C",
+          "note": "",
+          "guest": "",
+          "remaining": 59,
+          "totalRemaining": 59,
+          "hiddenOrGuestRemaining": 0,
+          "status": "available",
+          "ticketType": "平日日場 180"
+        },
+        {
+          "eventId": "2057058113638178817",
+          "start": 1783329600,
+          "end": 1783335240,
+          "venue": "誠品 B",
+          "note": "",
+          "guest": "",
+          "remaining": 103,
+          "totalRemaining": 110,
+          "hiddenOrGuestRemaining": 7,
+          "status": "available",
+          "ticketType": "平日日場 180"
+        }
+      ],
+      "availableScreeningCount": 3,
+      "screeningCount": 3,
+      "firstStart": 1782903600
+    },
+    {
+      "id": "2056681526572679168",
+      "title": "炎上",
+      "englishTitle": "BURN",
+      "creator": "長久允 NAGAHISA Makoto",
+      "production": "日本 Japan / 2026 / 103min",
+      "synopsis": "歌舞伎町街頭，離家少女闖入一群邊緣青年共築的烏托邦。他們以愛情旅館為家，收容每一個破碎的靈魂。在自由的新樂園裡，藍色特調下肚便能望見滿天星斗，短暫忘卻家庭陰霾，但成長的代價也隨之而來。逃亡究竟是美好新生開局，抑或是毀滅的序曲？長久允將失序青春熔鑄成絢爛影像，藉森七菜清澈無邪目光，凝視城市最幽暗一隅。 When runaway teen Ju-Ju is embraced by a tribe of misfit youths in Kabukicho, she finds belonging for the first time—until betrayal and despair twist her heaven into a prison, and she’s left with one way to take back control.",
+      "year": "2026",
+      "minutes": "103min",
+      "rating": "輔12級",
+      "categories": [
+        "外國片",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/17791860291256rLukxVNS1.jpeg",
+      "url": "https://www.opentix.life/event/2056681526572679168",
+      "screenings": [
+        {
+          "eventId": "2056681530101145600",
+          "start": 1782908400,
+          "end": 1782914580,
+          "venue": "光點 1",
+          "note": "★ 映後座談",
+          "guest": "映後",
+          "remaining": 0,
+          "totalRemaining": 0,
+          "hiddenOrGuestRemaining": 0,
+          "status": "sold_out_or_unavailable",
+          "ticketType": "學生 220"
+        },
+        {
+          "eventId": "2056681529865478145",
+          "start": 1783220400,
+          "end": 1783226580,
+          "venue": "光點 2",
+          "note": "",
+          "guest": "",
+          "remaining": 0,
+          "totalRemaining": 7,
+          "hiddenOrGuestRemaining": 7,
+          "status": "sold_out_or_unavailable",
+          "ticketType": "學生 220"
+        }
+      ],
+      "availableScreeningCount": 0,
+      "screeningCount": 2,
+      "firstStart": 1782908400
+    },
+    {
+      "id": "2057072480110575617",
+      "title": "阿巴斯短片輯 II",
+      "englishTitle": "Abbas Kiarostami Collection II",
+      "creator": "我也可以 So Can I阿巴斯．基亞羅斯塔米 Abbas KIAROSTAMI",
+      "production": "伊朗Iran / 1975 / 5min",
+      "synopsis": "螢幕前，男孩們看著動物的各種動作：袋鼠跳躍、猴子擺盪、魚兒游動。其中一人興致勃勃地模仿，從跳躍到攀爬，甚至在想像中延伸飛行的可能，另一人興味盎然地看著。在遊戲與模仿之間，想像力自然流動。本片結合真人與動畫，呈現兒童如何以身體理解世界，形式簡潔卻富實驗性，展現對影像語言的探索。 Two young boys are watching a cartoon about animals. With each scene, one of the boys keeps saying “I can do that” and mimes the cartoon animals, until a scene in which a bird is seen flying. Silence reigns. 牙齒保健室 Toothache阿巴斯．基亞羅斯塔米 Abbas KIAROSTAMI｜伊朗 Iran｜1980｜Color｜27min 男孩不愛刷牙，對爸爸的提醒總是愛理不理。突如其來的牙痛讓他難以忍受，不得不接受牙醫師的治療與健康教育。正經八百的醫師娓娓道來維持口腔清潔的重要性，手繪動畫段落穿插寫實畫面，在嚴肅與幽默之間取得微妙平衡。本片其對現實與建構影像關係的探問，顯露出阿巴斯日後作者風格的核心，亦為其創作脈絡中別具意義的早期實驗。 From father to son, dental hygiene has always been neglected in Mohammad Reza’s family. Result: both father and grandfather wear dentures. Mohammad himself is taken with a violent toothache that leads to his being dismissed from school. At the hospital, a specialist gives him some advice in the art of dental care. 致親愛的老師 Tribute to the Teachers阿巴斯．基亞羅斯塔米 Abbas KIAROSTAMI｜伊朗 Iran｜1977｜Color｜17min 在官方委託之下，鏡頭聚焦於教師這被視為崇高的職業。教學前線的教師在鏡頭前侃侃談起心路歷程，現實的面貌逐漸浮現：低薪、勞累與不被理解的挫折交織，現況複雜而矛盾。本片以極簡訪談形式建立張力，在記錄與反思之間游移，呈現一幅耐人尋味的教育圖景。阿巴斯展現對社會結構的敏銳觀察，亦為其形塑風格的重要起點。 Commissioned by the officials, this film explores the \"\"noble\"\" teaching profession. Educators reveal the harsh reality: low pay, exhaustion, and frustration. Through minimalist interviews, the documentary balances observation and reflection, creating a complex portrait of education. It showcases Kiarostami’s sharp social insight and marks a pivotal moment in his evolving cinematic style. 一個課堂兩種情境 First Case, Second Case阿巴斯．基亞羅斯塔米 Abbas KIAROSTAMI｜伊朗 Iran｜1979｜Color｜48min 一名學生在課堂上搗亂，老師要求同學說出搗亂者的名字，否則整排學生都必須在走廊上罰站一週。要揭發？還是不揭發？這是一個攸關伊斯蘭革命精神的問題。導演與教育家、劇作家、宗教領袖等人物在鏡頭前，滔滔探討著如何看待學生的沉默與告發，引發人們對紀律、責任、集體倫理，以及背叛等人性與道德價值的多重解讀。 A pupil is unruly in class. The teacher expels seven boys, including the guilty one, who remains unidentified. Kiarostami screens the scene (Case 1) to adults for discussion. Case 2 shows that the boys are punished; one returns to denounce the culprit. Kiarostami then attempts to define the significance of the scene.",
+      "year": "1975",
+      "minutes": "5min",
+      "rating": "普遍級",
+      "categories": [
+        "外國片",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779279226190rb1BYaBEIW.jpeg",
+      "url": "https://www.opentix.life/event/2057072480110575617",
+      "screenings": [
+        {
+          "eventId": "2057072483849281537",
+          "start": 1782910800,
+          "end": 1782916620,
+          "venue": "光點 2",
+          "note": "",
+          "guest": "",
+          "remaining": 21,
+          "totalRemaining": 27,
+          "hiddenOrGuestRemaining": 6,
+          "status": "available",
+          "ticketType": "學生 220"
+        },
+        {
+          "eventId": "2057073498569420801",
+          "start": 1783151400,
+          "end": 1783157220,
+          "venue": "光點 2",
+          "note": "",
+          "guest": "",
+          "remaining": 5,
+          "totalRemaining": 12,
+          "hiddenOrGuestRemaining": 7,
+          "status": "available",
+          "ticketType": "學生 220"
+        }
+      ],
+      "availableScreeningCount": 2,
+      "screeningCount": 2,
+      "firstStart": 1782910800
+    },
+    {
+      "id": "2056725832318918657",
+      "title": "片場超現實",
+      "englishTitle": "Black Rabbit, White Rabbit",
+      "creator": "沙朗．莫克利 Shahram MOKRI",
+      "production": "塔吉克、阿拉伯聯合大公國 Tajikistan, UAE / 2025 / 139min",
+      "synopsis": "一部伊朗電影在塔吉克拍攝，道具師擔心即將使用的是真槍。片場另一頭，年輕女助理執意爭取試鏡。城市彼端，車禍倖存的人妻懷疑這場意外是丈夫的陰謀。看似無關之事，讓三人命運交織。《一鏡殺到底》導演再次以長鏡頭帶觀眾墜入兔子洞，戲中戲的虛實無限迴圈，如因果如宿命，既荒謬又神祕，後設敘事更讓觀眾腦洞大開。 A director remakes a classic Iranian film in Tajikistan as the armorer fears a real gun may be used. A young woman demands an audition, while Sara, recovering from a crash, suspects a conspiracy. As events unfold, their seemingly separate lives begin to intertwine in unexpected ways.",
+      "year": "2025",
+      "minutes": "139min",
+      "rating": "輔12級",
+      "categories": [
+        "外國片",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779196605552zz0OIC0CE2.jpeg",
+      "url": "https://www.opentix.life/event/2056725832318918657",
+      "screenings": [
+        {
+          "eventId": "2056725835552727041",
+          "start": 1782911400,
+          "end": 1782919740,
+          "venue": "誠品 C",
+          "note": "",
+          "guest": "",
+          "remaining": 49,
+          "totalRemaining": 53,
+          "hiddenOrGuestRemaining": 4,
+          "status": "available",
+          "ticketType": "學生 220"
+        },
+        {
+          "eventId": "2056728776671305729",
+          "start": 1783140600,
+          "end": 1783148940,
+          "venue": "誠品 C",
+          "note": "",
+          "guest": "",
+          "remaining": 25,
+          "totalRemaining": 29,
+          "hiddenOrGuestRemaining": 4,
+          "status": "available",
+          "ticketType": "學生 220"
+        }
+      ],
+      "availableScreeningCount": 2,
+      "screeningCount": 2,
+      "firstStart": 1782911400
+    },
+    {
+      "id": "2054872416662859777",
+      "title": "逆風騎行",
+      "englishTitle": "Cutting Through Rocks",
+      "creator": "薩拉・哈基 Sara KHAKI、穆罕默德雷扎・艾尼 Mohammadreza EYNI",
+      "production": "伊朗、荷蘭、美國、德國、卡達、智利、加拿大 Iran, Netherlands, USA, Germany, Qatar, Chile, Canada / 2025 / 92min",
+      "synopsis": "伊朗偏遠村莊的首位女性議員，騎著摩托車穿越荒野，走進校園與家戶，試圖撼動童婚與父權傳統，為女孩們打開另一種未來，想像不同的人生。但村裡流言蜚語與人際壓力層層逼近，信念與地位開始動搖，更使改革顯得過於理想且艱困。前方塵土飛揚，他仍勇敢催下油門，在縫隙中尋找前行的可能。無畏精神一舉入圍奧斯卡最佳紀錄片。 As the first elected councilwoman of her Iranian village, Sara Shahverdi aims to break long-held patriarchal traditions by training teenage girls to ride motorcycles and stopping child marriages. When accusations arise questioning Sara’s intentions to empower the girls, her identity is put in turmoil.",
+      "year": "2025",
+      "minutes": "92min",
+      "rating": "保護級",
+      "categories": [
+        "外國片",
+        "電影-紀錄片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1778754064559nF8C5bGsxu.jpeg",
+      "url": "https://www.opentix.life/event/2054872416662859777",
+      "screenings": [
+        {
+          "eventId": "2054879707336290305",
+          "start": 1782912600,
+          "end": 1782918120,
+          "venue": "誠品 B",
+          "note": "",
+          "guest": "",
+          "remaining": 58,
+          "totalRemaining": 62,
+          "hiddenOrGuestRemaining": 4,
+          "status": "available",
+          "ticketType": "學生 220"
+        },
+        {
+          "eventId": "2054872418642571265",
+          "start": 1783132800,
+          "end": 1783138320,
+          "venue": "誠品 C",
+          "note": "",
+          "guest": "",
+          "remaining": 0,
+          "totalRemaining": 4,
+          "hiddenOrGuestRemaining": 4,
+          "status": "sold_out_or_unavailable",
+          "ticketType": "學生 220"
+        }
+      ],
+      "availableScreeningCount": 1,
+      "screeningCount": 2,
+      "firstStart": 1782912600
+    },
+    {
+      "id": "2061417095797415937",
+      "title": "台北電影獎｜短片＋動畫片 II",
+      "englishTitle": "Taipei Film Awards - Animations + Short Films II",
+      "creator": "工 Force Times Displacement吳承筠 Angel WU",
+      "production": "台灣 Taiwan / 2025 / 12min",
+      "synopsis": "在一座把人視同動物的工廠裡，一尊神秘木偶能實現一切關於成功的願望。一名年輕工人虔敬膜拜，終登事業高峰，卻在某日意外窺見另一個世界，萌生改變的渴望。影片融合生物影像、手繪、停格與實拍技法，以「工＝力×位移」的物理公式為引，探問我們為何工作，又該如何定義人與工作的關係。 In a factory driven by endless ambition, a mysterious wooden idol grants every wish for success. A young worker devotes himself to it — until a hidden room reveals a different world and sparks a desire for change. What does it mean to work, and why do we work at all? 螳螂 Praying Mantis謝文明 Joe HSIEH｜台灣 Taiwan｜2025｜Color｜18min 一位濃妝艷抹的女子，每晚在酒吧誘捕男人，將其殺害後的屍體帶回巢穴餵養小孩。但她在一次行動中意外失手，局勢逐漸失控。 A mysterious woman prowls the city at night, drawing men into her web as she explores the dark depths of maternal instincts. 末代殭屍 The Last Jiangshi游智傑 YU Chih-chieh｜中國 China｜2026｜Color｜20min 民間傳說裡，殭屍源於湘西「趕屍」術。1985年的《殭屍先生》將其搬上銀幕，並重新塑造了大眾的認知。自此，傳統殭屍成了影像符號。40多年過去，當經典散盡，這部紀錄片找到了唯一仍舊存活於當代的個體——最後一個殭屍，老李。 Rooted in the ancient Xiangxi ritual of corpse-herding, the “jiangshi” became a global cinematic icon following the 1985 cult classic Mr. Vampire. Four decades later, as the golden age of the genre fades, a documentary filmmaker and a Taoist priest encounter Lao Li, believed to be the last living Jiangshi in the modern world. 這不是我的牛 This Is NOT My Cow林治文 LIN Chih-wen｜台灣 Taiwan｜2025｜Color｜23min 軍演頻繁的村落，待退士兵被指派擔任「牛羊公差」，以照顧牛群維繫軍民和睦。豈料到了演習射擊週，長官巡訪，公差卻丟失了牛隻，好不容易尋回，居民又表示此牛非彼牛。連長施壓、同袍嫌棄、村民抗議，多重荒謬夾擊，揭穿體制下的虛假表相。 In a village troubled by military drills, soldiers care for livestock to ease tensions. A small mistake by one caretaker exposes deeper conflicts, revealing how the army’s presence continues to shape and strain the lives of local residents despite attempts at goodwill.",
+      "year": "2025",
+      "minutes": "12min",
+      "rating": "限制級",
+      "categories": [
+        "外國片",
+        "螳螂",
+        "這不是我的牛",
+        "末代殭屍",
+        "工",
+        "電影-動畫"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1780315002718ak4iGyAVVc.jpeg",
+      "url": "https://www.opentix.life/event/2061417095797415937",
+      "screenings": [
+        {
+          "eventId": "2061418318302814209",
+          "start": 1782914400,
+          "end": 1782918780,
+          "venue": "誠品 A",
+          "note": "",
+          "guest": "",
+          "remaining": 113,
+          "totalRemaining": 119,
+          "hiddenOrGuestRemaining": 6,
+          "status": "available",
+          "ticketType": "學生 220"
+        }
+      ],
+      "availableScreeningCount": 1,
+      "screeningCount": 1,
+      "firstStart": 1782914400
+    },
+    {
+      "id": "2058811111880777729",
+      "title": "枯葉",
+      "englishTitle": "Dry Leaf",
+      "creator": "亞歷山大．科貝里傑 Alexandre KOBERIDZE",
+      "production": "德國、喬治亞 Germany, Georgia / 2025 / 186min",
+      "synopsis": "年輕女攝影師人間蒸發，憂心的老父偕同女兒的「隱形」好友駕車尋人橫越鄉間，展開一段紀實又魔幻的公路漫遊。眼前流轉的風景，是否正是他消失前走過的路？全片採低畫素中古手機拍攝，田野、孩童、野狗、荒廢的足球場，看似千篇一律的粗糙影像，卻如印象派畫作朦朧流動，導演以舒緩筆觸淬鍊靈光，將平凡風景化為雋永記憶。 Nino and Irakli’s daughter Lisa vanishes after leaving a letter asking not to be found. Unable to let go, Irakli retraces her path with Lisa's \"invisible\" friend. As they journey through shifting landscapes, fragments emerge but Lisa grows ever more elusive—until a final clue rekindles hope.",
+      "year": "2025",
+      "minutes": "186min",
+      "rating": "普遍級",
+      "categories": [
+        "外國片",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779693761126erPIOzSFI7.jpeg",
+      "url": "https://www.opentix.life/event/2058811111880777729",
+      "screenings": [
+        {
+          "eventId": "2058811114959396864",
+          "start": 1782967800,
+          "end": 1782978960,
+          "venue": "光點 1",
+          "note": "",
+          "guest": "",
+          "remaining": 61,
+          "totalRemaining": 69,
+          "hiddenOrGuestRemaining": 8,
+          "status": "available",
+          "ticketType": "平日日場 180"
+        },
+        {
+          "eventId": "2058811114360012801",
+          "start": 1783336800,
+          "end": 1783347960,
+          "venue": "光點 1",
+          "note": "",
+          "guest": "",
+          "remaining": 50,
+          "totalRemaining": 58,
+          "hiddenOrGuestRemaining": 8,
+          "status": "available",
+          "ticketType": "學生 220"
+        }
+      ],
+      "availableScreeningCount": 2,
+      "screeningCount": 2,
+      "firstStart": 1782967800
+    },
+    {
+      "id": "2059203187920543745",
+      "title": "大地",
+      "englishTitle": "The Land",
+      "creator": "尤瑟夫．夏因 Youssef CHAHINE",
+      "production": "埃及 Egypt / 1969 / 129min",
+      "synopsis": "改編自埃及同名小說，描述1930年代地主與權貴掌控資源，組織反抗的農民，在暴力鎮壓與犧牲中凝聚彼此的集體意識。導演以強烈現實主義描繪農村社會結構性的壓迫，血與泥的視覺呈現，特別強化土地作為社會身分與個體延伸的意象，不僅是反殖民秩序的階級寓言，更被視為回應埃及後納賽爾時期的失落與政治焦慮。 A rural Egyptian village unsuccessfully attempts to retain access to its water. Told that they can only irrigate their land a few days a month, several of the villagers are arrested for overwatering. Although the outside threat originally seems to unite the villagers, divisions resurface.",
+      "year": "1969",
+      "minutes": "129min",
+      "rating": "保護級",
+      "categories": [
+        "外國片",
+        "尤瑟夫・夏因",
+        "大地",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779787209451LCTRRpfX0t.png",
+      "url": "https://www.opentix.life/event/2059203187920543745",
+      "screenings": [
+        {
+          "eventId": "2059203190272008192",
+          "start": 1782968400,
+          "end": 1782976140,
+          "venue": "光點 2",
+          "note": "",
+          "guest": "",
+          "remaining": 74,
+          "totalRemaining": 81,
+          "hiddenOrGuestRemaining": 7,
+          "status": "available",
+          "ticketType": "平日日場 180"
+        }
+      ],
+      "availableScreeningCount": 1,
+      "screeningCount": 1,
+      "firstStart": 1782968400
+    },
+    {
+      "id": "2059178477094641665",
+      "title": "神秘肌膚",
+      "englishTitle": "Mysterious Skin",
+      "creator": "葛瑞格・荒木 Gregg ARAKI",
+      "production": "美國 USA / 2004 / 106min",
+      "synopsis": "夏日炎炎，保守的堪薩斯小鎮上，兩名少棒男孩因教練的慾望產生了交集，懵懂的身體留下了痕跡。青春的騷亂與脆弱易感，隨著成長邁向分歧，駭人真相亦在虛實難辨的記憶迴廊中顯影。葛瑞格·荒木以雙線敘事遊走道德邊緣，處理戀童議題，20年後依然猖狂挑釁。年輕的喬瑟夫・高登－李維詮釋漂泊男妓，肉體交纏毫無保留，演技驚人。 Once little league teammates, Neil and Brian reunite 10 years later as opposites—one a charismatic hustler, the other a paranoid recluse obsessed with the idea that he was abducted by a UFO. When their paths collide, buried secrets surface, sending them on a dark and unsettling journey of self-discovery.",
+      "year": "2004",
+      "minutes": "106min",
+      "rating": "限制級",
+      "categories": [
+        "外國片",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/17797813517646euIEW1z4d.jpeg",
+      "url": "https://www.opentix.life/event/2059178477094641665",
+      "screenings": [
+        {
+          "eventId": "2059178479065894913",
+          "start": 1782968400,
+          "end": 1782974760,
+          "venue": "誠品 A",
+          "note": "",
+          "guest": "",
+          "remaining": 62,
+          "totalRemaining": 70,
+          "hiddenOrGuestRemaining": 8,
+          "status": "available",
+          "ticketType": "平日日場 180"
+        },
+        {
+          "eventId": "2059182002574925824",
+          "start": 1783345800,
+          "end": 1783352160,
+          "venue": "誠品 A",
+          "note": "",
+          "guest": "",
+          "remaining": 35,
+          "totalRemaining": 43,
+          "hiddenOrGuestRemaining": 8,
+          "status": "available",
+          "ticketType": "學生 220"
+        }
+      ],
+      "availableScreeningCount": 2,
+      "screeningCount": 2,
+      "firstStart": 1782968400
+    },
+    {
+      "id": "2057063070608982017",
+      "title": "這不只是個愛情故事",
+      "englishTitle": "Dead End",
+      "creator": "帕爾維茲．薩亞德 Parviz SAYYAD",
+      "production": "伊朗 Iran / 1977 / 81min",
+      "synopsis": "少女從窗外窺見陌生男子終日守候巷口，這份不知是愛慕或恐懼的跟隨，在死巷中演變成令人窒息的懸疑。導演薩亞德以日常生活為底色，巧妙揉合心理驚悚與政治隱喻，在壓抑運鏡中映射出當時巴勒維政權下人人自危的現實。本片作為伊朗電影新浪潮關鍵作，以極簡敘事精準捕捉了自由被剝奪前的戰慄不安。 A young woman notices a mysterious man watching her from an alley, turning a tale of supposed romance into psychological dread. Sayyad masterfully blends suspense with political allegory, using a domestic setting to mirror the oppressive atmosphere of 1970s Iran. It remains a chilling masterpiece of the first Iranian New Wave.",
+      "year": "1977",
+      "minutes": "81min",
+      "rating": "保護級",
+      "categories": [
+        "外國片",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/177927700990415TwXj1Wp9.jpeg",
+      "url": "https://www.opentix.life/event/2057063070608982017",
+      "screenings": [
+        {
+          "eventId": "2057063074347687937",
+          "start": 1782972000,
+          "end": 1782977700,
+          "venue": "誠品 B",
+          "note": "",
+          "guest": "",
+          "remaining": 101,
+          "totalRemaining": 108,
+          "hiddenOrGuestRemaining": 7,
+          "status": "available",
+          "ticketType": "平日日場 180"
+        },
+        {
+          "eventId": "2057063073244061697",
+          "start": 1782972000,
+          "end": 1782977700,
+          "venue": "誠品 C",
+          "note": "",
+          "guest": "",
+          "remaining": 75,
+          "totalRemaining": 75,
+          "hiddenOrGuestRemaining": 0,
+          "status": "available",
+          "ticketType": "平日日場 180"
+        }
+      ],
+      "availableScreeningCount": 2,
+      "screeningCount": 2,
+      "firstStart": 1782972000
+    },
+    {
+      "id": "2059209168052789248",
+      "title": "浮光掠影",
+      "englishTitle": "An Egyptian Story",
+      "creator": "尤瑟夫．夏因 Youssef CHAHINE",
+      "production": "埃及 Egypt / 1982 / 129min",
+      "synopsis": "男子在心臟手術時陷入生死邊緣，身體在麻醉狀態，意識卻如跑馬燈般回顧自己的一生，從童年創傷、家庭關係到他身為電影導演的職業生涯逐一浮現。夏因以手術室為敘事起點，將身體腔室轉化為心理劇場，融合夢境、回憶與紀錄影像，打破寫實邊界，建構高度自我反思的影像結構，成為其自傳電影中最具實驗性與心理深度的代表作。 During heart surgery, a filmmaker imagines his childhood self on trial for killing his adult self, revealing his ambitions, identity struggles, and ties to revolutionary Egypt.",
+      "year": "1982",
+      "minutes": "129min",
+      "rating": "保護級",
+      "categories": [
+        "外國片",
+        "浮光掠影",
+        "尤瑟夫・夏因",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779788677964DJCDqUCjvr.jpeg",
+      "url": "https://www.opentix.life/event/2059209168052789248",
+      "screenings": [
+        {
+          "eventId": "2059209170685386753",
+          "start": 1782978000,
+          "end": 1782985740,
+          "venue": "光點 2",
+          "note": "",
+          "guest": "",
+          "remaining": 63,
+          "totalRemaining": 70,
+          "hiddenOrGuestRemaining": 7,
+          "status": "available",
+          "ticketType": "平日日場 180"
+        }
+      ],
+      "availableScreeningCount": 1,
+      "screeningCount": 1,
+      "firstStart": 1782978000
+    },
+    {
+      "id": "2057356544915087360",
+      "title": "塔拉之歌",
+      "englishTitle": "Ballad of Tara",
+      "creator": "巴赫拉姆．貝扎伊 Bahram BEYZAIE",
+      "production": "伊朗 Iran / 1979 / 102min",
+      "synopsis": "寡婦整理爺爺遺物發現一把神祕寶劍。返家路上，一個古代武士的幽魂不斷現身，向他討回寶劍，好讓自己的靈魂安息。貝扎伊在現代故事完美揉雜波斯神話、文學和民俗祭儀，更包辦製片、剪輯和服裝設計，一手編織出波瀾壯闊的當代寓言。本片當年於坎城首映後便遭無限期禁演。女主角舞劍的鏡頭，彷彿與無數伊朗女性抗爭者的堅毅身影遙遙相望。 Tara, a strong-willed widow, encounters the ghost of an ancient warrior in a nearby forest. Drawn to a sword she inherited from her grandfather, he seeks its return to find peace. Yet once restored, his growing love for Tara binds him to the living, unable to depart.",
+      "year": "1979",
+      "minutes": "102min",
+      "rating": "保護級",
+      "categories": [
+        "外國片",
+        "塔拉之歌",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779346977008BfhWxD3Aw2.jpeg",
+      "url": "https://www.opentix.life/event/2057356544915087360",
+      "screenings": [
+        {
+          "eventId": "2057356546916970497",
+          "start": 1782980400,
+          "end": 1782986520,
+          "venue": "誠品 B",
+          "note": "",
+          "guest": "",
+          "remaining": 83,
+          "totalRemaining": 90,
+          "hiddenOrGuestRemaining": 7,
+          "status": "available",
+          "ticketType": "平日日場 180"
+        },
+        {
+          "eventId": "2057356546898993153",
+          "start": 1782980400,
+          "end": 1782986520,
+          "venue": "誠品 C",
+          "note": "",
+          "guest": "",
+          "remaining": 89,
+          "totalRemaining": 89,
+          "hiddenOrGuestRemaining": 0,
+          "status": "available",
+          "ticketType": "平日日場 180"
+        },
+        {
+          "eventId": "2057356546878808065",
+          "start": 1783249200,
+          "end": 1783255320,
+          "venue": "誠品 C",
+          "note": "",
+          "guest": "",
+          "remaining": 39,
+          "totalRemaining": 43,
+          "hiddenOrGuestRemaining": 4,
+          "status": "available",
+          "ticketType": "學生 220"
+        }
+      ],
+      "availableScreeningCount": 3,
+      "screeningCount": 3,
+      "firstStart": 1782980400
+    },
+    {
+      "id": "2057416103370498049",
+      "title": "未來回憶錄2093",
+      "englishTitle": "Memory of Princess Mumbi",
+      "creator": "達米安．豪澤 Damien HAUSER",
+      "production": "肯亞、瑞士、沙烏地阿拉伯 Kenya, Switzerland, Saudi Arabia / 2025 / 80min",
+      "synopsis": "2093年的非洲，一名導演在記錄戰後現狀的旅程中，愛上了鏡頭前充滿活力的年輕女孩。貼身拍攝的過程，也變為一場導演、女孩與王子間的三角糾葛。偽紀錄片形式搭配運用 AI 生成技術，打破成本限制，也為「非洲未來主義」開啟新頁，敘事手法亦令人聯想克里斯・馬克對時空的辯證。這是一部關於電影的電影，也是一部寫給未來的記憶之書。 In 2093, young filmmaker Kuve travels to Umata, where a war has outlawed modern technology. There he meets Mumbi, who challenges him to create without AI. As he adapts to this unplugged world, Kuve searches for his voice and begins to discover beauty in small, overlooked human moments.",
+      "year": "2025",
+      "minutes": "80min",
+      "rating": "保護級",
+      "categories": [
+        "外國片",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779361175184hGTWozTiGJ.jpeg",
+      "url": "https://www.opentix.life/event/2057416103370498049",
+      "screenings": [
+        {
+          "eventId": "2057416107622211587",
+          "start": 1782981600,
+          "end": 1782986400,
+          "venue": "光點 1",
+          "note": "",
+          "guest": "",
+          "remaining": 134,
+          "totalRemaining": 142,
+          "hiddenOrGuestRemaining": 8,
+          "status": "available",
+          "ticketType": "平日日場 180"
+        },
+        {
+          "eventId": "2057418261473669121",
+          "start": 1783248000,
+          "end": 1783252800,
+          "venue": "光點 1",
+          "note": "",
+          "guest": "",
+          "remaining": 123,
+          "totalRemaining": 131,
+          "hiddenOrGuestRemaining": 8,
+          "status": "available",
+          "ticketType": "學生 220"
+        }
+      ],
+      "availableScreeningCount": 2,
+      "screeningCount": 2,
+      "firstStart": 1782981600
+    },
+    {
+      "id": "2057397014683140097",
+      "title": "圍城生存指南",
+      "englishTitle": "Chronicles from the Siege",
+      "creator": "阿布達拉．哈蒂柏 Abdallah ALKHATIB",
+      "production": "阿爾及利亞、法國、巴勒斯坦 Algeria, France, Palestine / 2026 / 100min",
+      "synopsis": "形容枯槁的男人爭搶物資卻空手而歸；青年們在錄影帶店裡「燒電影」躲避空襲；有人在廢墟拾荒只為換取一口菸；愛人竭力享受轟炸間隙的時光⋯⋯。手持攝影機搖晃拍下斷垣殘壁裡，圍困城中苟延殘喘的人們，拼貼的人物故事交織匯聚，道盡人性光明與黑暗。取材自2011年敘利亞內戰的巴勒斯坦難民營，也映照當今屠殺未止的加薩日常。 During the siege of their city, a group of ordinary people struggle to survive amid hunger, snipers, and bombardments, while clinging to human connection, love, and small daily pleasures. Faced with impossible moral choices and deep psychological strain, their lives become inseparable from the siege itself.",
+      "year": "2026",
+      "minutes": "100min",
+      "rating": "保護級",
+      "categories": [
+        "外國片",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779356624032ZBrYK3xPx6.jpeg",
+      "url": "https://www.opentix.life/event/2057397014683140097",
+      "screenings": [
+        {
+          "eventId": "2057397019777576961",
+          "start": 1782987600,
+          "end": 1782993600,
+          "venue": "光點 2",
+          "note": "",
+          "guest": "",
+          "remaining": 69,
+          "totalRemaining": 76,
+          "hiddenOrGuestRemaining": 7,
+          "status": "available",
+          "ticketType": "學生 220"
+        },
+        {
+          "eventId": "2057397019133296643",
+          "start": 1783428600,
+          "end": 1783434600,
+          "venue": "誠品 C",
+          "note": "",
+          "guest": "",
+          "remaining": 50,
+          "totalRemaining": 54,
+          "hiddenOrGuestRemaining": 4,
+          "status": "available",
+          "ticketType": "學生 220"
+        }
+      ],
+      "availableScreeningCount": 2,
+      "screeningCount": 2,
+      "firstStart": 1782987600
+    },
+    {
+      "id": "2057384480759422977",
+      "title": "不受待見的我們",
+      "englishTitle": "The Young Strangers",
+      "creator": "內山拓也 UCHIYAMA Takuya",
+      "production": "日本、法國、南韓、香港 Japan, France, South Korea, Hong Kong / 2024 / 120min",
+      "synopsis": "男子為幫亡父償債和照護重病母親，不分日夜在工地與酒吧兼差。生活如履薄冰，他仍渴望守護戀情中平凡卻珍貴的悸動。弟弟追隨父親投身格鬥擂台，試圖殺出一條血路。然而一場意外暴力事件，卻無情奪走了他們渺小的日常。磯村勇斗挑大樑爆發力驚人，與岸井雪乃、染谷將太等實力派演員銀幕交手，撞擊出當代青年最真實的生存共鳴。 Ayato Kazama repays his deceased father’s debts while caring for his ailing mother, working construction by day and at his parents’ karaoke bar by night. His brother Sohei shares the burden, training as an MMA fighter. Despite their suffocating life, Ayato longs for happiness—until sudden violence shatters everything.",
+      "year": "2024",
+      "minutes": "120min",
+      "rating": "輔12級",
+      "categories": [
+        "外國片",
+        "不受待見的我們",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779353638685yXkLGZAc4S.jpeg",
+      "url": "https://www.opentix.life/event/2057384480759422977",
+      "screenings": [
+        {
+          "eventId": "2057386241381441537",
+          "start": 1782988800,
+          "end": 1782996000,
+          "venue": "光點 1",
+          "note": "",
+          "guest": "",
+          "remaining": 18,
+          "totalRemaining": 26,
+          "hiddenOrGuestRemaining": 8,
+          "status": "available",
+          "ticketType": "學生 220"
+        },
+        {
+          "eventId": "2057387501446377473",
+          "start": 1783165200,
+          "end": 1783172400,
+          "venue": "光點 1",
+          "note": "★ 映後座談",
+          "guest": "映後",
+          "remaining": 0,
+          "totalRemaining": 7,
+          "hiddenOrGuestRemaining": 7,
+          "status": "sold_out_or_unavailable",
+          "ticketType": "學生 220"
+        }
+      ],
+      "availableScreeningCount": 1,
+      "screeningCount": 2,
+      "firstStart": 1782988800
+    },
+    {
+      "id": "2059553080492548097",
+      "title": "順流逆流",
+      "englishTitle": "Time and Tide",
+      "creator": "徐克 TSUI Hark",
+      "production": "香港 Hong Kong / 2000 / 113min",
+      "synopsis": "酒保一夜情後人生急轉，為賺快錢改行保鑣；屠夫想與懷孕妻子安穩度日，舊日陰影卻不放過。謝霆鋒與伍佰兩種魅力，聯手共抗冷血傭兵。香港化為迷宮戰場，高樓狹巷、天井樓梯錯綜，子彈與拳腳於其間奔竄，逼出主角逆流意志，也為港產動作片打造新空間。鏡頭追身如風，剪輯快狠如刀，調度洶湧如潮，不過火、不失速、不罷休。 A streetwise youth becomes a bodyguard for cash, befriending a mercenary seeking a fresh start. Though they unite to foil an assassination, fate forces them into a deadly confrontation. This noir-infused thriller is a modern masterpiece of innovative action, earning six Hong Kong Film Award nominations.",
+      "year": "2000",
+      "minutes": "113min",
+      "rating": "輔12級",
+      "categories": [
+        "外國片",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779870661659UAWiEgDIbh.jpeg",
+      "url": "https://www.opentix.life/event/2059553080492548097",
+      "screenings": [
+        {
+          "eventId": "2059553084691652609",
+          "start": 1782989400,
+          "end": 1782996180,
+          "venue": "誠品 B",
+          "note": "",
+          "guest": "",
+          "remaining": 64,
+          "totalRemaining": 71,
+          "hiddenOrGuestRemaining": 7,
+          "status": "available",
+          "ticketType": "學生 220"
+        },
+        {
+          "eventId": "2059553084692881411",
+          "start": 1782989400,
+          "end": 1782996180,
+          "venue": "誠品 C",
+          "note": "",
+          "guest": "",
+          "remaining": 77,
+          "totalRemaining": 77,
+          "hiddenOrGuestRemaining": 0,
+          "status": "available",
+          "ticketType": "學生 220"
+        }
+      ],
+      "availableScreeningCount": 2,
+      "screeningCount": 2,
+      "firstStart": 1782989400
+    },
+    {
+      "id": "2058878775014318081",
+      "title": "籠民",
+      "englishTitle": "Cageman",
+      "creator": "張之亮 Jacob CHEUNG Chi Leung",
+      "production": "香港 Hong Kong / 1992 / 151min",
+      "synopsis": "寸土寸金香港地，底層單身男子蝸居鐵網籠屋，人鼠滿為患，但他們及時行樂，直到拆樓迫遷危機殺到眼前，要拿錢走人還是堅持留下？籠民投票抗議又請願，英國殖民管制下的香港人有多少話語權？第二波香港電影新浪潮導演張之亮取材深水埗籠屋火災真實事件，4K修復版重現舊時氛圍，樂團Beyond主唱黃家駒最後身影令人無限懷念。 Set in a cramped Hong Kong cage-home, Cageman follows a group of middle-aged men facing eviction as their building faces demolition. Blending absurd realism with street humor, the film captures their fragile bonds and divisions, offering a poignant reflection on marginal lives in pre-1997 Hong Kong.",
+      "year": "1992",
+      "minutes": "151min",
+      "rating": "保護級",
+      "categories": [
+        "外國片",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779709898797flnlzNpEjQ.jpeg",
+      "url": "https://www.opentix.life/event/2058878775014318081",
+      "screenings": [
+        {
+          "eventId": "2058878779158827008",
+          "start": 1782990000,
+          "end": 1782999060,
+          "venue": "中山堂",
+          "note": "",
+          "guest": "",
+          "remaining": 463,
+          "totalRemaining": 485,
+          "hiddenOrGuestRemaining": 22,
+          "status": "available",
+          "ticketType": "學生 220"
+        },
+        {
+          "eventId": "2058880549961834496",
+          "start": 1783216800,
+          "end": 1783225860,
+          "venue": "中山堂",
+          "note": "",
+          "guest": "",
+          "remaining": 495,
+          "totalRemaining": 517,
+          "hiddenOrGuestRemaining": 22,
+          "status": "available",
+          "ticketType": "學生 220"
+        }
+      ],
+      "availableScreeningCount": 2,
+      "screeningCount": 2,
+      "firstStart": 1782990000
+    },
+    {
+      "id": "2058821264839933952",
+      "title": "被奪去的土地",
+      "englishTitle": "Landmarks",
+      "creator": "露柯希亞．馬泰 Lucrecia MARTEL",
+      "production": "阿根廷、美國、墨西哥、法國、荷蘭、丹麥 Argentina, USA, Mexico, France, The Netherlands, Denmark / 2025 / 124min",
+      "synopsis": "2009年阿根廷西北部圖庫曼省，一名原住民族耆老為了保護土地遭槍擊身亡，即使過程有錄影為證，卻歷經多年抗議才開庭審理。導演耗時15年完成生涯首部紀錄長片，冷靜構築審判的荒謬諷刺，見證了棲居者在法律與文件中失語，生命故事成為存在證詞的時刻，並以詩意視角鳥瞰大地，回溯拉丁美洲數百年來遭掠奪的殖民歷史。 In 2009, Indigenous leader Javier Chocobar was killed defending his community’s land in Argentina. In her first feature documentary, Lucrecia Martel examines the murder trial, the Chuchagasta people, and the colonial legacy of land theft, paying cinematic tribute to a community that others systematically tried to erase from history.",
+      "year": "2025",
+      "minutes": "124min",
+      "rating": "輔12級",
+      "categories": [
+        "外國片",
+        "電影-紀錄片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779696183565oh62MkiyL6.jpeg",
+      "url": "https://www.opentix.life/event/2058821264839933952",
+      "screenings": [
+        {
+          "eventId": "2058821270953238529",
+          "start": 1782995400,
+          "end": 1783002840,
+          "venue": "光點 2",
+          "note": "",
+          "guest": "",
+          "remaining": 80,
+          "totalRemaining": 87,
+          "hiddenOrGuestRemaining": 7,
+          "status": "available",
+          "ticketType": "學生 220"
+        },
+        {
+          "eventId": "2058823321397354497",
+          "start": 1783419600,
+          "end": 1783427040,
+          "venue": "光點 2",
+          "note": "",
+          "guest": "",
+          "remaining": 73,
+          "totalRemaining": 80,
+          "hiddenOrGuestRemaining": 7,
+          "status": "available",
+          "ticketType": "學生 220"
+        }
+      ],
+      "availableScreeningCount": 2,
+      "screeningCount": 2,
+      "firstStart": 1782995400
+    },
+    {
+      "id": "2057406190564552705",
+      "title": "新GREAT派建築師",
+      "englishTitle": "The Great Arch",
+      "creator": "史蒂芬．德穆斯提耶 Stéphane DEMOUSTIER",
+      "production": "法國、丹麥 France, Denmark / 2025 / 107min",
+      "synopsis": "1980年代，一位名不見經傳的丹麥建築師在競賽出線，接下法國新凱旋門的設計重任。他滿懷熱忱投入畢生心力，卻在官僚博弈的迷宮中阻礙重重，逐漸孤身一人。是拱門還是立方，建築家的宏偉大夢將落於何方？取材真實歷史故事，法國編導挑戰國門神話，細緻還原時代細節，以躁動又優雅的運鏡冷諷政治現實，擲地有聲。 In 1982, President François Mitterrand decides to launch a competition for the Great Arch of La Défense. Danish architect Otto von Spreckelsen unexpectedly wins and arrives in Paris to lead this pharaonic project, only to see his ideas quickly clash with realistic constraints and the vicissitudes of politics.",
+      "year": "2025",
+      "minutes": "107min",
+      "rating": "普遍級",
+      "categories": [
+        "外國片",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/17793587058461cxdkPwlVI.jpeg",
+      "url": "https://www.opentix.life/event/2057406190564552705",
+      "screenings": [
+        {
+          "eventId": "2057409268556185600",
+          "start": 1782997200,
+          "end": 1783003620,
+          "venue": "誠品 A",
+          "note": "",
+          "guest": "",
+          "remaining": 49,
+          "totalRemaining": 57,
+          "hiddenOrGuestRemaining": 8,
+          "status": "available",
+          "ticketType": "學生 220"
+        },
+        {
+          "eventId": "2057406192452333569",
+          "start": 1783412400,
+          "end": 1783418820,
+          "venue": "誠品 A",
+          "note": "",
+          "guest": "",
+          "remaining": 63,
+          "totalRemaining": 71,
+          "hiddenOrGuestRemaining": 8,
+          "status": "available",
+          "ticketType": "平日日場 180"
+        }
+      ],
+      "availableScreeningCount": 2,
+      "screeningCount": 2,
+      "firstStart": 1782997200
+    },
+    {
+      "id": "2057080571124318209",
+      "title": "囚土",
+      "englishTitle": "The Sealed Soil",
+      "creator": "馬爾法．納比利 Marva NABILI",
+      "production": "伊朗、美國 Iran, USA / 1977 / 91min",
+      "synopsis": "伊朗偏遠村落，男婚女嫁傳宗接代，就像天空撒下的大網，沒有人逃得掉。在令人窒息的壓迫中，渴求自由與獨立的少女遲遲未嫁，被村民視為魔鬼化身。伊朗影史重要女導演之作，大量長鏡頭與凝鍊的視覺語言捕捉性別困境，並隱喻國家轉型期的伊朗樣貌。拍攝未取得官方許可，導演挾帶膠卷赴美完成後製，而此片卻從未在伊朗公開映演。 The earliest surviving feature by an Iranian woman, The Sealed Soil follows a young woman resisting forced marriage, her defiance misread as demonic possession. Restrained yet striking, it delivers an unflinching critique of institutionalized misogyny. This digitally restored version returns a long-overlooked work to its place in world cinema.",
+      "year": "1977",
+      "minutes": "91min",
+      "rating": "保護級",
+      "categories": [
+        "外國片",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779281170458L8VECJoq5e.jpeg",
+      "url": "https://www.opentix.life/event/2057080571124318209",
+      "screenings": [
+        {
+          "eventId": "2057080575525199873",
+          "start": 1782997800,
+          "end": 1783003260,
+          "venue": "光點 1",
+          "note": "",
+          "guest": "",
+          "remaining": 96,
+          "totalRemaining": 104,
+          "hiddenOrGuestRemaining": 8,
+          "status": "available",
+          "ticketType": "學生 220"
+        },
+        {
+          "eventId": "2057081853077561345",
+          "start": 1783222800,
+          "end": 1783228260,
+          "venue": "光點 1",
+          "note": "",
+          "guest": "",
+          "remaining": 86,
+          "totalRemaining": 94,
+          "hiddenOrGuestRemaining": 8,
+          "status": "available",
+          "ticketType": "學生 220"
+        }
+      ],
+      "availableScreeningCount": 2,
+      "screeningCount": 2,
+      "firstStart": 1782997800
+    },
+    {
+      "id": "2058891050682802177",
+      "title": "Playback",
+      "englishTitle": "Playback",
+      "creator": "三宅唱 MIYAKE Sho",
+      "production": "日本 Japan / 2012 / 113min",
+      "synopsis": "一名失去鬥志的演員離婚後，意外以中年身軀穿越回青春時代，過往的情感記憶、人生的選擇與錯過一一浮現，像咒語，像催眠，他能否清醒並走向未來？日本中生代導演三宅唱第二部長片，即入選盧卡諾影展主競賽，拍攝於311福島地震與核災後的茨城縣，村上淳細膩的表演和鏡頭光影堆疊出日常生活感，呈現出災後地景的不安與重生。 Haji, an actor nearing 40, dreams of his own death amid a career and life impasse. Dismissing a comeback offer, he returns home with an old friend. Falling asleep en route, he wakes back in his high school days in his adult body, and decides to relive the past.",
+      "year": "2012",
+      "minutes": "113min",
+      "rating": "保護級",
+      "categories": [
+        "外國片",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779712825845F8NCNo25Z0.jpeg",
+      "url": "https://www.opentix.life/event/2058891050682802177",
+      "screenings": [
+        {
+          "eventId": "2058894644450664449",
+          "start": 1782999000,
+          "end": 1783005780,
+          "venue": "誠品 B",
+          "note": "",
+          "guest": "",
+          "remaining": 57,
+          "totalRemaining": 64,
+          "hiddenOrGuestRemaining": 7,
+          "status": "available",
+          "ticketType": "學生 220"
+        },
+        {
+          "eventId": "2058895282678923265",
+          "start": 1782999000,
+          "end": 1783005780,
+          "venue": "誠品 C",
+          "note": "",
+          "guest": "",
+          "remaining": 69,
+          "totalRemaining": 69,
+          "hiddenOrGuestRemaining": 0,
+          "status": "available",
+          "ticketType": "學生 220"
+        }
+      ],
+      "availableScreeningCount": 2,
+      "screeningCount": 2,
+      "firstStart": 1782999000
+    },
+    {
+      "id": "2058884711687262209",
+      "title": "無路用之人",
+      "englishTitle": "Good for Nothing",
+      "creator": "三宅唱 MIYAKE Sho",
+      "production": "日本 Japan / 2010 / 76min",
+      "synopsis": "冰天雪地的札幌，三名高校少年無意升學，在前輩介紹下進入保全公司打工。他們穿上制服、剃平頭，學習職場技能，努力證明自己是獨當一面的「大人」，公司卻隱約透出不尋常的氣息。隨著考驗接踵而至，他們的決心也逐漸陷入意想不到的混亂與困頓。三宅唱在首部長片即展現精彩的影像調度，勾勒出時而並肩、時而孤獨的青春身影。 Three high school seniors hover between delinquency and adulthood in the wintery landscape of Sapporo. Taking jobs installing home security systems, they attempt to build a stable future, but poor choices and mounting consequences threaten to derail their fragile hopes for a better life.",
+      "year": "2010",
+      "minutes": "76min",
+      "rating": "保護級",
+      "categories": [
+        "外國片",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779711300955gqazV2LMex.jpeg",
+      "url": "https://www.opentix.life/event/2058884711687262209",
+      "screenings": [
+        {
+          "eventId": "2058884718783488001",
+          "start": 1783057800,
+          "end": 1783062360,
+          "venue": "誠品 C",
+          "note": "",
+          "guest": "",
+          "remaining": 30,
+          "totalRemaining": 30,
+          "hiddenOrGuestRemaining": 0,
+          "status": "available",
+          "ticketType": "平日日場 180"
+        },
+        {
+          "eventId": "2058884716157198336",
+          "start": 1783057800,
+          "end": 1783062360,
+          "venue": "誠品 B",
+          "note": "",
+          "guest": "",
+          "remaining": 69,
+          "totalRemaining": 76,
+          "hiddenOrGuestRemaining": 7,
+          "status": "available",
+          "ticketType": "平日日場 180"
+        },
+        {
+          "eventId": "2058889697481592833",
+          "start": 1783337400,
+          "end": 1783341960,
+          "venue": "誠品 C",
+          "note": "",
+          "guest": "",
+          "remaining": 8,
+          "totalRemaining": 8,
+          "hiddenOrGuestRemaining": 0,
+          "status": "available",
+          "ticketType": "學生 220"
+        },
+        {
+          "eventId": "2058888982287065089",
+          "start": 1783337400,
+          "end": 1783341960,
+          "venue": "誠品 B",
+          "note": "",
+          "guest": "",
+          "remaining": 36,
+          "totalRemaining": 43,
+          "hiddenOrGuestRemaining": 7,
+          "status": "available",
+          "ticketType": "學生 220"
+        }
+      ],
+      "availableScreeningCount": 4,
+      "screeningCount": 4,
+      "firstStart": 1783057800
+    },
+    {
+      "id": "2058794877173235712",
+      "title": "死亡根本不存在",
+      "englishTitle": "Death Does Not Exist",
+      "creator": "費利克斯．杜富爾—拉佩列耶 Félix DUFOUR-LAPERRIÈRE",
+      "production": "加拿大、法國 Canada, France / 2025 / 72min",
+      "synopsis": "劫掠富豪莊園的激進行動意外失敗，女子背棄同伴逃入密林。當死去的摯友、童年的自我紛紛如魅影般現身，他被迫穿越虛實視界，深入意識幽谷，諦聽真切心聲。導演將當代日常的暴力現實與青年成長的焦慮徬徨並置，以色彩斑斕的魔幻筆觸穿越宿命迷霧，構築現實與心靈的和解空間，絢麗鋪展出對於萬物規律的自然臣服。 After a failed attack on wealthy landowners, Hélène abandons her companions and flees into the forest. Manon, a friend and accomplice, returns to haunt her. Hélène has to revisit her convictions and choices, in a valley where metamorphoses and great upheavals disrupt the natural order of things.",
+      "year": "2025",
+      "minutes": "72min",
+      "rating": "輔12級",
+      "categories": [
+        "外國片",
+        "電影-動畫"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779689895687kCl7HVvBW2.jpeg",
+      "url": "https://www.opentix.life/event/2058794877173235712",
+      "screenings": [
+        {
+          "eventId": "2058794879188705281",
+          "start": 1783059000,
+          "end": 1783063320,
+          "venue": "誠品 A",
+          "note": "",
+          "guest": "",
+          "remaining": 128,
+          "totalRemaining": 136,
+          "hiddenOrGuestRemaining": 8,
+          "status": "available",
+          "ticketType": "平日日場 180"
+        },
+        {
+          "eventId": "2058794879157141505",
+          "start": 1783258800,
+          "end": 1783263120,
+          "venue": "誠品 A",
+          "note": "",
+          "guest": "",
+          "remaining": 130,
+          "totalRemaining": 138,
+          "hiddenOrGuestRemaining": 8,
+          "status": "available",
+          "ticketType": "學生 220"
+        }
+      ],
+      "availableScreeningCount": 2,
+      "screeningCount": 2,
+      "firstStart": 1783059000
+    },
+    {
+      "id": "2057033100324970497",
+      "title": "房屋是黑的＋磚與鏡",
+      "englishTitle": "The House Is Black + Brick and Mirror",
+      "creator": "ming the unwatchable into the sublime through poetry. 磚與鏡 Brick and Mirror易卜拉欣．古列斯坦 Ebrahim GOLESTAN",
+      "production": "伊朗 Iran / 1965 / 130min",
+      "synopsis": "德黑蘭的潮濕雨夜，一名計程車司機在後座撿到棄嬰。他奔走城郊廢墟，流連餐廳、警局與法院，懼怕世人眼光，也無法為孩子尋見安身處所。唯一關切這孩子的，是曾與他有一段情事的餐廳女子。漫漫長夜共組一家三口，在蝸居的窄室企盼出口。伊朗電影新浪潮開山作之一，片名取自詩作，以強烈對比照見社會暗角，點亮人性曙光。 A young man finds a baby girl in his cab and spends a night with his girlfriend debating her fate. A devastating portrait of hypocritical intellectuals, its 24-hour narrative moves from brisk to slow, revealing a Tehran far removed from the familiar image of the Iranian New Wave.",
+      "year": "1965",
+      "minutes": "130min",
+      "rating": "保護級",
+      "categories": [
+        "外國片",
+        "磚與鏡",
+        "電影-劇情片",
+        "電影-紀錄片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/17792698514367WYAPv7deg.jpeg",
+      "url": "https://www.opentix.life/event/2057033100324970497",
+      "screenings": [
+        {
+          "eventId": "2057033103147737088",
+          "start": 1783065000,
+          "end": 1783074120,
+          "venue": "誠品 C",
+          "note": "",
+          "guest": "",
+          "remaining": 52,
+          "totalRemaining": 52,
+          "hiddenOrGuestRemaining": 0,
+          "status": "available",
+          "ticketType": "平日日場 180"
+        },
+        {
+          "eventId": "2057033103490752513",
+          "start": 1783065000,
+          "end": 1783074120,
+          "venue": "誠品 B",
+          "note": "",
+          "guest": "",
+          "remaining": 92,
+          "totalRemaining": 99,
+          "hiddenOrGuestRemaining": 7,
+          "status": "available",
+          "ticketType": "平日日場 180"
+        },
+        {
+          "eventId": "2057041363670249473",
+          "start": 1783160400,
+          "end": 1783169520,
+          "venue": "誠品 C",
+          "note": "",
+          "guest": "",
+          "remaining": 28,
+          "totalRemaining": 32,
+          "hiddenOrGuestRemaining": 4,
+          "status": "available",
+          "ticketType": "學生 220"
+        }
+      ],
+      "availableScreeningCount": 3,
+      "screeningCount": 3,
+      "firstStart": 1783065000
+    },
+    {
+      "id": "2057707085150265344",
+      "title": "在世界的盡頭相遇",
+      "englishTitle": "Meets the World",
+      "creator": "松居大悟 MATSUI Daigo",
+      "production": "日本 Japan / 2025 / 126min",
+      "synopsis": "身為動漫狂粉的單身女，因擔心自己孤老終生而開始相親。一次聯誼慘敗後，爛醉的他在歌舞伎町被厭世美女公關出手相救，兩人就此展開同居生活。正當兩人情誼逐漸超越友達以上，迎來的卻是一場不告而別。松居大悟描繪東京年輕世代萍水相逢的人際日常，片中杉咲花、南琴奈與板垣李光人的生命交會看似雲淡風輕，餘韻卻久久不散。 Yukari secretly loves the anthropomorphic yakiniku anime “Meet is Mine.” Nearing 30 and fearing loneliness, she begins marriage hunting. After a failed group date, she’s rescued in Kabukicho by Rai, a suicidal hostess, and they start living together. But just as Yukari learns the importance of self-acceptance, Rai suddenly disappears…",
+      "year": "2025",
+      "minutes": "126min",
+      "rating": "保護級",
+      "categories": [
+        "外國片",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779430542747x2Xl1mENYx.jpeg",
+      "url": "https://www.opentix.life/event/2057707085150265344",
+      "screenings": [
+        {
+          "eventId": "2057707089357152257",
+          "start": 1783065600,
+          "end": 1783073220,
+          "venue": "光點 1",
+          "note": "",
+          "guest": "",
+          "remaining": 2,
+          "totalRemaining": 10,
+          "hiddenOrGuestRemaining": 8,
+          "status": "available",
+          "ticketType": "平日日場 180"
+        },
+        {
+          "eventId": "2057711308769140737",
+          "start": 1783426800,
+          "end": 1783434420,
+          "venue": "光點 1",
+          "note": "",
+          "guest": "",
+          "remaining": 0,
+          "totalRemaining": 8,
+          "hiddenOrGuestRemaining": 8,
+          "status": "sold_out_or_unavailable",
+          "ticketType": "學生 220"
+        }
+      ],
+      "availableScreeningCount": 1,
+      "screeningCount": 2,
+      "firstStart": 1783065600
+    },
+    {
+      "id": "2056701258421575681",
+      "title": "瘋狂隱形女富豪",
+      "englishTitle": "Lady",
+      "creator": "山繆．亞伯拉罕 Samuel ABRAHAMS",
+      "production": "英國 UK / 2025 / 95min",
+      "synopsis": "莊園夫人自詡為貴族界卡戴珊，遇上野心勃勃的年輕導演來拍他的真人實境秀。但他越是賣弄，導演越覺得無感，不料他的身體在鏡頭前竟開始變得透明，逐漸消失。影片模擬實境秀的手持搖晃、偷窺視角與快速變焦等手法，以偽紀錄片形式呈現主角們的「幕後直擊」，並透過鮮豔色彩與幽默魔幻的特效，溫柔關注那些隱形、不被看見的人。 Lady is an off-beat comedy about a lonely, narcissistic aristocrat who dupes a struggling, opportunistic director into filming her every move. But her obsession with the spotlight takes a surreal turn when she starts becoming… invisible. Blending mockumentary and magical realism, Lady satirizes our desperate need to feel seen.",
+      "year": "2025",
+      "minutes": "95min",
+      "rating": "保護級",
+      "categories": [
+        "外國片",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779190742507HE2j3Yey7r.jpeg",
+      "url": "https://www.opentix.life/event/2056701258421575681",
+      "screenings": [
+        {
+          "eventId": "2056701261175922689",
+          "start": 1783066800,
+          "end": 1783072500,
+          "venue": "光點 2",
+          "note": "",
+          "guest": "",
+          "remaining": 60,
+          "totalRemaining": 67,
+          "hiddenOrGuestRemaining": 7,
+          "status": "available",
+          "ticketType": "平日日場 180"
+        }
+      ],
+      "availableScreeningCount": 1,
+      "screeningCount": 1,
+      "firstStart": 1783066800
+    },
+    {
+      "id": "2058818342943055873",
+      "title": "與畢諾許共舞",
+      "englishTitle": "In-I in Motion",
+      "creator": "茱麗葉．畢諾許 Juliette BINOCHE",
+      "production": "法國 France / 2025 / 127min",
+      "synopsis": "2007年，法國影后茱麗葉．畢諾許與國際編舞名家阿喀郎．汗，攜手踏出彼此的專業領域，展開一場挑戰極限的藝術實驗 。歷經六個月的共創，他們透過即興凝鍊跨界舞作《In-I》。在逾百場的全球巡演落幕後，畢諾許以導演的身分，藉由爬梳拍攝素材的過程，反思藝術創作的本質，以及表演工作如何深深影響了他們的人生。 In 2007, French actress Juliette Binoche and British dancer-choreographer Akram Khan left their fields to create In-I, a bold performance staged worldwide. Returning to the project, Binoche retraces its creative journey through unseen footage, reflecting on artistic risk, vulnerability, and personal transformation from a filmmaker’s perspective.",
+      "year": "2025",
+      "minutes": "127min",
+      "rating": "普遍級",
+      "categories": [
+        "外國片",
+        "電影-紀錄片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779695486610JQ7ixJORce.jpeg",
+      "url": "https://www.opentix.life/event/2058818342943055873",
+      "screenings": [
+        {
+          "eventId": "2058818346122338304",
+          "start": 1783074600,
+          "end": 1783082220,
+          "venue": "光點 2",
+          "note": "",
+          "guest": "",
+          "remaining": 47,
+          "totalRemaining": 54,
+          "hiddenOrGuestRemaining": 7,
+          "status": "available",
+          "ticketType": "學生 220"
+        }
+      ],
+      "availableScreeningCount": 1,
+      "screeningCount": 1,
+      "firstStart": 1783074600
+    },
+    {
+      "id": "2057671569828814849",
+      "title": "金多寶",
+      "englishTitle": "The Snowball on a Sunny Day",
+      "creator": "翁子光 Philip YUNG",
+      "production": "香港 Hong Kong / 2026 / 131min",
+      "synopsis": "農曆新年，奶奶堅持多年的幸運號碼終於中了六合彩頭獎！但迷糊孫女錯過下注，情急之下聯手電影片場同事，上演「假中獎」戲碼，借來豪宅讓一家人歡喜入住，連多年的家族心結也有了轉機。翁子光最新賀歲喜劇，金馬影后鍾雪瑩、男神呂爵安及配角天后金燕玲主演，古天樂、蔡卓妍與許冠文客串演出，歡笑之餘亦深藏懷舊，與對電影的熱愛。 After years of buying the same lottery numbers for her grandmother, Sunnie Lam misses the draw the one time those numbers win HK$88.88 million. To protect her grandmother’s dream, she fakes the win and borrows a villa. As her family moves in, bonds heal—until an unexpected incident exposes the lie.",
+      "year": "2026",
+      "minutes": "131min",
+      "rating": "普遍級",
+      "categories": [
+        "外國片",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/177942207177361zNA0Rzn8.jpeg",
+      "url": "https://www.opentix.life/event/2057671569828814849",
+      "screenings": [
+        {
+          "eventId": "2057672886894686209",
+          "start": 1783075200,
+          "end": 1783083060,
+          "venue": "誠品 A",
+          "note": "★ 映後座談",
+          "guest": "映後",
+          "remaining": 43,
+          "totalRemaining": 50,
+          "hiddenOrGuestRemaining": 7,
+          "status": "available",
+          "ticketType": "學生 220"
+        },
+        {
+          "eventId": "2057673668054446081",
+          "start": 1783141200,
+          "end": 1783149060,
+          "venue": "誠品 A",
+          "note": "★ 映後座談",
+          "guest": "映後",
+          "remaining": 73,
+          "totalRemaining": 81,
+          "hiddenOrGuestRemaining": 8,
+          "status": "available",
+          "ticketType": "學生 220"
+        }
+      ],
+      "availableScreeningCount": 2,
+      "screeningCount": 2,
+      "firstStart": 1783075200
+    },
+    {
+      "id": "2057661771745816577",
+      "title": "雙面蘿絲",
+      "englishTitle": "Rose",
+      "creator": "馬克斯・賽林傑 Markus SCHLEINZER",
+      "production": "奧地利、德國 Austria, Germany / 2026 / 94min",
+      "synopsis": "17世紀德國農村，有座荒廢多時的莊園，出現一名自稱繼承人的神祕士兵；「他」行事粗獷俐落，逐漸建立起權力和威信，卻因一場意外暴露真實身分，走向審判。性別展演、階級與信仰秩序，在冷冽黑白影像與極簡敘事下一一攤開，剖析了身分在權力結構中的建構與崩解。德國影后桑德拉・惠勒以雌雄莫辨的詮釋，榮膺柏林影展最佳主角。 Amid the Thirty Years’ War, a mysterious, scarred soldier arrives in a secluded Protestant village, claiming a long-abandoned farm. Over time, he wins their acceptance through hard work and piety—yet lives a deception: a woman passing as a man, responsible for many wicked deeds.",
+      "year": "2026",
+      "minutes": "94min",
+      "rating": "保護級",
+      "categories": [
+        "外國片",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779419743542E6HAjYBJPS.jpeg",
+      "url": "https://www.opentix.life/event/2057661771745816577",
+      "screenings": [
+        {
+          "eventId": "2057663673648771073",
+          "start": 1783075200,
+          "end": 1783080840,
+          "venue": "光點 1",
+          "note": "",
+          "guest": "",
+          "remaining": 0,
+          "totalRemaining": 8,
+          "hiddenOrGuestRemaining": 8,
+          "status": "sold_out_or_unavailable",
+          "ticketType": "學生 220"
+        },
+        {
+          "eventId": "2057661775995944961",
+          "start": 1783401000,
+          "end": 1783406640,
+          "venue": "光點 1",
+          "note": "",
+          "guest": "",
+          "remaining": 0,
+          "totalRemaining": 8,
+          "hiddenOrGuestRemaining": 8,
+          "status": "sold_out_or_unavailable",
+          "ticketType": "平日日場 180"
+        }
+      ],
+      "availableScreeningCount": 0,
+      "screeningCount": 2,
+      "firstStart": 1783075200
+    },
+    {
+      "id": "2058802002383577089",
+      "title": "偏要喜歡你",
+      "englishTitle": "The Obsessed",
+      "creator": "高橋渉 TAKAHASHI Wataru",
+      "production": "日本 Japan / 2025 / 98min",
+      "synopsis": "園裡，一個常對喜愛事物專注到忘我的「執著男」，對賣氣球的少女一見鍾情，卻也發現那甜美笑容背後藏著悲傷與煩惱。為了女孩，他發揮「執著」的強大能量，拿出畢生的十八般武藝，默默為心上人掃除陰霾。改編自石井慎二同名小說，偶像團體「Aぇ! group」的佐野晶哉與上白石萌歌獻聲配音，共譜一段愛與奇蹟的樂章。 Giuseppe bounces from obsession to obsession, from singing to insect cataloging, never staying in one place for long. Then he meets Pechka, a quiet balloon seller with a lingering sadness, and it is the first time he wants to stay instead of chasing the next thing.",
+      "year": "2025",
+      "minutes": "98min",
+      "rating": "普遍級",
+      "categories": [
+        "外國片",
+        "電影-動畫"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779691592019lYlpM0w8FR.jpeg",
+      "url": "https://www.opentix.life/event/2058802002383577089",
+      "screenings": [
+        {
+          "eventId": "2058802004243644417",
+          "start": 1783076400,
+          "end": 1783082280,
+          "venue": "誠品 C",
+          "note": "",
+          "guest": "",
+          "remaining": 89,
+          "totalRemaining": 89,
+          "hiddenOrGuestRemaining": 0,
+          "status": "available",
+          "ticketType": "學生 220"
+        },
+        {
+          "eventId": "2058804186006937601",
+          "start": 1783076400,
+          "end": 1783082280,
+          "venue": "誠品 B",
+          "note": "",
+          "guest": "",
+          "remaining": 83,
+          "totalRemaining": 90,
+          "hiddenOrGuestRemaining": 7,
+          "status": "available",
+          "ticketType": "學生 220"
+        },
+        {
+          "eventId": "2058809114364870657",
+          "start": 1783344600,
+          "end": 1783350480,
+          "venue": "誠品 C",
+          "note": "",
+          "guest": "",
+          "remaining": 91,
+          "totalRemaining": 91,
+          "hiddenOrGuestRemaining": 0,
+          "status": "available",
+          "ticketType": "學生 220"
+        },
+        {
+          "eventId": "2058807367447732225",
+          "start": 1783344600,
+          "end": 1783350480,
+          "venue": "誠品 B",
+          "note": "",
+          "guest": "",
+          "remaining": 91,
+          "totalRemaining": 98,
+          "hiddenOrGuestRemaining": 7,
+          "status": "available",
+          "ticketType": "學生 220"
+        }
+      ],
+      "availableScreeningCount": 4,
+      "screeningCount": 4,
+      "firstStart": 1783076400
+    },
+    {
+      "id": "2056714364455952385",
+      "title": "你流過我的名字",
+      "englishTitle": "Strange River",
+      "creator": "賈烏瑪．克萊雷特．穆夏特 Jaume CLARET MUXART",
+      "production": "西班牙、德國 Spain, Germany / 2025 / 106min",
+      "synopsis": "盛夏多瑙河畔的家族單車旅行，開啟年少男孩的情慾萌動。穿梭蓊鬱綠林，沐浴陽光與河水，男孩看見河中若隱若現的裸體男子，一心想知道他的名字，心中鬱悶的結也與母親往事交織。16mm帶有觸感的攝影如水流動，魔幻寫實地將自然元素和角色情思結合，這條奇異河流有夢、有情，還有了身體，見證一個家庭中成員各自轉變的旅程。 Sixteen-year-old Dídac and his family are spending the summer holidays on a bicycle trip along the Danube. An unexpected encounter with a boy changes the course of the journey, with his enigmatic presence awakening new feelings in Dídac and disrupting his relationship with his family.",
+      "year": "2025",
+      "minutes": "106min",
+      "rating": "輔12級",
+      "categories": [
+        "外國片",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779193870734ppzQc5hCrl.jpeg",
+      "url": "https://www.opentix.life/event/2056714364455952385",
+      "screenings": [
+        {
+          "eventId": "2056714368199761921",
+          "start": 1783083000,
+          "end": 1783089360,
+          "venue": "光點 1",
+          "note": "",
+          "guest": "",
+          "remaining": 49,
+          "totalRemaining": 57,
+          "hiddenOrGuestRemaining": 8,
+          "status": "available",
+          "ticketType": "學生 220"
+        },
+        {
+          "eventId": "2056714366551400449",
+          "start": 1783428600,
+          "end": 1783434960,
+          "venue": "光點 2",
+          "note": "",
+          "guest": "",
+          "remaining": 49,
+          "totalRemaining": 56,
+          "hiddenOrGuestRemaining": 7,
+          "status": "available",
+          "ticketType": "學生 220"
+        }
+      ],
+      "availableScreeningCount": 2,
+      "screeningCount": 2,
+      "firstStart": 1783083000
+    },
+    {
+      "id": "2057067337954734081",
+      "title": "Harmonica ＋等等",
+      "englishTitle": "Harmonica + Waiting",
+      "creator": "Harmonica阿米爾．納德瑞 Amir NADERI",
+      "production": "伊朗 Iran / 1973 / 77min",
+      "synopsis": "漁村少年收到來自海外的口琴，好奇的朋友們為此展開較勁，村莊的日常也隨之掀起漣漪。孩童對新奇事物的迷戀，既純真又隱喻著對現代生活的渴求。取景於導演故鄉，鏡頭下印象派的光影將童年如夢似幻的氛圍精準呈現。本片是納德瑞於伊斯蘭革命前的重要作品，也是其兒童三部曲的起點，政治寓意與視覺詩意交織，名列伊朗電影新浪潮經典。 Adult relations remodeled in the imaginative childish world... There comes a time when you would rather lose everything dear to your heart than go ahead suffering indignities. 等等 Waiting阿米爾．納德瑞 Amir NADERI｜伊朗 Iran｜1974｜Color｜47min 南方小鎮上，老人水煙咕嘟作響，老婦低頭針指，男孩端著玻璃碗往返鄰家取冰。碗緣在日光下閃耀著懾人光彩，換來一碗沁涼，一飲而盡。門後伸出那只染著指甲花的手，神祕而遙遠。影片拍攝於伊朗南部舊城，簡約而敏銳的影像語言，在日常聲響與海潮拍岸之間，捕捉躁動的精神狀態，是導演從寫實轉向詩性、感官化敘事的重要轉折。 A 14-year-old boy lives with his aunt and her elderly husband in a provincial town in southern Iran. Each day he fetches ice from a neighborhood, receiving it from a girl he never sees. Catching a glimpse of the face behind the hennaed hands becomes his greatest wish.",
+      "year": "1973",
+      "minutes": "77min",
+      "rating": "保護級",
+      "categories": [
+        "外國片",
+        "等等",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/17792780076617vKgZ4myoi.jpeg",
+      "url": "https://www.opentix.life/event/2057067337954734081",
+      "screenings": [
+        {
+          "eventId": "2057067341461172225",
+          "start": 1783084800,
+          "end": 1783092240,
+          "venue": "誠品 B",
+          "note": "",
+          "guest": "",
+          "remaining": 89,
+          "totalRemaining": 96,
+          "hiddenOrGuestRemaining": 7,
+          "status": "available",
+          "ticketType": "學生 220"
+        },
+        {
+          "eventId": "2057069088963407872",
+          "start": 1783084800,
+          "end": 1783092240,
+          "venue": "誠品 C",
+          "note": "★ 映後座談",
+          "guest": "映後",
+          "remaining": 0,
+          "totalRemaining": 0,
+          "hiddenOrGuestRemaining": 0,
+          "status": "sold_out_or_unavailable",
+          "ticketType": "學生 220"
+        }
+      ],
+      "availableScreeningCount": 1,
+      "screeningCount": 2,
+      "firstStart": 1783084800
+    },
+    {
+      "id": "2057021165847781377",
+      "title": "絕謬喜劇",
+      "englishTitle": "Divine Comedy",
+      "creator": "阿里．阿斯嘉禮 Ali ASGARI",
+      "production": "伊朗、土耳其、義大利、法國、德國 Iran, Turkey, Italy, France, Germany / 2025 / 96min",
+      "synopsis": "名列世界十大名導、在伊朗家喻戶曉的他，新作卻僅因使用自己的母語方言，再次審查遭拒。他四處尋訪戲院辦地下首映，卻發現要找到一塊自由的銀幕，竟比買到一克致幻白粉還難？繼《我還有話說》後，名導阿斯嘉禮再度穿刺伊朗政教威權的荒誕與矛盾，卡夫卡式的尖銳批判與黑色幽默背後，盡是身為影迷的浪漫，以及電影人的無奈。 Bahram, a 40-year-old filmmaker whose Turkish-Azeri films have never screened in Iran, faces yet another ban. Pushed to defiance, he and his sharp-tongued producer Sadaf embark on an underground mission to show his work, navigating censors, absurd bureaucracy, and his own self-doubt along the way.",
+      "year": "2025",
+      "minutes": "96min",
+      "rating": "輔15級",
+      "categories": [
+        "外國片",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779267009518neLpcoBdTy.jpeg",
+      "url": "https://www.opentix.life/event/2057021165847781377",
+      "screenings": [
+        {
+          "eventId": "2057023825539833857",
+          "start": 1783087200,
+          "end": 1783092960,
+          "venue": "誠品 A",
+          "note": "",
+          "guest": "",
+          "remaining": 110,
+          "totalRemaining": 118,
+          "hiddenOrGuestRemaining": 8,
+          "status": "available",
+          "ticketType": "學生 220"
+        }
+      ],
+      "availableScreeningCount": 1,
+      "screeningCount": 1,
+      "firstStart": 1783087200
+    },
+    {
+      "id": "2056710020930805761",
+      "title": "火車小夢",
+      "englishTitle": "The River Train",
+      "creator": "羅倫佐．費洛 Lorenzo FERRO、盧卡斯．A．維尼亞雷 Lucas A. VIGNALE",
+      "production": "阿根廷 Argentina / 2026 / 76min",
+      "synopsis": "住在阿根廷偏遠鄉村的男孩，父親為了讓他成為民俗舞蹈馬蘭波舞者，常在深夜展開鐵血訓練。但他卻夢想搭著火車逃離日常瑣事和練舞，前往電視上令他嚮往的布宜諾斯艾利斯。男孩獨自隨列車穿梭，在城市漫遊流浪，於故事中漂泊冒險。阿根廷新銳搭檔的首部長片，描繪男孩的逐夢獨旅。途中的因緣際會，也成為百轉千迴的人生隱喻。 Nine-year-old Milo trains as a malambo dancer in a remote Argentine village, but dreams of trains and Buenos Aires, a city he knows only from movies. To break free from his small world, he must dare to embark on a new journey: loneliness.",
+      "year": "2026",
+      "minutes": "76min",
+      "rating": "保護級",
+      "categories": [
+        "外國片",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/177919283310650x1Dk4yKS.jpeg",
+      "url": "https://www.opentix.life/event/2056710020930805761",
+      "screenings": [
+        {
+          "eventId": "2056710025477992449",
+          "start": 1783135800,
+          "end": 1783140360,
+          "venue": "光點 2",
+          "note": "",
+          "guest": "",
+          "remaining": 65,
+          "totalRemaining": 72,
+          "hiddenOrGuestRemaining": 7,
+          "status": "available",
+          "ticketType": "學生 220"
+        }
+      ],
+      "availableScreeningCount": 1,
+      "screeningCount": 1,
+      "firstStart": 1783135800
+    },
+    {
+      "id": "2057070036905304065",
+      "title": "阿巴斯短片輯 I",
+      "englishTitle": "Abbas Kiarostami Collection I",
+      "creator": "大人的模樣 Experience阿巴斯．基亞羅斯塔米 Abbas KIAROSTAMI",
+      "production": "伊朗 Iran / 1973 / 56min",
+      "synopsis": "將滿15歲的男孩被父親安排在照相館跑腿打雜，刻薄的雇主老拿他和哥哥比較，對他盡是數落；每日穿梭在嘈雜市街的他，總在特定時間蹓躂到某間宅邸前，就為了和心儀的富家女孩擦肩而過。情竇初開讓他對未來有了想像和期待，在得到女孩似有若無的回應後，他決定換上超齡的行頭，操演假扮大人的儀式，登門等待一個答案。 14-year-old Mohammad works for a demanding boss in a photography shop where he's allowed to sleep. He begins to yearn for a brighter future when he falls for a middle-class girl from a well-to-do neighbourhood. He offers his services at her home, remaining hopeful but… 西裝借我穿 A Wedding Suit阿巴斯．基亞羅斯塔米 Abbas KIAROSTAMI｜伊朗 Iran｜1976｜Color｜60min 裁縫店來了位富太太，他替兒子訂做了一套高級西裝，好參加姊姊的婚禮。西裝像奇珍異寶，每個在商店街工作的少年們都趨之若鶩，不斷哀求甚至威脅在裁縫店當學徒的好友，想趁交貨前偷穿一晚，他將如何在老闆和朋友之間抉擇？阿巴斯展現對兒童的特殊視角與紀實筆法，也細膩呈現孩童內心的幽微情感。 In the courtyard of an apartment building lined with shops, a tailor is visited by a middle-class woman seeking a suit for her son to wear at her daughter’s wedding. As adults conduct business, others scheme to secretly wear the suit for a night before it is delivered.",
+      "year": "1973",
+      "minutes": "56min",
+      "rating": "保護級",
+      "categories": [
+        "外國片",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779278662088jDJ3y9PbDJ.jpeg",
+      "url": "https://www.opentix.life/event/2057070036905304065",
+      "screenings": [
+        {
+          "eventId": "2057071380770914305",
+          "start": 1783142400,
+          "end": 1783149360,
+          "venue": "光點 2",
+          "note": "",
+          "guest": "",
+          "remaining": 0,
+          "totalRemaining": 7,
+          "hiddenOrGuestRemaining": 7,
+          "status": "sold_out_or_unavailable",
+          "ticketType": "學生 220"
+        }
+      ],
+      "availableScreeningCount": 0,
+      "screeningCount": 1,
+      "firstStart": 1783142400
+    },
+    {
+      "id": "2056364224484540417",
+      "title": "台灣短SHOW I",
+      "englishTitle": "Taiwan Shorts I",
+      "creator": "潛台詞 Table Read黃綺琳 Norris WONG、黃鐦 WONG Hoi",
+      "production": "台灣 Taiwan / 2026 / 24min",
+      "synopsis": "香港來的Fiona以為自己獲選為新戲女主角，要演出一場家庭聚餐戲。熟記台詞的她卻被載到田間宮廟前，「男友」一家人正等她開飯。假戲被真做，忙亂中投入角色的Fiona，逐漸發現劇本之下的潛台詞。《金都》黃綺琳在台拍攝的新作，攜手《填詞L》監製黃鐦合導。香港新秀許月湘對上禾浩辰，幽默詮釋一道感情難題。 Professor J announces a casting for his new work. Fiona, a student from Hong Kong, is unexpectedly chosen as the female lead. During a staged family dinner, an abrupt performance, an uncooperative co-actor, and unaware spectators blur fiction and reality, leading her to uncover the script’s hidden subtext. 犀牛 The Rhino曾駿堯 Kevin C. Y. TSENG｜加拿大 Canada｜2026｜Color｜28min 一對住在美國加州的亞裔夫妻，生活過得簡約而恬靜，但兩人的課題始終未解：要不要生孩子。丈夫渴望為人父，妻子卻對這樣的責任和束縛充滿恐懼，「只有我不夠嗎？」、「我浪費了你的時間嗎？」她從未真正問出口，只猜想總有一個人會因此離開。全片以獨白搭配近乎紀錄片的拍攝方式，將真實感極大化，並試圖從中確認愛與包容的份量。 The day before their wedding, she told him she didn’t want children and may never will. The Rhino follows their marriage 11 years later, exploring how this conflict shapes their relationship. Through reenacted memories and lived moments, the film observes how love, grief, and tenderness coexist alongside an irreconcilable difference. 正面與背面之間 Between Faces楊子暄 YANG Tzu-hsuan｜台灣、日本 Taiwan, Japan｜2026｜Color｜13min 未曾謀面的爺爺留下一批於日本靖國神社拍攝的照片。父親說，身為台籍日本兵的爺爺，二戰時曾被送至印尼小島交戰，還輾轉到了澳洲戰俘營。導演聯繫澳洲國家檔案館，欲取得爺爺的相關紀錄。快門聲與影像的一次次停格、正面與背面的180度翻轉，導演造訪照片中的場景，拍下手持該處舊照的照片，藉由畫面中的雙層時空，找到自身與爺爺的連結。 The artist, who never met her grandfather, traces his presence through a photograph and images from Yasukuni Shrine. Guided by her father’s fragmented memories, she reconstructs an absent figure. Through reversals of images, bodies, and landscapes, the film explores shifting perspectives, revealing hidden layers of time, history, and memory. 各自安好 OK.FINE.陳柏諺 CHEN Bo-yan｜台灣 Taiwan｜2026｜Color｜17min 七歲的小如和爸媽感情超級好，但媽媽忙於劇組工作，爸爸更像他的專屬玩伴。某晚，他的寶貝手機被爸爸弄進水壞了。隔天上學路上，媽媽雖承諾晚上會把手機吹乾修好，但等不及的小如獨自跑回家，卻無意間發現了大人們的祕密。蔡亘晏、施名帥攜手小演員鄭羽晴，詮釋三口之家裂痕浮現卻又不點破的複雜心境，在美好表象之下各自安好。 All Ru wants is to fix her waterlogged phone, but she ends up being pulled into the messy lives of her parents. That night, the phone's still broken, but the three of them come together with secrets unspoken, sharing a family moment that is brief, imperfect, and real.",
+      "year": "2026",
+      "minutes": "24min",
+      "rating": "普遍級",
+      "categories": [
+        "外國片",
+        "正面與背面之間",
+        "犀牛",
+        "各自安好",
+        "潛台詞",
+        "電影-紀錄片",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779110310273JGqmdb533Y.jpeg",
+      "url": "https://www.opentix.life/event/2056364224484540417",
+      "screenings": [
+        {
+          "eventId": "2056366279947300865",
+          "start": 1783143600,
+          "end": 1783148520,
+          "venue": "中山堂",
+          "note": "★ 映後座談",
+          "guest": "映後",
+          "remaining": 454,
+          "totalRemaining": 465,
+          "hiddenOrGuestRemaining": 11,
+          "status": "available",
+          "ticketType": "學生 220"
+        }
+      ],
+      "availableScreeningCount": 1,
+      "screeningCount": 1,
+      "firstStart": 1783143600
+    },
+    {
+      "id": "2057381174358908929",
+      "title": "記憶中的佐佐木",
+      "englishTitle": "Sasaki in My Mind",
+      "creator": "內山拓也 UCHIYAMA Takuya",
+      "production": "日本 Japan / 2020 / 120min",
+      "synopsis": "少年為了演員夢來到東京，試鏡卻屢戰屢敗，與女友也陷入感情瓶頸。某日他與高中同學重逢，讓他想起班上的怪咖死黨──那個甘願脫光全裸，只為逗大家開心的風雲人物佐佐木。隨著排練的劇本內容與現實逐漸重疊，他突然接到了佐佐木久違的來電。內山拓也募資完成的第二部長片，集結藤原季節、河合優實與村上虹郎等實力派卡司助陣。 The story of a would-be actor, his larger-than-life classmate, and their friends. Unfolding their past and present, Sasaki in My Mind looks head-on at adolescent sparkle and the pathos of bygone days.",
+      "year": "2020",
+      "minutes": "120min",
+      "rating": "保護級",
+      "categories": [
+        "外國片",
+        "記憶中的佐佐木",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/17793528475858zab6wPDIX.jpeg",
+      "url": "https://www.opentix.life/event/2057381174358908929",
+      "screenings": [
+        {
+          "eventId": "2057381179028025345",
+          "start": 1783146000,
+          "end": 1783153200,
+          "venue": "光點 1",
+          "note": "▲ 非英語發音，且沒有英文字幕",
+          "guest": "",
+          "remaining": 32,
+          "totalRemaining": 40,
+          "hiddenOrGuestRemaining": 8,
+          "status": "available",
+          "ticketType": "學生 220"
+        },
+        {
+          "eventId": "2057381179024175105",
+          "start": 1783318800,
+          "end": 1783326000,
+          "venue": "光點 1",
+          "note": "▲ 非英語發音，且沒有英文字幕",
+          "guest": "",
+          "remaining": 40,
+          "totalRemaining": 48,
+          "hiddenOrGuestRemaining": 8,
+          "status": "available",
+          "ticketType": "平日日場 180"
+        }
+      ],
+      "availableScreeningCount": 2,
+      "screeningCount": 2,
+      "firstStart": 1783146000
+    },
+    {
+      "id": "2057652244643127297",
+      "title": "週末的尼諾",
+      "englishTitle": "Nino",
+      "creator": "寶琳．洛凱斯 Pauline LOQUÈS",
+      "production": "法國 France / 2025 / 97min",
+      "synopsis": "三天後，男子就要接受一項攸關生死的手術，儘管喉嚨的病痛讓他難以言語，醫生仍交付他兩項重要任務，迫使習慣和世界保持疏離的他，必須走入巴黎街頭，與過往斷裂的人際關係重新接軌。啟發自弟弟的生命經驗，導演在沉重考驗中挖掘荒謬與幽默，並以輕盈溫柔的筆觸描繪超越言語的身體觸覺，為受傷心靈找回擁抱生命的療癒力量。 In three days, Nino will face a major challenge. But first, his doctors have assigned himtwo vital tasks. Two missions that will lead the young man on a journey through Paris, compelling him to reconnect with the world - and himself.",
+      "year": "2025",
+      "minutes": "97min",
+      "rating": "輔12級",
+      "categories": [
+        "外國片",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779417451954VBcKK2igSb.jpeg",
+      "url": "https://www.opentix.life/event/2057652244643127297",
+      "screenings": [
+        {
+          "eventId": "2057655523062915073",
+          "start": 1783147200,
+          "end": 1783153020,
+          "venue": "誠品 B",
+          "note": "",
+          "guest": "",
+          "remaining": 17,
+          "totalRemaining": 22,
+          "hiddenOrGuestRemaining": 5,
+          "status": "available",
+          "ticketType": "學生 220"
+        }
+      ],
+      "availableScreeningCount": 1,
+      "screeningCount": 1,
+      "firstStart": 1783147200
+    },
+    {
+      "id": "2056639020943351808",
+      "title": "香巴拉物語",
+      "englishTitle": "Shambhala Story",
+      "creator": "関根俊夫 SEKINE Toshio",
+      "production": "日本、美國、印度 Japan, USA, India / 2025 / 109min",
+      "synopsis": "為精進修行，一位年輕喇嘛從印度大吉嶺啟程前往日本，在此遇見了於現實夾縫中苦苦求生的爺爺與孫女。隨著相處日增，禁忌情愫逐漸如薄霧籠罩在喇嘛與女子之間。金馬影帝莫子儀全外語飆戲，流利切換於日、英語之間，生動詮釋年輕僧侶動情與修行的兩難。日本女星武田梨奈展現細膩演技與肢體語言，造就出彩的銀幕火花。 Tashi, a devout Tibetan Buddhist monk, is sent to Japan to continue his spiritual training. There, he meets a cantankerous elderly man and his parolee granddaughter, Emi. As they grow closer, the distance between Tashi and the lonely Emi begins to shrink, and forbidden feelings start to emerge between them.",
+      "year": "2025",
+      "minutes": "109min",
+      "rating": "保護級",
+      "categories": [
+        "外國片",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1782651936171XjL3PAXwbw.jpeg",
+      "url": "https://www.opentix.life/event/2056639020943351808",
+      "screenings": [
+        {
+          "eventId": "2056639025625112577",
+          "start": 1783152600,
+          "end": 1783159140,
+          "venue": "誠品 A",
+          "note": "▲ 非英語發音，且沒有英文字幕  ★ 映後座談",
+          "guest": "映後",
+          "remaining": 0,
+          "totalRemaining": 4,
+          "hiddenOrGuestRemaining": 4,
+          "status": "sold_out_or_unavailable",
+          "ticketType": "學生 220"
+        },
+        {
+          "eventId": "2056639025615806465",
+          "start": 1783245600,
+          "end": 1783252140,
+          "venue": "誠品 B",
+          "note": "▲ 非英語發音，且沒有英文字幕  ★ 映後座談",
+          "guest": "映後",
+          "remaining": 0,
+          "totalRemaining": 5,
+          "hiddenOrGuestRemaining": 5,
+          "status": "sold_out_or_unavailable",
+          "ticketType": "學生 220"
+        }
+      ],
+      "availableScreeningCount": 0,
+      "screeningCount": 2,
+      "firstStart": 1783152600
+    },
+    {
+      "id": "2056340527213780993",
+      "title": "鼠一般的你",
+      "englishTitle": "SINSIN AND THE MOUSE",
+      "creator": "真壁幸紀 MAKABE Yukinori",
+      "production": "台灣、日本 Taiwan, Japan / 2026 / 108min",
+      "synopsis": "日本女孩為撫平喪母之痛，受朋友之邀來到台灣散心。在陌生的台北街頭，邂逅了寂寞的台日混血男孩。即便身處異地，心卻掀起漣漪，彼此撩撥試探，曖昧就此蔓延滋長。導演真壁幸紀改編吉本芭娜娜同名短篇小說，與《惠子不能輸》岸井雪乃搭擋的曾敬驊，呈現有別以往的內斂演技，台日合拍跨越語言國界，深情演繹浪漫愛戀。 A young Japanese woman reeling from the death of her beloved mother decides to take a trip to Taipei to alleviate her loss. While there, an encounter with a young man sees the pair strike up a tentative friendship that could help her come to terms with the death.",
+      "year": "2026",
+      "minutes": "108min",
+      "rating": "普遍級",
+      "categories": [
+        "外國片",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1780469775614cOV0AhDaY3.png",
+      "url": "https://www.opentix.life/event/2056340527213780993",
+      "screenings": [
+        {
+          "eventId": "2056340531127627776",
+          "start": 1783153200,
+          "end": 1783159680,
+          "venue": "中山堂",
+          "note": "★ 映後座談",
+          "guest": "映後",
+          "remaining": 0,
+          "totalRemaining": 3,
+          "hiddenOrGuestRemaining": 3,
+          "status": "sold_out_or_unavailable",
+          "ticketType": "學生 220"
+        }
+      ],
+      "availableScreeningCount": 0,
+      "screeningCount": 1,
+      "firstStart": 1783153200
+    },
+    {
+      "id": "2057668193971937280",
+      "title": "這年夏天，愛之尋謎",
+      "englishTitle": "Romería",
+      "creator": "卡拉・西蒙 Carla SIMÓN",
+      "production": "西班牙、德國 Spain, Germany / 2025 / 112min",
+      "synopsis": "獨自長大的女孩成年後，為了取得家人簽名以申請獎學金，踏上旅程跨海尋找未曾謀面的祖父母。家族成員熱情接待他，卻不樂意多談他死於愛滋的雙親，他只好自行深入絕美港都，嘗試拼湊至親身影。《桃子樹的最後豐收》柏林金熊名導卡拉・西蒙以細膩的鏡頭，重塑自身缺失的雙親記憶，敘事充盈浪漫又柔韌的感動能量。 Marina, 18, orphaned at a young age, travels to Spain’s Atlantic coast to secure a signature from paternal grandparents she has never met. Amid new relatives, she faces uncertain acceptance. As buried emotions resurface, she pieces together fragmented, often contradictory memories of the parents she barely remembers.",
+      "year": "2025",
+      "minutes": "112min",
+      "rating": "保護級",
+      "categories": [
+        "外國片",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779421275467Ut9zhoOzP0.jpeg",
+      "url": "https://www.opentix.life/event/2057668193971937280",
+      "screenings": [
+        {
+          "eventId": "2057669988626538497",
+          "start": 1783155000,
+          "end": 1783161720,
+          "venue": "誠品 B",
+          "note": "",
+          "guest": "",
+          "remaining": 74,
+          "totalRemaining": 79,
+          "hiddenOrGuestRemaining": 5,
+          "status": "available",
+          "ticketType": "學生 220"
+        }
+      ],
+      "availableScreeningCount": 1,
+      "screeningCount": 1,
+      "firstStart": 1783155000
+    },
+    {
+      "id": "2057048247880196097",
+      "title": "馬車夫想婚頭",
+      "englishTitle": "The Carriage Driver",
+      "creator": "諾斯拉圖拉．卡里米 Nosratollah KARIMIIran",
+      "production": "伊朗 Iran / 1971 / 116min",
+      "synopsis": "父親葬禮後，鄰居馬車夫等不及迎娶甫守寡的母親，成為一家之主的兒子堅決反對，不料他自己的心上人，竟是馬車夫的女兒。兩代男性求愛錯綜交織，想婚頭的馬車夫施展一系列計謀，誰能成功「得婚」？看似煽情的設定，卻有著寫實質地，鄰里與家屋空間的精彩調度，神來一筆的手工停格動畫，幽默諷刺伊朗社會傳統婚姻與性別角色。 Complications arise when young lovers Morteza and Pouri can marry only if Morteza approves his widowed mother’s union with Pouri’s father. With warmth and sharp wit, this critique of Iranian society turns anxieties around namus (the “virtue” of the family’s women) into fertile ground for comedy while skewering everyday rituals.",
+      "year": "1971",
+      "minutes": "116min",
+      "rating": "保護級",
+      "categories": [
+        "外國片",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779273389084Om1ExiFsew.jpeg",
+      "url": "https://www.opentix.life/event/2057048247880196097",
+      "screenings": [
+        {
+          "eventId": "2057048252839735297",
+          "start": 1783155600,
+          "end": 1783162620,
+          "venue": "光點 1",
+          "note": "",
+          "guest": "",
+          "remaining": 141,
+          "totalRemaining": 149,
+          "hiddenOrGuestRemaining": 8,
+          "status": "available",
+          "ticketType": "學生 220"
+        },
+        {
+          "eventId": "2057048252843761665",
+          "start": 1783409400,
+          "end": 1783416420,
+          "venue": "光點 1",
+          "note": "",
+          "guest": "",
+          "remaining": 138,
+          "totalRemaining": 146,
+          "hiddenOrGuestRemaining": 8,
+          "status": "available",
+          "ticketType": "平日日場 180"
+        }
+      ],
+      "availableScreeningCount": 2,
+      "screeningCount": 2,
+      "firstStart": 1783155600
+    },
+    {
+      "id": "2056718558445379584",
+      "title": "你的敵人不是你的敵人",
+      "englishTitle": "Straight Circle",
+      "creator": "奧斯卡．哈德森 Oscar HUDSON",
+      "production": "英國 UK / 2025 / 108min",
+      "synopsis": "敵對兩國在邊境慶祝停火十週年，雙方各派士兵共守哨所。兩名軍人在荒漠小屋機械地履行勤務，直到一名牧羊人誤闖禁區，打亂兩人的脆弱平衡，彼此也從猜忌、對立，轉變為相愛相殺的鏡像雙生。當身分界線開始崩解，誰將效忠國家？誰又是最後贏家？宛如《等待果陀》遇上《JSA共同警戒區》，碰撞出一則荒誕卻真實的政治寓言。 A pair of enemy soldiers stationed on a remote border in a vast featureless desert descend into a state of profound disorientation after forgetting which side of the border is which.",
+      "year": "2025",
+      "minutes": "108min",
+      "rating": "輔12級",
+      "categories": [
+        "外國片",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779194841215TrmJps1G1K.jpeg",
+      "url": "https://www.opentix.life/event/2056718558445379584",
+      "screenings": [
+        {
+          "eventId": "2056718562744147969",
+          "start": 1783159200,
+          "end": 1783165680,
+          "venue": "光點 2",
+          "note": "",
+          "guest": "",
+          "remaining": 0,
+          "totalRemaining": 7,
+          "hiddenOrGuestRemaining": 7,
+          "status": "sold_out_or_unavailable",
+          "ticketType": "學生 220"
+        }
+      ],
+      "availableScreeningCount": 0,
+      "screeningCount": 1,
+      "firstStart": 1783159200
+    },
+    {
+      "id": "2057675064434950145",
+      "title": "我們不是什麼",
+      "englishTitle": "We're Nothing at All",
+      "creator": "邱禮濤 Herman YAU",
+      "production": "香港 Hong Kong / 2026 / 128min",
+      "synopsis": "情人節當天，一輛雙層巴士在香港市中心爆炸，造成大量乘客傷亡。警方找來鑑定專家，兩具無家屬認領少年遺體，成為著重調查對象。鑑定的不只是物理證據，也是人際網絡和生命軌跡，被排斥及壓迫的他們在亂世中彷彿什麼都不是，但仍勇敢面對命運。關注少數族群的導演邱禮濤自資拍攝，改編真實事件，講述一個冷峻而保守的香港寓言。 On Valentine’s Day, a double-decker bus explodes, killing many. Evidence points to Fai and Ike, a marginalized gay couple. As retired forensic expert Lung Sir investigates, he uncovers a tragic history of abuse and homophobia that led to their fatal act of protest against an unjust world.",
+      "year": "2026",
+      "minutes": "128min",
+      "rating": "限制級",
+      "categories": [
+        "外國片",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779422901254vO7uJNv5BO.jpeg",
+      "url": "https://www.opentix.life/event/2057675064434950145",
+      "screenings": [
+        {
+          "eventId": "2057675067987402753",
+          "start": 1783162800,
+          "end": 1783170480,
+          "venue": "誠品 A",
+          "note": "★ 映後座談",
+          "guest": "映後",
+          "remaining": 0,
+          "totalRemaining": 4,
+          "hiddenOrGuestRemaining": 4,
+          "status": "sold_out_or_unavailable",
+          "ticketType": "學生 220"
+        },
+        {
+          "eventId": "2057676329712427009",
+          "start": 1783225200,
+          "end": 1783232880,
+          "venue": "誠品 A",
+          "note": "★ 映後座談",
+          "guest": "映後",
+          "remaining": 0,
+          "totalRemaining": 8,
+          "hiddenOrGuestRemaining": 8,
+          "status": "sold_out_or_unavailable",
+          "ticketType": "學生 220"
+        }
+      ],
+      "availableScreeningCount": 0,
+      "screeningCount": 2,
+      "firstStart": 1783162800
+    },
+    {
+      "id": "2058834358012190721",
+      "title": "再見沼影泳池",
+      "englishTitle": "Numakage Public Pool",
+      "creator": "太田信吾 OTA Shingo",
+      "production": "日本 Japan / 2025 / 80min",
+      "synopsis": "52年來，沼影公共泳池承載無數市民記憶：學習游泳的孩童、夏日消暑的青少年、保持運動的樂齡族、以及當地同志祕密尋找友誼和戀情的庇護所。如今，隨著市府宣佈拆除在即，有人陷入悲傷，也有些人組織起來抵抗。鏡頭以旁觀手法溫柔捕捉告別過程和曾經的美好，交織出對公共空間消逝的集體情感，也隱含對都市開發的反思。 For over 50 years, Numakage Public Pool—an “ocean” in landlocked suburban Tokyo—has served the elderly, families, and a vibrant gay community. Facing demolition despite local opposition, its loss ripples through the community. Through the five stages of grief, director Ota Shingo reflects on loss beyond human death.",
+      "year": "2025",
+      "minutes": "80min",
+      "rating": "普遍級",
+      "categories": [
+        "外國片",
+        "電影-紀錄片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779699309585FVISwjQVGw.jpeg",
+      "url": "https://www.opentix.life/event/2058834358012190721",
+      "screenings": [
+        {
+          "eventId": "2058834359918395393",
+          "start": 1783164000,
+          "end": 1783168800,
+          "venue": "誠品 B",
+          "note": "★ 映後座談",
+          "guest": "映後",
+          "remaining": 36,
+          "totalRemaining": 41,
+          "hiddenOrGuestRemaining": 5,
+          "status": "available",
+          "ticketType": "學生 220"
+        },
+        {
+          "eventId": "2058838110859296769",
+          "start": 1783226400,
+          "end": 1783231200,
+          "venue": "誠品 B",
+          "note": "★ 映後座談",
+          "guest": "映後",
+          "remaining": 68,
+          "totalRemaining": 73,
+          "hiddenOrGuestRemaining": 5,
+          "status": "available",
+          "ticketType": "學生 220"
+        }
+      ],
+      "availableScreeningCount": 2,
+      "screeningCount": 2,
+      "firstStart": 1783164000
+    },
+    {
+      "id": "2057075429256798209",
+      "title": "自由電影短片輯 I",
+      "englishTitle": "Cinema-ye Azad Collection I",
+      "creator": "樓梯間的臭箱子 The Day that Mr. J Appeared貝赫南．賈法里 Behnam JAFARI",
+      "production": "伊朗 Iran / 1975 / 22min",
+      "synopsis": "在J先生出現前，公寓裡的人們過著平凡的日子。某日，樓梯間出現一個神祕箱子，它阻擋了通道，並散發出難以言喻的異味。白天，眾人忙碌度過；夜晚，他們彎下腰尋找氣味的來源，層層搜索後，終於發現了驚人祕密。重複且精簡的敘事下，每一天過得既相同又嶄新，枯燥瑣事和孤單交織著日常氣息，構築一幅幽微諷刺的社會景象。 A mysterious package arrives for the residents of an apartment without a sender or a recipient. Curiosity quickly spreads among the neighbors. 屋頂上的喇叭手 Abandoned Heights貝赫南．賈法里 Behnam JAFARI｜伊朗 Iran｜1972｜Color｜19min 年輕男子每天都在荒廢的高樓天臺吹著小號，日復一日。另一名年邁的男人坐在底下，拚了命將紡織品拆毀，聆聽並旁觀著他。城市忙碌依舊，小號聲卻詭異預言著即將發生的事件，甚至命中一場死亡的發生。於「自由電影」運動中創作，以8mm膠卷捕捉德黑蘭即景，用自由的影像抵抗現實，大膽詮釋政權監視下的伊朗。 Every day, a young man plays his trumpet from the top of a half-finished building while facing the city. Ambiguous happenings around him suggest the outlines of what may lurk below the peaceful surface of society. 衰神幫幫忙 Mir Nasir and the Ill-Fated Genie貝赫南．賈法里 Behnam JAFARI｜伊朗 Iran｜1974｜B&amp;W｜67min 男人被堆滿實驗瓶的工作室吸引，原以為能藉此謀得生計，卻反而與僱主鬧翻臉。逃離之際，他帶走了一只閃爍神祕星芒的容器遠赴荒漠。此時，瓶中精靈現身眼前，卻無法實現任何願望。「自由電影」運動代表作，也是導演生涯唯一長片。以阿拉伯傳說為本，顛覆神燈的象徵意義；利用大漠中乾涸的泉水，對現代化衝擊及生存提出質問。 Mir Nasir, who thinks that life has finally shown him a bright side by finding a genie, realizes that the genie has been imprisoned inside the glass for too long.",
+      "year": "1975",
+      "minutes": "22min",
+      "rating": "保護級",
+      "categories": [
+        "外國片",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/17792799378846b6Dm4wDHi.jpeg",
+      "url": "https://www.opentix.life/event/2057075429256798209",
+      "screenings": [
+        {
+          "eventId": "2057075433118695425",
+          "start": 1783167600,
+          "end": 1783174080,
+          "venue": "光點 2",
+          "note": "★ 映後座談",
+          "guest": "映後",
+          "remaining": 59,
+          "totalRemaining": 66,
+          "hiddenOrGuestRemaining": 7,
+          "status": "available",
+          "ticketType": "學生 220"
+        },
+        {
+          "eventId": "2057076646536617985",
+          "start": 1783228200,
+          "end": 1783234680,
+          "venue": "光點 2",
+          "note": "★ 映後座談",
+          "guest": "映後",
+          "remaining": 41,
+          "totalRemaining": 48,
+          "hiddenOrGuestRemaining": 7,
+          "status": "available",
+          "ticketType": "學生 220"
+        }
+      ],
+      "availableScreeningCount": 2,
+      "screeningCount": 2,
+      "firstStart": 1783167600
+    },
+    {
+      "id": "2057657002750865408",
+      "title": "新浪潮",
+      "englishTitle": "Nouvelle Vague",
+      "creator": "李察・林克雷特 Richard LINKLATER",
+      "production": "法國 France / 2025 / 106min",
+      "synopsis": "1959年巴黎，影評人尚盧・高達說：「批評一部電影最好的方式，就是去拍一部。」他籌備著首部電影，打破常規游擊拍攝，在影壇掀起一場革命，宣告新浪潮的到來。美國名導李察・林克雷特首部法語片，重現高達傳奇開山作《斷了氣》的創作過程，以圍繞高達周遭的眾人視角，復刻場景、戲裡戲外呼應，共同致敬對電影的熱忱與摯愛。 Paris, 1959. A young Jean-Luc Godard is determined to make his debut film. Battling conventions, budgetary chaos and sceptical producers, he and his collaborators launch a quiet revolution in cinema, capturing the raw energy of the era.",
+      "year": "2025",
+      "minutes": "106min",
+      "rating": "保護級",
+      "categories": [
+        "外國片",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779418604238pltKLTsqqA.jpeg",
+      "url": "https://www.opentix.life/event/2057657002750865408",
+      "screenings": [
+        {
+          "eventId": "2057660086382305281",
+          "start": 1783173000,
+          "end": 1783179300,
+          "venue": "誠品 B",
+          "note": "",
+          "guest": "",
+          "remaining": 27,
+          "totalRemaining": 32,
+          "hiddenOrGuestRemaining": 5,
+          "status": "available",
+          "ticketType": "學生 220"
+        }
+      ],
+      "availableScreeningCount": 1,
+      "screeningCount": 1,
+      "firstStart": 1783173000
+    },
+    {
+      "id": "2057026451564601345",
+      "title": "茉莉人生",
+      "englishTitle": "Persepolis",
+      "creator": "瑪嘉．莎塔碧 Marjane SATRAPI、文森・帕蘭德 Vincent PARONNAUD",
+      "production": "法國、美國 France, USA / 2007 / 95min",
+      "synopsis": "1970年代的伊朗，童言無忌的女孩聰慧過人，見證了國王在革命中被推翻，原本以為可以過上更好生活，卻進入了伊斯蘭什葉派掌權的新伊朗。經歷高壓統治與兩伊戰爭後，父母把他送去歐洲求學，但歐陸卻非想像般無拘無束，而是處處格格不入。當他決定返鄉團聚，祖國卻已變得恍如隔世，面對眼前家鄉，他必須探問自己究竟屬於哪裡。 In 1970s Iran, Marjane “Marji” Satrapi witnesses the fall of the Shah and the 1979 Revolution through her young eyes. As she grows up, the new regime becomes a repressive tyranny. Sent to Vienna, she faces hardship abroad, and upon returning home, must decide where she truly belongs.",
+      "year": "2007",
+      "minutes": "95min",
+      "rating": "保護級",
+      "categories": [
+        "外國片",
+        "電影-動畫"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/17792682762027YSH6Tha8k.jpeg",
+      "url": "https://www.opentix.life/event/2057026451564601345",
+      "screenings": [
+        {
+          "eventId": "2057030954726785025",
+          "start": 1783174200,
+          "end": 1783179960,
+          "venue": "誠品 A",
+          "note": "▲ 非英語發音，且沒有英文字幕",
+          "guest": "",
+          "remaining": 81,
+          "totalRemaining": 89,
+          "hiddenOrGuestRemaining": 8,
+          "status": "available",
+          "ticketType": "學生 220"
+        }
+      ],
+      "availableScreeningCount": 1,
+      "screeningCount": 1,
+      "firstStart": 1783174200
+    },
+    {
+      "id": "2057083032809054209",
+      "title": "大鬍子叔叔＋尋親記",
+      "englishTitle": "Uncle Mustache + Journey",
+      "creator": "大鬍子叔叔 Uncle Mustache 巴赫拉姆・貝扎伊 Bahram BEYZAIE",
+      "production": "伊朗 Iran / 1970 / 28min",
+      "synopsis": "大鬍子叔叔歲月靜好的生活，被窗外一群踢球的孩童擾亂，即使他出言恫嚇又沒收足球，這些孩子就是不離開。某天，忍無可忍的他終於出手，徹底趕走了這群小鬼頭，但窗外沒了他們的活力和吵鬧，空虛感漸漸襲來⋯⋯。貝扎伊踏入電影創作的首部作品。故事看似平凡，卻又像成人社會的縮影，映照出當權者與群眾對立的權力隱喻。 The emergence of an emotional relationship between an old man who has been languishing in his lonely cocoon for years and children who are happy by nature. 尋親記 Journey巴赫拉姆・貝扎伊 Bahram BEYZAIE｜伊朗 Iran｜1972｜B&amp;W｜35min 男孩手握一紙父母身世的線索，拖著朋友踏上尋親之旅，從德黑蘭邊陲走向水泥塑成的市中心，踏入一段在現實與想像間擺盪的城市漫遊。這段旅程並不浪漫，兩人穿梭在擁擠、冷漠的人群中，經歷飢餓、等待與被排拒。透過跌跌撞撞的行動，與流動變換的空間，導演捕捉了伊朗社會底層的真實樣貌，映照出社會階級和城市邊界的身分與焦慮。 Two poor boys journey from the city’s outskirts to its wealthy center. One searches for his parents; the other hopes for a better job.",
+      "year": "1970",
+      "minutes": "28min",
+      "rating": "保護級",
+      "categories": [
+        "外國片",
+        "大鬍子叔叔",
+        "尋親記",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779281743441Nsa7jgutro.jpeg",
+      "url": "https://www.opentix.life/event/2057083032809054209",
+      "screenings": [
+        {
+          "eventId": "2057084566356209665",
+          "start": 1783222800,
+          "end": 1783226580,
+          "venue": "誠品 C",
+          "note": "",
+          "guest": "",
+          "remaining": 60,
+          "totalRemaining": 64,
+          "hiddenOrGuestRemaining": 4,
+          "status": "available",
+          "ticketType": "學生 220"
+        }
+      ],
+      "availableScreeningCount": 1,
+      "screeningCount": 1,
+      "firstStart": 1783222800
+    },
+    {
+      "id": "2057412721565642753",
+      "title": "偶像禁愛令",
+      "englishTitle": "Love On Trial",
+      "creator": "深田晃司 FUKADA Koji",
+      "production": "日本、法國 Japan, France / 2025 / 124min",
+      "synopsis": "正值事業巔峰的日本偶像女星，因墜入愛河而違反了「禁愛令」遭經紀公司索賠。祕戀的曝光，也讓他從萬千寵愛的光環中，跌入輿論公審的泥淖，原本美好世界逐漸崩解失控。名導深田晃司受日本演藝圈真實爭議啟發，實際訪查不同崗位的從業人員，更邀請前「日向坂46」成員齊藤京子主演，共同揭露日本偶像在鎂光燈內外背負的人設包袱。 A rising J-Pop idol violates the “no love” clause in her contract. As her relationship is exposed, she finds herself entangled in a public trial, her life spiraling into chaos.",
+      "year": "2025",
+      "minutes": "124min",
+      "rating": "保護級",
+      "categories": [
+        "外國片",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779360358398xDSIgXfMfI.jpeg",
+      "url": "https://www.opentix.life/event/2057412721565642753",
+      "screenings": [
+        {
+          "eventId": "2057414455965216769",
+          "start": 1783235400,
+          "end": 1783242840,
+          "venue": "誠品 B",
+          "note": "",
+          "guest": "",
+          "remaining": 10,
+          "totalRemaining": 15,
+          "hiddenOrGuestRemaining": 5,
+          "status": "available",
+          "ticketType": "學生 220"
+        }
+      ],
+      "availableScreeningCount": 1,
+      "screeningCount": 1,
+      "firstStart": 1783235400
+    },
+    {
+      "id": "2059545798841065472",
+      "title": "失序男孩",
+      "englishTitle": "Destruction Babies",
+      "creator": "真利子哲也 MARIKO Tetsuya",
+      "production": "日本 Japan / 2016 / 108min",
+      "synopsis": "少年離開了自小成長的港口小鎮，像引爆炸彈，在城市中無差別地對他人拳打腳踢。當他與同伴挾持少女逃亡，弟弟則在混亂失序的街道上追尋他的蹤影。靈感取自真實事件，導演以長鏡頭，捕捉每次揮拳、倒地，與精疲力竭的呼吸。坎城最年輕影帝柳樂優彌強烈的存在感，撐起幾乎無台詞的主角，展現烈血青春的犯罪與虛無。 In Mitsuhama, a quiet Japanese port town, orphan brothers Taira and Shota are separated after Taira is beaten by gangsters. As Shota searches, Taira embarks on a violent journey driven by pride, joined by a timid gamer. The film reveals the anxiety and violent impulses beneath a seemingly peaceful society.",
+      "year": "2016",
+      "minutes": "108min",
+      "rating": "輔15級",
+      "categories": [
+        "外國片",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779868888437lZq74AEjf1.jpeg",
+      "url": "https://www.opentix.life/event/2059545798841065472",
+      "screenings": [
+        {
+          "eventId": "2059545802813607937",
+          "start": 1783237200,
+          "end": 1783243680,
+          "venue": "誠品 A",
+          "note": "★ 映後座談",
+          "guest": "映後",
+          "remaining": 80,
+          "totalRemaining": 88,
+          "hiddenOrGuestRemaining": 8,
+          "status": "available",
+          "ticketType": "學生 220"
+        }
+      ],
+      "availableScreeningCount": 1,
+      "screeningCount": 1,
+      "firstStart": 1783237200
+    },
+    {
+      "id": "2057078166150127617",
+      "title": "自由電影短片輯 II",
+      "englishTitle": "Cinema-ye Azad Collection II",
+      "creator": "獨自抓青蛙的日子 DokhtarBass Didn't Want to Be Alone納瑟．古拉姆雷扎伊 Naser GHOLAMREZAI",
+      "production": "伊朗 Iran / 1974 / 33min",
+      "synopsis": "小女孩獨自在溪邊抓青蛙，一開始只是為了治療父親腳傷，後來竟將青蛙當成單調日常裡的玩物，一面等待父親康復，一面為青蛙開腸剖肚。導演實踐「自由電影」低成本、實驗性、去中心化的精神，在家鄉以8mm攝影機拍下當地傳統生活的現況，影像樸質卻饒富詩意。 DokhtarBass, the only girl in the family, is home alone. She finds a new playmate due to her father's illness. 毒河 Poison River基亞努許．阿亞里 Kianush AYYARI｜伊朗 Iran｜1975｜Color｜31min 導演阿亞里投身「自由電影」運動初期的作品，在一條汙染嚴重的河流旁，攝影機冷靜捕捉伊朗藍領勞工、平民辛勞的一天，身影包括童工、女性和各年齡層男性，他們和景框中的殘破地景，都成為現代化與工業化的犧牲品，也呈現伊斯蘭革命前，伊朗城市風貌的轉變和社會結構的變動，亦為導演日後關懷精神與風格奠定基礎。 Fishing in the river is banned, but two men go fishing secretly every night to make a living. One of the men’s sisters tries to stop her brother. Her efforts lead to a tragedy. 我把心賣給了魔鬼 How Frightening Is the Darkness of the Soul!納希布．納希比 Nasib NASIBI｜伊朗 Iran｜1971｜B&amp;W｜60min 一名了無生趣的女孩將他的心賣給了魔鬼，希望轉生在另一個世界。深受伊朗現代主義詩歌影響，影像構築起關於靈魂、死亡與重生的寓言，將詩意融入旁白與結構中，更以非線性敘事與畫面中的象徵性意象交織。演員多來自德黑蘭的實驗劇場Kargah-e Namayesh，為伊朗最重要的實驗作品之一。 This seminal avant-garde masterpiece follows a bored girl who sells her heart to the devil for rebirth. Featuring Theatre Workshop actors and dialogue co-written by Abbas Nalbandian, the narrative integrates \"\"Poetry of Volume\"\" verses, reflecting the director’s vision of cinematic art as a form of poetic transcendence.",
+      "year": "1974",
+      "minutes": "33min",
+      "rating": "保護級",
+      "categories": [
+        "外國片",
+        "電影-紀錄片",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779280571697qUAYdjIv71.jpeg",
+      "url": "https://www.opentix.life/event/2057078166150127617",
+      "screenings": [
+        {
+          "eventId": "2057078168079114241",
+          "start": 1783238400,
+          "end": 1783245840,
+          "venue": "光點 2",
+          "note": "★ 映後座談",
+          "guest": "映後",
+          "remaining": 69,
+          "totalRemaining": 76,
+          "hiddenOrGuestRemaining": 7,
+          "status": "available",
+          "ticketType": "學生 220"
+        },
+        {
+          "eventId": "2057079364565934081",
+          "start": 1783339800,
+          "end": 1783347240,
+          "venue": "光點 2",
+          "note": "★ 映後座談",
+          "guest": "映後",
+          "remaining": 95,
+          "totalRemaining": 102,
+          "hiddenOrGuestRemaining": 7,
+          "status": "available",
+          "ticketType": "學生 220"
+        }
+      ],
+      "availableScreeningCount": 2,
+      "screeningCount": 2,
+      "firstStart": 1783238400
+    },
+    {
+      "id": "2057351747303256064",
+      "title": "濛煙陌客",
+      "englishTitle": "The Stranger and the Fog",
+      "creator": "巴赫拉姆．貝扎伊 Bahram BEYZAIE",
+      "production": "伊朗 Iran / 1974 / 146min",
+      "synopsis": "迷霧中有船靠岸，船上奄奄一息的神祕男子甦醒後，卻自稱遇襲且忘卻了身分；當他試圖融入當地，村民間萌生猜忌，他的過往陰影也並未罷休。貝扎伊建構出史詩般的時空，搬演一樁身分恐懼的迷離劫，直指伊朗社會潛藏的封閉與排外，更突顯女性的堅強意志。上映時因背離主流期待而遭忽視，伊斯蘭革命後更遭禁映，實為超前時代之作。 A young man arrives unconscious in a canoe onto the shore of the Persian Gulf. Claiming to have no memory of who he is, he falls in love with a beautiful village woman and marries. After years of peace, strangers come from the sea looking for him and attack the village.",
+      "year": "1974",
+      "minutes": "146min",
+      "rating": "輔12級",
+      "categories": [
+        "外國片",
+        "濛煙陌客",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779345833170cesGg9rSlX.jpeg",
+      "url": "https://www.opentix.life/event/2057351747303256064",
+      "screenings": [
+        {
+          "eventId": "2057355305159827457",
+          "start": 1783238400,
+          "end": 1783247160,
+          "venue": "誠品 C",
+          "note": "",
+          "guest": "",
+          "remaining": 38,
+          "totalRemaining": 42,
+          "hiddenOrGuestRemaining": 4,
+          "status": "available",
+          "ticketType": "學生 220"
+        }
+      ],
+      "availableScreeningCount": 1,
+      "screeningCount": 1,
+      "firstStart": 1783238400
+    },
+    {
+      "id": "2061419536718897153",
+      "title": "小蟲蟲大冒險",
+      "englishTitle": "A Mighty Adventure",
+      "creator": "袁建滔 Toe YUEN",
+      "production": "台灣、馬來西亞、香港 Taiwan, Malaysia, Hong Kong / 2026 / 77min",
+      "synopsis": "三隻小蟲，穿越險惡的都市回家去！小蜘蛛不想學母親獵殺昆蟲，憤而離家，不慎跌入水窪，好險小草蜢相救，結伴蝴蝶，一起玩耍，突然被標本獵人抓走！小蟲合作逃離標本工場，才發現置身城市高樓裡！對卑微的小蟲來說，人類世界殺機處處。但憑著草蜢的勇氣、蜘蛛的機智與蝴蝶的魅力，加點運氣，三隻小蟲最終返回家鄉。 Three little insects (grasshopper, spider and butterfly) are transported to a concrete city. Ａseries of extraordinary micro-adventures forces them to explore themselves and helps to build their self-esteem, so they can finally get back home. They become much stronger and happier, and are able to choose their own future.",
+      "year": "2026",
+      "minutes": "77min",
+      "rating": "普遍級",
+      "categories": [
+        "外國片",
+        "電影-動畫"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1780315662697AxfMO7bVKV.png",
+      "url": "https://www.opentix.life/event/2061419536718897153",
+      "screenings": [
+        {
+          "eventId": "2061419541175877633",
+          "start": 1783239000,
+          "end": 1783243620,
+          "venue": "光點 1",
+          "note": "★ 映後座談",
+          "guest": "映後",
+          "remaining": 100,
+          "totalRemaining": 104,
+          "hiddenOrGuestRemaining": 4,
+          "status": "available",
+          "ticketType": "學生 220"
+        }
+      ],
+      "availableScreeningCount": 1,
+      "screeningCount": 1,
+      "firstStart": 1783239000
+    },
+    {
+      "id": "2059198831167565825",
+      "title": "王者薩拉丁",
+      "englishTitle": "Saladin",
+      "creator": "尤瑟夫．夏因 Youssef CHAHINE",
+      "production": "埃及 Egypt / 1963 / 186min",
+      "synopsis": "十字軍占領耶路撒冷並屠殺穆斯林朝聖者，薩拉丁憤而集結軍隊反擊，凱旋收復聖城，隨後卻被迫與英王理查展開對峙與談判。以宏大製作重構十字軍歷史，融合泛阿拉伯民族敘事與反帝國主義視角，並交織跨宗教的愛情支線，精湛的群戲調度與磅礴場面，是埃及電影史上兼具政治意涵與影像美學企圖心的代表作。 After Saladin's victory over the King of Jerusalem, a peace treaty is signed between them, but the commander of the Crusader army, Renaud de Chatillon, slaughters a group of pilgrims going to Mecca. Saladin then decides to take revenge.",
+      "year": "1963",
+      "minutes": "186min",
+      "rating": "保護級",
+      "categories": [
+        "外國片",
+        "尤瑟夫・夏因",
+        "王者薩拉丁",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/17797862115520WZCoAIkA3.jpeg",
+      "url": "https://www.opentix.life/event/2059198831167565825",
+      "screenings": [
+        {
+          "eventId": "2059200434564882433",
+          "start": 1783251600,
+          "end": 1783262760,
+          "venue": "光點 2",
+          "note": "",
+          "guest": "",
+          "remaining": 89,
+          "totalRemaining": 96,
+          "hiddenOrGuestRemaining": 7,
+          "status": "available",
+          "ticketType": "學生 220"
+        }
+      ],
+      "availableScreeningCount": 1,
+      "screeningCount": 1,
+      "firstStart": 1783251600
+    },
+    {
+      "id": "2057423164687990785",
+      "title": "哭妻物語",
+      "englishTitle": "My Wife Cries",
+      "creator": "安格拉．夏納萊克 Angela SCHANELEC",
+      "production": "德國、法國 Germany, France / 2026 / 92min",
+      "synopsis": "工地平淡無奇的一天，男人接到妻子來電，匆忙趕往公園，發現他正在哭泣⋯⋯。柏林學派代表人物安格拉．夏納萊克，再次將生活與感情裡，無以名狀的齟齬化為影像，訴說一段親密關係的破裂與修復。高冷的鏡頭、日常與戲劇間的辯證，如阿基・郭利斯馬基遇上洪常秀，最令人目眩神迷的，始終是那些溢於言表之外，無處安放的幽微情感。 A routine working day at a construction site. Thomas, a 40-year-old crane operator, receives a call from his wife, who asks him to pick her up from the hospital. He finds her crying.",
+      "year": "2026",
+      "minutes": "92min",
+      "rating": "輔12級",
+      "categories": [
+        "外國片",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779362850421S08xVAAd0E.jpeg",
+      "url": "https://www.opentix.life/event/2057423164687990785",
+      "screenings": [
+        {
+          "eventId": "2057423168830664705",
+          "start": 1783255200,
+          "end": 1783260720,
+          "venue": "光點 1",
+          "note": "",
+          "guest": "",
+          "remaining": 44,
+          "totalRemaining": 51,
+          "hiddenOrGuestRemaining": 7,
+          "status": "available",
+          "ticketType": "學生 220"
+        }
+      ],
+      "availableScreeningCount": 1,
+      "screeningCount": 1,
+      "firstStart": 1783255200
+    },
+    {
+      "id": "2056722582405193729",
+      "title": "尋找夢希地",
+      "englishTitle": "Between Dreams and Hope",
+      "creator": "弗拉努斯．薩邁迪 Farnoosh SAMADI",
+      "production": "伊朗 Iran / 2025 / 107min",
+      "synopsis": "年輕跨性別男子尋求法律肯認身分，冥頑保守的行政機關，卻要他提供家長同意書，逼得他鼓起勇氣攜手伴侶返鄉，也讓理應溫馨的久別重逢，變成危機四伏的家庭風暴。繼一鳴驚人的《謊言風暴》後，導演延續性別議題，觀照酷兒社群的日常困境。全片手持長鏡頭輔以魔幻寫實氛圍，將體制的冰冷壓迫與愛戀熾熱的情感張力渲染到最大。 Azad, a trans man, and Nora are two young lovers fighting between tradition and modernity in their society and family that create great problems for them. Despite all the hardships, they have dreams, hope and love for life.",
+      "year": "2025",
+      "minutes": "107min",
+      "rating": "保護級",
+      "categories": [
+        "外國片",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779195825191DgGfPlG4TL.jpeg",
+      "url": "https://www.opentix.life/event/2056722582405193729",
+      "screenings": [
+        {
+          "eventId": "2056724263999221760",
+          "start": 1783256400,
+          "end": 1783262760,
+          "venue": "誠品 B",
+          "note": "",
+          "guest": "",
+          "remaining": 93,
+          "totalRemaining": 98,
+          "hiddenOrGuestRemaining": 5,
+          "status": "available",
+          "ticketType": "學生 220"
+        }
+      ],
+      "availableScreeningCount": 1,
+      "screeningCount": 1,
+      "firstStart": 1783256400
+    },
+    {
+      "id": "2057361242234363905",
+      "title": "小小異鄉人",
+      "englishTitle": "Bashu, the Little Stranger",
+      "creator": "巴赫拉姆．貝扎伊 Bahram BEYZAIE",
+      "production": "伊朗 Iran / 1986 / 122min",
+      "synopsis": "兩伊戰爭下，伊朗南部一名孤兒逃到語言、文化與膚色皆不同的北方，被獨力撐起三口之家的母親收留，村民的冷嘲熱諷，反讓他們催化出家人般的深厚羈絆。靈性的鏡頭語言和演出，使這跨越族群的永恆情誼更顯動人。儘管本片完成後一度遭禁，仍在伊朗獲選影史最佳影片，名導賈法．潘納希更盛讚本片是「舉足輕重的電影傑作」。 After his family is killed in a bombing, young Bashu flees southern Iran and arrives alone in a remote northern village. Unable to speak the local language and shunned as a stranger, he is taken in by a mother of two whose husband is away. A fragile bond slowly grows between them.",
+      "year": "1986",
+      "minutes": "122min",
+      "rating": "普遍級",
+      "categories": [
+        "外國片",
+        "小小異鄉人",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779348099556jIG3nSGLCp.jpeg",
+      "url": "https://www.opentix.life/event/2057361242234363905",
+      "screenings": [
+        {
+          "eventId": "2057362619195531265",
+          "start": 1783257600,
+          "end": 1783264920,
+          "venue": "誠品 C",
+          "note": "",
+          "guest": "",
+          "remaining": 0,
+          "totalRemaining": 4,
+          "hiddenOrGuestRemaining": 4,
+          "status": "sold_out_or_unavailable",
+          "ticketType": "學生 220"
+        }
+      ],
+      "availableScreeningCount": 0,
+      "screeningCount": 1,
+      "firstStart": 1783257600
+    },
+    {
+      "id": "2056674579226144769",
+      "title": "藍鷺少年",
+      "englishTitle": "Blue Heron",
+      "creator": "蘇菲．容瓦利 Sophy ROMVARI",
+      "production": "加拿大、匈牙利 Canada, Hungary / 2025 / 91min",
+      "synopsis": "移民一家落腳島嶼，夏日海風輕拂，陰影悄然潛伏。哥哥孤高如藍鷺，身心漸趨失序，旁人視他如未爆彈；父母疲於應對，苦撐表面秩序，但妹妹逐浪嬉戲，未覺家庭裂縫日益擴大。導演將親身經歷改編，以孩童懵懂主觀為舵，撿拾日常碎片、拼接往事斷面。視角轉換精妙，在拼與散之間游移、信與疑之間搖曳，考察當年未明卻事後作痛的隱形創傷。 In the late 1990s, eight-year-old Sasha and her Hungarian immigrant family relocate to a new home on Vancouver Island. Their fresh start is interrupted by increasingly dangerous behavior from Jeremy, the family’s oldest child.",
+      "year": "2025",
+      "minutes": "91min",
+      "rating": "保護級",
+      "categories": [
+        "外國片",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779184364051PQAr2OnYwe.jpeg",
+      "url": "https://www.opentix.life/event/2056674579226144769",
+      "screenings": [
+        {
+          "eventId": "2056674583565377537",
+          "start": 1783316400,
+          "end": 1783321860,
+          "venue": "光點 2",
+          "note": "",
+          "guest": "",
+          "remaining": 9,
+          "totalRemaining": 16,
+          "hiddenOrGuestRemaining": 7,
+          "status": "available",
+          "ticketType": "平日日場 180"
+        }
+      ],
+      "availableScreeningCount": 1,
+      "screeningCount": 1,
+      "firstStart": 1783316400
+    },
+    {
+      "id": "2057420009664225281",
+      "title": "母體迴路",
+      "englishTitle": "Mothernet",
+      "creator": "何蔚庭 HO Wi Ding",
+      "production": "印尼、新加坡 Indonesia, Singapore / 2025 / 109min",
+      "synopsis": "母親意外驟逝，悲痛難耐的叛逆期少年不顧嚴父反對，委託駭客友人施展AI魔法，生成思想、個性與面貌皆與母親如出一轍的「虛擬家人」，一步步深入他的生活與內心……。《台北星期天》、《幸福城市》導演何蔚庭挑戰近未來科幻題材，觸碰人們心中最軟的一部分，直面大AI時代的科技焦慮，更探索至親關係的存在本質。 After his mother’s death, 16-year-old Rama feels lost, unable to connect with his strict father. He finds solace in i-BU, an AI that recreates his mother’s face, voice, and affection. But as he retreats into this digital echo, can he truly come to terms with his grief?",
+      "year": "2025",
+      "minutes": "109min",
+      "rating": "普遍級",
+      "categories": [
+        "外國片",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779362100231MH1KIhzuVW.jpeg",
+      "url": "https://www.opentix.life/event/2057420009664225281",
+      "screenings": [
+        {
+          "eventId": "2057420012813692929",
+          "start": 1783324200,
+          "end": 1783330740,
+          "venue": "光點 2",
+          "note": "",
+          "guest": "",
+          "remaining": 93,
+          "totalRemaining": 99,
+          "hiddenOrGuestRemaining": 6,
+          "status": "available",
+          "ticketType": "平日日場 180"
+        }
+      ],
+      "availableScreeningCount": 1,
+      "screeningCount": 1,
+      "firstStart": 1783324200
+    },
+    {
+      "id": "2059194650758078464",
+      "title": "開羅車站",
+      "englishTitle": "Cairo Station",
+      "creator": "尤瑟夫．夏因 Youssef CHAHINE",
+      "production": "埃及 Egypt / 1958 / 73min",
+      "synopsis": "跛足青年在龍蛇混雜的開羅車站謀生，他迷戀販賣汽水的女子，遭拒後逐漸陷入偏執與暴力，連帶賠上人生，步入歧途。導演自導自演，融合新寫實主義與黑色電影風格，以紀實場景與強烈心理刻劃揭露性壓抑與階級張力。本片上映時票房失利，而後經過時間淬鍊才成為國際經典，確立其在阿拉伯電影史上的里程碑地位。 In Cairo’s chaotic central station, Qinawi, an impoverished newspaper vendor, develops an infatuation with the free-spirited Hannuma, who dodges the authorities to peddle soft drinks to passengers. When he faces rejection, Qinawi’s obsession becomes dangerous as he falls into a state of insanity.",
+      "year": "1958",
+      "minutes": "73min",
+      "rating": "輔12級",
+      "categories": [
+        "外國片",
+        "尤瑟夫・夏因",
+        "開羅車站",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779785212170qaasDTmN9H.png",
+      "url": "https://www.opentix.life/event/2059194650758078464",
+      "screenings": [
+        {
+          "eventId": "2059195953009778688",
+          "start": 1783333200,
+          "end": 1783337580,
+          "venue": "光點 2",
+          "note": "",
+          "guest": "",
+          "remaining": 44,
+          "totalRemaining": 51,
+          "hiddenOrGuestRemaining": 7,
+          "status": "available",
+          "ticketType": "學生 220"
+        }
+      ],
+      "availableScreeningCount": 1,
+      "screeningCount": 1,
+      "firstStart": 1783333200
+    },
+    {
+      "id": "2059559733464535040",
+      "title": "鬼打鬼",
+      "englishTitle": "Encounter of the Spooky Kind",
+      "creator": "洪金寶 Sammo HUNG",
+      "production": "香港 Hong Kong / 1980 / 103min",
+      "synopsis": "莽夫張大膽被騙至陰森祠堂過夜，遭奸人作法召來殭屍奪命。人生好難，又遇官兵攔截。慶幸俠義道士畫符指點，傻人終有傻福。香港靈幻武打開山之作，洪金寶翻玩功夫片套路，以港式笑料揉合茅山道術，啟發《殭屍先生》等經典。洪家班包辦動作設計，集結元彪、林正英等人的硬橋硬馬真功夫，搭壇神打的驚人場面，至今教人嘆為觀止。 Cheung becomes the target of black magic when his wife’s lover hires a Taoist monk to eliminate him. What follows is a wild supernatural comedy of hopping vampires, possession, and ritual chaos, combining kung fu action and slapstick humor as Cheung battles back against his enemies.",
+      "year": "1980",
+      "minutes": "103min",
+      "rating": "輔12級",
+      "categories": [
+        "外國片",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779872252049H145yGjozs.jpeg",
+      "url": "https://www.opentix.life/event/2059559733464535040",
+      "screenings": [
+        {
+          "eventId": "2059559737721753601",
+          "start": 1783335000,
+          "end": 1783341180,
+          "venue": "誠品 A",
+          "note": "★ 映後座談",
+          "guest": "映後",
+          "remaining": 101,
+          "totalRemaining": 108,
+          "hiddenOrGuestRemaining": 7,
+          "status": "available",
+          "ticketType": "學生 220"
+        }
+      ],
+      "availableScreeningCount": 1,
+      "screeningCount": 1,
+      "firstStart": 1783335000
+    },
+    {
+      "id": "2056688717253902337",
+      "title": "盛夏來的人",
+      "englishTitle": "Forastera",
+      "creator": "露西亞．阿連尼亞．伊格萊西亞斯 Lucía ALEÑAR IGLESIAS",
+      "production": "西班牙、義大利、瑞典 Spain, Italy, Sweden / 2025 / 97min",
+      "synopsis": "盛夏小島上，少女與家人假期靜好，卻因外婆的意外逝世打破寧靜。他開始穿上外婆留下的衣服、烹飪食譜，走過房屋的樓梯，在「扮演」他者的練習間，漸漸模糊了現實的情感界線⋯⋯。西班牙新銳導演延伸同名短片，以私密筆觸書寫徘徊於日常不散的憂鬱，鏡頭下的空間如幽魂縈繞，凝視哀悼也追憶思念，情感也在夏日渲染而開。 On a summer holiday in Mallorca, teenage Cata’s quiet retreat is shattered by her grandmother’s sudden death. As she and her grandfather struggle with grief, Cata begins wearing her grandmother’s clothes and cooking her recipes, slipping into a new role that slowly takes hold.",
+      "year": "2025",
+      "minutes": "97min",
+      "rating": "保護級",
+      "categories": [
+        "外國片",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779187749701LgDENDTcen.jpeg",
+      "url": "https://www.opentix.life/event/2056688717253902337",
+      "screenings": [
+        {
+          "eventId": "2056688719468494849",
+          "start": 1783411200,
+          "end": 1783417020,
+          "venue": "光點 2",
+          "note": "",
+          "guest": "",
+          "remaining": 46,
+          "totalRemaining": 53,
+          "hiddenOrGuestRemaining": 7,
+          "status": "available",
+          "ticketType": "平日日場 180"
+        }
+      ],
+      "availableScreeningCount": 1,
+      "screeningCount": 1,
+      "firstStart": 1783411200
+    },
+    {
+      "id": "2058827646947024896",
+      "title": "紅色是記憶的顏色",
+      "englishTitle": "Memory",
+      "creator": "弗拉德雷娜．桑杜 Vladlena SANDU",
+      "production": "法國、荷蘭 France, The Netherlands / 2025 / 98min",
+      "synopsis": "父母離異後，六歲的女孩從克里米亞搬到車臣的祖父母家，全然不知戰火將吞噬他的童年。回首童年時光，包圍他的，是讓人深陷其中的戲院座椅、與父親共渡午後的罌粟花田，以及無處不在的共產政權。導演以宛如帕拉贊諾夫的構圖美學，結合物件劇場形式，孩童視角純真中包藏殘酷，將至今仍持續的無情現實，轉為風格化的拼貼圖景。 After her parents’ divorce, six-year-old Vladlena moves from Crimea to Grozny. When war breaks out in Chechnya, it deeply affects her city and family. Years later, filmmaker Sandu reflects on her childhood, exploring how cycles of violence shape children—and how healing and change are possible.",
+      "year": "2025",
+      "minutes": "98min",
+      "rating": "輔12級",
+      "categories": [
+        "外國片",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779697707808Q4O3jSxJL1.jpeg",
+      "url": "https://www.opentix.life/event/2058827646947024896",
+      "screenings": [
+        {
+          "eventId": "2058832588540076032",
+          "start": 1783420200,
+          "end": 1783426080,
+          "venue": "誠品 C",
+          "note": "",
+          "guest": "",
+          "remaining": 0,
+          "totalRemaining": 4,
+          "hiddenOrGuestRemaining": 4,
+          "status": "sold_out_or_unavailable",
+          "ticketType": "學生 220"
+        }
+      ],
+      "availableScreeningCount": 0,
+      "screeningCount": 1,
+      "firstStart": 1783420200
+    },
+    {
+      "id": "2057390984768856066",
+      "title": "地獄浣腸",
+      "englishTitle": "Bowels of Hell",
+      "creator": "古斯塔沃・維納格雷 Gustavo VINAGRE、古爾修斯．格韋納 Gurcius GEWDNER",
+      "production": "巴西 Brazil / 2026 / 111min",
+      "synopsis": "跨性別孩子正值叛逆期、網紅奧客丟出荒謬難題，壓力山大加深便祕宿疾，讓他的人生「塞」到荼蘼。便意尚未降臨，慘劇卻又來襲，公寓裡所有馬桶突然通通失靈。該來的不來，該去的不去，超自然異相將為混濁世道帶來一場大清洗。巴西搞怪雙導攪和家庭、性別與身心靈，揮灑棕色濃液嘲諷失控社會集體，奏響屎尿屁系邪典狂想曲。 Malu is cracking due to the weight of past trauma and a rebellious child. When a strange curse turns toilets into deadly monsters, she is hurled into a surreal nightmare where motherhood, grief, and existential terror can't simply be flushed away.",
+      "year": "2026",
+      "minutes": "111min",
+      "rating": "輔15級",
+      "categories": [
+        "外國片",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/177935517506011bEeu5eUS.jpeg",
+      "url": "https://www.opentix.life/event/2057390984768856066",
+      "screenings": [
+        {
+          "eventId": "2057394970214604801",
+          "start": 1783428000,
+          "end": 1783434660,
+          "venue": "誠品 A",
+          "note": "",
+          "guest": "",
+          "remaining": 130,
+          "totalRemaining": 138,
+          "hiddenOrGuestRemaining": 8,
+          "status": "available",
+          "ticketType": "學生 220"
+        }
+      ],
+      "availableScreeningCount": 1,
+      "screeningCount": 1,
+      "firstStart": 1783428000
+    },
+    {
+      "id": "2057701321302278145",
+      "title": "世界的主人",
+      "englishTitle": "The World of Love",
+      "creator": "尹佳恩 YOON Ga-eun",
+      "production": "南韓 South Korea / 2025 / 119min",
+      "synopsis": "高三的女孩正值情慾萌芽與探索自我時期，同學眼中的她活潑外向、百無禁忌，卻在一次反對性侵犯重返社區的連署中，展現截然不同的一面。她拒絕配合、說詞反覆，讓大家開始猜疑。片中人際關係如漣漪共振，所有人都帶著創傷徐徐前行，深怕因他人的錯誤而社會性死亡。當真相的界線漸趨模糊，同理心是否還存在世界上？ Jooin, a high school senior seen as carefree and outspoken, reveals a more conflicted side during a petition against a sex offender’s return. As suspicion grows, intertwined relationships expose shared trauma and blurred boundaries. Through her journey, the film explores resilience, agency, and the possibility of true empathy.",
+      "year": "2025",
+      "minutes": "119min",
+      "rating": "輔12級",
+      "categories": [
+        "外國片",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779429148065OKRukbNJFn.jpeg",
+      "url": "https://www.opentix.life/event/2057701321302278145",
+      "screenings": [],
+      "availableScreeningCount": 0,
+      "screeningCount": 0,
+      "firstStart": null
+    },
+    {
+      "id": "2059183347869802496",
+      "title": "炙熱的太陽",
+      "englishTitle": "The Blazing Sun",
+      "creator": "尤瑟夫．夏因 Youssef CHAHINE",
+      "production": "埃及 Egypt / 1954 / 116min",
+      "synopsis": "青年返鄉投入甘蔗收成改良，帶動農民收入，也引來地主忌憚，暗中毀田並嫁禍其父致死；他與地主之女相戀，在階級與陰謀夾擊下追尋真相。導演以新寫實主義為基底，結合通俗情節，刻劃階級衝突與權力結構。本片亦為《阿拉伯的勞倫斯》、《齊瓦哥醫生》主角奧瑪．雪瑞夫出道之作，兼具影史意義與強烈黑白影像美學。 Ahmed, a young agricultural engineer, helps the farmers produce a superior sugar cane crop. Taher Pasha, a wealthy land owner, feels threatened by his recent production prosperity. Ahmed is in love with Pasha’s daughter, but due to their fathers’ rivalry, he is compelled to hide their relationship.",
+      "year": "1954",
+      "minutes": "116min",
+      "rating": "普遍級",
+      "categories": [
+        "外國片",
+        "尤瑟夫・夏因",
+        "炙熱的太陽",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779782524524H09rwhAZOp.jpeg",
+      "url": "https://www.opentix.life/event/2059183347869802496",
+      "screenings": [],
+      "availableScreeningCount": 0,
+      "screeningCount": 0,
+      "firstStart": null
+    },
+    {
+      "id": "2056351066502049793",
+      "title": "苦力（第1-3集）",
+      "englishTitle": "Coolie (Ep. 1-3)",
+      "creator": "陳駿霖 Arvin CHEN、朱利安．阿卡斯塔 Julian ACOSTA",
+      "production": "多明尼加、巴拿馬 Dominican Republic, Panama / 2026 / 140min",
+      "synopsis": "19世紀，中國女子為還債遠赴古巴，成為一名政治流亡華人的「跨國新娘」。他在農莊主人與丈夫間周旋，堅毅跨越了種族與社會藩籬逆轉人生，也見證艱辛的華人苦力如何在古巴獨立運動中扮演關鍵角色。導演陳駿霖首度參與英語迷你劇集，更挑戰時代劇題材，張孝全與《梅艷芳》香港女星王丹妮遠赴中美洲拍攝，演繹鮮為人知的海外華人血淚史。 Twenty-two-year-old orphan Chulin leaves southern China for Cuba as the promised bride of a Chinese coolie. Overcoming many hurdles, her fate shifts as she falls in love with her master, Cuban plantation owner Don Leonardo Ortega—making the country her home and Ortega her heart and soul.",
+      "year": "2026",
+      "minutes": "140min",
+      "rating": "保護級",
+      "categories": [
+        "外國片",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779107249387AdbzoMR6yI.jpeg",
+      "url": "https://www.opentix.life/event/2056351066502049793",
+      "screenings": [],
+      "availableScreeningCount": 0,
+      "screeningCount": 0,
+      "firstStart": null
+    },
+    {
+      "id": "2057389065002360833",
+      "title": "無人知曉的沉默",
+      "englishTitle": "Numb",
+      "creator": "內山拓也 UCHIYAMA Takuya",
+      "production": "日本 Japan / 2025 / 119min",
+      "synopsis": "少年因父親家暴而失語，相依為命的母親又終日為男人揮霍，讓他只能偷竊度日，但仍守護著母親。當母子二人投靠沉迷宗教的姨母，他只能旁觀母親陷入另一段暴力的惡性循環。離家父親的音訊讓他決心踏上旅程，也潛入記憶碎片中找回自己的聲音。導演的半自傳色彩作品，由實力派演員北村匠海主演，更與宮澤理惠、永瀨正敏等人同台飆戲。 A boy who no longer speaks, shaped by a tyrannical father and a mother he both resents and loves, grows up on Japan’s northern coast. With nowhere to belong, he returns to seek his father, setting his fate in motion.",
+      "year": "2025",
+      "minutes": "119min",
+      "rating": "輔12級",
+      "categories": [
+        "外國片",
+        "無人知曉的沉默",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779354716454t9auyqaxqA.jpeg",
+      "url": "https://www.opentix.life/event/2057389065002360833",
+      "screenings": [],
+      "availableScreeningCount": 0,
+      "screeningCount": 0,
+      "firstStart": null
+    },
+    {
+      "id": "2059583596269957121",
+      "title": "恨女的逆襲",
+      "englishTitle": "A DANCE WITH RAINBOWS",
+      "creator": "李宜珊 LEE Yi-shan",
+      "production": "台灣 Taiwan / 2025 / 115min",
+      "synopsis": "人在江湖，真的身不由己？20歲的家玲才不懂大人世界的大道理！有點粗線條的她，平日幫家裡賣便當供弟弟上學，也在拳館揮灑汗水。兩光老爸的私生活讓她看不透，偏心老媽的隱忍求全更叫她坐不住；沒想到有一天，就連教練泰爸也告訴她，打拳有真有假才是贏家，她還能活出自己嗎？ At 20, Ling balances boxing and helping with her mother's lunchbox business, all while her family quietly unravels. Her parents fake harmony, but when her father brings home a new \"girlfriend,\" the illusion is shattered. She faces reality head-on, discovering that only an honest heart gives her punches real weight.",
+      "year": "2025",
+      "minutes": "115min",
+      "rating": "保護級",
+      "categories": [
+        "本國片",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779877935364skeoymXQ4f.jpeg",
+      "url": "https://www.opentix.life/event/2059583596269957121",
+      "screenings": [
+        {
+          "eventId": "2059583600719503361",
+          "start": 1782891600,
+          "end": 1782898500,
+          "venue": "誠品 A",
+          "note": "★ 映後座談",
+          "guest": "映後",
+          "remaining": 72,
+          "totalRemaining": 80,
+          "hiddenOrGuestRemaining": 8,
+          "status": "available",
+          "ticketType": "平日日場 180"
+        }
+      ],
+      "availableScreeningCount": 1,
+      "screeningCount": 1,
+      "firstStart": 1782891600
+    },
+    {
+      "id": "2056645779652419585",
+      "title": "鯽魚",
+      "englishTitle": "The Crucian",
+      "creator": "張哲龍 CHANG Che-lung",
+      "production": "台灣 Taiwan / 2026 / 98min",
+      "synopsis": "通海街上的每個人都和年幼的鯽仔説，他失蹤的母親早已死去。為了追尋真相，鯽仔找上尪婆紅姨觀落陰、跟隨土地公穿梭陰陽兩界，也看見了小鎮被歲月掩埋的歷史與宿命。導演張哲龍改編其獲獎舞台劇本，童星斯拉（陳馨妃）、楊大正與陳雪甄領銜主演，在僅200坪的片場裡，以劇場美學融入電影的手法帶領觀眾身歷其境，重窺台灣的時代傷痕。 Born never to cry, Fish seeks his missing mother through the underworld. He believes her ghost is imprisoned within a deity puppet—yet, it conceals neither his mother nor an informant, but a survivor. Through the puppet’s mouth, the seaside street’s buried past unfolds.",
+      "year": "2026",
+      "minutes": "98min",
+      "rating": "保護級",
+      "categories": [
+        "本國片",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779177492505gq1irmxFaC.jpeg",
+      "url": "https://www.opentix.life/event/2056645779652419585",
+      "screenings": [
+        {
+          "eventId": "2056645781524783105",
+          "start": 1782903600,
+          "end": 1782909480,
+          "venue": "中山堂",
+          "note": "★ 映後座談",
+          "guest": "映後",
+          "remaining": 166,
+          "totalRemaining": 166,
+          "hiddenOrGuestRemaining": 0,
+          "status": "available",
+          "ticketType": "學生 220"
+        }
+      ],
+      "availableScreeningCount": 1,
+      "screeningCount": 1,
+      "firstStart": 1782903600
+    },
+    {
+      "id": "2059854774593101825",
+      "title": "泥娃娃",
+      "englishTitle": "Mudborn",
+      "creator": "解孟儒 SHIEH Meng-ju",
+      "production": "台灣 Taiwan / 2025 / 111min",
+      "synopsis": "旭川為開發VR遊戲，意外將凶宅的殘破泥娃娃帶回家 。身為文物修護師且懷有身孕的妻子慕華，竟對其產生瘋狂執念，不顧日漸虛弱的身心執意修復 。家中靈異怪事接連發生，旭川無計可施，被迫求助通靈人阿生 。隨著真相揭開，這尊泥娃娃背後深埋的駭人祕密，正一步步吞噬這個家庭……。 Hsu-Chuan brings home a haunted clay doll, sparking a sinister obsession in his pregnant wife, Mu-hua. As paranormal events escalate, Hsu-Chuan seeks help from psychic Ah-Sheng to uncover the doll’s terrifying secret.",
+      "year": "2025",
+      "minutes": "111min",
+      "rating": "輔15級",
+      "categories": [
+        "本國片",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779942590587P7SUVFcm3i.jpeg",
+      "url": "https://www.opentix.life/event/2059854774593101825",
+      "screenings": [
+        {
+          "eventId": "2059854776914702337",
+          "start": 1782976800,
+          "end": 1782983460,
+          "venue": "誠品 A",
+          "note": "",
+          "guest": "",
+          "remaining": 149,
+          "totalRemaining": 157,
+          "hiddenOrGuestRemaining": 8,
+          "status": "available",
+          "ticketType": "平日日場 180"
+        }
+      ],
+      "availableScreeningCount": 1,
+      "screeningCount": 1,
+      "firstStart": 1782976800
+    },
+    {
+      "id": "2059586376272044033",
+      "title": "死亡賭局",
+      "englishTitle": "DEAD END",
+      "creator": "詹淳皓 CHAN Chun-hao",
+      "production": "台灣 Taiwan / 2026 / 96min",
+      "synopsis": "因打假球失去未來的勝毅，誤入一起詭譎的人命賭局。他一夜狂奔，尋覓獲得救贖的唯一機會。 A former baseball player runs all night to protect his dying father from an underground scheme gambling over elders' deaths.",
+      "year": "2026",
+      "minutes": "96min",
+      "rating": "輔12級",
+      "categories": [
+        "本國片",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779878601879MWvIlTHp3Y.jpeg",
+      "url": "https://www.opentix.life/event/2059586376272044033",
+      "screenings": [
+        {
+          "eventId": "2059586379645689857",
+          "start": 1782979800,
+          "end": 1782985560,
+          "venue": "中山堂",
+          "note": "★ 映後座談",
+          "guest": "映後",
+          "remaining": 497,
+          "totalRemaining": 508,
+          "hiddenOrGuestRemaining": 11,
+          "status": "available",
+          "ticketType": "平日日場 180"
+        }
+      ],
+      "availableScreeningCount": 1,
+      "screeningCount": 1,
+      "firstStart": 1782979800
+    },
+    {
+      "id": "2060208553457737729",
+      "title": "同一條船下",
+      "englishTitle": "Under the Same Boat",
+      "creator": "張明右 CHANG Ming-yu",
+      "production": "台灣 Taiwan / 2025 / 78min",
+      "synopsis": "16年前，陳火盛是一名船長，同時也是一宗運毒案的主角。他以為司法終會還他一個清白，卻不知道受冤的烏雲比海上的海盜還難纏。陳火盛或許有冤，但毒品確實也是從他手上帶回來的，一個看似無心之過就得扛上18年刑期。一個冤案的形成，看似複雜，但細看下其實也不是難以理解。只是說，冤，難道只有一種樣子嗎？ Sixteen years ago, Captain Chen Huo-sheng believed justice would clear his name, unaware that legal shadows are harder to escape than any sea pirate. His \"mistake\" cost him 18 years. Through Chen’s ordeal, we examine the shifting faces of injustice and the intricate depths of Taiwan’s judicial system.",
+      "year": "2025",
+      "minutes": "78min",
+      "rating": "普遍級",
+      "categories": [
+        "本國片",
+        "電影-紀錄片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1780026937354A5kuVMoRGN.jpeg",
+      "url": "https://www.opentix.life/event/2060208553457737729",
+      "screenings": [
+        {
+          "eventId": "2060208557593321474",
+          "start": 1782988200,
+          "end": 1782992880,
+          "venue": "誠品 A",
+          "note": "★ 映後座談",
+          "guest": "映後",
+          "remaining": 105,
+          "totalRemaining": 113,
+          "hiddenOrGuestRemaining": 8,
+          "status": "available",
+          "ticketType": "學生 220"
+        }
+      ],
+      "availableScreeningCount": 1,
+      "screeningCount": 1,
+      "firstStart": 1782988200
+    },
+    {
+      "id": "2059847212707586048",
+      "title": "女孩",
+      "englishTitle": "Girl",
+      "creator": "舒淇 SHU Qi",
+      "production": "台灣 Taiwan / 2025 / 124min",
+      "synopsis": "1988 年，基隆港煙塵蔽日，林小麗在迷惘中長大，渴望逃離黑暗。 直到遇見無懼眼光、自在生活的李莉莉，她才第一次看見世界的色彩。 然而，這份嚮往卻觸動了母親阿娟的過往創傷。 當年，她也曾憧憬未來，卻被現實困住。 女孩與女人，在交錯的命運中互相映照，像一面鏡子照出彼此的傷卻無能為力。 Set against Taiwan’s 1988 economic surge, a young girl’s encounter with a free-spirited friend awakens her longing for change and possibility, while stirring her mother’s deeply buried trauma, as both are drawn into a quiet reckoning with the fragile hope of escape, forgiveness, and reconciliation across generations.",
+      "year": "2025",
+      "minutes": "124min",
+      "rating": "輔12級",
+      "categories": [
+        "本國片",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779940789452QmlC0PYh97.jpeg",
+      "url": "https://www.opentix.life/event/2059847212707586048",
+      "screenings": [
+        {
+          "eventId": "2059847216358780929",
+          "start": 1783064400,
+          "end": 1783071840,
+          "venue": "中山堂",
+          "note": "★ 映後座談",
+          "guest": "映後",
+          "remaining": 454,
+          "totalRemaining": 474,
+          "hiddenOrGuestRemaining": 20,
+          "status": "available",
+          "ticketType": "平日日場 180"
+        }
+      ],
+      "availableScreeningCount": 1,
+      "screeningCount": 1,
+      "firstStart": 1783064400
+    },
+    {
+      "id": "2060202361537982465",
+      "title": "傳奇女伶 高菊花",
+      "englishTitle": "LA PALOMA",
+      "creator": "盧元奇 LU Yuan-chi",
+      "production": "台灣 Taiwan / 2026 / 72min",
+      "synopsis": "高菊花曾是1950至60年代拉丁歌后「派娜娜」，亦為白色恐怖受難者高一生之女。父親遭槍決後，她放棄留學夢想，以歌聲撐起家計，卻長年受監控與利用。《傳奇女伶 高菊花》由女兒視角出發，追尋母親在威權陰影下的生存痕跡。 “LA PALOMA” follows Kao Chu-hua, also known by her stage name “Panana,” a celebrated 1950s Latin singer and daughter of White Terror victim Kao Yi-sheng. Through her daughter’s search, the film reveals her life under surveillance and the enduring struggle of a woman shaped by authoritarian rule.",
+      "year": "2026",
+      "minutes": "72min",
+      "rating": "保護級",
+      "categories": [
+        "本國片",
+        "電影-紀錄片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1780025457921bHcZpiSMR2.jpeg",
+      "url": "https://www.opentix.life/event/2060202361537982465",
+      "screenings": [
+        {
+          "eventId": "2060202367117025281",
+          "start": 1783066200,
+          "end": 1783070520,
+          "venue": "誠品 A",
+          "note": "★ 映後座談",
+          "guest": "映後",
+          "remaining": 75,
+          "totalRemaining": 82,
+          "hiddenOrGuestRemaining": 7,
+          "status": "available",
+          "ticketType": "平日日場 180"
+        }
+      ],
+      "availableScreeningCount": 1,
+      "screeningCount": 1,
+      "firstStart": 1783066200
+    },
+    {
+      "id": "2059595864451817473",
+      "title": "大濛",
+      "englishTitle": "A Foggy Tale",
+      "creator": "陳玉勳 CHEN Yu-hsun",
+      "production": "台灣 Taiwan / 2025 / 134min",
+      "synopsis": "1954年，15歲的阿月父母雙亡，與弟弟寄住叔叔家。得知哥哥在台北被槍斃後，她帶著僅有的數十塊、母親遺物手鐲與被送養姊姊的手寫信，獨自北上，只為帶哥哥回家。初到台北，她險遭拐騙，幸被三輪車夫趙公道所救。兩人前往殯儀館，卻發現費用遠超能力；在歌舞團工作的姊姊，也無力相助。為籌贖屍費，兩人被迫鋌而走險。 In 1954, 15-year-old Yue travels alone to Taipei to reclaim the body of her executed brother. Nearly sold by traffickers, she is rescued by Chao Kung-tao, a discharged soldier. With no money to retrieve the body, the two strangers join forces and risk their lives to bring him home.",
+      "year": "2025",
+      "minutes": "134min",
+      "rating": "保護級",
+      "categories": [
+        "本國片",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779880863392JfRxMlft6p.jpeg",
+      "url": "https://www.opentix.life/event/2059595864451817473",
+      "screenings": [
+        {
+          "eventId": "2059595866588258305",
+          "start": 1783076400,
+          "end": 1783084440,
+          "venue": "中山堂",
+          "note": "★ 映後座談",
+          "guest": "映後",
+          "remaining": 355,
+          "totalRemaining": 377,
+          "hiddenOrGuestRemaining": 22,
+          "status": "available",
+          "ticketType": "學生 220"
+        }
+      ],
+      "availableScreeningCount": 1,
+      "screeningCount": 1,
+      "firstStart": 1783076400
+    },
+    {
+      "id": "2060193012000202753",
+      "title": "人生海海",
+      "englishTitle": "The Waves Will Carry Us",
+      "creator": "廖克發 LAU Kek Huat",
+      "production": "台灣 Taiwan / 2025 / 101min",
+      "synopsis": "阿耀回到馬來西亞與弟妹一起為父親舉辦喪禮，卻遇到宗教局人員帶走父親的屍體。不服氣的兄弟倆展開搶回屍體的旅程。阿耀回憶起小時候父親做走私，教他如何在這不公平的社會下狡猾求存。當初老一輩下南洋歷經各種荒謬而又滑稽的苦難，在榴槤、熱病、身分證、大便中求生，如今這些記憶都傳承到三兄妹的心裡。 When Ah Yao returns to Malaysia for his father’s funeral, he expects grief — not chaos. But when religious authorities claim his secretly converted father must receive an Islamic burial, Ah Yao and his siblings embark on a darkly comedic quest to reclaim the body, facing cultural clashes and buried family secrets.",
+      "year": "2025",
+      "minutes": "101min",
+      "rating": "保護級",
+      "categories": [
+        "本國片",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1780023209589Aiw3qy6rkj.jpeg",
+      "url": "https://www.opentix.life/event/2060193012000202753",
+      "screenings": [
+        {
+          "eventId": "2060193015965290497",
+          "start": 1783131600,
+          "end": 1783137660,
+          "venue": "誠品 A",
+          "note": "★ 映後座談",
+          "guest": "映後",
+          "remaining": 49,
+          "totalRemaining": 57,
+          "hiddenOrGuestRemaining": 8,
+          "status": "available",
+          "ticketType": "學生 220"
+        }
+      ],
+      "availableScreeningCount": 1,
+      "screeningCount": 1,
+      "firstStart": 1783131600
+    },
+    {
+      "id": "2056668734944780289",
+      "title": "天黑．夏午．闔家觀賞",
+      "englishTitle": "The End of the Tunnel + Summer Afternoon + Family Viewing",
+      "creator": "天黑 The End of the Tunnel張榮吉 CHANG Jung-chi",
+      "production": "台灣 Taiwan / 2008 / 38min",
+      "synopsis": "裕翔看不見是在三歲那年。海邊，他的視線越來越模糊，卻擋不住他的音樂天賦。當他遇見跳舞少女在痛哭，琴聲引領他們再次前往大海，失明或失戀都是同一個道理。混合紀實與劇情形式，在失焦與對焦的〈天黑黑〉後，尋找隧道出口的另一個可能。爾後，張榮吉不僅延伸完成長片《逆光飛翔》，更將光影的深刻掌握，內化於故事與人物中。 A blind boy lives in darkness. As a child, he believed closing his eyes was simply night, like being blindfolded in a game of hide-and-seek. Now, only sound doesn't bore him. Through music, he finds a miracle that leads him out of isolation and into the world. 夏午 Summer Afternoon何蔚庭 HO Wi Ding｜台灣 Taiwan｜2008｜B&amp;W｜16min 夏日午後，汽車駛於山間蜿蜒道路，前座一男一女在玩笑間挑逗前行，後座另一名女子急欲停車解決生理需求。緊急煞車後的暫歇，卻讓三人關係瞬間失衡崩壞。一個跨越性別的愛情三角謎團於焉浮現。何蔚庭以魔幻的黑白影像，將嫉妒、情欲與衝動凝滯在燥熱顛簸，彷彿正對青春畸戀，扭轉幸福的迷茫現實之前，突圍痛苦故事的痴想。 The girl in the backseat likes the girl in the front passenger seat. The backseat girl does not like the driver guy. Summer Afternoon unfolds in real time with two lovers playing a joke on the girl in the backseat. But once the car stops, an afternoon drive in the country takes a wrong turn as the backseat girl now controls the fun. 闔家觀賞 Family Viewing郭承衢 KUO Cheng-chui｜台灣、法國 Taiwan, France｜2008｜Color｜29min 週六清晨，號稱來自法國電視台的攝影師闖入林家，只為拍下「世界最有趣家庭比賽」的素材影像。在獎金誘惑下，林家三口開始習慣攝影機，深藏鏡頭後的祕密也隨之揭開。旅法導演郭承衢，以跨國視野及輕盈而深厚的敘事，剖析華人家庭面貌，並入圍法國凱薩獎。本片亦可窺見其日後創作一貫涵蓋親情、異國與跨域情感的核心主題。 A French TV crew enters a Taiwanese family’s home in Taipei for a weekend reality program. Tempted by prize money, the Lin family agrees to be filmed. Gradually, the camera becomes a new way of communication, revealing each member’s thoughts, daily life, and perhaps a hidden secret…",
+      "year": "2008",
+      "minutes": "38min",
+      "rating": "輔15級",
+      "categories": [
+        "本國片",
+        "闔家觀賞",
+        "夏午",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779182938640P46xar0c79.jpeg",
+      "url": "https://www.opentix.life/event/2056668734944780289",
+      "screenings": [
+        {
+          "eventId": "2056668736839819265",
+          "start": 1783134000,
+          "end": 1783138980,
+          "venue": "中山堂",
+          "note": "★ 映後座談",
+          "guest": "映後",
+          "remaining": 410,
+          "totalRemaining": 432,
+          "hiddenOrGuestRemaining": 22,
+          "status": "available",
+          "ticketType": "學生 220"
+        }
+      ],
+      "availableScreeningCount": 1,
+      "screeningCount": 1,
+      "firstStart": 1783134000
+    },
+    {
+      "id": "2059575973360902144",
+      "title": "96分鐘",
+      "englishTitle": "96 Minutes",
+      "creator": "＊感謝 ASUS ProArt 支持本場《96分鐘》放映活動（仍開放一般觀眾購票） 洪子烜 HUNG Tzu-hsuan",
+      "production": "台灣 Taiwan / 2025 / 118min",
+      "synopsis": "三年前一場震驚全台的炸彈攻擊，徹底改變了拆彈專家宋康任的人生。如今，他與刑警妻子搭上南下高鐵，卻接獲列車藏有炸彈的警告。全車乘客瞬間陷入生死危機，時間只剩96分鐘。列車高速前行、倒數逼近，宋康任必須在極限壓力下找出炸彈、拆除危機，同時面對埋藏多年的傷痛與祕密，拯救眾人。 A bomb is planted on a high-speed train. With only 96 minutes to stop the explosion, a former bomb disposal expert must face his trauma, race against time, and save hundreds of innocent passengers.",
+      "year": "2025",
+      "minutes": "118min",
+      "rating": "輔12級",
+      "categories": [
+        "本國片",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/177987612163291go2LG8WO.jpeg",
+      "url": "https://www.opentix.life/event/2059575973360902144",
+      "screenings": [
+        {
+          "eventId": "2059575975407116289",
+          "start": 1783135800,
+          "end": 1783142880,
+          "venue": "誠品 B",
+          "note": "★ 映後座談   *ProArt 品牌特選場（仍開放購票）",
+          "guest": "映後",
+          "remaining": 0,
+          "totalRemaining": 5,
+          "hiddenOrGuestRemaining": 5,
+          "status": "sold_out_or_unavailable",
+          "ticketType": "學生 220"
+        }
+      ],
+      "availableScreeningCount": 0,
+      "screeningCount": 1,
+      "firstStart": 1783135800
+    },
+    {
+      "id": "2056345758369120257",
+      "title": "再見1987（特別版）",
+      "englishTitle": "Until We Meet Again (Special Edition)",
+      "creator": "吳宗叡 Ray WU、李權洋 LI Chuan-yang",
+      "production": "台灣 Taiwan / 2026 / 85min",
+      "synopsis": "1943年的夏天，叛逆少女與名校高材生因理想相遇，許下相守一生的承諾。然而戰後局勢驟變，二二八事件爆發，男孩被迫流亡南韓；隨之而來的白色恐怖，也讓成了母親的她帶著女兒隱姓埋名、四處躲藏。數十年後，一封來自南韓的信，終於揭開塵封已久的祕密。細膩的造型與場景，重現戰前戰後的時代氛圍。方志友與林哲熹的演出，則深刻詮釋小人物身在歷史洪流中無所依歸的迷惘。 Taichung, summer 1943. A rebellious girl and a carefree elite schoolboy begin as adversaries, but are drawn together by a shared anti-colonial ideal and fall in love. After the war, the outbreak of the February 28 Incident pulls them once more into the tide of an uncertain fate.",
+      "year": "2026",
+      "minutes": "85min",
+      "rating": "普遍級",
+      "categories": [
+        "本國片",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779105975388OF2d0Jm6cu.jpeg",
+      "url": "https://www.opentix.life/event/2056345758369120257",
+      "screenings": [
+        {
+          "eventId": "2056345761386405889",
+          "start": 1783164000,
+          "end": 1783169400,
+          "venue": "中山堂",
+          "note": "★ 映後座談",
+          "guest": "映後",
+          "remaining": 0,
+          "totalRemaining": 8,
+          "hiddenOrGuestRemaining": 8,
+          "status": "sold_out_or_unavailable",
+          "ticketType": "學生 220"
+        }
+      ],
+      "availableScreeningCount": 0,
+      "screeningCount": 1,
+      "firstStart": 1783164000
+    },
+    {
+      "id": "2056360063986900993",
+      "title": "小公視X富邦文教兒童短片輯",
+      "englishTitle": "PTS xs X Fubon Cultural and Educational Foundation Children's Short Films",
+      "creator": "預備！嗶！ Ready! Beep!陳秋甫 CHEN Chiou-fu",
+      "production": "台灣 Taiwan / 2026 / 13min",
+      "synopsis": "連年擔任大隊接力最後一棒、為班級贏得榮譽的阿凱，這次竟要被轉學生琪琪搶走鋒頭，不甘心的他絞盡腦汁想說服琪琪再跟他比一次短跑，兩人在校園裡相互追逐。幽默可愛的情節與對話下，友誼逐漸從這場對抗萌生。 Kai has always been the fastest, until the new girl, Kiki, outruns him in class. Determined, Kai keeps challenging her. Their playful rivalry slowly turns into a quiet friendship. 小栩的魔毯 Her Magic Carpet黃宜璇 HUANG Yi-hsuan｜台灣 Taiwan｜2026｜Color｜16min 和阿玉阿嬤同住的小栩，最喜歡玩魔毯遊戲，他總是盡情發揮想像力，一路從海底穿梭到外太空。但隨著他長大，阿嬤年事漸高，已經沒有體力再陪他玩了，當他落寞地躲進魔毯裡，這時，屋裡闖進了一個叫小玉的小女孩，一場精彩冒險即將展開。 Seven-year-old Xiao Xu loves playing a magic carpet game with her grandma—until one day Grandma can no longer pull her along. Lonely, Xiao Xu makes a wish, and something magical happens. Inspired by the director’s childhood, this is a whimsical, childlike tale of a grandma and a granddaughter. 你好，朵朵 Blooming Dodie林靖珊 Sammy LIN｜台灣 Taiwan｜2026｜Color｜15min 朵朵和爸爸、弟弟來到溫泉湯屋，爸爸要他挑選泡湯用的新泳衣，卻沒察覺他對自己的身體變化感到疑惑彆扭。遲遲不肯換上那件裙裝的他，在園內遇見一位剃著平頭的清潔人員，竟跟著他進入女湯，朵朵忍不住大聲制止……。 On a hot-spring-trip, 12-year-old Dodie refuses to enter the water in the girly swimsuit her father bought her. Feeling misunderstood, she hides. Then, the calm, androgynous presence of Fujiko catches her attention.\" 忍術！痛痛飛走術！ Pain Pain Flies Away Jutsu!王韋棋 Vicky WANG｜台灣 Taiwan｜2026｜Color｜11min 熱衷成為忍者的小一弟弟，因不滿姊姊獲得特許的黑糖，上學路上不斷對他使出忍術攻擊。正當姊姊被班上男生欺負，弟弟趁虛而入使出絕招！眼見姊姊跌倒在地，他尾隨著來到健康中心，才發現實情超乎想像。分鏡生動流暢，化性別健康教育為引人入勝的故事。 Winnie, the sister of a ninja-aspiring brother Yoyo, is facing a growing-up challenge. The two start a chaotic adventure over a coveted brown sugar candy. When Yoyo tries his ninja trick, things go hilariously wrong. As accidents pile up, he uncovers the truth behind Winnie’s hidden injury—can he save her in time?\"",
+      "year": "2026",
+      "minutes": "13min",
+      "rating": "普遍級",
+      "categories": [
+        "本國片",
+        "兒童短片輯",
+        "小栩的魔毯",
+        "預備！嗶！",
+        "忍術！痛痛飛走術！",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779109289977SiX1jfuYdt.jpeg",
+      "url": "https://www.opentix.life/event/2056360063986900993",
+      "screenings": [
+        {
+          "eventId": "2056362066246967296",
+          "start": 1783218000,
+          "end": 1783221360,
+          "venue": "誠品 A",
+          "note": "★ 映後座談",
+          "guest": "映後",
+          "remaining": 39,
+          "totalRemaining": 47,
+          "hiddenOrGuestRemaining": 8,
+          "status": "available",
+          "ticketType": "學生 220"
+        }
+      ],
+      "availableScreeningCount": 1,
+      "screeningCount": 1,
+      "firstStart": 1783218000
+    },
+    {
+      "id": "2056368190268223489",
+      "title": "台灣短SHOW II",
+      "englishTitle": "Taiwan Shorts II",
+      "creator": "當阿嬤變成阿公 When Grandma Becomes Grandpa吳瑾蓉 Sharon WU",
+      "production": "台灣 Taiwan / 2026 / 19min",
+      "synopsis": "公園裡，長輩們被看護推來透透氣，突如其來的大雨，讓看護雪莉陰錯陽差推錯了人，他們家的阿嬤竟變成了一個無法講話的臭臉阿公。他急著想找回阿嬤，阿公卻帶著他在路上繞啊繞，就是不願意回家。《關於我和鬼變成家人的那件事》編劇吳瑾蓉首度執導，喜翔零台詞詮釋阿公心境，和金鐘影后莫愛芳一同呈現一則人情味滿滿的溫馨喜劇。 After a sudden downpour in the park, caregiver Shelly accidentally wheels home the wrong person—only to find she has brought back a grumpy, uncommunicative grandpa instead of her client. As she scrambles to switch them back, the grandpa refuses to go home. 莿 The Prick余易勳 YU Yi-hsun｜台灣 Taiwan｜2025｜Color｜12min 長途夜車抵達台北，男子下車失神遊蕩在陰鬱大街，與情人的往日回憶伴隨寒風襲擊腦門。被悲傷淹沒之際，路邊孤傲冷豔的花吸引了他的注意，忘情伸手卻被狠狠刺傷。當前男友想以吻化解對峙，男子究竟該將破碎的心刺向對方，還是在愛慾下再次臣服。《軍犬》、《春行》編劇余易勳首度執導，僅以兩天拍攝完成，刻劃情傷者的狂暴與易碎。 Numb with heartbreak, Hsing leaves southern Taiwan for Taipei to confront his unfaithful ex. But the city is colder than expected, and so is the intimacy they fall back into. Desire returns, beautiful and wounding. When remorse arrives as kisses, Hsing reaches a breaking point where apology, forgiveness, and revenge blur. 自主揮棒 The Brave Swing黃聖鈞 HUANG Sheng-chun｜台灣 Taiwan｜2026｜Color｜20min 由單親媽媽撫養的男孩，經常被托給夜市擺攤的舅舅看顧，原本喜愛棒球的他，近來卻逃避練球，也抗拒和舅舅一起去球場；一日，他在追逐遊戲之後，竟要玩伴脫褲子讓他用手機拍攝，媽媽發現影片，也漸漸察覺異狀。本片從兒童視角出發，細膩描繪身體界線受侵犯後難以言說的情緒經驗。創作過程亦結合心理師、親密指導與兒童陪伴員協作完成。 Cheng-Cheng has changed. He no longer plays baseball or goes near the field, as if something inside him has shut down. His mother cannot understand why. Haunted by someone he once trusted, he finds himself alone with a bat one night, knowing he must decide—whether to swing, or not. 表演課 Performing陳家益 CHEN Chia-yi｜台灣 Taiwan｜2025｜Color｜35min 升上高三的睿澤與剛復學的芷芸，在「生活表演」課相遇，木訥寡言的睿澤正為了升學面試苦惱，而看似外向的芷芸積極融入新班級，卻屢屢碰壁。透過表演課的練習，他們摸索著自己與他人的關係。全片以保持距離的長鏡頭及旁觀視角，和多次「凝視鏡中自己」的設計，關注少男少女探索真實自我時的懷疑與焦慮。 In a performing class, two high school friends reunite—one returning after a year away, the other rehearsing for a college interview. And outside the classroom, the real performance quietly begins as they search for how to be in the world.",
+      "year": "2026",
+      "minutes": "19min",
+      "rating": "輔12級",
+      "categories": [
+        "本國片",
+        "自主揮棒",
+        "當阿嬤變成阿公",
+        "莿",
+        "表演課",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779111268238qgxngwPcqt.jpeg",
+      "url": "https://www.opentix.life/event/2056368190268223489",
+      "screenings": [
+        {
+          "eventId": "2056370358108880897",
+          "start": 1783228200,
+          "end": 1783233360,
+          "venue": "中山堂",
+          "note": "★ 映後座談",
+          "guest": "映後",
+          "remaining": 396,
+          "totalRemaining": 404,
+          "hiddenOrGuestRemaining": 8,
+          "status": "available",
+          "ticketType": "學生 220"
+        }
+      ],
+      "availableScreeningCount": 1,
+      "screeningCount": 1,
+      "firstStart": 1783228200
+    },
+    {
+      "id": "2058882007151124481",
+      "title": "拒絕聯考的小子：導演版",
+      "englishTitle": "The Fellow Who Rejected College: Director's Cut",
+      "creator": "徐進良 TCHII Ching-long (HSU Chin-liang)",
+      "production": "台灣 Taiwan / 1979 / 95min",
+      "synopsis": "大學聯考倒數，建國中學的高三生們破釜沉舟。班長在班遊中，與他校女同學不打不相識，互生好感。當他目睹學長因落榜而崩潰，開始質疑升學的真正意義，並拒絕讓聯考決定人生的走向。改編自同名暢銷自傳小說，在解嚴前的台灣，直指教育制度的僵化與「一試定終身」之困境，更透過反叛精神，為學生電影與青春類型設下重要里程碑。 As college exams loom, top student Wu Hsiang-hui feels mounting pressure. A budding romance faces opposition from parents, while a classmate’s breakdown shakes his beliefs. Questioning the system, he rejects the exam and chooses to enter society instead. Can he stay true to himself and forge his own path?",
+      "year": "1979",
+      "minutes": "95min",
+      "rating": "保護級",
+      "categories": [
+        "本國片",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779710664841kiiJe9UKXe.jpeg",
+      "url": "https://www.opentix.life/event/2058882007151124481",
+      "screenings": [
+        {
+          "eventId": "2058883522137923585",
+          "start": 1783230600,
+          "end": 1783236300,
+          "venue": "光點 1",
+          "note": "",
+          "guest": "",
+          "remaining": 38,
+          "totalRemaining": 44,
+          "hiddenOrGuestRemaining": 6,
+          "status": "available",
+          "ticketType": "學生 220"
+        }
+      ],
+      "availableScreeningCount": 1,
+      "screeningCount": 1,
+      "firstStart": 1783230600
+    },
+    {
+      "id": "2059588448597958657",
+      "title": "深度安靜",
+      "englishTitle": "Deep Quiet Room",
+      "creator": "沈可尚 SHEN Ko-shang",
+      "production": "台灣 Taiwan / 2025 / 108min",
+      "synopsis": "諭明與依庭相識於極度安靜中的怦然，但幸福的婚姻沒有眷顧兩人。懷孕後的依庭背負童年暗影，在情緒風暴中墜落，諭明猜不透她，而這一切，似乎都與住進家中的岳父有關。 Yu-ming and Yi-ting meet in a sudden, heart-fluttering connection amid silence, yet a happy marriage would prove elusive for them. After pregnancy, Yi-ting’s childhood shadows resurface, drawing her into emotional turmoil. Caught in her descent, Yu-ming finds her increasingly unreadable.",
+      "year": "2025",
+      "minutes": "108min",
+      "rating": "保護級",
+      "categories": [
+        "本國片",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779879089797G77ME8NDh1.jpeg",
+      "url": "https://www.opentix.life/event/2059588448597958657",
+      "screenings": [
+        {
+          "eventId": "2059588450562318337",
+          "start": 1783238400,
+          "end": 1783244880,
+          "venue": "中山堂",
+          "note": "★ 映後座談",
+          "guest": "映後",
+          "remaining": 388,
+          "totalRemaining": 399,
+          "hiddenOrGuestRemaining": 11,
+          "status": "available",
+          "ticketType": "學生 220"
+        }
+      ],
+      "availableScreeningCount": 1,
+      "screeningCount": 1,
+      "firstStart": 1783238400
+    },
+    {
+      "id": "2054201327492128769",
+      "title": "我的棋王爺爺",
+      "englishTitle": "The Grandmaster's Gift",
+      "creator": "陳怡蓉 CHEN Yi-jung",
+      "production": "台灣 Taiwan / 2026 / 100min",
+      "synopsis": "千禧年，鑰匙兒童江奕軒成長於城南萬華。下午時光漫漫，除了家附近的自助餐店與青年公園棒球場，他最常去公園裡玩耍閒晃。某天，他在公園遇見自稱「棋王」的退伍老兵，一場跨世代情誼就此在棋盤上展開。耀眼新星謝以樂與戲劇泰斗李立群同台對戲，春風、朱宥丞、陶傳正等人畫龍點睛，共同演繹一段「棋如人生，人生如棋」的庶民生命史。 In a quiet park, young Yixuan meets Liu Bin, a lonely chess master. Left alone by his taxi-driver father, Yixuan finds guidance and warmth in his new chess teacher. A small wager blossoms into a bond that bridges generations, revealing how love can emerge in unexpected places.",
+      "year": "2026",
+      "minutes": "100min",
+      "rating": "普遍級",
+      "categories": [
+        "本國片",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779100946282nMSEKjQMEO.png",
+      "url": "https://www.opentix.life/event/2054201327492128769",
+      "screenings": [
+        {
+          "eventId": "2054201329332797441",
+          "start": 1783249200,
+          "end": 1783255740,
+          "venue": "中山堂",
+          "note": "★ 映後座談",
+          "guest": "映後",
+          "remaining": 0,
+          "totalRemaining": 0,
+          "hiddenOrGuestRemaining": 0,
+          "status": "sold_out_or_unavailable",
+          "ticketType": "學生 220"
+        }
+      ],
+      "availableScreeningCount": 0,
+      "screeningCount": 1,
+      "firstStart": 1783249200
+    },
+    {
+      "id": "2061413927202201601",
+      "title": "台北電影獎｜短片＋動畫片 I",
+      "englishTitle": "Taipei Film Awards - Animations + Short Films I",
+      "creator": "你吹Do，我吹Si tutti莊榮祚 ZHUANG Rong-zuo",
+      "production": "台灣 Taiwan / 2026 / 19min",
+      "synopsis": "一個不擅長吹奏，但想留在直笛隊的女孩容辰，遇見了想離開的男孩紹瑜。他們的相遇讓容辰找到了吹奏的訣竅，也讓紹瑜找到了遠比技巧更珍貴的東西。 Rong-Chen, a girl struggling to stay on the recorder team, meets Shao-Yu, a boy who wants to quit. Their time practicing together helps them grow not only in skill, but also in something that matters even more. 落雺 Falling Mist莊淯津 ZHUANG Yu-jin｜台灣 Taiwan｜2025｜Color｜6min 一條下班路，從喧囂的城市巷弄延伸至人煙稀少的產業道路，途中經過一個鐵路平交道。穿越鐵軌時，迎面而來的大霧讓人思考生命的終點，以及對自然界生靈的崇敬。這裡有被污染的環境，也有生活其中的人類心靈。 Crossing a foggy railway on the way home inspires reflections on death, nature, and the human soul within a polluted world. 我朋友的故事 Stacy林奕伶 Lin Yi-Ling｜台灣 Taiwan｜2025｜Color｜9min 牙包的朋友去遠方冒險了，她用盛怒包裝遺憾，試著在混亂的情緒裡面嘗試放下，忍不住頻頻翻閱過去回憶，但仍無法接受。在一次意料之外的夢境中，她跟朋友展開激烈的對話，醒來後，她開始嘗試拋下對朋友的幻想與執念、尊重這個事實。 Toothbag’s friend committed suicide. Toothbag wraps her regret in anger, constantly flipping through past memories, yet still can’t accept the loss. After an unexpected dream, she tries to leave behind her fantasies and attachments to her friend — and accept reality. 百花公主 Florentia李晏如 LEE Yen-ju｜台灣 Taiwan｜2025｜Color｜25min 44歲京劇演員吳思幗，在排演一齣公主錯愛敵國間諜、國破家亡後自刎的悲劇時，發現懷上前夫的孩子，而那位曾辜負她的男人，正是這齣戲的導演。舞台上，她穿著蹺鞋模仿古代婦女纏足的姿態；舞台下，她面對父親傳宗接代的期待。當現實與角色逐漸重疊，她站在命運的終幕前，第一次思考能否改寫結局。 At the age of 44, a Taiwanese opera actress rehearsing a tragedy about a princess destroyed by misplaced love discovers she is pregnant by her ex-husband, now the production's director. Caught between her father's expectations and the roles written for her, she begins to sense another ending. Somewhere in time, 河與石頭 Somewhere in time, River and Stone黃芝嘉 Paulie HUANG Chih-chia｜台灣 Taiwan｜2025｜Color｜24min 「她們曾經在一起，好多世、好多次。這一次，石頭和小河還沒認出彼此。」今天石頭帶小河到壽山探鐘乳石洞，美麗的喀斯特地形和可愛動物環繞。兩人坐在天地之間，當最美的時刻到來，小河卻害怕，石頭有天會離開。 Stone and River were together in past lives. In this life, they have yet to recognize each other. One day, they sit together in nature, sharing a beautiful moment, though River fears that Stone may leave someday...",
+      "year": "2026",
+      "minutes": "19min",
+      "rating": "保護級",
+      "categories": [
+        "本國片",
+        "你吹Do，我吹Si",
+        "百花公主",
+        "我朋友的故事",
+        "落雺",
+        "Somewhere in time, 河與石頭",
+        "電影-動畫"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1780314204485bopJG4Ieh5.jpeg",
+      "url": "https://www.opentix.life/event/2061413927202201601",
+      "screenings": [
+        {
+          "eventId": "2061413930117111809",
+          "start": 1783420800,
+          "end": 1783425780,
+          "venue": "誠品 A",
+          "note": "",
+          "guest": "",
+          "remaining": 111,
+          "totalRemaining": 119,
+          "hiddenOrGuestRemaining": 8,
+          "status": "available",
+          "ticketType": "學生 220"
+        }
+      ],
+      "availableScreeningCount": 1,
+      "screeningCount": 1,
+      "firstStart": 1783420800
+    },
+    {
+      "id": "2059947847980015617",
+      "title": "陽光女子合唱團",
+      "englishTitle": "Sunshine Women's Choir",
+      "creator": "林孝謙 Gavin LIN",
+      "production": "台灣 Taiwan / 2025 / 134min",
+      "synopsis": "生日快樂歌聲響起，女嬰呱呱墜地，四名女子在監獄慶祝新生。惠貞、阿珮、阿蘭和玉英奶奶各自背負不堪過去，成為獄友互相扶持。新來的宥芯叛逆衝突不斷，卻在爭吵中建立友誼。女嬰被診斷眼疾須送養就醫，音痴的惠貞決定送女兒最後回憶，陽光女子合唱團就地成立。面對外界成見與質疑，她們唱出動人生命。 A baby girl is born in a women’s prison and welcomed by four inmates, including her mother. When a rebellious newcomer arrives, conflict turns to friendship. After the baby is diagnosed with an eye disease, her mother leads them to form a prison choir to leave her one final memory.",
+      "year": "2025",
+      "minutes": "134min",
+      "rating": "輔12級",
+      "categories": [
+        "本國片",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779964768526noHU9x7tzc.jpeg",
+      "url": "https://www.opentix.life/event/2059947847980015617",
+      "screenings": [
+        {
+          "eventId": "2059947853087449088",
+          "start": 1783422000,
+          "end": 1783430040,
+          "venue": "誠品 B",
+          "note": "★ 映後座談",
+          "guest": "映後",
+          "remaining": 0,
+          "totalRemaining": 5,
+          "hiddenOrGuestRemaining": 5,
+          "status": "sold_out_or_unavailable",
+          "ticketType": "學生 220"
+        }
+      ],
+      "availableScreeningCount": 0,
+      "screeningCount": 1,
+      "firstStart": 1783422000
+    },
+    {
+      "id": "2056353245650550785",
+      "title": "山的時間",
+      "englishTitle": "The Echoes",
+      "creator": "廖敬堯 LIAO Ching-yao",
+      "production": "台灣 Taiwan / 2026 / 70min",
+      "synopsis": "導演轉身背對眾人期待的「美景」，將鏡頭深入高山荒野凝視文明遺留的殘骸，捕捉人類在山林留下的各種痕跡，以及土地徐緩的生命節奏。影片透過無對白的視覺語言及聲響共振，讓時間在靜默中現跡，也讓文明的短暫喧囂，與大自然時間的萬籟俱寂產生強烈對比，反思人類如何在大地的永恆中留下印記，又如何被時間收納。 Set above the clouds, The Echoes is a visual documentary exploring Taiwan’s alpine wilderness. By juxtaposing human traces with nature’s slow rhythm, the film captures the duality of fleeting existence and eternal silence, inviting contemplation on how time eventually reclaims all man-made marks.",
+      "year": "2026",
+      "minutes": "70min",
+      "rating": "普遍級",
+      "categories": [
+        "本國片",
+        "電影-紀錄片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779107758905QoWk8Lhhh9.jpeg",
+      "url": "https://www.opentix.life/event/2056353245650550785",
+      "screenings": [],
+      "availableScreeningCount": 0,
+      "screeningCount": 0,
+      "firstStart": null
+    },
+    {
+      "id": "2059849377097048065",
+      "title": "功夫",
+      "englishTitle": "KUNG FU",
+      "creator": "九把刀（柯景騰）Giddens KO",
+      "production": "台灣 Taiwan / 2026 / 127min",
+      "synopsis": "衰尾高中生淵仔與好友阿義，遇上自稱沉睡500年、身懷絕世武功的神祕流浪漢黃駿。原以為只是怪人說夢話，沒想到當晚黃駿竟現身在淵仔五樓房間窗外，留下「拜我為師」四個大字！ A high-school underdog, Yuan, and his buddy, Ah-yi , try to help a homeless man — only to get beaten up. The vagrant claims to be Huang Jun, a once-great warrior, and later appears outside Yuan’s fourth-floor window, demanding: “Make Me Your Master.”",
+      "year": "2026",
+      "minutes": "127min",
+      "rating": "輔15級",
+      "categories": [
+        "本國片",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779941302115vHN2BoI96q.jpeg",
+      "url": "https://www.opentix.life/event/2059849377097048065",
+      "screenings": [],
+      "availableScreeningCount": 0,
+      "screeningCount": 0,
+      "firstStart": null
+    },
+    {
+      "id": "2059578159602573312",
+      "title": "丟包阿公到我家",
+      "englishTitle": "April",
+      "creator": "唐福睿 Freddy TANG",
+      "production": "台灣 Taiwan / 2025 / 105min",
+      "synopsis": "離家多年的菲律賓移工April，為了探望病危的母親，必須帶著失智的台灣阿公，踏上返鄉旅程。阿公剛出獄的兒子阿偉卻在此時回家，沒料到已經人去樓空。這兩段異地歸鄉的故事主角，心中懷抱著秘密，面對陌生又疏離的家鄉親友，竟不約而同地發現，回到老家，其實才是這段漫長歸途的起點。 April, a Filipino migrant worker, takes the ailing grandpa she cares for to the Philippines to see her dying mother. Meanwhile, the grandpa's recently released son Ah-Wei returns home to find it empty. Two parallel returns reshape their families. They discover coming home is not the end, but the beginning.",
+      "year": "2025",
+      "minutes": "105min",
+      "rating": "保護級",
+      "categories": [
+        "本國片",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779876638203mf6aiHl2E1.jpeg",
+      "url": "https://www.opentix.life/event/2059578159602573312",
+      "screenings": [],
+      "availableScreeningCount": 0,
+      "screeningCount": 0,
+      "firstStart": null
+    },
+    {
+      "id": "2056697711654674433",
+      "title": "我未許願先吹蠟燭",
+      "englishTitle": "I Blew Out the Candles Before Making a Wish",
+      "creator": "周鉅宏 CHAO Koi Wang、胡錦筵 Yen HU",
+      "production": "台灣 Taiwan / 2026 / 116min",
+      "synopsis": "澳門女孩與奶奶蝸居於舊樓天台，來自台灣的落魄青年登門討債不成，反倒與祖孫二人結交情誼。一日，急需用錢的女孩意外撿到賭場籌碼，並將其交給男子去下注。萍水相逢的兩人，於此展開一場相親又相騙的老千行動。飾演失意廢柴的柯震東苦練粵語，與硬底戲骨金燕玲、天才童星梅靜妍同場飆戲，演繹跨越文化與世代的動人情誼。 Young JoJo unexpectedly comes into casino chips and seeks to repay her runaway father’s debt, asking down-on-his-luck collector Hua to gamble for her. In Macau’s chaotic casinos, they form an unlikely alliance. When the final bet arrives, fate strips them of everything, revealing life’s true gift.",
+      "year": "2026",
+      "minutes": "116min",
+      "rating": "保護級",
+      "categories": [
+        "本國片",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779189797901pAm4yPLFSm.jpeg",
+      "url": "https://www.opentix.life/event/2056697711654674433",
+      "screenings": [],
+      "availableScreeningCount": 0,
+      "screeningCount": 0,
+      "firstStart": null
+    },
+    {
+      "id": "2059856835114819585",
+      "title": "那張照片裡的我們",
+      "englishTitle": "The Photo From 1977",
+      "creator": "湯昇榮 Phil TANG、鄭乃方 Frank CHENG",
+      "production": "台灣 Taiwan / 2025 / 126min",
+      "synopsis": "照片是凝望過去的切片，永存時間的證言。70年代台灣街頭，選舉造勢聲此起彼落，政治暗流湧動。無法識字、喜愛攝影的少女賢英身邊，總有青梅竹馬弘國陪伴，他替她讀懂每個未解的字句，她卻期待不同於日常的未知。來台交流的韓國跆拳道教練浩熙吸引了她的目光，情竇初開伴隨青春苦澀。然而從縣長投票那天起，一切不再相同⋯。 Taiwan, 1977. At a photo studio in Zhongli, aspiring photographer Fan Hsien-ying, her activist friend Lee Hong-guo, and Korean Taekwondo coach Kim Ho-hee form a bond. The Zhongli protest erupts, forcing them to choose between dreams and awakening.",
+      "year": "2025",
+      "minutes": "126min",
+      "rating": "輔12級",
+      "categories": [
+        "本國片",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779943081495efJ5NJMKbT.jpeg",
+      "url": "https://www.opentix.life/event/2059856835114819585",
+      "screenings": [],
+      "availableScreeningCount": 0,
+      "screeningCount": 0,
+      "firstStart": null
+    },
+    {
+      "id": "2056335287916277761",
+      "title": "怎麼可能我家的祖先是你家的鬼",
+      "englishTitle": "Oh My Ghost! Oh My God!",
+      "creator": "蘇達 Ta SU (Voyu)",
+      "production": "台灣 Taiwan / 2026 / 88min",
+      "synopsis": "日本潮流天后為追憶母親，旋風造訪母親位於鄉村部落的出生地，並邀小學同學心嵐偕男友萬德陪同上山。一行人嬉鬧入林，只有萬德始終繃緊神經，就怕驚動山林中的祖靈。夜漸深，濃霧鎖山、異象連環，恐懼逐漸化作心魔，甚至引來邪靈相伴。這趟山林之行，是尋根之旅，還是失魂記？ 出道多年的鄒族演員蘇達演而優則導，完成生涯首部自編、自導、自演的劇情長片，以原民文化與各種山林傳說為背景，融合台式喜劇與驚悚電影的類型元素，並力邀渡邊直美、劉以豪、小薰、撒基努跨海共演，還有Vivian徐若瑄驚喜現身，碰撞文化與信仰，譜出一場「笑中帶嚇」的驚魂變奏曲。 A Japanese pop icon returns to her late mother’s birthplace in a mountain village, joined by a former classmate and her boyfriend. Their trek into the forest turns dark after disturbing ancestral spirits. Trapped in thick fog, fear manifests into inner demons as supernatural events unfold, blurring the line between self-discovery and a descent into madness. In his directorial debut, veteran Tsou actor Ta SU (Voyu) writes, directs, and stars in this bold fusion of Indigenous folklore, Taiwanese comedy, and horror. Featuring an international cast including Watanabe Naomi, Jasper Liu, Esther Huang, and Sakinu, with a special appearance by Vivian Hsu, this \"horror-comedy\" delivers a spine-chilling symphony of culture and faith.\"",
+      "year": "2026",
+      "minutes": "88min",
+      "rating": "保護級",
+      "categories": [
+        "本國片",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779103561237eBAcjQNK4R.jpeg",
+      "url": "https://www.opentix.life/event/2056335287916277761",
+      "screenings": [],
+      "availableScreeningCount": 0,
+      "screeningCount": 0,
+      "firstStart": null
+    },
+    {
+      "id": "2061406709908119553",
+      "title": "春雨424",
+      "englishTitle": "When the Spring Rain Falls",
+      "creator": "馮賢賢 Sylvia FENG",
+      "production": "台灣 Taiwan / 2025 / 184min",
+      "synopsis": "春雨綿綿的1970年4月24日，黃晴美、黃文雄及鄭自才前往紐約市廣場飯店。在蔣經國即將進入旋轉門之際，黃文雄向蔣經國開槍。三人的生命從此天翻地覆。黃晴美與鄭自才在匹茲堡熱戀後結婚。晴美的大哥黃文雄此時也來到匹茲堡就學。一場純真的戀情，決定了三人日後共同刺蔣的命運。刺蔣事件震驚海外，也深刻影響台灣。 A Taiwanese odyssey resulting from the 1970 assassination attempt on Chiang Ching-kuo, heir apparent to dictator Chiang Kai-shek. With memories shared by the protagonists and people across three continents, the film explores love and betrayal, defiance and regrets, and the possibility of poetic closure from pain and loss.",
+      "year": "2025",
+      "minutes": "184min",
+      "rating": "保護級",
+      "categories": [
+        "本國片",
+        "電影-紀錄片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1780312605488T0sO1IygJu.png",
+      "url": "https://www.opentix.life/event/2061406709908119553",
+      "screenings": [],
+      "availableScreeningCount": 0,
+      "screeningCount": 0,
+      "firstStart": null
+    },
+    {
+      "id": "2061408849544224769",
+      "title": "第九十三封信之後",
+      "englishTitle": "Beyond 93 Letters",
+      "creator": "林佑恩 LIN Yu-en、劉燕美 LIU Yen-mei",
+      "production": "台灣 Taiwan / 2025 / 40min",
+      "synopsis": "林佑恩 LIN Yu-en、劉燕美 LIU Yen-mei｜台灣 Taiwan｜2025｜Color｜40min 亭瑩在取得博士學位那年確診腦瘤，四處求醫無效後，她向瑞士安樂死機構發出了求助信。在90多封的書信往返中，她摸索著通往安樂死之路；然而周邊有疼愛她的家人與羈絆20多年的男友。在愛與解脫間，她該如何選擇？ A girl with a brain tumor seeks help from the Swiss right-to-die organization Dignitas. Through 93 letters, she faces a painful choice between enduring love from family and partner, and the suffering that leads her toward assisted death.",
+      "year": "2025",
+      "minutes": "40min",
+      "rating": "普遍級",
+      "categories": [
+        "本國片",
+        "電影-紀錄片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1780313104508GLodSIH2Fb.jpeg",
+      "url": "https://www.opentix.life/event/2061408849544224769",
+      "screenings": [],
+      "availableScreeningCount": 0,
+      "screeningCount": 0,
+      "firstStart": null
+    },
+    {
+      "id": "2058792162612088833",
+      "title": "極樂",
+      "englishTitle": "Bliss: Beyond the Edge of Time",
+      "creator": "凱文．蓋格 Kevin GEIGER、劉育樹 LIU Yu-shu、邱立偉 CHIU Li-wei、黃瀛洲 Jo-Jo HWANG、廖偉智 Leo LIAO、連亞珏 Jade LIEN",
+      "production": "台灣 Taiwan / 2026 / 95min",
+      "synopsis": "這是一場關於未來的深情凝視，在冷酷的科技世界中挖掘人性的溫度。六位動畫導演以《易經》六爻為引，融合台灣文化，幻化孕育出六個風格與題材各異的獨立故事篇章，交織傳統與未來、信仰與真情、科幻與現實的內爆奇點。在動畫虛空中，漂流宇宙的太空探險、香燈勇者的無限列車、肉身超脫的電子穿越、世界末日冷酷異境的浪漫綺戀，在虛實交錯之間一一絢麗具現。 A tender yet unflinching look into the future, where the cold precision of technology collides with the fragile, unyielding essence of humanity. Six animation directors draw on the six lines of the I Ching to create distinct shorts rooted in Taiwanese vernacular culture. Blending tradition and futurity, faith and emotion, and science fiction with reality, these intersecting visions spiral toward a cold yet fantastical romance in an animated void.",
+      "year": "2026",
+      "minutes": "95min",
+      "rating": "輔12級",
+      "categories": [
+        "本國片",
+        "電影-動畫"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779689244232jyksuaTUpZ.jpeg",
+      "url": "https://www.opentix.life/event/2058792162612088833",
+      "screenings": [],
+      "availableScreeningCount": 0,
+      "screeningCount": 0,
+      "firstStart": null
+    },
+    {
+      "id": "2060195526223360001",
+      "title": "獨奏者之舞",
+      "englishTitle": "The Dance of A Soloist",
+      "creator": "李立劭 LEE Li-shao",
+      "production": "台灣 Taiwan / 2026 / 129min",
+      "synopsis": "一位50年代的白色青年，終生飽受壓抑，卻披荊斬棘開創了一條特異之路。李哲洋是台灣音樂史上的異數，他因白色恐怖被迫輟學，16歲開始走上自學之路，在體制外踽踽獨行。 他是1960年代民歌採集運動的拓荒者，70年代開始主編20年的音樂文摘，編譯大量音樂著作，散播其特有的音樂哲學，影響許多愛樂者，卻被台灣音樂史給遺忘。 Li Ze-yang’s journey in music was bumpy yet full of colors. His musical collection serves as a historic witness to ethnic communities. His relentless editorial commitment proved a quintessential scarcity in the history of Taiwanese music.",
+      "year": "2026",
+      "minutes": "129min",
+      "rating": "普遍級",
+      "categories": [
+        "本國片",
+        "電影-紀錄片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1780023809520SPlbf2qntY.png",
+      "url": "https://www.opentix.life/event/2060195526223360001",
+      "screenings": [],
+      "availableScreeningCount": 0,
+      "screeningCount": 0,
+      "firstStart": null
+    },
+    {
+      "id": "2056343259086004225",
+      "title": "聰明鎮（第1-2集）",
+      "englishTitle": "Bloody Smart (Ep. 1-2)",
+      "creator": "謝駿毅 HSIEH Chun-yi",
+      "production": "台灣 Taiwan / 2026 / 96min",
+      "synopsis": "偏僻小鎮上的崇明學園是鐵血補習名校，全校上下、乃至於整座小鎮，都為了成績用盡手段。直到學園長出一顆奇樹，傳說它的猩紅果實能讓人變聰明；禁果喚醒人心渴望與貪婪，詭異事件也接連發生。首部改編伊藤潤二作品的真人劇集，Gigi梁詠琪及陳姸霏領銜主演。台日團隊還原漫畫經典元素，場景更融入台灣特色，攜手演繹伊藤筆下的詭譎奇譚。 Rejected from her dream college, Jackie is taken by her mother Emily to Smart town, famed for its enrollment rates. Amid an all-consuming drive to climb the educational ladder, a hidden evil—disguised as fruit that sharpens minds and intensifies desires—pushes the town to the brink of madness.",
+      "year": "2026",
+      "minutes": "96min",
+      "rating": "輔12級",
+      "categories": [
+        "本國片",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779105385866HTbNAVNxQm.jpeg",
+      "url": "https://www.opentix.life/event/2056343259086004225",
+      "screenings": [],
+      "availableScreeningCount": 0,
+      "screeningCount": 0,
+      "firstStart": null
+    },
+    {
+      "id": "2059590834808807425",
+      "title": "雙囍",
+      "englishTitle": "Double Happiness",
+      "creator": "許承傑 Joseph HSU Chen-chieh",
+      "production": "台灣 Taiwan / 2025 / 130min",
+      "synopsis": "大囍之日，高級飯店裡的新郎高庭生必須隱瞞打死不相見的離婚雙親，在當晚同時舉辦兩場最完美的婚禮！ Groom-to-be Tim must simultaneously pull off two perfect weddings at the same five-star hotel for his estranged divorced parents without being discovered.",
+      "year": "2025",
+      "minutes": "130min",
+      "rating": "普遍級",
+      "categories": [
+        "本國片",
+        "電影-劇情片"
+      ],
+      "imageUrl": "https://s3.resource.opentix.life/upload/program/1779879657815IwoEAciiWK.jpeg",
+      "url": "https://www.opentix.life/event/2059590834808807425",
+      "screenings": [],
+      "availableScreeningCount": 0,
+      "screeningCount": 0,
+      "firstStart": null
+    }
+  ]
+}

@@ -30,6 +30,25 @@ npm install
 npm run dev
 ```
 
+## 研究資料同步
+
+`GovernmentDebt` 的資料層主本在 private data repo `government-debt-research-data`。本專案不會在瀏覽器或部署環境中連線讀取該 private repo；頁面只 import 本 repo 內的快照檔：
+
+```text
+src/data/governmentDebt.json
+```
+
+更新流程：
+
+```bash
+cd ../government-debt-research-data
+npm run sync
+cd ../my-canvas-lab
+npm run build
+```
+
+這個同步目前是手動觸發。不要預設掛進 `build`，因為 Vercel 等部署環境不一定有 sibling private repo。凡是同步到 `src/data/` 並部署出去的內容，都視為公開前端資料；raw 素材、書籍、筆記、工程日誌留在 private data repo。
+
 ## 新增頁面
 
 在 `src/pages/` 新增一個 `.jsx` 檔，路由自動生效（路徑為 `/{檔名小寫}`）。若要在首頁顯示卡片，在 `src/App.jsx` 的 `PAGE_META` 補上對應設定。

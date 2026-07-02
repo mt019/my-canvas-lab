@@ -11,10 +11,12 @@
 ### GovernmentDebt 政府債務研究
 - [ ] 補入最新數據（IMF WEO 或 BIS）更新各國債務佔 GDP 比率
 - [ ] 中國城投（LGFV）債務規模估算補入近年數字
+- [x] 資料層拆出：private data repo 保存 raw/materials/notes/logs，前端只保留 `src/data/governmentDebt.json` 快照
+- [x] 工程文件補明同步模型：手動同步，不 runtime 讀 private repo，前端快照部署後視為公開資料
 
 ### 全局
 - [ ] 各頁加入 Open Graph / meta description，使分享連結有標題與預覽摘要
-- [ ] 研究類頁面的大型靜態資料外置為 `/public/data/*.json`，組件改 fetch 載入，方便日後更新數據而不動程式碼
+- [ ] 研究類頁面逐步移出大型 in-component 靜態資料；小型公開資料可放 `src/data/*.json`，長期研究資料採 private data repo + frontend snapshot
 
 ## 新頁面構想
 - [ ] 碳費制度分析（與空污費對照，2024 年開徵）
