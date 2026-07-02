@@ -53,8 +53,6 @@ const ui = {
     type: '材料類型',
     layer: '認識層',
     all: '全部',
-    allViews: '全部視角',
-    filterLens: '篩選研究視角',
     desc: '把法律權威、實務觀察、趨勢訊號與研究熱點分開標記，避免把不同證據強度的材料混在一起。',
   },
   en: {
@@ -82,8 +80,6 @@ const ui = {
     type: 'Material type',
     layer: 'Epistemic layer',
     all: 'All',
-    allViews: 'All views',
-    filterLens: 'Filter by research view',
     desc: 'Separates legal authority, implementation facts, trend signals, and research hotspots so claims are not mixed across evidence strength.',
   },
 };
@@ -302,23 +298,6 @@ export default function InternationalTaxOps() {
           <button type="button" onClick={() => scrollToSection('frontier')}><Radar size={15} />{t.frontier}</button>
           <button type="button" onClick={() => scrollToSection('relations')}><GitBranch size={15} />{lang === 'zh' ? '關係圖譜' : 'Relations'}</button>
         </nav>
-
-        <div className={styles.sideSection}>
-          <div className={styles.filterHeader}>
-            <Filter size={13} />
-            <p>{t.filterLens}</p>
-          </div>
-          <button className={layer === 'all' ? `${styles.sideFilter} ${styles.active}` : styles.sideFilter} onClick={() => setLayer('all')}>
-            <span />
-            {t.allViews}
-          </button>
-          {layers.slice(0, 6).map((item) => (
-            <button key={item.id} className={layer === item.id ? `${styles.sideFilter} ${styles.active}` : styles.sideFilter} onClick={() => setLayer(item.id)}>
-              <span />
-              {item[lang]}
-            </button>
-          ))}
-        </div>
 
         <button className={`${styles.langButton} ${styles.sideLang}`} onClick={() => setLang(lang === 'zh' ? 'en' : 'zh')}>
           <Languages size={16} />
