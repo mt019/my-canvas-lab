@@ -1,0 +1,153 @@
+[
+  {
+    "id": "map-access-denial-and-avoidance",
+    "title": {
+      "zh": "MAP 取得管道遭限縮：不當拒絕、反避稅規則阻撓、「MAP 規避」",
+      "en": "MAP access under strain: improper denial, anti-abuse obstruction, and 'MAP avoidance'"
+    },
+    "summary": {
+      "zh": "Danon（2025-05-28，新加坡稅務學院國際稅務爭議日開幕演講，後刊於 Kluwer International Tax Blog）指出當前 MAP（OECD 範本稅約第 25 條）實務存在三種取得管道限縮：（一）部分稅務主管機關對納稅人取得 MAP 施加過多條件或超出必要的資訊要求，Danon 認為違反比例原則與 BEPS Action 14「誠信」取得 MAP 的要求；（二）部分國家以調整源自國內反濫用規則為由拒絕開放 MAP，Danon 主張此舉違反《維也納條約法公約》第 27 條（禁止援引國內法逃避條約義務）；（三）「MAP 規避」——部分國家以替代性國內法規則重新定性移轉定價調整，聲稱此類爭議排除於 MAP 之外，Danon 認為違背 OECD 範本第 9 條及第 25 條的目的與宗旨。他並主張為非移轉定價爭議（定性問題、常設機構、受益所有人事項）建立類似 BAPA 的雙邊爭議預防機制，並將間接稅納入爭議解決框架。",
+      "en": "Danon's opening address at the Singapore Tax Academy's International Tax Dispute Day (2025-05-22, later published on the Kluwer International Tax Blog, 2025-05-28) identifies three ways MAP access under Article 25 of the OECD Model is currently being constrained: (i) some tax authorities impose excessive conditions or information demands before granting MAP access, which Danon argues violates proportionality and BEPS Action 14's 'good faith' access requirement; (ii) some states deny MAP where an adjustment stems from a domestic anti-abuse rule, which Danon argues breaches VCLT Article 27 (a state may not invoke domestic law to justify failure to perform a treaty); (iii) 'MAP avoidance' — recharacterizing transfer pricing adjustments under alternative domestic rules to claim the dispute falls outside MAP's scope, which Danon argues defeats the object and purpose of Model Articles 9 and 25. He proposes a BAPA-like bilateral prevention mechanism for non-TP disputes (characterization, PE, beneficial ownership) and extending the framework to indirect taxes."
+    },
+    "controversyType": "academic-critique-of-state-practice",
+    "authorityTier": "academic-peer",
+    "epistemicLayer": ["controversy", "normative-rule"],
+    "topicDomain": ["tax-certainty-and-disputes"],
+    "temporalStatus": "current-final",
+    "relatedTopicIds": ["danon-lausanne-disputes"],
+    "citation": {
+      "author": "Robert Danon",
+      "title": "The effectiveness of the Mutual Agreement Procedure and the global tax controversy landscape: some critical observations on current pressure areas and suggestions to improve the framework",
+      "venue": "Kluwer International Tax Blog",
+      "date": "2025-05-28",
+      "url": "https://legalblogs.wolterskluwer.com/international-tax-law-blog/the-effectiveness-of-the-mutual-agreement-procedure-and-the-global-tax-controversy-landscape-some-critical-observations-on-current-pressure-areas-and-suggestions-to-improve-the-framework/",
+      "accessNote": "Free full text"
+    }
+  },
+  {
+    "id": "un-model-isds-override-clause",
+    "title": {
+      "zh": "UN 範本稅約新增 ISDS 排除條款：Danon 與 Martín Jiménez 的批判",
+      "en": "The UN Model's new ISDS-override clause: Danon and Martín Jiménez's critique"
+    },
+    "summary": {
+      "zh": "2025 年 3 月，聯合國範本稅收協定新增一項條款，意圖阻止投資人在稅務相關爭議中援引投資人–地主國爭端解決（ISDS）程序。該條款兩句式結構：第一句規定符合雙重課稅協定（DTC）的稅收措施，其爭端解決應限於 DTC 本身，不得援引其他條約下的爭端解決安排；第二句則對 DTC 範圍以外的爭議（如稅收徵收、任意課稅）同樣限制 ISDS 取得，除非締約方主管機關另行同意。Danon 與 Martín Jiménez（2025-04-15，Kluwer 部落格）從三面向批判：政策面——「整體政府」理論站不住腳，現行投資條約多已含有精細例外規定的稅收除外條款，此條款卻一律排除稅務事項的 ISDS 管道；法律面——條款具自我判斷性質（主管機關單方定性爭議），仲裁庭可能以越權為由拒絕接受管轄限制，且與《能源憲章條約》等多邊條約的相容性、與歐盟成員國對歐盟貿易協定的適用問題均未處理；救濟缺口面——MAP 是國家對國家機制，主管機關僅「努力」解決爭議，許多 DTC 不含仲裁條款，外國投資人面對稅收錯誤適用或任意課稅時可能完全無有效救濟。",
+      "en": "In March 2025 the UN Model Tax Convention added a clause intended to bar investors from invoking investor-state dispute settlement (ISDS) in tax-related disputes. It has a two-sentence structure: the first confines dispute resolution over DTC-consistent tax measures to the DTC itself, barring recourse to dispute settlement under any other treaty; the second restricts ISDS access even for disputes outside the DTC's scope (e.g. tax collection, arbitrary taxation) unless the competent authorities separately agree otherwise. Danon and Martín Jiménez (Kluwer blog, 2025-04-15) attack it on three fronts: policy — the 'whole of government' theory is unpersuasive, since modern investment treaties already contain carefully carved-out tax exceptions, yet this clause categorically removes ISDS access for tax matters; legal fragility — the clause is self-judging (competent authorities unilaterally characterize the dispute), tribunals may reject the jurisdictional limitation as ultra vires, and compatibility with multilateral treaties like the Energy Charter Treaty, plus EU member states' ability to use the mechanism in EU trade agreements, remain unaddressed; and a genuine remedies gap — MAP is a state-to-state mechanism where competent authorities only 'endeavour' to resolve disputes, many DTCs lack arbitration clauses, and foreign investors facing misapplied domestic tax law or arbitrary taxation may be left with no effective remedy at all."
+    },
+    "controversyType": "treaty-drafting-dispute",
+    "authorityTier": "academic-peer",
+    "epistemicLayer": ["controversy", "normative-rule", "future-development"],
+    "topicDomain": ["un-tax-cooperation", "investment-arbitration-and-tax", "tax-certainty-and-disputes"],
+    "temporalStatus": "current-draft",
+    "relatedTopicIds": ["un-tax-convention-governance", "danon-lausanne-disputes"],
+    "citation": {
+      "author": "Robert Danon, Adolfo Martín Jiménez",
+      "title": "The Override of International Investment Agreements by Double Taxation Conventions in the Latest UN Model Tax Convention: Critical comments",
+      "venue": "Kluwer International Tax Blog",
+      "date": "2025-04-15",
+      "url": "https://legalblogs.wolterskluwer.com/international-tax-law-blog/the-override-of-international-investment-agreements-by-double-taxation-conventions-in-the-latest-un-model-tax-convention-critical-comments/",
+      "accessNote": "Free full text"
+    }
+  },
+  {
+    "id": "globe-dispute-resolution-architecture-proposal",
+    "title": {
+      "zh": "GloBE 爭端解決架構提案：Art. 25(3) ＋ 互惠原則 ＋ 新示範規則",
+      "en": "The proposed GloBE dispute-resolution architecture: Art. 25(3), reciprocity, and new model rules"
+    },
+    "summary": {
+      "zh": "Danon 與 Gutmann、Maisto、Martín Jiménez 在 2022 年《World Tax Journal》論文（pp. 489–515）主張：GloBE 規則高度協調化的設計，將引發前所未有的跨境爭議數量，而現有機制不足以因應。他們提出以 OECD 範本第 25(3) 條（主管機關間一般協議程序）為法律基礎，結合互惠原則（reciprocity），建構「互惠國內解決機制」（reciprocal domestic resolution mechanism）。2023 年跟進論文（《International Tax Studies》Vol. 6, No. 2）進一步提出三項具體制度設計：（一）新解釋性示範規則（interpretive model rule），（二）新 lex specialis 示範規則，作為國內互惠爭議解決機制的補充，（三）明確的爭議預防機制。此提案已於 OECD「Pillar Two – Tax Certainty for the GloBE Rules」公開諮詢中提交。2026 年 4 月 8 日，Danon 在 OECD 巴黎「Tax Certainty Roundtable」就修訂後的 MEMAP 2026（2026 年 2 月發布，新增 59 項最佳實踐）提供意見，強調程序最佳化是必要條件，但 Pillar Two 的高度相互依賴性需要更強的法律確定性保障——換言之，MEMAP 2026 的漸進式改善尚未回應他 2022/2023 年提出的結構性提案。",
+      "en": "Danon, Gutmann, Maisto, and Martín Jiménez's 2022 World Tax Journal article (pp. 489–515) argues that the GloBE Rules' highly coordinated design will generate an unprecedented volume of cross-border disputes that existing mechanisms cannot absorb. They propose grounding a 'reciprocal domestic resolution mechanism' in Article 25(3) of the OECD Model (the general mutual-agreement provision) combined with a principle of reciprocity. A 2023 follow-up (International Tax Studies, Vol. 6, No. 2) adds three concrete design elements: (i) a new interpretive model rule, (ii) a new lex specialis model rule supplementing domestic reciprocal resolution mechanisms, and (iii) an explicit dispute-prevention component. The proposal was submitted to the OECD's 'Pillar Two – Tax Certainty for the GloBE Rules' public consultation. On 2026-04-08, Danon commented on the revised MEMAP 2026 (released February 2026, adding 59 best practices) at the OECD's Paris Tax Certainty Roundtable, arguing that procedural best practices are necessary but that Pillar Two's high interdependence demands stronger legal-certainty guarantees — implying MEMAP 2026's incremental improvements have not yet answered the structural proposal he made in 2022/2023."
+    },
+    "controversyType": "academic-proposal-vs-administrative-response",
+    "authorityTier": "academic-peer",
+    "epistemicLayer": ["controversy", "future-development", "normative-rule"],
+    "topicDomain": ["pillar-two", "tax-certainty-and-disputes"],
+    "temporalStatus": "current-draft",
+    "relatedTopicIds": ["pillar-two-simplification", "danon-lausanne-disputes"],
+    "citation": {
+      "author": "Robert Danon, Daniel Gutmann, Guglielmo Maisto, Adolfo Martín Jiménez",
+      "title": "The OECD/G20 Global Minimum Tax and Dispute Resolution: A Workable Solution Based on Article 25(3) of the OECD Model, the Principle of Reciprocity and the GloBE Model Rules",
+      "venue": "World Tax Journal, Vol. 14, No. 3 (2022), pp. 489-515; follow-up in International Tax Studies, Vol. 6, No. 2 (2023)",
+      "date": "2022",
+      "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4194671",
+      "accessNote": "Free full text on SSRN (registration required)"
+    }
+  },
+  {
+    "id": "beneficial-ownership-legal-vs-economic-split",
+    "title": {
+      "zh": "受益所有人：法律概念說 vs. 經濟概念說的司法分歧",
+      "en": "Beneficial ownership: the judicial split between legal and economic conceptions"
+    },
+    "summary": {
+      "zh": "Danon（2026-03-27，Kluwer 部落格）評析近期司法實踐對稅約「受益所有人」概念的詮釋分歧。瑞士聯邦最高法院（FSC）確立受益所有人應理解為法律概念而非經濟概念——「事實與情形」只能用以確定法律或合同上的轉付義務是否存在，不能僅憑實際運作上的必要性構造出轉付義務；FSC 並明確 2014 年 OECD 注釋修訂僅屬對原始含義的澄清，因此適用於 2014 年前後締結的所有雙重課稅協定。加拿大稅務法院於 C&W Offshore Ltd（2026）判決中，認定英國子公司係受益所有人，依據為其對所得的佔有、控制及承擔財務風險——同樣支持法律詮釋而非經濟詮釋。Danon 強調在後 BEPS 條約下，區分受益所有人分析（法律面向）與 PPT 分析（經濟面向）至關重要：以導管架構為核心的結構應透過 PPT 處理，而非受益所有人概念本身被拉伸以吸收經濟實質判斷。",
+      "en": "Danon's 2026-03-27 Kluwer blog post examines a judicial split over the tax-treaty concept of 'beneficial ownership.' The Swiss Federal Supreme Court has held that beneficial ownership is a legal, not an economic, concept — 'facts and circumstances' can only establish whether a legal or contractual obligation to pass on income exists, not manufacture one out of operational necessity; the FSC also held that the 2014 OECD Commentary revision merely clarified the original meaning, so it applies to DTCs concluded both before and after 2014. The Canadian Tax Court's 2026 decision in C&W Offshore Ltd found a UK subsidiary to be the beneficial owner based on its possession, control, and assumption of financial risk over the income — again supporting the legal rather than economic reading. Danon stresses that in post-BEPS treaties, keeping the beneficial-ownership analysis (legal) separate from the PPT analysis (economic) matters: conduit-centred structures should be addressed through the PPT, not by stretching beneficial ownership itself to absorb economic-substance judgments."
+    },
+    "controversyType": "judicial-interpretation-split",
+    "authorityTier": "academic-peer",
+    "epistemicLayer": ["controversy", "observable-trend"],
+    "topicDomain": ["tax-treaties", "beneficial-ownership-and-abuse"],
+    "temporalStatus": "current-final",
+    "relatedTopicIds": ["danon-lausanne-disputes"],
+    "citation": {
+      "author": "Robert Danon",
+      "title": "A few thoughts on the recent application of the beneficial ownership limitation in tax treaty disputes",
+      "venue": "Kluwer International Tax Blog",
+      "date": "2026-03-27",
+      "url": "https://legalblogs.wolterskluwer.com/international-tax-law-blog/a-few-thoughts-on-the-recent-application-of-the-beneficial-ownership-limitation-in-tax-treaty-disputes/",
+      "accessNote": "Free full text"
+    }
+  },
+  {
+    "id": "qatar-qdmtt-effective-date-discrepancy",
+    "title": {
+      "zh": "Qatar QDMTT 生效日期跨來源不一致",
+      "en": "Qatar's QDMTT effective date disagrees across official sources"
+    },
+    "summary": {
+      "zh": "OECD 於 2026 年更新的 Central Record 將 Qatar 的 IIR 與 QDMTT 列為合格（qualified），Side-by-Side Package 文件第 1.2 節記載其 QDMTT 自 2024 年 1 月 1 日起生效；然而 Qatar 本身的國內公告文件、HMRC（英國稅務海關總署）自身的參考清單，以及 Side-by-Side Package Notice 2 的合格 QDMTT 對照表，均記載為 2025 年 1 月 1 日生效。此為一項具體、可查核的行政指引版本間不一致案例：同一制度事實在 OECD 官方文件內部（Central Record vs. Side-by-Side Package 附表）與跨機構文件（HMRC）之間即存在日期落差，顯示即使是「已確認合格」的規則，其細節仍可能因文件版本、更新時點不同而產生跨管轄權的解讀分歧——這正是 Danon 等學者主張 GloBE 需要更強法律確定性機制的具體例證之一，而非抽象論點。",
+      "en": "The OECD's 2026 update to the Central Record lists Qatar's IIR and QDMTT as qualified, and Section 1.2 of the Side-by-Side Package records Qatar's QDMTT as effective from 1 January 2024; however Qatar's own domestic announcements, HMRC's (UK) own reference list, and the Side-by-Side Package's own Notice 2 qualified-QDMTT table all record 1 January 2025 instead. This is a concrete, checkable case of administrative-guidance version inconsistency: the same regulatory fact disagrees both within the OECD's own documents (Central Record vs. Side-by-Side Package annex) and across institutions (HMRC) — showing that even a rule already 'confirmed qualified' can still generate cross-jurisdictional interpretation gaps depending on which document version or update cycle is consulted. This is exactly the kind of concrete instance that supports Danon's abstract argument that GloBE needs stronger legal-certainty mechanisms, rather than remaining a purely theoretical claim."
+    },
+    "controversyType": "administrative-guidance-inconsistency",
+    "authorityTier": "professional-analysis",
+    "epistemicLayer": ["controversy", "implementation-reality"],
+    "topicDomain": ["pillar-two"],
+    "temporalStatus": "current-final",
+    "relatedTopicIds": ["pillar-two-simplification"],
+    "citation": {
+      "author": "oecdpillars.com (tracking UK HMRC guidance update)",
+      "title": "Pillar Two Developments Tracker 2026 — UK anomaly note on Qatar's QDMTT qualification date",
+      "venue": "oecdpillars.com",
+      "date": "2026-06-01",
+      "url": "https://oecdpillars.com/pillar-two-developments-tracker-2026/",
+      "accessNote": "Free full text; secondary tracking source, cross-check against OECD Central Record before citing formally"
+    }
+  },
+  {
+    "id": "manus-meta-live-case-application",
+    "title": {
+      "zh": "活案例：Manus–Meta 收購案如何實測 Danon × Ziegler 的分析框架",
+      "en": "Live case: testing the Danon × Ziegler framework against the Manus–Meta acquisition"
+    },
+    "summary": {
+      "zh": "本研究桌上的其他條目多半是抽象的學說爭議；Canvas Lab 的另一個頁面「Manus–Meta 跨境收購」則把 Danon 與 Ziegler 的分析工具直接套用在一個 2025 年底發生的真實交易上——中國新創 Manus（原 Butterfly Effect/Monica.Im）於 2023 年在開曼群島設立母公司，2025 年 7 月將總部與逾 40 名核心技術人員遷往新加坡，同年 12 月被 Meta 以逾 20 億美元收購，Meta 發言人確認收購後「不再有任何中國持股利益」。該頁面運用 Danon 的條約濫用理論（重組時序是否構成 BEPS Action 6／OECD 範本第 29 條下的 PPT 疑慮）與其「體系整合」原則（VCLT 第 31(3)(c) 條），並援引 Ziegler 在強制徵收、公平公正待遇標準與國家安全例外方面的投資法研究，逐項檢視大陸國家發展改革委員會可能援引的「實質重於形式」原則是否構成可受投資仲裁保護的強制剝奪。這是本研究桌唯一一個把上述學說性爭點放進具體、有時間戳記事實的案例。",
+      "en": "Most other entries here are abstract doctrinal disputes. A separate Canvas Lab page, 'Manus–Meta Cross-Border Acquisition,' applies Danon's and Ziegler's analytical tools directly to a real transaction that closed in late 2025: the Chinese startup Manus (originally Butterfly Effect/Monica.Im) incorporated a Cayman Islands parent in 2023, relocated its headquarters and over 40 core technical staff to Singapore in July 2025, and was acquired by Meta for over USD 2 billion that December, with a Meta spokesperson confirming 'no continuing Chinese ownership interests' post-acquisition. That page runs Danon's treaty-abuse framework (whether the restructuring's timing raises a PPT concern under BEPS Action 6/OECD Model Art. 29) and his 'systemic integration' principle (VCLT Art. 31(3)(c)) alongside Ziegler's investment-law work on forced expropriation, the fair-and-equitable-treatment standard, and national-security exceptions, to test whether an NDRC substance-over-form order would constitute a compensable taking under investment arbitration protection. It is the one entry here that puts these doctrinal disputes against a concrete, dated fact pattern rather than leaving them abstract."
+    },
+    "controversyType": "cross-reference",
+    "authorityTier": "professional-analysis",
+    "epistemicLayer": ["controversy", "research-hotspot"],
+    "topicDomain": ["investment-arbitration-and-tax", "tax-treaties"],
+    "temporalStatus": "current-final",
+    "relatedTopicIds": ["danon-lausanne-disputes"],
+    "internalLink": "/manusmetaacquisition",
+    "citation": {
+      "author": "Canvas Lab",
+      "title": "Manus–Meta 跨境收購 / Manus-Meta Cross-Border Acquisition",
+      "venue": "my-canvas-lab",
+      "date": "2026",
+      "url": "/manusmetaacquisition",
+      "accessNote": "Internal page, not an external source"
+    }
+  }
+]
