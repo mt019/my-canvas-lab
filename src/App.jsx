@@ -1,6 +1,6 @@
 import React, { Suspense, lazy, useEffect, useMemo } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import { ArrowRight, Droplets, Landmark, Mic, Music, Music2, Piano, Scale, Wind } from 'lucide-react';
+import { ArrowRight, CalendarDays, Droplets, Globe2, Landmark, Mic, Music, Music2, Piano, Scale, Wind } from 'lucide-react';
 
 const pages = import.meta.glob('./pages/*.{jsx,tsx}');
 
@@ -69,11 +69,28 @@ const PAGE_META = {
     accentText: '#3b4f78',
     group: 'analysis',
   },
+  InternationalTaxOps: {
+    name: '國際稅法研究桌',
+    desc: 'OECD、UN、洛桑稅法圈與前沿趨勢觀察，從 Canvas 進入同一研究桌',
+    Icon: Globe2,
+    accent: '#d7e7e5',
+    accentText: '#1f6f69',
+    group: 'analysis',
+  },
+  TaipeiFilmFestival: {
+    name: '台北電影節售票雷達',
+    desc: 'OpenTix 即時餘額同步，將可買場次壓成首頁式決策儀表板',
+    Icon: CalendarDays,
+    accent: '#d8e8e0',
+    accentText: '#2f6f60',
+    group: 'life',
+  },
 };
 
 const GROUPS = [
   { key: 'music',    label: '音樂工具' },
   { key: 'analysis', label: '分析工具' },
+  { key: 'life',     label: '生活工具' },
 ];
 
 export default function App() {
@@ -135,6 +152,7 @@ function RouteCard({ route }) {
 const GROUP_META = {
   music:    { emoji: '♩', desc: '調音、音高偵測與鍵盤合成器' },
   analysis: { emoji: '◈', desc: '法律、財稅與政策的互動視覺化' },
+  life:     { emoji: '◇', desc: '活動、行程與日常決策工具' },
 };
 
 function HomePage({ routes }) {
