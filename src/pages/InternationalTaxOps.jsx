@@ -332,6 +332,31 @@ export default function InternationalTaxOps() {
           <Link to="/"><ArrowLeft size={15} />{lang === 'zh' ? '回總入口' : 'Back to Canvas'}</Link>
         </nav>
 
+        <div className={styles.sideSection}>
+          <div className={styles.filterHeader}>
+            <Filter size={13} />
+            <p>{t.lens}</p>
+          </div>
+          <p className={styles.filterDesc}>{t.desc}</p>
+          <button
+            className={layer === 'all' ? `${styles.sideFilter} ${styles.active}` : styles.sideFilter}
+            onClick={() => { setLayer('all'); setMainTab('matrix'); }}
+          >
+            <span />
+            {t.all}
+          </button>
+          {layers.map((item) => (
+            <button
+              key={item.id}
+              className={layer === item.id ? `${styles.sideFilter} ${styles.active}` : styles.sideFilter}
+              onClick={() => { setLayer(item.id); setMainTab('matrix'); }}
+            >
+              <span />
+              {item[lang]}
+            </button>
+          ))}
+        </div>
+
         <button className={`${styles.langButton} ${styles.sideLang}`} onClick={() => setLang(lang === 'zh' ? 'en' : 'zh')}>
           <Languages size={16} />
           {t.lang}
@@ -376,23 +401,6 @@ export default function InternationalTaxOps() {
 
         {mainTab === 'matrix' && (
           <>
-            <section className={styles.lensPanel}>
-              <div className={styles.sectionHead}>
-                <div>
-                  <h2>{t.lens}</h2>
-                  <p>{t.desc}</p>
-                </div>
-              </div>
-              <div className={styles.chips}>
-                <button className={layer === 'all' ? `${styles.chip} ${styles.active}` : styles.chip} onClick={() => setLayer('all')}>{t.all}</button>
-                {layers.map((item) => (
-                  <button key={item.id} className={layer === item.id ? `${styles.chip} ${styles.active}` : styles.chip} onClick={() => setLayer(item.id)}>
-                    {item[lang]}
-                  </button>
-                ))}
-              </div>
-            </section>
-
             <section className={styles.panel}>
               <div className={styles.sectionHead}>
                 <h2>{t.matrix}</h2>
