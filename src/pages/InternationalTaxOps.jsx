@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Background, Controls, ReactFlow } from '@xyflow/react';
+import { Background, Controls, ReactFlow, useNodesState, useEdgesState } from '@xyflow/react';
 import dagre from '@dagrejs/dagre';
 import '@xyflow/react/dist/style.css';
 import {
@@ -208,7 +208,7 @@ export default function InternationalTaxOps() {
   // in the data). Watch-list items have no recorded topic relevance yet, so
   // they're laid out as an unconnected column rather than wired with
   // fabricated edges that would just add visual noise without signal.
-  const { graphNodes, graphEdges } = useMemo(() => {
+  const { graphNodes: layoutNodes, graphEdges: layoutEdges } = useMemo(() => {
     const NODE_WIDTH = { source: 210, topic: 245, watch: 220 };
     const NODE_HEIGHT = 68;
 
@@ -270,6 +270,17 @@ export default function InternationalTaxOps() {
       graphEdges: sourceEdges,
     };
   }, [lang, selected.id]);
+
+  // ReactFlow's `nodes`/`edges` props are controlled — without local state
+  // synced via onNodesChange/onEdgesChange, dragging has nowhere to persist
+  // to and silently resets on every render. useNodesState/useEdgesState own
+  // that local state; the effects below re-sync from the dagre layout only
+  // when the underlying data actually changes (language, selection), not on
+  // every render, so a drag isn't immediately undone by React Flow itself.
+  const [nodes, setNodes, onNodesChange] = useNodesState(layoutNodes);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(layoutEdges);
+  useEffect(() => { setNodes(layoutNodes); }, [layoutNodes, setNodes]);
+  useEffect(() => { setEdges(layoutEdges); }, [layoutEdges, setEdges]);
 
   return (
     <main className={styles.workspace}>
@@ -445,8 +456,10 @@ export default function InternationalTaxOps() {
           </div>
           <div className={styles.relationCanvas}>
             <ReactFlow
-              nodes={graphNodes}
-              edges={graphEdges}
+              nodes={nodes}
+              edges={edges}
+              onNodesChange={onNodesChange}
+              onEdgesChange={onEdgesChange}
               fitView
               minZoom={0.35}
               maxZoom={1.45}
