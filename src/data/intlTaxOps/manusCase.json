@@ -1,0 +1,1142 @@
+{
+  "phases": [
+    {
+      "no": "I",
+      "period": "2016 – 2022",
+      "color": "#c8d8f0",
+      "tc": "#305090",
+      "zh": {
+        "title": "中國境內價值形成",
+        "sub": "創業起點與技術積累"
+      },
+      "en": {
+        "title": "Value Formation in China",
+        "sub": "Founding & Technology Accumulation"
+      },
+      "events": [
+        {
+          "date": "~2016",
+          "zh": "創始人肖弘（Xiao Hong）與核心團隊在中國開始創業探索，前身為「夜鶯科技」，歷經多次產品迭代與失敗。",
+          "en": "Founder Xiao Hong and core team begin entrepreneurial exploration in China under predecessor \"Nightingale Tech,\" through multiple product iterations."
+        },
+        {
+          "date": "2019–2021",
+          "zh": "真格基金等早期投資人開始投入，公司仍屬高度不確定的早期新創，無穩定收入，研發與人員集中於中國境內。",
+          "en": "Early investors including ZhenFund begin backing the company. Highly uncertain early-stage startup with no stable revenue; R&D and personnel concentrated in China."
+        },
+        {
+          "date": "2022 年底",
+          "zh": "Butterfly Effect Tech（蝴蝶效應科技）正式成立，推出 AI 助手 Monica.im。ChatGPT 兩個月後問世，公司核心活動仍在中國。",
+          "en": "Butterfly Effect Tech formally established, launching AI assistant Monica.im. ChatGPT follows two months later; company operations remain China-based.",
+          "src": "[1][2][3]"
+        }
+      ],
+      "taxNote": {
+        "zh": "長期虧損，無應稅利潤，無可定價之無形資產。經濟價值持續形成，但在稅法上完全不可見——中國此時並無任何稅收連結點可主張資本利得。",
+        "en": "Sustained losses, no taxable profits, no priceable intangibles. Economic value accumulates but is invisible to tax law; China has no nexus to assert taxing rights over future capital gains."
+      }
+    },
+    {
+      "no": "II",
+      "period": "2022 – 2023",
+      "color": "#d0e4d8",
+      "tc": "#306050",
+      "zh": {
+        "title": "早期融資與風險承擔",
+        "sub": "中國風投入場"
+      },
+      "en": {
+        "title": "Early Funding & Risk-Taking",
+        "sub": "Chinese VC Entry"
+      },
+      "events": [
+        {
+          "date": "2022",
+          "zh": "公司完成第一輪融資，金額不超過 1,000 萬美元，投資人包括真格基金等中國創投。",
+          "en": "Company closes first funding round (under USD 10M); investors include Chinese VC ZhenFund.",
+          "src": "[4][5][6]"
+        },
+        {
+          "date": "2023 年 1 月",
+          "zh": "紅杉資本中國（現 HongShan Capital）據報加入投資。騰訊亦為早期投資人。",
+          "en": "HongShan Capital (formerly Sequoia China) reportedly joins; Tencent is also an early investor.",
+          "src": "[7]"
+        }
+      ],
+      "taxNote": {
+        "zh": "風險承擔本身不產生課稅事件。早期虧損投資不在國際稅法中形成分配地位。但中國法人實體（北京蝴蝶效應科技有限公司）已存在並承擔全部實質業務功能。",
+        "en": "Risk-taking itself generates no taxable event. Early-stage loss investment creates no allocation entitlement under IEL. But a Chinese legal entity exists bearing all substantive business functions."
+      }
+    },
+    {
+      "no": "III",
+      "period": "2023",
+      "color": "#e8daf0",
+      "tc": "#604070",
+      "zh": {
+        "title": "境外結構前置部署",
+        "sub": "開曼控股架構成形"
+      },
+      "en": {
+        "title": "Offshore Pre-Structuring",
+        "sub": "Cayman Holding Structure Established"
+      },
+      "events": [
+        {
+          "date": "2023",
+          "zh": "「Butterfly Effect」母公司在開曼群島完成設立，成為控股架構頂端。同期新加坡實體亦開始布局，形成「開曼 → 新加坡 → 中國」的三層結構。此時公司尚未爆紅，亦未引入美國主流資本。",
+          "en": "Parent entity \"Butterfly Effect\" incorporated in the Cayman Islands as holding structure apex. Singapore entity also established. Three-tier structure: Cayman → Singapore → China. Company not yet prominent; no major US capital.",
+          "src": "[8][9]"
+        }
+      ],
+      "taxNote": {
+        "zh": "此為關鍵的稅收連結點遷移節點。資本利得的未來歸屬路徑已被預先鎖定於開曼（零稅率）。中國稅法對境外股權轉讓的管轄能力自此受到結構性限制。這是「法律形式先於實質活動」的典型預部署。",
+        "en": "Critical moment of nexus migration. Future capital gains locked into a zero-tax Cayman vehicle before any value realization. China's capacity to tax offshore equity transfers is structurally limited from this point. Classic pre-structuring: legal form precedes substantive relocation."
+      }
+    },
+    {
+      "no": "IV",
+      "period": "2024",
+      "color": "#f0e8d0",
+      "tc": "#705030",
+      "zh": {
+        "title": "Manus 產品爆紅",
+        "sub": "市場定價前夕"
+      },
+      "en": {
+        "title": "Manus Goes Viral",
+        "sub": "Market Valuation on the Horizon"
+      },
+      "events": [
+        {
+          "date": "2024 年 3 月",
+          "zh": "Manus AI Agent 正式發布，等待名單迅速突破 200 萬，在中國與全球科技圈引發廣泛關注。",
+          "en": "Manus AI Agent publicly launched. Waitlist surpasses 2 million rapidly; major attention in China and global tech media."
+        },
+        {
+          "date": "2024 年初",
+          "zh": "ByteDance 嘗試以 3,000 萬美元收購 Monica，被創始人拒絕。公司宣布與阿里巴巴通義千問合作，計劃推出「中國版 Manus」。",
+          "en": "ByteDance attempts to acquire Monica for USD 30M; founder declines. Company announces partnership with Alibaba's Tongyi Qianwen, planning a China-version of Manus.",
+          "src": "[10]"
+        }
+      ],
+      "taxNote": {
+        "zh": "價值首次被市場廣泛識別，但尚未發生任何實現事件（no realization event）。國際稅法此時仍沉默——未實現的價值增長不觸發任何稅收義務。然而市場識別本身提高了境外結構所承載的潛在稅基。",
+        "en": "Value first recognized widely by market, but no realization event occurs. International tax law remains silent; unrealized appreciation triggers no obligation. Yet market recognition raises the potential tax base locked in the offshore structure."
+      }
+    },
+    {
+      "no": "V",
+      "period": "2025 年 4–5 月",
+      "color": "#d0e0f8",
+      "tc": "#304880",
+      "zh": {
+        "title": "美國資本進場",
+        "sub": "Series B · Benchmark 領投"
+      },
+      "en": {
+        "title": "US Capital Entry",
+        "sub": "Series B · Benchmark Lead"
+      },
+      "events": [
+        {
+          "date": "2025 年 4 月",
+          "zh": "Manus 完成 7,500 萬美元 B 輪融資，由 Benchmark 領投，投後估值約 5 億美元。既有投資人包括騰訊、真格基金、HongShan。公司由此進入美國主流資本市場的可見範圍，美中科技管制語境下的合規壓力隨之上升。",
+          "en": "Manus closes Series B at USD 75M led by Benchmark; post-money valuation ~USD 500M. Existing investors include Tencent, ZhenFund, HongShan. Company now visible to US capital markets; compliance pressure under US-China tech controls rises.",
+          "src": "[11][12]"
+        }
+      ],
+      "taxNote": {
+        "zh": "融資本身為股權投資，通常不等同股東退出，不當然產生「已實現」之資本利得課稅事件。主要效應在於估值被國際資本市場重新定價，使境外控股結構開始在功能上承載「未來資本利得」之主要歸屬路徑。",
+        "en": "Equity financing does not itself constitute a shareholder exit; typically not a realization event. Primary effect: valuation reset by international capital markets, making the offshore structure the functional vehicle for future capital gain allocation."
+      }
+    },
+    {
+      "no": "VI",
+      "period": "2025 年 6–7 月",
+      "color": "#f8d8c8",
+      "tc": "#804020",
+      "zh": {
+        "title": "實質營運撤出中國",
+        "sub": "新加坡化完成"
+      },
+      "en": {
+        "title": "Substantive Exit from China",
+        "sub": "Singaporeanisation Complete"
+      },
+      "events": [
+        {
+          "date": "2025 年 6 月",
+          "zh": "公司對外宣布總部已遷至新加坡，新加坡正式成為主要研發與管理據點。",
+          "en": "Company publicly announces HQ relocation to Singapore; Singapore becomes primary R&D and management hub.",
+          "src": "[13][14]"
+        },
+        {
+          "date": "2025 年 7 月",
+          "zh": "中國境內大規模裁員（原約 120 人，約 40 名核心技術人員轉至新加坡）。終止與阿里巴巴合作，中止「中國版 Manus」開發。清空微博、小紅書等中國社群帳號。中國 IP 訪問官網顯示服務不可用。",
+          "en": "Mass layoffs in China (from ~120 staff; ~40 key technical personnel transferred to Singapore). Terminates Alibaba partnership, halts China-version development. Chinese social media accounts wiped. Chinese IP access to website blocked.",
+          "src": "[13][14][15]"
+        },
+        {
+          "date": "（持續存在）",
+          "zh": "北京蝴蝶效應科技有限公司法律實體仍然存續（新華通訊社確認），但已不承擔核心研發、營運或退出功能。",
+          "en": "Beijing Butterfly Effect Technology Co. Ltd. remains legally extant (confirmed by Xinhua), but no longer carries core R&D, operations, or exit functions.",
+          "src": "[8]"
+        }
+      ],
+      "taxNote": {
+        "zh": "此為最關鍵的稅收連結點重組節點。中國稅法可能主張「實質遷移」觸發「中國境內財產轉讓所得」的課稅權；OECD BEPS 行動計畫（尤其 Action 8-10）關注功能、風險與資產的實質轉移。新加坡成為新的稅收居民地。",
+        "en": "Most critical nexus restructuring moment. China may assert that substantive relocation triggers taxing rights over \"income from transfer of China-sited property.\" OECD BEPS Actions 8-10 focus on substantive transfer of functions, risks, and assets. Singapore becomes new tax residence."
+      }
+    },
+    {
+      "no": "VII",
+      "period": "2025 年 12 月",
+      "color": "#d8f0d8",
+      "tc": "#307050",
+      "zh": {
+        "title": "Meta 完成收購",
+        "sub": "退出事件實現"
+      },
+      "en": {
+        "title": "Meta Acquisition Complete",
+        "sub": "Exit Event Realized"
+      },
+      "events": [
+        {
+          "date": "2025 年 12 月 29–30 日",
+          "zh": "Meta Platforms 宣布協議收購 Manus，交易估值逾 20 億美元（部分報導指現金對價 20 億美元）。收購標的為新加坡實體，由開曼群島控股公司持有。Meta 發言人確認：「Manus AI 完成交易後將無任何持續存在的中國所有權利益。」",
+          "en": "Meta Platforms announces agreement to acquire Manus; deal valued at >USD 2 billion (some reports: USD 2B cash). Target: Singapore entity held by Cayman holding company. Meta spokesperson: \"there will be no continuing Chinese ownership interests in Manus AI.\"",
+          "src": "[16][17][18][19][20]"
+        },
+        {
+          "date": "2025 年 12 月（交割完成）",
+          "zh": "交易靜默完成交割，Manus 正式成為 Meta 旗下。截至交割時，Manus 年度經常性收入（ARR）約 1 億美元。",
+          "en": "Deal closes quietly. Manus officially becomes part of Meta. ARR at closing: approximately USD 100M."
+        }
+      ],
+      "taxNote": {
+        "zh": "此為最終退出實現事件（ultimate exit realization event）。資本利得在開曼群島控股層面實現，對中國稅務機關而言，依法追徵中國境內創始價值之所得稅極為困難。這正是「境外結構預部署」的核心效果——稅收連結點與價值創造地完全脫鉤。然而，「事件鏈」在此並未結束——中國監管機構隨即啟動外商投資安全審查。",
+        "en": "Ultimate exit realization event. Capital gains realized at Cayman level; Chinese tax recovery of China-origin early-stage value creation is legally arduous. This is the core pre-structuring effect: complete decoupling of tax nexus from value creation. Yet the \"event chain\" does not end here — Chinese regulators immediately initiated foreign investment security review."
+      }
+    },
+    {
+      "no": "VIII",
+      "period": "2026 年 4 月",
+      "color": "#f8d0a0",
+      "tc": "#804000",
+      "zh": {
+        "title": "NDRC 強制解除交易",
+        "sub": "中國 FISR 首次公開適用於 AI 跨境收購"
+      },
+      "en": {
+        "title": "NDRC Mandates Unwind",
+        "sub": "China FISR First Public AI Acquisition Block"
+      },
+      "events": [
+        {
+          "date": "2026 年 4 月 27 日",
+          "zh": "中國國家發展和改革委員會（NDRC）依《外商投資安全審查辦法》（2020）第 12 條，正式命令 Meta 與 Manus 解除收購交易，要求恢復投資前狀態。此為中國 FISR 機制首次公開確認用於解除已完成的跨境 AI 收購交易，具有重大先例意義。",
+          "en": "China's NDRC issues formal order under FISR Measures (2020) Article 12, requiring Meta and Manus to unwind the acquisition and restore pre-investment state. This is the first publicly confirmed use of China's FISR mechanism to unwind a completed cross-border AI acquisition — a landmark precedent.",
+          "src": "[A1][A2][A3]"
+        },
+        {
+          "date": "審查過程",
+          "zh": "NDRC 在交易宣布後（2025 年 12 月）幾乎立即啟動審查，歷時約四個月後作出命令。審查依據：《外商投資法》第 35 條與《國家安全法》第 59 條的授權，由 NDRC 與商務部聯合實施。NDRC 研究員朱友平表示：「Manus 遷至新加坡本質上是利用中國境內資源孵化價值，再通過境外結構套現以規避監管。」",
+          "en": "NDRC initiated review almost immediately after deal announcement (Dec 2025); review stretched approximately four months. Legal basis: FISR Measures implementing FIL Article 35 and National Security Law Article 59, jointly administered by NDRC and MOFCOM. NDRC researcher Zhu Youping: \"Manus's relocation to Singapore is essentially a case of using domestic resources to incubate value and monetizing it through an offshore structure to bypass oversight.\"",
+          "src": "[A2][A4]"
+        }
+      ],
+      "taxNote": {
+        "zh": "法律分析核心：《外商投資安全審查辦法》第 12 條「恢復投資前狀態」的命令，實質上是對「法律形式（境外結構）」之後的「實質聯繫（中國創始價值）」主張管轄，形成「實質重於形式」原則在安全審查法中的首次公開適用。此原則與國際稅法的 BEPS 框架同構，但其強制力與速度遠超稅法工具。",
+        "en": "Legal analysis core: FISR Measures Article 12 \"restore pre-investment state\" order asserts jurisdiction over \"substantive connection\" (Chinese founding value) behind \"legal form\" (offshore structure) — the first public application of substance-over-form doctrine in Chinese security review law. This principle is structurally isomorphic to BEPS, but its enforcement power and speed far exceed tax law tools."
+      }
+    },
+    {
+      "no": "IX",
+      "period": "2026 年 6 月（進行中）",
+      "color": "#e8e0f8",
+      "tc": "#503080",
+      "zh": {
+        "title": "解構與重組：Manus 回歸",
+        "sub": "創始人主導回購，香港 IPO 待議"
+      },
+      "en": {
+        "title": "Unwinding & Restructuring: Manus Returns",
+        "sub": "Founder-Led Buyback; HK IPO Under Discussion"
+      },
+      "events": [
+        {
+          "date": "2026 年 6 月 11 日",
+          "zh": "Meta 完成與 Manus 的營運切割，Manus 員工被禁止訪問 Meta 內部系統，Meta 員工亦停止使用 Manus 工具，並宣布將「日落」（sunset）Manus 平台。",
+          "en": "Meta completes operational split from Manus. Manus staff barred from Meta internal systems; Meta employees cease using Manus tools. Meta announces \"sunsetting\" of Manus platform.",
+          "src": "[A5][A6]"
+        },
+        {
+          "date": "2026 年 6 月（進行中）",
+          "zh": "創始人肖弘、季逸超、張韜正尋求融資約 10 億美元，以 20 億美元估值從 Meta 回購 Manus——但此時 Manus 的 ARR 已成長至 4–5 億美元（收購時為 1 億美元），Meta 實際上被迫以原始收購價返還一家已增值數倍的公司。回購方案包括騰訊、真格基金、HongShan 及 Benchmark，後續計畫在中國設立合資架構，並謀求香港 IPO。",
+          "en": "Founders Xiao Hong, Ji Yichao, and Zhang Tao seek ~USD 1B to buy Manus back from Meta at the original USD 2B valuation — but Manus ARR has grown to USD 400-500M (from USD 100M at acquisition). Meta is effectively forced to return a company several times more valuable at the original price. Buyback coalition: Tencent, ZhenFund, HongShan, Benchmark. Next steps: Chinese JV structure, then potential Hong Kong IPO.",
+          "src": "[A7][A8][A9]"
+        }
+      ],
+      "taxNote": {
+        "zh": "解構交易的稅務後果高度複雜：原始退出實現（開曼層面）的課稅地位是否因解除而被追溯改變？早期投資人（騰訊、ZhenFund、HongShan）的資本利得是否在回購交易中重新觸發課稅？若最終走向香港 IPO，則整個結構的稅收歸屬地將再次重組。此為「跨境 AI 新創退出」在後監管干預階段的稅法前沿問題。",
+        "en": "The tax consequences of the unwind are highly complex: is the original exit realization (at Cayman level) retroactively undone? Do early investors' (Tencent, ZhenFund, HongShan) capital gains re-trigger on the buyback transaction? A Hong Kong IPO would restructure the entire tax nexus again. This is the frontier tax law question for cross-border AI startup exits in the post-regulatory-intervention phase."
+      }
+    }
+  ],
+  "structure": [
+    {
+      "id": "meta",
+      "label": "Meta Platforms Inc.",
+      "sub": "Delaware, USA · Acquirer",
+      "color": "#d0e8d0",
+      "tc": "#307030",
+      "zh": "收購方（2025 年 12 月）",
+      "en": "Acquirer (December 2025)"
+    },
+    {
+      "id": "cayman",
+      "label": "Butterfly Effect",
+      "sub": "Cayman Islands · Ultimate Parent",
+      "color": "#e8d0f0",
+      "tc": "#603080",
+      "zh": "開曼群島控股主體 · 法律上承載資本利得",
+      "en": "Cayman holding entity · legally captures capital gains"
+    },
+    {
+      "id": "sg",
+      "label": "Manus AI Pte. Ltd.",
+      "sub": "Singapore · Operational HQ (post-Jul 2025)",
+      "color": "#d0e0f8",
+      "tc": "#304880",
+      "zh": "新加坡營運主體 · 2025 年 7 月後為核心實體",
+      "en": "Singapore operational entity · core post-July 2025"
+    },
+    {
+      "id": "cn",
+      "label": "北京蝴蝶效應科技有限公司",
+      "sub": "Beijing, China · Still legally extant",
+      "color": "#f0d8d0",
+      "tc": "#803020",
+      "zh": "中國法律實體（仍存續）· 已不承擔核心功能",
+      "en": "Chinese entity (still extant) · no longer core-functional"
+    }
+  ],
+  "legalDimensions": [
+    {
+      "id": "screening",
+      "color": "#c8d8f0",
+      "tc": "#304878",
+      "zh": {
+        "title": "投資審查制度",
+        "sub": "三個司法管轄區的監管主張"
+      },
+      "en": {
+        "title": "Investment Screening",
+        "sub": "Regulatory Claims Across Three Jurisdictions"
+      },
+      "items": [
+        {
+          "zh": {
+            "h": "中國：外商投資安全審查",
+            "b": "中國依據《外商投資法》（2019）及外商投資安全審查辦法（2021）對本案主張管轄權。問題核心在於：即便控制性主體已設於境外，中國技術與創始價值是否仍構成受保護的國家戰略資產？監管機關的介入（事後）揭示了一個結構性矛盾：安全審查框架以「實質聯繫」為連結點，可穿透法律形式，追及已完成境外重組的交易。"
+          },
+          "en": {
+            "h": "China: Foreign Investment Security Review",
+            "b": "China asserts jurisdiction under the Foreign Investment Law (2019) and Security Review Measures for Foreign Investments (2021). Core issue: do Chinese technology and founding value constitute protected strategic assets even after controlling entities relocate offshore? Post-hoc regulatory intervention reveals a structural tension: security review frameworks use \"substantive connection\" as their nexus, capable of piercing legal form to reach restructured transactions."
+          }
+        },
+        {
+          "zh": {
+            "h": "CFIUS（美國）",
+            "b": "Manus 被 Benchmark 投資後進入美國資本市場語境，CFIUS 對外國控制的技術資產有管轄能力。Meta 為美國公司，本次收購在 CFIUS 角度為美國公司收購涉中國來源 AI 技術的交易，技術性上觸發申報考量。然而 Meta 已獲確認完成收購，顯示 CFIUS 審查（如有）未構成禁止性阻礙。"
+          },
+          "en": {
+            "h": "CFIUS (United States)",
+            "b": "Post-Benchmark investment, Manus entered US capital market jurisdiction; CFIUS has authority over foreign-controlled technology assets. As a US company acquiring AI technology of Chinese-origin, Meta's transaction technically triggers CFIUS filing considerations. The confirmed completion of the deal suggests CFIUS review (if any) was not prohibitive."
+          }
+        },
+        {
+          "zh": {
+            "h": "EU 外商直接投資審查（比較背景）",
+            "b": "EU FDI 審查條例（2019/452）建立資訊共享機制，成員國保留個別審查權。本案為美國企業收購新加坡實體，但若涉及歐盟境內業務拓展，相關機制可能被觸發。本案具比較法意義在於：揭示 FDI 審查框架如何因應 AI 技術的高流動性（legal mobility）而重新定義「管轄連結點」。"
+          },
+          "en": {
+            "h": "EU FDI Screening (Comparative Context)",
+            "b": "EU FDI Screening Regulation (2019/452) establishes an information-sharing mechanism; member states retain individual review authority. Though a US-Singapore transaction, EU mechanisms could activate for EU market operations. Comparative significance: reveals how FDI screening frameworks redefine \"jurisdictional nexus\" in response to the high legal mobility of AI technology."
+          }
+        }
+      ],
+      "iconId": "Shield"
+    },
+    {
+      "id": "techcontrol",
+      "color": "#d0f0e0",
+      "tc": "#305040",
+      "zh": {
+        "title": "技術管制與資料治理",
+        "sub": "資產流動的法律可行性限制"
+      },
+      "en": {
+        "title": "Technology Controls & Data Governance",
+        "sub": "Legal Feasibility Constraints on Asset Mobility"
+      },
+      "items": [
+        {
+          "zh": {
+            "h": "中國技術出口管制",
+            "b": "《技術進出口管理條例》（TIER）及 2023 年修訂的《對外貿易法》相關規定，使特定 AI 技術（尤其是模型、算法、訓練數據）的跨境轉移受到許可管制。Manus 案的問題在於：「人才遷移＋模型帶出」是否構成未申報的技術出口？此為技術管制法與公司重組的核心衝突點。"
+          },
+          "en": {
+            "h": "China Technology Export Controls",
+            "b": "The Regulations on Technology Import and Export (TIER) and 2023 amendments to the Foreign Trade Law regulate cross-border transfer of specific AI technologies (models, algorithms, training data). Key Manus question: does \"talent migration + model transfer\" constitute undeclared technology export? This is the central conflict between technology control law and corporate restructuring."
+          }
+        },
+        {
+          "zh": {
+            "h": "資料在地化與跨境資料流",
+            "b": "《個人資訊保護法》（2021）及《數據安全法》（2021）對資料出境設有安全評估要求。Manus 在中國市場曾積累大量用戶數據，其服務終止與資料遷移是否依法完成資料出境評估，具有法律不確定性。此一問題在併購後的資產整合階段（Meta 整合 Manus 數據）將再度浮現。"
+          },
+          "en": {
+            "h": "Data Localization & Cross-Border Data Flows",
+            "b": "The Personal Information Protection Law (2021) and Data Security Law (2021) impose security assessment requirements for data cross-border transfers. Manus had accumulated Chinese user data; legal uncertainty surrounds whether its service termination and data migration complied with exit assessment requirements. This issue resurfaces during post-acquisition integration (Meta incorporating Manus data)."
+          }
+        }
+      ],
+      "iconId": "Network"
+    },
+    {
+      "id": "tax",
+      "color": "#f0e8d0",
+      "tc": "#705030",
+      "zh": {
+        "title": "國際稅法：課稅權分配",
+        "sub": "OECD 框架下的時序錯位問題"
+      },
+      "en": {
+        "title": "International Tax: Taxing Rights Allocation",
+        "sub": "Temporal Mismatch Under the OECD Framework"
+      },
+      "items": [
+        {
+          "zh": {
+            "h": "核心問題：價值創造地 ≠ 退出實現地",
+            "b": "國際稅法傳統上以「來源地」（source）與「居住地」（residence）為課稅連結點。Manus 案呈現典型的時序錯位（temporal mismatch）：早期創新活動與人力資本積累在中國（來源地），資本利得在開曼群島控股層面實現，而新加坡為退出前的最後居民地。三個管轄區的課稅主張在不同面向上均有正當性依據。"
+          },
+          "en": {
+            "h": "Core Problem: Value Creation ≠ Exit Realization",
+            "b": "International tax law traditionally uses \"source\" and \"residence\" as nexus points. Manus presents a textbook temporal mismatch: early innovation and human capital in China (source), capital gains realized at Cayman holding level, Singapore as last pre-exit residence. All three jurisdictions have facially legitimate taxing claims in different respects."
+          }
+        },
+        {
+          "zh": {
+            "h": "OECD BEPS 框架的局限性",
+            "b": "OECD BEPS 行動計畫（尤其 Action 8-10 關於無形資產、風險分配與資本）要求課稅按「實質功能、風險承擔、資產所在」分配。然而 Manus 案顯示：當新創公司的功能、風險與資產在法律層面（offshore holding）與實質層面（China-based R&D team）長期分離，現行移轉定價規則無法有效追及早期來源地的貢獻。"
+          },
+          "en": {
+            "h": "Limits of OECD BEPS Framework",
+            "b": "OECD BEPS (especially Actions 8-10 on intangibles, risk allocation, and capital) requires taxation to follow substantive functions, risks borne, and asset locations. Yet Manus reveals: when a startup's functions, risks, and assets are legally separated (offshore holding) from their substantive location (China R&D team) for years, transfer pricing rules cannot effectively recapture early source-country contributions."
+          }
+        },
+        {
+          "zh": {
+            "h": "中國反避稅工具的適用限制",
+            "b": "中國《企業所得稅法》第 47 條（一般反避稅）及受控外國公司（CFC）規則理論上可用於追徵境外架構的所得。但在實踐中，對創業公司境外持股架構的追及面臨舉證困難（難以量化早期無形資產的價值）及主權管轄的政治摩擦（中美關係、中新關係）。"
+          },
+          "en": {
+            "h": "Limits of China's Anti-Avoidance Tools",
+            "b": "China's EIT Law Article 47 (GAAR) and CFC rules theoretically enable assessment against offshore structures. In practice, pursuit faces evidentiary challenges (quantifying early-stage intangible value) and political friction of sovereign jurisdiction (US-China, China-Singapore relations)."
+          }
+        }
+      ],
+      "iconId": "Scale"
+    },
+    {
+      "id": "fisr",
+      "color": "#f8d0a0",
+      "tc": "#804000",
+      "zh": {
+        "title": "⚑ FISR 執法先例（2026 年 4 月）",
+        "sub": "中國首次公開適用外商投資安全審查解除 AI 收購"
+      },
+      "en": {
+        "title": "⚑ FISR Enforcement Precedent (April 2026)",
+        "sub": "China's First Public FISR Block of a Completed AI Acquisition"
+      },
+      "items": [
+        {
+          "zh": {
+            "h": "法律依據：FISR 第 12 條「恢復投資前狀態」",
+            "b": "《外商投資安全審查辦法》（2020 年 12 月，NDRC 與商務部聯合頒佈）第 12 條授權主管機關在交易完成後，仍可命令當事方採取「必要措施恢復投資前狀態」。本條在 2021 年至 2026 年 4 月前從未被公開適用。NDRC 命令覆蓋的法律主體為新加坡實體（並非中國法人），顯示 FISR 可穿透境外結構，依「實質聯繫」主張管轄。"
+          },
+          "en": {
+            "h": "Legal Basis: FISR Article 12 \"Restore Pre-Investment State\"",
+            "b": "The Measures for Foreign Investment Security Review (Dec 2020, jointly issued by NDRC and MOFCOM) Article 12 authorizes authorities, even after a deal closes, to order parties to \"take necessary measures to restore the pre-investment state.\" This provision had never been publicly invoked from 2021 until April 27, 2026. The NDRC order covers a Singapore entity (not a Chinese legal person), demonstrating that FISR can pierce offshore structures and assert jurisdiction via \"substantive connection.\""
+          }
+        },
+        {
+          "zh": {
+            "h": "實質重於形式：「中國資源孵化、境外套現」原則",
+            "b": "NDRC 研究員朱友平的聲明確立了「實質重於形式」原則在 FISR 中的適用：Manus 新加坡化是「利用中國境內資源孵化價值、通過境外結構套現以規避監管」，因此法律形式（新加坡／開曼架構）不能遮蔽實質聯繫（中國創始活動、中國人力資本、中國市場）。此原則若在後續案件中被系統性確立，將從根本上改變跨境 AI 新創的重組邏輯。"
+          },
+          "en": {
+            "h": "Substance Over Form: \"China-Incubated Value, Offshore Exit\" Doctrine",
+            "b": "NDRC researcher Zhu Youping's statement establishes substance-over-form doctrine in FISR: Manus's Singaporeanisation was \"using domestic resources to incubate value and monetizing it through an offshore structure to bypass oversight\" — so legal form (Singapore/Cayman structure) cannot shield substantive connection (Chinese founding activity, human capital, market). If systematically confirmed in subsequent cases, this principle would fundamentally alter the restructuring logic for cross-border AI startups."
+          }
+        },
+        {
+          "zh": {
+            "h": "先例意義：2026 年為外商投資分水嶺？",
+            "b": "Morgan Lewis、O'Melveny 等國際律所均指出，本案為中國 FISR 機制首次公開確認用於解除已完成之跨境 AI 收購，具有重大先例意義。未來跨境 AI 新創退出的法律盡職調查將必須納入「中國 FISR 後置風險」——即便標的實體已完全境外化。本案也提示：FISR 與 CFIUS 形成某種監管競合：同一筆交易同時面臨兩個「版本的 CFIUS」的審查壓力。"
+          },
+          "en": {
+            "h": "Precedential Significance: 2026 as a Watershed Year?",
+            "b": "Morgan Lewis, O'Melveny, and other international firms identify this as the first publicly confirmed FISR use to unwind a completed cross-border AI acquisition — a landmark. Future M&A diligence for cross-border AI startup exits must now include \"China FISR tail risk\" even when the target entity is fully offshore. The case also demonstrates regulatory competition between FISR and CFIUS: the same transaction faces the scrutiny of two \"versions of CFIUS\" simultaneously."
+          }
+        }
+      ],
+      "iconId": "Shield"
+    },
+    {
+      "id": "fragmentation",
+      "color": "#f0d0e8",
+      "tc": "#703060",
+      "zh": {
+        "title": "監管碎片化與制度競合",
+        "sub": "流動性—安全性悖論"
+      },
+      "en": {
+        "title": "Regulatory Fragmentation & Institutional Competition",
+        "sub": "The Mobility–Security Paradox"
+      },
+      "items": [
+        {
+          "zh": {
+            "h": "核心悖論：可移動性即威脅來源",
+            "b": "Manus 案揭示了一個「流動性—安全性悖論」（mobility-security paradox）：AI 新創的高度可移動性（法律架構遷移、人才出走、數據轉移）正是讓各國重新主張監管控制的觸發因素。越是容易重組，國家越有動機（但越難在技術上行使）主張課稅或安全審查主權。"
+          },
+          "en": {
+            "h": "Core Paradox: Mobility as the Threat Source",
+            "b": "The Manus case reveals a mobility-security paradox: AI startups' high legal mobility (structure migration, talent exit, data transfer) is precisely the trigger for states to reassert regulatory control. The easier restructuring becomes, the stronger the incentive (but the harder the technical capacity) for states to assert tax or security sovereignty."
+          }
+        },
+        {
+          "zh": {
+            "h": "三種制度之間的協調缺失",
+            "b": "投資審查（Security）、技術管制（Technology）與稅法（Tax）三套制度各自以不同的連結點、不同的主體、不同的時間節點主張管轄權，且彼此之間缺乏協調機制。投資審查以「安全威脅」為由可事後阻止已完成的交易；技術管制以「出口許可」為由可限制資產轉移；稅法以「課稅連結點」為由主張所得課徵。三者可以同時主張、相互矛盾，且對當事人形成無法同時滿足的合規要求。"
+          },
+          "en": {
+            "h": "Absence of Coordination Among Three Regimes",
+            "b": "Investment screening (Security), technology controls (Technology), and tax law (Tax) each assert jurisdiction through different nexus tests, different actors, and different temporal triggers — with no coordinating mechanism. Security review can block completed transactions ex post; technology controls can restrict asset transfers; tax law can assert income claims. All three may operate simultaneously, in contradiction, imposing compliance demands that cannot all be satisfied at once."
+          }
+        }
+      ],
+      "iconId": "Globe"
+    }
+  ],
+  "researchQuestions": [
+    {
+      "no": "RQ1",
+      "color": "#c8d8f0",
+      "tc": "#304878",
+      "zh": {
+        "q": "投資審查制度如何因應 AI 新創在被外國科技平台收購前的遷移或重組？",
+        "analysis": "Manus 案顯示，安全審查框架的傳統連結點（法律居民地、資產所在地）難以因應法律架構與實質活動之間的長期分離。各國正以「實質聯繫」（substantial connection）或「顛覆性技術」（critical technology）擴大管轄半徑，但執行力仍高度不對稱——法律在技術上追不上重組速度。"
+      },
+      "en": {
+        "q": "How do investment screening regimes respond when AI startups relocate or restructure before acquisition by foreign technology platforms?",
+        "analysis": "Manus illustrates that the traditional nexus points of security review frameworks (legal domicile, asset location) cannot handle long-term separation between legal structure and substantive activity. States are expanding jurisdictional reach through \"substantial connection\" or \"critical technology\" standards, but enforcement capacity remains highly asymmetric — law struggles to keep pace with restructuring speed."
+      }
+    },
+    {
+      "no": "RQ2",
+      "color": "#d0f0e0",
+      "tc": "#305040",
+      "zh": {
+        "q": "技術轉讓管制與資料治理規則如何影響 AI 新創跨境退出的法律可行性？",
+        "analysis": "技術管制與資料治理創造了一類「法律上可行但合規上困難」的跨境退出。Manus 的人才遷移與服務終止，在技術出口管制與資料出境評估的框架下均存在合規不確定性。這類不確定性並非偶然——它是國家用來保留戰略槓桿的制度設計，即使無法正式阻止交易，也可提高摩擦成本。"
+      },
+      "en": {
+        "q": "How do technology transfer controls and data governance rules affect the legal feasibility of cross-border AI startup exits?",
+        "analysis": "Technology controls and data governance create a class of exits that are \"legally possible but compliance-costly.\" Manus's talent migration and service termination both carry compliance uncertainty under technology export control and data exit assessment frameworks. This uncertainty is not incidental — it is a tool states use to retain strategic leverage, raising friction costs even when formal blockage is unavailable."
+      }
+    },
+    {
+      "no": "RQ3",
+      "color": "#f0e8d0",
+      "tc": "#705030",
+      "zh": {
+        "q": "當早期價值創造發生於某一管轄區、而退出階段的實現卻透過境外或遷移後的架構完成時，國際稅法如何分配課稅權？",
+        "analysis": "現行 OECD 框架在面對「創業期無形資產的跨期貢獻評估」時存在根本性的方法論缺口：移轉定價規則要求臂距價格，但早期新創的無形資產在技術上難以在境外化之前定價。這使得來源地（中國）對其人力資本與技術積累的早期貢獻，在現行架構下幾乎無法主張有效課稅權。"
+      },
+      "en": {
+        "q": "How do international tax rules allocate taxing rights when early-stage value creation occurs in one jurisdiction but exit-stage realization occurs through offshore or relocated structures?",
+        "analysis": "The current OECD framework has a fundamental methodological gap facing \"inter-temporal attribution of startup intangible contributions\": transfer pricing requires arm's-length pricing, but startup intangibles are technically unquantifiable before they become valuable — i.e., before offshore structuring occurs. This renders the source jurisdiction (China) nearly unable to assert effective taxing rights over its early human capital and technology contributions under current doctrine."
+      }
+    },
+    {
+      "no": "RQ4",
+      "color": "#f0d0e8",
+      "tc": "#703060",
+      "zh": {
+        "q": "這些制度是否連貫運作，抑或產生碎片化且相互競合的監管主張？",
+        "analysis": "Manus 案強力支持「制度碎片化」假設。三套制度（投資審查、技術管制、稅法）各自以不同時間節點啟動（稅法在退出時、安全審查在宣布時、技術管制在轉移時），針對不同主體（股東、技術資產、數據），並以不同測試標準（形式控制、實質聯繫、功能分析）為根據。在缺乏協調機制下，它們對同一筆交易形成相互矛盾的合規要求。"
+      },
+      "en": {
+        "q": "Do these regimes operate coherently, or do they produce fragmented and competing claims of regulatory authority?",
+        "analysis": "The Manus case strongly supports the fragmentation hypothesis. Three regimes (investment screening, technology controls, tax law) each activate at different temporal moments (tax at exit, security at announcement, tech controls at transfer), target different actors (shareholders, technology assets, data), and apply different tests (formal control, substantive connection, functional analysis). Without coordination mechanisms, they impose contradictory compliance demands on the same transaction."
+      }
+    },
+    {
+      "no": "RQ5",
+      "color": "#e0d0f8",
+      "tc": "#503078",
+      "zh": {
+        "q": "AI 新創的跨境退出能否被確立為國際經濟法中的一個獨立類別？",
+        "analysis": "本研究的核心理論主張。跨境 AI 新創退出兼具：①高度可移動的戰略性資產（模型、算法、工程師）、②境外化的法律結構（VIE、Cayman、Singapore）、③從早期創造到退出實現之間的長時序錯位、④多個國家的同步監管主張，使其無法被現行任何單一法律類別（FDI、技術轉讓、稅務規劃）完整描述。確立此類別具有規範意義：提示需要跨制度的協調機制。"
+      },
+      "en": {
+        "q": "Can cross-border AI startup exits be established as a distinct category within international economic law?",
+        "analysis": "The core theoretical claim of this research. Cross-border AI startup exits combine: ① highly mobile strategic assets (models, algorithms, engineers), ② offshore legal structures (VIE, Cayman, Singapore), ③ a long temporal mismatch from early creation to exit realization, and ④ simultaneous regulatory claims from multiple states — making them incapable of complete description by any existing single legal category (FDI, technology transfer, tax planning). Establishing this category has normative force: it points to the need for cross-regime coordination mechanisms."
+      }
+    }
+  ],
+  "scholars": [
+    {
+      "id": "danon",
+      "color": "#d8e8f8",
+      "tc": "#204068",
+      "initials": "RJD",
+      "zh": {
+        "name": "Robert J. Danon 教授",
+        "position": "洛桑大學（UNIL）法學正教授 · 稅務政策中心主任",
+        "affil": "國際財政協會（IFA）永久科學委員會前主席（2017–2025）；現為榮譽會員",
+        "lens": "國際稅法視角：條約濫用、實質分析、稅法—投資仲裁交界",
+        "methodology": "他的方法論以《維也納條約法公約》（VCLT）為詮釋框架，結合功能分析（functional analysis）與比較稅法，重點研究：（一）BEPS 後稅收協定反濫用規則（PPT／GAAR）在實踐中的適用邊界；（二）受益所有人（beneficial ownership）概念對境外控股結構的穿透能力；（三）稅法與投資仲裁的程序及實體交叉點——其與 Ziegler 合編之《國際投資仲裁中的稅務事項》（Kluwer，2026）正是此交界的最新學術回應。",
+        "points": [
+          {
+            "h": "PPT 分析：重組的「時序怪異性」",
+            "b": "Danon 的研究確立了一個核心命題：構成條約濫用（treaty abuse）的問題，不在於境外架構本身，而在於「重組的時序與順序所呈現的怪異性」（the circumstances surrounding the restructuring that may appear awkward and hence abusive）。就 Manus 而言，開曼設立（2023）→ 新加坡化（2025 年 7 月）→ Meta 收購宣布（2025 年 12 月）的壓縮時序，在 PPT 分析下高度可疑：新加坡化發生於 Benchmark 融資（4 月）與收購宣布（12 月）之間，其主要目的是否之一在於取得條約利益（如中新稅收協定下的較低預提稅率），是 Danon 框架下的核心提問。"
+          },
+          {
+            "h": "受益所有人與導管公司：開曼架構的穿透問題",
+            "b": "開曼群島控股公司在 Danon 的分析框架下構成「導管實體」（conduit entity）的典型形態：它在法律形式上承載資本利得，但可能不具備實質功能、人員或風險承擔。受益所有人原則要求追問：資本利得的「真正受益人」是誰？若答案是中國創始人（肖弘等），則開曼結構可能無法主張稅收協定的保護，中國的課稅主張即獲得正當性基礎。Danon 在股息條款（Art. 10）與利息條款（Art. 11）上的受益所有人研究，可直接類推適用於本案的股份轉讓所得。"
+          },
+          {
+            "h": "BEPS Actions 8-10：DEMPE 功能與無形資產的來源地歸屬",
+            "b": "Danon 在 BEPS 框架下的研究聚焦「實質對應原則」（Actions 8-10）：稅收應跟隨無形資產的實際發展、增強、維護、保護與利用（DEMPE）功能所在地。Manus 的無形資產（AI 模型、算法、工程能力）的 DEMPE 功能長期在中國境內執行（2016–2025）。開曼實體缺乏執行任何 DEMPE 功能的實質能力。Danon 的框架因此指向：在 BEPS 框架下，中國作為 DEMPE 功能的主要執行地，具有主張大部分技術無形資產增值稅收的正當基礎——即便現行移轉定價規則在實踐上難以執行。"
+          },
+          {
+            "h": "稅法—投資仲裁交界：FISR 強制解除的稅法後果",
+            "b": "這是 Danon 學術研究最直接切中 Manus 最新進展的維度。NDRC 依 FISR 第 12 條強制「恢復投資前狀態」的命令，在稅法上引發了一個前所未見的問題：原已「實現」的資本利得（開曼層面，2025 年 12 月）是否因強制解除而被追溯消滅？已繳（或應繳）的稅款是否應退還？若創始人與投資人被迫以原始價格（20 億美元）返還一家現值 40–50 億美元的公司，差額的稅務處理如何？Danon 主持的研究平台「稅務相關爭端與國際仲裁」正是處理此類稅法—投資法複合爭端的前沿。"
+          }
+        ]
+      },
+      "en": {
+        "name": "Prof. Robert J. Danon",
+        "position": "Full Professor of Law, UNIL · Head, Tax Policy Center",
+        "affil": "Former Global Chair, IFA Permanent Scientific Committee (2017–2025); Honorary Member",
+        "lens": "International Tax Law: Treaty Abuse, Substance Analysis, Tax–Investment Arbitration Interface",
+        "methodology": "His methodology grounds treaty interpretation in the Vienna Convention on the Law of Treaties (VCLT), combined with functional analysis and comparative tax law. Core research themes: (i) post-BEPS anti-abuse rules (PPT/GAAR) and their practical limits; (ii) beneficial ownership doctrine's capacity to pierce offshore holding structures; (iii) the procedural and substantive intersection of tax law with investment arbitration — addressed in his co-edited volume \"Tax Matters in International Investment Arbitration\" (Danon/Wuschka/Ziegler, Kluwer 2026).",
+        "points": [
+          {
+            "h": "PPT Analysis: The \"Awkwardness\" of Restructuring Timing",
+            "b": "Danon's research establishes a core proposition: treaty abuse is not located in the offshore structure per se, but in \"the circumstances surrounding the restructuring (typically the timing and/or sequence of events) that may appear awkward and hence abusive.\" For Manus, the compressed sequence — Cayman incorporation (2023) → Singapore HQ (July 2025) → Meta acquisition announced (December 2025) — raises PPT concerns under BEPS Action 6/OECD Model Art. 29: was one of the principal purposes of the Singaporeanisation to obtain a treaty benefit (e.g., lower withholding tax under the Singapore-China DTA)? This is the first question Danon's framework raises."
+          },
+          {
+            "h": "Beneficial Ownership & Conduit Companies: Piercing the Cayman Structure",
+            "b": "The Cayman holding company is a paradigmatic \"conduit entity\" in Danon's analytical framework: it legally captures capital gains but may bear no substantive functions, staff, or risks. The beneficial ownership principle asks: who is the \"real beneficial owner\" of the gains? If the answer is the Chinese founders, the Cayman structure may not claim treaty protection, and China's taxing claims gain legitimacy. Danon's research on beneficial ownership in dividend (Art. 10) and interest (Art. 11) contexts translates directly to the share transfer income in this case."
+          },
+          {
+            "h": "BEPS Actions 8-10: DEMPE Functions and Source-Country Intangible Attribution",
+            "b": "Danon's BEPS framework focuses on the \"substance alignment principle\" (Actions 8-10): taxation should follow where Development, Enhancement, Maintenance, Protection, and Exploitation (DEMPE) functions for intangibles are actually performed. Manus's intangibles (AI models, algorithms, engineering capability) had DEMPE functions performed in China for nearly a decade (2016–2025). The Cayman entity performed no DEMPE functions. Danon's framework therefore points to China having a substantively justified BEPS-based claim to most of the technical intangible appreciation — even if current transfer pricing rules make enforcement practically arduous."
+          },
+          {
+            "h": "Tax–Investment Arbitration Interface: Tax Consequences of FISR-Forced Unwind",
+            "b": "This is where Danon's research most directly addresses the Manus post-April 2026 situation. The NDRC's Article 12 \"restore pre-investment state\" order raises a novel tax law question: is the capital gain \"realized\" in Cayman in December 2025 retroactively extinguished? If founders and investors are compelled to return a company now worth USD 4-5B at the original USD 2B price, what is the tax treatment of the forced retransfer? Danon's research platform on \"Tax-Related Disputes and International Arbitration\" is precisely calibrated to address these tax-investment hybrid disputes."
+          }
+        ]
+      }
+    },
+    {
+      "id": "ziegler",
+      "color": "#e8f0d8",
+      "tc": "#304820",
+      "initials": "ARZ",
+      "zh": {
+        "name": "Andreas R. Ziegler 教授",
+        "position": "洛桑大學（UNIL）法學正教授 · 比較、歐洲與國際法中心（CDCEI）",
+        "affil": "WTO 常設仲裁員名冊；ICSID 仲裁員；ILA 優惠貿易與投資協定研究小組主席（2013–）",
+        "lens": "國際經濟法視角：投資保護、貿易法、FDI 審查、瑞士作為小型開放經濟體的比較視角",
+        "methodology": "Ziegler 的方法論結合了國際公法詮釋傳統與國家實踐分析（state practice），並高度重視瑞士的立場——作為一個簽有超過 120 個 BIT、深度參與 WTO/OECD 體系但缺乏系統性 FDI 審查法的小型開放經濟體，瑞士提供了一個「自願開放」模型的比較基準。其研究方法論特色：從多邊規則（WTO）→ 雙邊協定（BIT）→ 國家例外（安全例外）這一層層縮小的框架，分析跨境投資流動中的法律正當性。",
+        "points": [
+          {
+            "h": "投資保護：FISR 強制解除是否構成間接徵收？",
+            "b": "Ziegler 的 BIT 研究框架將 NDRC 的 FISR 第 12 條命令定性為一種「強制性投資撤出」（forced divestiture）。若 Manus 的投資人（如美國 Benchmark 基金）受某一對中國有效的 BIT 保護，則此命令可能構成「間接徵收」（indirect expropriation）或違反「公平公正待遇」（FET）標準。關鍵問題是：美中之間目前沒有生效的 BIT（談判於 2016 年後擱置）；但其他投資人（如香港、新加坡實體背後的資本）可能通過第三方 BIT 主張保護。Ziegler 的研究確立了「合法監管行為」與「可補償徵收」之間的邊界測試。"
+          },
+          {
+            "h": "國家安全例外的適用邊界：自我裁量還是可審查標準？",
+            "b": "Ziegler 在國際經濟法中對「國家安全例外」的研究（涵蓋 GATS Art. XIV bis、WTO GATT Art. XXI 及 BIT 安全例外條款）提供了分析 FISR 的關鍵工具。核心問題是：FISR 的「國家安全」援引是否構成不可審查的「自判性」（self-judging）措施，還是受比例原則（proportionality）或必要性測試（necessity test）的拘束？WTO DS 505（俄羅斯—交通過境）及 DS 512 確立了「國家安全例外非完全自我裁量」的趨勢——Ziegler 的研究正是在此框架下分析中國 FISR 的正當性邊界。"
+          },
+          {
+            "h": "GATS 與 AI 服務：中國的服務貿易承諾是否受影響？",
+            "b": "Manus 開發的 AI Agent 在 GATS 分類下屬於「電腦及相關服務」（CPC 84），中國在此領域有一定的 GATS 具體承諾。Ziegler 作為 WTO 常設仲裁員的研究視角下，FISR 強制解除 Meta 對 Manus 的收購，是否同時構成對「商業存在」（GATS Mode 3）服務貿易的歧視性限制？此問題在 WTO 爭端解決機制尚未有直接先例，但 Ziegler 的 WTO 法分析框架可提供精確的法律測試。"
+          },
+          {
+            "h": "瑞士模型：小型開放經濟體的比較基準",
+            "b": "這是 Ziegler 研究中最具比較法原創性的維度。瑞士是一個沒有系統性 FDI 審查機制（截至 2026 年仍主要依賴有限的行業特定規則）、但廣泛簽訂 BIT 並深度參與 OECD/WTO 體系的小型開放經濟體。若一家類似 Manus 的瑞士 AI 新創被中國科技巨頭收購，瑞士將面臨什麼法律困境？Ziegler 的研究回答了這個問題：瑞士「自願開放」的模型在 AI 時代正面臨其固有限制——既無有效的主動審查機制，也難以在事後援引 FISR 型的「恢復前狀態」命令。"
+          }
+        ]
+      },
+      "en": {
+        "name": "Prof. Andreas R. Ziegler",
+        "position": "Full Professor of International Economic Law, UNIL · CDCEI",
+        "affil": "WTO Permanent Panelist Roster; ICSID; ILA Study Group Chair on Preferential Trade & Investment Agreements (2013–)",
+        "lens": "International Economic Law: Investment Protection, Trade Law, FDI Screening, Switzerland as Small Open Economy Comparator",
+        "methodology": "Ziegler combines traditional international law doctrinal methodology with state practice analysis, giving significant weight to the Swiss position — a small open economy with 120+ BITs, deep WTO/OECD integration, but no systematic FDI screening law. This \"voluntary openness\" model provides a comparative baseline. His analytical sequence runs from multilateral rules (WTO) → bilateral agreements (BITs) → state exceptions (security carve-outs), examining the legal legitimacy of cross-border investment restrictions at each layer.",
+        "points": [
+          {
+            "h": "Investment Protection: Does FISR-Forced Unwind Constitute Indirect Expropriation?",
+            "b": "In Ziegler's BIT framework, the NDRC's Article 12 \"restoration of pre-investment state\" order constitutes a \"forced divestiture.\" If Manus investors (e.g., US-based Benchmark) are protected under a BIT effective against China, this order may constitute indirect expropriation or a violation of the fair and equitable treatment (FET) standard. Critical constraint: there is no effective US-China BIT (negotiations stalled post-2016). But investors operating through Singapore or HK entities may assert protection through third-party BITs. Ziegler's research establishes the boundary test between legitimate regulation and compensable taking."
+          },
+          {
+            "h": "National Security Exception: Self-Judging or Subject to Review?",
+            "b": "Ziegler's research on national security exceptions in IEL (GATS Art. XIV bis, GATT Art. XXI, BIT security carve-outs) provides critical analytical tools for assessing China's FISR invocation. The central question: is the \"national security\" invocation a self-judging measure immune from review, or is it constrained by proportionality and necessity? WTO DS 505 and DS 512 established that national security exceptions are not entirely self-judging — Ziegler's framework applies this trend to assess the legal limits of China's FISR action."
+          },
+          {
+            "h": "GATS and AI Services: Do China's Service Trade Commitments Apply?",
+            "b": "Manus's AI Agent falls under \"computer and related services\" (GATS CPC 84), a sector where China holds specific GATS commitments. From Ziegler's WTO panelist perspective: does the FISR-ordered divestiture of Meta's acquisition also constitute a discriminatory restriction on trade in services via commercial presence (Mode 3)? This issue has no direct WTO precedent, but Ziegler's WTO law analytical framework provides precise legal tests for a potential DS claim."
+          },
+          {
+            "h": "The Swiss Model: Small Open Economy as Comparative Benchmark",
+            "b": "This is Ziegler's most original comparative dimension. Switzerland lacks a systematic FDI screening mechanism (relying on limited sector-specific rules as of 2026), but maintains 120+ BITs and deep OECD/WTO integration. If a comparable Swiss AI startup were acquired by a Chinese tech giant, what legal tools would Switzerland have? Ziegler's research answers: the Swiss \"voluntary openness\" model faces its inherent limits in the AI era — no proactive screening mechanism, and no capacity to invoke FISR-type ex post \"restoration\" orders. This comparison sharpens the normative question: should small open economies adopt proactive investment screening?"
+          }
+        ]
+      }
+    },
+    {
+      "id": "joint",
+      "color": "#f0e8d8",
+      "tc": "#604020",
+      "initials": "D+Z",
+      "zh": {
+        "name": "Danon × Ziegler 聯合視角",
+        "position": "《國際投資仲裁中的稅務事項》共同編者（Kluwer，2026 年 3 月）",
+        "affil": "同一大學，不同研究中心，共同探索稅法—投資法交界",
+        "lens": "稅法與投資仲裁的制度交界：Manus 案作為聯合研究議程的活案例",
+        "books": [
+          {
+            "label": "核心合著（2026.03）",
+            "title": "Tax Matters in International Investment Arbitration",
+            "sub": "General Questions, Jurisdiction, Merits and Remedies",
+            "pub": "Danon / Wuschka / Ziegler（eds.）· Kluwer Law International · 18 章",
+            "desc": "Danon 個人章節包括：國際稅法體系的概念與演進、稅務爭端在管轄階段的方法論、稅務爭端在實體審查階段的方法論、「FET 標準與涉稅投資爭端：從系統性整合到全球稅收標準方法」。此書直接提供本研究的分析框架。"
+          },
+          {
+            "label": "Danon 方法論奠基著作（2026 預出版）",
+            "title": "Tax Treaty Interpretation under the Vienna Convention on the Law of Treaties",
+            "sub": "",
+            "pub": "Danon / Maisto / Martín Jiménez（eds.）· IBFD / IFA",
+            "desc": "Danon 章節：《VCLT 第 31(3)(c) 條下的系統性整合原則與稅收協定解釋》。核心命題：稅收協定不孤立存在，必須在更廣泛的國際法體系（包括 BIT、習慣國際法）的脈絡中加以詮釋——即「系統性整合」（systemic integration）原則。"
+          }
+        ],
+        "body": {
+          "zh": "【核心方法論框架：系統性整合 + FET 標準的「全球稅收標準」路徑】\n\nDanon 的最新書籍揭示了其分析 Manus 案的核心工具：VCLT 第 31(3)(c) 條的「系統性整合」原則要求，任何稅收協定（如中新租稅協定）的解釋，必須考量「各方之間適用的國際法相關規則」——這意味著中國援引的稅收主張必須在包括 BIT 法、一般國際法原則在內的更廣泛法律體系中接受審視。\n\n在「涉稅投資爭端的 FET 標準」研究中，Danon 提出「全球稅收標準方法」（the global tax standards approach）：FET 標準的違反與否，應以 OECD/BEPS 等「全球稅收標準」作為評估基準，而非單純依賴雙邊條約文本。這對 Manus 案的含義是：NDRC 的 FISR 強制解除命令是否符合 OECD BEPS 所確立的來源地課稅正當性標準？若否，則此命令在投資仲裁框架下可能構成 FET 違反。\n\nDanon × Ziegler 的合作因此形成了一個完整的分析迴路：Danon 從稅法解釋出發（系統性整合）→ 抵達稅法與投資法的交界（FET 測試）→ Ziegler 從投資保護出發（BIT、徵收、安全例外）→ 回到整個 IEL 框架的正當性問題。Manus 案是這個迴路的第一個活案例。",
+          "en": "【Core Methodological Framework: Systemic Integration + FET Standard via \"Global Tax Standards\" Approach】\n\nDanon's latest books reveal the core tools for analysing Manus. The \"systemic integration\" principle (VCLT Art. 31(3)(c)) requires that any tax treaty (e.g., the China-Singapore DTA) be interpreted taking into account \"relevant rules of international law applicable in the relations between the parties\" — meaning China's tax claims must survive scrutiny against the broader international legal system, including BIT law and general international law principles.\n\nIn his \"FET Standard and Tax-Related Investment Disputes\" chapter, Danon proposes the \"global tax standards approach\": whether FET is violated should be assessed against \"global tax standards\" (OECD/BEPS), not merely bilateral treaty text. The Manus implication: does the NDRC's FISR-forced unwind conform to OECD BEPS-established source-country taxing legitimacy standards? If not, the order may constitute an FET violation in the investment arbitration framework.\n\nThe Danon × Ziegler collaboration thus forms a complete analytical loop: Danon from tax treaty interpretation (systemic integration) → reaching the tax-investment interface (FET test) → Ziegler from investment protection (BIT, expropriation, security exceptions) → back to the legitimacy of the entire IEL framework. Manus is the first live case running through this loop."
+        }
+      },
+      "en": {
+        "name": "Danon × Ziegler Joint Perspective",
+        "position": "Co-editors, \"Tax Matters in International Investment Arbitration\" (Kluwer, March 2026)",
+        "affil": "Same university, different research centres; jointly exploring the tax–investment law interface",
+        "lens": "Tax Law × Investment Arbitration Interface: Manus as the First Live Case",
+        "books": [
+          {
+            "label": "Core joint work (2026.03)",
+            "title": "Tax Matters in International Investment Arbitration",
+            "sub": "General Questions, Jurisdiction, Merits and Remedies",
+            "pub": "Danon / Wuschka / Ziegler (eds.) · Kluwer Law International · 18 chapters",
+            "desc": "Danon's individual chapters include: evolution of the international tax system, methodology for tax disputes in the jurisdictional phase, methodology for the merits phase, and the \"FET Standard and Tax-Related Investment Disputes: From Systemic Integration to the Global Tax Standards Approach.\" This book directly provides the analytical framework for this research."
+          },
+          {
+            "label": "Danon's methodological foundation (forthcoming 2026)",
+            "title": "Tax Treaty Interpretation under the Vienna Convention on the Law of Treaties",
+            "sub": "",
+            "pub": "Danon / Maisto / Martín Jiménez (eds.) · IBFD / IFA",
+            "desc": "Danon's chapter: \"The Principle of Systemic Integration under Article 31(3)(c) VCLT and Tax Treaty Interpretation.\" Core proposition: tax treaties do not exist in isolation — they must be interpreted in light of the broader international law system (including BITs, customary international law), the principle of \"systemic integration.\""
+          }
+        ]
+      }
+    }
+  ],
+  "facts": [
+    {
+      "status": "confirmed",
+      "zh": {
+        "claim": "交易估值逾 20 億美元",
+        "note": "路透社、彭博社、華爾街日報均確認。部分報導指現金對價恰為 20 億美元。"
+      },
+      "en": {
+        "claim": "Deal valued at more than USD 2 billion",
+        "note": "Confirmed by Reuters, Bloomberg, and Wall Street Journal. Some reports specify exactly USD 2B in cash."
+      },
+      "sources": [
+        "Reuters (Dec 29)",
+        "Bloomberg (Dec 29)",
+        "WSJ (Dec 30)"
+      ]
+    },
+    {
+      "status": "confirmed",
+      "zh": {
+        "claim": "收購宣布日期為 2025 年 12 月 29 或 30 日",
+        "note": "路透社、彭博社報導為 29 日，多家媒體以 30 日為準，差異係因時區。"
+      },
+      "en": {
+        "claim": "Acquisition announced December 29 or 30, 2025",
+        "note": "Reuters and Bloomberg report Dec 29; others use Dec 30 due to timezone differences."
+      },
+      "sources": [
+        "Reuters",
+        "Bloomberg",
+        "CNBC"
+      ]
+    },
+    {
+      "status": "confirmed",
+      "zh": {
+        "claim": "B 輪融資 7,500 萬美元，Benchmark 領投，估值約 5 億美元",
+        "note": "多家英文媒體（TechCrunch、彭博社）一致確認。估值表述為「約 5 億美元」（approximately）。"
+      },
+      "en": {
+        "claim": "Series B: USD 75M led by Benchmark at ~USD 500M valuation",
+        "note": "Consistently confirmed by TechCrunch, Bloomberg. Valuation described as \"approximately\" USD 500M."
+      },
+      "sources": [
+        "Bloomberg (Apr 24)",
+        "TechCrunch (Apr 25)"
+      ]
+    },
+    {
+      "status": "confirmed",
+      "zh": {
+        "claim": "公司於 2025 年 7 月前後完成向新加坡遷移，並在中國進行大規模裁員",
+        "note": "南華早報、Technode、Tech in Asia 均確認。約 40 名核心技術人員轉至新加坡。"
+      },
+      "en": {
+        "claim": "Company completed Singapore relocation in July 2025, with mass layoffs in China",
+        "note": "Confirmed by SCMP, Technode, Tech in Asia. ~40 key technical staff transferred to Singapore."
+      },
+      "sources": [
+        "SCMP (Jul 15)",
+        "Technode (Jul 10)",
+        "Tech in Asia (Jul 16)"
+      ]
+    },
+    {
+      "status": "confirmed",
+      "zh": {
+        "claim": "Meta 發言人確認不再有中國所有權利益",
+        "note": "見 ABC News（2025 年 12 月 31 日）對 Meta 官方聲明的引用。"
+      },
+      "en": {
+        "claim": "Meta spokesperson confirmed no continuing Chinese ownership interests",
+        "note": "Cited in ABC News (December 31, 2025) from Meta's official statement."
+      },
+      "sources": [
+        "ABC News (Dec 31)"
+      ]
+    },
+    {
+      "status": "confirmed",
+      "zh": {
+        "claim": "北京蝴蝶效應科技有限公司法律實體仍然存續",
+        "note": "36Kr 報導（引用新華通訊社）確認。但中國社群帳號已清空，中國境內服務已停止。"
+      },
+      "en": {
+        "claim": "Beijing Butterfly Effect Technology Co. Ltd. remains legally extant",
+        "note": "Confirmed by 36Kr citing Xinhua. Chinese social accounts wiped; mainland services terminated."
+      },
+      "sources": [
+        "36Kr (Jul 16)"
+      ]
+    },
+    {
+      "status": "partial",
+      "zh": {
+        "claim": "ByteDance 曾嘗試以 3,000 萬美元收購 Monica，遭拒",
+        "note": "來源為 China Talk（2025 年 3 月），屬新聞評論媒體而非財經大媒體，未見路透社等主流媒體獨立確認。此事實在法律文章中可引用但應標明來源侷限。"
+      },
+      "en": {
+        "claim": "ByteDance attempted to acquire Monica for USD 30M; declined by founder",
+        "note": "Sourced from China Talk (March 2025), a commentary outlet — not independently confirmed by major financial press (Reuters, Bloomberg). Citable but source limitation must be noted."
+      },
+      "sources": [
+        "China Talk (Mar 10)"
+      ]
+    },
+    {
+      "status": "partial",
+      "zh": {
+        "claim": "HongShan Capital（前紅杉中國）於 2023 年 1 月加入投資",
+        "note": "來源為「Today in AI」（2025 年 5 月），屬二手整理報導，非 HongShan 官方確認。"
+      },
+      "en": {
+        "claim": "HongShan Capital (formerly Sequoia China) invested in January 2023",
+        "note": "Sourced from \"Today in AI\" (May 2025), a secondary aggregator — not officially confirmed by HongShan."
+      },
+      "sources": [
+        "Today in AI (May 12)"
+      ]
+    },
+    {
+      "status": "unknown",
+      "zh": {
+        "claim": "收購為股份收購（而非資產收購）",
+        "note": "公開報導均未明確交易結構（股份 vs. 資產）。稅務與法律分析須對此保持開放性（agnostic）。"
+      },
+      "en": {
+        "claim": "Acquisition structured as share purchase (vs. asset purchase)",
+        "note": "No public source specifies the deal structure. Legal and tax analysis must remain agnostic on this point."
+      },
+      "sources": []
+    },
+    {
+      "status": "confirmed",
+      "zh": {
+        "claim": "NDRC 於 2026 年 4 月 27 日依 FISR 第 12 條強制解除交易",
+        "note": "CNBC、路透社、彭博社、Morgan Lewis、O'Melveny 等法律媒體均確認。此為中國 FISR 機制首次公開適用於解除已完成之跨境 AI 收購，具有重大先例意義。審查歷時約四個月，命令要求「恢復投資前狀態」。"
+      },
+      "en": {
+        "claim": "NDRC ordered unwind of completed deal on April 27, 2026 under FISR Article 12",
+        "note": "Confirmed by CNBC, Reuters, Bloomberg, and legal outlets Morgan Lewis, O'Melveny, Lexology. First publicly confirmed use of China's FISR mechanism to unwind a completed cross-border AI acquisition. Review lasted ~4 months; order requires \"restoration of pre-investment state.\""
+      },
+      "sources": [
+        "CNBC (Apr 27, 2026)",
+        "Morgan Lewis",
+        "O'Melveny",
+        "Lexology"
+      ]
+    },
+    {
+      "status": "confirmed",
+      "zh": {
+        "claim": "Manus ARR 從收購時的 1 億美元成長至 4–5 億美元（截至 2026 年 6 月）",
+        "note": "Quartz、CryptoBriefing 報導。Meta 被迫以原始收購價返還一家已增值數倍的公司，形成「被迫以舊價拱手讓回」的高度不對稱後果。"
+      },
+      "en": {
+        "claim": "Manus ARR grew from ~USD 100M at acquisition to USD 400-500M (as of June 2026)",
+        "note": "Reported by Quartz and CryptoBriefing. Meta is forced to return a company several times more valuable at the original price — a highly asymmetric outcome."
+      },
+      "sources": [
+        "Quartz",
+        "CryptoBriefing (Jun 2026)"
+      ]
+    },
+    {
+      "status": "partial",
+      "zh": {
+        "claim": "創始人正尋求 10 億美元融資，計劃以 20 億美元估值回購 Manus",
+        "note": "多家媒體（Quartz、TechStory、TechFundingNews）確認回購意向，但 10 億美元融資尚未確認完成，香港 IPO 亦屬討論中方案。"
+      },
+      "en": {
+        "claim": "Founders seeking ~USD 1B to fund buyback at USD 2B valuation; Hong Kong IPO under discussion",
+        "note": "Buyback intent confirmed by Quartz, TechStory, TechFundingNews; USD 1B fundraise not yet confirmed closed; Hong Kong IPO remains a discussed option."
+      },
+      "sources": [
+        "Quartz",
+        "TechStory",
+        "TechFundingNews"
+      ]
+    }
+  ],
+  "sources": {
+    "en": [
+      {
+        "no": "[1]",
+        "pub": "CNBC",
+        "title": "Meta acquires intelligent agent firm Manus, capping year of massive spending on AI",
+        "date": "Dec 30, 2025"
+      },
+      {
+        "no": "[2]",
+        "pub": "Business Insider",
+        "title": "What is Manus, the Chinese-founded AI startup Meta is buying for $2 billion?",
+        "date": "Dec 30, 2025"
+      },
+      {
+        "no": "[3]",
+        "pub": "Yahoo Tech",
+        "title": "Chinese AI agent Manus transcends chatbots, founder of Butterfly Effect says",
+        "date": "Mar 11, 2025"
+      },
+      {
+        "no": "[4]",
+        "pub": "Tracxn",
+        "title": "Manus – 2025 Company Profile & Team",
+        "date": "2025"
+      },
+      {
+        "no": "[5]",
+        "pub": "Bloomberg",
+        "title": "Chinese AI Startup Manus Scores Funding at $500 Million Value",
+        "date": "Apr 24, 2025"
+      },
+      {
+        "no": "[6]",
+        "pub": "Investing.com",
+        "title": "China's Manus AI secures funding at $500 mln valuation",
+        "date": "Apr 24, 2025"
+      },
+      {
+        "no": "[7]",
+        "pub": "Today in AI",
+        "title": "Manus AI: The $500m Chinese AI startup that's winning over Silicon Valley",
+        "date": "May 12, 2025"
+      },
+      {
+        "no": "[10]",
+        "pub": "China Talk",
+        "title": "Manus: China's Latest AI Sensation",
+        "date": "Mar 10, 2025"
+      },
+      {
+        "no": "[11]",
+        "pub": "TechCrunch",
+        "title": "Chinese AI startup Manus reportedly gets funding from Benchmark at $500m valuation",
+        "date": "Apr 25, 2025"
+      },
+      {
+        "no": "[12]",
+        "pub": "Seeking Alpha",
+        "title": "Manus AI creator Chinese startup secures $75M funding at $500M valuation",
+        "date": "Apr 25, 2025"
+      },
+      {
+        "no": "[13]",
+        "pub": "Technode",
+        "title": "Manus trims China team, relocates core staff to Singapore headquarters",
+        "date": "Jul 10, 2025"
+      },
+      {
+        "no": "[14]",
+        "pub": "City News Service",
+        "title": "China's AI agent Manus relocates HQ to Singapore",
+        "date": "Jul 11, 2025"
+      },
+      {
+        "no": "[15]",
+        "pub": "Tech in Asia",
+        "title": "AI agent platform Manus cuts China jobs, halts mainland service",
+        "date": "Jul 16, 2025"
+      },
+      {
+        "no": "[16]",
+        "pub": "Reuters",
+        "title": "Meta to buy Chinese-founded startup Manus to boost advanced AI features",
+        "date": "Dec 29, 2025"
+      },
+      {
+        "no": "[17]",
+        "pub": "Bloomberg",
+        "title": "Meta to Buy Manus, an AI Startup With Chinese Roots",
+        "date": "Dec 29, 2025"
+      },
+      {
+        "no": "[18]",
+        "pub": "Wall Street Journal",
+        "title": "Meta Buys AI Startup Manus for More Than $2 Billion",
+        "date": "Dec 30, 2025"
+      },
+      {
+        "no": "[19]",
+        "pub": "MLQ.AI",
+        "title": "Meta Acquires Manus for $2B to Boost Autonomous AI Agents",
+        "date": "Dec 30, 2025"
+      },
+      {
+        "no": "[20]",
+        "pub": "ABC News",
+        "title": "Meta buys startup Manus in latest move to advance its artificial intelligence efforts",
+        "date": "Dec 31, 2025"
+      }
+    ],
+    "zh": [
+      {
+        "no": "[8]",
+        "pub": "36Kr",
+        "title": "Manus 資本困境：揮之不去的中國印記、總部遷移與 20 億美元退出",
+        "date": "2025 年 7 月 16 日"
+      },
+      {
+        "no": "[9]",
+        "pub": "南華早報 (SCMP)",
+        "title": "Manus AI 裁撤中國員工，清空社群媒體，暫停中國境內服務",
+        "date": "2025 年 7 月 15 日"
+      },
+      {
+        "no": "[A4]",
+        "pub": "CGTN",
+        "title": "China requires Meta to unwind Manus acquisition, citing legal framework",
+        "date": "2026 年 4 月 28 日"
+      }
+    ],
+    "latest": [
+      {
+        "no": "[A1]",
+        "pub": "CNBC",
+        "title": "China blocks Meta's $2 billion takeover of AI startup Manus",
+        "date": "Apr 27, 2026"
+      },
+      {
+        "no": "[A2]",
+        "pub": "O'Melveny",
+        "title": "China Unwinds Meta's Acquisition of Manus: Implications for Cross-Border AI Transactions",
+        "date": "May 2026"
+      },
+      {
+        "no": "[A3]",
+        "pub": "Morgan Lewis",
+        "title": "The Manus Decision: China's First AI Security Review Block and Implications for Cross-Border AI Investment",
+        "date": "May 2026"
+      },
+      {
+        "no": "[A4b]",
+        "pub": "Lexology",
+        "title": "China Orders Unwinding of Meta-Manus Deal: A New Precedent Under the Foreign Investment Security Review Mechanism",
+        "date": "May 2026"
+      },
+      {
+        "no": "[A5]",
+        "pub": "The Next Web",
+        "title": "Meta has cut Manus off from its internal systems and told staff to sunset the AI platform",
+        "date": "Jun 2026"
+      },
+      {
+        "no": "[A6]",
+        "pub": "CNBC",
+        "title": "Meta reportedly begins dismantling $2 billion Manus deal on Beijing's orders",
+        "date": "Jun 12, 2026"
+      },
+      {
+        "no": "[A7]",
+        "pub": "Quartz",
+        "title": "Manus founders are seeking $1 billion to buy back the AI startup China forced Meta to give up",
+        "date": "Jun 2026"
+      },
+      {
+        "no": "[A8]",
+        "pub": "TechStory",
+        "title": "China Forces Meta To Give Back Manus AI At $2 Billion As Original Investors Plan Buyback And Hong Kong Listing",
+        "date": "Jun 2026"
+      },
+      {
+        "no": "[A9]",
+        "pub": "Mondaq",
+        "title": "First Public Blocking Of Foreign Acquisition On Economic Security Ground — Is 2026 The Watershed Moment For Foreign Investors In China Deals?",
+        "date": "May 2026"
+      }
+    ]
+  }
+}
