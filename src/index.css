@@ -2,3 +2,59 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+ * Site-wide type system.
+ * CJK: Huiwen-mincho (body, CC0/public domain) + GenWanMin2 (display, SIL OFL 1.1).
+ * Latin: Erikas Farbband (body) + Radio Newsman (display), typewriter faces from
+ * the translation project's BVerfGE front-matter set.
+ * All files are subset to the glyphs this site actually uses; see public/fonts/.
+ */
+@font-face {
+  font-family: 'Huiwen Mincho';
+  src: url('/fonts/HuiwenMincho-subset.woff2') format('woff2');
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'GenWanMin2';
+  src: url('/fonts/GenWanMin2-subset.woff2') format('woff2');
+  font-weight: 400 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Erikas Farbband';
+  src: url('/fonts/ErikasFarbband-subset.woff2') format('woff2');
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Erikas Farbband';
+  src: url('/fonts/ErikasFarbband-Bold-subset.woff2') format('woff2');
+  font-weight: 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Radio Newsman';
+  src: url('/fonts/RadioNewsman-subset.woff2') format('woff2');
+  font-weight: 400 700;
+  font-display: swap;
+}
+
+:root {
+  --font-body: 'Erikas Farbband', 'Huiwen Mincho', 'Songti TC', 'Noto Serif CJK TC', serif;
+  --font-display: 'Radio Newsman', 'GenWanMin2', 'Songti TC', 'Noto Serif CJK TC', serif;
+}
+
+body {
+  font-family: var(--font-body);
+  font-synthesis: none;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-display);
+}
+

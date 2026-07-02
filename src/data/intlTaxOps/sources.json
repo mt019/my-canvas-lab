@@ -1,0 +1,138 @@
+[
+  {
+    "id": "oecd-globe-commentary-2026",
+    "institution": "OECD",
+    "title": {
+      "zh": "2026 GloBE 規則合併註釋",
+      "en": "2026 Consolidated Commentary to the GloBE Rules"
+    },
+    "url": "https://www.oecd.org/en/publications/tax-challenges-arising-from-the-digitalisation-of-the-economy-consolidated-commentary-to-the-global-anti-base-erosion-model-rules-2026_4377e89f-en.html",
+    "dateChecked": "2026-07-02",
+    "authorityTier": "official-soft-law",
+    "materialType": ["model-or-commentary"],
+    "epistemicLayer": ["normative-rule", "implementation-reality"],
+    "temporalStatus": "current-final",
+    "topicDomain": ["pillar-two", "tax-incentives", "tax-certainty-and-disputes"],
+    "workflowState": "download-needed",
+    "refreshCadence": "monthly"
+  },
+  {
+    "id": "oecd-gmt-implementation-toolkit-2026",
+    "institution": "OECD",
+    "title": {
+      "zh": "全球最低稅負執行工具包",
+      "en": "Global Minimum Tax Implementation Toolkit"
+    },
+    "url": "https://www.oecd.org/en/publications/the-global-minimum-tax-implementation-toolkit_0ee66d84-en.html",
+    "dateChecked": "2026-07-02",
+    "authorityTier": "official-soft-law",
+    "materialType": ["implementation-toolkit"],
+    "epistemicLayer": ["implementation-reality", "future-development"],
+    "temporalStatus": "current-final",
+    "topicDomain": ["pillar-two"],
+    "workflowState": "parsed",
+    "refreshCadence": "quarterly"
+  },
+  {
+    "id": "un-unfcitc-terms-reference-2025",
+    "institution": "United Nations",
+    "title": {
+      "zh": "UN 國際稅務合作框架公約職權範圍",
+      "en": "Terms of Reference for a UN Framework Convention on International Tax Cooperation"
+    },
+    "url": "https://financing.desa.un.org/document/terms-reference-united-nations-framework-convention-international-tax-cooperation",
+    "dateChecked": "2026-07-02",
+    "authorityTier": "official-process",
+    "materialType": ["agenda-or-workplan", "treaty-or-convention"],
+    "epistemicLayer": ["future-development", "controversy", "normative-rule"],
+    "temporalStatus": "current-draft",
+    "topicDomain": ["un-tax-cooperation", "developing-country-taxation"],
+    "workflowState": "parsed",
+    "refreshCadence": "weekly"
+  },
+  {
+    "id": "un-tax-committee-home",
+    "institution": "United Nations",
+    "title": {
+      "zh": "UN 國際稅務合作專家委員會",
+      "en": "UN Committee of Experts on International Cooperation in Tax Matters"
+    },
+    "url": "https://financing.desa.un.org/what-we-do/ECOSOC/tax-committee/tax-committee-home",
+    "dateChecked": "2026-07-02",
+    "authorityTier": "official-process",
+    "materialType": ["agenda-or-workplan"],
+    "epistemicLayer": ["future-development", "actor-ecosystem"],
+    "temporalStatus": "scheduled",
+    "topicDomain": ["un-tax-cooperation"],
+    "workflowState": "monitoring",
+    "refreshCadence": "weekly"
+  },
+  {
+    "id": "unil-tax-policy-center",
+    "institution": "University of Lausanne",
+    "title": {
+      "zh": "洛桑大學 Tax Policy Center",
+      "en": "University of Lausanne Tax Policy Center"
+    },
+    "url": "https://www.unil.ch/taxpolicy/en/home.html",
+    "dateChecked": "2026-07-02",
+    "authorityTier": "academic-peer",
+    "materialType": ["event-or-network-signal"],
+    "epistemicLayer": ["actor-ecosystem", "research-hotspot"],
+    "temporalStatus": "current-final",
+    "topicDomain": ["swiss-international-tax", "tax-certainty-and-disputes", "transfer-pricing"],
+    "workflowState": "monitoring",
+    "refreshCadence": "weekly"
+  },
+  {
+    "id": "linkedin-danon-profile",
+    "institution": "LinkedIn",
+    "title": {
+      "zh": "Robert J. Danon LinkedIn 線索",
+      "en": "Robert J. Danon LinkedIn signal"
+    },
+    "url": "https://ch.linkedin.com/in/prof-dr-robert-j-danon-39379742",
+    "dateChecked": "2026-07-02",
+    "authorityTier": "secondary-signal",
+    "materialType": ["social-signal"],
+    "epistemicLayer": ["actor-ecosystem", "research-hotspot"],
+    "temporalStatus": "emerging",
+    "topicDomain": ["tax-certainty-and-disputes", "investment-arbitration-and-tax"],
+    "workflowState": "monitoring",
+    "refreshCadence": "manual"
+  },
+  {
+    "id": "danonlaw-home",
+    "institution": "DANON",
+    "title": {
+      "zh": "Danon 個人主頁",
+      "en": "Danon personal homepage"
+    },
+    "url": "https://danonlaw.ch/en/",
+    "dateChecked": "2026-07-02",
+    "authorityTier": "professional-analysis",
+    "materialType": ["event-or-network-signal"],
+    "epistemicLayer": ["actor-ecosystem", "research-hotspot"],
+    "temporalStatus": "current-final",
+    "topicDomain": ["tax-certainty-and-disputes", "investment-arbitration-and-tax", "swiss-international-tax"],
+    "workflowState": "parsed",
+    "refreshCadence": "weekly"
+  },
+  {
+    "id": "euto-global-tax-evasion-report-2024",
+    "institution": "EU Tax Observatory",
+    "title": {
+      "zh": "全球稅逃漏報告 2024",
+      "en": "Global Tax Evasion Report 2024"
+    },
+    "url": "https://www.taxobservatory.eu/publication/global-tax-evasion-report-2024/",
+    "dateChecked": "2026-07-02",
+    "authorityTier": "academic-peer",
+    "materialType": ["research-paper", "dataset-or-statistics"],
+    "epistemicLayer": ["data-evidence", "observable-trend", "controversy"],
+    "temporalStatus": "current-final",
+    "topicDomain": ["hnwi-wealth-taxation", "tax-transparency", "data-and-measurement"],
+    "workflowState": "parsed",
+    "refreshCadence": "quarterly"
+  }
+]
