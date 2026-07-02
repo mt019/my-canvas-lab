@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Background, Controls, ReactFlow } from '@xyflow/react';
+import dagre from '@dagrejs/dagre';
 import '@xyflow/react/dist/style.css';
 import {
   Activity,
@@ -207,35 +208,14 @@ export default function InternationalTaxOps() {
   const officialCount = sources.filter((s) => s.authorityTier.startsWith('official') || s.authorityTier === 'binding-law').length;
   const queuedCount = sources.filter((s) => s.workflowState.includes('needed')).length;
   const watchCount = watchlist.length;
-  const graphNodes = useMemo(() => {
-    const topicNodes = topics.map((topic, index) => ({
-      id: topic.id,
-      type: 'default',
-      position: { x: 300, y: index * 150 },
-      data: { label: topic.title[lang] },
-      className: 'topicNode',
-    }));
+  // Only source -> topic edges reflect a real relationship (topic.sourceIds
+  // in the data). Watch-list items have no recorded topic relevance yet, so
+  // they're laid out as an unconnected column rather than wired with
+  // fabricated edges that would just add visual noise without signal.
+  const { graphNodes, graphEdges } = useMemo(() => {
+    const NODE_WIDTH = { source: 210, topic: 245, watch: 220 };
+    const NODE_HEIGHT = 68;
 
-    const sourceNodes = sources.map((source, index) => ({
-      id: source.id,
-      type: 'default',
-      position: { x: index % 2 === 0 ? 30 : 570, y: Math.floor(index / 2) * 132 + 24 },
-      data: { label: `${source.institution} · ${source.title[lang]}` },
-      className: 'sourceNode',
-    }));
-
-    const watchNodes = watchlist.slice(0, 5).map((item, index) => ({
-      id: `watch-${item.id}`,
-      type: 'default',
-      position: { x: 810, y: index * 112 + 10 },
-      data: { label: item.label[lang] },
-      className: 'watchNode',
-    }));
-
-    return [...sourceNodes, ...topicNodes, ...watchNodes];
-  }, [lang]);
-
-  const graphEdges = useMemo(() => {
     const sourceEdges = topics.flatMap((topic) => topic.sourceIds.map((sourceId) => ({
       id: `${sourceId}-${topic.id}`,
       source: sourceId,
@@ -244,15 +224,56 @@ export default function InternationalTaxOps() {
       className: topic.id === selected.id ? 'activeEdge' : '',
     })));
 
-    const watchEdges = watchlist.slice(0, 5).map((item, index) => ({
-      id: `${topics[index % topics.length].id}-watch-${item.id}`,
-      source: topics[index % topics.length].id,
-      target: `watch-${item.id}`,
-      className: 'watchEdge',
+    const dagreGraph = new dagre.graphlib.Graph();
+    dagreGraph.setDefaultEdgeLabel(() => ({}));
+    dagreGraph.setGraph({ rankdir: 'LR', nodesep: 24, ranksep: 90 });
+
+    sources.forEach((source) => {
+      dagreGraph.setNode(source.id, { width: NODE_WIDTH.source, height: NODE_HEIGHT });
+    });
+    topics.forEach((topic) => {
+      dagreGraph.setNode(topic.id, { width: NODE_WIDTH.topic, height: NODE_HEIGHT });
+    });
+    sourceEdges.forEach((edge) => dagreGraph.setEdge(edge.source, edge.target));
+
+    dagre.layout(dagreGraph);
+
+    const sourceNodes = sources.map((source) => {
+      const { x, y } = dagreGraph.node(source.id);
+      return {
+        id: source.id,
+        type: 'default',
+        position: { x: x - NODE_WIDTH.source / 2, y: y - NODE_HEIGHT / 2 },
+        data: { label: `${source.institution} · ${source.title[lang]}` },
+        className: 'sourceNode',
+      };
+    });
+
+    const topicNodes = topics.map((topic) => {
+      const { x, y } = dagreGraph.node(topic.id);
+      return {
+        id: topic.id,
+        type: 'default',
+        position: { x: x - NODE_WIDTH.topic / 2, y: y - NODE_HEIGHT / 2 },
+        data: { label: topic.title[lang] },
+        className: 'topicNode',
+      };
+    });
+
+    const topicRankX = Math.max(...topics.map((topic) => dagreGraph.node(topic.id).x));
+    const watchNodes = watchlist.slice(0, 5).map((item, index) => ({
+      id: `watch-${item.id}`,
+      type: 'default',
+      position: { x: topicRankX + NODE_WIDTH.topic / 2 + 140, y: index * (NODE_HEIGHT + 24) },
+      data: { label: item.label[lang] },
+      className: 'watchNode',
     }));
 
-    return [...sourceEdges, ...watchEdges];
-  }, [selected.id]);
+    return {
+      graphNodes: [...sourceNodes, ...topicNodes, ...watchNodes],
+      graphEdges: sourceEdges,
+    };
+  }, [lang, selected.id]);
 
   return (
     <main className={styles.workspace}>
@@ -439,7 +460,7 @@ export default function InternationalTaxOps() {
           <div className={styles.sectionHead}>
             <div>
               <h2>{lang === 'zh' ? '關係圖譜' : 'Relations'}</h2>
-              <p>{lang === 'zh' ? '拖曳節點、縮放畫面，查看議題、來源與動態之間的連線。' : 'Drag nodes and zoom the canvas to inspect how topics, sources, and live signals connect.'}</p>
+              <p>{lang === 'zh' ? '拖曳節點、縮放畫面，查看議題與來源之間的連線；右側前沿監測項目尚未標記對應議題，暫列為獨立欄。' : 'Drag nodes and zoom the canvas to inspect how topics connect to their sources. Frontier-watch items on the right have no recorded topic link yet, so they are listed as an unconnected column.'}</p>
             </div>
             <GitBranch size={18} />
           </div>
