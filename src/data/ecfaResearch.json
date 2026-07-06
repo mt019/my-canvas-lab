@@ -1,0 +1,3371 @@
+{
+  "schemaVersion": "0.2.0",
+  "generatedAt": "2026-07-05T08:33:31.947Z",
+  "source": {
+    "owner": "ecfa-research-data",
+    "snapshot": "ecfaResearch.json",
+    "status": "official_ecfa_core_sources_parsed_with_thesis_meta_layer",
+    "note": "Raw official pages, PDFs, NDLTD pasted result pages, and local parse files stay in the data repo. Canvas receives public summaries and source-status metadata."
+  },
+  "datasets": {
+    "researchQuestion": {
+      "title": "ECFA 的前世今生與可檢驗效果",
+      "subtitle": "2010 年協議文本、五個附件、早收降稅、制度停滯、2024 年兩批中止優惠，以及商品層級受影響範圍。",
+      "thesis": "本頁整理協議條文、早收產品、降稅安排、貿易統計入口、中止優惠事件與學位論文研究史。"
+    },
+    "timeline": [
+      {
+        "date": "2010-06-29",
+        "event": "兩岸簽署 ECFA",
+        "type": "agreement",
+        "confidence": "high"
+      },
+      {
+        "date": "2011-01-01",
+        "event": "貨品貿易早期收穫計畫開始降稅；服務貿易早收部門及開放措施全面實施",
+        "type": "implementation",
+        "confidence": "high"
+      },
+      {
+        "date": "2013-01-01",
+        "event": "早期收穫全部產品降為零關稅",
+        "type": "implementation",
+        "confidence": "high"
+      },
+      {
+        "date": "2024-01-01",
+        "event": "中國大陸中止部分石化早收產品關稅減讓",
+        "type": "rollback",
+        "confidence": "medium"
+      },
+      {
+        "date": "2024-06-15",
+        "event": "中國大陸再度中止 134 項早收優惠，涵蓋石化、紡織、機械、鋼鐵及金屬、運輸工具等",
+        "type": "rollback",
+        "confidence": "medium"
+      }
+    ],
+    "eventTimeline": [
+      {
+        "date": "2001-12-11",
+        "title": "中國加入 WTO",
+        "type": "經貿脈絡",
+        "factCheck": "已查核",
+        "evidence": "WTO 會員資料頁記載，中國自 2001 年 12 月 11 日起為 WTO 會員。",
+        "sourceRefs": [
+          "wto_china_member"
+        ],
+        "researchMeaning": "兩岸經貿關係進入 WTO 規則環境後，後續 ECFA 的協議語言與關稅安排才有可比對的國際貿易制度背景。"
+      },
+      {
+        "date": "2002-01-01",
+        "title": "中華台北加入 WTO",
+        "type": "經貿脈絡",
+        "factCheck": "已查核",
+        "evidence": "WTO 會員資料頁記載，中華台北自 2002 年 1 月 1 日起為 WTO 會員。",
+        "sourceRefs": [
+          "wto_chinese_taipei_member"
+        ],
+        "researchMeaning": "台灣以獨立關稅領域參與多邊貿易體系，這是分析 ECFA 稅則、原產地規則與貿易統計時不可省略的前提。"
+      },
+      {
+        "date": "2008-06-11",
+        "title": "第一次江陳會談恢復制度性協商",
+        "type": "協商脈絡",
+        "factCheck": "已查核",
+        "evidence": "海基會資料記載，第一次江陳會談於 2008 年 6 月 11 至 14 日在北京舉行，簽署包機與大陸居民赴台旅遊兩項協議。",
+        "sourceRefs": [
+          "sef_jiang_chen_4_significance"
+        ],
+        "researchMeaning": "ECFA 延續兩會復談後的經貿與人流往來協議，制度脈絡早於 2010 年簽署。"
+      },
+      {
+        "date": "2008-11-03",
+        "title": "第二次江陳會談建立直航與郵政連結",
+        "type": "協商脈絡",
+        "factCheck": "已查核",
+        "evidence": "海基會資料記載，第二次江陳會談於 2008 年 11 月 3 至 7 日在台北進行，簽署空運、海運、郵政與食品安全四項協議。",
+        "sourceRefs": [
+          "sef_jiang_chen_4_significance"
+        ],
+        "researchMeaning": "直航、海運與郵政協議先改變物流與交易成本，後續分析 ECFA 效果時應同時納入簽署前的交易條件變化。"
+      },
+      {
+        "date": "2009-04-25",
+        "title": "第三次江陳會談擴及金融與投資",
+        "type": "協商脈絡",
+        "factCheck": "已查核",
+        "evidence": "海基會資料記載，第三次江陳會談於 2009 年 4 月 25 至 29 日在南京舉行，簽署共同打擊犯罪及司法互助、金融合作、空運補充協議，並發表陸資來台共同聲明。",
+        "sourceRefs": [
+          "sef_jiang_chen_4_significance"
+        ],
+        "researchMeaning": "ECFA 前的制度鋪陳已延伸到金融合作與投資安排，產業與市場反應可能早在簽署前開始調整。"
+      },
+      {
+        "date": "2009-12-22",
+        "title": "第四次江陳會談把 ECFA 排入後續議程",
+        "type": "議程形成",
+        "factCheck": "已查核",
+        "evidence": "海基會資料記載，第四次會談前的討論已把經濟合作架構協議列為未來可商談議題，並以降低關稅與非關稅貿易障礙說明其重要性。",
+        "sourceRefs": [
+          "sef_jiang_chen_4_significance",
+          "sef_jiang_chen_4_schedule"
+        ],
+        "researchMeaning": "這是從一般交流協議轉向大型經貿架構協議的關鍵轉折，應放在簽署前脈絡中觀察。"
+      },
+      {
+        "date": "2010-01",
+        "title": "ECFA 進入正式協商期",
+        "type": "協商脈絡",
+        "factCheck": "已查核",
+        "evidence": "海基會與政策說明資料顯示，第四次會談後 ECFA 進入具體協商與早期收穫清單安排階段。",
+        "sourceRefs": [
+          "sef_ecfa_outlook",
+          "sef_jiang_chen_5_results",
+          "mac_2009_ecfa_policy"
+        ],
+        "researchMeaning": "協商期本身可能影響企業預期；若日後做事件研究，應區分政策醞釀、協商、簽署、生效與降稅。"
+      },
+      {
+        "date": "2010-06-29",
+        "title": "兩岸簽署 ECFA",
+        "type": "制度形成",
+        "factCheck": "已查核",
+        "evidence": "ECFA 協議文本及附件入口保存 2010-06-29 協議文本與五個附件。",
+        "sourceRefs": [
+          "ecfa_related_doc",
+          "ecfa_agreement_pdf"
+        ],
+        "researchMeaning": "這是制度時間軸起點，後續早期收穫、服務開放與原產地規則都掛在這個框架下。"
+      },
+      {
+        "date": "2010-09-12",
+        "title": "ECFA 生效",
+        "type": "制度生效",
+        "factCheck": "已查核",
+        "evidence": "ECFA 官方新聞及說明資料記載協議於 2010 年 9 月 12 日生效。",
+        "sourceRefs": [
+          "ecfa_related_doc",
+          "ecfa_implementation"
+        ],
+        "researchMeaning": "事件研究若看市場反應，簽署日與生效日要分開。"
+      },
+      {
+        "date": "2011-01-01",
+        "title": "貨品與服務早期收穫開始實施",
+        "type": "政策實施",
+        "factCheck": "已查核",
+        "evidence": "ECFA 執行情形頁載明，貨品貿易早期收穫計畫自民國 100 年 1 月 1 日開始降稅，服務貿易早期收穫部門及開放措施亦同時全面實施。",
+        "sourceRefs": [
+          "ecfa_implementation"
+        ],
+        "researchMeaning": "這是以早收清單建立處理組的核心起點。"
+      },
+      {
+        "date": "2013-01-01",
+        "title": "早期收穫全部產品降為零關稅",
+        "type": "政策完成",
+        "factCheck": "已查核",
+        "evidence": "ECFA 執行情形頁載明，自民國 102 年 1 月 1 日起，早期收穫計畫全部產品已降為零關稅。",
+        "sourceRefs": [
+          "ecfa_implementation"
+        ],
+        "researchMeaning": "2011 至 2013 年的效果不宜合併為單一瞬間事件，降稅過程有階段性。"
+      },
+      {
+        "date": "2023-12-21",
+        "title": "陸方公告第一批中止關稅減讓",
+        "type": "優惠中止",
+        "factCheck": "已查核",
+        "evidence": "陸方公告與產品清單顯示，部分原產於台灣的早收產品中止適用 ECFA 協定稅率。",
+        "sourceRefs": [
+          "mainland_20231221_rollback",
+          "mainland_20231221_rollback_list_pdf"
+        ],
+        "researchMeaning": "2024 年以前已有第一批中止，不能只把 2024 年 6 月視為唯一中止事件。"
+      },
+      {
+        "date": "2024-05-31",
+        "title": "中方宣布第二批 134 項中止優惠",
+        "type": "優惠中止",
+        "factCheck": "已查核",
+        "evidence": "經濟部 2024 年 5 月 31 日說明指出，中方宣布自 2024 年 6 月 15 日起中止 134 項產品早收優惠關稅。",
+        "sourceRefs": [
+          "trade_20240531_rollback",
+          "moea_20240531_rollback",
+          "mainland_20240531_rollback",
+          "mainland_20240531_rollback_list_pdf"
+        ],
+        "researchMeaning": "公告日與實施日都重要：公告日可看市場預期，實施日可看貿易與訂單反應。"
+      },
+      {
+        "date": "2024-06-15",
+        "title": "第二批中止優惠生效",
+        "type": "優惠中止",
+        "factCheck": "已查核",
+        "evidence": "經濟部與陸方公告均指向 2024 年 6 月 15 日為 134 項產品中止優惠實施日。",
+        "sourceRefs": [
+          "trade_20240531_rollback",
+          "mainland_20240531_rollback_list_pdf"
+        ],
+        "researchMeaning": "產品別出口資料應以此日後的月資料或季資料觀察變化。"
+      }
+    ],
+    "preEcfaContext": [
+      {
+        "date": "2001-12-11",
+        "title": "中國加入 WTO",
+        "type": "經貿脈絡",
+        "factCheck": "已查核",
+        "evidence": "WTO 會員資料頁記載，中國自 2001 年 12 月 11 日起為 WTO 會員。",
+        "sourceRefs": [
+          "wto_china_member"
+        ],
+        "researchMeaning": "兩岸經貿關係進入 WTO 規則環境後，後續 ECFA 的協議語言與關稅安排才有可比對的國際貿易制度背景。"
+      },
+      {
+        "date": "2002-01-01",
+        "title": "中華台北加入 WTO",
+        "type": "經貿脈絡",
+        "factCheck": "已查核",
+        "evidence": "WTO 會員資料頁記載，中華台北自 2002 年 1 月 1 日起為 WTO 會員。",
+        "sourceRefs": [
+          "wto_chinese_taipei_member"
+        ],
+        "researchMeaning": "台灣以獨立關稅領域參與多邊貿易體系，這是分析 ECFA 稅則、原產地規則與貿易統計時不可省略的前提。"
+      },
+      {
+        "date": "2008-06-11",
+        "title": "第一次江陳會談恢復制度性協商",
+        "type": "協商脈絡",
+        "factCheck": "已查核",
+        "evidence": "海基會資料記載，第一次江陳會談於 2008 年 6 月 11 至 14 日在北京舉行，簽署包機與大陸居民赴台旅遊兩項協議。",
+        "sourceRefs": [
+          "sef_jiang_chen_4_significance"
+        ],
+        "researchMeaning": "ECFA 延續兩會復談後的經貿與人流往來協議，制度脈絡早於 2010 年簽署。"
+      },
+      {
+        "date": "2008-11-03",
+        "title": "第二次江陳會談建立直航與郵政連結",
+        "type": "協商脈絡",
+        "factCheck": "已查核",
+        "evidence": "海基會資料記載，第二次江陳會談於 2008 年 11 月 3 至 7 日在台北進行，簽署空運、海運、郵政與食品安全四項協議。",
+        "sourceRefs": [
+          "sef_jiang_chen_4_significance"
+        ],
+        "researchMeaning": "直航、海運與郵政協議先改變物流與交易成本，後續分析 ECFA 效果時應同時納入簽署前的交易條件變化。"
+      },
+      {
+        "date": "2009-04-25",
+        "title": "第三次江陳會談擴及金融與投資",
+        "type": "協商脈絡",
+        "factCheck": "已查核",
+        "evidence": "海基會資料記載，第三次江陳會談於 2009 年 4 月 25 至 29 日在南京舉行，簽署共同打擊犯罪及司法互助、金融合作、空運補充協議，並發表陸資來台共同聲明。",
+        "sourceRefs": [
+          "sef_jiang_chen_4_significance"
+        ],
+        "researchMeaning": "ECFA 前的制度鋪陳已延伸到金融合作與投資安排，產業與市場反應可能早在簽署前開始調整。"
+      },
+      {
+        "date": "2009-12-22",
+        "title": "第四次江陳會談把 ECFA 排入後續議程",
+        "type": "議程形成",
+        "factCheck": "已查核",
+        "evidence": "海基會資料記載，第四次會談前的討論已把經濟合作架構協議列為未來可商談議題，並以降低關稅與非關稅貿易障礙說明其重要性。",
+        "sourceRefs": [
+          "sef_jiang_chen_4_significance",
+          "sef_jiang_chen_4_schedule"
+        ],
+        "researchMeaning": "這是從一般交流協議轉向大型經貿架構協議的關鍵轉折，應放在簽署前脈絡中觀察。"
+      },
+      {
+        "date": "2010-01",
+        "title": "ECFA 進入正式協商期",
+        "type": "協商脈絡",
+        "factCheck": "已查核",
+        "evidence": "海基會與政策說明資料顯示，第四次會談後 ECFA 進入具體協商與早期收穫清單安排階段。",
+        "sourceRefs": [
+          "sef_ecfa_outlook",
+          "sef_jiang_chen_5_results",
+          "mac_2009_ecfa_policy"
+        ],
+        "researchMeaning": "協商期本身可能影響企業預期；若日後做事件研究，應區分政策醞釀、協商、簽署、生效與降稅。"
+      }
+    ],
+    "ecfaCore": {
+      "sourceCoverage": {
+        "officialCoreSources": 17,
+        "parsedPdfSources": 8,
+        "parsedHtmlSources": 8,
+        "parsedCsvSources": 1
+      },
+      "productSummary": {
+        "officialEarlyHarvestBenchmark": {
+          "taiwanConcessionToMainland": 267,
+          "mainlandConcessionToTaiwan": 539,
+          "note": "Official ECFA early-harvest list benchmark. Current PDF-text parser is kept as a working extract and still needs table-level audit."
+        },
+        "earlyHarvestTotal": 745,
+        "earlyBySide": [
+          {
+            "side": "taiwan_concession_to_mainland",
+            "count": 226
+          },
+          {
+            "side": "mainland_concession_to_taiwan",
+            "count": 519
+          }
+        ],
+        "earlyByChapter": [
+          {
+            "chapter": "84",
+            "count": 161
+          },
+          {
+            "chapter": "87",
+            "count": 63
+          },
+          {
+            "chapter": "85",
+            "count": 58
+          },
+          {
+            "chapter": "39",
+            "count": 57
+          },
+          {
+            "chapter": "29",
+            "count": 56
+          },
+          {
+            "chapter": "54",
+            "count": 27
+          },
+          {
+            "chapter": "82",
+            "count": 26
+          },
+          {
+            "chapter": "52",
+            "count": 20
+          },
+          {
+            "chapter": "72",
+            "count": 20
+          },
+          {
+            "chapter": "74",
+            "count": 19
+          },
+          {
+            "chapter": "32",
+            "count": 18
+          },
+          {
+            "chapter": "55",
+            "count": 17
+          },
+          {
+            "chapter": "56",
+            "count": 17
+          },
+          {
+            "chapter": "28",
+            "count": 13
+          },
+          {
+            "chapter": "59",
+            "count": 13
+          },
+          {
+            "chapter": "60",
+            "count": 13
+          },
+          {
+            "chapter": "90",
+            "count": 13
+          },
+          {
+            "chapter": "61",
+            "count": 12
+          },
+          {
+            "chapter": "58",
+            "count": 11
+          },
+          {
+            "chapter": "62",
+            "count": 11
+          },
+          {
+            "chapter": "40",
+            "count": 9
+          },
+          {
+            "chapter": "70",
+            "count": 9
+          },
+          {
+            "chapter": "27",
+            "count": 8
+          },
+          {
+            "chapter": "76",
+            "count": 8
+          },
+          {
+            "chapter": "35",
+            "count": 7
+          },
+          {
+            "chapter": "38",
+            "count": 7
+          },
+          {
+            "chapter": "09",
+            "count": 6
+          },
+          {
+            "chapter": "96",
+            "count": 6
+          },
+          {
+            "chapter": "08",
+            "count": 5
+          },
+          {
+            "chapter": "95",
+            "count": 5
+          },
+          {
+            "chapter": "03",
+            "count": 4
+          },
+          {
+            "chapter": "42",
+            "count": 4
+          },
+          {
+            "chapter": "63",
+            "count": 4
+          },
+          {
+            "chapter": "25",
+            "count": 3
+          },
+          {
+            "chapter": "34",
+            "count": 3
+          },
+          {
+            "chapter": "64",
+            "count": 3
+          },
+          {
+            "chapter": "33",
+            "count": 2
+          },
+          {
+            "chapter": "04",
+            "count": 1
+          },
+          {
+            "chapter": "06",
+            "count": 1
+          },
+          {
+            "chapter": "07",
+            "count": 1
+          },
+          {
+            "chapter": "37",
+            "count": 1
+          },
+          {
+            "chapter": "78",
+            "count": 1
+          },
+          {
+            "chapter": "81",
+            "count": 1
+          },
+          {
+            "chapter": "94",
+            "count": 1
+          }
+        ],
+        "rollbackTotal": 146,
+        "rollbackByBatch": [
+          {
+            "batch": "first",
+            "count": 12
+          },
+          {
+            "batch": "second",
+            "count": 134
+          }
+        ],
+        "rollbackByChapter": [
+          {
+            "chapter": "84",
+            "count": 34
+          },
+          {
+            "chapter": "39",
+            "count": 28
+          },
+          {
+            "chapter": "29",
+            "count": 18
+          },
+          {
+            "chapter": "72",
+            "count": 9
+          },
+          {
+            "chapter": "85",
+            "count": 9
+          },
+          {
+            "chapter": "32",
+            "count": 6
+          },
+          {
+            "chapter": "87",
+            "count": 6
+          },
+          {
+            "chapter": "54",
+            "count": 5
+          },
+          {
+            "chapter": "74",
+            "count": 5
+          },
+          {
+            "chapter": "60",
+            "count": 4
+          },
+          {
+            "chapter": "82",
+            "count": 4
+          },
+          {
+            "chapter": "35",
+            "count": 3
+          },
+          {
+            "chapter": "59",
+            "count": 3
+          },
+          {
+            "chapter": "70",
+            "count": 3
+          },
+          {
+            "chapter": "27",
+            "count": 2
+          },
+          {
+            "chapter": "52",
+            "count": 2
+          },
+          {
+            "chapter": "34",
+            "count": 1
+          },
+          {
+            "chapter": "55",
+            "count": 1
+          },
+          {
+            "chapter": "56",
+            "count": 1
+          },
+          {
+            "chapter": "90",
+            "count": 1
+          },
+          {
+            "chapter": "95",
+            "count": 1
+          }
+        ],
+        "rollbackMatchedOriginalMainlandEarlyHarvest": 118,
+        "parseCaveat": "PDF text extraction is machine-parsed. Use official PDFs as source of truth; manually audit wrapped product names and HS-version concordance before econometric estimation."
+      },
+      "rollbackExposure": {
+        "generatedAt": "2026-07-05T08:33:31.455Z",
+        "total": 146,
+        "byBatch": [
+          {
+            "key": "second",
+            "count": 134
+          },
+          {
+            "key": "first",
+            "count": 12
+          }
+        ],
+        "bySector": [
+          {
+            "key": "化學、石化與塑橡膠",
+            "count": 56
+          },
+          {
+            "key": "機械、電機與設備",
+            "count": 43
+          },
+          {
+            "key": "鋼鐵、金屬與工具",
+            "count": 18
+          },
+          {
+            "key": "紡織與成衣",
+            "count": 16
+          },
+          {
+            "key": "運輸工具",
+            "count": 6
+          },
+          {
+            "key": "其他製品",
+            "count": 4
+          },
+          {
+            "key": "礦物與燃料",
+            "count": 2
+          },
+          {
+            "key": "光學、精密與醫療器材",
+            "count": 1
+          }
+        ],
+        "byChapter": [
+          {
+            "key": "84",
+            "count": 34
+          },
+          {
+            "key": "39",
+            "count": 28
+          },
+          {
+            "key": "29",
+            "count": 18
+          },
+          {
+            "key": "72",
+            "count": 9
+          },
+          {
+            "key": "85",
+            "count": 9
+          },
+          {
+            "key": "32",
+            "count": 6
+          },
+          {
+            "key": "87",
+            "count": 6
+          },
+          {
+            "key": "54",
+            "count": 5
+          },
+          {
+            "key": "74",
+            "count": 5
+          },
+          {
+            "key": "60",
+            "count": 4
+          },
+          {
+            "key": "82",
+            "count": 4
+          },
+          {
+            "key": "35",
+            "count": 3
+          },
+          {
+            "key": "59",
+            "count": 3
+          },
+          {
+            "key": "70",
+            "count": 3
+          },
+          {
+            "key": "27",
+            "count": 2
+          },
+          {
+            "key": "52",
+            "count": 2
+          },
+          {
+            "key": "34",
+            "count": 1
+          },
+          {
+            "key": "55",
+            "count": 1
+          },
+          {
+            "key": "56",
+            "count": 1
+          },
+          {
+            "key": "90",
+            "count": 1
+          },
+          {
+            "key": "95",
+            "count": 1
+          }
+        ],
+        "originalEarlyHarvestMatched": 118,
+        "needsCodeOrNameAudit": 28,
+        "eventDates": [
+          {
+            "batch": "first",
+            "announcementDate": "2023-12-21",
+            "effectiveDate": "2024-01-01",
+            "products": 12
+          },
+          {
+            "batch": "second",
+            "announcementDate": "2024-05-31",
+            "effectiveDate": "2024-06-15",
+            "products": 134
+          }
+        ],
+        "researchUse": [
+          "This table is the first closed 2024 treatment list for ECFA rollback exposure.",
+          "Rows can be joined to Taiwan trade values after HS-code year concordance is completed.",
+          "Rows marked needs_code_or_name_audit should not be treated as unmatched controls; they require HS-version and product-name review."
+        ]
+      },
+      "rollbackConcordanceAudit": {
+        "generatedAt": "2026-07-05T08:33:31.577Z",
+        "total": 146,
+        "byConclusion": [
+          {
+            "key": "官方早收對照表命中",
+            "count": 137
+          },
+          {
+            "key": "疑似原早收代碼拆分",
+            "count": 8
+          },
+          {
+            "key": "未找到早收候選",
+            "count": 1
+          }
+        ],
+        "byConfidence": [
+          {
+            "key": "高",
+            "count": 145
+          },
+          {
+            "key": "低",
+            "count": 1
+          }
+        ],
+        "matchedAfterAudit": 145,
+        "lowConfidenceRows": 1,
+        "researchMeaning": [
+          "The 2024 suspension treatment list remains closed at 146 rows.",
+          "Exact-code matches are safe for descriptive treatment mapping.",
+          "Prefix or name-based matches should be used as likely original early-harvest links, but not as final code concordance for causal estimates.",
+          "Low-confidence rows need official tariff-version concordance before model use."
+        ]
+      },
+      "rollbackResearchFindings": {
+        "generatedAt": "2026-07-05T08:33:31.690Z",
+        "title": "2024 年 ECFA 中止優惠產品範圍初步發現",
+        "evidenceBase": {
+          "totalSuspendedProducts": 146,
+          "firstBatchProducts": 12,
+          "secondBatchProducts": 134,
+          "linkedToOriginalEarlyHarvestHighOrMediumConfidence": 145,
+          "lowConfidenceRows": 1
+        },
+        "headlineFindings": [
+          {
+            "finding": "2024 年兩批中止優惠共 146 項，第二批占 91.8%。",
+            "evidence": "第一批 12 項、第二批 134 項，兩批公告日至生效日分別相隔 11 日與 15 日。",
+            "researchUse": "事件研究應分開公告日與生效日；第二批較適合作為主要事件窗口。"
+          },
+          {
+            "finding": "中止優惠集中在 化學、石化與塑橡膠 56 項、機械、電機與設備 43 項、鋼鐵、金屬與工具 18 項。",
+            "evidence": "按章別與產業大類整理後，前三大類合計占多數產品。",
+            "researchUse": "後續比較組不宜只用全體未中止產品，至少要控制章別或產業。"
+          },
+          {
+            "finding": "145 項可初步連回原早收清單，1 項仍需官方稅則年版確認。",
+            "evidence": "複核採 8 碼相同、6 碼拆分、品名延續三層判斷；低信心列保留為待確認。",
+            "researchUse": "描述統計可先使用全 146 項；正式因果估計前，低信心列要用官方代碼對照處理。"
+          }
+        ],
+        "sectorConcentration": [
+          {
+            "key": "化學、石化與塑橡膠",
+            "count": 56,
+            "share": 38.4
+          },
+          {
+            "key": "機械、電機與設備",
+            "count": 43,
+            "share": 29.5
+          },
+          {
+            "key": "鋼鐵、金屬與工具",
+            "count": 18,
+            "share": 12.3
+          },
+          {
+            "key": "紡織與成衣",
+            "count": 16,
+            "share": 11
+          },
+          {
+            "key": "運輸工具",
+            "count": 6,
+            "share": 4.1
+          },
+          {
+            "key": "其他製品",
+            "count": 4,
+            "share": 2.7
+          },
+          {
+            "key": "礦物與燃料",
+            "count": 2,
+            "share": 1.4
+          },
+          {
+            "key": "光學、精密與醫療器材",
+            "count": 1,
+            "share": 0.7
+          }
+        ],
+        "auditConclusions": [
+          {
+            "key": "官方早收對照表命中",
+            "count": 137,
+            "share": 93.8
+          },
+          {
+            "key": "疑似原早收代碼拆分",
+            "count": 8,
+            "share": 5.5
+          },
+          {
+            "key": "未找到早收候選",
+            "count": 1,
+            "share": 0.7
+          }
+        ],
+        "lowConfidenceRows": [
+          {
+            "hsCode": "85249140",
+            "product": "显示模组，含驱动器和控制电路",
+            "sector": "機械、電機與設備",
+            "batch": "second",
+            "auditConclusion": "未找到早收候選",
+            "auditNote": "需另以官方稅則年版、原始清單表格或海關統計代碼對照確認。",
+            "candidateEarlyHarvestCodes": "",
+            "candidateEarlyHarvestProducts": ""
+          }
+        ],
+        "allowedCurrentClaims": [
+          "可以說明 2024 中止優惠產品範圍、產業集中度、批次時間與原早收清單連結狀態。",
+          "可以把全 146 項作為描述性受影響產品集合。",
+          "正式估計政策效果前，仍需接入產品別貿易值，並完成低信心列與控制組代碼對照。"
+        ],
+        "notYetAllowedClaims": [
+          "尚不能主張中止優惠造成出口下降。",
+          "尚不能把低信心列視為已完成官方代碼年版對照。",
+          "尚不能用全體未中止產品直接當控制組。"
+        ]
+      },
+      "rollbackSample": [
+        {
+          "batch": "first",
+          "effectiveDate": "2024-01-01",
+          "seq": 1,
+          "hsCode": "29012200",
+          "product": "丙烯",
+          "rawLine": "1 29012200 丙烯",
+          "inOriginalMainlandEarlyHarvest": true
+        },
+        {
+          "batch": "first",
+          "effectiveDate": "2024-01-01",
+          "seq": 2,
+          "hsCode": "29012410",
+          "product": "1,3-丁二烯",
+          "rawLine": "2 29012410 1,3-丁二烯",
+          "inOriginalMainlandEarlyHarvest": false
+        },
+        {
+          "batch": "first",
+          "effectiveDate": "2024-01-01",
+          "seq": 3,
+          "hsCode": "29012420",
+          "product": "异戊二烯",
+          "rawLine": "3 29012420 异戊二烯",
+          "inOriginalMainlandEarlyHarvest": false
+        },
+        {
+          "batch": "first",
+          "effectiveDate": "2024-01-01",
+          "seq": 4,
+          "hsCode": "29024100",
+          "product": "邻二甲苯",
+          "rawLine": "4 29024100 邻二甲苯",
+          "inOriginalMainlandEarlyHarvest": true
+        },
+        {
+          "batch": "first",
+          "effectiveDate": "2024-01-01",
+          "seq": 5,
+          "hsCode": "29024200",
+          "product": "间二甲苯",
+          "rawLine": "5 29024200 间二甲苯",
+          "inOriginalMainlandEarlyHarvest": true
+        },
+        {
+          "batch": "first",
+          "effectiveDate": "2024-01-01",
+          "seq": 6,
+          "hsCode": "29024300",
+          "product": "对二甲苯",
+          "rawLine": "6 29024300 对二甲苯",
+          "inOriginalMainlandEarlyHarvest": true
+        },
+        {
+          "batch": "first",
+          "effectiveDate": "2024-01-01",
+          "seq": 7,
+          "hsCode": "29024400",
+          "product": "混合二甲苯异构体",
+          "rawLine": "7 29024400 混合二甲苯异构体",
+          "inOriginalMainlandEarlyHarvest": true
+        },
+        {
+          "batch": "first",
+          "effectiveDate": "2024-01-01",
+          "seq": 8,
+          "hsCode": "29029030",
+          "product": "十二烷基苯",
+          "rawLine": "8 29029030 十二烷基苯",
+          "inOriginalMainlandEarlyHarvest": true
+        },
+        {
+          "batch": "first",
+          "effectiveDate": "2024-01-01",
+          "seq": 9,
+          "hsCode": "29031300",
+          "product": "氯仿(三氯甲烷)",
+          "rawLine": "9 29031300 氯仿(三氯甲烷)",
+          "inOriginalMainlandEarlyHarvest": true
+        },
+        {
+          "batch": "first",
+          "effectiveDate": "2024-01-01",
+          "seq": 10,
+          "hsCode": "29032100",
+          "product": "氯乙烯",
+          "rawLine": "10 29032100 氯乙烯",
+          "inOriginalMainlandEarlyHarvest": true
+        },
+        {
+          "batch": "first",
+          "effectiveDate": "2024-01-01",
+          "seq": 11,
+          "hsCode": "39023010",
+          "product": "初级形状的乙烯丙烯共聚物(乙丙橡胶)",
+          "rawLine": "11 39023010 初级形状的乙烯丙烯共聚物(乙丙橡胶)",
+          "inOriginalMainlandEarlyHarvest": false
+        },
+        {
+          "batch": "first",
+          "effectiveDate": "2024-01-01",
+          "seq": 12,
+          "hsCode": "39029000",
+          "product": "其他初级形状的烯烃聚合物",
+          "rawLine": "12 39029000 其他初级形状的烯烃聚合物",
+          "inOriginalMainlandEarlyHarvest": true
+        },
+        {
+          "batch": "second",
+          "effectiveDate": "2024-06-15",
+          "seq": 1,
+          "hsCode": "27101993",
+          "product": "润滑油基础油",
+          "rawLine": "1 27101993 润滑油基础油",
+          "inOriginalMainlandEarlyHarvest": true
+        },
+        {
+          "batch": "second",
+          "effectiveDate": "2024-06-15",
+          "seq": 2,
+          "hsCode": "27101994",
+          "product": "液体石蜡和重质液体石蜡",
+          "rawLine": "2 27101994 液体石蜡和重质液体石蜡",
+          "inOriginalMainlandEarlyHarvest": true
+        },
+        {
+          "batch": "second",
+          "effectiveDate": "2024-06-15",
+          "seq": 3,
+          "hsCode": "29051220",
+          "product": "异丙醇",
+          "rawLine": "3 29051220 异丙醇",
+          "inOriginalMainlandEarlyHarvest": true
+        },
+        {
+          "batch": "second",
+          "effectiveDate": "2024-06-15",
+          "seq": 4,
+          "hsCode": "29051300",
+          "product": "正丁醇",
+          "rawLine": "4 29051300 正丁醇",
+          "inOriginalMainlandEarlyHarvest": true
+        }
+      ],
+      "analysisReadiness": [
+        {
+          "layer": "制度文本",
+          "status": "已抓取並抽文字",
+          "note": "協議本文與附件一至五已保存為 PDF 與 txt。"
+        },
+        {
+          "layer": "早收商品暴露",
+          "status": "部分機器解析",
+          "note": "目前抽出 745 筆；正式建模前需補齊至官方 267/539 口徑。"
+        },
+        {
+          "layer": "2024 中止事件",
+          "status": "可進入初步視覺化",
+          "note": "第一批與第二批合計 146 筆，已按批次與章別整理；145 筆可初步連回原早收清單，1 筆仍需官方代碼對照。"
+        },
+        {
+          "layer": "貿易統計面板",
+          "status": "待抓取數值資料",
+          "note": "已定位關務署稅則/開放資料入口；下一步需建立 HS × 年 × 對象地區的進出口值。"
+        },
+        {
+          "layer": "深度學習/NLP",
+          "status": "待建語料向量",
+          "note": "可先對協議文本、公告、新聞稿與論文摘要做嵌入、主題聚類與語義檢索。"
+        }
+      ]
+    },
+    "sourceInventory": [
+      {
+        "id": "wto_china_member",
+        "label": "WTO：中國會員資料",
+        "sourceTier": "official",
+        "status": "raw_html_parsed",
+        "url": "https://www.wto.org/english/thewto_e/countries_e/china_e.htm",
+        "kind": "html",
+        "hsCodesParsed": 0
+      },
+      {
+        "id": "wto_chinese_taipei_member",
+        "label": "WTO：中華台北會員資料",
+        "sourceTier": "official",
+        "status": "raw_html_parsed",
+        "url": "https://www.wto.org/english/thewto_e/countries_e/chinese_taipei_e.htm",
+        "kind": "html",
+        "hsCodesParsed": 0
+      },
+      {
+        "id": "sef_jiang_chen_4_significance",
+        "label": "海基會：第四次江陳會談的意義",
+        "sourceTier": "official",
+        "status": "fetch_failed",
+        "url": "https://www.sef.org.tw/article-1-131-8393",
+        "kind": "html",
+        "hsCodesParsed": 0
+      },
+      {
+        "id": "sef_jiang_chen_4_schedule",
+        "label": "海基會：第四次江陳會談將於台中舉行",
+        "sourceTier": "official",
+        "status": "fetch_failed",
+        "url": "https://www.sef.org.tw/article-1-131-8371",
+        "kind": "html",
+        "hsCodesParsed": 0
+      },
+      {
+        "id": "sef_ecfa_outlook",
+        "label": "海基會：ECFA 與兩岸經貿關係展望",
+        "sourceTier": "official",
+        "status": "fetch_failed",
+        "url": "https://www.sef.org.tw/article-1-131-8551",
+        "kind": "html",
+        "hsCodesParsed": 0
+      },
+      {
+        "id": "sef_jiang_chen_5_results",
+        "label": "海基會：第五次江陳會談成果說明",
+        "sourceTier": "official",
+        "status": "fetch_failed",
+        "url": "https://www.sef.org.tw/article-1-131-8636",
+        "kind": "html",
+        "hsCodesParsed": 0
+      },
+      {
+        "id": "mac_2009_ecfa_policy",
+        "label": "陸委會：民國 98 年 ECFA 政策說明",
+        "sourceTier": "official",
+        "status": "raw_html_parsed",
+        "url": "https://www.mac.gov.tw/News_Content.aspx?n=FF87AB3AC4507DE3%26sms%3D4A22C80D8C659C54%26s%3DCB882833D3848EBC",
+        "kind": "html",
+        "hsCodesParsed": 0
+      },
+      {
+        "id": "comparative_connections_ecfa_domestic_politics",
+        "label": "Comparative Connections：ECFA and Domestic Politics",
+        "sourceTier": "academic",
+        "status": "raw_html_parsed",
+        "url": "https://cc.pacforum.org/2010/04/ecfa-domestic-politics/",
+        "kind": "html",
+        "hsCodesParsed": 0
+      },
+      {
+        "id": "ecfa_related_doc",
+        "label": "ECFA 協議文本及附件入口",
+        "sourceTier": "official",
+        "status": "raw_html_parsed",
+        "url": "https://www.ecfa.org.tw/RelatedDoc.aspx?nid=14",
+        "kind": "html",
+        "hsCodesParsed": 1
+      },
+      {
+        "id": "ecfa_implementation",
+        "label": "ECFA 執行情形",
+        "sourceTier": "official",
+        "status": "raw_html_parsed",
+        "url": "https://www.ecfa.org.tw/ShowDetail.aspx?nid=1121&pid=1044",
+        "kind": "html",
+        "hsCodesParsed": 1
+      },
+      {
+        "id": "ecfa_early_harvest_query",
+        "label": "ECFA 早收清單降稅查詢",
+        "sourceTier": "official",
+        "status": "raw_html_parsed",
+        "url": "https://www.ecfa.org.tw/EHList.aspx?nid=5",
+        "kind": "html",
+        "hsCodesParsed": 1
+      },
+      {
+        "id": "ecfa_agreement_pdf",
+        "label": "海峽兩岸經濟合作架構協議文本",
+        "sourceTier": "official",
+        "status": "raw_pdf_text_parsed",
+        "url": "https://www.ecfa.org.tw/EcfaAttachment/ECFADoc/2010-06-29-%E5%8D%94%E8%AD%B0%E6%96%87%E6%9C%AC.pdf",
+        "kind": "pdf",
+        "hsCodesParsed": 0
+      },
+      {
+        "id": "ecfa_annex1_early_harvest_pdf",
+        "label": "附件一：貨品貿易早期收穫產品清單及降稅安排",
+        "sourceTier": "official",
+        "status": "raw_pdf_text_parsed",
+        "url": "https://www.ecfa.org.tw/EcfaAttachment/ECFADoc/2010-06-29-%E9%99%84%E4%BB%B6%E4%B8%80%E8%B2%A8%E5%93%81%E8%B2%BF%E6%98%93%E6%97%A9%E6%9C%9F%E6%94%B6%E7%A9%AB%E7%94%A2%E5%93%81%E6%B8%85%E5%96%AE%E5%8F%8A%E9%99%8D%E7%A8%85%E5%AE%89%E6%8E%92.pdf",
+        "kind": "pdf",
+        "hsCodesParsed": 728
+      },
+      {
+        "id": "ecfa_annex2_origin_rules_pdf",
+        "label": "附件二：貨品貿易早期收穫產品的臨時原產地規則",
+        "sourceTier": "official",
+        "status": "raw_pdf_text_parsed",
+        "url": "https://www.ecfa.org.tw/EcfaAttachment/ECFADoc/2010-06-29-%E9%99%84%E4%BB%B6%E4%BA%8C%E9%81%A9%E7%94%A8%E6%96%BC%E8%B2%A8%E5%93%81%E8%B2%BF%E6%98%93%E6%97%A9%E6%9C%9F%E6%94%B6%E7%A9%AB%E7%94%A2%E5%93%81%E7%9A%84%E8%87%A8%E6%99%82%E5%8E%9F%E7%94%A2%E5%9C%B0%E8%A6%8F%E5%89%87.pdf",
+        "kind": "pdf",
+        "hsCodesParsed": 0
+      },
+      {
+        "id": "ecfa_annex3_safeguards_pdf",
+        "label": "附件三：貨品貿易早期收穫產品的雙方防衛措施",
+        "sourceTier": "official",
+        "status": "raw_pdf_text_parsed",
+        "url": "https://www.ecfa.org.tw/EcfaAttachment/ECFADoc/2010-06-29-%E9%99%84%E4%BB%B6%E4%B8%89%E9%81%A9%E7%94%A8%E6%96%BC%E8%B2%A8%E5%93%81%E8%B2%BF%E6%98%93%E6%97%A9%E6%9C%9F%E6%94%B6%E7%A9%AB%E7%94%A2%E5%93%81%E7%9A%84%E9%9B%99%E6%96%B9%E9%98%B2%E8%A1%9B%E6%8E%AA%E6%96%BD.pdf",
+        "kind": "pdf",
+        "hsCodesParsed": 0
+      },
+      {
+        "id": "ecfa_annex4_service_early_harvest_pdf",
+        "label": "附件四：服務貿易早期收穫部門及開放措施",
+        "sourceTier": "official",
+        "status": "raw_pdf_text_parsed",
+        "url": "https://www.ecfa.org.tw/EcfaAttachment/ECFADoc/2010-06-29-%E9%99%84%E4%BB%B6%E5%9B%9B%E6%9C%8D%E5%8B%99%E8%B2%BF%E6%98%93%E6%97%A9%E6%9C%9F%E6%94%B6%E7%A9%AB%E9%83%A8%E9%96%80%E5%8F%8A%E9%96%8B%E6%94%BE%E6%8E%AA%E6%96%BD.pdf",
+        "kind": "pdf",
+        "hsCodesParsed": 0
+      },
+      {
+        "id": "ecfa_annex5_service_supplier_pdf",
+        "label": "附件五：服務貿易早期收穫部門及開放措施的服務提供者定義",
+        "sourceTier": "official",
+        "status": "raw_pdf_text_parsed",
+        "url": "https://www.ecfa.org.tw/EcfaAttachment/ECFADoc/2010-06-29-%E9%99%84%E4%BB%B6%E4%BA%94%E9%81%A9%E7%94%A8%E6%96%BC%E6%9C%8D%E5%8B%99%E8%B2%BF%E6%98%93%E6%97%A9%E6%9C%9F%E6%94%B6%E7%A9%AB%E9%83%A8%E9%96%80%E5%8F%8A%E9%96%8B%E6%94%BE%E6%8E%AA%E6%96%BD%E7%9A%84%E6%9C%8D%E5%8B%99%E6%8F%90%E4%BE%9B%E8%80%85%E5%AE%9A%E7%BE%A9.pdf",
+        "kind": "pdf",
+        "hsCodesParsed": 0
+      },
+      {
+        "id": "customs_tariff_downloads",
+        "label": "關務署稅則稅率下載專區",
+        "sourceTier": "official",
+        "status": "raw_html_parsed",
+        "url": "https://web.customs.gov.tw/singlehtml/1205?cntId=cus1_112173_1205",
+        "kind": "html",
+        "hsCodesParsed": 0
+      },
+      {
+        "id": "trade_20240531_rollback",
+        "label": "經濟部 2024-05-31 中止 134 項早收優惠說明",
+        "sourceTier": "official",
+        "status": "raw_html_parsed",
+        "url": "https://www.trade.gov.tw/Pages/Detail.aspx?nodeid=40&pid=784730",
+        "kind": "html",
+        "hsCodesParsed": 0
+      },
+      {
+        "id": "moea_20240531_rollback",
+        "label": "經濟部新聞：中方再度片面取消 ECFA 早收優惠",
+        "sourceTier": "official",
+        "status": "raw_html_parsed",
+        "url": "https://www.moea.gov.tw/MNS/populace/news/News.aspx?kind=1&menu_id=40&news_id=114977",
+        "kind": "html",
+        "hsCodesParsed": 0
+      },
+      {
+        "id": "mainland_20231221_rollback",
+        "label": "陸方 2023-12-21 第一批中止關稅減讓公告",
+        "sourceTier": "official",
+        "status": "raw_html_parsed",
+        "url": "https://cws.mofcom.gov.cn/swcjzc/art/2024/art_5036be5b502b4f27aae9e882d7ca05c2.html",
+        "kind": "html",
+        "hsCodesParsed": 0
+      },
+      {
+        "id": "mainland_20231221_rollback_list_pdf",
+        "label": "第一批中止關稅減讓產品清單 PDF",
+        "sourceTier": "official",
+        "status": "raw_pdf_text_parsed",
+        "url": "https://cws.mofcom.gov.cn/cms_files/oldfile//cws/202401/20240102151157157.pdf",
+        "kind": "pdf",
+        "hsCodesParsed": 12
+      },
+      {
+        "id": "mainland_20240531_rollback",
+        "label": "陸方 2024-05-31 第二批中止關稅減讓公告",
+        "sourceTier": "official",
+        "status": "raw_html_parsed",
+        "url": "https://www.news.cn/tw/20240531/fcae1d745423401181c3cf3b8f7bff5a/c.html",
+        "kind": "html",
+        "hsCodesParsed": 0
+      },
+      {
+        "id": "mainland_20240531_rollback_list_pdf",
+        "label": "第二批中止關稅減讓產品清單 PDF",
+        "sourceTier": "official",
+        "status": "raw_pdf_text_parsed",
+        "url": "https://gss.mof.gov.cn/gzdt/zhengcefabu/202405/P020240531308646828162.pdf",
+        "kind": "pdf",
+        "hsCodesParsed": 134
+      },
+      {
+        "id": "customs_opendata_catalog",
+        "label": "關務署開放資料目錄",
+        "sourceTier": "official",
+        "status": "raw_csv_captured",
+        "url": "https://opendata.customs.gov.tw/data/17079/csv.csv",
+        "kind": "csv",
+        "hsCodesParsed": 0
+      },
+      {
+        "id": "ndltd_title_ecfa",
+        "label": "NDLTD 題名精準 ecfa 檢索結果",
+        "sourceTier": "academic",
+        "status": "parsed_catalog_rows",
+        "url": "https://ndltd.ncl.edu.tw/"
+      },
+      {
+        "id": "frl_2024_early_harvest",
+        "label": "Financial Research Letters 2024 早收實證文章",
+        "sourceTier": "academic",
+        "status": "raw_html_captured",
+        "url": "https://ideas.repec.org/a/eee/finlet/v59y2024ics1544612323011443.html"
+      },
+      {
+        "id": "trade_statistics",
+        "label": "稅則號列與雙邊貿易統計資料",
+        "sourceTier": "official",
+        "status": "data_endpoint_identified",
+        "url": "https://web.customs.gov.tw/singlehtml/1205?cntId=cus1_112173_1205"
+      }
+    ],
+    "literatureMap": [
+      {
+        "id": "financial_innovation_2024_early_harvest",
+        "title": "Did the 'Early harvest list' of commodity trade under ECFA promote Taiwan's manufacturing industry?",
+        "type": "article",
+        "year": 2024,
+        "method": "staggered_did",
+        "status": "lead_identified",
+        "note": "Uses empirical design around early-harvest list exposure; candidate anchor for causal-design review."
+      },
+      {
+        "id": "jei_details_ecfa",
+        "title": "Details in the China-Taiwan Free Trade Agreement",
+        "type": "article",
+        "year": 2014,
+        "method": "selection_and_utilization",
+        "status": "lead_identified",
+        "note": "Empirical investigation of determinants of ECFA utilization in Taiwan-to-China exports."
+      },
+      {
+        "id": "tandf_expected_effect",
+        "title": "The ECFA and its expected effect on cross-strait trade and investment",
+        "type": "article",
+        "year": 2012,
+        "method": "ex_ante_policy_analysis",
+        "status": "lead_identified",
+        "note": "Useful as pre-implementation expectation baseline."
+      }
+    ],
+    "thesisMeta": {
+      "corpus": {
+        "query": "\"ecfa\".ti precise title search",
+        "totalParsed": 263,
+        "sourcePages": 3,
+        "captureDate": "2026-07-02",
+        "coverageLevel": "title_results_complete",
+        "status": "title_keywords_and_methods_tagged",
+        "detailVerified": 1
+      },
+      "byYear": [
+        {
+          "rocYear": "98",
+          "count": 21
+        },
+        {
+          "rocYear": "99",
+          "count": 81
+        },
+        {
+          "rocYear": "100",
+          "count": 53
+        },
+        {
+          "rocYear": "101",
+          "count": 42
+        },
+        {
+          "rocYear": "102",
+          "count": 17
+        },
+        {
+          "rocYear": "103",
+          "count": 15
+        },
+        {
+          "rocYear": "104",
+          "count": 15
+        },
+        {
+          "rocYear": "105",
+          "count": 6
+        },
+        {
+          "rocYear": "106",
+          "count": 2
+        },
+        {
+          "rocYear": "107",
+          "count": 1
+        },
+        {
+          "rocYear": "108",
+          "count": 1
+        },
+        {
+          "rocYear": "109",
+          "count": 2
+        },
+        {
+          "rocYear": "110",
+          "count": 1
+        },
+        {
+          "rocYear": "111",
+          "count": 3
+        },
+        {
+          "rocYear": "112",
+          "count": 2
+        },
+        {
+          "rocYear": "113",
+          "count": 1
+        }
+      ],
+      "byDegree": [
+        {
+          "degree": "碩士",
+          "count": 255
+        },
+        {
+          "degree": "博士",
+          "count": 8
+        }
+      ],
+      "byField": [
+        {
+          "field": "商業及管理學門",
+          "count": 131
+        },
+        {
+          "field": "社會及行為科學學門",
+          "count": 90
+        },
+        {
+          "field": "法律學門",
+          "count": 12
+        },
+        {
+          "field": "傳播學門",
+          "count": 8
+        },
+        {
+          "field": "工程學門",
+          "count": 7
+        },
+        {
+          "field": "運輸服務學門",
+          "count": 5
+        },
+        {
+          "field": "電算機學門",
+          "count": 4
+        },
+        {
+          "field": "農業科學學門",
+          "count": 3
+        },
+        {
+          "field": "數學及統計學門",
+          "count": 2
+        },
+        {
+          "field": "教育學門",
+          "count": 1
+        }
+      ],
+      "byTopic": [
+        {
+          "topic": "industry_firm",
+          "label": "產業、企業與績效",
+          "count": 97
+        },
+        {
+          "topic": "political_policy",
+          "label": "政治經濟與政策治理",
+          "count": 80
+        },
+        {
+          "topic": "trade_tariff",
+          "label": "貿易與關稅效果",
+          "count": 39
+        },
+        {
+          "topic": "other",
+          "label": "其他或待人工分類",
+          "count": 27
+        },
+        {
+          "topic": "finance_investment",
+          "label": "金融、投資與資本市場",
+          "count": 16
+        },
+        {
+          "topic": "agriculture_food",
+          "label": "農食產品與個案產業",
+          "count": 4
+        }
+      ],
+      "topCited": [
+        {
+          "rank": 208,
+          "title": "兩岸經濟合作架構協議(ECFA)對台灣經濟影響初探",
+          "university": "國立臺灣大學",
+          "department": "經濟學研究所",
+          "rocYear": "99",
+          "degree": "碩士",
+          "field": "社會及行為科學學門",
+          "category": "經濟學類",
+          "student": "周芯瑋",
+          "advisor": "李顯峰 李顯峰",
+          "hasFulltext": false,
+          "embargoDate": "",
+          "cited": 39,
+          "views": 3520,
+          "downloads": 0,
+          "saved": 3,
+          "sourcePage": 3,
+          "topic": "political_policy",
+          "methodTag": "政策效果比較",
+          "keywords": [
+            "兩岸治理"
+          ],
+          "abstract": "",
+          "detailUrl": "",
+          "detailStatus": "待逐筆核對論文詳目"
+        },
+        {
+          "rank": 241,
+          "title": "兩岸簽署經濟合作架構協議（ECFA）之研究",
+          "university": "淡江大學",
+          "department": "中國大陸研究所碩士班",
+          "rocYear": "98",
+          "degree": "碩士",
+          "field": "社會及行為科學學門",
+          "category": "區域研究學類",
+          "student": "田永弘",
+          "advisor": "郭建中 郭建中",
+          "hasFulltext": false,
+          "embargoDate": "",
+          "cited": 31,
+          "views": 1660,
+          "downloads": 0,
+          "saved": 3,
+          "sourcePage": 3,
+          "topic": "political_policy",
+          "methodTag": "制度分析",
+          "keywords": [
+            "兩岸治理"
+          ],
+          "abstract": "",
+          "detailUrl": "",
+          "detailStatus": "待逐筆核對論文詳目"
+        },
+        {
+          "rank": 147,
+          "title": "台灣茶業產銷現況分析及政府因應政策：以WTO及ECFA為例",
+          "university": "國立中正大學",
+          "department": "政治學研究所",
+          "rocYear": "100",
+          "degree": "碩士",
+          "field": "社會及行為科學學門",
+          "category": "政治學類",
+          "student": "黃月英",
+          "advisor": "藍玉春 藍玉春",
+          "hasFulltext": true,
+          "embargoDate": "",
+          "cited": 17,
+          "views": 4511,
+          "downloads": 822,
+          "saved": 3,
+          "sourcePage": 2,
+          "topic": "political_policy",
+          "methodTag": "個案研究",
+          "keywords": [
+            "農食產品",
+            "兩岸治理"
+          ],
+          "abstract": "",
+          "detailUrl": "",
+          "detailStatus": "待逐筆核對論文詳目"
+        },
+        {
+          "rank": 229,
+          "title": "台灣銀行業如何改變商業模式以因應ECFA下之變局-以個案銀行為例",
+          "university": "國立中央大學",
+          "department": "財務金融學系碩士在職專班",
+          "rocYear": "98",
+          "degree": "碩士",
+          "field": "商業及管理學門",
+          "category": "財務金融學類",
+          "student": "楊忠恕",
+          "advisor": "徐政義 徐政義／鄭漢鐔 鄭漢鐔",
+          "hasFulltext": false,
+          "embargoDate": "",
+          "cited": 15,
+          "views": 1131,
+          "downloads": 0,
+          "saved": 4,
+          "sourcePage": 3,
+          "topic": "industry_firm",
+          "methodTag": "個案研究",
+          "keywords": [
+            "企業績效",
+            "金融投資"
+          ],
+          "abstract": "",
+          "detailUrl": "",
+          "detailStatus": "待逐筆核對論文詳目"
+        },
+        {
+          "rank": 122,
+          "title": "東南亞國協與兩岸政經關係發展之研究：從改善中國形象與ECFA觀點探討",
+          "university": "國立中山大學",
+          "department": "中國與亞太區域研究所",
+          "rocYear": "100",
+          "degree": "博士",
+          "field": "社會及行為科學學門",
+          "category": "區域研究學類",
+          "student": "林士奇",
+          "advisor": "周世雄",
+          "hasFulltext": true,
+          "embargoDate": "",
+          "cited": 14,
+          "views": 1410,
+          "downloads": 471,
+          "saved": 1,
+          "sourcePage": 2,
+          "topic": "political_policy",
+          "methodTag": "制度分析",
+          "keywords": [
+            "兩岸治理"
+          ],
+          "abstract": "",
+          "detailUrl": "",
+          "detailStatus": "待逐筆核對論文詳目"
+        },
+        {
+          "rank": 237,
+          "title": "ECFA事件宣告與股價關聯性之研究-以我國食品股票上市公司為例",
+          "university": "國立高雄第一科技大學",
+          "department": "金融所",
+          "rocYear": "98",
+          "degree": "碩士",
+          "field": "商業及管理學門",
+          "category": "財務金融學類",
+          "student": "李致賢",
+          "advisor": "汪逸真 汪逸真",
+          "hasFulltext": false,
+          "embargoDate": "",
+          "cited": 14,
+          "views": 936,
+          "downloads": 0,
+          "saved": 1,
+          "sourcePage": 3,
+          "topic": "industry_firm",
+          "methodTag": "事件研究",
+          "keywords": [
+            "企業績效",
+            "金融投資",
+            "農食產品"
+          ],
+          "abstract": "",
+          "detailUrl": "",
+          "detailStatus": "待逐筆核對論文詳目"
+        },
+        {
+          "rank": 236,
+          "title": "ECFA對兩岸經濟發展之影響－以台灣食品業為例",
+          "university": "輔仁大學",
+          "department": "應用統計學研究所",
+          "rocYear": "98",
+          "degree": "碩士",
+          "field": "數學及統計學門",
+          "category": "統計學類",
+          "student": "陳飛宏",
+          "advisor": "張光昭／謝邦昌 謝邦昌",
+          "hasFulltext": true,
+          "embargoDate": "",
+          "cited": 12,
+          "views": 2873,
+          "downloads": 676,
+          "saved": 4,
+          "sourcePage": 3,
+          "topic": "political_policy",
+          "methodTag": "政策效果比較",
+          "keywords": [
+            "農食產品",
+            "兩岸治理"
+          ],
+          "abstract": "",
+          "detailUrl": "",
+          "detailStatus": "待逐筆核對論文詳目"
+        },
+        {
+          "rank": 121,
+          "title": "ECFA早期收穫計畫對臺灣出口中國大陸的影響",
+          "university": "逢甲大學",
+          "department": "公共政策所",
+          "rocYear": "100",
+          "degree": "碩士",
+          "field": "社會及行為科學學門",
+          "category": "公共行政學類",
+          "student": "黃瑜渲",
+          "advisor": "馬彥彬 馬彥彬",
+          "hasFulltext": true,
+          "embargoDate": "",
+          "cited": 12,
+          "views": 1304,
+          "downloads": 388,
+          "saved": 1,
+          "sourcePage": 2,
+          "topic": "trade_tariff",
+          "methodTag": "政策效果比較",
+          "keywords": [
+            "早收清單",
+            "出口貿易",
+            "兩岸治理"
+          ],
+          "abstract": "",
+          "detailUrl": "",
+          "detailStatus": "待逐筆核對論文詳目"
+        },
+        {
+          "rank": 194,
+          "title": "ECFA事件宣告對台灣股票市場之影響-以台灣上市公司為例",
+          "university": "國立中正大學",
+          "department": "財務金融研究所",
+          "rocYear": "99",
+          "degree": "碩士",
+          "field": "商業及管理學門",
+          "category": "財務金融學類",
+          "student": "陳蕙珍",
+          "advisor": "賴靖宜 賴靖宜",
+          "hasFulltext": true,
+          "embargoDate": "",
+          "cited": 12,
+          "views": 948,
+          "downloads": 44,
+          "saved": 1,
+          "sourcePage": 2,
+          "topic": "industry_firm",
+          "methodTag": "事件研究",
+          "keywords": [
+            "企業績效",
+            "金融投資"
+          ],
+          "abstract": "",
+          "detailUrl": "",
+          "detailStatus": "待逐筆核對論文詳目"
+        },
+        {
+          "rank": 235,
+          "title": "ECFA的議價模型",
+          "university": "國立臺北大學",
+          "department": "經濟學系",
+          "rocYear": "98",
+          "degree": "碩士",
+          "field": "社會及行為科學學門",
+          "category": "經濟學類",
+          "student": "林妍溱",
+          "advisor": "官德星",
+          "hasFulltext": true,
+          "embargoDate": "",
+          "cited": 11,
+          "views": 1840,
+          "downloads": 635,
+          "saved": 2,
+          "sourcePage": 3,
+          "topic": "other",
+          "methodTag": "計量或模型分析",
+          "keywords": [
+            "待摘要確認"
+          ],
+          "abstract": "",
+          "detailUrl": "",
+          "detailStatus": "待逐筆核對論文詳目"
+        },
+        {
+          "rank": 126,
+          "title": "政策行銷的運用與限制-以ECFA推動過程為例",
+          "university": "國立政治大學",
+          "department": "公共行政研究所",
+          "rocYear": "100",
+          "degree": "碩士",
+          "field": "社會及行為科學學門",
+          "category": "公共行政學類",
+          "student": "何敬欽",
+          "advisor": "陳敦源 陳敦源",
+          "hasFulltext": false,
+          "embargoDate": "",
+          "cited": 10,
+          "views": 507,
+          "downloads": 0,
+          "saved": 1,
+          "sourcePage": 2,
+          "topic": "political_policy",
+          "methodTag": "個案研究",
+          "keywords": [
+            "兩岸治理"
+          ],
+          "abstract": "",
+          "detailUrl": "",
+          "detailStatus": "待逐筆核對論文詳目"
+        },
+        {
+          "rank": 146,
+          "title": "ECFA協議簽署對股票價格的宣告效果－以台灣航運與觀光產業為例",
+          "university": "國立虎尾科技大學",
+          "department": "經營管理研究所",
+          "rocYear": "100",
+          "degree": "碩士",
+          "field": "商業及管理學門",
+          "category": "企業管理學類",
+          "student": "許漢寬",
+          "advisor": "鄧誠中 鄧誠中",
+          "hasFulltext": false,
+          "embargoDate": "",
+          "cited": 10,
+          "views": 895,
+          "downloads": 0,
+          "saved": 0,
+          "sourcePage": 2,
+          "topic": "industry_firm",
+          "methodTag": "事件研究",
+          "keywords": [
+            "產業影響"
+          ],
+          "abstract": "",
+          "detailUrl": "",
+          "detailStatus": "待逐筆核對論文詳目"
+        }
+      ],
+      "recent": [
+        {
+          "rank": 3,
+          "title": "兩岸經濟合作架構協議(ECFA)優惠稅率終止對台灣主要產業的影響：市場多元化與財務績效分析",
+          "university": "國立中正大學",
+          "department": "企業管理系研究所",
+          "rocYear": "113",
+          "degree": "博士",
+          "field": "商業及管理學門",
+          "category": "企業管理學類",
+          "student": "涂淑釗",
+          "advisor": "鎮明常 鎮明常",
+          "hasFulltext": true,
+          "embargoDate": "20280831",
+          "cited": 0,
+          "views": 43,
+          "downloads": 0,
+          "saved": 0,
+          "sourcePage": 1,
+          "topic": "trade_tariff",
+          "methodTag": "政策效果比較",
+          "keywords": [
+            "兩岸經濟合作架構協議",
+            "早期清單",
+            "分散市場",
+            "關稅優惠終止",
+            "事件研究法",
+            "ECFA",
+            "trade policy",
+            "Taiwan industries"
+          ],
+          "abstract": "本研究旨在探討兩岸經濟合作架構協議（ECFA）2024年階段性終止優惠關稅措施，對台灣四大重點出口產業（石化、機械、紡織及汽車零組件）之短、中、長期衝擊，並以未直接受惠於ECFA之半導體產業（72家上市公司）作為對照。研究採用事件研究法(Event Study)檢測ECFA終止、簽署及其他重大貿易政策事件對50家受ECFA影響企業之累積異常報酬（CAR）之短期影響；進而運用縱橫資料隨機效應面板迴歸分析(Panel Regression)，評估關稅終止對企業股價波動性、財務績效指標（如營收成長率、ROA、ROE、Tobin’s Q）及出口市場結構之長期效果。實證結果顯示：1. ECFA終止後，石化與機械產業短期內股價波動顯著加劇，CAR顯著下跌；紡織與汽車零組件亦承受負面衝擊。半導體產業CAR則維持穩定，驗證對照組設定之有效性。2. 事前主動多元化出口市場之機械與汽車零組件業者，於關稅終止後表現出更高之財務韌性與較穩定之營收成長。3. 根據前景理論(Prospect Theory)，產業中表現低於基準之企業，因風險尋求傾向，更積極展開市場分散策略，以因應不確定性。本研究成果強調全球市場多元化在面對貿易政策衝擊時之緩衝作用，並為政府及企業提供政策制定與風險管理之實證依據，有助於提升產業長期韌性與國際競爭力。",
+          "detailUrl": "https://ndltd.ncl.edu.tw/cgi-bin/gs32/gsweb.cgi/login?o=dnclcdr&s=id%3D%22113CCU00121084%22.&searchmode=basic",
+          "detailStatus": "已核對公開詳目"
+        },
+        {
+          "rank": 4,
+          "title": "ECFA 對臺灣勞動需求彈性的影響",
+          "university": "國立政治大學",
+          "department": "國際經營與貿易學系",
+          "rocYear": "112",
+          "degree": "碩士",
+          "field": "商業及管理學門",
+          "category": "貿易學類",
+          "student": "林郁惟",
+          "advisor": "蔡致遠 蔡致遠",
+          "hasFulltext": true,
+          "embargoDate": "20260705",
+          "cited": 0,
+          "views": 61,
+          "downloads": 0,
+          "saved": 0,
+          "sourcePage": 1,
+          "topic": "trade_tariff",
+          "methodTag": "政策效果比較",
+          "keywords": [
+            "出口貿易"
+          ],
+          "abstract": "",
+          "detailUrl": "",
+          "detailStatus": "待逐筆核對論文詳目"
+        },
+        {
+          "rank": 5,
+          "title": "海峽兩岸經濟合作架構協議(ECFA)對台南關廟麵產業之影響分析：以長安製麵廠為例",
+          "university": "國立成功大學",
+          "department": "政治學系碩士在職專班",
+          "rocYear": "112",
+          "degree": "碩士",
+          "field": "社會及行為科學學門",
+          "category": "政治學類",
+          "student": "陳心瑜",
+          "advisor": "周志杰",
+          "hasFulltext": true,
+          "embargoDate": "",
+          "cited": 0,
+          "views": 146,
+          "downloads": 27,
+          "saved": 0,
+          "sourcePage": 1,
+          "topic": "industry_firm",
+          "methodTag": "政策效果比較",
+          "keywords": [
+            "產業影響",
+            "農食產品",
+            "兩岸治理"
+          ],
+          "abstract": "",
+          "detailUrl": "",
+          "detailStatus": "待逐筆核對論文詳目"
+        },
+        {
+          "rank": 6,
+          "title": "ECFA與RCEP對台灣的貿易與投資的影響",
+          "university": "國立臺北商業大學",
+          "department": "國際商務系（所）",
+          "rocYear": "111",
+          "degree": "碩士",
+          "field": "商業及管理學門",
+          "category": "貿易學類",
+          "student": "洪金鶴",
+          "advisor": "郭俊賢 郭俊賢",
+          "hasFulltext": true,
+          "embargoDate": "",
+          "cited": 3,
+          "views": 299,
+          "downloads": 52,
+          "saved": 0,
+          "sourcePage": 1,
+          "topic": "trade_tariff",
+          "methodTag": "政策效果比較",
+          "keywords": [
+            "出口貿易",
+            "金融投資",
+            "區域經濟整合"
+          ],
+          "abstract": "",
+          "detailUrl": "",
+          "detailStatus": "待逐筆核對論文詳目"
+        },
+        {
+          "rank": 7,
+          "title": "海峽兩岸經濟合作架構協議(ECFA)對台灣進出口的關稅傳導效果",
+          "university": "國立中正大學",
+          "department": "經濟系國際經濟學研究所",
+          "rocYear": "111",
+          "degree": "碩士",
+          "field": "社會及行為科學學門",
+          "category": "經濟學類",
+          "student": "陳庭維",
+          "advisor": "陳偉智 陳偉智",
+          "hasFulltext": true,
+          "embargoDate": "",
+          "cited": 0,
+          "views": 372,
+          "downloads": 84,
+          "saved": 1,
+          "sourcePage": 1,
+          "topic": "trade_tariff",
+          "methodTag": "政策效果比較",
+          "keywords": [
+            "關稅",
+            "出口貿易",
+            "兩岸治理"
+          ],
+          "abstract": "",
+          "detailUrl": "",
+          "detailStatus": "待逐筆核對論文詳目"
+        },
+        {
+          "rank": 242,
+          "title": "論海峽兩岸經濟合作架構協議對台灣的意涵與影響",
+          "university": "淡江大學",
+          "department": "外交與國際關係學系中國大陸研究碩士在職專班",
+          "rocYear": "111",
+          "degree": "碩士",
+          "field": "社會及行為科學學門",
+          "category": "國際事務學類",
+          "student": "許至中",
+          "advisor": "潘錫堂／李志強 李志強",
+          "hasFulltext": true,
+          "embargoDate": "",
+          "cited": 0,
+          "views": 179,
+          "downloads": 29,
+          "saved": 0,
+          "sourcePage": 3,
+          "topic": "political_policy",
+          "methodTag": "政策效果比較",
+          "keywords": [
+            "兩岸治理"
+          ],
+          "abstract": "",
+          "detailUrl": "",
+          "detailStatus": "待逐筆核對論文詳目"
+        },
+        {
+          "rank": 8,
+          "title": "ECFA早收清單對兩岸貿易的長期與短期效果",
+          "university": "國立中正大學",
+          "department": "經濟系國際經濟學研究所",
+          "rocYear": "110",
+          "degree": "碩士",
+          "field": "社會及行為科學學門",
+          "category": "經濟學類",
+          "student": "曾俊維",
+          "advisor": "陳偉智 陳偉智",
+          "hasFulltext": true,
+          "embargoDate": "20270725",
+          "cited": 0,
+          "views": 234,
+          "downloads": 1,
+          "saved": 1,
+          "sourcePage": 1,
+          "topic": "trade_tariff",
+          "methodTag": "政策效果比較",
+          "keywords": [
+            "早收清單",
+            "出口貿易",
+            "兩岸治理"
+          ],
+          "abstract": "",
+          "detailUrl": "",
+          "detailStatus": "待逐筆核對論文詳目"
+        },
+        {
+          "rank": 9,
+          "title": "ECFA對台灣茶葉外銷中國大陸成效之研究",
+          "university": "國立中山大學",
+          "department": "中國與亞太區域研究所",
+          "rocYear": "109",
+          "degree": "碩士",
+          "field": "社會及行為科學學門",
+          "category": "區域研究學類",
+          "student": "張宸瑋",
+          "advisor": "翁嘉禧 翁嘉禧",
+          "hasFulltext": true,
+          "embargoDate": "",
+          "cited": 0,
+          "views": 270,
+          "downloads": 12,
+          "saved": 0,
+          "sourcePage": 1,
+          "topic": "political_policy",
+          "methodTag": "待摘要確認",
+          "keywords": [
+            "農食產品",
+            "兩岸治理"
+          ],
+          "abstract": "",
+          "detailUrl": "",
+          "detailStatus": "待逐筆核對論文詳目"
+        },
+        {
+          "rank": 10,
+          "title": "ECFA對台灣經濟之影響",
+          "university": "國立高雄大學",
+          "department": "應用經濟學系碩士班",
+          "rocYear": "109",
+          "degree": "碩士",
+          "field": "社會及行為科學學門",
+          "category": "經濟學類",
+          "student": "朱寶嘉",
+          "advisor": "翁銘章 翁銘章",
+          "hasFulltext": true,
+          "embargoDate": "",
+          "cited": 2,
+          "views": 476,
+          "downloads": 103,
+          "saved": 0,
+          "sourcePage": 1,
+          "topic": "other",
+          "methodTag": "政策效果比較",
+          "keywords": [
+            "待摘要確認"
+          ],
+          "abstract": "",
+          "detailUrl": "",
+          "detailStatus": "待逐筆核對論文詳目"
+        },
+        {
+          "rank": 11,
+          "title": "ECFA早收清單對台灣出口貿易之探討",
+          "university": "國立屏東大學",
+          "department": "國際貿易學系碩士在職專班",
+          "rocYear": "108",
+          "degree": "碩士",
+          "field": "商業及管理學門",
+          "category": "貿易學類",
+          "student": "洪維詳",
+          "advisor": "黃財源 黃財源",
+          "hasFulltext": true,
+          "embargoDate": "",
+          "cited": 1,
+          "views": 410,
+          "downloads": 3,
+          "saved": 1,
+          "sourcePage": 1,
+          "topic": "trade_tariff",
+          "methodTag": "待摘要確認",
+          "keywords": [
+            "早收清單",
+            "出口貿易"
+          ],
+          "abstract": "",
+          "detailUrl": "",
+          "detailStatus": "待逐筆核對論文詳目"
+        },
+        {
+          "rank": 12,
+          "title": "後ECFA時期中國大陸對臺灣經貿環境影響探析",
+          "university": "淡江大學",
+          "department": "中國大陸研究所碩士在職專班",
+          "rocYear": "107",
+          "degree": "碩士",
+          "field": "社會及行為科學學門",
+          "category": "區域研究學類",
+          "student": "劉晉強",
+          "advisor": "李志強 李志強",
+          "hasFulltext": false,
+          "embargoDate": "",
+          "cited": 0,
+          "views": 170,
+          "downloads": 0,
+          "saved": 0,
+          "sourcePage": 1,
+          "topic": "political_policy",
+          "methodTag": "政策效果比較",
+          "keywords": [
+            "兩岸治理"
+          ],
+          "abstract": "",
+          "detailUrl": "",
+          "detailStatus": "待逐筆核對論文詳目"
+        },
+        {
+          "rank": 13,
+          "title": "台灣石斑魚外銷中國大陸影響因素之分析— 兼論ECFA早收清單降稅之效果",
+          "university": "國立政治大學",
+          "department": "經濟學系",
+          "rocYear": "106",
+          "degree": "碩士",
+          "field": "社會及行為科學學門",
+          "category": "經濟學類",
+          "student": "鄧鈞之",
+          "advisor": "林祖嘉 林祖嘉",
+          "hasFulltext": false,
+          "embargoDate": "",
+          "cited": 1,
+          "views": 451,
+          "downloads": 0,
+          "saved": 0,
+          "sourcePage": 1,
+          "topic": "trade_tariff",
+          "methodTag": "政策效果比較",
+          "keywords": [
+            "早收清單",
+            "農食產品",
+            "兩岸治理"
+          ],
+          "abstract": "",
+          "detailUrl": "",
+          "detailStatus": "待逐筆核對論文詳目"
+        }
+      ],
+      "sampleRows": [
+        {
+          "rank": 1,
+          "title": "ECFA與MOU對台灣經濟產業的影響",
+          "university": "國立高雄應用科技大學",
+          "department": "商務經營研究所",
+          "rocYear": "100",
+          "degree": "碩士",
+          "field": "商業及管理學門",
+          "category": "一般商業學類",
+          "student": "魏立昇",
+          "advisor": "羅正忠 羅正忠",
+          "hasFulltext": true,
+          "embargoDate": "",
+          "cited": 4,
+          "views": 1930,
+          "downloads": 123,
+          "saved": 1,
+          "sourcePage": 1,
+          "topic": "industry_firm",
+          "methodTag": "政策效果比較",
+          "keywords": [
+            "產業影響"
+          ],
+          "abstract": "",
+          "detailUrl": "",
+          "detailStatus": "待逐筆核對論文詳目"
+        },
+        {
+          "rank": 2,
+          "title": "智慧資本、效率與生產力- ECFA早收與非早收名單產業在ECFA實施前後之差異比較",
+          "university": "朝陽科技大學",
+          "department": "財務金融系",
+          "rocYear": "104",
+          "degree": "碩士",
+          "field": "商業及管理學門",
+          "category": "財務金融學類",
+          "student": "李盈君",
+          "advisor": "劉定焜 劉定焜",
+          "hasFulltext": true,
+          "embargoDate": "",
+          "cited": 4,
+          "views": 390,
+          "downloads": 21,
+          "saved": 1,
+          "sourcePage": 1,
+          "topic": "trade_tariff",
+          "methodTag": "政策效果比較",
+          "keywords": [
+            "早收清單",
+            "產業影響",
+            "企業績效",
+            "金融投資"
+          ],
+          "abstract": "",
+          "detailUrl": "",
+          "detailStatus": "待逐筆核對論文詳目"
+        },
+        {
+          "rank": 3,
+          "title": "兩岸經濟合作架構協議(ECFA)優惠稅率終止對台灣主要產業的影響：市場多元化與財務績效分析",
+          "university": "國立中正大學",
+          "department": "企業管理系研究所",
+          "rocYear": "113",
+          "degree": "博士",
+          "field": "商業及管理學門",
+          "category": "企業管理學類",
+          "student": "涂淑釗",
+          "advisor": "鎮明常 鎮明常",
+          "hasFulltext": true,
+          "embargoDate": "20280831",
+          "cited": 0,
+          "views": 43,
+          "downloads": 0,
+          "saved": 0,
+          "sourcePage": 1,
+          "topic": "trade_tariff",
+          "methodTag": "政策效果比較",
+          "keywords": [
+            "兩岸經濟合作架構協議",
+            "早期清單",
+            "分散市場",
+            "關稅優惠終止",
+            "事件研究法",
+            "ECFA",
+            "trade policy",
+            "Taiwan industries"
+          ],
+          "abstract": "本研究旨在探討兩岸經濟合作架構協議（ECFA）2024年階段性終止優惠關稅措施，對台灣四大重點出口產業（石化、機械、紡織及汽車零組件）之短、中、長期衝擊，並以未直接受惠於ECFA之半導體產業（72家上市公司）作為對照。研究採用事件研究法(Event Study)檢測ECFA終止、簽署及其他重大貿易政策事件對50家受ECFA影響企業之累積異常報酬（CAR）之短期影響；進而運用縱橫資料隨機效應面板迴歸分析(Panel Regression)，評估關稅終止對企業股價波動性、財務績效指標（如營收成長率、ROA、ROE、Tobin’s Q）及出口市場結構之長期效果。實證結果顯示：1. ECFA終止後，石化與機械產業短期內股價波動顯著加劇，CAR顯著下跌；紡織與汽車零組件亦承受負面衝擊。半導體產業CAR則維持穩定，驗證對照組設定之有效性。2. 事前主動多元化出口市場之機械與汽車零組件業者，於關稅終止後表現出更高之財務韌性與較穩定之營收成長。3. 根據前景理論(Prospect Theory)，產業中表現低於基準之企業，因風險尋求傾向，更積極展開市場分散策略，以因應不確定性。本研究成果強調全球市場多元化在面對貿易政策衝擊時之緩衝作用，並為政府及企業提供政策制定與風險管理之實證依據，有助於提升產業長期韌性與國際競爭力。",
+          "detailUrl": "https://ndltd.ncl.edu.tw/cgi-bin/gs32/gsweb.cgi/login?o=dnclcdr&s=id%3D%22113CCU00121084%22.&searchmode=basic",
+          "detailStatus": "已核對公開詳目"
+        },
+        {
+          "rank": 4,
+          "title": "ECFA 對臺灣勞動需求彈性的影響",
+          "university": "國立政治大學",
+          "department": "國際經營與貿易學系",
+          "rocYear": "112",
+          "degree": "碩士",
+          "field": "商業及管理學門",
+          "category": "貿易學類",
+          "student": "林郁惟",
+          "advisor": "蔡致遠 蔡致遠",
+          "hasFulltext": true,
+          "embargoDate": "20260705",
+          "cited": 0,
+          "views": 61,
+          "downloads": 0,
+          "saved": 0,
+          "sourcePage": 1,
+          "topic": "trade_tariff",
+          "methodTag": "政策效果比較",
+          "keywords": [
+            "出口貿易"
+          ],
+          "abstract": "",
+          "detailUrl": "",
+          "detailStatus": "待逐筆核對論文詳目"
+        },
+        {
+          "rank": 5,
+          "title": "海峽兩岸經濟合作架構協議(ECFA)對台南關廟麵產業之影響分析：以長安製麵廠為例",
+          "university": "國立成功大學",
+          "department": "政治學系碩士在職專班",
+          "rocYear": "112",
+          "degree": "碩士",
+          "field": "社會及行為科學學門",
+          "category": "政治學類",
+          "student": "陳心瑜",
+          "advisor": "周志杰",
+          "hasFulltext": true,
+          "embargoDate": "",
+          "cited": 0,
+          "views": 146,
+          "downloads": 27,
+          "saved": 0,
+          "sourcePage": 1,
+          "topic": "industry_firm",
+          "methodTag": "政策效果比較",
+          "keywords": [
+            "產業影響",
+            "農食產品",
+            "兩岸治理"
+          ],
+          "abstract": "",
+          "detailUrl": "",
+          "detailStatus": "待逐筆核對論文詳目"
+        },
+        {
+          "rank": 6,
+          "title": "ECFA與RCEP對台灣的貿易與投資的影響",
+          "university": "國立臺北商業大學",
+          "department": "國際商務系（所）",
+          "rocYear": "111",
+          "degree": "碩士",
+          "field": "商業及管理學門",
+          "category": "貿易學類",
+          "student": "洪金鶴",
+          "advisor": "郭俊賢 郭俊賢",
+          "hasFulltext": true,
+          "embargoDate": "",
+          "cited": 3,
+          "views": 299,
+          "downloads": 52,
+          "saved": 0,
+          "sourcePage": 1,
+          "topic": "trade_tariff",
+          "methodTag": "政策效果比較",
+          "keywords": [
+            "出口貿易",
+            "金融投資",
+            "區域經濟整合"
+          ],
+          "abstract": "",
+          "detailUrl": "",
+          "detailStatus": "待逐筆核對論文詳目"
+        },
+        {
+          "rank": 7,
+          "title": "海峽兩岸經濟合作架構協議(ECFA)對台灣進出口的關稅傳導效果",
+          "university": "國立中正大學",
+          "department": "經濟系國際經濟學研究所",
+          "rocYear": "111",
+          "degree": "碩士",
+          "field": "社會及行為科學學門",
+          "category": "經濟學類",
+          "student": "陳庭維",
+          "advisor": "陳偉智 陳偉智",
+          "hasFulltext": true,
+          "embargoDate": "",
+          "cited": 0,
+          "views": 372,
+          "downloads": 84,
+          "saved": 1,
+          "sourcePage": 1,
+          "topic": "trade_tariff",
+          "methodTag": "政策效果比較",
+          "keywords": [
+            "關稅",
+            "出口貿易",
+            "兩岸治理"
+          ],
+          "abstract": "",
+          "detailUrl": "",
+          "detailStatus": "待逐筆核對論文詳目"
+        },
+        {
+          "rank": 8,
+          "title": "ECFA早收清單對兩岸貿易的長期與短期效果",
+          "university": "國立中正大學",
+          "department": "經濟系國際經濟學研究所",
+          "rocYear": "110",
+          "degree": "碩士",
+          "field": "社會及行為科學學門",
+          "category": "經濟學類",
+          "student": "曾俊維",
+          "advisor": "陳偉智 陳偉智",
+          "hasFulltext": true,
+          "embargoDate": "20270725",
+          "cited": 0,
+          "views": 234,
+          "downloads": 1,
+          "saved": 1,
+          "sourcePage": 1,
+          "topic": "trade_tariff",
+          "methodTag": "政策效果比較",
+          "keywords": [
+            "早收清單",
+            "出口貿易",
+            "兩岸治理"
+          ],
+          "abstract": "",
+          "detailUrl": "",
+          "detailStatus": "待逐筆核對論文詳目"
+        },
+        {
+          "rank": 9,
+          "title": "ECFA對台灣茶葉外銷中國大陸成效之研究",
+          "university": "國立中山大學",
+          "department": "中國與亞太區域研究所",
+          "rocYear": "109",
+          "degree": "碩士",
+          "field": "社會及行為科學學門",
+          "category": "區域研究學類",
+          "student": "張宸瑋",
+          "advisor": "翁嘉禧 翁嘉禧",
+          "hasFulltext": true,
+          "embargoDate": "",
+          "cited": 0,
+          "views": 270,
+          "downloads": 12,
+          "saved": 0,
+          "sourcePage": 1,
+          "topic": "political_policy",
+          "methodTag": "待摘要確認",
+          "keywords": [
+            "農食產品",
+            "兩岸治理"
+          ],
+          "abstract": "",
+          "detailUrl": "",
+          "detailStatus": "待逐筆核對論文詳目"
+        },
+        {
+          "rank": 10,
+          "title": "ECFA對台灣經濟之影響",
+          "university": "國立高雄大學",
+          "department": "應用經濟學系碩士班",
+          "rocYear": "109",
+          "degree": "碩士",
+          "field": "社會及行為科學學門",
+          "category": "經濟學類",
+          "student": "朱寶嘉",
+          "advisor": "翁銘章 翁銘章",
+          "hasFulltext": true,
+          "embargoDate": "",
+          "cited": 2,
+          "views": 476,
+          "downloads": 103,
+          "saved": 0,
+          "sourcePage": 1,
+          "topic": "other",
+          "methodTag": "政策效果比較",
+          "keywords": [
+            "待摘要確認"
+          ],
+          "abstract": "",
+          "detailUrl": "",
+          "detailStatus": "待逐筆核對論文詳目"
+        },
+        {
+          "rank": 11,
+          "title": "ECFA早收清單對台灣出口貿易之探討",
+          "university": "國立屏東大學",
+          "department": "國際貿易學系碩士在職專班",
+          "rocYear": "108",
+          "degree": "碩士",
+          "field": "商業及管理學門",
+          "category": "貿易學類",
+          "student": "洪維詳",
+          "advisor": "黃財源 黃財源",
+          "hasFulltext": true,
+          "embargoDate": "",
+          "cited": 1,
+          "views": 410,
+          "downloads": 3,
+          "saved": 1,
+          "sourcePage": 1,
+          "topic": "trade_tariff",
+          "methodTag": "待摘要確認",
+          "keywords": [
+            "早收清單",
+            "出口貿易"
+          ],
+          "abstract": "",
+          "detailUrl": "",
+          "detailStatus": "待逐筆核對論文詳目"
+        },
+        {
+          "rank": 12,
+          "title": "後ECFA時期中國大陸對臺灣經貿環境影響探析",
+          "university": "淡江大學",
+          "department": "中國大陸研究所碩士在職專班",
+          "rocYear": "107",
+          "degree": "碩士",
+          "field": "社會及行為科學學門",
+          "category": "區域研究學類",
+          "student": "劉晉強",
+          "advisor": "李志強 李志強",
+          "hasFulltext": false,
+          "embargoDate": "",
+          "cited": 0,
+          "views": 170,
+          "downloads": 0,
+          "saved": 0,
+          "sourcePage": 1,
+          "topic": "political_policy",
+          "methodTag": "政策效果比較",
+          "keywords": [
+            "兩岸治理"
+          ],
+          "abstract": "",
+          "detailUrl": "",
+          "detailStatus": "待逐筆核對論文詳目"
+        },
+        {
+          "rank": 13,
+          "title": "台灣石斑魚外銷中國大陸影響因素之分析— 兼論ECFA早收清單降稅之效果",
+          "university": "國立政治大學",
+          "department": "經濟學系",
+          "rocYear": "106",
+          "degree": "碩士",
+          "field": "社會及行為科學學門",
+          "category": "經濟學類",
+          "student": "鄧鈞之",
+          "advisor": "林祖嘉 林祖嘉",
+          "hasFulltext": false,
+          "embargoDate": "",
+          "cited": 1,
+          "views": 451,
+          "downloads": 0,
+          "saved": 0,
+          "sourcePage": 1,
+          "topic": "trade_tariff",
+          "methodTag": "政策效果比較",
+          "keywords": [
+            "早收清單",
+            "農食產品",
+            "兩岸治理"
+          ],
+          "abstract": "",
+          "detailUrl": "",
+          "detailStatus": "待逐筆核對論文詳目"
+        },
+        {
+          "rank": 14,
+          "title": "影響在臺陸資與大陸臺資企業展開多元合作的決定因素：ECFA與投保協議生效後",
+          "university": "國立政治大學",
+          "department": "行政管理碩士學程",
+          "rocYear": "105",
+          "degree": "碩士",
+          "field": "社會及行為科學學門",
+          "category": "公共行政學類",
+          "student": "周淑娟",
+          "advisor": "翁永和 翁永和",
+          "hasFulltext": false,
+          "embargoDate": "",
+          "cited": 1,
+          "views": 359,
+          "downloads": 0,
+          "saved": 0,
+          "sourcePage": 1,
+          "topic": "industry_firm",
+          "methodTag": "政策效果比較",
+          "keywords": [
+            "企業績效",
+            "金融投資"
+          ],
+          "abstract": "",
+          "detailUrl": "",
+          "detailStatus": "待逐筆核對論文詳目"
+        },
+        {
+          "rank": 15,
+          "title": "影響在臺陸資產品附加價值的決定因素：以ECFA與投保協議生效後的資料做分析",
+          "university": "國立政治大學",
+          "department": "行政管理碩士學程",
+          "rocYear": "105",
+          "degree": "碩士",
+          "field": "社會及行為科學學門",
+          "category": "公共行政學類",
+          "student": "彭美華",
+          "advisor": "翁永和 翁永和",
+          "hasFulltext": false,
+          "embargoDate": "",
+          "cited": 0,
+          "views": 192,
+          "downloads": 0,
+          "saved": 0,
+          "sourcePage": 1,
+          "topic": "finance_investment",
+          "methodTag": "政策效果比較",
+          "keywords": [
+            "金融投資"
+          ],
+          "abstract": "",
+          "detailUrl": "",
+          "detailStatus": "待逐筆核對論文詳目"
+        },
+        {
+          "rank": 16,
+          "title": "ECFA與投保協定生效後,影響在臺陸資兩岸貿易機會的決定因素",
+          "university": "國立政治大學",
+          "department": "行政管理碩士學程",
+          "rocYear": "105",
+          "degree": "碩士",
+          "field": "社會及行為科學學門",
+          "category": "公共行政學類",
+          "student": "黃上容",
+          "advisor": "胡偉民 胡偉民",
+          "hasFulltext": false,
+          "embargoDate": "",
+          "cited": 1,
+          "views": 267,
+          "downloads": 0,
+          "saved": 0,
+          "sourcePage": 1,
+          "topic": "trade_tariff",
+          "methodTag": "政策效果比較",
+          "keywords": [
+            "出口貿易",
+            "金融投資",
+            "兩岸治理"
+          ],
+          "abstract": "",
+          "detailUrl": "",
+          "detailStatus": "待逐筆核對論文詳目"
+        },
+        {
+          "rank": 17,
+          "title": "ECFA與投保協定生效後影響在臺陸資對臺採購規模的決定因素",
+          "university": "國立政治大學",
+          "department": "行政管理碩士學程",
+          "rocYear": "105",
+          "degree": "碩士",
+          "field": "社會及行為科學學門",
+          "category": "公共行政學類",
+          "student": "施育生",
+          "advisor": "胡偉民 胡偉民",
+          "hasFulltext": false,
+          "embargoDate": "",
+          "cited": 0,
+          "views": 150,
+          "downloads": 0,
+          "saved": 0,
+          "sourcePage": 1,
+          "topic": "finance_investment",
+          "methodTag": "政策效果比較",
+          "keywords": [
+            "金融投資"
+          ],
+          "abstract": "",
+          "detailUrl": "",
+          "detailStatus": "待逐筆核對論文詳目"
+        },
+        {
+          "rank": 18,
+          "title": "影響在臺陸資與臺商合作開發國際市場機會的決定因素：ECFA與投保協議生效後的調查為例",
+          "university": "國立政治大學",
+          "department": "行政管理碩士學程",
+          "rocYear": "105",
+          "degree": "碩士",
+          "field": "社會及行為科學學門",
+          "category": "公共行政學類",
+          "student": "呂蕙君",
+          "advisor": "胡偉民 胡偉民",
+          "hasFulltext": false,
+          "embargoDate": "",
+          "cited": 0,
+          "views": 186,
+          "downloads": 0,
+          "saved": 0,
+          "sourcePage": 1,
+          "topic": "finance_investment",
+          "methodTag": "政策效果比較",
+          "keywords": [
+            "金融投資"
+          ],
+          "abstract": "",
+          "detailUrl": "",
+          "detailStatus": "待逐筆核對論文詳目"
+        },
+        {
+          "rank": 19,
+          "title": "全球區域經濟整合下兩岸簽署ECFA之政經分析",
+          "university": "國立臺灣大學",
+          "department": "政治學研究所",
+          "rocYear": "105",
+          "degree": "碩士",
+          "field": "社會及行為科學學門",
+          "category": "政治學類",
+          "student": "張雅珍",
+          "advisor": "蕭全政 蕭全政",
+          "hasFulltext": true,
+          "embargoDate": "",
+          "cited": 6,
+          "views": 853,
+          "downloads": 223,
+          "saved": 0,
+          "sourcePage": 1,
+          "topic": "political_policy",
+          "methodTag": "制度分析",
+          "keywords": [
+            "兩岸治理"
+          ],
+          "abstract": "",
+          "detailUrl": "",
+          "detailStatus": "待逐筆核對論文詳目"
+        },
+        {
+          "rank": 20,
+          "title": "在ECFA架構下中韓FTA之簽訂對台灣經濟之影響",
+          "university": "淡江大學",
+          "department": "國際企業學系碩士班",
+          "rocYear": "104",
+          "degree": "碩士",
+          "field": "商業及管理學門",
+          "category": "企業管理學類",
+          "student": "謝秉儒",
+          "advisor": "鮑世亨",
+          "hasFulltext": false,
+          "embargoDate": "",
+          "cited": 5,
+          "views": 209,
+          "downloads": 0,
+          "saved": 0,
+          "sourcePage": 1,
+          "topic": "industry_firm",
+          "methodTag": "政策效果比較",
+          "keywords": [
+            "企業績效",
+            "區域經濟整合"
+          ],
+          "abstract": "",
+          "detailUrl": "",
+          "detailStatus": "待逐筆核對論文詳目"
+        },
+        {
+          "rank": 21,
+          "title": "台灣南向政策受ECFA影響下之研究",
+          "university": "健行科技大學",
+          "department": "企業管理系碩士班",
+          "rocYear": "104",
+          "degree": "碩士",
+          "field": "商業及管理學門",
+          "category": "企業管理學類",
+          "student": "吳家識",
+          "advisor": "孔祥科 孔祥科",
+          "hasFulltext": false,
+          "embargoDate": "",
+          "cited": 1,
+          "views": 245,
+          "downloads": 0,
+          "saved": 1,
+          "sourcePage": 1,
+          "topic": "industry_firm",
+          "methodTag": "政策效果比較",
+          "keywords": [
+            "企業績效",
+            "兩岸治理",
+            "區域經濟整合"
+          ],
+          "abstract": "",
+          "detailUrl": "",
+          "detailStatus": "待逐筆核對論文詳目"
+        },
+        {
+          "rank": 22,
+          "title": "兩岸經濟架構協議(ECFA)對台灣不鏽鋼業者之衝擊及其因應策略",
+          "university": "國立成功大學",
+          "department": "經營管理碩士學位學程(AMBA)",
+          "rocYear": "104",
+          "degree": "碩士",
+          "field": "商業及管理學門",
+          "category": "企業管理學類",
+          "student": "歐劭軒",
+          "advisor": "利德江 利德江",
+          "hasFulltext": false,
+          "embargoDate": "",
+          "cited": 0,
+          "views": 230,
+          "downloads": 0,
+          "saved": 0,
+          "sourcePage": 1,
+          "topic": "political_policy",
+          "methodTag": "調查與策略分析",
+          "keywords": [
+            "產業影響",
+            "兩岸治理"
+          ],
+          "abstract": "",
+          "detailUrl": "",
+          "detailStatus": "待逐筆核對論文詳目"
+        },
+        {
+          "rank": 23,
+          "title": "美日量化寬鬆政策、MOU及ECFA對兩岸匯率變動之影響",
+          "university": "國立成功大學",
+          "department": "企業管理學系",
+          "rocYear": "104",
+          "degree": "碩士",
+          "field": "商業及管理學門",
+          "category": "企業管理學類",
+          "student": "陳婕安",
+          "advisor": "康信鴻",
+          "hasFulltext": false,
+          "embargoDate": "",
+          "cited": 0,
+          "views": 169,
+          "downloads": 0,
+          "saved": 0,
+          "sourcePage": 1,
+          "topic": "industry_firm",
+          "methodTag": "政策效果比較",
+          "keywords": [
+            "企業績效",
+            "金融投資",
+            "兩岸治理"
+          ],
+          "abstract": "",
+          "detailUrl": "",
+          "detailStatus": "待逐筆核對論文詳目"
+        },
+        {
+          "rank": 24,
+          "title": "ECFA與投保協議生效後，影響在臺陸資業務種類多樣化的決定因素",
+          "university": "國立政治大學",
+          "department": "行政管理碩士學程",
+          "rocYear": "104",
+          "degree": "碩士",
+          "field": "社會及行為科學學門",
+          "category": "公共行政學類",
+          "student": "許毓容",
+          "advisor": "翁永和 翁永和",
+          "hasFulltext": false,
+          "embargoDate": "",
+          "cited": 0,
+          "views": 153,
+          "downloads": 0,
+          "saved": 0,
+          "sourcePage": 1,
+          "topic": "finance_investment",
+          "methodTag": "政策效果比較",
+          "keywords": [
+            "金融投資"
+          ],
+          "abstract": "",
+          "detailUrl": "",
+          "detailStatus": "待逐筆核對論文詳目"
+        }
+      ]
+    },
+    "methodPlan": {
+      "researchExecutionStrategy": {
+        "updatedAt": "2026-07-05",
+        "priorityTrack": "2024_suspension_trade_effect",
+        "plainQuestion": "2024 年中止 ECFA 早收優惠後，受影響產品對中國大陸出口是否出現明顯變化？變化是否集中在特定產業或產品章別？",
+        "whyThisFirst": [
+          "2024 年兩批中止優惠清單已整理為 146 項，事件邊界比 2011/2013 早收清單更清楚。",
+          "公告日與生效日都可辨識，能先做事件前後描述，再視月資料品質決定是否做事件研究。",
+          "目前已有受影響產品、批次、公告日、生效日、章別與產業大類，最缺的是產品別貿易數值。"
+        ],
+        "scopeGuardrails": [
+          "每一項新資料工作必須補上處置、結果、對照或可主張推論的其中一環。",
+          "一般背景、全文語料、論文補標籤與視覺摘要不列為當前進度，除非能直接改善研究設計。",
+          "宏觀貿易或章別資料只能做背景，不可替代產品別事件面板。"
+        ],
+        "researchStack": [
+          {
+            "layer": "事實層",
+            "question": "什麼事件在何時發生？哪些產品被列入？",
+            "currentState": "事件日期、兩批清單與 146 項產品已整理；137 項直接命中官方 17064 早收對照，8 項為高可信代碼拆分，僅 `85249140` 仍待確認。",
+            "nextEvidence": "只處理 `85249140`：取得官方稅則年版確認，或寫明描述統計納入、因果比較排除的規則。"
+          },
+          {
+            "layer": "產品層",
+            "question": "哪些產品、章別、產業受影響？",
+            "currentState": "已有 HS 章別與粗產業分類，可先做產品範圍與產業集中度描述。",
+            "nextEvidence": "建立產品代碼年版對照，避免 2010 與 2024 代碼變動造成錯配。"
+          },
+          {
+            "layer": "貿易層",
+            "question": "受影響產品在事件前後的出口金額與數量如何變化？",
+            "currentState": "貿易欄位已定義，數值資料尚未接入。",
+            "nextEvidence": "取得產品分類碼、年月、對象地區、出口金額與出口數量；寬口徑 HS 或總量資料只能當背景，不能替代事件面板。"
+          },
+          {
+            "layer": "比較層",
+            "question": "受影響產品是否不同於相近未中止產品？",
+            "currentState": "可先用同章或同產業產品做描述性比較；正式因果估計需完成控制組完整性檢查。",
+            "nextEvidence": "完成同章未中止早收產品、同產業未中止產品、其他市場出口三種比較組評估。"
+          }
+        ],
+        "immediateOutputs": [
+          {
+            "name": "2024 中止優惠產品概況表",
+            "file": "data/materials/rollback_exposure_2024.tsv",
+            "canFinishNow": true,
+            "value": "直接回答哪幾類產品受影響、哪一批、公告到生效間隔、哪些仍需複核。"
+          },
+          {
+            "name": "產品章別與產業集中度摘要",
+            "file": "data/materials/rollback_exposure_2024_summary.json",
+            "canFinishNow": true,
+            "value": "先判斷事件是否集中於石化、紡織、機械、金屬等產業，而不是只說有 146 項。"
+          },
+          {
+            "name": "貿易面板第一版",
+            "file": "data/materials/trade_panel.tsv",
+            "canFinishNow": false,
+            "value": "一旦接入產品別月資料，就能產生事件前後圖與比較表。"
+          }
+        ],
+        "designOptions": [
+          {
+            "name": "描述統計",
+            "canStart": true,
+            "claimAllowed": "可說明受影響範圍、產業集中度、事件時間與資料缺口。",
+            "claimNotAllowed": "不能主張中止優惠造成出口下降或轉單。"
+          },
+          {
+            "name": "事件前後比較",
+            "canStart": false,
+            "minimumData": "產品分類碼 × 月 × 對象地區的出口金額與數量，至少涵蓋 2023-01 至 2025-12。",
+            "claimAllowed": "可描述公告前後、生效前後的變化方向與幅度。",
+            "claimNotAllowed": "若沒有合適比較組，仍不能直接作因果判斷。"
+          },
+          {
+            "name": "差異比較",
+            "canStart": false,
+            "minimumData": "受影響產品、同章或同產業未中止產品、事件前足夠月份、趨勢檢查。",
+            "claimAllowed": "若趨勢檢查通過，可較嚴格比較受影響與未受影響產品的變化差異。",
+            "claimNotAllowed": "控制組不穩或代碼錯配時不能使用。"
+          },
+          {
+            "name": "2011/2013 早收效果",
+            "canStart": false,
+            "minimumData": "完整 267/539 早收清單、稅率路徑、代碼年版對照、2008-2014 產品別貿易值。",
+            "claimAllowed": "清單與代碼完整後，可研究早收降稅期的產品貿易變化。",
+            "claimNotAllowed": "目前不應先做估計，因早收產品宇宙尚未完成核對。"
+          }
+        ],
+        "nextThreeMoves": [
+          "寫明 `85249140` 的處理規則：官方確認、描述統計納入但因果比較排除，或整體排除。",
+          "從關務署或其他官方入口取得產品分類碼 × 月 × 對象地區的出口金額與數量；若無可重現批次來源，改寫有限的 GA30E 人工抽查方案。",
+          "資料源通過欄位檢查後，再建立 2023-2025 月資料面板與第一張事件前後描述表。"
+        ]
+      },
+      "tradeDataSourceAssessment": {
+        "updatedAt": "2026-07-05",
+        "purpose": "Identify the next source for product-code by month by partner trade values needed for the 2024 ECFA suspension analysis.",
+        "scopeGuardrail": "A source stays active only if it supplies treatment definition, product-level outcome values, comparison-group construction, or code concordance. Broad macro or context sources can inform notes, but they do not advance the empirical panel.",
+        "requiredPanel": {
+          "unit": "product code × month × partner economy",
+          "minimumPeriod": "2023-01 to 2025-12",
+          "preferredPeriod": "2008-01 to 2025-12",
+          "requiredMeasures": [
+            "export value",
+            "export quantity or weight",
+            "partner economy",
+            "product code",
+            "month"
+          ],
+          "preferredProductResolution": "8-digit or 11-digit customs product code"
+        },
+        "sourcesAssessed": [
+          {
+            "id": "customs_ga30e",
+            "title": "Customs Statistics Database Query",
+            "url": "https://portal.sw.nat.gov.tw/APGA/GA30E",
+            "provider": "Customs Administration, Ministry of Finance",
+            "whatItProvides": "Interactive query supports annual or monthly trade statistics, specific 2/4/6/8/11-digit commodity codes, partner selection, USD/NTD/weight/quantity, and CSV export.",
+            "fitForResearch": "high",
+            "currentAccess": "interactive_with_captcha",
+            "blocker": "The form validates CAPTCHA before submission, so it is not currently suitable for reproducible automated batch collection.",
+            "nextMove": "Use manually for spot checks or find an official no-CAPTCHA bulk endpoint behind the same statistics data."
+          },
+          {
+            "id": "data_gov_tw_export",
+            "title": "Government open-data full dataset export",
+            "url": "https://data.gov.tw/datasets/export/csv",
+            "provider": "data.gov.tw",
+            "whatItProvides": "Dataset metadata and public download URLs. It exposed ECFA early-harvest crosswalk datasets 17061 and 17064, tariff dataset 80871, aggregate trade datasets, and HS/category by major partner datasets.",
+            "fitForResearch": "medium",
+            "currentAccess": "captured",
+            "blocker": "The export metadata did not reveal a no-CAPTCHA 8-digit product by month by partner bulk download.",
+            "nextMove": "Keep as source inventory; use it to locate related official datasets and metadata update dates."
+          },
+          {
+            "id": "customs_17064",
+            "title": "ECFA early-harvest mainland-to-Taiwan 8-digit crosswalk",
+            "url": "https://opendata.customs.gov.tw/data/17064/csv.csv",
+            "provider": "Customs Administration, Ministry of Finance",
+            "whatItProvides": "Official ECFA early-harvest mainland tariff code to Taiwan tariff code crosswalk.",
+            "fitForResearch": "high_for_concordance",
+            "currentAccess": "captured",
+            "blocker": "It is a treatment and concordance source, not trade-flow values.",
+            "nextMove": "Use as authoritative link between 2024 suspended mainland-side codes and original ECFA early-harvest products."
+          },
+          {
+            "id": "customs_17061",
+            "title": "ECFA early-harvest Taiwan-to-mainland 8-digit crosswalk",
+            "url": "https://opendata.customs.gov.tw/data/17061/csv.csv",
+            "provider": "Customs Administration, Ministry of Finance",
+            "whatItProvides": "Official ECFA early-harvest Taiwan tariff code to mainland tariff code crosswalk.",
+            "fitForResearch": "high_for_concordance",
+            "currentAccess": "captured",
+            "blocker": "It is a treatment and concordance source, not trade-flow values.",
+            "nextMove": "Use for early-harvest product universe and 2011/2013 analysis after trade values are located."
+          },
+          {
+            "id": "customs_80871",
+            "title": "Customs import tariff data",
+            "url": "https://opendata.customs.gov.tw/data/80871/csv.csv",
+            "provider": "Customs Administration, Ministry of Finance",
+            "whatItProvides": "Current tariff codes, Chinese and English product names, tariff rates, statistical units, and import/export regulations.",
+            "fitForResearch": "medium_for_code_names",
+            "currentAccess": "captured",
+            "blocker": "It gives current tariff-code names and units, not historical trade-flow values.",
+            "nextMove": "Use to interpret current Taiwan codes and resolve remaining low-confidence product names."
+          },
+          {
+            "id": "mof_28536",
+            "title": "Exports to China and Hong Kong by major commodity group",
+            "url": "https://data.gov.tw/dataset/28536",
+            "provider": "Ministry of Finance Statistics Department",
+            "whatItProvides": "Exports to China and Hong Kong by broad HS-based major commodity groups, in thousand USD.",
+            "fitForResearch": "low_for_product_panel",
+            "currentAccess": "metadata_identified",
+            "blocker": "Broad product groups cannot identify the 146 suspended product codes.",
+            "nextMove": "Use only as macro context if detailed product-level data remains unavailable."
+          },
+          {
+            "id": "mof_28573",
+            "title": "Trade value by HS and major partner",
+            "url": "https://data.gov.tw/dataset/28573",
+            "provider": "Ministry of Finance Statistics Department",
+            "whatItProvides": "Trade values by HS category and major partner group, in thousand USD.",
+            "fitForResearch": "medium_for_context",
+            "currentAccess": "metadata_identified",
+            "blocker": "Metadata appears to expose broad HS categories rather than 8-digit product codes.",
+            "nextMove": "Test download later for chapter/section context, not as the main product panel."
+          }
+        ],
+        "currentConclusion": "The strongest immediate improvement is the official ECFA crosswalk: it reduces 2024 suspension concordance uncertainty before trade values are attached. The main trade-flow blocker remains the lack of a reproducible no-CAPTCHA product-code by month by partner download.",
+        "nextActions": [
+          "Use the official 17064 crosswalk as the primary early-harvest linkage source for the 2024 suspended products.",
+          "Keep GA30E as the official manual query reference and spot-check route.",
+          "Search for a no-CAPTCHA bulk endpoint or alternate official export for 8-digit/11-digit product by partner by month trade data.",
+          "If product-level bulk data remains unavailable, build a fallback context layer from broad HS/major-partner datasets while clearly separating it from the product-level event study."
+        ]
+      },
+      "empiricalDesign2024": {
+        "generatedAt": "2026-07-05T08:33:31.797Z",
+        "title": "2024 ECFA 中止優惠事件研究設計草案",
+        "status": "descriptive_ready_trade_values_needed",
+        "researchQuestion": "2024 年兩批 ECFA 中止優惠產品，在公告後與生效後的對中出口是否出現不同於相近未中止產品的變化？",
+        "unit": "產品分類碼 × 月 × 對象地區",
+        "outcomeCandidates": [
+          "出口金額",
+          "出口數量",
+          "對中國大陸出口占比",
+          "對其他市場出口金額"
+        ],
+        "treatment": {
+          "treatedDefinition": "列入 2024 年第一批或第二批中止優惠清單的產品分類碼",
+          "treatmentRows": 146,
+          "firstBatch": {
+            "batch": "first",
+            "announcementDate": "2023-12-21",
+            "effectiveDate": "2024-01-01",
+            "products": 12
+          },
+          "secondBatch": {
+            "batch": "second",
+            "announcementDate": "2024-05-31",
+            "effectiveDate": "2024-06-15",
+            "products": 134
+          },
+          "matchedOriginalEarlyHarvest": 118,
+          "needsAudit": 28
+        },
+        "comparisonCandidates": [
+          {
+            "label": "同章未中止早收產品",
+            "use": "最接近政策暴露，但需要先完成早收清單 267/539 與代碼年版對照。",
+            "risk": "若未完成代碼對照，控制組可能混入實際受影響或不可比產品。"
+          },
+          {
+            "label": "同產業未中止產品",
+            "use": "可作為描述性比較，適合先做市場分散或出口趨勢圖。",
+            "risk": "產業內產品異質性高，不能直接當因果控制組。"
+          },
+          {
+            "label": "對其他市場出口",
+            "use": "可觀察是否出現市場轉向，但不能單獨代表政策效果。",
+            "risk": "全球需求、匯率與供應鏈變化會同時影響其他市場。"
+          }
+        ],
+        "eventWindows": [
+          {
+            "event": "第一批公告",
+            "date": "2023-12-21",
+            "window": "公告日前後 3 至 6 個月",
+            "purpose": "觀察預期與訂單調整。"
+          },
+          {
+            "event": "第一批生效",
+            "date": "2024-01-01",
+            "window": "生效日前後 3 至 6 個月",
+            "purpose": "觀察稅率適用後的短期出口變化。"
+          },
+          {
+            "event": "第二批公告",
+            "date": "2024-05-31",
+            "window": "公告日前後 3 至 6 個月",
+            "purpose": "第二批產品數量較大，適合先做主要事件窗口。"
+          },
+          {
+            "event": "第二批生效",
+            "date": "2024-06-15",
+            "window": "生效日前後 3 至 6 個月",
+            "purpose": "觀察實際優惠取消後的變化。"
+          }
+        ],
+        "minimumTradePanel": [
+          "產品分類碼",
+          "年月",
+          "對象地區",
+          "出口金額",
+          "出口數量",
+          "流向",
+          "產品分類碼年版",
+          "產業大類",
+          "2024 中止優惠標記",
+          "中止批次",
+          "公告日",
+          "生效日",
+          "原早收產品標記",
+          "資料品質註記"
+        ],
+        "readyNow": [
+          "2024 中止優惠處理組已閉合為 146 筆。",
+          "可先做產品與產業暴露描述。",
+          "可先設計事件窗口與資料欄位。"
+        ],
+        "blockers": [
+          "尚未取得產品分類碼 × 月 × 對象地區的出口值。",
+          "28 筆中止產品仍需代碼年版或品名核對。",
+          "早收完整清單仍需補齊至官方 267/539，才能建立更好的控制組。"
+        ],
+        "currentConclusion": "目前可做描述性暴露分析與資料規格設計；尚不能主張政策造成出口變化。"
+      },
+      "empiricalTracks": [
+        {
+          "id": "early_harvest_did",
+          "label": "早收清單差異比較",
+          "dataNeed": "需要先完成產品清單、出口資料與產業分類的對照。",
+          "gate": "確認政策前趨勢相近，再比較列入清單與未列入清單的變化。"
+        },
+        {
+          "id": "rollback_event",
+          "label": "2024 中止優惠事件研究",
+          "dataNeed": "需要受影響產品、出口金額與企業或產業曝險資料。",
+          "gate": "先確認事件日期、稅率變化與公告清單，再觀察市場反應。"
+        },
+        {
+          "id": "deep_text_analysis",
+          "label": "ECFA 文本與政策語料分析",
+          "dataNeed": "需要協議文本、附件、公告、政策報告與論文摘要。",
+          "gate": "先去重、分段與人工核對主題，再做語義比較。"
+        },
+        {
+          "id": "thesis_meta",
+          "label": "學位論文研究史分析",
+          "dataNeed": "需要書目、摘要、關鍵詞、研究方法與引用下載訊號。",
+          "gate": "先完成 263 筆分類與重複檢查，再比較議題轉向。"
+        },
+        {
+          "id": "institutional_history",
+          "label": "制度流變敘事",
+          "dataNeed": "需要協議文本、官方說明與後續談判紀錄。",
+          "gate": "按來源等級建立時間軸，避免把評論和正式文件混用。"
+        }
+      ],
+      "blockers": [
+        "早收產品清單目前可探索，但 PDF 文字抽取未達官方 267/539 完整口徑，正式估計前要用 ECFA 查詢頁或關務署資料補齊。",
+        "早收產品清單與台灣貿易統計口徑需完成 HS code 年版對照。",
+        "NDLTD 已完成題名層級標註；摘要與全文授權狀態仍需逐筆核對原站詳目。",
+        "2024 中止優惠項目已抓官方清單，但仍需對照 2009/2024 稅則差異與中文品名換版。"
+      ]
+    },
+    "glossary": [
+      {
+        "term": "ECFA",
+        "fullName": "海峽兩岸經濟合作架構協議",
+        "plain": "2010 年兩岸簽署的經濟合作架構，先處理早期收穫清單，後續再談貨品、服務、投資與爭端解決等制度。",
+        "whyItMatters": "它不是單一關稅表，而是一個把後續經貿協議掛在同一框架下的制度入口。",
+        "sourceRefs": [
+          "ecfa_agreement"
+        ]
+      },
+      {
+        "term": "早期收穫",
+        "fullName": "Early Harvest Program",
+        "plain": "在完整自由化協議完成前，先讓部分貨品或服務提前降稅或開放。",
+        "whyItMatters": "ECFA 實證研究常把是否列入早收清單作為政策處理組。",
+        "sourceRefs": [
+          "ecfa_implementation",
+          "ecfa_faq_early_harvest"
+        ]
+      },
+      {
+        "term": "關稅減讓",
+        "fullName": "Tariff Concession",
+        "plain": "雙方依協議降低特定貨品進口關稅；若優惠中止，產品會回到一般稅率或其他適用稅率。",
+        "whyItMatters": "2024 年中止部分早收優惠後，衝擊評估要回到產品別稅率與出口曝險。",
+        "sourceRefs": [
+          "trade_20240531"
+        ]
+      },
+      {
+        "term": "稅則號列",
+        "fullName": "貨品分類碼",
+        "plain": "用來識別貨品的分類碼。不同年度或兩岸統計口徑可能需要對照。",
+        "whyItMatters": "早收清單、貿易統計、受影響產品清單都必須先在貨品分類層級對齊。",
+        "sourceRefs": [
+          "customs_opendata_catalog"
+        ]
+      },
+      {
+        "term": "原產地規則",
+        "fullName": "Rules of Origin",
+        "plain": "判斷貨品是否能被視為台灣或大陸原產，進而適用 ECFA 優惠稅率的規則。",
+        "whyItMatters": "列入早收清單不等於所有出口都自動享有優惠，仍要符合原產地與產證要求。",
+        "sourceRefs": [
+          "ecfa_attachment_2"
+        ]
+      },
+      {
+        "term": "事件研究法",
+        "fullName": "Event Study",
+        "plain": "觀察政策事件前後，市場價格或報酬是否出現異常變化。",
+        "whyItMatters": "2024 年優惠中止很適合作為短期資本市場反應的觀察切點。",
+        "sourceRefs": [
+          "ndltd_detail_rank_003"
+        ]
+      },
+      {
+        "term": "累積異常報酬",
+        "fullName": "CAR",
+        "plain": "事件窗口內，實際報酬和模型預期報酬之差的累積值。",
+        "whyItMatters": "可衡量 ECFA 簽署或優惠中止是否改變市場對特定產業或公司的評價。",
+        "sourceRefs": [
+          "ndltd_detail_rank_003"
+        ]
+      },
+      {
+        "term": "市場多元化",
+        "fullName": "Market Diversification",
+        "plain": "企業降低對單一出口市場依賴，轉向其他地區或客戶。",
+        "whyItMatters": "2024 年優惠中止後，是否已分散市場會影響企業承受政策衝擊的能力。",
+        "sourceRefs": [
+          "trade_20240531",
+          "ndltd_detail_rank_003"
+        ]
+      }
+    ],
+    "factChecks": [
+      {
+        "claim": "ECFA 貨品早期收穫在 2011 年 1 月 1 日開始降稅。",
+        "finding": "可確認",
+        "evidence": "ECFA 執行情形頁載明，貨品貿易早期收穫計畫自民國 100 年 1 月 1 日開始實施降稅。",
+        "confidence": "高",
+        "sourceRefs": [
+          "ecfa_implementation"
+        ]
+      },
+      {
+        "claim": "早期收穫清單產品在 2013 年 1 月 1 日全部降為零關稅。",
+        "finding": "可確認",
+        "evidence": "ECFA 執行情形頁載明，自民國 102 年 1 月 1 日起，早期收穫計畫全部產品已降為零關稅。",
+        "confidence": "高",
+        "sourceRefs": [
+          "ecfa_implementation"
+        ]
+      },
+      {
+        "claim": "ECFA 早收清單不是雙方完全同項等量交換。",
+        "finding": "可確認，但需注意統計口徑",
+        "evidence": "官方資料列出我方清單與陸方清單規模不同；後續研究應分別處理台方減讓與陸方減讓。",
+        "confidence": "高",
+        "sourceRefs": [
+          "ecfa_faq_early_harvest"
+        ]
+      },
+      {
+        "claim": "2024 年中國大陸再度中止 134 項 ECFA 早收優惠。",
+        "finding": "可確認",
+        "evidence": "經濟部 2024 年 5 月 31 日說明指出，中方宣布自 2024 年 6 月 15 日起中止 134 項產品早收優惠關稅。",
+        "confidence": "高",
+        "sourceRefs": [
+          "trade_20240531"
+        ]
+      },
+      {
+        "claim": "134 項中止優惠主要涉及石化、紡織、機械、鋼鐵及金屬、運輸工具等。",
+        "finding": "可確認",
+        "evidence": "經濟部同一說明列出相關產品涵蓋產業，並指出稅率恢復為 1% 至 12% 不等。",
+        "confidence": "高",
+        "sourceRefs": [
+          "trade_20240531"
+        ]
+      },
+      {
+        "claim": "2024 年中止優惠項目的 2023 年輸中金額約 98 億美元，占台灣全球出口約 2%。",
+        "finding": "可確認為經濟部估計",
+        "evidence": "經濟部新聞稿列出 2023 年該等產品輸中金額約 98 億美元，約占我對全球出口比重 2%。",
+        "confidence": "中高",
+        "sourceRefs": [
+          "trade_20240531"
+        ]
+      }
+    ],
+    "analysisNotes": [
+      {
+        "title": "先分清制度層與政策事件層",
+        "summary": "ECFA 是框架協議；早收清單是框架下提前實施的部分優惠；2024 年中止優惠是後來的政策事件。把三者混在一起，會讓處理組和事件日失焦。",
+        "researchUse": "制度史分頁看 ECFA；實證分頁看早收清單或 2024 中止事件。"
+      },
+      {
+        "title": "曝險不應只用有無列入清單",
+        "summary": "列入早收清單只是第一層，真正曝險還包括出口金額、稅率差、產證利用率、產品替代性與中國市場依賴度。",
+        "researchUse": "後續資料表至少要做到產品別出口額與稅率變動，企業層研究再接公司營收與市場分布。"
+      },
+      {
+        "title": "學位論文研究史能揭露議題轉向",
+        "summary": "2010 至 2012 年附近的論文高峰，反映簽署與早收實施後的政策關注；近年論文轉向優惠終止、市場多元化與財務韌性。",
+        "researchUse": "論文分析不只列書目，也能標出研究問題如何從期待效果轉向風險管理。"
+      },
+      {
+        "title": "短期市場反應與長期產業效果要分開",
+        "summary": "事件研究適合看股價或累積異常報酬的短期反應；產業產值、出口市場結構與財務韌性則需要長期資料。",
+        "researchUse": "方法分頁應把短期市場反應、產業比較、制度流變放在不同資料門檻下評估。"
+      }
+    ],
+    "immediateNextWork": [
+      "把早收清單補到官方口徑，分清台方減讓與陸方減讓。",
+      "整理產品別出口金額，先畫出 2008 至 2025 年的變化與 2024 年受影響程度。",
+      "把協議文本、附件、公告、政策報告與論文摘要放進同一套可比較的研究材料。",
+      "將學位論文分析定位為研究史與方法地圖，主軸仍回到 ECFA 制度與產業效果。"
+    ]
+  }
+}

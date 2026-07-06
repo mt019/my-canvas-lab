@@ -1,0 +1,564 @@
+{
+  "schemaVersion": "0.1.0",
+  "generatedAt": "2026-07-02",
+  "source": {
+    "ownerRepo": "local-fiscal-enforcement-risk-research-data",
+    "frontendSnapshot": "my-canvas-lab/src/data/fiscalEnforcementRisk.json",
+    "syncCommand": "npm run sync",
+    "publicBoundary": "This processed file is a public frontend snapshot. Raw sources, private notes, local paths, and non-public personal data remain in the data repo."
+  },
+  "datasets": {
+    "researchQuestion": {
+      "title": "地方財政缺口風險與遠洋捕撈現象",
+      "subtitle": "財政壓力如何轉化為跨區域趨利性執法的可觀測指標",
+      "thesis": "若地方財政壓力提高後，跨區域案件、凍結資金、罰沒收入與灰色產業標的同步上升，則可檢驗財政缺口推動趨利性執法的政治經濟學機制。",
+      "unitOptions": [
+        "縣級年度 panel",
+        "地級市年度 panel",
+        "案件級 microdata linked to enforcement origin and target location"
+      ],
+      "timeWindow": "建議先建立 2016-2025 年試算框架；資料不足時先以 2020-2025 年建立城市級 pilot。"
+    },
+    "hypotheses": [
+      {
+        "id": "H1",
+        "name": "核心假說",
+        "claim": "地方財政缺口越大，跨區域趨利性執法的頻率與金額越高。",
+        "expectedSign": "positive",
+        "observableImplication": "財政自給率下降或非稅收入依賴度上升後，下一期跨區域案件數、罰沒收入、追繳金額或異地凍結事件增加。"
+      },
+      {
+        "id": "H2",
+        "name": "異質性假說",
+        "claim": "經濟落後地區的財政缺口傳導效應高於發達地區。",
+        "expectedSign": "positive interaction",
+        "observableImplication": "低 GDP、人均收入低或轉移支付依賴高的地區，Fiscal_Gap 與 enforcement proxy 的斜率更陡。"
+      },
+      {
+        "id": "H3",
+        "name": "標的偏好假說",
+        "claim": "執法標的偏向高現金流、法規邊界模糊、異地且政治保護弱的產業。",
+        "expectedSign": "sector concentration",
+        "observableImplication": "網遊加速器、VPN/機場、加密貨幣、電商、支付與灰色流量產業在跨區域案件中占比偏高。"
+      },
+      {
+        "id": "H4",
+        "name": "時間壓力假說",
+        "claim": "趨利性執法事件在財政結算壓力較高的季度更集中。",
+        "expectedSign": "Q4 concentration",
+        "observableImplication": "抓捕、凍結、追繳或罰沒入庫事件在第四季度或年底前後顯著增加。"
+      }
+    ],
+    "variables": {
+      "independent": [
+        {
+          "id": "fiscal_self_sufficiency",
+          "label": "財政自給率",
+          "formula": "一般公共預算收入 / 一般公共預算支出",
+          "direction": "lower value means larger gap",
+          "sourceClass": "地方預決算報告"
+        },
+        {
+          "id": "non_tax_dependency",
+          "label": "非稅收入依賴度",
+          "formula": "非稅收入 / 一般公共預算收入",
+          "direction": "higher value means stronger non-tax reliance",
+          "sourceClass": "地方預決算報告"
+        },
+        {
+          "id": "fine_confiscation_growth",
+          "label": "罰沒收入異常增長率",
+          "formula": "(本年罰沒收入 - 上年罰沒收入) / 上年罰沒收入",
+          "direction": "higher value may signal revenue-seeking enforcement",
+          "sourceClass": "財政決算明細、預算執行情況報告"
+        },
+        {
+          "id": "debt_rollover_pressure",
+          "label": "地方債務滾動壓力",
+          "formula": "到期債務、城投債利息、再融資債券或非標風險指標",
+          "direction": "higher pressure may increase extraction incentive",
+          "sourceClass": "地方債資料、城投債資料、審計與公開報告"
+        }
+      ],
+      "dependent": [
+        {
+          "id": "cross_region_case_count",
+          "label": "跨區域案件數",
+          "definition": "執法機關所在地與被告戶籍地、企業註冊地、伺服器所在地或主要經營地不一致的案件數。"
+        },
+        {
+          "id": "cross_region_case_share",
+          "label": "跨區域案件比例",
+          "definition": "跨區域案件數 / 同類案件總數。"
+        },
+        {
+          "id": "amount_extracted",
+          "label": "涉案抽取金額",
+          "definition": "追繳違法所得、罰金、罰沒、退贓、保證金、凍結金額等可量化金額。"
+        },
+        {
+          "id": "account_freeze_events",
+          "label": "異地凍結帳戶事件",
+          "definition": "公開報導、公告、企業披露或維權資料中可歸屬到異地機關的資金凍結事件。"
+        }
+      ],
+      "controls": [
+        "GDP",
+        "人均 GDP",
+        "人口規模",
+        "互聯網普及率",
+        "同類網絡犯罪基數",
+        "官員更替",
+        "全國專項行動年度",
+        "省級固定趨勢"
+      ]
+    },
+    "modelSpec": {
+      "baseline": "Y_it = beta_0 + beta_1 * Fiscal_Gap_i,t-1 + gamma * X_it + alpha_i + delta_t + epsilon_it",
+      "dependentExamples": [
+        "跨區域罰沒案件數",
+        "罰沒收入總額",
+        "異地凍結帳戶事件數",
+        "涉案抽取金額"
+      ],
+      "fixedEffects": [
+        "county_or_city_fixed_effect",
+        "year_fixed_effect"
+      ],
+      "identificationNotes": [
+        "核心自變量採滯後一期，降低同年罰沒反向改善財政指標的內生性。",
+        "加入全國專項行動年度 dummy，以免把全國性運動誤判為地方財政效應。",
+        "案件級資料可用 enforcement origin 和 target location 建立 dyadic panel。"
+      ],
+      "diagnostics": [
+        "事件月份是否集中於第四季度",
+        "罰沒收入增長是否先於跨區域案件增加",
+        "低財政自給率地區的斜率是否更高",
+        "同一罪名在不同地區是否出現異常跨省捕撈比例"
+      ]
+    },
+    "dataSources": [
+      {
+        "id": "fiscal_reports",
+        "label": "地方財政報告",
+        "priority": "core",
+        "targets": [
+          "年度預算執行情況與預算草案報告",
+          "財政決算報告",
+          "一般公共預算收入支出表",
+          "非稅收入與罰沒收入細分科目"
+        ],
+        "fields": [
+          "region_code",
+          "year",
+          "general_budget_revenue",
+          "general_budget_expenditure",
+          "non_tax_revenue",
+          "fine_confiscation_revenue"
+        ]
+      },
+      {
+        "id": "judicial_documents",
+        "label": "司法與檢察公開文書",
+        "priority": "core",
+        "targets": [
+          "裁判文書",
+          "不起訴決定書",
+          "起訴書摘要",
+          "地方檢察院案例通報"
+        ],
+        "fields": [
+          "enforcement_origin",
+          "defendant_location",
+          "company_registration",
+          "charge",
+          "amount",
+          "case_date",
+          "cross_region_flag"
+        ]
+      },
+      {
+        "id": "account_freezes",
+        "label": "異地凍結與企業案例",
+        "priority": "secondary",
+        "targets": [
+          "企業公告",
+          "媒體報導",
+          "公開維權資料庫",
+          "社群整理的個案索引"
+        ],
+        "fields": [
+          "source_url",
+          "reported_date",
+          "freezing_authority",
+          "target_sector",
+          "frozen_amount",
+          "verification_status"
+        ]
+      },
+      {
+        "id": "macro_controls",
+        "label": "宏觀控制資料",
+        "priority": "supporting",
+        "targets": [
+          "統計年鑑",
+          "城市統計公報",
+          "互聯網普及率資料",
+          "官員任免資料"
+        ],
+        "fields": [
+          "gdp",
+          "gdp_per_capita",
+          "population",
+          "internet_penetration",
+          "official_turnover"
+        ]
+      }
+    ],
+    "pipeline": [
+      {
+        "stage": "source_inventory",
+        "label": "來源盤點",
+        "output": "按地區與年份建立財政報告、司法文書與案例來源清單。"
+      },
+      {
+        "stage": "capture",
+        "label": "原始保存",
+        "output": "保存官方 HTML/PDF、媒體頁面與資料庫匯出檔，並記錄 URL 與取得日期。"
+      },
+      {
+        "stage": "extract",
+        "label": "欄位抽取",
+        "output": "抽取財政收入支出、罰沒收入、案件地理欄位、罪名、金額與月份。"
+      },
+      {
+        "stage": "classify",
+        "label": "跨區域判定",
+        "output": "比對執法機關所在地與被告/企業/伺服器/資金所在地，標記跨省、跨市、跨縣。"
+      },
+      {
+        "stage": "panel_build",
+        "label": "面板建構",
+        "output": "形成 region-year panel 與案件級 microdata，可接上固定效應模型。"
+      },
+      {
+        "stage": "model",
+        "label": "模型估計",
+        "output": "估計財政缺口對趨利性執法 proxy 的邊際效應與異質性。"
+      }
+    ],
+    "industryTargets": [
+      {
+        "sector": "網遊加速器",
+        "whyTargeted": "高現金流、服務跨境、技術與合規邊界模糊。",
+        "observableFlags": [
+          "非法經營罪",
+          "提供侵入、非法控制計算機信息系統程序、工具",
+          "伺服器或用戶跨區"
+        ]
+      },
+      {
+        "sector": "VPN/機場",
+        "whyTargeted": "跨境連線服務、支付流水明確、個人經營者保護弱。",
+        "observableFlags": [
+          "翻牆軟件",
+          "代理服務",
+          "跨省抓捕",
+          "追繳違法所得"
+        ]
+      },
+      {
+        "sector": "加密貨幣與支付",
+        "whyTargeted": "資金流水大且可被凍結，犯罪鏈條敘事容易擴張。",
+        "observableFlags": [
+          "幫助信息網絡犯罪活動",
+          "掩飾、隱瞞犯罪所得",
+          "異地凍結"
+        ]
+      },
+      {
+        "sector": "電商與流量灰產",
+        "whyTargeted": "跨平台、跨地域、交易資料可量化，易形成批量案件。",
+        "observableFlags": [
+          "刷單",
+          "引流",
+          "侵犯公民個人信息",
+          "行政罰與刑事轉化"
+        ]
+      }
+    ],
+    "caseSignals": [
+      {
+        "label": "夏津縣等基層網安案例",
+        "status": "seed lead",
+        "use": "作為跨省抓捕與涉案金額抽取的個案索引起點；需逐案回到公開來源驗證。"
+      },
+      {
+        "label": "海外媒體與民間資料庫",
+        "status": "lead source",
+        "use": "提供被捕者敘事、機關名稱與時間線線索；進模型前需標記 verification_status。"
+      },
+      {
+        "label": "地方財政罰沒收入異常",
+        "status": "screening signal",
+        "use": "用於篩選財政壓力與罰沒收入同時異常的地區年份，再回查案件。"
+      }
+    ],
+    "riskRegister": [
+      {
+        "risk": "官方文書缺失或下架",
+        "mitigation": "保存來源快照；用多來源交叉驗證；保留缺失機制說明。"
+      },
+      {
+        "risk": "跨區域不等於趨利性執法",
+        "mitigation": "區分合法管轄、專項行動與財政抽取 proxy；用金額、月份、標的產業與地方財政壓力共同判斷。"
+      },
+      {
+        "risk": "個案指控法律風險",
+        "mitigation": "前端只呈現研究框架與聚合結果；個人層級資訊保留在研究 notes 並採來源狀態標記。"
+      },
+      {
+        "risk": "內生性與反向因果",
+        "mitigation": "使用滯後財政指標、固定效應、事件時間、placebo crime category 與異質性檢驗。"
+      }
+    ],
+    "milestones": [
+      {
+        "id": "M1",
+        "label": "Pilot source map",
+        "deliverable": "10-20 個地區的 5 年財政報告索引與罰沒收入欄位表。"
+      },
+      {
+        "id": "M2",
+        "label": "Case coding sheet",
+        "deliverable": "100 件網絡/非法經營相關公開案件的跨區域欄位與金額欄位。"
+      },
+      {
+        "id": "M3",
+        "label": "City-year panel",
+        "deliverable": "可跑 TWFE baseline 的城市年度面板。"
+      },
+      {
+        "id": "M4",
+        "label": "Canvas results dashboard",
+        "deliverable": "在前端展示初步估計、地圖、季度集中度與資料可信度。"
+      }
+    ],
+    "initialResults": {
+      "status": {
+        "phase": "初步材料整理",
+        "readiness": "適合做問題意識、類型學、個案線索與描述性財政圖；尚不足以做強因果面板。",
+        "currentModelGate": "模型先保留候選，不直接上 TWFE。等官方財政 row、案件 outcome proxy、比較組補齊後再選。"
+      },
+      "headlineFindings": [
+        {
+          "title": "財政資料差很大，主因是口徑混比",
+          "detail": "南陽 2023 年官方全市數扣除市本級與五個功能區後，收入為 212.2678 億元；CNT_FinRev 13 個縣市區合計為 212.2460 億元，差約 -0.01%。",
+          "confidence": "high"
+        },
+        {
+          "title": "第三方財政表可作 B+ 種子，但不能整包升級",
+          "detail": "已驗證的是南陽 2023 的同口徑收入與支出小計；2022 仍需完整決算附表與功能區口徑。",
+          "confidence": "medium"
+        },
+        {
+          "title": "財政壓力變數應使用 lag",
+          "detail": "Garrett & Wagner、Su、Wang & Dai 均支持財政條件先於執法反應的時間結構；baseline 用 t-1，並檢查 t-2、t-3。",
+          "confidence": "high"
+        },
+        {
+          "title": "官方財政資料大多能抓，但個案錢流不一定能靠財政報告證明",
+          "detail": "一般預算、非稅、債務、部門決算多可由官方文件補；罰沒財物處置、拍賣、入庫、凍結資金去向要另抓公告、審計、處罰或監督文書。",
+          "confidence": "medium"
+        }
+      ],
+      "fiscalValidation": {
+        "nanyang": {
+          "thirdPartyScope": "13 個標準縣市區，不含市本級與五個功能區",
+          "rows": [
+            {
+              "year": 2023,
+              "metric": "一般公共預算收入",
+              "officialScope": "全市扣除市本級與五個功能區",
+              "official": 212.2678,
+              "thirdParty": 212.246,
+              "difference": -0.0218,
+              "pctDifference": -0.01,
+              "status": "B+"
+            },
+            {
+              "year": 2023,
+              "metric": "一般公共預算支出",
+              "officialScope": "全市扣除市本級與五個功能區",
+              "official": 647.4356,
+              "thirdParty": 645.2269,
+              "difference": -2.2087,
+              "pctDifference": -0.34,
+              "status": "B+ pending"
+            },
+            {
+              "year": 2022,
+              "metric": "一般公共預算收入",
+              "officialScope": "官方縣（市、區）級",
+              "official": 199,
+              "thirdParty": 187.16,
+              "difference": -11.84,
+              "pctDifference": -5.95,
+              "status": "B"
+            },
+            {
+              "year": 2022,
+              "metric": "一般公共預算支出",
+              "officialScope": "官方縣（市、區）級",
+              "official": 645.5,
+              "thirdParty": 617.85,
+              "difference": -27.65,
+              "pctDifference": -4.28,
+              "status": "B"
+            }
+          ],
+          "rule": "官方全市數只能與全口徑數比；第三方縣市區表要先扣除市本級與功能區。"
+        }
+      },
+      "materialCoverage": [
+        {
+          "label": "來源清單",
+          "value": "S001-S068",
+          "status": "已建置",
+          "note": "含政策、官方監督、案例線索、財政資料、方法文獻。"
+        },
+        {
+          "label": "案件事件表",
+          "value": "20 筆事件",
+          "status": "可用於時間線",
+          "note": "泌陽、南陽、夏津、壹健康、邢燕軍等線索分級保存。"
+        },
+        {
+          "label": "財政面板",
+          "value": "4 筆南陽種子 row",
+          "status": "剛起步",
+          "note": "含 2022/2023 全市與縣市區小計；2023 小計為 validated_bplus。"
+        },
+        {
+          "label": "第三方縣級財政",
+          "value": "2000-2024",
+          "status": "B 級種子",
+          "note": "需逐樣本與官方口徑比對，不可整包升級。"
+        },
+        {
+          "label": "地級市債務資料",
+          "value": "2006-2023",
+          "status": "B 級背景",
+          "note": "縣級案例只能作 prefecture_proxy。"
+        },
+        {
+          "label": "lag 文獻",
+          "value": "3 條核心依據",
+          "status": "可用",
+          "note": "Garrett & Wagner、Su、Wang & Dai 已抓取或入庫。"
+        }
+      ],
+      "typologySummary": [
+        {
+          "type": "行政凍品/貨物查扣",
+          "mechanism": "扣押、無主認定、處置、拍賣或入庫",
+          "evidenceNeed": "處置公告、拍賣評估、罰沒財物入庫、行政救濟。"
+        },
+        {
+          "type": "公安網安/平台型案件",
+          "mechanism": "罪名擴張、跨省抓捕、取保或追繳",
+          "evidenceNeed": "立案、取保、起訴/不起訴、判決、保證金與追繳文件。"
+        },
+        {
+          "type": "警稅合成作戰",
+          "mechanism": "稅務資料與公安偵查協作，可能強化涉企抽取能力",
+          "evidenceNeed": "官方中心設立文件、採購、聯席機制、具體案件文書。"
+        },
+        {
+          "type": "帳戶凍結/解凍監督",
+          "mechanism": "異地凍結造成營運壓力，後續由檢察或上級監督糾偏",
+          "evidenceNeed": "凍結協查、檢察監督、解封清單、企業公告。"
+        },
+        {
+          "type": "非本地企業執法偏誤",
+          "mechanism": "地方財政壓力下，外地企業政治保護弱，成為較易抽取標的",
+          "evidenceNeed": "origin-target dyad、企業註冊地、執法地財政壓力、同類本地企業對照。"
+        }
+      ],
+      "methodPlan": {
+        "baselineTiming": "FiscalPressure_{i,t-1}",
+        "alternatives": [
+          "t-2 lag",
+          "t-3 lag",
+          "事件月/季度集中度",
+          "origin-target dyad-year"
+        ],
+        "firstUsableDesign": "機制型比較個案 + 描述性 city/county fiscal timeline",
+        "blockedDesigns": [
+          "強 TWFE 因果模型",
+          "完整 dyad-year targeting model"
+        ],
+        "blockers": [
+          "A-grade 罰沒收入明細不足",
+          "2025-2026 官方縣市資料未補齊",
+          "案件 outcome proxy 還不完整",
+          "比較組尚未建立"
+        ]
+      },
+      "immediateNextWork": [
+        "抽取南陽 2024 官方財政數值，記錄第三方 2024 南陽缺口。",
+        "抓南陽凍品案 17 批公告、拍賣/評估、罰沒財物處置、入庫線索。",
+        "恢復泌陽官方資料：18 個扣留公告、2023-2025 財政/審計文件。",
+        "驗證駐馬店、南陽、德州、焦作、商丘地級市債務資料。",
+        "建立第一版 Nanyang/Biyang 財政-事件時間線。"
+      ],
+      "factCheck": {
+        "summary": "目前可以公開展示的是制度問題、南陽財政口徑比對、官方監督類別與方法依據；個案錢流與部分案例仍需補原始文書。",
+        "items": [
+          {
+            "claim": "南陽 2023 年第三方縣市區財政數與官方拆分後口徑高度一致。",
+            "status": "已核實",
+            "basis": "官方全市數扣除市本級與五個功能區後，收入 212.2678 億元；CNT_FinRev 13 縣市區收入 212.2460 億元。",
+            "caution": "只能升級同年度、同指標、同口徑；不能把整包第三方資料一次升級。"
+          },
+          {
+            "claim": "大差額主要來自行政口徑混比。",
+            "status": "已核實",
+            "basis": "第三方南陽表只含 13 個標準縣市區，不含市本級與五個功能區。",
+            "caution": "2022 年仍需完整決算附表確認功能區或財政管理區口徑。"
+          },
+          {
+            "claim": "財政壓力變數應先用前一期。",
+            "status": "已核實",
+            "basis": "Garrett & Wagner、Su 的交通罰款研究均使用 lag；Wang & Dai 是最貼近中國非本地企業執法偏誤的參照。",
+            "caution": "lag 支持時間設計，不等於本案已完成因果識別。"
+          },
+          {
+            "claim": "南陽凍品案可作行政查扣與罰沒財物處置主線。",
+            "status": "部分核實",
+            "basis": "已抓南陽市場監管局官方通報，確認 2023 年 7-8 月 17 批貨物、2023 年 10 月處置等線索。",
+            "caution": "仍缺 17 批公告、拍賣/評估、入庫與處置明細。"
+          },
+          {
+            "claim": "泌陽冷凍車案可作主案例時間線。",
+            "status": "部分核實",
+            "basis": "已有地方通報、媒體調查與省級工作組線索，可建立 2025-2026 事件時間線。",
+            "caution": "仍需官方扣留公告、審計/財政文件、處置與救濟材料。"
+          },
+          {
+            "claim": "夏津 VPN/網安案例能進模型。",
+            "status": "待核實",
+            "basis": "目前主要是媒體與當事人敘事線索。",
+            "caution": "缺立案、取保、檢察、判決/不起訴、保證金與追繳等可公開文書前，不應作模型觀測。"
+          },
+          {
+            "claim": "地方財政缺口已被證明導致具體個案。",
+            "status": "不可作結論",
+            "basis": "目前材料足以支持機制假說與描述性比較，不足以支持強因果宣稱。",
+            "caution": "需要 A-grade 罰沒收入明細、比較組、可重複 outcome proxy 與清楚時間順序。"
+          }
+        ]
+      }
+    }
+  }
+}
