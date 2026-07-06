@@ -1,7 +1,6 @@
-import { execFileSync } from 'node:child_process';
-import { existsSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
-import { tmpdir } from 'node:os';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import * as fontkit from 'fontkit';
 
 function walk(dir) {
   return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
@@ -31,30 +30,31 @@ const chars = [...new Set([...text])].filter((char) => {
 
 const cjkChars = chars.filter((char) => /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}]/u.test(char));
 
-const tmp = mkdtempSync(join(tmpdir(), 'canvas-font-check-'));
-const allCharsFile = join(tmp, 'all.txt');
-const cjkCharsFile = join(tmp, 'cjk.txt');
-writeFileSync(allCharsFile, chars.join(''));
-writeFileSync(cjkCharsFile, cjkChars.join(''));
+// Codepoints the source fonts themselves lack; these render via the CSS fallback stack.
+const exceptions = new Set(
+  readFileSync('scripts/font-coverage-exceptions.txt', 'utf8')
+    .split('\n')
+    .map((line) => line.split('#')[0].trim())
+    .filter((line) => line.startsWith('U+'))
+    .map((line) => parseInt(line.slice(2), 16)),
+);
 
-function assertCoverage(fontPath, textFile, label) {
-  const output = execFileSync('pyftsubset', [
-    fontPath,
-    `--text-file=${textFile}`,
-    '--ignore-missing-glyphs',
-    '--layout-features=*',
-    '--output-file=/dev/null',
-  ], { encoding: 'utf8', stderr: 'pipe' });
-  const missingLine = output.split('\n').find((line) => line.includes('Missing glyphs'));
-  if (missingLine) {
-    throw new Error(`${label} is missing required glyphs: ${missingLine}`);
+function assertCoverage(fontPath, requiredChars, label) {
+  const font = fontkit.openSync(fontPath);
+  const missing = requiredChars.filter((char) => {
+    const code = char.codePointAt(0);
+    return !exceptions.has(code) && !font.hasGlyphForCodePoint(code);
+  });
+  if (missing.length > 0) {
+    const sample = missing.slice(0, 20).join('');
+    const codes = missing.slice(0, 20).map((c) => 'U+' + c.codePointAt(0).toString(16).toUpperCase().padStart(4, '0')).join(' ');
+    throw new Error(
+      `${label} is missing ${missing.length} required glyphs (e.g. ${sample} — ${codes}); ` +
+      'rebuild the subset, or add codepoints absent from the source font to scripts/font-coverage-exceptions.txt.',
+    );
   }
 }
 
-try {
-  assertCoverage('public/fonts/HuiwenMincho-subset.woff2', allCharsFile, 'HuiwenMincho body subset');
-  assertCoverage('public/fonts/GenWanMin2-subset.woff2', cjkCharsFile, 'GenWanMin2 display CJK subset');
-  console.log(`Font coverage validated: ${chars.length} text glyphs, ${cjkChars.length} CJK glyphs.`);
-} finally {
-  rmSync(tmp, { recursive: true, force: true });
-}
+assertCoverage('public/fonts/HuiwenMincho-subset.woff2', chars, 'HuiwenMincho body subset');
+assertCoverage('public/fonts/GenWanMin2-subset.woff2', cjkChars, 'GenWanMin2 display CJK subset');
+console.log(`Font coverage validated: ${chars.length} text glyphs, ${cjkChars.length} CJK glyphs.`);

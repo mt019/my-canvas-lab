@@ -1,0 +1,24 @@
+# Codepoints known to be absent from the SOURCE fonts (HuiwenMincho-Improved.ttf /
+# GenWanMin2-R.ttc). They cannot appear in any subset and render via the CSS
+# fallback stack (Songti TC / Noto Serif CJK TC). Verified 2026-07-06 with fontkit
+# against the source files. One codepoint per line; '#' starts a comment.
+U+1D62  # ᵢ subscript i
+U+2076  # ⁶ superscript six
+U+2083  # ₃ subscript three
+U+3223  # ㈣ parenthesized ideograph four
+U+56CD  # 囍
+U+57D7  # 埗
+U+59F8  # 姸
+U+5C2A  # 尪
+U+69E4  # 槤
+U+6DEF  # 淯
+U+70DC  # 烜
+U+70F1  # 烱
+U+7061  # 灡
+U+711C  # 焜
+U+7444  # 瑄
+U+830D  # 茍
+U+83BF  # 莿
+U+8E53  # 蹓
+U+96FA  # 雺
+U+F98E  # 年 CJK compatibility ideograph (duplicate of U+5E74)
