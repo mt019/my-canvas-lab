@@ -18,6 +18,16 @@
   font-display: swap;
 }
 
+/* Glyphs absent from Huiwen Mincho itself, filled from Chiron Sung HK (OFL-1.1).
+   Declared after the main face so this unicode-range wins for exactly these codepoints. */
+@font-face {
+  font-family: 'Huiwen Mincho';
+  src: url('/fonts/ChironSungHK-fallback-subset.woff2') format('woff2');
+  font-weight: 400;
+  font-display: swap;
+  unicode-range: U+2076, U+2083, U+3223, U+56CD, U+57D7, U+59F8, U+5C2A, U+69E4, U+6DEF, U+70DC, U+70F1, U+7061, U+711C, U+7444, U+830D, U+83BF, U+8E53, U+96FA, U+F98E;
+}
+
 @font-face {
   font-family: 'GenWanMin2';
   src: url('/fonts/GenWanMin2-subset.woff2') format('woff2');
