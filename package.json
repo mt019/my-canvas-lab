@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "npm run validate:fonts && vite build",
+    "validate:fonts": "node scripts/validate-font-coverage.mjs",
     "lint": "eslint .",
     "preview": "vite preview"
   },
