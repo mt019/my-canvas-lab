@@ -9,10 +9,19 @@
     "url": "https://www.oecd.org/en/publications/tax-challenges-arising-from-the-digitalisation-of-the-economy-consolidated-commentary-to-the-global-anti-base-erosion-model-rules-2026_4377e89f-en.html",
     "dateChecked": "2026-07-02",
     "authorityTier": "official-soft-law",
-    "materialType": ["model-or-commentary"],
-    "epistemicLayer": ["normative-rule", "implementation-reality"],
+    "materialType": [
+      "model-or-commentary"
+    ],
+    "epistemicLayer": [
+      "normative-rule",
+      "implementation-reality"
+    ],
     "temporalStatus": "current-final",
-    "topicDomain": ["pillar-two", "tax-incentives", "tax-certainty-and-disputes"],
+    "topicDomain": [
+      "pillar-two",
+      "tax-incentives",
+      "tax-certainty-and-disputes"
+    ],
     "workflowState": "download-needed",
     "refreshCadence": "monthly"
   },
@@ -26,10 +35,17 @@
     "url": "https://www.oecd.org/en/publications/the-global-minimum-tax-implementation-toolkit_0ee66d84-en.html",
     "dateChecked": "2026-07-02",
     "authorityTier": "official-soft-law",
-    "materialType": ["implementation-toolkit"],
-    "epistemicLayer": ["implementation-reality", "future-development"],
+    "materialType": [
+      "implementation-toolkit"
+    ],
+    "epistemicLayer": [
+      "implementation-reality",
+      "future-development"
+    ],
     "temporalStatus": "current-final",
-    "topicDomain": ["pillar-two"],
+    "topicDomain": [
+      "pillar-two"
+    ],
     "workflowState": "parsed",
     "refreshCadence": "quarterly"
   },
@@ -43,10 +59,20 @@
     "url": "https://financing.desa.un.org/document/terms-reference-united-nations-framework-convention-international-tax-cooperation",
     "dateChecked": "2026-07-02",
     "authorityTier": "official-process",
-    "materialType": ["agenda-or-workplan", "treaty-or-convention"],
-    "epistemicLayer": ["future-development", "controversy", "normative-rule"],
+    "materialType": [
+      "agenda-or-workplan",
+      "treaty-or-convention"
+    ],
+    "epistemicLayer": [
+      "future-development",
+      "controversy",
+      "normative-rule"
+    ],
     "temporalStatus": "current-draft",
-    "topicDomain": ["un-tax-cooperation", "developing-country-taxation"],
+    "topicDomain": [
+      "un-tax-cooperation",
+      "developing-country-taxation"
+    ],
     "workflowState": "parsed",
     "refreshCadence": "weekly"
   },
@@ -60,10 +86,17 @@
     "url": "https://financing.desa.un.org/what-we-do/ECOSOC/tax-committee/tax-committee-home",
     "dateChecked": "2026-07-02",
     "authorityTier": "official-process",
-    "materialType": ["agenda-or-workplan"],
-    "epistemicLayer": ["future-development", "actor-ecosystem"],
+    "materialType": [
+      "agenda-or-workplan"
+    ],
+    "epistemicLayer": [
+      "future-development",
+      "actor-ecosystem"
+    ],
     "temporalStatus": "scheduled",
-    "topicDomain": ["un-tax-cooperation"],
+    "topicDomain": [
+      "un-tax-cooperation"
+    ],
     "workflowState": "monitoring",
     "refreshCadence": "weekly"
   },
@@ -77,10 +110,19 @@
     "url": "https://www.unil.ch/taxpolicy/en/home.html",
     "dateChecked": "2026-07-02",
     "authorityTier": "academic-peer",
-    "materialType": ["event-or-network-signal"],
-    "epistemicLayer": ["actor-ecosystem", "research-hotspot"],
+    "materialType": [
+      "event-or-network-signal"
+    ],
+    "epistemicLayer": [
+      "actor-ecosystem",
+      "research-hotspot"
+    ],
     "temporalStatus": "current-final",
-    "topicDomain": ["swiss-international-tax", "tax-certainty-and-disputes", "transfer-pricing"],
+    "topicDomain": [
+      "swiss-international-tax",
+      "tax-certainty-and-disputes",
+      "transfer-pricing"
+    ],
     "workflowState": "monitoring",
     "refreshCadence": "weekly"
   },
@@ -94,10 +136,18 @@
     "url": "https://ch.linkedin.com/in/prof-dr-robert-j-danon-39379742",
     "dateChecked": "2026-07-02",
     "authorityTier": "secondary-signal",
-    "materialType": ["social-signal"],
-    "epistemicLayer": ["actor-ecosystem", "research-hotspot"],
+    "materialType": [
+      "social-signal"
+    ],
+    "epistemicLayer": [
+      "actor-ecosystem",
+      "research-hotspot"
+    ],
     "temporalStatus": "emerging",
-    "topicDomain": ["tax-certainty-and-disputes", "investment-arbitration-and-tax"],
+    "topicDomain": [
+      "tax-certainty-and-disputes",
+      "investment-arbitration-and-tax"
+    ],
     "workflowState": "monitoring",
     "refreshCadence": "manual"
   },
@@ -111,10 +161,19 @@
     "url": "https://danonlaw.ch/en/",
     "dateChecked": "2026-07-02",
     "authorityTier": "professional-analysis",
-    "materialType": ["event-or-network-signal"],
-    "epistemicLayer": ["actor-ecosystem", "research-hotspot"],
+    "materialType": [
+      "event-or-network-signal"
+    ],
+    "epistemicLayer": [
+      "actor-ecosystem",
+      "research-hotspot"
+    ],
     "temporalStatus": "current-final",
-    "topicDomain": ["tax-certainty-and-disputes", "investment-arbitration-and-tax", "swiss-international-tax"],
+    "topicDomain": [
+      "tax-certainty-and-disputes",
+      "investment-arbitration-and-tax",
+      "swiss-international-tax"
+    ],
     "workflowState": "parsed",
     "refreshCadence": "weekly"
   },
@@ -128,11 +187,98 @@
     "url": "https://www.taxobservatory.eu/publication/global-tax-evasion-report-2024/",
     "dateChecked": "2026-07-02",
     "authorityTier": "academic-peer",
-    "materialType": ["research-paper", "dataset-or-statistics"],
-    "epistemicLayer": ["data-evidence", "observable-trend", "controversy"],
+    "materialType": [
+      "research-paper",
+      "dataset-or-statistics"
+    ],
+    "epistemicLayer": [
+      "data-evidence",
+      "observable-trend",
+      "controversy"
+    ],
     "temporalStatus": "current-final",
-    "topicDomain": ["hnwi-wealth-taxation", "tax-transparency", "data-and-measurement"],
+    "topicDomain": [
+      "hnwi-wealth-taxation",
+      "tax-transparency",
+      "data-and-measurement"
+    ],
     "workflowState": "parsed",
     "refreshCadence": "quarterly"
+  },
+  {
+    "id": "un-inc-ws1-convention-template-2026-01-22",
+    "institution": "UN FSDO / INC-Tax",
+    "title": {
+      "zh": "UN 框架公約模板（WS1 共同主席草案，CRP.26）",
+      "en": "UN Framework Convention Template (WS1 Co-Lead's Draft, CRP.26)"
+    },
+    "url": "https://financing.desa.un.org/document/workstream-i-framework-convention-co-leads-draft-framework-convention-template-22-jan-2026",
+    "dateChecked": "2026-07-06",
+    "authorityTier": "official-process",
+    "materialType": [
+      "agenda-or-workplan"
+    ],
+    "epistemicLayer": [
+      "normative-rule",
+      "future-development"
+    ],
+    "temporalStatus": "current-draft",
+    "topicDomain": [
+      "un-tax-cooperation",
+      "tax-treaties"
+    ],
+    "workflowState": "parsed",
+    "refreshCadence": "monthly"
+  },
+  {
+    "id": "un-inc-ws2-services-options-2026-01-21",
+    "institution": "UN FSDO / INC-Tax",
+    "title": {
+      "zh": "UN 跨境服務課稅選項文件（WS2 共同主席草案，CRP.27）",
+      "en": "UN Taxation of Services Draft Options Paper (WS2 Co-Lead's Draft, CRP.27)"
+    },
+    "url": "https://financing.desa.un.org/document/workstream-ii-taxation-services-co-leads-draft-options-paper-21-jan-2026",
+    "dateChecked": "2026-07-06",
+    "authorityTier": "official-process",
+    "materialType": [
+      "agenda-or-workplan"
+    ],
+    "epistemicLayer": [
+      "normative-rule",
+      "future-development"
+    ],
+    "temporalStatus": "current-draft",
+    "topicDomain": [
+      "un-tax-cooperation",
+      "digital-services-taxation"
+    ],
+    "workflowState": "parsed",
+    "refreshCadence": "monthly"
+  },
+  {
+    "id": "un-inc-ws3-concept-note-2026-01-23",
+    "institution": "UN FSDO / INC-Tax",
+    "title": {
+      "zh": "UN 稅務爭端預防與解決概念說明（WS3 共同主席，CRP.28）",
+      "en": "UN Dispute Prevention and Resolution Co-Leads' Concept Note (WS3, CRP.28)"
+    },
+    "url": "https://financing.desa.un.org/document/workstream-iii-dispute-prevention-and-resolution-co-leads-concept-note-23-jan-2026",
+    "dateChecked": "2026-07-06",
+    "authorityTier": "official-process",
+    "materialType": [
+      "agenda-or-workplan"
+    ],
+    "epistemicLayer": [
+      "normative-rule",
+      "future-development",
+      "controversy"
+    ],
+    "temporalStatus": "current-draft",
+    "topicDomain": [
+      "un-tax-cooperation",
+      "tax-certainty-and-disputes"
+    ],
+    "workflowState": "parsed",
+    "refreshCadence": "monthly"
   }
 ]

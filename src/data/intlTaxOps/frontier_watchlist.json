@@ -37,7 +37,8 @@
     ],
     "latestObserved": "Search-visible LinkedIn profile identifies Danon as a tenured full professor and Tax Policy Center head; LinkedIn pages may require sign-in and must remain secondary evidence.",
     "latestObservedZh": "公開搜尋可見摘要顯示 Danon 為洛桑大學教授並主持 Tax Policy Center；LinkedIn 可能受登入限制，只作輔助線索。",
-    "status": "secondary"
+    "status": "secondary",
+    "skipAutoMonitor": true
   },
   {
     "id": "linkedin-tax-policy-center-lausanne",
@@ -56,7 +57,8 @@
     ],
     "latestObserved": "Public search-visible company page describes the center as research and education in international tax law, Swiss tax law, transfer pricing, and EU tax law.",
     "latestObservedZh": "公開搜尋可見摘要將中心定位為國際稅法、瑞士稅法、轉讓定價與歐盟稅法的研究與教育平台。",
-    "status": "secondary"
+    "status": "secondary",
+    "skipAutoMonitor": true
   },
   {
     "id": "unil-tax-policy-center",
@@ -178,8 +180,60 @@
       "high-net-worth individuals",
       "illicit financial flows"
     ],
-    "latestObserved": "UN process tracks a framework convention and early protocols with strong implications for allocation of taxing rights and developing-country participation.",
-    "latestObservedZh": "UN 路線正在推進框架公約與早期議定書，對徵稅權配置與發展中國家參與具有直接意義。",
+    "latestObserved": "Page now fetchable with browser headers (2026-07-06). Latest documents: CRP.26 FC template, CRP.27 services options paper, CRP.28 dispute-resolution concept note (all late Jan 2026); INC-5 on 3-13 Aug 2026, zero draft of the dispute protocol due there.",
+    "latestObservedZh": "頁面已可抓取（2026-07-06 換瀏覽器 headers）。最新文件：CRP.26 公約模板、CRP.27 服務課稅選項、CRP.28 爭端解決概念說明（均 2026 年 1 月下旬）；INC-5 於 2026-08-03–13 舉行，爭端議定書零草案屆時提交。",
     "status": "monitor"
+  },
+  {
+    "id": "south-centre-tax-cooperation",
+    "label": {
+      "zh": "South Centre 國際稅務合作專頁",
+      "en": "South Centre international tax cooperation"
+    },
+    "sourceUrl": "https://www.southcentre.int/tag/international-tax-cooperation/",
+    "watchType": "institution",
+    "cadence": "monthly",
+    "signals": [
+      "UN tax convention",
+      "developing-country positions",
+      "source taxation",
+      "tax cooperation governance"
+    ],
+    "latestObserved": "Added 2026-07-06 as a Global South counterweight to the Danon/OECD-adjacent sources on this desk; intergovernmental think tank of developing countries, active written inputs to the INC process.",
+    "latestObservedZh": "2026-07-06 新增：作為本桌 Danon／OECD 系來源的南方對照視角；發展中國家政府間智庫，持續向 INC 程序提交書面意見。"
+  },
+  {
+    "id": "ictd-un-tax-convention",
+    "label": {
+      "zh": "ICTD UN 稅務公約主題頁",
+      "en": "ICTD UN tax convention theme"
+    },
+    "sourceUrl": "https://www.ictd.ac/theme/un-tax-convention-en/",
+    "watchType": "institution",
+    "cadence": "monthly",
+    "signals": [
+      "UN tax convention analysis",
+      "developing-country taxation research",
+      "session explainers"
+    ],
+    "latestObserved": "Added 2026-07-06; research institute (not advocacy) focused on taxation and development, publishes session-by-session analysis of the INC negotiations.",
+    "latestObservedZh": "2026-07-06 新增：專研稅收與發展的研究機構（非倡議組織），逐場分析 INC 談判。"
+  },
+  {
+    "id": "tjn-un-tax-convention",
+    "label": {
+      "zh": "Tax Justice Network UN 公約專頁",
+      "en": "Tax Justice Network UN tax convention"
+    },
+    "sourceUrl": "https://taxjustice.net/topics/un-tax-convention/",
+    "watchType": "secondary-signal",
+    "cadence": "monthly",
+    "signals": [
+      "advocacy positions",
+      "stakeholder submissions",
+      "anti-arbitration stance"
+    ],
+    "latestObserved": "Added 2026-07-06; advocacy organization with a declared position (anti-mandatory-arbitration) — treat as stance-bearing signal per the desk's source-stance rule, already cited (attributed) in the 2026-07-06 digest.",
+    "latestObservedZh": "2026-07-06 新增：有明確立場（反強制仲裁）的倡議組織——依本桌立場來源規則視為帶立場訊號，digest 已具名引用。"
   }
 ]
