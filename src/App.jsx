@@ -232,7 +232,7 @@ function HomePage({ routes }) {
           <p className="mb-4 font-accent text-[10px] font-bold uppercase tracking-[0.28em] text-[var(--home-accent)]">
             Phenom&nbsp;&nbsp;·&nbsp;&nbsp;Canvas Lab
           </p>
-          <h1 className="font-sans text-3xl font-semibold leading-tight text-[var(--home-ink-strong)] sm:text-4xl">
+          <h1 className="font-display text-3xl font-semibold leading-tight text-[var(--home-ink-strong)] sm:text-4xl">
             專案索引
           </h1>
           <p className="mt-3 max-w-2xl text-token-sm leading-relaxed text-[var(--home-ink-soft)]">
@@ -250,7 +250,7 @@ function HomePage({ routes }) {
                 <div className="mb-2 flex items-end justify-between gap-3 border-b border-[var(--home-line-strong)] pb-2">
                   <div>
                     <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--home-accent)]">{gm?.note}</p>
-                    <h2 className="mt-1 font-sans text-lg font-semibold text-[var(--home-ink-strong)]">{label}</h2>
+                    <h2 className="mt-1 font-display text-lg font-semibold text-[var(--home-ink-strong)]">{label}</h2>
                   </div>
                 </div>
                 <p className="mb-1 text-token-xs leading-relaxed text-[var(--home-ink-faint)]">{GROUPS.find((group) => group.key === key)?.desc}</p>

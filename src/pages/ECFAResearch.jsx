@@ -839,7 +839,7 @@ export default function ECFAResearch() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[var(--ecfa-bg)] font-sans text-[var(--ecfa-ink-strong)]" style={{ ...ECFA_VARS, paddingBottom: 60 }}>
+    <div className="min-h-screen bg-[var(--ecfa-bg)] font-sans text-[var(--ecfa-ink-strong)]" style={{ ...ECFA_VARS, paddingBottom: 60, zoom: fontScale }}>
       <header className="border-b border-[var(--ecfa-line)] bg-white">
         <div className="mx-auto max-w-6xl px-4 py-7 sm:px-6">
           <div className="flex items-start justify-between gap-3">
@@ -877,7 +877,7 @@ export default function ECFAResearch() {
         </div>
       </nav>
 
-      <main className="mx-auto max-w-6xl px-4 sm:px-6 prose-scaled" style={{ '--fs': fontScale }}>
+      <main className="mx-auto max-w-6xl px-4 sm:px-6 prose-scaled">
         {active === 'core' ? <CoreView /> : null}
         {active === 'events' ? <EventTimelineView /> : null}
         {active === 'exposure' ? <ExposureView /> : null}

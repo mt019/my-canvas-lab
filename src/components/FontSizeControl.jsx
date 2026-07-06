@@ -1,15 +1,15 @@
 import { useEffect, useState } from 'react';
 
 const STORAGE_KEY = 'canvaslab:fontScale';
-export const FONT_SCALES = [0.9, 1, 1.1, 1.25, 1.4];
+export const FONT_SCALES = [0.85, 0.925, 1, 1.1, 1.25, 1.4, 1.6];
 
 /*
- * Reader font-size control for long-form academic pages. The scale is a
- * container-level multiplier: apply style={{ '--fs': scale }} on the prose
- * wrapper and size prose text with calc(var(--text-body) * var(--fs, 1))
- * (PageShell width="prose" does this). Deliberately does NOT touch the html
- * font-size — that would drag every Tailwind rem spacing with it and break
- * dashboard/instrument layouts.
+ * Reader size control. Primary mechanism (2026-07-07 user decision): apply
+ * the scale as CSS zoom on the page content root — style={{ zoom: scale }} —
+ * so every element scales proportionally, like browser Cmd+/Cmd-. PageShell
+ * does this built-in; pages with their own shell put it on their root div.
+ * The older --fs / .prose-scaled text-only multiplier still works but is
+ * secondary. localStorage-persisted, shared across pages.
  */
 export function useFontScale() {
   const [scale, setScale] = useState(() => {

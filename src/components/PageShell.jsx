@@ -26,10 +26,13 @@ export default function PageShell({
     if (title) document.title = title;
   }, [title]);
 
-  const scaleStyle = fontScale != null ? { '--fs': fontScale } : undefined;
+  // zoom scales the whole page content proportionally (browser-zoom-like).
+  // Deliberately does NOT also set --fs: that would compound with zoom on
+  // .prose-scaled / text-scaled-* text.
+  const scaleStyle = fontScale != null ? { zoom: fontScale } : undefined;
 
   return (
-    <main className="min-h-screen bg-paper text-ink">
+    <main className="min-h-screen bg-paper text-ink" style={scaleStyle}>
       <div className={`mx-auto px-4 py-10 sm:px-6 ${WIDTHS[width] ?? WIDTHS.prose}`}>
         <header className="mb-8">
           <div className="mb-4 flex items-center justify-between gap-4">
@@ -48,10 +51,7 @@ export default function PageShell({
             </h1>
           ) : null}
         </header>
-        <div
-          className={width === 'prose' ? 'prose-scaled' : undefined}
-          style={scaleStyle}
-        >
+        <div className={width === 'prose' ? 'prose-scaled' : undefined}>
           {children}
         </div>
       </div>

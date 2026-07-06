@@ -8,20 +8,23 @@
  * next to their @font-face declarations (stable, don't re-derive).
  */
 :root {
-  /* Color roles. Low-chroma, paper-like. Page identity pastels stay local
-     to each page's wrapper; only neutral + brand roles live here. */
-  --c-paper: #fbfaf7;          /* main body background — the only allowed prose backdrop */
-  --c-surface: #f4f1ea;        /* cards, sidebars, quiet panels */
+  /* Color roles — interim neutral default (2026-07-07). The warm-cream +
+     sage-teal combo was banned by the user as "AI default"; this cool
+     near-white / near-black set holds the fort until a palette is chosen
+     on the PaletteLab page. Page identity palettes stay local to each
+     page's wrapper. */
+  --c-paper: #fdfdfc;          /* main body background — the only allowed prose backdrop */
+  --c-surface: #f6f7f8;        /* cards, sidebars, quiet panels */
   --c-surface-raised: #ffffff; /* elevated cards, popovers */
-  --c-ink: #2c2a26;            /* primary text */
-  --c-ink-muted: #5f5a52;      /* secondary text */
-  --c-ink-faint: #8d867b;      /* tertiary text, captions */
-  --c-line: #d8d2c6;           /* borders, dividers */
-  --c-line-soft: #e9e4da;      /* hairlines, table grids */
-  --c-accent: #4c7971;         /* brand teal (shared with intl-tax-ops-lab, font-lab) */
-  --c-accent-soft: #e3ecea;    /* accent wash for chips, hovers */
-  --c-warn: #a2703a;
-  --c-danger: #9a4b3f;
+  --c-ink: #1f2328;            /* primary text */
+  --c-ink-muted: #57606a;      /* secondary text */
+  --c-ink-faint: #848d97;      /* tertiary text, captions */
+  --c-line: #d1d9e0;           /* borders, dividers */
+  --c-line-soft: #eaeef2;      /* hairlines, table grids */
+  --c-accent: #3d5a80;         /* desaturated deep blue (interim; PaletteLab decides) */
+  --c-accent-soft: #e7edf4;    /* accent wash for chips, hovers */
+  --c-warn: #9a6700;
+  --c-danger: #a3403a;
   --c-info: #4a6d8c;
 
   /* Type scale (rem). Body is 18px: Huiwen Mincho strokes are thin and
@@ -56,8 +59,8 @@
   --radius-full: 999px;
 
   /* Shadows stay faint — paper, not Material elevation. */
-  --shadow-sm: 0 1px 2px rgba(44, 42, 38, 0.06);
-  --shadow-md: 0 2px 10px rgba(44, 42, 38, 0.08);
+  --shadow-sm: 0 1px 2px rgba(31, 35, 40, 0.06);
+  --shadow-md: 0 2px 10px rgba(31, 35, 40, 0.08);
 
   /* Motion: restrained; animate opacity/transform only. */
   --dur-fast: 120ms;

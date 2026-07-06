@@ -149,7 +149,7 @@ export default function TranslationAtlas() {
           <p className="mb-4 font-accent text-[10px] font-bold uppercase tracking-[0.28em] text-[var(--ta-eyebrow)]">
             Phenom&nbsp;&nbsp;·&nbsp;&nbsp;Translation Atlas
           </p>
-          <h1 className="font-sans text-3xl font-semibold leading-tight text-[var(--ta-heading)] sm:text-4xl">
+          <h1 className="font-display text-3xl font-semibold leading-tight text-[var(--ta-heading)] sm:text-4xl">
             翻譯工程總覽
           </h1>
           <p className="mt-3 max-w-2xl text-[13px] leading-relaxed text-[var(--ta-body-text)]">

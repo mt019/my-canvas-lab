@@ -770,7 +770,7 @@ const styles = `
   color: var(--fer-dark);
 }
 .fer-title-zh {
-  font-family: var(--font-body);
+  font-family: var(--font-display);
   font-weight: 700;
 }
 .fer-title-en {
