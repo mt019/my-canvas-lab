@@ -260,8 +260,8 @@ function InsightRows({ rows }) {
         <div key={row.label} className="grid gap-2 py-3 sm:grid-cols-[140px_1fr]">
           <div className="text-[12px] font-bold text-[var(--ecfa-accent)]">{row.label}</div>
           <div>
-            <div className="text-[13px] font-bold leading-relaxed text-[var(--ecfa-ink)]">{row.value}</div>
-            <div className="mt-1 text-[11px] leading-relaxed text-[var(--ecfa-ink-soft)]">{row.note}</div>
+            <div className="text-scaled-xs font-bold leading-relaxed text-[var(--ecfa-ink)]">{row.value}</div>
+            <div className="mt-1 text-[0.65em] leading-relaxed text-[var(--ecfa-ink-soft)]">{row.note}</div>
           </div>
         </div>
       ))}
@@ -625,7 +625,7 @@ function EventTimelineView() {
               </div>
               <div className="border-t border-[var(--ecfa-line)] pt-3">
                 <div className="flex flex-wrap items-center gap-2">
-                  <h3 className="font-sans text-sm font-bold text-[var(--ecfa-ink)]">{item.title}</h3>
+                  <h3 className="font-sans text-scaled-sm font-bold text-[var(--ecfa-ink)]">{item.title}</h3>
                   <Badge tone="green">{item.factCheck}</Badge>
                   <span className="text-[10px] font-bold text-[var(--ecfa-muted)]">{item.type}</span>
                 </div>
@@ -648,7 +648,7 @@ function GlossaryView() {
           {ds.glossary.map((item) => (
             <article key={item.term} className="border-t border-[var(--ecfa-line)] pt-3">
               <div className="flex items-baseline gap-2">
-                <h3 className="font-sans text-sm font-bold text-[var(--ecfa-ink)]">{item.term}</h3>
+                <h3 className="font-sans text-scaled-sm font-bold text-[var(--ecfa-ink)]">{item.term}</h3>
                 <span className="text-[10px] text-[var(--ecfa-muted)]">{item.fullName}</span>
               </div>
               <p className="mt-2 text-scaled-xs leading-relaxed text-[var(--ecfa-ink-mid)]">{item.plain}</p>
@@ -683,7 +683,7 @@ function FactChecksView() {
         <div className="grid gap-3 md:grid-cols-2">
           {ds.analysisNotes.map((item) => (
             <article key={item.title} className="border-t border-[var(--ecfa-line)] pt-3">
-              <h3 className="font-sans text-sm font-bold text-[var(--ecfa-ink)]">{item.title}</h3>
+              <h3 className="font-sans text-scaled-sm font-bold text-[var(--ecfa-ink)]">{item.title}</h3>
               <p className="mt-2 text-scaled-xs leading-relaxed text-[var(--ecfa-ink-mid)]">{item.summary}</p>
               <p className="mt-1 text-[11px] leading-relaxed text-[var(--ecfa-note)]">{item.researchUse}</p>
             </article>
@@ -735,7 +735,7 @@ function SourcesView() {
             <article key={item.id} className="grid gap-2 py-3 md:grid-cols-[130px_1fr]">
               <div className="text-[11px] font-bold text-[var(--ecfa-accent)]">{item.year} · {methodLabel[item.method] || displayText(item.method)}</div>
               <div>
-                <h3 className="font-sans text-sm font-bold leading-snug text-[var(--ecfa-ink)]">{item.title}</h3>
+                <h3 className="font-sans text-scaled-sm font-bold leading-snug text-[var(--ecfa-ink)]">{item.title}</h3>
                 <p className="mt-1 text-scaled-xs leading-relaxed text-[var(--ecfa-ink-soft)]">{literatureUse(item)}</p>
               </div>
             </article>
@@ -778,7 +778,7 @@ function MethodsView() {
           {design.eventWindows.map((item) => (
             <article key={`${item.event}-${item.date}`} className="grid gap-2 py-3 md:grid-cols-[120px_150px_1fr]">
               <div className="text-[12px] font-bold text-[var(--ecfa-accent)]">{item.date}</div>
-              <h3 className="font-sans text-sm font-bold text-[var(--ecfa-ink)]">{item.event}</h3>
+              <h3 className="font-sans text-scaled-sm font-bold text-[var(--ecfa-ink)]">{item.event}</h3>
               <div>
                 <p className="text-scaled-xs leading-relaxed text-[var(--ecfa-ink-soft)]">{item.window}</p>
                 <p className="mt-1 text-[11px] leading-relaxed text-[var(--ecfa-note)]">{item.purpose}</p>
@@ -792,7 +792,7 @@ function MethodsView() {
         <div className="divide-y divide-[var(--ecfa-line)]">
           {design.comparisonCandidates.map((item) => (
             <article key={item.label} className="grid gap-2 py-3 md:grid-cols-[180px_1fr]">
-              <h3 className="font-sans text-sm font-bold text-[var(--ecfa-ink)]">{item.label}</h3>
+              <h3 className="font-sans text-scaled-sm font-bold text-[var(--ecfa-ink)]">{item.label}</h3>
               <div>
                 <p className="text-scaled-xs leading-relaxed text-[var(--ecfa-ink-soft)]">{displayText(item.use)}</p>
                 <p className="mt-1 text-scaled-xs leading-relaxed text-[var(--ecfa-risk-text)]">{displayText(item.risk)}</p>
@@ -804,7 +804,7 @@ function MethodsView() {
       <Panel eyebrow="研究限制" title="目前不能假裝已經解決的事" icon={AlertTriangle}>
         <div className="divide-y divide-[var(--ecfa-line)]">
           {design.blockers.map((item) => (
-            <div key={item} className="flex gap-2 py-3 text-[12px] font-bold leading-relaxed text-[var(--ecfa-warning-text)]">
+            <div key={item} className="flex gap-2 py-3 text-scaled-xs font-bold leading-relaxed text-[var(--ecfa-warning-text)]">
               <AlertTriangle size={15} className="mt-0.5 shrink-0" />
               {displayText(item)}
             </div>
@@ -822,7 +822,7 @@ function NextView() {
         {ds.immediateNextWork.map((item, idx) => (
           <div key={item} className="grid gap-3 py-3 sm:grid-cols-[36px_1fr]">
             <div className="font-display text-lg text-[var(--ecfa-icon)]">{idx + 1}</div>
-            <div className="text-[13px] font-bold leading-relaxed text-[var(--ecfa-next-text)]">{displayText(item)}</div>
+            <div className="text-scaled-xs font-bold leading-relaxed text-[var(--ecfa-next-text)]">{displayText(item)}</div>
           </div>
         ))}
       </div>
