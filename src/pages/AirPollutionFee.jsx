@@ -6,12 +6,67 @@ import {
   ArrowRight, History, Landmark,
 } from 'lucide-react';
 
+const APF_VARS = { // token-exempt
+  '--apf-bg': '#f5eceb',
+  '--apf-line': '#e8d3d1',
+  '--apf-label': '#b09e9c',
+  '--apf-ink': '#6b5b58',
+  '--apf-ink-soft': '#8a7a78',
+  '--apf-icon-muted': '#c5b4b2',
+  '--apf-track': '#f0e8e6',
+  '--apf-ink-mid': '#a09088',
+  '--apf-ink-body': '#7a6a68',
+  '--apf-divide': '#f8f4f3',
+  '--apf-note-text': '#4a6880',
+  '--apf-note-bg': '#eef2f8',
+  '--apf-footer-bg': '#faf6f5',
+  '--apf-warn-bg': '#f8f0e8',
+  '--apf-warn-icon': '#b08060',
+  '--apf-pol-sox-bg': '#d4c4a8',
+  '--apf-pol-sox-ink': '#6a5030',
+  '--apf-pol-nox-bg': '#a8c4b4',
+  '--apf-pol-nox-ink': '#2a6048',
+  '--apf-pol-vocs-bg': '#b8a8d4',
+  '--apf-pol-vocs-ink': '#50388a',
+  '--apf-pol-pm-bg': '#c4b4a4',
+  '--apf-pol-pm-ink': '#6a5848',
+  '--apf-role-green-bg': '#d0e8d8',
+  '--apf-role-green-ink': '#3a6848',
+  '--apf-role-purple-bg': '#e0d0e8',
+  '--apf-role-purple-ink': '#683878',
+  '--apf-role-gold-bg': '#e8e0c8',
+  '--apf-role-gold-ink': '#686030',
+  '--apf-role-blue-bg': '#d0dce8',
+  '--apf-role-blue-ink': '#3a5878',
+  '--apf-role-mint-bg': '#d8e8d0',
+  '--apf-role-mint-ink': '#487840',
+  '--apf-role-terracotta-bg': '#e8d8d0',
+  '--apf-role-terracotta-ink': '#784030',
+  '--apf-exp-fixed': '#c4d4a8',
+  '--apf-exp-monitor': '#b4c4d4',
+  '--apf-exp-admin': '#d4c4b8',
+  '--apf-hist-1995-bg': '#e0d8c8',
+  '--apf-hist-1995-ink': '#685830',
+  '--apf-role-violet-bg': '#d8d0e8',
+  '--apf-hist-2010-ink': '#504878',
+  '--apf-hist-2018-bg': '#d0e8e8',
+  '--apf-hist-2018-ink': '#306870',
+  '--apf-hist-2020-ink': '#785048',
+  '--apf-evasion-types-bg': '#e8d8c8',
+  '--apf-evasion-types-ink': '#784830',
+  '--apf-evasion-admin-bg': '#e0d0d8',
+  '--apf-evasion-admin-ink': '#783848',
+  '--apf-evasion-criminal-ink': '#4a3870',
+  '--apf-evasion-enforce-bg': '#e8e8d0',
+  '--apf-evasion-enforce-ink': '#606830',
+};
+
 // ─── Fee rate data ──────────────────────────────────────────────────────────
 
 const POLLUTANTS = {
   SOx: {
     name: '硫氧化物', abbr: 'SOx',
-    color: '#d4c4a8', textColor: '#6a5030',
+    color: 'var(--apf-pol-sox-bg)', textColor: 'var(--apf-pol-sox-ink)',
     desc: '燃燒含硫燃料（煤、重油）產生，為酸雨與呼吸道疾病主因。',
     tiers: [
       { label: '第一級', range: '季排放 > 40 公噸' },
@@ -26,7 +81,7 @@ const POLLUTANTS = {
   },
   NOx: {
     name: '氮氧化物', abbr: 'NOx',
-    color: '#a8c4b4', textColor: '#2a6048',
+    color: 'var(--apf-pol-nox-bg)', textColor: 'var(--apf-pol-nox-ink)',
     desc: '高溫燃燒過程產生，為臭氧與 PM2.5 的前驅物。',
     tiers: [
       { label: '第一級', range: '季排放 > 70 公噸' },
@@ -41,7 +96,7 @@ const POLLUTANTS = {
   },
   VOCs: {
     name: '揮發性有機物', abbr: 'VOCs',
-    color: '#b8a8d4', textColor: '#50388a',
+    color: 'var(--apf-pol-vocs-bg)', textColor: 'var(--apf-pol-vocs-ink)',
     desc: '石化、塗料、印刷等行業排放，為臭氧前驅物，部分具毒性。',
     tiers: [
       { label: '第一級', range: '季排放 > 90 公噸' },
@@ -56,7 +111,7 @@ const POLLUTANTS = {
   },
   PM: {
     name: '粒狀污染物', abbr: 'PM',
-    color: '#c4b4a4', textColor: '#6a5848',
+    color: 'var(--apf-pol-pm-bg)', textColor: 'var(--apf-pol-pm-ink)',
     desc: '含細懸浮微粒（PM2.5），直接危害呼吸道與心血管健康。',
     tiers: [
       { label: '第一級', range: '製程季排放 > 15 公噸' },
@@ -76,7 +131,7 @@ const POLLUTANTS = {
 const ELEMENTS_DATA = [
   {
     id: 'subject', no: '01', title: '義務主體',
-    icon: Factory, color: '#d0e8d8', textColor: '#3a6848', badge: '三類',
+    icon: Factory, color: 'var(--apf-role-green-bg)', textColor: 'var(--apf-role-green-ink)', badge: '三類',
     content: [
       '固定污染源：排放空氣污染物之公私場所（工廠、電廠、焚化廠等），每季申報排放量並繳費。',
       '移動污染源：燃料之銷售者或進口者（由供應端代繳，依燃料含硫量分三級計費），再由市場機制轉嫁消費者。',
@@ -85,7 +140,7 @@ const ELEMENTS_DATA = [
   },
   {
     id: 'object', no: '02', title: '課徵客體',
-    icon: Wind, color: '#e0d0e8', textColor: '#683878', badge: '6 類污染物',
+    icon: Wind, color: 'var(--apf-role-purple-bg)', textColor: 'var(--apf-role-purple-ink)', badge: '6 類污染物',
     content: [
       '固定源課徵項目：SOx（硫氧化物）、NOx（氮氧化物）、VOCs（揮發性有機物）、PM（粒狀污染物含 PM2.5）、重金屬（鉛鎘汞砷六價鉻）、戴奧辛。',
       '起徵門檻（固定源）：SOx、NOx 季排放量 > 0.01 公噸；VOCs > 1 公噸/季。低於門檻者免徵，但仍負申報義務。',
@@ -94,7 +149,7 @@ const ELEMENTS_DATA = [
   },
   {
     id: 'basis', no: '03', title: '計費基準',
-    icon: Calculator, color: '#e8e0c8', textColor: '#686030', badge: '累進費率',
+    icon: Calculator, color: 'var(--apf-role-gold-bg)', textColor: 'var(--apf-role-gold-ink)', badge: '累進費率',
     content: [
       '基本公式：費額 = 【Σ（各級排放量 × 各級費率）】× D × E',
       '三層費率結構：①防制區等級（二級 vs. 一三級，依當地空品等級；一三級費率較高）②季節差別（Q1/Q4 冬季費率高於 Q2/Q3 夏季）③排放量累進分級（排放量越大適用費率越高）。',
@@ -114,7 +169,7 @@ const QUARTERLY_DEADLINES = [
 const PROCEDURE_STEPS = [
   {
     step: '01', title: '申報義務與截止日',
-    icon: ClipboardList, color: '#d0dce8', textColor: '#3a5878',
+    icon: ClipboardList, color: 'var(--apf-role-blue-bg)', textColor: 'var(--apf-role-blue-ink)',
     items: [
       '固定源業者須於每季結束後次月底前，向直轄市或縣市主管機關申報當季排放量（Q1→4月30日；Q2→7月31日；Q3→10月31日；Q4→次年1月31日）。',
       '逾期申報：未於截止日前完成申報者，主管機關得依空污法第76條裁處罰鍰，並按查核方式核算費額補繳；不得以「尚未計算完畢」為由延後。',
@@ -124,7 +179,7 @@ const PROCEDURE_STEPS = [
   },
   {
     step: '02', title: '排放量計量方式',
-    icon: Calculator, color: '#d0e8d8', textColor: '#3a6848',
+    icon: Calculator, color: 'var(--apf-role-green-bg)', textColor: 'var(--apf-role-green-ink)',
     items: [
       '連續自動監測（CEMS）：達法定規模之固定源強制安裝，數據即時傳輸，為最高位階之排放量認定依據；設備異常期間不得自行免報，應依環境部公告之「異常期間推估方式」補算。',
       '質量平衡法：依原料投入量、製程產出量及廢棄物量推估排放，為 VOCs 等逸散型污染物之主要計量方式；申報時須檢附原料購入憑證及盤點紀錄供查核。',
@@ -133,7 +188,7 @@ const PROCEDURE_STEPS = [
   },
   {
     step: '03', title: '核算、繳費與延滯金',
-    icon: Scale, color: '#e8e0c8', textColor: '#686030',
+    icon: Scale, color: 'var(--apf-role-gold-bg)', textColor: 'var(--apf-role-gold-ink)',
     items: [
       '費額核算：主管機關收到申報後核算費額，作成核課處分（繳費通知），送達義務人。義務人應於繳費通知所載期限（通常為送達後 30 日）內繳納。',
       '延滯金（§74）：逾繳費期限起每日加徵滯納金額之 0.5%，並另按郵政儲金一年期定存固定利率計日加計利息（兩者並行，無累計上限）。實務上長期欠繳者延滯金可超過本金；繳清本金後延滯金方停止計算。',
@@ -143,7 +198,7 @@ const PROCEDURE_STEPS = [
   },
   {
     step: '04', title: '核課時效與追繳',
-    icon: Shield, color: '#e0d0e8', textColor: '#683878',
+    icon: Shield, color: 'var(--apf-role-purple-bg)', textColor: 'var(--apf-role-purple-ink)',
     items: [
       '核課時效（追徵期間）：依行政程序法第131條，公法上請求權原則上自得行使起 5 年間不行使而消滅。主管機關對已申報但核算有誤、或查獲低報者，得於 5 年內補徵差額費額。',
       '故意逃漏（虛偽申報）之例外：若義務人有詐欺、虛偽申報等故意行為，核課時效延長至行為終了後 10 年，防止惡意業者藉時效規避追繳。',
@@ -153,7 +208,7 @@ const PROCEDURE_STEPS = [
   },
   {
     step: '05', title: '稽查機制',
-    icon: Info, color: '#d8e8d0', textColor: '#487840',
+    icon: Info, color: 'var(--apf-role-mint-bg)', textColor: 'var(--apf-role-mint-ink)',
     items: [
       '書面稽查：主管機關定期審核申報資料與 CEMS 監測紀錄，比對生產量、燃料使用量是否相符；異常申報列為現場稽查優先對象。稽查選案以排放量高、歷年申報波動異常者為主。',
       '現場稽查：稽查人員可至廠區要求業者提供生產紀錄、燃料採購憑證、防制設備運轉日誌；得委託環境檢測機構進行實地排放量量測，量測費用由業者承擔。',
@@ -162,7 +217,7 @@ const PROCEDURE_STEPS = [
   },
   {
     step: '06', title: '爭議救濟與期限',
-    icon: Gavel, color: '#e8d8d0', textColor: '#784030',
+    icon: Gavel, color: 'var(--apf-role-terracotta-bg)', textColor: 'var(--apf-role-terracotta-ink)',
     items: [
       '申請復查：對費額核課處分不服者，應於處分書送達後 30 日內向原處分機關申請復查（類稅法復查，非行政訴訟前置程序，但為訴願前置）；逾期不申請，處分即確定，不得再爭執費額。',
       '訴願：對復查決定不服者，應於決定書送達後 30 日內提起訴願（訴願法第14條）；訴願機關為上級主管機關或訴願管轄機關，通常在 3 個月內作成決定（得延長 2 個月）。',
@@ -174,7 +229,7 @@ const PROCEDURE_STEPS = [
 const EFFECTS_DATA = [
   {
     id: 'duty', title: '繳費義務之成立',
-    icon: Scale, color: '#d0dce8', textColor: '#3a5878',
+    icon: Scale, color: 'var(--apf-role-blue-bg)', textColor: 'var(--apf-role-blue-ink)',
     content: [
       '空污費屬「金錢給付公法義務」。主管機關依義務人申報之排放量核算費額，作成行政處分（繳費通知），義務人須於期限內依通知金額繳納，逾期不發生使義務消滅之效果。',
       '法律關係特徵：義務人自行申報排放量（具公示效）→ 機關核算費額（核課處分）→ 義務人依限履行（給付義務）。核課處分送達即生拘束力，義務人如有不服須依行政救濟途徑，不得以不服為由拒繳。',
@@ -182,7 +237,7 @@ const EFFECTS_DATA = [
   },
   {
     id: 'enforce', title: '未履行之強制效果',
-    icon: Gavel, color: '#e8e0c8', textColor: '#686030',
+    icon: Gavel, color: 'var(--apf-role-gold-bg)', textColor: 'var(--apf-role-gold-ink)',
     content: [
       '逾期未繳費（§74）：每逾一日加徵 0.5% 滯納金，並另計郵政儲金一年期定存利率之利息（兩者並行）。滯納金性質上為行政加給，非稅法之「利息」，旨在促使義務人迅速履行並彌補基金資金成本。',
       '長期欠繳：主管機關得移送行政執行署依《行政執行法》執行，手段包括：命義務人報告財產狀況、扣押動產不動產、限制出境，直至拍賣財產以清償費額及滯納金。',
@@ -195,36 +250,36 @@ const FINANCE_DATA = {
   // 收入來源與徵收主體（附中央地方分工）
   revenue: [
     {
-      label: '固定污染源費', pct: 72, color: '#a8c4b4',
+      label: '固定污染源費', pct: 72, color: 'var(--apf-pol-nox-bg)',
       collector: '地方', collectorNote: '直轄市、縣（市）主管機關徵收',
       fund: '地方空污基金', note: '工廠、電廠每季申報繳費',
     },
     {
-      label: '移動污染源費', pct: 24, color: '#b8a8d4',
+      label: '移動污染源費', pct: 24, color: 'var(--apf-pol-vocs-bg)',
       collector: '中央', collectorNote: '環境部統一徵收（燃料供應端）',
       fund: '中央空污基金', note: '依各縣市車輛數、空品等因子回分配地方',
     },
     {
-      label: '營建工程費', pct: 4, color: '#d4c4a8',
+      label: '營建工程費', pct: 4, color: 'var(--apf-pol-sox-bg)',
       collector: '地方', collectorNote: '直轄市、縣（市）主管機關徵收',
       fund: '地方空污基金', note: '達規模工程依施工面積與工期計費',
     },
   ],
   // 基金支出結構
   expenditure: [
-    { label: '移動源管制', pct: 37.5, color: '#a8c4b4' },
-    { label: '空品淨化區設置', pct: 19.6, color: '#b8a8d4' },
-    { label: '執行空污防制計畫', pct: 19.6, color: '#d4c4a8' },
-    { label: '固定源管制', pct: 11.9, color: '#c4d4a8' },
-    { label: '策略推動/研發', pct: 9.3, color: '#c4b4a4' },
-    { label: '空品監測', pct: 1.4, color: '#b4c4d4' },
-    { label: '一般行政建設', pct: 0.8, color: '#d4c4b8' },
+    { label: '移動源管制', pct: 37.5, color: 'var(--apf-pol-nox-bg)' },
+    { label: '空品淨化區設置', pct: 19.6, color: 'var(--apf-pol-vocs-bg)' },
+    { label: '執行空污防制計畫', pct: 19.6, color: 'var(--apf-pol-sox-bg)' },
+    { label: '固定源管制', pct: 11.9, color: 'var(--apf-exp-fixed)' },
+    { label: '策略推動/研發', pct: 9.3, color: 'var(--apf-pol-pm-bg)' },
+    { label: '空品監測', pct: 1.4, color: 'var(--apf-exp-monitor)' },
+    { label: '一般行政建設', pct: 0.8, color: 'var(--apf-exp-admin)' },
   ],
   // 中央地方基金關係
   centralLocal: [
     {
       title: '中央空污基金',
-      color: '#d0dce8', textColor: '#3a5878',
+      color: 'var(--apf-role-blue-bg)', textColor: 'var(--apf-role-blue-ink)',
       items: [
         '來源：移動源費（燃料供應端全數繳入）',
         '管理：環境部空污基金管理委員會',
@@ -234,7 +289,7 @@ const FINANCE_DATA = {
     },
     {
       title: '地方空污基金',
-      color: '#d0e8d8', textColor: '#3a6848',
+      color: 'var(--apf-role-green-bg)', textColor: 'var(--apf-role-green-ink)',
       items: [
         '來源：固定源費及營建工程費（由縣市政府徵收，直接入地方基金）',
         '管理：各直轄市、縣（市）政府設管理委員會',
@@ -248,47 +303,47 @@ const FINANCE_DATA = {
 const HISTORY_TIMELINE = [
   {
     year: '1975', label: '空污法制定',
-    color: '#d0dce8', textColor: '#3a5878',
+    color: 'var(--apf-role-blue-bg)', textColor: 'var(--apf-role-blue-ink)',
     desc: '《空氣污染防制法》首次制定，確立基本管制框架，但尚無空污費條款；管制手段以行政許可為主。',
   },
   {
     year: '1992', label: '費徵授權入法',
-    color: '#d0e8d8', textColor: '#3a6848',
+    color: 'var(--apf-role-green-bg)', textColor: 'var(--apf-role-green-ink)',
     desc: '空污法大幅修正，第10條明定主管機關得依排放種類及排放量徵收空氣污染防制費，確立「污染者付費」法律依據；同年確立設置「空氣污染防制基金」，專款專用，為特別公課立法模式之先例。',
   },
   {
     year: '1995', label: 'SOx 費開徵',
-    color: '#e0d8c8', textColor: '#685830',
+    color: 'var(--apf-hist-1995-bg)', textColor: 'var(--apf-hist-1995-ink)',
     desc: '固定污染源空污費正式實施，首先徵收硫氧化物（SOx）排放費；移動污染源費同步開辦，依汽柴油含硫量三級計費，由燃料銷售商代繳。此為台灣最早以經濟誘因工具管制空污的實踐。',
   },
   {
     year: '1996–1998', label: 'NOx 納入徵收',
-    color: '#e0d0e8', textColor: '#683878',
+    color: 'var(--apf-role-purple-bg)', textColor: 'var(--apf-role-purple-ink)',
     desc: '氮氧化物（NOx）納入固定源徵收範圍，擴大污染物覆蓋；費率首度調整，並引入季節差別費率雛形（夏季臭氧問題較冬季嚴重，費率設計開始分化）。',
   },
   {
     year: '2002', label: '費率首次全面調整',
-    color: '#d8e8d0', textColor: '#487840',
+    color: 'var(--apf-role-mint-bg)', textColor: 'var(--apf-role-mint-ink)',
     desc: '對 SOx、NOx 費率進行系統性調整，提高費率以強化減量誘因；同步評估 VOCs 徵費可行性，為後續開徵奠基。',
   },
   {
     year: '2007', label: 'VOCs 費開徵',
-    color: '#e8e0c8', textColor: '#686030',
+    color: 'var(--apf-role-gold-bg)', textColor: 'var(--apf-role-gold-ink)',
     desc: '揮發性有機物（VOCs）正式納入固定源徵費範圍，成為繼 SOx、NOx 之後第三類主要課徵污染物；此政策背景為：1990年代以來 O₃（臭氧）濃度不降反升，顯示前驅物 VOCs 管制不足。',
   },
   {
     year: '2010', label: '費率結構大幅改革',
-    color: '#d8d0e8', textColor: '#504878',
+    color: 'var(--apf-role-violet-bg)', textColor: 'var(--apf-hist-2010-ink)',
     desc: '引入三層累進費率結構：①防制區等級（一三級vs二級）②季節差別（Q1/Q4冬季高於Q2/Q3夏季）③排放量累進分級。同時建立優惠係數D（裝設防制設備可享四至十折優惠）及減量係數E（冬季實際減排享費率折扣），形成雙軌誘因機制。',
   },
   {
     year: '2018', label: '空污法全面修正',
-    color: '#d0e8e8', textColor: '#306870',
+    color: 'var(--apf-hist-2018-bg)', textColor: 'var(--apf-hist-2018-ink)',
     desc: '空污法修正，空污費條文由舊法第10條改為現行第16條（條次重新編排）；強化 PM2.5 獨立管制規範，PM 類費率計費基準細化；徵收機關由環保署（現環境部）統一督導，固定源由直轄市/縣市政府徵收，移動源由中央統一辦理。',
   },
   {
     year: '2020–迄今', label: '持續精進',
-    color: '#e8d8d0', textColor: '#785048',
+    color: 'var(--apf-role-terracotta-bg)', textColor: 'var(--apf-hist-2020-ink)',
     desc: '配合國家空品改善方案（AQMP）定期檢討費率，移動源費率隨燃料品質提升動態調整；積極推動以 CEMS 即時數據取代估算申報，提高課徵精確度；並研議將戴奧辛、重金屬費率接軌實際毒性危害，反映環境成本。',
   },
 ];
@@ -296,7 +351,7 @@ const HISTORY_TIMELINE = [
 const EVASION_DATA = [
   {
     id: 'types', title: '常見逃漏型態',
-    icon: AlertTriangle, color: '#e8d8c8', textColor: '#784830',
+    icon: AlertTriangle, color: 'var(--apf-evasion-types-bg)', textColor: 'var(--apf-evasion-types-ink)',
     badge: '行為態樣',
     items: [
       { label: '低報排放量', desc: '申報量遠低於實際排放：如以行業排放係數申報但高污染製程未列入、調降生產量以縮小計費基礎，或刻意在稽查頻率較低的季度集中排放。' },
@@ -308,7 +363,7 @@ const EVASION_DATA = [
   },
   {
     id: 'admin', title: '行政責任',
-    icon: Gavel, color: '#e0d0d8', textColor: '#783848',
+    icon: Gavel, color: 'var(--apf-evasion-admin-bg)', textColor: 'var(--apf-evasion-admin-ink)',
     badge: '空污法',
     items: [
       {
@@ -331,7 +386,7 @@ const EVASION_DATA = [
   },
   {
     id: 'criminal', title: '刑事責任',
-    icon: Scale, color: '#d8d0e8', textColor: '#4a3870',
+    icon: Scale, color: 'var(--apf-role-violet-bg)', textColor: 'var(--apf-evasion-criminal-ink)',
     badge: '空污法',
     items: [
       {
@@ -358,7 +413,7 @@ const EVASION_DATA = [
   },
   {
     id: 'concurrence', title: '行政／刑事競合',
-    icon: BookOpen, color: '#d8e8d0', textColor: '#487840',
+    icon: BookOpen, color: 'var(--apf-role-mint-bg)', textColor: 'var(--apf-role-mint-ink)',
     badge: '行政罰法 §26',
     items: [
       {
@@ -381,7 +436,7 @@ const EVASION_DATA = [
   },
   {
     id: 'enforcement', title: '稽查與防逃手段',
-    icon: Shield, color: '#e8e8d0', textColor: '#606830',
+    icon: Shield, color: 'var(--apf-evasion-enforce-bg)', textColor: 'var(--apf-evasion-enforce-ink)',
     badge: '主管機關',
     items: [
       { label: '強制安裝 CEMS', desc: '達法定規模之固定源須裝設連續自動監測系統，數據即時傳輸主管機關，從源頭封堵低報空間。異常期間須依推估方式補算，不得自行免報。' },
@@ -426,16 +481,16 @@ export default function AirPollutionFee() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#f5eceb] font-sans" style={{ paddingBottom: 64 }}>
+    <div className="min-h-screen bg-[var(--apf-bg)] font-sans" style={{ ...APF_VARS, paddingBottom: 64 }}>
 
       {/* Header */}
-      <header className="sticky top-0 z-10 bg-[#f5eceb]/90 backdrop-blur-md border-b border-[#e8d3d1] px-4 py-3 flex items-center gap-3">
-        <div className="w-8 h-8 rounded-xl bg-[#d0dce8] flex items-center justify-center">
-          <Wind size={16} className="text-[#3a5878]" strokeWidth={2.2} />
+      <header className="sticky top-0 z-10 bg-[var(--apf-bg)]/90 backdrop-blur-md border-b border-[var(--apf-line)] px-4 py-3 flex items-center gap-3">
+        <div className="w-8 h-8 rounded-xl bg-[var(--apf-role-blue-bg)] flex items-center justify-center">
+          <Wind size={16} className="text-[var(--apf-role-blue-ink)]" strokeWidth={2.2} />
         </div>
         <div>
-          <p className="text-[9px] font-black uppercase tracking-[0.3em] text-[#b09e9c]">空污法 §16 · 特別公課</p>
-          <p className="text-xs font-black text-[#6b5b58] leading-none">空氣污染防制費</p>
+          <p className="text-[9px] font-black uppercase tracking-[0.3em] text-[var(--apf-label)]">空污法 §16 · 特別公課</p>
+          <p className="text-xs font-black text-[var(--apf-ink)] leading-none">空氣污染防制費</p>
         </div>
       </header>
 
@@ -451,8 +506,8 @@ export default function AirPollutionFee() {
                 onClick={() => setSection(s.id)}
                 className={`flex flex-col items-center gap-1 py-2.5 px-1 rounded-2xl text-[10px] font-black transition-all duration-200 ${
                   section === s.id
-                    ? 'bg-[#6b5b58] text-white shadow-sm'
-                    : 'bg-white/70 text-[#8a7a78] border border-[#e8d3d1]'
+                    ? 'bg-[var(--apf-ink)] text-white shadow-sm'
+                    : 'bg-white/70 text-[var(--apf-ink-soft)] border border-[var(--apf-line)]'
                 }`}
               >
                 <Icon size={14} strokeWidth={2.2} />
@@ -466,15 +521,15 @@ export default function AirPollutionFee() {
         {section === 'elements' && (
           <div className="space-y-3">
             {/* 授權法源 — 非構成要件，另立顯示 */}
-            <div className="rounded-[1.5rem] border border-[#d0dce8] bg-[#eef2f8] px-5 py-4">
+            <div className="rounded-[1.5rem] border border-[var(--apf-role-blue-bg)] bg-[var(--apf-note-bg)] px-5 py-4">
               <div className="flex items-center gap-2 mb-2">
-                <BookOpen size={13} className="text-[#3a5878]" strokeWidth={2.5} />
-                <p className="text-[9px] font-black uppercase tracking-[0.35em] text-[#3a5878]">授權法源</p>
+                <BookOpen size={13} className="text-[var(--apf-role-blue-ink)]" strokeWidth={2.5} />
+                <p className="text-[9px] font-black uppercase tracking-[0.35em] text-[var(--apf-role-blue-ink)]">授權法源</p>
               </div>
-              <p className="text-[12px] text-[#4a6880] leading-relaxed mb-1">
+              <p className="text-[12px] text-[var(--apf-note-text)] leading-relaxed mb-1">
                 空污法第 16 條第 1 項：「各級主管機關應依污染源排放空氣污染物之種類及排放量，徵收空氣污染防制費。」費率由中央主管機關（環境部）公告。
               </p>
-              <p className="text-[12px] text-[#4a6880] leading-relaxed">
+              <p className="text-[12px] text-[var(--apf-note-text)] leading-relaxed">
                 性質為「<strong>特別公課</strong>」（大法官釋字第 426 號），非稅捐。特別公課有別於稅：費款專入空污基金、不統收統支；繳費多寡直接連結排放量，內建減量誘因。
               </p>
             </div>
@@ -494,8 +549,8 @@ export default function AirPollutionFee() {
                       </div>
                       <div className="flex-1">
                         <div className="flex items-center gap-2">
-                          <span className="text-[9px] font-black text-[#b09e9c]">{el.no}</span>
-                          <span className="text-sm font-black text-[#6b5b58]">{el.title}</span>
+                          <span className="text-[9px] font-black text-[var(--apf-label)]">{el.no}</span>
+                          <span className="text-sm font-black text-[var(--apf-ink)]">{el.title}</span>
                           <Tag color={el.color} text={el.badge} textColor={el.textColor} />
                         </div>
                       </div>
@@ -510,16 +565,16 @@ export default function AirPollutionFee() {
             {/* Fee rates embedded */}
             <button
               onClick={() => setShowRates(!showRates)}
-              className="w-full flex items-center gap-3 rounded-[1.5rem] border border-[#e8d3d1] bg-white/70 backdrop-blur-xl px-5 py-4 shadow-sm shadow-rose-100/60 hover:shadow-md transition-all"
+              className="w-full flex items-center gap-3 rounded-[1.5rem] border border-[var(--apf-line)] bg-white/70 backdrop-blur-xl px-5 py-4 shadow-sm shadow-rose-100/60 hover:shadow-md transition-all"
             >
-              <div className="shrink-0 w-9 h-9 rounded-xl bg-[#e8e0c8] flex items-center justify-center">
-                <Calculator size={15} className="text-[#686030]" strokeWidth={2.2} />
+              <div className="shrink-0 w-9 h-9 rounded-xl bg-[var(--apf-role-gold-bg)] flex items-center justify-center">
+                <Calculator size={15} className="text-[var(--apf-role-gold-ink)]" strokeWidth={2.2} />
               </div>
               <div className="flex-1 text-left">
-                <p className="text-sm font-black text-[#6b5b58]">費率查詢</p>
-                <p className="text-[11px] text-[#a09088]">SOx、NOx、VOCs、PM 各級費率互動查詢</p>
+                <p className="text-sm font-black text-[var(--apf-ink)]">費率查詢</p>
+                <p className="text-[11px] text-[var(--apf-ink-mid)]">SOx、NOx、VOCs、PM 各級費率互動查詢</p>
               </div>
-              <ChevronRight size={14} className="shrink-0 text-[#c5b4b2] transition-transform duration-200"
+              <ChevronRight size={14} className="shrink-0 text-[var(--apf-icon-muted)] transition-transform duration-200"
                 style={{ transform: showRates ? 'rotate(90deg)' : 'none' }} />
             </button>
 
@@ -532,7 +587,7 @@ export default function AirPollutionFee() {
                       key={key}
                       onClick={() => setActiveTab(key)}
                       className={`shrink-0 px-4 py-1.5 rounded-full text-xs font-bold transition-all border ${
-                        activeTab === key ? 'text-white shadow-sm border-transparent' : 'bg-white/70 border-[#e8d3d1] text-[#8a7a78]'
+                        activeTab === key ? 'text-white shadow-sm border-transparent' : 'bg-white/70 border-[var(--apf-line)] text-[var(--apf-ink-soft)]'
                       }`}
                       style={activeTab === key ? { backgroundColor: val.textColor } : {}}
                     >
@@ -560,25 +615,25 @@ export default function AirPollutionFee() {
                   <InfoBox text="第一、四季（冬季）費率較高，另乘減量係數E。" warn />
                 )}
 
-                <div className="rounded-[1.5rem] border border-[#e8d3d1] bg-white/70 backdrop-blur-xl overflow-hidden shadow-sm">
-                  <div className="px-5 py-2.5 border-b border-[#f5eceb]">
-                    <p className="text-[9px] font-black uppercase tracking-[0.35em] text-[#b09e9c]">
+                <div className="rounded-[1.5rem] border border-[var(--apf-line)] bg-white/70 backdrop-blur-xl overflow-hidden shadow-sm">
+                  <div className="px-5 py-2.5 border-b border-[var(--apf-bg)]">
+                    <p className="text-[9px] font-black uppercase tracking-[0.35em] text-[var(--apf-label)]">
                       {p.abbr}｜{zone === 'zone2' ? '二級防制區' : '一三級防制區'}｜第{season === 'q23' ? '二、三' : '一、四'}季
                     </p>
                   </div>
-                  <div className="divide-y divide-[#f8f4f3]">
+                  <div className="divide-y divide-[var(--apf-divide)]">
                     {p.tiers.map((tier, i) => {
                       const rate = rates[i];
                       const isFlat = typeof rate === 'string';
                       return (
                         <div key={i} className="flex items-center gap-3 px-5 py-3.5">
                           <div className="shrink-0 w-[68px]">
-                            <p className="text-[11px] font-black text-[#6b5b58]">{tier.label}</p>
-                            <p className="text-[9px] text-[#b09e9c] leading-tight mt-0.5">{tier.range}</p>
+                            <p className="text-[11px] font-black text-[var(--apf-ink)]">{tier.label}</p>
+                            <p className="text-[9px] text-[var(--apf-label)] leading-tight mt-0.5">{tier.range}</p>
                           </div>
                           <div className="flex-1 flex items-center gap-2.5">
                             {!isFlat && (
-                              <div className="flex-1 h-2 rounded-full bg-[#f0e8e6]">
+                              <div className="flex-1 h-2 rounded-full bg-[var(--apf-track)]">
                                 <div className="h-full rounded-full transition-all duration-500"
                                   style={{ width: `${(rate / maxRate) * 100}%`, backgroundColor: p.color }} />
                               </div>
@@ -606,15 +661,15 @@ export default function AirPollutionFee() {
             />
 
             {/* Flow diagram */}
-            <div className="rounded-[1.5rem] border border-[#e8d3d1] bg-white/70 backdrop-blur-xl px-5 py-4 shadow-sm">
-              <p className="text-[9px] font-black uppercase tracking-[0.35em] text-[#b09e9c] mb-3">稽徵流程</p>
+            <div className="rounded-[1.5rem] border border-[var(--apf-line)] bg-white/70 backdrop-blur-xl px-5 py-4 shadow-sm">
+              <p className="text-[9px] font-black uppercase tracking-[0.35em] text-[var(--apf-label)] mb-3">稽徵流程</p>
               <div className="flex items-center gap-1 overflow-x-auto pb-1">
                 {['每季申報', '計算費額', '繳款', '稽查核對', '爭議救濟'].map((step, i, arr) => (
                   <React.Fragment key={step}>
-                    <div className="shrink-0 rounded-xl bg-[#f5eceb] border border-[#e8d3d1] px-3 py-2 text-center">
-                      <p className="text-[11px] font-black text-[#6b5b58] whitespace-nowrap">{step}</p>
+                    <div className="shrink-0 rounded-xl bg-[var(--apf-bg)] border border-[var(--apf-line)] px-3 py-2 text-center">
+                      <p className="text-[11px] font-black text-[var(--apf-ink)] whitespace-nowrap">{step}</p>
                     </div>
-                    {i < arr.length - 1 && <ArrowRight size={12} className="shrink-0 text-[#c5b4b2]" />}
+                    {i < arr.length - 1 && <ArrowRight size={12} className="shrink-0 text-[var(--apf-icon-muted)]" />}
                   </React.Fragment>
                 ))}
               </div>
@@ -635,8 +690,8 @@ export default function AirPollutionFee() {
                       </div>
                       <div className="flex-1">
                         <div className="flex items-center gap-2">
-                          <span className="text-[9px] font-black text-[#b09e9c]">{proc.step}</span>
-                          <span className="text-sm font-black text-[#6b5b58]">{proc.title}</span>
+                          <span className="text-[9px] font-black text-[var(--apf-label)]">{proc.step}</span>
+                          <span className="text-sm font-black text-[var(--apf-ink)]">{proc.title}</span>
                         </div>
                       </div>
                     </div>
@@ -670,7 +725,7 @@ export default function AirPollutionFee() {
                       <div className="shrink-0 w-9 h-9 rounded-xl flex items-center justify-center" style={{ backgroundColor: ef.color }}>
                         <Icon size={15} style={{ color: ef.textColor }} strokeWidth={2.2} />
                       </div>
-                      <span className="text-sm font-black text-[#6b5b58]">{ef.title}</span>
+                      <span className="text-sm font-black text-[var(--apf-ink)]">{ef.title}</span>
                     </div>
                   }
                 >
@@ -704,7 +759,7 @@ export default function AirPollutionFee() {
                       </div>
                       <div className="flex-1">
                         <div className="flex items-center gap-2">
-                          <span className="text-sm font-black text-[#6b5b58]">{ev.title}</span>
+                          <span className="text-sm font-black text-[var(--apf-ink)]">{ev.title}</span>
                           <Tag color={ev.color} text={ev.badge} textColor={ev.textColor} />
                         </div>
                       </div>
@@ -713,9 +768,9 @@ export default function AirPollutionFee() {
                 >
                   <div className="space-y-2.5">
                     {ev.items.map(item => (
-                      <div key={item.label} className="rounded-xl bg-[#f5eceb] px-4 py-3">
-                        <p className="text-[11px] font-black text-[#6b5b58] mb-1">{item.label}</p>
-                        <p className="text-[11px] text-[#8a7a78] leading-relaxed">{item.desc}</p>
+                      <div key={item.label} className="rounded-xl bg-[var(--apf-bg)] px-4 py-3">
+                        <p className="text-[11px] font-black text-[var(--apf-ink)] mb-1">{item.label}</p>
+                        <p className="text-[11px] text-[var(--apf-ink-soft)] leading-relaxed">{item.desc}</p>
                       </div>
                     ))}
                   </div>
@@ -735,17 +790,17 @@ export default function AirPollutionFee() {
 
             {/* 時間軸 */}
             <div className="relative pl-6">
-              <div className="absolute left-[11px] top-2 bottom-2 w-0.5 bg-[#e8d3d1]" />
+              <div className="absolute left-[11px] top-2 bottom-2 w-0.5 bg-[var(--apf-line)]" />
               {HISTORY_TIMELINE.map((item, i) => (
                 <div key={item.year} className="relative mb-4 last:mb-0">
                   <div className="absolute -left-6 top-3 w-4 h-4 rounded-full border-2 border-white shadow-sm"
                     style={{ backgroundColor: item.color }} />
-                  <div className="rounded-[1.25rem] border border-[#e8d3d1] bg-white/70 backdrop-blur-xl px-4 py-3.5 shadow-sm">
+                  <div className="rounded-[1.25rem] border border-[var(--apf-line)] bg-white/70 backdrop-blur-xl px-4 py-3.5 shadow-sm">
                     <div className="flex items-baseline gap-2 mb-1.5">
                       <span className="text-[11px] font-black" style={{ color: item.textColor }}>{item.year}</span>
-                      <span className="text-[11px] font-black text-[#6b5b58]">{item.label}</span>
+                      <span className="text-[11px] font-black text-[var(--apf-ink)]">{item.label}</span>
                     </div>
-                    <p className="text-[11px] text-[#7a6a68] leading-relaxed">{item.desc}</p>
+                    <p className="text-[11px] text-[var(--apf-ink-body)] leading-relaxed">{item.desc}</p>
                   </div>
                 </div>
               ))}
@@ -763,49 +818,49 @@ export default function AirPollutionFee() {
             />
 
             {/* 中央地方徵收分工 */}
-            <div className="rounded-[1.5rem] border border-[#e8d3d1] bg-white/70 backdrop-blur-xl overflow-hidden shadow-sm">
-              <div className="px-5 py-3 border-b border-[#f5eceb]">
-                <p className="text-[9px] font-black uppercase tracking-[0.35em] text-[#b09e9c]">收入來源 · 徵收主體</p>
+            <div className="rounded-[1.5rem] border border-[var(--apf-line)] bg-white/70 backdrop-blur-xl overflow-hidden shadow-sm">
+              <div className="px-5 py-3 border-b border-[var(--apf-bg)]">
+                <p className="text-[9px] font-black uppercase tracking-[0.35em] text-[var(--apf-label)]">收入來源 · 徵收主體</p>
               </div>
-              <div className="divide-y divide-[#f8f4f3]">
+              <div className="divide-y divide-[var(--apf-divide)]">
                 {FINANCE_DATA.revenue.map(item => (
                   <div key={item.label} className="px-5 py-3.5">
                     <div className="flex items-center gap-3 mb-1.5">
                       <div className="shrink-0 w-2 h-2 rounded-full" style={{ backgroundColor: item.color }} />
-                      <p className="text-[12px] font-black text-[#6b5b58] flex-1">{item.label}</p>
-                      <span className={`text-[9px] font-black px-2 py-0.5 rounded-full ${item.collector === '中央' ? 'bg-[#d0dce8] text-[#3a5878]' : 'bg-[#d0e8d8] text-[#3a6848]'}`}>
+                      <p className="text-[12px] font-black text-[var(--apf-ink)] flex-1">{item.label}</p>
+                      <span className={`text-[9px] font-black px-2 py-0.5 rounded-full ${item.collector === '中央' ? 'bg-[var(--apf-role-blue-bg)] text-[var(--apf-role-blue-ink)]' : 'bg-[var(--apf-role-green-bg)] text-[var(--apf-role-green-ink)]'}`}>
                         {item.collector}徵收
                       </span>
-                      <span className="text-[11px] font-black text-[#8a7a78]">~{item.pct}%</span>
+                      <span className="text-[11px] font-black text-[var(--apf-ink-soft)]">~{item.pct}%</span>
                     </div>
                     <div className="ml-5">
-                      <div className="h-1.5 rounded-full bg-[#f0e8e6] mb-1">
+                      <div className="h-1.5 rounded-full bg-[var(--apf-track)] mb-1">
                         <div className="h-full rounded-full" style={{ width: `${item.pct}%`, backgroundColor: item.color }} />
                       </div>
-                      <p className="text-[10px] text-[#a09088]">{item.collectorNote}　→　存入 <span className="font-bold text-[#6b5b58]">{item.fund}</span></p>
-                      <p className="text-[10px] text-[#b09e9c] mt-0.5">{item.note}</p>
+                      <p className="text-[10px] text-[var(--apf-ink-mid)]">{item.collectorNote}　→　存入 <span className="font-bold text-[var(--apf-ink)]">{item.fund}</span></p>
+                      <p className="text-[10px] text-[var(--apf-label)] mt-0.5">{item.note}</p>
                     </div>
                   </div>
                 ))}
               </div>
-              <div className="px-5 py-2.5 bg-[#faf6f5] border-t border-[#f0e8e6]">
-                <p className="text-[10px] text-[#a09088]">累計徵收（1995–2008）：逾 <span className="font-black text-[#6b5b58]">355 億元</span>；費款全數入各級空污基金，不納入一般財政預算。</p>
+              <div className="px-5 py-2.5 bg-[var(--apf-footer-bg)] border-t border-[var(--apf-track)]">
+                <p className="text-[10px] text-[var(--apf-ink-mid)]">累計徵收（1995–2008）：逾 <span className="font-black text-[var(--apf-ink)]">355 億元</span>；費款全數入各級空污基金，不納入一般財政預算。</p>
               </div>
             </div>
 
             {/* 中央地方基金結構 */}
             <div className="grid grid-cols-2 gap-2">
               {FINANCE_DATA.centralLocal.map(fund => (
-                <div key={fund.title} className="rounded-[1.5rem] border border-[#e8d3d1] bg-white/70 backdrop-blur-xl px-4 py-4 shadow-sm">
+                <div key={fund.title} className="rounded-[1.5rem] border border-[var(--apf-line)] bg-white/70 backdrop-blur-xl px-4 py-4 shadow-sm">
                   <div className="w-7 h-7 rounded-xl mb-2 flex items-center justify-center" style={{ backgroundColor: fund.color }}>
                     <Landmark size={13} style={{ color: fund.textColor }} strokeWidth={2.2} />
                   </div>
-                  <p className="text-[11px] font-black text-[#6b5b58] mb-2">{fund.title}</p>
+                  <p className="text-[11px] font-black text-[var(--apf-ink)] mb-2">{fund.title}</p>
                   <div className="space-y-1.5">
                     {fund.items.map((item, i) => (
                       <div key={i} className="flex gap-1.5">
-                        <span className="shrink-0 w-1 h-1 rounded-full mt-1.5 bg-[#c5b4b2]" />
-                        <p className="text-[10px] text-[#7a6a68] leading-relaxed">{item}</p>
+                        <span className="shrink-0 w-1 h-1 rounded-full mt-1.5 bg-[var(--apf-icon-muted)]" />
+                        <p className="text-[10px] text-[var(--apf-ink-body)] leading-relaxed">{item}</p>
                       </div>
                     ))}
                   </div>
@@ -814,18 +869,18 @@ export default function AirPollutionFee() {
             </div>
 
             {/* 基金支出結構 */}
-            <div className="rounded-[1.5rem] border border-[#e8d3d1] bg-white/70 backdrop-blur-xl overflow-hidden shadow-sm">
-              <div className="px-5 py-3 border-b border-[#f5eceb]">
-                <p className="text-[9px] font-black uppercase tracking-[0.35em] text-[#b09e9c]">基金支出用途結構</p>
+            <div className="rounded-[1.5rem] border border-[var(--apf-line)] bg-white/70 backdrop-blur-xl overflow-hidden shadow-sm">
+              <div className="px-5 py-3 border-b border-[var(--apf-bg)]">
+                <p className="text-[9px] font-black uppercase tracking-[0.35em] text-[var(--apf-label)]">基金支出用途結構</p>
               </div>
               <div className="px-5 py-4">
                 {FINANCE_DATA.expenditure.map(item => (
                   <div key={item.label} className="flex items-center gap-3 mb-2.5">
-                    <p className="text-[11px] text-[#6b5b58] w-28 shrink-0">{item.label}</p>
-                    <div className="flex-1 h-2 rounded-full bg-[#f0e8e6]">
+                    <p className="text-[11px] text-[var(--apf-ink)] w-28 shrink-0">{item.label}</p>
+                    <div className="flex-1 h-2 rounded-full bg-[var(--apf-track)]">
                       <div className="h-full rounded-full transition-all" style={{ width: `${item.pct}%`, backgroundColor: item.color }} />
                     </div>
-                    <p className="text-[11px] font-black text-[#8a7a78] w-10 text-right shrink-0">{item.pct}%</p>
+                    <p className="text-[11px] font-black text-[var(--apf-ink-soft)] w-10 text-right shrink-0">{item.pct}%</p>
                   </div>
                 ))}
               </div>
@@ -833,7 +888,7 @@ export default function AirPollutionFee() {
           </div>
         )}
 
-        <p className="mt-10 text-center text-[9px] font-bold text-[#c5b4b2] leading-relaxed">
+        <p className="mt-10 text-center text-[9px] font-bold text-[var(--apf-icon-muted)] leading-relaxed">
           依據空污法第16條及相關費率附表（固定污染源）<br />
           僅供學術研究參考，實務請以環境部官方公告為準
         </p>
@@ -846,17 +901,17 @@ export default function AirPollutionFee() {
 
 function Accordion({ isOpen, onToggle, header, children }) {
   return (
-    <div className="rounded-[1.5rem] border border-[#e8d3d1] bg-white/70 backdrop-blur-xl overflow-hidden shadow-sm shadow-rose-100/60 transition-all duration-200 hover:shadow-md hover:shadow-rose-100/80">
+    <div className="rounded-[1.5rem] border border-[var(--apf-line)] bg-white/70 backdrop-blur-xl overflow-hidden shadow-sm shadow-rose-100/60 transition-all duration-200 hover:shadow-md hover:shadow-rose-100/80">
       <button className="w-full flex items-center gap-2 px-5 py-4" onClick={onToggle}>
         <div className="flex-1">{header}</div>
         <ChevronRight
           size={14}
-          className="shrink-0 text-[#c5b4b2] transition-transform duration-200"
+          className="shrink-0 text-[var(--apf-icon-muted)] transition-transform duration-200"
           style={{ transform: isOpen ? 'rotate(90deg)' : 'none' }}
         />
       </button>
       {isOpen && (
-        <div className="px-5 pb-4 border-t border-[#f5eceb]">
+        <div className="px-5 pb-4 border-t border-[var(--apf-bg)]">
           <div className="pt-3">{children}</div>
         </div>
       )}
@@ -869,8 +924,8 @@ function BulletList({ items }) {
     <div className="space-y-2.5">
       {items.map((line, i) => (
         <div key={i} className="flex gap-3">
-          <span className="shrink-0 w-1.5 h-1.5 rounded-full mt-[5px] bg-[#c5b4b2]" />
-          <p className="text-[12px] text-[#6b5b58] leading-relaxed">{line}</p>
+          <span className="shrink-0 w-1.5 h-1.5 rounded-full mt-[5px] bg-[var(--apf-icon-muted)]" />
+          <p className="text-[12px] text-[var(--apf-ink)] leading-relaxed">{line}</p>
         </div>
       ))}
     </div>
@@ -880,12 +935,12 @@ function BulletList({ items }) {
 function InfoBox({ title, text, warn }) {
   return (
     <div className={`rounded-[1.5rem] border px-5 py-4 ${warn
-      ? 'bg-[#f8f0e8] border-[#e8d8c8]'
-      : 'border-[#e8d3d1] bg-white/70 backdrop-blur-xl shadow-sm shadow-rose-100/60'}`}>
-      {title && <p className="text-[9px] font-black uppercase tracking-[0.35em] text-[#b09e9c] mb-1.5">{title}</p>}
+      ? 'bg-[var(--apf-warn-bg)] border-[var(--apf-evasion-types-bg)]'
+      : 'border-[var(--apf-line)] bg-white/70 backdrop-blur-xl shadow-sm shadow-rose-100/60'}`}>
+      {title && <p className="text-[9px] font-black uppercase tracking-[0.35em] text-[var(--apf-label)] mb-1.5">{title}</p>}
       <div className="flex gap-2">
-        {warn && <Info size={12} className="text-[#b08060] mt-0.5 shrink-0" />}
-        <p className="text-[12px] text-[#7a6a68] leading-relaxed">{text}</p>
+        {warn && <Info size={12} className="text-[var(--apf-warn-icon)] mt-0.5 shrink-0" />}
+        <p className="text-[12px] text-[var(--apf-ink-body)] leading-relaxed">{text}</p>
       </div>
     </div>
   );
@@ -903,11 +958,11 @@ function Tag({ color, text, textColor }) {
 function ToggleGroup({ label, options, value, onChange }) {
   return (
     <div className="flex-1">
-      <p className="text-[9px] font-bold text-[#b09e9c] uppercase tracking-wider mb-1.5 px-0.5">{label}</p>
-      <div className="flex rounded-xl border border-[#e8d3d1] bg-white/50 p-0.5">
+      <p className="text-[9px] font-bold text-[var(--apf-label)] uppercase tracking-wider mb-1.5 px-0.5">{label}</p>
+      <div className="flex rounded-xl border border-[var(--apf-line)] bg-white/50 p-0.5">
         {options.map(([v, l]) => (
           <button key={v} onClick={() => onChange(v)}
-            className={`flex-1 py-1.5 rounded-lg text-[11px] font-bold transition-all ${value === v ? 'bg-[#6b5b58] text-white shadow-sm' : 'text-[#8a7a78]'}`}>
+            className={`flex-1 py-1.5 rounded-lg text-[11px] font-bold transition-all ${value === v ? 'bg-[var(--apf-ink)] text-white shadow-sm' : 'text-[var(--apf-ink-soft)]'}`}>
             {l}
           </button>
         ))}

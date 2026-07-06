@@ -65,9 +65,18 @@
 body {
   font-family: var(--font-body);
   font-synthesis: none;
+  font-size: var(--text-body);
+  color: var(--c-ink);
+  background-color: var(--c-paper);
 }
 
 h1, h2, h3 {
   font-family: var(--font-display);
+}
+
+/* Long-form reading container: follows the FontSizeControl multiplier.
+   Only prose opts in; dashboards and instrument UIs stay fixed. */
+.prose-scaled {
+  font-size: calc(var(--text-body) * var(--fs, 1));
 }
 

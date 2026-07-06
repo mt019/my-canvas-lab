@@ -14,10 +14,72 @@ import {
   Sparkles,
 } from 'lucide-react';
 import data from '../data/ecfaResearch.json';
+import FontSizeControl, { useFontScale } from '../components/FontSizeControl';
 
 const ds = data.datasets;
 const thesis = ds.thesisMeta;
 const core = ds.ecfaCore;
+
+const ECFA_VARS = { // token-exempt
+  '--ecfa-bg': '#fbf8f9',
+  '--ecfa-line': '#eadde2',
+  '--ecfa-ink': '#44343d',
+  '--ecfa-ink-strong': '#3f3339',
+  '--ecfa-ink-soft': '#74636a',
+  '--ecfa-ink-mid': '#5b4e55',
+  '--ecfa-ink-muted': '#76666d',
+  '--ecfa-accent': '#8f6071',
+  '--ecfa-icon': '#9b6b7b',
+  '--ecfa-eyebrow': '#a77b89',
+  '--ecfa-title-ink': '#45343c',
+  '--ecfa-figure-note': '#7d7076',
+  '--ecfa-note': '#8a6472',
+  '--ecfa-muted': '#9a8790',
+  '--ecfa-body-text': '#6f6369',
+  '--ecfa-heading': '#2f2a2d',
+  '--ecfa-eyebrow-header': '#987483',
+  '--ecfa-label-dark': '#493842',
+  '--ecfa-tag-text': '#665862',
+  '--ecfa-topic-fallback': '#7b7078',
+  '--ecfa-placeholder': '#aa9aa1',
+  '--ecfa-link-underline': '#d9b8c3',
+  '--ecfa-risk-text': '#955c6d',
+  '--ecfa-warning-text': '#8f5264',
+  '--ecfa-next-text': '#4b3b43',
+  '--ecfa-table-border': '#e6ded2',
+  '--ecfa-table-head-bg': '#f7edf0',
+  '--ecfa-table-head-ink': '#7f5b69',
+  '--ecfa-row-border': '#f0e3e8',
+  '--ecfa-toggle-bg': '#f5edf0',
+  '--ecfa-toggle-text': '#765866',
+  '--ecfa-tab-active-bg': '#f1e3e8',
+  '--ecfa-tab-active-text': '#704c5a',
+  '--ecfa-tab-inactive-text': '#806b74',
+  '--ecfa-topicbar-count': '#987888',
+  '--ecfa-topicbar-track': '#f0e2e7',
+  '--ecfa-chart-line': '#a86f80',
+  '--ecfa-chart-wash': '#d9a7b5',
+  '--ecfa-chart-grid': '#efe4e8',
+  '--ecfa-chart-tick': '#eadce2',
+  '--ecfa-chart-dot': '#fffafa',
+  '--ecfa-chart-count-text': '#735765',
+  '--ecfa-chart-baseline': '#e2d2d9',
+  '--ecfa-chart-event-line': '#c9a1ae',
+  '--ecfa-chart-event-date': '#805f6b',
+  '--ecfa-chart-event-label': '#9a7380',
+  '--ecfa-badge-slate-bg': '#eef1f2',
+  '--ecfa-badge-slate-ink': '#52616a',
+  '--ecfa-badge-gold-bg': '#f2e3e7',
+  '--ecfa-badge-gold-ink': '#945d70',
+  '--ecfa-badge-green-bg': '#e8efe5',
+  '--ecfa-badge-green-ink': '#566d50',
+  '--ecfa-badge-red-bg': '#f5dfe3',
+  '--ecfa-badge-red-ink': '#984f62',
+  '--ecfa-badge-blue-bg': '#e8e5f1',
+  '--ecfa-badge-blue-ink': '#615982',
+  '--ecfa-badge-violet-bg': '#eee4f2',
+  '--ecfa-badge-violet-ink': '#755b82',
+};
 
 const tabs = [
   { id: 'core', label: 'ECFA 本體', icon: ScrollText },
@@ -31,7 +93,7 @@ const tabs = [
   { id: 'next', label: '研究進度', icon: ListChecks },
 ];
 
-const topicTone = {
+const topicTone = { // token-exempt
   trade_tariff: '#8f6f95',
   industry_firm: '#b8788a',
   political_policy: '#796f98',
@@ -140,12 +202,12 @@ function displayText(value) {
 
 function Badge({ children, tone = 'slate' }) {
   const colors = {
-    slate: ['#eef1f2', '#52616a'],
-    gold: ['#f2e3e7', '#945d70'],
-    green: ['#e8efe5', '#566d50'],
-    red: ['#f5dfe3', '#984f62'],
-    blue: ['#e8e5f1', '#615982'],
-    violet: ['#eee4f2', '#755b82'],
+    slate: ['var(--ecfa-badge-slate-bg)', 'var(--ecfa-badge-slate-ink)'],
+    gold: ['var(--ecfa-badge-gold-bg)', 'var(--ecfa-badge-gold-ink)'],
+    green: ['var(--ecfa-badge-green-bg)', 'var(--ecfa-badge-green-ink)'],
+    red: ['var(--ecfa-badge-red-bg)', 'var(--ecfa-badge-red-ink)'],
+    blue: ['var(--ecfa-badge-blue-bg)', 'var(--ecfa-badge-blue-ink)'],
+    violet: ['var(--ecfa-badge-violet-bg)', 'var(--ecfa-badge-violet-ink)'],
   };
   const [bg, color] = colors[tone] || colors.slate;
   return (
@@ -157,17 +219,17 @@ function Badge({ children, tone = 'slate' }) {
 
 function Panel({ eyebrow, title, icon: Icon, children, aside }) {
   return (
-    <section className="border-t border-[#eadde2] py-5">
+    <section className="border-t border-[var(--ecfa-line)] py-5">
       <div className="mb-4 flex items-start justify-between gap-3">
         <div className="flex items-start gap-2.5">
           {Icon ? (
-            <div className="mt-0.5 shrink-0 text-[#9b6b7b]">
+            <div className="mt-0.5 shrink-0 text-[var(--ecfa-icon)]">
               <Icon size={15} />
             </div>
           ) : null}
           <div>
-            <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[#a77b89]">{eyebrow}</p>
-            <h2 className="font-sans text-base font-bold leading-tight text-[#45343c]">{title}</h2>
+            <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--ecfa-eyebrow)]">{eyebrow}</p>
+            <h2 className="font-sans text-base font-bold leading-tight text-[var(--ecfa-title-ink)]">{title}</h2>
           </div>
         </div>
         {aside}
@@ -179,12 +241,12 @@ function Panel({ eyebrow, title, icon: Icon, children, aside }) {
 
 function KeyFigures({ items }) {
   return (
-    <div className="flex flex-wrap gap-x-8 gap-y-2 border-t border-[#eadde2] py-4">
+    <div className="flex flex-wrap gap-x-8 gap-y-2 border-t border-[var(--ecfa-line)] py-4">
       {items.map((item) => (
         <div key={item.label} className="flex items-baseline gap-2">
-          <span className="text-[11px] font-bold text-[#9b6b7b]">{item.label}</span>
-          <span className="text-lg font-bold text-[#3f3339]">{item.value}</span>
-          <span className="text-[11px] text-[#7d7076]">{item.note}</span>
+          <span className="text-[11px] font-bold text-[var(--ecfa-icon)]">{item.label}</span>
+          <span className="text-lg font-bold text-[var(--ecfa-ink-strong)]">{item.value}</span>
+          <span className="text-[11px] text-[var(--ecfa-figure-note)]">{item.note}</span>
         </div>
       ))}
     </div>
@@ -193,13 +255,13 @@ function KeyFigures({ items }) {
 
 function InsightRows({ rows }) {
   return (
-    <div className="divide-y divide-[#eadde2]">
+    <div className="divide-y divide-[var(--ecfa-line)]">
       {rows.map((row) => (
         <div key={row.label} className="grid gap-2 py-3 sm:grid-cols-[140px_1fr]">
-          <div className="text-[12px] font-bold text-[#8f6071]">{row.label}</div>
+          <div className="text-[12px] font-bold text-[var(--ecfa-accent)]">{row.label}</div>
           <div>
-            <div className="text-[13px] font-bold leading-relaxed text-[#44343d]">{row.value}</div>
-            <div className="mt-1 text-[11px] leading-relaxed text-[#74636a]">{row.note}</div>
+            <div className="text-[13px] font-bold leading-relaxed text-[var(--ecfa-ink)]">{row.value}</div>
+            <div className="mt-1 text-[11px] leading-relaxed text-[var(--ecfa-ink-soft)]">{row.note}</div>
           </div>
         </div>
       ))}
@@ -264,9 +326,9 @@ function CoreView() {
       </Panel>
 
       <Panel eyebrow="樣本核對" title="2024 中止清單樣本" icon={FileText}>
-        <div className="overflow-x-auto rounded-lg border border-[#e6ded2]">
+        <div className="overflow-x-auto rounded-lg border border-[var(--ecfa-table-border)]">
           <table className="w-full min-w-[720px] border-collapse bg-white text-left text-[11px]">
-            <thead className="bg-[#f7edf0] text-[#7f5b69]">
+            <thead className="bg-[var(--ecfa-table-head-bg)] text-[var(--ecfa-table-head-ink)]">
               <tr>
                 <th className="px-3 py-2">批次</th>
                 <th className="px-3 py-2">生效日</th>
@@ -277,12 +339,12 @@ function CoreView() {
             </thead>
             <tbody>
               {core.rollbackSample.map((row) => (
-                <tr key={`${row.batch}-${row.seq}-${row.hsCode}`} className="border-t border-[#f0e3e8]">
-                  <td className="px-3 py-2 font-bold text-[#8f6071]">{row.batch === 'first' ? '第一批' : '第二批'}</td>
-                  <td className="px-3 py-2 text-[#76666d]">{row.effectiveDate}</td>
-                  <td className="px-3 py-2 font-bold text-[#44343d]">{row.hsCode}</td>
-                  <td className="px-3 py-2 text-[#5b4e55]">{row.product}</td>
-                  <td className="px-3 py-2 text-[#76666d]">{row.inOriginalMainlandEarlyHarvest ? '早收內' : '待核對'}</td>
+                <tr key={`${row.batch}-${row.seq}-${row.hsCode}`} className="border-t border-[var(--ecfa-row-border)]">
+                  <td className="px-3 py-2 font-bold text-[var(--ecfa-accent)]">{row.batch === 'first' ? '第一批' : '第二批'}</td>
+                  <td className="px-3 py-2 text-[var(--ecfa-ink-muted)]">{row.effectiveDate}</td>
+                  <td className="px-3 py-2 font-bold text-[var(--ecfa-ink)]">{row.hsCode}</td>
+                  <td className="px-3 py-2 text-[var(--ecfa-ink-mid)]">{row.product}</td>
+                  <td className="px-3 py-2 text-[var(--ecfa-ink-muted)]">{row.inOriginalMainlandEarlyHarvest ? '早收內' : '待核對'}</td>
                 </tr>
               ))}
             </tbody>
@@ -323,18 +385,18 @@ function ExposureView() {
       </Panel>
 
       <Panel eyebrow="產業分布" title="受影響產品集中在哪些產業" icon={Layers3}>
-        <div className="divide-y divide-[#eadde2]">
+        <div className="divide-y divide-[var(--ecfa-line)]">
           {exposure.bySector.map((row) => (
             <div key={row.key} className="grid gap-2 py-2.5 sm:grid-cols-[150px_1fr_42px] sm:items-center">
-              <div className="text-[12px] font-bold text-[#493842]">{row.key}</div>
-              <div className="h-px bg-[#eadde2]">
-                <div className="h-px bg-[#a86f80]" style={{ width: `${(row.count / maxSector) * 100}%` }} />
+              <div className="text-[12px] font-bold text-[var(--ecfa-label-dark)]">{row.key}</div>
+              <div className="h-px bg-[var(--ecfa-line)]">
+                <div className="h-px bg-[var(--ecfa-chart-line)]" style={{ width: `${(row.count / maxSector) * 100}%` }} />
               </div>
-              <div className="text-right text-[12px] font-bold text-[#8f6071]">{row.count}</div>
+              <div className="text-right text-[12px] font-bold text-[var(--ecfa-accent)]">{row.count}</div>
             </div>
           ))}
         </div>
-        <p className="mt-3 text-[11px] leading-relaxed text-[#74636a]">
+        <p className="mt-3 text-[11px] leading-relaxed text-[var(--ecfa-ink-soft)]">
           這張表把 2024 年中止事件轉成後續可接出口資料的受影響分層。
         </p>
       </Panel>
@@ -390,37 +452,37 @@ function ThesisTimeline() {
       eyebrow="學位論文研究史"
       title="ECFA 學位論文年度時間軸"
       icon={CalendarClock}
-      aside={<span className="text-[12px] font-bold text-[#9b6b7b]">{thesis.corpus.totalParsed} 筆論文</span>}
+      aside={<span className="text-[12px] font-bold text-[var(--ecfa-icon)]">{thesis.corpus.totalParsed} 筆論文</span>}
     >
       <div className="overflow-x-auto">
         <svg viewBox={`0 0 ${W} ${H}`} className="min-w-[820px]" role="img" aria-label="ECFA 學位論文年度時間軸">
           <defs>
             <linearGradient id="ecfaTimelineWash" x1="0" x2="0" y1="0" y2="1">
-              <stop offset="0%" stopColor="#d9a7b5" stopOpacity="0.22" />
-              <stop offset="100%" stopColor="#d9a7b5" stopOpacity="0.02" />
+              <stop offset="0%" stopColor="var(--ecfa-chart-wash)" stopOpacity="0.22" />
+              <stop offset="100%" stopColor="var(--ecfa-chart-wash)" stopOpacity="0.02" />
             </linearGradient>
           </defs>
           {[0.25, 0.5, 0.75, 1].map((ratio) => {
             const gy = T + ratio * (H - T - B);
-            return <line key={ratio} x1={L} x2={W - R} y1={gy} y2={gy} stroke="#efe4e8" strokeWidth="1" />;
+            return <line key={ratio} x1={L} x2={W - R} y1={gy} y2={gy} stroke="var(--ecfa-chart-grid)" strokeWidth="1" />;
           })}
           <path d={areaPath} fill="url(#ecfaTimelineWash)" />
-          <path d={linePath} fill="none" stroke="#a86f80" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+          <path d={linePath} fill="none" stroke="var(--ecfa-chart-line)" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
           {points.map((point) => {
             const countX = point.rocYear === '99' ? point.x - 10 : point.x;
             const countAnchor = point.rocYear === '99' ? 'end' : 'middle';
             return (
             <g key={point.rocYear}>
-              <line x1={point.x} x2={point.x} y1={point.y + 8} y2={H - B} stroke="#eadce2" strokeWidth="1" />
-              <circle cx={point.x} cy={point.y} r={point.count >= 15 ? 5 : 4} fill="#fffafa" stroke="#a86f80" strokeWidth="2" />
+              <line x1={point.x} x2={point.x} y1={point.y + 8} y2={H - B} stroke="var(--ecfa-chart-tick)" strokeWidth="1" />
+              <circle cx={point.x} cy={point.y} r={point.count >= 15 ? 5 : 4} fill="var(--ecfa-chart-dot)" stroke="var(--ecfa-chart-line)" strokeWidth="2" />
               {(point.count >= 15 || point.rocYear === '113') ? (
-                <text x={countX} y={point.y - 12} textAnchor={countAnchor} fontSize="12" fontWeight="700" fill="#735765">{point.count}</text>
+                <text x={countX} y={point.y - 12} textAnchor={countAnchor} fontSize="12" fontWeight="700" fill="var(--ecfa-chart-count-text)">{point.count}</text>
               ) : null}
-              <text x={point.x} y={H - 22} textAnchor="middle" fontSize="11" fontWeight="700" fill="#9a8790">{point.rocYear}</text>
+              <text x={point.x} y={H - 22} textAnchor="middle" fontSize="11" fontWeight="700" fill="var(--ecfa-muted)">{point.rocYear}</text>
             </g>
             );
           })}
-          <line x1={L} x2={W - R} y1={H - B} y2={H - B} stroke="#e2d2d9" strokeWidth="1" />
+          <line x1={L} x2={W - R} y1={H - B} y2={H - B} stroke="var(--ecfa-chart-baseline)" strokeWidth="1" />
           {eventMarks.map((event, idx) => {
             const point = points.find((row) => row.rocYear === event.rocYear);
             if (!point) return null;
@@ -430,16 +492,16 @@ function ThesisTimeline() {
             const anchor = nearRight ? 'end' : 'start';
             return (
               <g key={event.rocYear}>
-                <line x1={point.x} x2={point.x} y1={labelY + 13} y2={H - B} stroke="#c9a1ae" strokeWidth="1" strokeDasharray="3 5" />
-                <circle cx={point.x} cy={labelY + 13} r="3" fill="#a86f80" />
-                <text x={labelX} y={labelY + 3} textAnchor={anchor} fontSize="11" fontWeight="700" fill="#805f6b">{event.date}</text>
-                <text x={labelX} y={labelY + 17} textAnchor={anchor} fontSize="10" fill="#9a7380">{event.label}</text>
+                <line x1={point.x} x2={point.x} y1={labelY + 13} y2={H - B} stroke="var(--ecfa-chart-event-line)" strokeWidth="1" strokeDasharray="3 5" />
+                <circle cx={point.x} cy={labelY + 13} r="3" fill="var(--ecfa-chart-line)" />
+                <text x={labelX} y={labelY + 3} textAnchor={anchor} fontSize="11" fontWeight="700" fill="var(--ecfa-chart-event-date)">{event.date}</text>
+                <text x={labelX} y={labelY + 17} textAnchor={anchor} fontSize="10" fill="var(--ecfa-chart-event-label)">{event.label}</text>
               </g>
             );
           })}
         </svg>
       </div>
-      <p className="mt-3 text-[11px] leading-relaxed text-[#74636a]">
+      <p className="mt-3 text-[11px] leading-relaxed text-[var(--ecfa-ink-soft)]">
         橫軸為民國年。資料來自 NDLTD 題名精準檢索結果，並已先依題名整理研究主題與方法線索。
       </p>
     </Panel>
@@ -454,10 +516,10 @@ function TopicBars() {
         {thesis.byTopic.map((row) => (
           <div key={row.topic}>
             <div className="mb-1 flex items-center justify-between gap-3 text-[11px]">
-              <span className="font-bold text-[#493842]">{row.label}</span>
-              <span className="font-bold text-[#987888]">{row.count}</span>
+              <span className="font-bold text-[var(--ecfa-label-dark)]">{row.label}</span>
+              <span className="font-bold text-[var(--ecfa-topicbar-count)]">{row.count}</span>
             </div>
-            <div className="h-2 rounded-full bg-[#f0e2e7]">
+            <div className="h-2 rounded-full bg-[var(--ecfa-topicbar-track)]">
               <div className="h-2 rounded-full" style={{ width: `${(row.count / max) * 100}%`, background: topicTone[row.topic] }} />
             </div>
           </div>
@@ -469,9 +531,9 @@ function TopicBars() {
 
 function ThesisTable({ rows }) {
   return (
-    <div className="overflow-x-auto rounded-lg border border-[#e6ded2]">
+    <div className="overflow-x-auto rounded-lg border border-[var(--ecfa-table-border)]">
       <table className="w-full min-w-[760px] border-collapse bg-white text-left text-[11px]">
-        <thead className="bg-[#f7edf0] text-[#7f5b69]">
+        <thead className="bg-[var(--ecfa-table-head-bg)] text-[var(--ecfa-table-head-ink)]">
           <tr>
             <th className="px-3 py-2">年</th>
             <th className="px-3 py-2">題名</th>
@@ -483,15 +545,15 @@ function ThesisTable({ rows }) {
         </thead>
         <tbody>
           {rows.map((row) => (
-            <tr key={`${row.rank}-${row.title}`} className="border-t border-[#f0e3e8]">
-              <td className="px-3 py-2 font-bold text-[#8f6071]">{row.rocYear}</td>
-              <td className="px-3 py-2 font-bold leading-snug text-[#44343d]">{row.title}</td>
-              <td className="px-3 py-2 text-[#76666d]">{row.university}／{row.department}</td>
+            <tr key={`${row.rank}-${row.title}`} className="border-t border-[var(--ecfa-row-border)]">
+              <td className="px-3 py-2 font-bold text-[var(--ecfa-accent)]">{row.rocYear}</td>
+              <td className="px-3 py-2 font-bold leading-snug text-[var(--ecfa-ink)]">{row.title}</td>
+              <td className="px-3 py-2 text-[var(--ecfa-ink-muted)]">{row.university}／{row.department}</td>
               <td className="px-3 py-2">
                 <CategoryTag row={row} />
               </td>
-              <td className="px-3 py-2 text-right font-bold text-[#76666d]">{row.cited}</td>
-              <td className="px-3 py-2 text-right font-bold text-[#76666d]">{row.downloads}</td>
+              <td className="px-3 py-2 text-right font-bold text-[var(--ecfa-ink-muted)]">{row.cited}</td>
+              <td className="px-3 py-2 text-right font-bold text-[var(--ecfa-ink-muted)]">{row.downloads}</td>
             </tr>
           ))}
         </tbody>
@@ -502,12 +564,12 @@ function ThesisTable({ rows }) {
 
 function CategoryTag({ row }) {
   return (
-    <span className="block min-w-[120px] text-[11px] leading-snug text-[#665862]">
+    <span className="block min-w-[120px] text-[11px] leading-snug text-[var(--ecfa-tag-text)]">
       <span className="inline-flex items-center gap-1.5 font-bold">
-        <span className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: topicTone[row.topic] || '#7b7078' }} />
+        <span className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: topicTone[row.topic] || 'var(--ecfa-topic-fallback)' }} />
         <span>{topicLabel[row.topic] || '待分類'}</span>
       </span>
-      {row.methodTag ? <span className="mt-1 block text-[10px] text-[#9a8790]">{row.methodTag}</span> : null}
+      {row.methodTag ? <span className="mt-1 block text-[10px] text-[var(--ecfa-muted)]">{row.methodTag}</span> : null}
     </span>
   );
 }
@@ -526,7 +588,7 @@ function ThesisView() {
           title={mode === 'top' ? '引用與下載訊號最高的論文' : '最近期論文'}
           icon={BookOpen}
           aside={
-            <div className="flex rounded-md bg-[#f5edf0] p-1">
+            <div className="flex rounded-md bg-[var(--ecfa-toggle-bg)] p-1">
               {[
                 ['top', '熱門'],
                 ['recent', '近期'],
@@ -535,7 +597,7 @@ function ThesisView() {
                   key={id}
                   onClick={() => setMode(id)}
                   className="rounded px-2.5 py-1 text-[10px] font-bold"
-                  style={{ background: mode === id ? 'white' : 'transparent', color: '#765866', boxShadow: mode === id ? '0 1px 2px rgba(103, 71, 84, 0.12)' : 'none' }}
+                  style={{ background: mode === id ? 'white' : 'transparent', color: 'var(--ecfa-toggle-text)', boxShadow: mode === id ? '0 1px 2px rgba(103, 71, 84, 0.12)' : 'none' }}
                 >
                   {label}
                 </button>
@@ -554,21 +616,21 @@ function EventTimelineView() {
   return (
     <Panel eyebrow="事件時間軸" title="已查核的 ECFA 關鍵事件" icon={GitBranch}>
       <div className="relative">
-        <div className="absolute bottom-2 left-[78px] top-2 w-px bg-[#eadde2]" />
+        <div className="absolute bottom-2 left-[78px] top-2 w-px bg-[var(--ecfa-line)]" />
         <div className="space-y-5">
           {ds.eventTimeline.map((item) => (
             <article key={`${item.date}-${item.title}`} className="grid gap-3 sm:grid-cols-[92px_1fr]">
-              <div className="relative text-[11px] font-bold text-[#8f6071]">
-                <span className="relative z-10 bg-[#fbf8f9] pr-2">{item.date}</span>
+              <div className="relative text-[11px] font-bold text-[var(--ecfa-accent)]">
+                <span className="relative z-10 bg-[var(--ecfa-bg)] pr-2">{item.date}</span>
               </div>
-              <div className="border-t border-[#eadde2] pt-3">
+              <div className="border-t border-[var(--ecfa-line)] pt-3">
                 <div className="flex flex-wrap items-center gap-2">
-                  <h3 className="font-sans text-sm font-bold text-[#44343d]">{item.title}</h3>
+                  <h3 className="font-sans text-sm font-bold text-[var(--ecfa-ink)]">{item.title}</h3>
                   <Badge tone="green">{item.factCheck}</Badge>
-                  <span className="text-[10px] font-bold text-[#9a8790]">{item.type}</span>
+                  <span className="text-[10px] font-bold text-[var(--ecfa-muted)]">{item.type}</span>
                 </div>
-                <p className="mt-2 text-[12px] leading-relaxed text-[#5b4e55]">{item.evidence}</p>
-                <p className="mt-1 text-[11px] leading-relaxed text-[#8a6472]">{item.researchMeaning}</p>
+                <p className="mt-2 text-scaled-xs leading-relaxed text-[var(--ecfa-ink-mid)]">{item.evidence}</p>
+                <p className="mt-1 text-[11px] leading-relaxed text-[var(--ecfa-note)]">{item.researchMeaning}</p>
               </div>
             </article>
           ))}
@@ -584,13 +646,13 @@ function GlossaryView() {
       <Panel eyebrow="名詞解釋" title="讀 ECFA 研究前先釐清的概念" icon={BookOpen}>
         <div className="grid gap-3 md:grid-cols-2">
           {ds.glossary.map((item) => (
-            <article key={item.term} className="border-t border-[#eadde2] pt-3">
+            <article key={item.term} className="border-t border-[var(--ecfa-line)] pt-3">
               <div className="flex items-baseline gap-2">
-                <h3 className="font-sans text-sm font-bold text-[#44343d]">{item.term}</h3>
-                <span className="text-[10px] text-[#9a8790]">{item.fullName}</span>
+                <h3 className="font-sans text-sm font-bold text-[var(--ecfa-ink)]">{item.term}</h3>
+                <span className="text-[10px] text-[var(--ecfa-muted)]">{item.fullName}</span>
               </div>
-              <p className="mt-2 text-[12px] leading-relaxed text-[#5b4e55]">{item.plain}</p>
-              <p className="mt-1 text-[11px] leading-relaxed text-[#8a6472]">{item.whyItMatters}</p>
+              <p className="mt-2 text-scaled-xs leading-relaxed text-[var(--ecfa-ink-mid)]">{item.plain}</p>
+              <p className="mt-1 text-[11px] leading-relaxed text-[var(--ecfa-note)]">{item.whyItMatters}</p>
             </article>
           ))}
         </div>
@@ -605,13 +667,13 @@ function FactChecksView() {
       <Panel eyebrow="事實查核" title="目前可確認的核心事實" icon={Search}>
         <div className="space-y-3">
           {ds.factChecks.map((item) => (
-            <article key={item.claim} className="border-t border-[#eadde2] pt-3">
+            <article key={item.claim} className="border-t border-[var(--ecfa-line)] pt-3">
               <div className="flex flex-wrap items-center gap-2">
                 <Badge tone={item.confidence === '高' ? 'green' : 'gold'}>信心 {item.confidence}</Badge>
-                <span className="text-[11px] font-bold text-[#8f6071]">{item.finding}</span>
+                <span className="text-[11px] font-bold text-[var(--ecfa-accent)]">{item.finding}</span>
               </div>
-              <h3 className="mt-2 font-sans text-sm font-bold text-[#44343d]">{item.claim}</h3>
-              <p className="mt-1 text-[12px] leading-relaxed text-[#6f6369]">{item.evidence}</p>
+              <h3 className="mt-2 font-sans text-sm font-bold text-[var(--ecfa-ink)]">{item.claim}</h3>
+              <p className="mt-1 text-scaled-xs leading-relaxed text-[var(--ecfa-body-text)]">{item.evidence}</p>
             </article>
           ))}
         </div>
@@ -620,10 +682,10 @@ function FactChecksView() {
       <Panel eyebrow="研究判斷" title="從事實到研究設計" icon={Sparkles}>
         <div className="grid gap-3 md:grid-cols-2">
           {ds.analysisNotes.map((item) => (
-            <article key={item.title} className="border-t border-[#eadde2] pt-3">
-              <h3 className="font-sans text-sm font-bold text-[#44343d]">{item.title}</h3>
-              <p className="mt-2 text-[12px] leading-relaxed text-[#5b4e55]">{item.summary}</p>
-              <p className="mt-1 text-[11px] leading-relaxed text-[#8a6472]">{item.researchUse}</p>
+            <article key={item.title} className="border-t border-[var(--ecfa-line)] pt-3">
+              <h3 className="font-sans text-sm font-bold text-[var(--ecfa-ink)]">{item.title}</h3>
+              <p className="mt-2 text-scaled-xs leading-relaxed text-[var(--ecfa-ink-mid)]">{item.summary}</p>
+              <p className="mt-1 text-[11px] leading-relaxed text-[var(--ecfa-note)]">{item.researchUse}</p>
             </article>
           ))}
         </div>
@@ -636,10 +698,10 @@ function SourcesView() {
   return (
     <div className="space-y-4">
       <Panel eyebrow="資料來源" title="可查核來源" icon={Database}>
-        <div className="overflow-x-auto border-t border-[#eadde2]">
+        <div className="overflow-x-auto border-t border-[var(--ecfa-line)]">
           <table className="w-full min-w-[720px] border-collapse text-left text-[11px]">
-            <thead className="text-[#8f6071]">
-              <tr className="border-b border-[#eadde2]">
+            <thead className="text-[var(--ecfa-accent)]">
+              <tr className="border-b border-[var(--ecfa-line)]">
                 <th className="py-2 pr-4">類型</th>
                 <th className="px-3 py-2">來源</th>
                 <th className="px-3 py-2">用途</th>
@@ -648,17 +710,17 @@ function SourcesView() {
             </thead>
             <tbody>
           {ds.sourceInventory.map((item) => (
-            <tr key={item.id} className="border-b border-[#f0e3e8]">
-              <td className="py-2 pr-4 text-[#8f6071]">{sourceTierLabel[item.sourceTier] || '研究來源'}</td>
-              <td className="px-3 py-2 font-bold leading-relaxed text-[#44343d]">{item.label.replace(' PDF', '')}</td>
-              <td className="px-3 py-2 leading-relaxed text-[#74636a]">{sourceUse(item)}</td>
+            <tr key={item.id} className="border-b border-[var(--ecfa-row-border)]">
+              <td className="py-2 pr-4 text-[var(--ecfa-accent)]">{sourceTierLabel[item.sourceTier] || '研究來源'}</td>
+              <td className="px-3 py-2 font-bold leading-relaxed text-[var(--ecfa-ink)]">{item.label.replace(' PDF', '')}</td>
+              <td className="px-3 py-2 leading-relaxed text-[var(--ecfa-ink-soft)]">{sourceUse(item)}</td>
               <td className="py-2 pl-3 text-right">
                 {item.url ? (
-                  <a className="font-bold text-[#8f6071] underline decoration-[#d9b8c3] underline-offset-4" href={item.url} target="_blank" rel="noreferrer">
+                  <a className="font-bold text-[var(--ecfa-accent)] underline decoration-[var(--ecfa-link-underline)] underline-offset-4" href={item.url} target="_blank" rel="noreferrer">
                     來源頁
                   </a>
                 ) : (
-                  <span className="text-[#aa9aa1]">待補</span>
+                  <span className="text-[var(--ecfa-placeholder)]">待補</span>
                 )}
               </td>
             </tr>
@@ -668,13 +730,13 @@ function SourcesView() {
         </div>
       </Panel>
       <Panel eyebrow="文獻入口" title="實證研究入口" icon={FileText}>
-        <div className="divide-y divide-[#eadde2]">
+        <div className="divide-y divide-[var(--ecfa-line)]">
           {ds.literatureMap.map((item) => (
             <article key={item.id} className="grid gap-2 py-3 md:grid-cols-[130px_1fr]">
-              <div className="text-[11px] font-bold text-[#8f6071]">{item.year} · {methodLabel[item.method] || displayText(item.method)}</div>
+              <div className="text-[11px] font-bold text-[var(--ecfa-accent)]">{item.year} · {methodLabel[item.method] || displayText(item.method)}</div>
               <div>
-                <h3 className="font-sans text-sm font-bold leading-snug text-[#44343d]">{item.title}</h3>
-                <p className="mt-1 text-[12px] leading-relaxed text-[#74636a]">{literatureUse(item)}</p>
+                <h3 className="font-sans text-sm font-bold leading-snug text-[var(--ecfa-ink)]">{item.title}</h3>
+                <p className="mt-1 text-scaled-xs leading-relaxed text-[var(--ecfa-ink-soft)]">{literatureUse(item)}</p>
               </div>
             </article>
           ))}
@@ -689,7 +751,7 @@ function MethodsView() {
   return (
     <div className="space-y-4">
       <Panel eyebrow="方法設計" title={design.title} icon={Search}>
-        <p className="text-sm leading-relaxed text-[#5b4e55]">{design.researchQuestion}</p>
+        <p className="text-scaled-sm leading-relaxed text-[var(--ecfa-ink-mid)]">{design.researchQuestion}</p>
         <InsightRows
           rows={[
             {
@@ -712,14 +774,14 @@ function MethodsView() {
       </Panel>
 
       <Panel eyebrow="事件窗口" title="公告日與生效日分開觀察" icon={GitBranch}>
-        <div className="divide-y divide-[#eadde2]">
+        <div className="divide-y divide-[var(--ecfa-line)]">
           {design.eventWindows.map((item) => (
             <article key={`${item.event}-${item.date}`} className="grid gap-2 py-3 md:grid-cols-[120px_150px_1fr]">
-              <div className="text-[12px] font-bold text-[#8f6071]">{item.date}</div>
-              <h3 className="font-sans text-sm font-bold text-[#44343d]">{item.event}</h3>
+              <div className="text-[12px] font-bold text-[var(--ecfa-accent)]">{item.date}</div>
+              <h3 className="font-sans text-sm font-bold text-[var(--ecfa-ink)]">{item.event}</h3>
               <div>
-                <p className="text-[12px] leading-relaxed text-[#74636a]">{item.window}</p>
-                <p className="mt-1 text-[11px] leading-relaxed text-[#8a6472]">{item.purpose}</p>
+                <p className="text-scaled-xs leading-relaxed text-[var(--ecfa-ink-soft)]">{item.window}</p>
+                <p className="mt-1 text-[11px] leading-relaxed text-[var(--ecfa-note)]">{item.purpose}</p>
               </div>
             </article>
           ))}
@@ -727,22 +789,22 @@ function MethodsView() {
       </Panel>
 
       <Panel eyebrow="比較組" title="候選比較方式與風險" icon={Layers3}>
-        <div className="divide-y divide-[#eadde2]">
+        <div className="divide-y divide-[var(--ecfa-line)]">
           {design.comparisonCandidates.map((item) => (
             <article key={item.label} className="grid gap-2 py-3 md:grid-cols-[180px_1fr]">
-              <h3 className="font-sans text-sm font-bold text-[#44343d]">{item.label}</h3>
+              <h3 className="font-sans text-sm font-bold text-[var(--ecfa-ink)]">{item.label}</h3>
               <div>
-                <p className="text-[12px] leading-relaxed text-[#74636a]">{displayText(item.use)}</p>
-                <p className="mt-1 text-[12px] leading-relaxed text-[#955c6d]">{displayText(item.risk)}</p>
+                <p className="text-scaled-xs leading-relaxed text-[var(--ecfa-ink-soft)]">{displayText(item.use)}</p>
+                <p className="mt-1 text-scaled-xs leading-relaxed text-[var(--ecfa-risk-text)]">{displayText(item.risk)}</p>
               </div>
             </article>
           ))}
         </div>
       </Panel>
       <Panel eyebrow="研究限制" title="目前不能假裝已經解決的事" icon={AlertTriangle}>
-        <div className="divide-y divide-[#eadde2]">
+        <div className="divide-y divide-[var(--ecfa-line)]">
           {design.blockers.map((item) => (
-            <div key={item} className="flex gap-2 py-3 text-[12px] font-bold leading-relaxed text-[#8f5264]">
+            <div key={item} className="flex gap-2 py-3 text-[12px] font-bold leading-relaxed text-[var(--ecfa-warning-text)]">
               <AlertTriangle size={15} className="mt-0.5 shrink-0" />
               {displayText(item)}
             </div>
@@ -756,11 +818,11 @@ function MethodsView() {
 function NextView() {
   return (
     <Panel eyebrow="研究進度" title="接下來要回答的問題" icon={ListChecks}>
-      <div className="divide-y divide-[#eadde2]">
+      <div className="divide-y divide-[var(--ecfa-line)]">
         {ds.immediateNextWork.map((item, idx) => (
           <div key={item} className="grid gap-3 py-3 sm:grid-cols-[36px_1fr]">
-            <div className="font-display text-lg text-[#9b6b7b]">{idx + 1}</div>
-            <div className="text-[13px] font-bold leading-relaxed text-[#4b3b43]">{displayText(item)}</div>
+            <div className="font-display text-lg text-[var(--ecfa-icon)]">{idx + 1}</div>
+            <div className="text-[13px] font-bold leading-relaxed text-[var(--ecfa-next-text)]">{displayText(item)}</div>
           </div>
         ))}
       </div>
@@ -770,39 +832,43 @@ function NextView() {
 
 export default function ECFAResearch() {
   const [active, setActive] = useState('core');
+  const [fontScale, setFontScale] = useFontScale();
 
   useEffect(() => {
     document.title = 'ECFA 研究地圖';
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#fbf8f9] font-sans text-[#3f3339]" style={{ paddingBottom: 60 }}>
-      <header className="border-b border-[#eadde2] bg-white">
+    <div className="min-h-screen bg-[var(--ecfa-bg)] font-sans text-[var(--ecfa-ink-strong)]" style={{ ...ECFA_VARS, paddingBottom: 60 }}>
+      <header className="border-b border-[var(--ecfa-line)] bg-white">
         <div className="mx-auto max-w-6xl px-4 py-7 sm:px-6">
-          <div className="max-w-4xl">
-            <div className="mb-3 inline-flex items-center gap-2 font-accent text-[11px] font-bold uppercase tracking-[0.08em] text-[#987483]">
-              <ScrollText size={13} />
-              ECFA Research Lab
+          <div className="flex items-start justify-between gap-3">
+            <div className="max-w-4xl">
+              <div className="mb-3 inline-flex items-center gap-2 font-accent text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--ecfa-eyebrow-header)]">
+                <ScrollText size={13} />
+                ECFA Research Lab
+              </div>
+                <h1 className="max-w-3xl leading-tight text-[var(--ecfa-heading)]">
+                  <span className="font-display text-3xl font-normal sm:text-4xl">ECFA</span>
+                  <span className="ml-3 align-baseline font-sans text-2xl font-semibold sm:text-[2.15rem]">的前世今生與實證研究地圖</span>
+                </h1>
+                <p className="mt-3 max-w-3xl text-token-sm leading-relaxed text-[var(--ecfa-body-text)]">
+                  從 WTO 脈絡、江陳會談、協議文本、五個附件、早收清單一路整理到 2024 年中止優惠與商品範圍。
+                </p>
             </div>
-              <h1 className="max-w-3xl leading-tight text-[#2f2a2d]">
-                <span className="font-display text-3xl font-normal sm:text-4xl">ECFA</span>
-                <span className="ml-3 align-baseline font-sans text-2xl font-semibold sm:text-[2.15rem]">的前世今生與實證研究地圖</span>
-              </h1>
-              <p className="mt-3 max-w-3xl text-sm leading-relaxed text-[#6f6369]">
-                從 WTO 脈絡、江陳會談、協議文本、五個附件、早收清單一路整理到 2024 年中止優惠與商品範圍。
-              </p>
+            <FontSizeControl scale={fontScale} onChange={setFontScale} />
           </div>
         </div>
       </header>
 
-      <nav className="sticky top-0 z-20 border-b border-[#eadde2] bg-white/94 backdrop-blur">
+      <nav className="sticky top-0 z-20 border-b border-[var(--ecfa-line)] bg-white/94 backdrop-blur">
         <div className="mx-auto flex max-w-6xl gap-1 overflow-x-auto px-4 py-2 sm:px-6">
           {tabs.map(({ id, label, icon: Icon }) => (
             <button
               key={id}
               onClick={() => setActive(id)}
               className="flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-2 text-[12px] font-bold transition"
-              style={{ background: active === id ? '#f1e3e8' : 'transparent', color: active === id ? '#704c5a' : '#806b74' }}
+              style={{ background: active === id ? 'var(--ecfa-tab-active-bg)' : 'transparent', color: active === id ? 'var(--ecfa-tab-active-text)' : 'var(--ecfa-tab-inactive-text)' }}
             >
               <Icon size={14} />
               {label}
@@ -811,7 +877,7 @@ export default function ECFAResearch() {
         </div>
       </nav>
 
-      <main className="mx-auto max-w-6xl px-4 sm:px-6">
+      <main className="mx-auto max-w-6xl px-4 sm:px-6 prose-scaled" style={{ '--fs': fontScale }}>
         {active === 'core' ? <CoreView /> : null}
         {active === 'events' ? <EventTimelineView /> : null}
         {active === 'exposure' ? <ExposureView /> : null}

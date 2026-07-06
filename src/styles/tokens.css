@@ -1,0 +1,67 @@
+/*
+ * Design tokens — single source of truth for the whole site.
+ * Plain CSS custom properties only, one :root block: this file must stay
+ * copy-pastable into a MkDocs extra.css or a vanilla project unchanged.
+ * Tailwind reads these via tailwind.config.js; CSS Modules and injected
+ * <style> strings read them directly. See docs/DESIGN.md.
+ * Fonts are NOT defined here — the --font-* variables live in index.css
+ * next to their @font-face declarations (stable, don't re-derive).
+ */
+:root {
+  /* Color roles. Low-chroma, paper-like. Page identity pastels stay local
+     to each page's wrapper; only neutral + brand roles live here. */
+  --c-paper: #fbfaf7;          /* main body background — the only allowed prose backdrop */
+  --c-surface: #f4f1ea;        /* cards, sidebars, quiet panels */
+  --c-surface-raised: #ffffff; /* elevated cards, popovers */
+  --c-ink: #2c2a26;            /* primary text */
+  --c-ink-muted: #5f5a52;      /* secondary text */
+  --c-ink-faint: #8d867b;      /* tertiary text, captions */
+  --c-line: #d8d2c6;           /* borders, dividers */
+  --c-line-soft: #e9e4da;      /* hairlines, table grids */
+  --c-accent: #4c7971;         /* brand teal (shared with intl-tax-ops-lab, font-lab) */
+  --c-accent-soft: #e3ecea;    /* accent wash for chips, hovers */
+  --c-warn: #a2703a;
+  --c-danger: #9a4b3f;
+  --c-info: #4a6d8c;
+
+  /* Type scale (rem). Body is 18px: Huiwen Mincho strokes are thin and
+     CJK Ming faces need one step up from Latin defaults. */
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-body: 1.125rem;
+  --text-lg: 1.25rem;
+  --text-xl: 1.5rem;
+  --text-2xl: 1.875rem;
+  --text-3xl: 2.375rem;
+
+  /* Reader font-scale multiplier. FontSizeControl sets --fs on a prose
+     wrapper; anything sized with calc(… * var(--fs, 1)) follows it. */
+  --fs: 1;
+
+  /* Spacing, 4px grid. Mostly for CSS Modules / raw CSS / MkDocs consumers;
+     Tailwind pages keep native spacing utilities. */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4rem;
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 14px;
+  --radius-full: 999px;
+
+  /* Shadows stay faint — paper, not Material elevation. */
+  --shadow-sm: 0 1px 2px rgba(44, 42, 38, 0.06);
+  --shadow-md: 0 2px 10px rgba(44, 42, 38, 0.08);
+
+  /* Motion: restrained; animate opacity/transform only. */
+  --dur-fast: 120ms;
+  --dur-base: 200ms;
+  --dur-slow: 320ms;
+  --ease-out: cubic-bezier(0.22, 0.61, 0.36, 1);
+}

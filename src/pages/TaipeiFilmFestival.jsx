@@ -16,6 +16,10 @@ import {
 } from 'lucide-react';
 import catalogData from '../data/taipeiffPrograms.json';
 
+const TFF_VARS = { // token-exempt
+  '--tff-bg': '#f6f4ef',
+};
+
 const TZ = 'Asia/Taipei';
 const OPENTIX_EVENT = 'https://www.opentix.life/event/';
 const CATALOG_PROGRAMS = catalogData.programs ?? [];
@@ -717,7 +721,7 @@ export default function TaipeiFilmFestival() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f6f4ef] text-slate-950">
+    <div className="min-h-screen bg-[var(--tff-bg)] text-slate-950" style={TFF_VARS}>
       <header className="border-b border-slate-200 bg-white">
         <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-5 sm:px-6 lg:px-8">
           <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">

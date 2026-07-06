@@ -8,14 +8,63 @@ import {
 import manusCase from '../data/intlTaxOps/manusCase.json';
 
 // ─── Palette ───────────────────────────────────────────────────────────────────
+const MMA_VARS = { // token-exempt
+  '--mma-bg': '#f2f4f8',
+  '--mma-border': '#dde2ef',
+  '--mma-primary': '#3b4f78',
+  '--mma-accent': '#b87333',
+  '--mma-muted': '#8892a8',
+  '--mma-faint': '#edf0f7',
+  '--mma-update-bg': '#fff3e0',
+  '--mma-update-border': '#f0a040',
+  '--mma-update-dot': '#e07000',
+  '--mma-amber-label': '#804000',
+  '--mma-amber-body': '#5a3000',
+  '--mma-rq-banner-bg': '#eef1fa',
+  '--mma-rq-banner-border': '#c8d0e8',
+  '--mma-body-text': '#3a4a5a',
+  '--mma-taxnote-bg': '#fffbf0',
+  '--mma-taxnote-border': '#e8d8a0',
+  '--mma-taxnote-label': '#806020',
+  '--mma-taxnote-body': '#5a4820',
+  '--mma-taxnote-item-bg': '#f8f0d8',
+  '--mma-meta-bg': '#d0e8d0',
+  '--mma-meta-border': '#70b870',
+  '--mma-meta-text': '#306030',
+  '--mma-meta-subtext': '#508050',
+  '--mma-cayman-bg': '#e8d0f0',
+  '--mma-cayman-border': '#a870c8',
+  '--mma-cayman-text': '#604070',
+  '--mma-cayman-badge-bg': '#a870c833',
+  '--mma-cayman-body': '#503060',
+  '--mma-sg-bg': '#d0e0f8',
+  '--mma-sg-border': '#6890d8',
+  '--mma-sg-text': '#304878',
+  '--mma-sg-badge-bg': '#6890d833',
+  '--mma-sg-body': '#203858',
+  '--mma-cn-bg': '#f0d8d0',
+  '--mma-cn-border': '#d87860',
+  '--mma-cn-text': '#803020',
+  '--mma-cn-badge-bg': '#d8786033',
+  '--mma-cn-body': '#602010',
+  '--mma-scholar-banner-bg': '#f8f4ee',
+  '--mma-scholar-banner-border': '#d8c8a8',
+  '--mma-scholar-banner-label': '#906030',
+  '--mma-scholar-banner-body': '#604020',
+  '--mma-scholar-methodology': '#4a5a6a',
+  '--mma-book-bg': '#fffbf2',
+  '--mma-book-border': '#e0c880',
+  '--mma-book-desc': '#5a4a20',
+};
+
 const P = {
-  bg: '#f2f4f8',
+  bg: 'var(--mma-bg)',
   card: 'rgba(255,255,255,0.82)',
-  border: '#dde2ef',
-  primary: '#3b4f78',
-  accent: '#b87333',
-  muted: '#8892a8',
-  faint: '#edf0f7',
+  border: 'var(--mma-border)',
+  primary: 'var(--mma-primary)',
+  accent: 'var(--mma-accent)',
+  muted: 'var(--mma-muted)',
+  faint: 'var(--mma-faint)',
 };
 
 // Research data (timeline, corporate structure, legal analysis, research
@@ -57,7 +106,7 @@ export default function ManusMetaAcquisition() {
     : ['Timeline', 'Structure', 'Legal', 'Research', 'Fact-Check'];
 
   return (
-    <div className="min-h-screen font-sans" style={{ background: P.bg }}>
+    <div className="min-h-screen font-sans" style={{ ...MMA_VARS, background: P.bg }}>
       <div className="max-w-2xl mx-auto px-4 pt-10 pb-20">
 
         {/* ── Header ── */}
@@ -87,14 +136,14 @@ export default function ManusMetaAcquisition() {
           </div>
 
           {/* Latest update banner */}
-          <div className="rounded-2xl px-4 py-3 border" style={{ background: '#fff3e0', borderColor: '#f0a040' }}>
+          <div className="rounded-2xl px-4 py-3 border" style={{ background: 'var(--mma-update-bg)', borderColor: 'var(--mma-update-border)' }}>
             <div className="flex items-center gap-2 mb-1">
-              <div className="w-2 h-2 rounded-full animate-pulse" style={{ background: '#e07000' }} />
-              <p className="text-[9px] font-black uppercase tracking-widest" style={{ color: '#804000' }}>
+              <div className="w-2 h-2 rounded-full animate-pulse" style={{ background: 'var(--mma-update-dot)' }} />
+              <p className="text-[9px] font-black uppercase tracking-widest" style={{ color: 'var(--mma-amber-label)' }}>
                 {iZh ? '最新進展（2026 年 6 月）' : 'Latest Development (June 2026)'}
               </p>
             </div>
-            <p className="text-[11px] leading-relaxed font-medium" style={{ color: '#5a3000' }}>
+            <p className="text-[11px] leading-relaxed font-medium" style={{ color: 'var(--mma-amber-body)' }}>
               {iZh
                 ? '2026 年 4 月 27 日，中國 NDRC 依 FISR 第 12 條強制解除 Meta 對 Manus 的收購——此為中國安全審查機制首次公開適用於解除已完成的跨境 AI 交易。Meta 已切斷與 Manus 的數據連結，創始人正尋求 10 億美元回購資金，計劃以 20 億美元原價買回。'
                 : 'On April 27, 2026, China\'s NDRC mandated unwinding of Meta\'s Manus acquisition under FISR Article 12 — the first public use of China\'s security review mechanism to reverse a completed cross-border AI deal. Meta has severed data access; founders seek USD 1B to buy back at the original USD 2B valuation.'}
@@ -102,7 +151,7 @@ export default function ManusMetaAcquisition() {
           </div>
 
           {/* Research question banner */}
-          <div className="rounded-2xl px-4 py-3 border" style={{ background: '#eef1fa', borderColor: '#c8d0e8' }}>
+          <div className="rounded-2xl px-4 py-3 border" style={{ background: 'var(--mma-rq-banner-bg)', borderColor: 'var(--mma-rq-banner-border)' }}>
             <p className="text-[10px] font-black uppercase tracking-widest mb-1" style={{ color: P.muted }}>
               {iZh ? '核心研究問題' : 'Central Research Question'}
             </p>
@@ -178,18 +227,18 @@ export default function ManusMetaAcquisition() {
                       {ph.events.map((ev, j) => (
                         <div key={j} className="rounded-xl px-3 py-2.5" style={{ background: ph.color + '44' }}>
                           <div className="text-[10px] font-black mb-1" style={{ color: ph.tc }}>{ev.date} {ev.src && <span className="font-normal opacity-70">{ev.src}</span>}</div>
-                          <p className="text-[11px] leading-relaxed" style={{ color: '#3a4a5a' }}>
+                          <p className="text-[11px] leading-relaxed" style={{ color: 'var(--mma-body-text)' }}>
                             {iZh ? ev.zh : ev.en}
                           </p>
                         </div>
                       ))}
 
                       {/* Tax note */}
-                      <div className="rounded-xl px-3 py-2.5 border" style={{ background: '#fffbf0', borderColor: '#e8d8a0' }}>
-                        <div className="text-[10px] font-black mb-1" style={{ color: '#806020' }}>
+                      <div className="rounded-xl px-3 py-2.5 border" style={{ background: 'var(--mma-taxnote-bg)', borderColor: 'var(--mma-taxnote-border)' }}>
+                        <div className="text-[10px] font-black mb-1" style={{ color: 'var(--mma-taxnote-label)' }}>
                           {iZh ? '稅法意義（學術分析）' : 'Tax Law Note (Academic Analysis)'}
                         </div>
-                        <p className="text-[11px] leading-relaxed" style={{ color: '#5a4820' }}>
+                        <p className="text-[11px] leading-relaxed" style={{ color: 'var(--mma-taxnote-body)' }}>
                           {iZh ? ph.taxNote.zh : ph.taxNote.en}
                         </p>
                       </div>
@@ -220,12 +269,12 @@ export default function ManusMetaAcquisition() {
             {/* Acquisition arrow */}
             <div className="flex flex-col items-center gap-0">
               {/* Meta acquirer */}
-              <div className="w-full rounded-2xl border px-4 py-3" style={{ background: '#d0e8d0', borderColor: '#70b870' }}>
+              <div className="w-full rounded-2xl border px-4 py-3" style={{ background: 'var(--mma-meta-bg)', borderColor: 'var(--mma-meta-border)' }}>
                 <div className="flex items-center gap-2">
-                  <Flag size={14} style={{ color: '#306030' }} />
+                  <Flag size={14} style={{ color: 'var(--mma-meta-text)' }} />
                   <div>
-                    <div className="text-xs font-black" style={{ color: '#306030' }}>Meta Platforms Inc.</div>
-                    <div className="text-[10px]" style={{ color: '#508050' }}>Delaware, USA · {iZh ? '收購方' : 'Acquirer'} · Dec 2025 · &gt;USD 2B</div>
+                    <div className="text-xs font-black" style={{ color: 'var(--mma-meta-text)' }}>Meta Platforms Inc.</div>
+                    <div className="text-[10px]" style={{ color: 'var(--mma-meta-subtext)' }}>Delaware, USA · {iZh ? '收購方' : 'Acquirer'} · Dec 2025 · &gt;USD 2B</div>
                   </div>
                 </div>
               </div>
@@ -238,15 +287,15 @@ export default function ManusMetaAcquisition() {
               </div>
 
               {/* Cayman */}
-              <div className="w-full rounded-2xl border px-4 py-3" style={{ background: '#e8d0f0', borderColor: '#a870c8' }}>
+              <div className="w-full rounded-2xl border px-4 py-3" style={{ background: 'var(--mma-cayman-bg)', borderColor: 'var(--mma-cayman-border)' }}>
                 <div className="flex items-center gap-2 mb-1">
-                  <Building2 size={14} style={{ color: '#604070' }} />
-                  <div className="text-xs font-black" style={{ color: '#604070' }}>Butterfly Effect</div>
-                  <span className="ml-auto text-[9px] font-black px-1.5 py-0.5 rounded-md" style={{ background: '#a870c833', color: '#604070' }}>
+                  <Building2 size={14} style={{ color: 'var(--mma-cayman-text)' }} />
+                  <div className="text-xs font-black" style={{ color: 'var(--mma-cayman-text)' }}>Butterfly Effect</div>
+                  <span className="ml-auto text-[9px] font-black px-1.5 py-0.5 rounded-md" style={{ background: 'var(--mma-cayman-badge-bg)', color: 'var(--mma-cayman-text)' }}>
                     {iZh ? '開曼群島控股' : 'Cayman · Holding'}
                   </span>
                 </div>
-                <p className="text-[10px] leading-relaxed" style={{ color: '#503060' }}>
+                <p className="text-[10px] leading-relaxed" style={{ color: 'var(--mma-cayman-body)' }}>
                   {iZh
                     ? '最終控股主體。資本利得於此層面實現。開曼無資本利得稅、無所得稅，為「稅收實現地」。早期投資人（騰訊、真格、HongShan）及 Benchmark 均持有此層股份。'
                     : 'Ultimate holding entity. Capital gains realized at this level. Cayman: no capital gains tax, no income tax — the "realization jurisdiction." Tencent, ZhenFund, HongShan, Benchmark hold equity here.'}
@@ -258,15 +307,15 @@ export default function ManusMetaAcquisition() {
               </div>
 
               {/* Singapore */}
-              <div className="w-full rounded-2xl border px-4 py-3" style={{ background: '#d0e0f8', borderColor: '#6890d8' }}>
+              <div className="w-full rounded-2xl border px-4 py-3" style={{ background: 'var(--mma-sg-bg)', borderColor: 'var(--mma-sg-border)' }}>
                 <div className="flex items-center gap-2 mb-1">
-                  <MapPin size={14} style={{ color: '#304878' }} />
-                  <div className="text-xs font-black" style={{ color: '#304878' }}>Manus AI Pte. Ltd.</div>
-                  <span className="ml-auto text-[9px] font-black px-1.5 py-0.5 rounded-md" style={{ background: '#6890d833', color: '#304878' }}>
+                  <MapPin size={14} style={{ color: 'var(--mma-sg-text)' }} />
+                  <div className="text-xs font-black" style={{ color: 'var(--mma-sg-text)' }}>Manus AI Pte. Ltd.</div>
+                  <span className="ml-auto text-[9px] font-black px-1.5 py-0.5 rounded-md" style={{ background: 'var(--mma-sg-badge-bg)', color: 'var(--mma-sg-text)' }}>
                     {iZh ? '新加坡 · 核心營運' : 'Singapore · Core Ops'}
                   </span>
                 </div>
-                <p className="text-[10px] leading-relaxed" style={{ color: '#203858' }}>
+                <p className="text-[10px] leading-relaxed" style={{ color: 'var(--mma-sg-body)' }}>
                   {iZh
                     ? '2025 年 7 月後的主要研發與管理主體。約 40 名核心技術人員集中於此。併購的實際標的（操作層面）。新加坡稅收居住地。'
                     : 'Post-July 2025 primary R&D and management entity. ~40 key technical staff concentrated here. Actual transaction target (operational level). Singapore tax resident.'}
@@ -278,15 +327,15 @@ export default function ManusMetaAcquisition() {
               </div>
 
               {/* China entity */}
-              <div className="w-full rounded-2xl border px-4 py-3" style={{ background: '#f0d8d0', borderColor: '#d87860' }}>
+              <div className="w-full rounded-2xl border px-4 py-3" style={{ background: 'var(--mma-cn-bg)', borderColor: 'var(--mma-cn-border)' }}>
                 <div className="flex items-center gap-2 mb-1">
-                  <Building2 size={14} style={{ color: '#803020' }} />
-                  <div className="text-xs font-black" style={{ color: '#803020' }}>北京蝴蝶效應科技有限公司</div>
-                  <span className="ml-auto text-[9px] font-black px-1.5 py-0.5 rounded-md" style={{ background: '#d8786033', color: '#803020' }}>
+                  <Building2 size={14} style={{ color: 'var(--mma-cn-text)' }} />
+                  <div className="text-xs font-black" style={{ color: 'var(--mma-cn-text)' }}>北京蝴蝶效應科技有限公司</div>
+                  <span className="ml-auto text-[9px] font-black px-1.5 py-0.5 rounded-md" style={{ background: 'var(--mma-cn-badge-bg)', color: 'var(--mma-cn-text)' }}>
                     {iZh ? '中國 · 仍存續' : 'China · Still Extant'}
                   </span>
                 </div>
-                <p className="text-[10px] leading-relaxed" style={{ color: '#602010' }}>
+                <p className="text-[10px] leading-relaxed" style={{ color: 'var(--mma-cn-body)' }}>
                   {iZh
                     ? '法律主體仍存續（新華通訊社確認）。但已不承擔核心研發、營運或退出功能。中國境內服務已終止，社群帳號已清空。Meta 聲明確認不再有中國所有權利益。'
                     : 'Legal entity remains extant (Xinhua confirmed). But no longer bears core R&D, operations, or exit functions. China services terminated; social accounts wiped. Meta confirmed no continuing Chinese ownership interests.'}
@@ -295,8 +344,8 @@ export default function ManusMetaAcquisition() {
             </div>
 
             {/* Structural significance */}
-            <div className="rounded-2xl border px-4 py-3" style={{ background: '#fffbf0', borderColor: '#e8d8a0' }}>
-              <div className="text-xs font-black mb-2" style={{ color: '#806020' }}>
+            <div className="rounded-2xl border px-4 py-3" style={{ background: 'var(--mma-taxnote-bg)', borderColor: 'var(--mma-taxnote-border)' }}>
+              <div className="text-xs font-black mb-2" style={{ color: 'var(--mma-taxnote-label)' }}>
                 {iZh ? '結構的制度意義' : 'Institutional Significance of the Structure'}
               </div>
               <div className="flex flex-col gap-2">
@@ -314,8 +363,8 @@ export default function ManusMetaAcquisition() {
                     en: 'Technology lock-in: Regardless of legal form, the actual transfer path of technology assets (models, algorithms, training data) is governed by technology control law — it does not automatically follow corporate restructuring.',
                   },
                 ].map((item, i) => (
-                  <div key={i} className="rounded-xl px-3 py-2" style={{ background: '#f8f0d8' }}>
-                    <p className="text-[10px] leading-relaxed" style={{ color: '#5a4820' }}>
+                  <div key={i} className="rounded-xl px-3 py-2" style={{ background: 'var(--mma-taxnote-item-bg)' }}>
+                    <p className="text-[10px] leading-relaxed" style={{ color: 'var(--mma-taxnote-body)' }}>
                       {iZh ? item.zh : item.en}
                     </p>
                   </div>
@@ -383,7 +432,7 @@ export default function ManusMetaAcquisition() {
                               />
                             </button>
                             {itemOpen && (
-                              <p className="px-3 pb-3 text-[11px] leading-relaxed" style={{ color: '#3a4a5a' }}>
+                              <p className="px-3 pb-3 text-[11px] leading-relaxed" style={{ color: 'var(--mma-body-text)' }}>
                                 {iZh ? item.zh.b : item.en.b}
                               </p>
                             )}
@@ -453,7 +502,7 @@ export default function ManusMetaAcquisition() {
                           <div className="text-[10px] font-black mb-1" style={{ color: rq.tc }}>
                             {iZh ? '問題意識分析' : 'Analytical Note'}
                           </div>
-                          <p className="text-[11px] leading-relaxed" style={{ color: '#3a4a5a' }}>
+                          <p className="text-[11px] leading-relaxed" style={{ color: 'var(--mma-body-text)' }}>
                             {iZh ? rq.zh.analysis : rq.en.analysis}
                           </p>
                         </div>
@@ -494,11 +543,11 @@ export default function ManusMetaAcquisition() {
             </div>
 
             {/* ── Scholars ── */}
-            <div className="rounded-2xl border px-4 py-3" style={{ background: '#f8f4ee', borderColor: '#d8c8a8' }}>
-              <p className="text-[9px] font-black uppercase tracking-[0.35em] mb-1" style={{ color: '#906030' }}>
+            <div className="rounded-2xl border px-4 py-3" style={{ background: 'var(--mma-scholar-banner-bg)', borderColor: 'var(--mma-scholar-banner-border)' }}>
+              <p className="text-[9px] font-black uppercase tracking-[0.35em] mb-1" style={{ color: 'var(--mma-scholar-banner-label)' }}>
                 {iZh ? '學術視角：UNIL 洛桑大學研究脈絡' : 'Scholarly Perspectives: UNIL Research Context'}
               </p>
-              <p className="text-[11px] leading-relaxed" style={{ color: '#604020' }}>
+              <p className="text-[11px] leading-relaxed" style={{ color: 'var(--mma-scholar-banner-body)' }}>
                 {iZh
                   ? '以下兩位教授均任職於本研究申請機構（洛桑大學）。其研究視角與方法論直接構成本研究的學術對話對象，並提供最新的分析工具。'
                   : 'Both professors are based at the target institution (UNIL). Their research perspectives and methodologies directly constitute the scholarly interlocutors for this research and provide the latest analytical tools.'}
@@ -538,18 +587,18 @@ export default function ManusMetaAcquisition() {
                       <div className="rounded-xl px-3 py-2" style={{ background: sc.color + '55' }}>
                         <p className="text-[10px] font-black" style={{ color: sc.tc }}>{s.lens}</p>
                         {s.methodology && (
-                          <p className="text-[10px] leading-relaxed mt-1" style={{ color: '#4a5a6a' }}>{s.methodology}</p>
+                          <p className="text-[10px] leading-relaxed mt-1" style={{ color: 'var(--mma-scholar-methodology)' }}>{s.methodology}</p>
                         )}
                       </div>
 
                       {/* Books (joint only) */}
                       {(iZh ? sc.zh.books : sc.en.books) && (iZh ? sc.zh.books : sc.en.books).map((bk, bi) => (
-                        <div key={bi} className="rounded-xl border px-3 py-2.5" style={{ background: '#fffbf2', borderColor: '#e0c880' }}>
-                          <div className="text-[9px] font-black uppercase tracking-wider mb-1" style={{ color: '#806020' }}>{bk.label}</div>
-                          <div className="text-[11px] font-black italic mb-0.5" style={{ color: '#604020' }}>{bk.title}</div>
-                          {bk.sub && <div className="text-[10px] mb-0.5" style={{ color: '#806020' }}>{bk.sub}</div>}
+                        <div key={bi} className="rounded-xl border px-3 py-2.5" style={{ background: 'var(--mma-book-bg)', borderColor: 'var(--mma-book-border)' }}>
+                          <div className="text-[9px] font-black uppercase tracking-wider mb-1" style={{ color: 'var(--mma-taxnote-label)' }}>{bk.label}</div>
+                          <div className="text-[11px] font-black italic mb-0.5" style={{ color: 'var(--mma-scholar-banner-body)' }}>{bk.title}</div>
+                          {bk.sub && <div className="text-[10px] mb-0.5" style={{ color: 'var(--mma-taxnote-label)' }}>{bk.sub}</div>}
                           <div className="text-[10px] font-bold mb-1" style={{ color: P.muted }}>{bk.pub}</div>
-                          <p className="text-[10px] leading-relaxed" style={{ color: '#5a4a20' }}>{bk.desc}</p>
+                          <p className="text-[10px] leading-relaxed" style={{ color: 'var(--mma-book-desc)' }}>{bk.desc}</p>
                         </div>
                       ))}
 
@@ -557,7 +606,7 @@ export default function ManusMetaAcquisition() {
                       {s.points && s.points.map((pt, pi) => (
                         <div key={pi} className="rounded-xl border px-3 py-2.5" style={{ background: sc.color + '33', borderColor: sc.color + '88' }}>
                           <div className="text-[11px] font-black mb-1.5" style={{ color: sc.tc }}>{pt.h}</div>
-                          <p className="text-[11px] leading-relaxed" style={{ color: '#3a4a5a' }}>{pt.b}</p>
+                          <p className="text-[11px] leading-relaxed" style={{ color: 'var(--mma-body-text)' }}>{pt.b}</p>
                         </div>
                       ))}
 
@@ -565,7 +614,7 @@ export default function ManusMetaAcquisition() {
                       {isJoint && sc.zh.body && (
                         <div className="rounded-xl px-3 py-3" style={{ background: sc.color + '33' }}>
                           {(iZh ? sc.zh.body.zh : sc.zh.body.en).split('\n\n').map((para, pi) => (
-                            <p key={pi} className="text-[11px] leading-relaxed mb-2 last:mb-0" style={{ color: '#3a4a5a' }}>
+                            <p key={pi} className="text-[11px] leading-relaxed mb-2 last:mb-0" style={{ color: 'var(--mma-body-text)' }}>
                               {para}
                             </p>
                           ))}
@@ -590,7 +639,7 @@ export default function ManusMetaAcquisition() {
                 {iZh ? '主要事實主張查核' : 'Key Claim Verification'}
               </h2>
               <div className="flex gap-3 text-[10px] mt-2 mb-1">
-                {[
+                {[ // token-exempt: status legend, colors looked up by key
                   { s: 'confirmed', icon: CheckCircle, color: '#307050', bg: '#d0f0e0', zh: '已確認', en: 'Confirmed' },
                   { s: 'partial', icon: AlertCircle, color: '#805020', bg: '#f0e0c0', zh: '部分確認', en: 'Partial' },
                   { s: 'unknown', icon: XCircle, color: '#705030', bg: '#f0e0d0', zh: '待查核', en: 'Unverified' },
@@ -605,7 +654,7 @@ export default function ManusMetaAcquisition() {
 
             <div className="flex flex-col gap-2">
               {FACTS.map((f, i) => {
-                const cfg = {
+                const cfg = { // token-exempt: status lookup, colors looked up by key
                   confirmed: { Icon: CheckCircle, color: '#307050', bg: '#d0f0e0', border: '#90d0b0' },
                   partial: { Icon: AlertCircle, color: '#805020', bg: '#f0e0c0', border: '#d0a060' },
                   unknown: { Icon: XCircle, color: '#705030', bg: '#f0e0d0', border: '#d0a080' },
@@ -671,15 +720,15 @@ export default function ManusMetaAcquisition() {
                 ))}
               </div>
 
-              <p className="text-[10px] font-black uppercase tracking-wider mb-2" style={{ color: '#804000' }}>
+              <p className="text-[10px] font-black uppercase tracking-wider mb-2" style={{ color: 'var(--mma-amber-label)' }}>
                 {iZh ? '最新進展來源（2026 年）' : 'Latest Development Sources (2026)'}
               </p>
               <div className="flex flex-col gap-1.5">
                 {SOURCES.latest.map((s) => (
                   <div key={s.no} className="flex gap-2 items-start">
-                    <span className="shrink-0 text-[9px] font-black w-8 text-right" style={{ color: '#804000' }}>{s.no}</span>
+                    <span className="shrink-0 text-[9px] font-black w-8 text-right" style={{ color: 'var(--mma-amber-label)' }}>{s.no}</span>
                     <div>
-                      <span className="text-[10px] font-black" style={{ color: '#804000' }}>{s.pub}</span>
+                      <span className="text-[10px] font-black" style={{ color: 'var(--mma-amber-label)' }}>{s.pub}</span>
                       <span className="text-[10px]" style={{ color: P.muted }}> · {s.title} · {s.date}</span>
                     </div>
                   </div>

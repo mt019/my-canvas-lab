@@ -1,0 +1,11 @@
+# Files not yet migrated to design tokens (src/styles/tokens.css).
+# Ratchet: this list may only shrink. Remove a file once migrated; never add back.
+# Batch C (own isolated palettes; repoint values to tokens, keep architecture)
+src/pages/FiscalEnforcementRisk.jsx
+src/pages/InternationalTaxOps.jsx
+src/pages/InternationalTaxOps.module.css
+# Batch D (instrument UIs, opportunistic only)
+src/pages/AutoTuner.jsx
+src/pages/UkuleleTuner.jsx
+src/pages/VocalTuner.jsx
+src/pages/ElectricPiano.jsx

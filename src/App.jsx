@@ -4,7 +4,7 @@ import { ArrowRight, CalendarDays, Droplets, FileSearch, Gavel, Globe2, Graduati
 
 const pages = import.meta.glob('./pages/*.{jsx,tsx}');
 
-const PAGE_META = {
+const PAGE_META = { // token-exempt: per-page identity chip colors (data, not styling)
   AutoTuner: {
     name: '自動調音器',
     desc: '吉他、烏克麗麗、吉他麗麗全支援，含 Open G、DADGAD 等特殊定弦',
@@ -127,6 +127,23 @@ const PAGE_META = {
   },
 };
 
+/* Home page identity palette (rose/mauve). Page-local by design — global
+   tokens only carry neutral + brand roles; see docs/DESIGN.md. */
+const HOME_VARS = { // token-exempt
+  '--home-bg': '#fbf8f9',
+  '--home-ink-strong': '#332b30',
+  '--home-ink': '#3f3339',
+  '--home-ink-soft': '#74636a',
+  '--home-ink-faint': '#8a7480',
+  '--home-line': '#eadde2',
+  '--home-line-strong': '#d9c8cf',
+  '--home-accent': '#a77b89',
+  '--home-arrow': '#c9a9b4',
+  '--home-arrow-hover': '#8f6071',
+  '--home-hover': '#fffafb',
+  '--home-foot': '#b8a3ab',
+};
+
 const GROUPS = [
   { key: 'research', label: '研究地圖', desc: '資料層分離、可延伸成長期研究的小型工作台' },
   { key: 'doctrine', label: '法政解析', desc: '法律、財稅、投資與制度案例的結構化拆解' },
@@ -150,8 +167,8 @@ export default function App() {
   return (
     <Router>
       <Suspense fallback={
-        <div className="min-h-screen bg-[#f5eceb] flex items-center justify-center">
-          <div className="w-10 h-10 border-[3px] border-[#e8d3d1] border-t-[#b09e9c] rounded-full animate-spin" />
+        <div className="min-h-screen bg-paper flex items-center justify-center">
+          <div className="w-10 h-10 border-[3px] border-line-soft border-t-ink-faint rounded-full animate-spin" />
         </div>
       }>
         <Routes>
@@ -170,7 +187,7 @@ function RouteRow({ route }) {
   return (
     <Link
       to={route.path}
-      className="group grid grid-cols-[34px_1fr_auto] items-center gap-3 border-b border-[#eadde2] py-3 transition-colors hover:bg-[#fffafb]"
+      className="group grid grid-cols-[34px_1fr_auto] items-center gap-3 border-b border-[var(--home-line)] py-3 transition-colors hover:bg-[var(--home-hover)]"
     >
       <div
         className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg"
@@ -179,12 +196,12 @@ function RouteRow({ route }) {
         <Icon size={16} style={{ color: accentText }} strokeWidth={2} />
       </div>
       <div className="flex-1 min-w-0">
-        <div className="text-[13px] font-bold leading-snug text-[#493842]">{name}</div>
-        <div className="mt-0.5 text-[11px] leading-relaxed text-[#8a7a80]">{desc}</div>
+        <div className="text-token-sm font-bold leading-snug text-[var(--home-ink-strong)]">{name}</div>
+        <div className="mt-0.5 text-token-xs leading-relaxed text-[var(--home-ink-faint)]">{desc}</div>
       </div>
       <ArrowRight
         size={14}
-        className="shrink-0 text-[#c9a9b4] transition-transform duration-200 group-hover:translate-x-1 group-hover:text-[#8f6071]"
+        className="shrink-0 text-[var(--home-arrow)] transition-transform duration-200 group-hover:translate-x-1 group-hover:text-[var(--home-arrow-hover)]"
       />
     </Link>
   );
@@ -206,19 +223,19 @@ function HomePage({ routes }) {
   const unknown = routes.filter((r) => !r.meta);
   return (
     <div
-      className="min-h-screen bg-[#fbf8f9] px-4 font-sans text-[#3f3339] sm:px-6"
-      style={{ paddingTop: 46, paddingBottom: 64 }}
+      className="min-h-screen bg-[var(--home-bg)] px-4 font-sans text-[var(--home-ink)] sm:px-6"
+      style={{ ...HOME_VARS, paddingTop: 46, paddingBottom: 64 }}
     >
       <div className="mx-auto w-full max-w-5xl">
 
-        <header className="mb-8 border-b border-[#eadde2] pb-7">
-          <p className="mb-4 font-accent text-[10px] font-bold uppercase tracking-[0.28em] text-[#a77b89]">
+        <header className="mb-8 border-b border-[var(--home-line)] pb-7">
+          <p className="mb-4 font-accent text-[10px] font-bold uppercase tracking-[0.28em] text-[var(--home-accent)]">
             Phenom&nbsp;&nbsp;·&nbsp;&nbsp;Canvas Lab
           </p>
-          <h1 className="font-sans text-3xl font-semibold leading-tight text-[#332b30] sm:text-4xl">
+          <h1 className="font-sans text-3xl font-semibold leading-tight text-[var(--home-ink-strong)] sm:text-4xl">
             專案索引
           </h1>
-          <p className="mt-3 max-w-2xl text-[13px] leading-relaxed text-[#74636a]">
+          <p className="mt-3 max-w-2xl text-token-sm leading-relaxed text-[var(--home-ink-soft)]">
             把頁面按用途分開：長期研究放在研究地圖，制度與案例放在法政解析，能直接操作的留在工具區。
           </p>
         </header>
@@ -230,13 +247,13 @@ function HomePage({ routes }) {
             const gm = GROUP_META[key];
             return (
               <section key={key}>
-                <div className="mb-2 flex items-end justify-between gap-3 border-b border-[#d9c8cf] pb-2">
+                <div className="mb-2 flex items-end justify-between gap-3 border-b border-[var(--home-line-strong)] pb-2">
                   <div>
-                    <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#a77b89]">{gm?.note}</p>
-                    <h2 className="mt-1 font-sans text-lg font-semibold text-[#44343d]">{label}</h2>
+                    <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--home-accent)]">{gm?.note}</p>
+                    <h2 className="mt-1 font-sans text-lg font-semibold text-[var(--home-ink-strong)]">{label}</h2>
                   </div>
                 </div>
-                <p className="mb-1 text-[11px] leading-relaxed text-[#8a7480]">{GROUPS.find((group) => group.key === key)?.desc}</p>
+                <p className="mb-1 text-token-xs leading-relaxed text-[var(--home-ink-faint)]">{GROUPS.find((group) => group.key === key)?.desc}</p>
                 <div>
                   {items.map((route) => <RouteRow key={route.path} route={route} />)}
                 </div>
@@ -257,7 +274,7 @@ function HomePage({ routes }) {
 
           {unknown.length > 0 && (
             <section>
-              <p className="mb-2 border-b border-[#d9c8cf] pb-2 text-[10px] font-bold uppercase tracking-[0.14em] text-[#a77b89]">
+              <p className="mb-2 border-b border-[var(--home-line-strong)] pb-2 text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--home-accent)]">
                 其他
               </p>
               <div>
@@ -265,10 +282,10 @@ function HomePage({ routes }) {
                   <Link
                     key={route.path}
                     to={route.path}
-                    className="group flex items-center gap-4 border-b border-[#eadde2] py-3 transition-colors hover:bg-[#fffafb]"
+                    className="group flex items-center gap-4 border-b border-[var(--home-line)] py-3 transition-colors hover:bg-[var(--home-hover)]"
                   >
-                    <div className="min-w-0 flex-1 text-xs font-bold text-[#8a7a78]">{route.name}</div>
-                    <ArrowRight size={13} className="shrink-0 text-[#c9a9b4] transition-transform group-hover:translate-x-0.5" />
+                    <div className="min-w-0 flex-1 text-xs font-bold text-[var(--home-ink-faint)]">{route.name}</div>
+                    <ArrowRight size={13} className="shrink-0 text-[var(--home-arrow)] transition-transform group-hover:translate-x-0.5" />
                   </Link>
                 ))}
               </div>
@@ -276,11 +293,11 @@ function HomePage({ routes }) {
           )}
         </div>
 
-        <div className="mt-12 border-t border-[#eadde2] pt-5">
-          <p className="font-accent text-[10px] font-bold uppercase tracking-[0.28em] text-[#a77b89]">
+        <div className="mt-12 border-t border-[var(--home-line)] pt-5">
+          <p className="font-accent text-[10px] font-bold uppercase tracking-[0.28em] text-[var(--home-accent)]">
             Phenom&nbsp;&nbsp;·&nbsp;&nbsp;Canvas Lab
           </p>
-          <p className="mt-1 text-[10px] font-medium tracking-wide text-[#b8a3ab]">
+          <p className="mt-1 text-[10px] font-medium tracking-wide text-[var(--home-foot)]">
             音樂 · 研究 · 實驗
           </p>
         </div>

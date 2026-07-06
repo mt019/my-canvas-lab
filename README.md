@@ -27,6 +27,10 @@
 - **圖示**：lucide-react
 - **部署**：Vercel
 
+## 設計系統
+
+色彩、字級、間距等 design token 定義在 `src/styles/tokens.css`（單一事實來源，可複製到其他專案）；共用元件（LangSwitch 雙語切換、FontSizeControl 字級控制、PageShell、Eyebrow）在 `src/components/`。完整規範與遷移現況見 `docs/DESIGN.md`。`npm run validate:tokens` 在 build 時擋住已遷移頁面的裸 hex 色值。
+
 ## 字體系統
 
 站內字體由 `src/index.css` 的 CSS 變數統一管理：

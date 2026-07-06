@@ -14,7 +14,7 @@
   --side: #f4f7f8;
   --hover: #edf2f3;
   --active: #e7f0ed;
-  --teal: #4c7971;
+  --teal: var(--c-accent); /* brand teal from src/styles/tokens.css */
   --blue: #61799d;
   --amber: #8f744e;
   --red: #a05d66;
