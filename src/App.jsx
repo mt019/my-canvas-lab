@@ -1,6 +1,6 @@
 import React, { Suspense, lazy, useEffect, useMemo } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import { ArrowRight, CalendarDays, Droplets, FileSearch, Gavel, Globe2, GraduationCap, Landmark, Languages, Mic, Music, Music2, Piano, Scale, ScrollText, Wind } from 'lucide-react';
+import { ArrowRight, CalendarDays, Droplets, FileSearch, Gavel, Globe2, GraduationCap, Landmark, Languages, Mic, Music, Music2, Palette, Piano, Scale, ScrollText, Wind } from 'lucide-react';
 
 const pages = import.meta.glob('./pages/*.{jsx,tsx}');
 
@@ -116,6 +116,14 @@ const PAGE_META = { // token-exempt: per-page identity chip colors (data, not st
     accent: '#eadde2',
     accentText: '#8f6071',
     group: 'research',
+  },
+  PaletteLab: {
+    name: '色票試穿間',
+    desc: '全站色票庫：現有色票與名畫取樣即時試穿、輸出 tokens.css',
+    Icon: Palette,
+    accent: '#e4e0d8',
+    accentText: '#6f6455',
+    group: 'tool',
   },
   TaipeiFilmFestival: {
     name: '台北電影節售票雷達',

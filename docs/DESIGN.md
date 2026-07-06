@@ -6,11 +6,11 @@
 
 | 前綴 | 內容 | 使用時機 |
 |---|---|---|
-| `--c-paper` | 暖近白 `#fbfaf7` | 正文區唯一允許的底色 |
+| `--c-paper` | 冷近白 `#fdfdfc`（過渡預設） | 正文區唯一允許的底色 |
 | `--c-surface(-raised)` | 卡片、側欄底 | 需要與正文區分層時 |
 | `--c-ink(-muted/-faint)` | 三級文字 | 正文／輔助說明／註記 |
 | `--c-line(-soft)` | 分隔線 | 邊框／髮絲線 |
-| `--c-accent(-soft)` | 品牌藍綠 `#4c7971` | 互動與強調；與 intl-tax-ops-lab、font-lab 共用 |
+| `--c-accent(-soft)` | 壓灰深藍（過渡預設；正式值由 PaletteLab 選定） | 互動與強調 |
 | `--c-warn/-danger/-info` | 低彩度狀態色 | 徽章、警示 |
 | `--text-*` | 字級 scale（rem） | `--text-body` = 18px 是正文基準 |
 | `--space-*` | 4px 網格 | 主要給 CSS Modules／raw CSS／MkDocs 用 |
@@ -20,30 +20,26 @@
 ## 字級規則
 
 - 正文 18px（`--text-body`）。匯文明朝筆畫細，CJK 明朝正文要比拉丁預設大一級；16px 以下視為過小。
-- 讀者字級控制走容器級 multiplier：長文容器掛 `.prose-scaled` class 與 `style={{ '--fs': scale }}`，內部閱讀文字用 em 字級（Tailwind 的 `text-scaled-xs/sm/base/lg`）才會跟著縮放。儀表板、調音器等密集 UI 不掛 `.prose-scaled`，用 `text-token-sm/xs` 固定字級。
-- 不動 `html` 的 font-size：那會連動所有 Tailwind rem 間距，拉壞儀表板版面。
+- 讀者字級控制（2026-07-07 起）＝**整頁等比縮放**：頁面內容根容器 `style={{ zoom: scale }}`，七檔 0.85–1.6，像瀏覽器 ⌘+。PageShell 內建；自帶外殼的頁把 zoom 掛頁根 div。所有元素（含表格、nav、寫死 px 的字）一律跟著縮放。
+- 舊的 `--fs`／`.prose-scaled`／`text-scaled-*` 文字級 multiplier 保留為次要機制；**不要與 zoom 同時掛 --fs**，會疊乘。
+- 不動 `html` 的 font-size。
 
 ## 共用元件（`src/components/`）
 
 | 元件 | 用法 |
 |---|---|
 | `LangSwitch` ＋ `useLang` | `const { lang, setLang, t } = useLang(dict)`；字典以中文原文為 key，zh 零成本、漏譯自動回退。localStorage `canvaslab:lang`，同步 `document.documentElement.lang`。新頁一律用它，不再自造 lang state。 |
-| `FontSizeControl` ＋ `useFontScale` | `const [scale, setScale] = useFontScale()`；五檔 0.9–1.4，localStorage `canvaslab:fontScale`。學術長文頁掛在 header 右側。 |
+| `FontSizeControl` ＋ `useFontScale` | `const [scale, setScale] = useFontScale()`；七檔 0.85–1.6，localStorage `canvaslab:fontScale`。scale 掛頁根 `zoom`（見字級規則）。學術長文頁放 header 右側。 |
 | `PageShell` | 新頁與簡單長文頁的外殼：`--c-paper` 底、prose（~65ch）或 wide 寬度、document.title、header 右側 controls slot。自帶複雜外殼的儀表板頁（分頁導覽、側欄）不硬套。 |
-| `Eyebrow` | 眉標 kicker，用打字機 accent 字體。2026-07-07 起 `--font-display`（h1–h3）的拉丁面也改用 Erikas Farbband 打字機體（中文面＝Huiwen Mincho，與內文同）；Radio Newsman 與 GenWanMin2 已不被 token 引用，字檔暫留。 |
+| `Eyebrow` | 眉標 kicker。打字機 accent 字體（Erikas）唯一的預設允許位置——曾於 2026-07-07 短暫用於 h1–h3 拉丁面，同日因行內數字紋理過噪而改回 Radio Newsman；標題中文面維持 Huiwen Mincho（與內文同，取代 GenWanMin2）。GenWanMin2 已無 token 引用，字檔暫留。 |
 
 ## 色票庫
 
-全域 token 只收中性色與品牌 accent。頁面識別色票收在各頁頂部的 `*_VARS` 物件（`// token-exempt` 標記），目前有：
+**色票庫的家是 `/palettelab`（`src/pages/PaletteLab.jsx`）**：站內現用色票＋名畫取樣的候選票都在那裡，整頁即時試穿、可複製成 tokens.css 片段。全域預設色票由使用者在 PaletteLab 點名決定；在那之前 tokens.css 維持過渡中性（冷白／近黑／壓灰深藍）。
 
-| 色票 | 所在 | 性格 |
-|---|---|---|
-| 玫瑰灰（`HOME_VARS`） | `src/App.jsx` | 首頁：藕粉底、灰褐 ink、玫瑰 accent |
-| 藕粉／深玫瑰（`ECFA_VARS`） | `src/pages/ECFAResearch.jsx` | 低彩度研究儀表板（README 的 ECFA 視覺規範） |
-| 墨綠米（`--fer-*`） | `src/pages/FiscalEnforcementRisk.jsx` | 注入式 CSS 的頁內變數區塊 |
-| 冷灰藍綠 | `src/pages/InternationalTaxOps.module.css` | 冷調工作台；`--teal` 已指回 `--c-accent` |
+頁面識別色票收在各頁頂部的 `*_VARS` 物件（`// token-exempt` 標記）：首頁與翻譯工程的藕粉玫瑰、ECFA 藕粉深玫瑰、AirPollution 陶土粉、ManusMeta 靛藍銅、IntlTaxOps 冷灰茶青（`--teal: #4c7971`，使用者點名保留）、FER 墨綠米。使用者不喜歡 GovernmentDebt 現行配色（「clunky」），待 PaletteLab 選定後重配。
 
-升格判準：同一套色票被兩頁以上使用，才升進 tokens.css 成具名 palette；單頁實驗色不升格。
+升格判準：使用者在 PaletteLab 點名，或同一套色票被兩頁以上使用。新增候選票一律先進 PaletteLab，不直接改 tokens.css。
 
 ## 品味參照 → 具體規則
 
@@ -59,6 +55,8 @@
 
 ## 禁止事項
 
+- **AI 預設審美零容忍**（2026-07-07 使用者裁定）：奶油底＋灰綠 accent 的組合（`#fbfaf7`/`#f4f1ea`＋`#4c7971` 式搭配）不得作為任何頁面的預設外觀；大圓角厚陰影的「產品感」卡片同屬此列。判準：看起來像 LLM 產品官網就重來。
+- **大面積低資訊密度卡片禁止**：KPI 大卡、只放一個數字的色塊卡不准用；數字與說明併入行內（表格列、列表列、行內註記），參照 GitHub 的密度。此規則原是 ECFA 單頁規範（HANDOFF），現升為全站規則。
 - 正文區底色只准 `--c-paper`（或頁面色票中同角色的近白值）；不放任何搶眼背景色。
 - 不引入 UI 框架（shadcn、MUI 等）。
 - 不新增字體、不改 `--font-*` 三變數與 @font-face（見 HANDOFF）。

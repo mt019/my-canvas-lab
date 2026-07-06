@@ -882,7 +882,7 @@ function JusticeDetail({ name, onBack, onOpen }) {
 // 任期時間軸（生涯甘特圖）。124 人官方名冊＋簡歷/屆次/人工核定三層任期。
 // 著色四色已跑過 dataviz palette 驗證（light surface）。
 const TENURE_BG_COLOR = { // token-exempt: dataviz categorical palette, validated
-  學者: '#a84f6e', 法官: '#5a5fb0', 律師: '#3f7d44', 檢察官: '#a06a1f', 待確認: '#b3a8ad',
+  學者: '#a84f6e', 法官: '#5a5fb0', 律師: '#3f7d44', 檢察官: '#a06a1f', 其他: '#b3a8ad', 待確認: '#b3a8ad',
 };
 // 留學地分群：null 再分「國內」（逐人查核確認無外國學位）與「待確認」（查不到可靠線索）
 const ABROAD_GROUP = (j) => {
@@ -934,8 +934,9 @@ function TenureView({ onOpen }) {
     : colorBy === '提名總統'
       ? PRES_COLOR[j.提名總統] ?? TENURE_BG_COLOR.待確認
       : TENURE_ABROAD_COLOR[ABROAD_GROUP(j)]);
-  // 留學地「待確認」畫空心條（描邊無填滿），與「國內」灰實心區分
-  const isHollow = (j) => colorBy === '留學國' && ABROAD_GROUP(j) === '待確認';
+  // 「待確認」畫空心條（描邊無填滿）：留學地模式與「國內」灰實心區分，出身模式與「其他」（查核後四類皆非）區分
+  const isHollow = (j) => (colorBy === '留學國' && ABROAD_GROUP(j) === '待確認')
+    || (colorBy === '出身' && j.出身 === '待確認');
   const legend = colorBy === '出身' ? TENURE_BG_COLOR : colorBy === '提名總統' ? PRES_COLOR : TENURE_ABROAD_COLOR;
 
   return (
@@ -956,7 +957,7 @@ function TenureView({ onOpen }) {
       <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-[var(--cc-ink-soft)]">
         {Object.entries(legend).map(([k, c]) => (
           <span key={k} className="inline-flex items-center gap-1.5">
-            {colorBy === '留學國' && k === '待確認'
+            {k === '待確認' && colorBy !== '提名總統'
               ? <span className="h-2.5 w-2.5 rounded-sm border" style={{ borderColor: c }} />
               : <span className="h-2.5 w-2.5 rounded-sm" style={{ background: c }} />}
             {k}
@@ -1075,8 +1076,8 @@ function TenureView({ onOpen }) {
       <p className="mt-2 max-w-4xl text-[11px] leading-relaxed text-[var(--cc-ink-soft)]">
         任期資料三層來源：官方個人簡歷（48 人，精確到月日，含早逝、辭職與連任）、官方屆次區間（其餘多數）、
         逐人查核後的人工核定（現任八人與翁岳生、城仲模等特殊任期）。淺色未封口的橫條＝現任。
-        出身與留學地由官方經歷與維基百科條目逐人查核標註；留學地「國內」（灰實心）＝查核後確認無外國學位，
-        「待確認」（灰空心）＝尚查不到可靠線索。
+        出身與留學地由官方經歷、官職資料庫與維基百科條目逐人查核標註；「國內」「其他」（灰實心）＝查核後確認
+        （無外國學位／非學者法官律師檢察官四類的行政文官），「待確認」（灰空心）＝尚查不到可靠線索。
         提名總統依各段任期起始日反查總統任期推定（人工核定者除外）；性別由維基條目語彙機標（女 14 人），
         無條目的 20 人（多為第一、二屆與部分現任）尚待人工補注，圖上暫不標。
       </p>
