@@ -15,6 +15,12 @@
 ### InternationalTaxOps 國際稅法研究桌
 - [ ] 待 Codex 補齊 `sources.json` 缺漏的 5 筆已解析來源、重試 UN FSDO 抓取（見 `HANDOFF.md`「Outstanding work」）
 
+### ConstitutionalCourt 憲法法庭案例庫
+- [ ] 湯德宗對憲訴法改制後裁判編號系統變更表示遺憾——待使用者提供出處（文獻或演講）後放上 About 或案件時間軸的憲訴法標記旁；無出處不上正文
+- [ ] 意見書全文抽取（1578 份 PDF 批次下載→抽純文字→刪檔，資料 repo 硬規則流程；>50 件抓取已知需使用者確認）→ 之後才做意見書全文靜態索引（MiniSearch 類、lazy load）。Elasticsearch 不採用：靜態站無伺服器，且現有 1.9MB 快照客戶端篩選已足，只有意見書全文語料（估數十 MB）才需要重新評估
+- [ ] 大法官性別 20 人待確認（`資料repo/data/materials/性別覆核佇列.md`），人工補進 justices-overrides.json
+- [ ] 釋字時期（813 件）參與大法官：依屆次名冊＋日期回填
+
 ### 全局
 - [ ] 各頁加入 Open Graph / meta description，使分享連結有標題與預覽摘要
 

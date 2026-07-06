@@ -30,7 +30,7 @@
 | `LangSwitch` ＋ `useLang` | `const { lang, setLang, t } = useLang(dict)`；字典以中文原文為 key，zh 零成本、漏譯自動回退。localStorage `canvaslab:lang`，同步 `document.documentElement.lang`。新頁一律用它，不再自造 lang state。 |
 | `FontSizeControl` ＋ `useFontScale` | `const [scale, setScale] = useFontScale()`；五檔 0.9–1.4，localStorage `canvaslab:fontScale`。學術長文頁掛在 header 右側。 |
 | `PageShell` | 新頁與簡單長文頁的外殼：`--c-paper` 底、prose（~65ch）或 wide 寬度、document.title、header 右側 controls slot。自帶複雜外殼的儀表板頁（分頁導覽、側欄）不硬套。 |
-| `Eyebrow` | 眉標 kicker。打字機 accent 字體唯一的預設允許位置。 |
+| `Eyebrow` | 眉標 kicker，用打字機 accent 字體。2026-07-07 起 `--font-display`（h1–h3）的拉丁面也改用 Erikas Farbband 打字機體（中文面＝Huiwen Mincho，與內文同）；Radio Newsman 與 GenWanMin2 已不被 token 引用，字檔暫留。 |
 
 ## 色票庫
 

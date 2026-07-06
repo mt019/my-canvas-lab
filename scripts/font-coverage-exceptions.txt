@@ -4,3 +4,18 @@
 # One codepoint per line; '#' starts a comment.
 U+1D62  # ᵢ subscript i (AirPollutionFee formula) — not in Huiwen Mincho, Chiron Sung HK, or GenWanMin2; Latin-safe via system serif
 U+5027  # 倧（王之倧，第二屆大法官姓名）— 原始字型包三個 CJK 面均無此字，走系統 serif fallback
+# 2026-07-07 標點/符號納入抽字規則後新增：以下皆為來源字型（Huiwen/Chiron/GenWanMin）確認缺字，走系統 fallback
+U+007E  # ~ 半形波浪（Huiwen 來源缺；ASCII 由系統字安全呈現）
+U+207A  # ⁺ 上標加號（程式/圖表標記）
+U+2027  # ‧ 連字點
+U+2039  # ‹ 單書名角括
+U+203A  # › 單書名角括
+U+2264  # ≤
+U+2265  # ≥
+U+22EF  # ⋯ 中線省略號
+U+2550  # ═ 框線字元（程式碼字串）
+U+2691  # ⚑ 旗標符號（UI 標記）
+U+2715  # ✕ 叉號（UI 關閉鈕）
+U+27E8  # ⟨ 數學角括
+U+FE30  # ︰ 直排冒號
+U+FFFD  # � replacement character（資料雜訊，不需字形）

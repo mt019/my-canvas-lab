@@ -5,9 +5,10 @@
 //
 // Requires: pyftsubset (fonttools) and the source fonts in ~/Library/Fonts.
 import { execFileSync } from 'node:child_process';
-import { existsSync, readFileSync, readdirSync, writeFileSync, mkdtempSync, rmSync } from 'node:fs';
+import { existsSync, writeFileSync, mkdtempSync, rmSync } from 'node:fs';
 import { homedir, tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { extractChars } from './font-chars.mjs';
 
 const SOURCES = {
   'public/fonts/HuiwenMincho-subset.woff2': {
@@ -21,25 +22,7 @@ const SOURCES = {
   },
 };
 
-function walk(dir) {
-  return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
-    const path = join(dir, entry.name);
-    return entry.isDirectory() ? walk(path) : [path];
-  });
-}
-
-const textFiles = ['index.html', 'README.md', 'TODO.md', 'HANDOFF.md', ...walk('src')].filter(Boolean);
-const text = textFiles
-  .filter((file) => existsSync(file))
-  .map((file) => readFileSync(file, 'utf8'))
-  .join('\n');
-
-const chars = [...new Set([...text])].filter((char) => {
-  const code = char.codePointAt(0);
-  if (code < 0x20) return false;
-  return /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}\p{Letter}\p{Number}]/u.test(char);
-});
-const cjkChars = chars.filter((char) => /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}]/u.test(char));
+const { chars, cjkChars } = extractChars();
 
 const tmp = mkdtempSync(join(tmpdir(), 'canvas-font-build-'));
 try {

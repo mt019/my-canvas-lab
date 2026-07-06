@@ -4,8 +4,9 @@
 
 /*
  * Site-wide type system.
- * CJK: Huiwen-mincho (body, CC0/public domain) + GenWanMin2 (display, SIL OFL 1.1).
- * Latin display: Radio Newsman (headings) — clean at any size, no ink texture.
+ * CJK: Huiwen-mincho (body AND display headings, CC0/public domain).
+ * Latin display: Erikas Farbband typewriter (headings, 2026-07-07 user decision);
+ * Radio Newsman + GenWanMin2 faces kept loaded but unreferenced by tokens — candidates for cleanup.
  * Latin accent: Erikas Farbband — has a heavy ink-ribbon texture that reads
  * as noisy at small sizes or mixed inline with CJK. Opt-in only, for large/
  * sparse decorative text (kickers, eyebrows) — never the default body font.
@@ -58,7 +59,7 @@
 
 :root {
   --font-body: 'Huiwen Mincho', 'Songti TC', 'Noto Serif CJK TC', serif;
-  --font-display: 'Radio Newsman', 'GenWanMin2', 'Songti TC', 'Noto Serif CJK TC', serif;
+  --font-display: 'Erikas Farbband', 'Huiwen Mincho', 'Songti TC', 'Noto Serif CJK TC', serif;
   --font-accent: 'Erikas Farbband', 'Huiwen Mincho', 'Songti TC', 'Noto Serif CJK TC', serif;
 }
 

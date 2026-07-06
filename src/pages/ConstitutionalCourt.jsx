@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import {
   BookOpen,
   Download,
@@ -73,6 +74,7 @@ const docs = data.文件;
 const justices = data.大法官;
 const coSign = data.共同具名;
 const citeEdges = data.引用網絡;
+const presidents = data.總統任期 ?? [];
 
 const TYPE_COLOR = { 解釋: 'var(--cc-highlight)', 判決: 'var(--cc-type-judgment)', 實體裁定: 'var(--cc-type-ruling)' };
 
@@ -648,7 +650,7 @@ function TopicHeatmaps() {
   );
 }
 
-function JusticesView() {
+function JusticesView({ onOpen }) {
   const [sortKey, setSortKey] = useState('提出意見書');
   const list = useMemo(
     () => [...justices].sort((a, b) => (b[sortKey] ?? 0) - (a[sortKey] ?? 0)),
@@ -681,7 +683,9 @@ function JusticesView() {
           <tbody>
             {list.map((j) => (
               <tr key={j.姓名} className="border-t border-[var(--cc-row-border)]">
-                <td className="px-3 py-2 font-bold text-[var(--cc-ink-heavy)]">{j.姓名}</td>
+                <td className="px-3 py-2">
+                  <button onClick={() => onOpen?.(j.姓名)} className="font-bold text-[var(--cc-ink-heavy)] underline decoration-[var(--cc-link-underline)] underline-offset-2 hover:text-[var(--cc-accent)]">{j.姓名}</button>
+                </td>
                 <td className="px-3 py-2 font-bold text-[var(--cc-accent)]">{j.提出意見書}</td>
                 <td className="px-3 py-2">
                   <div className="h-1.5 rounded-full bg-[var(--cc-track)]">
@@ -706,15 +710,197 @@ function JusticesView() {
   );
 }
 
+// 大法官個人頁（?tab=justices&j=姓名）：基本資料、意見書清單、參與判決、共同具名、打包匯出
+function JusticeDetail({ name, onBack, onOpen }) {
+  const j = justices.find((x) => x.姓名 === name);
+
+  const opinions = useMemo(() => {
+    const ops = [];
+    for (const d of docs) {
+      for (const op of d.意見書) {
+        if (op.作者類別 !== '大法官') continue;
+        const role = op.提出?.includes(name) ? '提出' : op.加入?.includes(name) ? '加入' : null;
+        if (role) ops.push({ d, op, role });
+      }
+    }
+    return ops.sort((a, b) => (b.d.日期 ?? '').localeCompare(a.d.日期 ?? ''));
+  }, [name]);
+
+  const participated = useMemo(
+    () => docs.filter((d) => d.參與大法官?.includes(name)).sort((a, b) => (b.日期 ?? '').localeCompare(a.日期 ?? '')),
+    [name],
+  );
+
+  const partners = useMemo(() => coSign
+    .filter((e) => e.甲 === name || e.乙 === name)
+    .map((e) => ({ 對象: e.甲 === name ? e.乙 : e.甲, 次數: e.次數 }))
+    .sort((a, b) => b.次數 - a.次數), [name]);
+
+  const involvedCases = useMemo(() => {
+    const m = new Map();
+    for (const { d } of opinions) m.set(d.字號, d);
+    for (const d of participated) m.set(d.字號, d);
+    return [...m.values()].sort((a, b) => (b.日期 ?? '').localeCompare(a.日期 ?? ''));
+  }, [opinions, participated]);
+
+  if (!j) {
+    return (
+      <div className="py-8">
+        <button onClick={onBack} className="text-[12px] font-bold text-[var(--cc-accent)] hover:underline">← 回大法官總覽</button>
+        <p className="mt-4 text-[13px] text-[var(--cc-ink-mid)]">名冊裡查無「{name}」。</p>
+      </div>
+    );
+  }
+
+  const stamp = new Date().toISOString().slice(0, 10);
+  const opinionCite = ({ d, op }) =>
+    `${citeString(d).replace(/（.*?）$/, '')}${(op.提出 ?? []).join('、')}大法官${op.類型}${d.日期 ? `（${d.日期}）` : ''}`;
+  const exportCites = () => downloadFile(
+    [...opinions.map(opinionCite), ...participated.map(citeString)].join('\n'),
+    `${name}_引註清單_${stamp}.txt`, 'text/plain',
+  );
+  const exportBib = () => downloadFile(toBibtex(involvedCases), `${name}_案件_${stamp}.bib`, 'text/plain');
+  const exportManifest = () => downloadFile(JSON.stringify({
+    說明: '此清單供本機批次下載使用：到資料庫 repo 執行 npm run fetch-batch -- --manifest <本檔>',
+    大法官: name,
+    產生時間: new Date().toISOString(),
+    文件: involvedCases.map((d) => ({
+      字號: d.字號,
+      官方頁: d.官方頁,
+      意見書: d.意見書
+        .filter((op) => op.提出?.includes(name) || op.加入?.includes(name))
+        .map((op) => ({ 文件名: op.文件名, 下載網址: op.下載網址 })),
+      ...(d.立場表下載 && d.參與大法官?.includes(name) ? { 立場表: d.立場表下載 } : {}),
+    })),
+  }, null, 1), `${name}_下載清單_${stamp}.json`, 'application/json');
+
+  const tenureText = (j.任期 ?? [])
+    .map((t) => `${t.職 !== '大法官' ? `${t.職} ` : ''}${String(t.起)}–${t.訖 ? String(t.訖) : '現任'}`)
+    .join('；');
+
+  return (
+    <div>
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[var(--cc-line)] py-4">
+        <button onClick={onBack} className="text-[12px] font-bold text-[var(--cc-accent)] hover:underline">← 回大法官總覽</button>
+        <div className="flex flex-wrap items-center gap-3 text-[11px]">
+          <span className="text-[var(--cc-eyebrow)]">打包這位大法官的全部資料：</span>
+          <button onClick={exportCites} className="inline-flex items-center gap-1 font-bold text-[var(--cc-accent)] hover:text-[var(--cc-link-hover)]"><Download size={11} />引註清單</button>
+          <button onClick={exportBib} className="inline-flex items-center gap-1 font-bold text-[var(--cc-accent)] hover:text-[var(--cc-link-hover)]"><Download size={11} />BibTeX</button>
+          <button onClick={exportManifest} className="inline-flex items-center gap-1 font-bold text-[var(--cc-blue-ink)] hover:text-[var(--cc-blue-ink-hover)]"><Download size={11} />批次下載清單</button>
+        </div>
+      </div>
+
+      <section className="py-5">
+        <h2 className="text-2xl font-bold text-[var(--cc-heading)]">{j.姓名}</h2>
+        <div className="mt-2 flex flex-wrap gap-x-6 gap-y-1 text-[12px] text-[var(--cc-ink-mid)]">
+          {j.屆次?.length ? <span><strong className="text-[var(--cc-accent)]">屆次</strong>　{j.屆次.join('、')}</span> : null}
+          {tenureText ? <span><strong className="text-[var(--cc-accent)]">任期</strong>　{tenureText}{j.任期來源 !== '簡歷頁' ? `（${j.任期來源}）` : ''}</span> : null}
+          {j.提名總統 ? <span><strong className="text-[var(--cc-accent)]">提名</strong>　{j.提名總統}{j.提名總統標註 === '依就任日推定' ? '（推定）' : ''}</span> : null}
+          {j.出身 && j.出身 !== '待確認' ? <span><strong className="text-[var(--cc-accent)]">出身</strong>　{j.出身}</span> : null}
+          {j.留學國 ? <span><strong className="text-[var(--cc-accent)]">留學</strong>　{j.留學國}</span> : null}
+          {j.性別 === '女' ? <span><strong className="text-[var(--cc-accent)]">性別</strong>　女</span> : null}
+          {j.簡歷頁 ? (
+            <a href={j.簡歷頁} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 font-bold text-[var(--cc-accent)] underline decoration-[var(--cc-link-underline)] underline-offset-2">
+              官方簡歷 <ExternalLink size={11} />
+            </a>
+          ) : null}
+        </div>
+        <div className="mt-3 flex flex-wrap gap-x-8 gap-y-2">
+          {[['提出意見書', j.提出意見書], ['加入意見書', j.加入意見書], ['主筆判決', j.主筆判決], ['參與判決', j.參與判決]].map(([label, value]) => (
+            <div key={label} className="flex items-baseline gap-2">
+              <span className="text-[11px] font-bold text-[var(--cc-icon)]">{label}</span>
+              <span className="font-display text-lg font-bold text-[var(--cc-ink)]">{value}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {opinions.length ? (
+        <section className="border-t border-[var(--cc-line)] py-5">
+          <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">意見書 {opinions.length} 份</p>
+          <h3 className="text-base font-bold text-[var(--cc-title-ink)]">
+            {Object.entries(j.意見書類型 ?? {}).map(([k, v]) => `${k.replace('意見書', '')} ${v}`).join('・') || '意見書'}
+          </h3>
+          <div className="mt-2 divide-y divide-[var(--cc-row-border)]">
+            {opinions.map(({ d, op, role }, i) => (
+              <div key={i} className="flex flex-wrap items-center gap-x-3 gap-y-1 py-1.5 text-[12px]">
+                <span className="w-[76px] text-[11px] text-[var(--cc-figure-note)]">{d.日期}</span>
+                <a href={d.官方頁} target="_blank" rel="noreferrer" className="w-[130px] font-bold text-[var(--cc-ink-strong)] underline decoration-[var(--cc-link-underline)] underline-offset-2 hover:text-[var(--cc-accent)]">{d.字號}</a>
+                <Badge tone={op.類型.includes('不同') ? 'red' : op.類型.includes('協同') ? 'blue' : 'slate'}>{op.類型}</Badge>
+                {role === '加入' ? <Badge tone="slate">加入</Badge> : null}
+                {op.收於抄本 ? <Badge tone="gold">收於抄本</Badge> : null}
+                <span className="max-w-[400px] truncate text-[11px] text-[var(--cc-ink-soft)]">{d.爭點?.slice(0, 40)}</span>
+                <a href={op.下載網址} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-[11px] text-[var(--cc-accent)] underline decoration-[var(--cc-link-underline)] underline-offset-2">PDF <ExternalLink size={10} /></a>
+              </div>
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+      {participated.length ? (
+        <section className="border-t border-[var(--cc-line)] py-5">
+          <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">參與裁判 {participated.length} 件（憲法法庭時期）</p>
+          <div className="mt-2 divide-y divide-[var(--cc-row-border)]">
+            {participated.map((d) => (
+              <div key={d.字號} className="flex flex-wrap items-center gap-x-3 gap-y-1 py-1.5 text-[12px]">
+                <span className="w-[76px] text-[11px] text-[var(--cc-figure-note)]">{d.日期}</span>
+                <a href={d.官方頁} target="_blank" rel="noreferrer" className="w-[130px] font-bold text-[var(--cc-ink-strong)] underline decoration-[var(--cc-link-underline)] underline-offset-2 hover:text-[var(--cc-accent)]">{d.字號}</a>
+                {d.主筆 === name ? <Badge tone="plum">主筆</Badge> : null}
+                {d.審查結論?.結論 && d.審查結論.結論 !== '未分類' ? (
+                  <Badge tone={OUTCOME_TONE[d.審查結論.結論] ?? 'slate'}>{d.審查結論.結論 === '其他/待人工' ? '待人工' : d.審查結論.結論}</Badge>
+                ) : null}
+                <span className="max-w-[440px] truncate text-[11px] text-[var(--cc-ink-soft)]">{d.爭點?.slice(0, 44)}</span>
+              </div>
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+      {partners.length ? (
+        <section className="border-t border-[var(--cc-line)] py-5">
+          <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">共同具名對象</p>
+          <div className="mt-2 flex flex-wrap gap-2">
+            {partners.map((p) => (
+              <button key={p.對象} onClick={() => onOpen(p.對象)}
+                className="rounded-md border border-[var(--cc-border)] bg-white px-2.5 py-1 text-[11.5px] font-bold text-[var(--cc-accent)] hover:bg-[var(--cc-hover-bg)]">
+                {p.對象} × {p.次數}
+              </button>
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+      <p className="border-t border-[var(--cc-line)] py-4 text-[11px] leading-relaxed text-[var(--cc-ink-soft)]">
+        意見書清單解析自官方附件檔名；「收於抄本」表示該意見書僅收於全案合訂 PDF。參與裁判僅憲法法庭時期
+        （2022 起）有官方合議庭記載，釋字時期的參與名單待屆次名冊回填。批次下載清單需回研究資料庫執行
+        <code className="mx-1 rounded bg-[var(--cc-hover-bg)] px-1">npm run fetch-batch -- --manifest</code>下載官方 PDF。
+      </p>
+    </div>
+  );
+}
+
 // 任期時間軸（生涯甘特圖）。124 人官方名冊＋簡歷/屆次/人工核定三層任期。
 // 著色四色已跑過 dataviz palette 驗證（light surface）。
 const TENURE_BG_COLOR = { // token-exempt: dataviz categorical palette, validated
   學者: '#a84f6e', 法官: '#5a5fb0', 律師: '#3f7d44', 檢察官: '#a06a1f', 待確認: '#b3a8ad',
 };
-const ABROAD_GROUP = (c) => (c === '德國' || c === '奧地利' || c === '瑞士' ? '德語圈'
-  : c === '美國' || c === '英國' ? '英美' : c === '日本' ? '日本' : c ? '其他' : '無紀錄/國內');
+// 留學地分群：null 再分「國內」（逐人查核確認無外國學位）與「待確認」（查不到可靠線索）
+const ABROAD_GROUP = (j) => {
+  const c = j.留學國;
+  if (c === '德國' || c === '奧地利' || c === '瑞士') return '德語圈';
+  if (c === '美國' || c === '英國') return '英美';
+  if (c === '日本') return '日本';
+  if (c) return '其他';
+  return (j.留學國來源 ?? '').includes('查核') ? '國內' : '待確認';
+};
 const TENURE_ABROAD_COLOR = { // token-exempt: dataviz categorical palette, validated
-  德語圈: '#a84f6e', 英美: '#5a5fb0', 日本: '#3f7d44', 其他: '#a06a1f', '無紀錄/國內': '#b3a8ad',
+  德語圈: '#a84f6e', 英美: '#5a5fb0', 日本: '#3f7d44', 其他: '#a06a1f', 國內: '#b3a8ad', 待確認: '#b3a8ad',
+};
+// 提名總統 8 色（依年代固定順序指派；dataviz validator 通過，CVD 落在 8–12 警戒帶，
+// 靠總統背景帶＋tooltip 作輔助編碼）token-exempt: dataviz categorical palette, validated
+const PRES_COLOR = {
+  蔣中正: '#a84f6e', '李宗仁（代）': '#5a5fb0', 嚴家淦: '#3f7d44', 蔣經國: '#a06a1f',
+  李登輝: '#0e7fa8', 陳水扁: '#7a4fa8', 馬英九: '#b3435c', 蔡英文: '#5f7a2f', 賴清德: '#b3a8ad',
 };
 
 function tenureYear(s, isEnd) {
@@ -725,7 +911,7 @@ function tenureYear(s, isEnd) {
   return y + (m - 0.5) / 12;
 }
 
-function TenureView() {
+function TenureView({ onOpen }) {
   const [colorBy, setColorBy] = useState('出身');
   const [onlyAuthors, setOnlyAuthors] = useState(false);
   const [hover, setHover] = useState(null);
@@ -745,8 +931,12 @@ function TenureView() {
   const maxOps = Math.max(...justices.map((j) => j.提出意見書 + j.加入意見書), 1);
   const colorOf = (j) => (colorBy === '出身'
     ? TENURE_BG_COLOR[j.出身] ?? TENURE_BG_COLOR.待確認
-    : TENURE_ABROAD_COLOR[ABROAD_GROUP(j.留學國)]);
-  const legend = colorBy === '出身' ? TENURE_BG_COLOR : TENURE_ABROAD_COLOR;
+    : colorBy === '提名總統'
+      ? PRES_COLOR[j.提名總統] ?? TENURE_BG_COLOR.待確認
+      : TENURE_ABROAD_COLOR[ABROAD_GROUP(j)]);
+  // 留學地「待確認」畫空心條（描邊無填滿），與「國內」灰實心區分
+  const isHollow = (j) => colorBy === '留學國' && ABROAD_GROUP(j) === '待確認';
+  const legend = colorBy === '出身' ? TENURE_BG_COLOR : colorBy === '提名總統' ? PRES_COLOR : TENURE_ABROAD_COLOR;
 
   return (
     <section className="border-t border-[var(--cc-line)] py-5">
@@ -756,7 +946,7 @@ function TenureView() {
           <h2 className="text-base font-bold text-[var(--cc-title-ink)]">歷任大法官任期時間軸（{rows.length} 人）</h2>
         </div>
         <div className="flex flex-wrap items-center gap-4">
-          <Select label="著色" value={colorBy} onChange={setColorBy} options={[['出身', '按出身'], ['留學國', '按留學地']]} />
+          <Select label="著色" value={colorBy} onChange={setColorBy} options={[['出身', '按出身'], ['留學國', '按留學地'], ['提名總統', '按提名總統']]} />
           <label className="flex items-center gap-1.5 text-[11px] font-bold text-[var(--cc-ink-soft)]">
             <input type="checkbox" checked={onlyAuthors} onChange={(e) => setOnlyAuthors(e.target.checked)} />
             僅顯示有具名意見書者
@@ -766,33 +956,73 @@ function TenureView() {
       <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-[var(--cc-ink-soft)]">
         {Object.entries(legend).map(([k, c]) => (
           <span key={k} className="inline-flex items-center gap-1.5">
-            <span className="h-2.5 w-2.5 rounded-sm" style={{ background: c }} />{k}
+            {colorBy === '留學國' && k === '待確認'
+              ? <span className="h-2.5 w-2.5 rounded-sm border" style={{ borderColor: c }} />
+              : <span className="h-2.5 w-2.5 rounded-sm" style={{ background: c }} />}
+            {k}
           </span>
         ))}
-        <span className="ml-2">右欄細條＝具名意見書數</span>
+        <span className="inline-flex items-center gap-1.5">
+          <svg width={11} height={11} aria-hidden>
+            <rect width={11} height={11} rx={2} fill="var(--cc-dim-text)" />
+            <path d="M-2 5 l8 -8 M0 13 l13 -13 M6 13 l8 -8" stroke="var(--cc-bg)" strokeWidth={1.6} />
+          </svg>
+          斜紋＝女性大法官
+        </span>
+        <span className="ml-2">右欄細條＝具名意見書數；底色帶＝總統任期</span>
       </div>
 
-      {hover ? (
-        <div className="mt-2 rounded-md border border-[var(--cc-border)] bg-[var(--cc-node-fill)] px-3 py-1.5 text-[11.5px] text-[var(--cc-ink-strong)]">
-          <strong>{hover.姓名}</strong>
-          　{hover.任期.map((t) => `${t.職 !== '大法官' ? t.職 : ''}${String(t.起)}–${t.訖 ? String(t.訖) : '現任'}`).join('；')}
-          　出身 {hover.出身}{hover.留學國 ? `　留學 ${hover.留學國}` : ''}
-          {hover.提名總統 ? `　提名 ${hover.提名總統}` : ''}
-          {hover.提出意見書 + hover.加入意見書 > 0 ? `　意見書 提出${hover.提出意見書}／加入${hover.加入意見書}` : ''}
-          {hover.任期來源 !== '簡歷頁' ? `　（任期${hover.任期來源}）` : ''}
-        </div>
-      ) : (
-        <div className="mt-2 px-3 py-1.5 text-[11.5px] text-[var(--cc-ink-soft)]">游標移到列上看任期細節；點姓名開官方簡歷頁。</div>
-      )}
+      {/* 圖已攤開全高，資訊列 sticky 貼在頁面導覽下緣，滾到圖底仍看得到 */}
+      <div className="sticky top-[49px] z-10 mt-2 rounded-md border border-[var(--cc-border)] bg-[var(--cc-bg)]/95 px-3 py-1.5 text-[11.5px] backdrop-blur">
+        {hover ? (
+          <div className="flex flex-wrap items-baseline gap-x-4 gap-y-0.5 text-[var(--cc-ink-strong)]">
+            <strong>{hover.姓名}</strong>
+            <span>{hover.任期.map((t) => `${t.職 !== '大法官' ? `${t.職} ` : ''}${String(t.起)}–${t.訖 ? String(t.訖) : '現任'}`).join('；')}</span>
+            <span><span className="text-[var(--cc-ink-soft)]">出身</span> {hover.出身}</span>
+            <span><span className="text-[var(--cc-ink-soft)]">留學</span> {hover.留學國 ?? ((hover.留學國來源 ?? '').includes('查核') ? '無（國內）' : '待確認')}</span>
+            {hover.提名總統 ? <span><span className="text-[var(--cc-ink-soft)]">提名</span> {hover.提名總統}</span> : null}
+            {hover.性別 === '女' ? <span><span className="text-[var(--cc-ink-soft)]">性別</span> 女</span> : null}
+            {hover.提出意見書 + hover.加入意見書 > 0
+              ? <span><span className="text-[var(--cc-ink-soft)]">意見書</span> 提出 {hover.提出意見書}／加入 {hover.加入意見書}</span>
+              : null}
+            {hover.任期來源 !== '簡歷頁' ? <span className="text-[var(--cc-ink-soft)]">（任期{hover.任期來源}）</span> : null}
+          </div>
+        ) : (
+          <span className="text-[var(--cc-ink-soft)]">游標移到列上看任期細節；點姓名開個人頁（意見書清單、參與裁判與打包下載）。</span>
+        )}
+      </div>
 
       <div className="mt-1 overflow-x-auto">
-        <div className="max-h-[620px] overflow-y-auto" style={{ width: LABEL + CHART + COUNT + 10 }}>
-          <svg width={LABEL + CHART + COUNT + 10} height={H + 24} role="img" aria-label="歷任大法官任期甘特圖">
+        <div style={{ width: LABEL + CHART + COUNT + 10 }}>
+          <svg width={LABEL + CHART + COUNT + 10} height={H + 50} role="img" aria-label="歷任大法官任期甘特圖">
+            <defs>
+              {/* 女性大法官的 45° 斜紋覆層：紙色細線疊在任何 bar 色上都可辨（非僅顏色編碼） */}
+              <pattern id="tenure-hatch-f" width={4} height={4} patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+                <line x1={0} y1={0} x2={0} y2={4} stroke="var(--cc-bg)" strokeWidth={1.6} />
+              </pattern>
+            </defs>
+            {/* 總統任期背景直帶（交錯淡染＋帶頂總統名） */}
+            {presidents.map((p, i) => {
+              const a = Math.max(tenureYear(p.起, false), Y0);
+              const b = Math.min(p.訖 === '9999-12-31' ? Y1 : tenureYear(p.訖, true), Y1);
+              if (b <= Y0 || a >= Y1) return null;
+              const w = x(b) - x(a);
+              return (
+                <g key={`${p.總統}${p.起}`}>
+                  {i % 2 ? <rect x={x(a)} y={18} width={w} height={H + 2} fill="var(--cc-hover-bg)" opacity={0.55} /> : null}
+                  {w >= 26 ? (
+                    <text x={x(a) + w / 2} y={H + 46} textAnchor="middle" fontSize={8.5} fill="var(--cc-eyebrow)">{p.總統.replace('（代）', '')}</text>
+                  ) : null}
+                </g>
+              );
+            })}
             {/* 十年格線 */}
             {Array.from({ length: 8 }, (_, i) => 1950 + i * 10).map((yr) => (
               <g key={yr}>
                 <line x1={x(yr)} y1={18} x2={x(yr)} y2={H + 20} stroke="var(--cc-line)" strokeWidth={1} />
                 <text x={x(yr)} y={12} textAnchor="middle" fontSize={10} fill="var(--cc-axis-text)">{yr}</text>
+                {/* 全圖攤開後頂軸會滾出視野，底部重標一次年份 */}
+                <text x={x(yr)} y={H + 33} textAnchor="middle" fontSize={10} fill="var(--cc-axis-text)">{yr}</text>
               </g>
             ))}
             {/* 憲訴法施行 */}
@@ -807,22 +1037,27 @@ function TenureView() {
                 <g key={j.姓名}
                   onMouseEnter={() => setHover(j)} onMouseLeave={() => setHover(null)}>
                   <rect x={0} y={y} width={LABEL + CHART + COUNT} height={ROW} fill={hover?.姓名 === j.姓名 ? 'var(--cc-hover-bg)' : 'transparent'} />
-                  <a href={j.簡歷頁} target="_blank" rel="noreferrer">
-                    <text x={LABEL - 6} y={y + ROW / 2 + 3.5} textAnchor="end" fontSize={10.5}
-                      fontWeight={hover?.姓名 === j.姓名 ? 700 : 500}
-                      fill={dim ? 'var(--cc-dim-text)' : 'var(--cc-ink-strong)'} className="cursor-pointer">
-                      {j.姓名}
-                    </text>
-                  </a>
+                  <text x={LABEL - 6} y={y + ROW / 2 + 3.5} textAnchor="end" fontSize={10.5}
+                    fontWeight={hover?.姓名 === j.姓名 ? 700 : 500}
+                    fill={dim ? 'var(--cc-dim-text)' : 'var(--cc-ink-strong)'} className="cursor-pointer"
+                    onClick={() => onOpen?.(j.姓名)}>
+                    {j.姓名}
+                  </text>
                   {j.任期.map((t, k) => {
                     const a = tenureYear(t.起, false);
                     const b = t.訖 ? tenureYear(t.訖, true) : Y1 - 0.4;
+                    const w = Math.max(x(b) - x(a), 2.5);
                     return (
-                      <rect key={k}
-                        x={x(a)} y={y + 3}
-                        width={Math.max(x(b) - x(a), 2.5)} height={ROW - 6} rx={2}
-                        fill={colorOf(j)} opacity={dim ? 0.25 : t.訖 ? 0.92 : 0.65}
-                      />
+                      <g key={k}>
+                        <rect x={x(a)} y={y + 3} width={w} height={ROW - 6} rx={2}
+                          fill={isHollow(j) ? 'var(--cc-bg)' : colorOf(j)}
+                          stroke={isHollow(j) ? colorOf(j) : 'none'} strokeWidth={isHollow(j) ? 1 : 0}
+                          opacity={dim ? 0.25 : t.訖 ? 0.92 : 0.65} />
+                        {j.性別 === '女' && !isHollow(j) ? (
+                          <rect x={x(a)} y={y + 3} width={w} height={ROW - 6} rx={2}
+                            fill="url(#tenure-hatch-f)" opacity={dim ? 0.25 : 1} />
+                        ) : null}
+                      </g>
                     );
                   })}
                   {ops > 0 ? (
@@ -840,7 +1075,10 @@ function TenureView() {
       <p className="mt-2 max-w-4xl text-[11px] leading-relaxed text-[var(--cc-ink-soft)]">
         任期資料三層來源：官方個人簡歷（48 人，精確到月日，含早逝、辭職與連任）、官方屆次區間（其餘多數）、
         逐人查核後的人工核定（現任八人與翁岳生、城仲模等特殊任期）。淺色未封口的橫條＝現任。
-        出身與留學地由官方經歷與維基百科條目逐人查核標註，標「待確認」者為兩邊都查不到可靠線索的早期大法官。
+        出身與留學地由官方經歷與維基百科條目逐人查核標註；留學地「國內」（灰實心）＝查核後確認無外國學位，
+        「待確認」（灰空心）＝尚查不到可靠線索。
+        提名總統依各段任期起始日反查總統任期推定（人工核定者除外）；性別由維基條目語彙機標（女 14 人），
+        無條目的 20 人（多為第一、二屆與部分現任）尚待人工補注，圖上暫不標。
       </p>
     </section>
   );
@@ -1006,11 +1244,16 @@ function AboutView() {
 }
 
 export default function ConstitutionalCourt() {
-  const [active, setActive] = useState('index');
+  // 分頁與大法官個人頁都掛在 URL（?tab=…&j=姓名）：可深連結、可分享、可返回
+  const [params, setParams] = useSearchParams();
+  const active = params.get('tab') ?? 'index';
+  const justiceName = params.get('j');
+  const setActive = (id) => setParams(id === 'index' ? {} : { tab: id });
+  const openJustice = (name) => setParams({ tab: 'justices', j: name });
 
   useEffect(() => {
-    document.title = '憲法法庭案例庫';
-  }, []);
+    document.title = justiceName ? `${justiceName}｜憲法法庭案例庫` : '憲法法庭案例庫';
+  }, [justiceName]);
 
   return (
     <div className="min-h-screen bg-[var(--cc-bg)] font-sans text-[var(--cc-ink)]" style={{ ...CC_VARS, paddingBottom: 60 }}>
@@ -1063,8 +1306,12 @@ export default function ConstitutionalCourt() {
       <main className="mx-auto max-w-6xl px-4 sm:px-6">
         {active === 'index' ? <IndexView /> : null}
         {active === 'timeline' ? <TimelineView /> : null}
-        {active === 'justices' ? <JusticesView /> : null}
-        {active === 'tenure' ? <TenureView /> : null}
+        {active === 'justices' ? (
+          justiceName
+            ? <JusticeDetail name={justiceName} onBack={() => setParams({ tab: 'justices' })} onOpen={openJustice} />
+            : <JusticesView onOpen={openJustice} />
+        ) : null}
+        {active === 'tenure' ? <TenureView onOpen={openJustice} /> : null}
         {active === 'graph' ? <GraphView /> : null}
         {active === 'about' ? <AboutView /> : null}
       </main>

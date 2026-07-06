@@ -1,34 +1,8 @@
-import { existsSync, readdirSync, readFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { readFileSync } from 'node:fs';
 import * as fontkit from 'fontkit';
+import { extractChars } from './font-chars.mjs';
 
-function walk(dir) {
-  return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
-    const path = join(dir, entry.name);
-    return entry.isDirectory() ? walk(path) : [path];
-  });
-}
-
-const textFiles = [
-  'index.html',
-  'README.md',
-  'TODO.md',
-  'HANDOFF.md',
-  ...walk('src'),
-].filter(Boolean);
-
-const text = textFiles
-  .filter((file) => existsSync(file))
-  .map((file) => readFileSync(file, 'utf8'))
-  .join('\n');
-
-const chars = [...new Set([...text])].filter((char) => {
-  const code = char.codePointAt(0);
-  if (code < 0x20) return false;
-  return /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}\p{Letter}\p{Number}]/u.test(char);
-});
-
-const cjkChars = chars.filter((char) => /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}]/u.test(char));
+const { chars, cjkChars } = extractChars();
 
 // Codepoints the source fonts themselves lack; these render via the CSS fallback stack.
 const exceptions = new Set(

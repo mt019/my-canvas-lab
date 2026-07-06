@@ -167,6 +167,26 @@ described here in detail — update this section once that work lands.
   categorical palette note below doesn't apply to them. Rule docs +
   how-to-rerun live in the data repo:
   `docs/意見書解析與標籤規則.md`.
+- 2026-07-07 update: all tabs + the new per-justice page live on URL
+  query params (`?tab=…&j=姓名`) via `useSearchParams` — deep-linkable
+  and back-button friendly. Justice detail page assembles opinions/
+  participation by scanning the snapshot client-side and offers
+  per-justice exports (citation list / BibTeX / fetch-batch manifest).
+  Tenure gantt gained president-era background bands, a `按提名總統`
+  color mode (8-color palette validated; CVD sits in the 8–12 warn
+  band — the bands + tooltip are the required secondary encoding), and
+  a 45° hatch overlay marking female justices (gender is
+  wiki-machine-tagged in the data repo, 20 justices still 待確認 and
+  unmarked). Footer-menu pollution in the data repo's 相關法令 field
+  was fixed (74 cases lost a spurious 選舉與政黨 topic; snapshot
+  resynced).
+- Site-wide font change (user decision 2026-07-07): `--font-display`
+  is now Erikas Farbband (typewriter Latin) + Huiwen Mincho (CJK).
+  Radio Newsman and GenWanMin2 faces are no longer referenced by any
+  token; their `@font-face` blocks and subset files are kept for now —
+  cleanup candidates. Subset char extraction now includes punctuation
+  and lives in `scripts/font-chars.mjs`, shared by rebuild +
+  validate so the two can't drift apart again.
 - Downloads are two-stage by design: the page exports a manifest of
   official URLs; actual batch download happens in the data repo via
   `npm run fetch-batch -- --manifest <file>` (or `--tag 稅法`). The
