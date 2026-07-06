@@ -3,3 +3,4 @@
 # They render via the CSS fallback stack (Songti TC / Noto Serif CJK TC / serif).
 # One codepoint per line; '#' starts a comment.
 U+1D62  # ᵢ subscript i (AirPollutionFee formula) — not in Huiwen Mincho, Chiron Sung HK, or GenWanMin2; Latin-safe via system serif
+U+5027  # 倧（王之倧，第二屆大法官姓名）— 原始字型包三個 CJK 面均無此字，走系統 serif fallback

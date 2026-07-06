@@ -5,6 +5,7 @@ import {
   ExternalLink,
   FileText,
   Gavel,
+  History,
   Info,
   Network,
   Search,
@@ -88,8 +89,9 @@ const STANDARD_TONE = { 嚴格: 'red', 中度: 'gold', 寬鬆: 'green', '多重�
 
 const tabs = [
   { id: 'index', label: '案件索引', icon: Search },
-  { id: 'timeline', label: '時間軸', icon: CalendarClock },
+  { id: 'timeline', label: '案件時間軸', icon: CalendarClock },
   { id: 'justices', label: '大法官', icon: Users },
+  { id: 'tenure', label: '任期時間軸', icon: History },
   { id: 'graph', label: '意見書圖譜', icon: Network },
   { id: 'about', label: '資料說明', icon: Info },
 ];
@@ -704,6 +706,146 @@ function JusticesView() {
   );
 }
 
+// 任期時間軸（生涯甘特圖）。124 人官方名冊＋簡歷/屆次/人工核定三層任期。
+// 著色四色已跑過 dataviz palette 驗證（light surface）。
+const TENURE_BG_COLOR = { // token-exempt: dataviz categorical palette, validated
+  學者: '#a84f6e', 法官: '#5a5fb0', 律師: '#3f7d44', 檢察官: '#a06a1f', 待確認: '#b3a8ad',
+};
+const ABROAD_GROUP = (c) => (c === '德國' || c === '奧地利' || c === '瑞士' ? '德語圈'
+  : c === '美國' || c === '英國' ? '英美' : c === '日本' ? '日本' : c ? '其他' : '無紀錄/國內');
+const TENURE_ABROAD_COLOR = { // token-exempt: dataviz categorical palette, validated
+  德語圈: '#a84f6e', 英美: '#5a5fb0', 日本: '#3f7d44', 其他: '#a06a1f', '無紀錄/國內': '#b3a8ad',
+};
+
+function tenureYear(s, isEnd) {
+  if (!s) return null;
+  const str = String(s);
+  const y = Number(str.slice(0, 4));
+  const m = str.length >= 7 ? Number(str.slice(5, 7)) : (isEnd ? 12 : 1);
+  return y + (m - 0.5) / 12;
+}
+
+function TenureView() {
+  const [colorBy, setColorBy] = useState('出身');
+  const [onlyAuthors, setOnlyAuthors] = useState(false);
+  const [hover, setHover] = useState(null);
+
+  const rows = useMemo(() => {
+    const list = justices
+      .filter((j) => j.任期?.length)
+      .map((j) => ({ ...j, start: tenureYear(j.任期[0].起, false) }))
+      .sort((a, b) => a.start - b.start || a.姓名.localeCompare(b.姓名));
+    return onlyAuthors ? list.filter((j) => j.提出意見書 + j.加入意見書 > 0) : list;
+  }, [onlyAuthors]);
+
+  const Y0 = 1948, Y1 = 2027;
+  const ROW = 14, LABEL = 62, CHART = 830, COUNT = 52;
+  const H = rows.length * ROW;
+  const x = (yr) => LABEL + ((yr - Y0) / (Y1 - Y0)) * CHART;
+  const maxOps = Math.max(...justices.map((j) => j.提出意見書 + j.加入意見書), 1);
+  const colorOf = (j) => (colorBy === '出身'
+    ? TENURE_BG_COLOR[j.出身] ?? TENURE_BG_COLOR.待確認
+    : TENURE_ABROAD_COLOR[ABROAD_GROUP(j.留學國)]);
+  const legend = colorBy === '出身' ? TENURE_BG_COLOR : TENURE_ABROAD_COLOR;
+
+  return (
+    <section className="border-t border-[var(--cc-line)] py-5">
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">制度 77 年</p>
+          <h2 className="text-base font-bold text-[var(--cc-title-ink)]">歷任大法官任期時間軸（{rows.length} 人）</h2>
+        </div>
+        <div className="flex flex-wrap items-center gap-4">
+          <Select label="著色" value={colorBy} onChange={setColorBy} options={[['出身', '按出身'], ['留學國', '按留學地']]} />
+          <label className="flex items-center gap-1.5 text-[11px] font-bold text-[var(--cc-ink-soft)]">
+            <input type="checkbox" checked={onlyAuthors} onChange={(e) => setOnlyAuthors(e.target.checked)} />
+            僅顯示有具名意見書者
+          </label>
+        </div>
+      </div>
+      <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-[var(--cc-ink-soft)]">
+        {Object.entries(legend).map(([k, c]) => (
+          <span key={k} className="inline-flex items-center gap-1.5">
+            <span className="h-2.5 w-2.5 rounded-sm" style={{ background: c }} />{k}
+          </span>
+        ))}
+        <span className="ml-2">右欄細條＝具名意見書數</span>
+      </div>
+
+      {hover ? (
+        <div className="mt-2 rounded-md border border-[var(--cc-border)] bg-[var(--cc-node-fill)] px-3 py-1.5 text-[11.5px] text-[var(--cc-ink-strong)]">
+          <strong>{hover.姓名}</strong>
+          　{hover.任期.map((t) => `${t.職 !== '大法官' ? t.職 : ''}${String(t.起)}–${t.訖 ? String(t.訖) : '現任'}`).join('；')}
+          　出身 {hover.出身}{hover.留學國 ? `　留學 ${hover.留學國}` : ''}
+          {hover.提名總統 ? `　提名 ${hover.提名總統}` : ''}
+          {hover.提出意見書 + hover.加入意見書 > 0 ? `　意見書 提出${hover.提出意見書}／加入${hover.加入意見書}` : ''}
+          {hover.任期來源 !== '簡歷頁' ? `　（任期${hover.任期來源}）` : ''}
+        </div>
+      ) : (
+        <div className="mt-2 px-3 py-1.5 text-[11.5px] text-[var(--cc-ink-soft)]">游標移到列上看任期細節；點姓名開官方簡歷頁。</div>
+      )}
+
+      <div className="mt-1 overflow-x-auto">
+        <div className="max-h-[620px] overflow-y-auto" style={{ width: LABEL + CHART + COUNT + 10 }}>
+          <svg width={LABEL + CHART + COUNT + 10} height={H + 24} role="img" aria-label="歷任大法官任期甘特圖">
+            {/* 十年格線 */}
+            {Array.from({ length: 8 }, (_, i) => 1950 + i * 10).map((yr) => (
+              <g key={yr}>
+                <line x1={x(yr)} y1={18} x2={x(yr)} y2={H + 20} stroke="var(--cc-line)" strokeWidth={1} />
+                <text x={x(yr)} y={12} textAnchor="middle" fontSize={10} fill="var(--cc-axis-text)">{yr}</text>
+              </g>
+            ))}
+            {/* 憲訴法施行 */}
+            <line x1={x(2022)} y1={18} x2={x(2022)} y2={H + 20} stroke="var(--cc-type-judgment)" strokeDasharray="3 3" strokeWidth={1} />
+            <text x={x(2022) + 3} y={12} fontSize={9} fill="var(--cc-type-judgment)">憲訴法</text>
+
+            {rows.map((j, i) => {
+              const y = 20 + i * ROW;
+              const dim = hover && hover.姓名 !== j.姓名;
+              const ops = j.提出意見書 + j.加入意見書;
+              return (
+                <g key={j.姓名}
+                  onMouseEnter={() => setHover(j)} onMouseLeave={() => setHover(null)}>
+                  <rect x={0} y={y} width={LABEL + CHART + COUNT} height={ROW} fill={hover?.姓名 === j.姓名 ? 'var(--cc-hover-bg)' : 'transparent'} />
+                  <a href={j.簡歷頁} target="_blank" rel="noreferrer">
+                    <text x={LABEL - 6} y={y + ROW / 2 + 3.5} textAnchor="end" fontSize={10.5}
+                      fontWeight={hover?.姓名 === j.姓名 ? 700 : 500}
+                      fill={dim ? 'var(--cc-dim-text)' : 'var(--cc-ink-strong)'} className="cursor-pointer">
+                      {j.姓名}
+                    </text>
+                  </a>
+                  {j.任期.map((t, k) => {
+                    const a = tenureYear(t.起, false);
+                    const b = t.訖 ? tenureYear(t.訖, true) : Y1 - 0.4;
+                    return (
+                      <rect key={k}
+                        x={x(a)} y={y + 3}
+                        width={Math.max(x(b) - x(a), 2.5)} height={ROW - 6} rx={2}
+                        fill={colorOf(j)} opacity={dim ? 0.25 : t.訖 ? 0.92 : 0.65}
+                      />
+                    );
+                  })}
+                  {ops > 0 ? (
+                    <rect x={LABEL + CHART + 6} y={y + 4.5}
+                      width={Math.max((ops / maxOps) * (COUNT - 8), 1.5)} height={ROW - 9} rx={1.5}
+                      fill="var(--cc-highlight)" opacity={dim ? 0.25 : 0.85} />
+                  ) : null}
+                </g>
+              );
+            })}
+          </svg>
+        </div>
+      </div>
+
+      <p className="mt-2 max-w-4xl text-[11px] leading-relaxed text-[var(--cc-ink-soft)]">
+        任期資料三層來源：官方個人簡歷（48 人，精確到月日，含早逝、辭職與連任）、官方屆次區間（其餘多數）、
+        逐人查核後的人工核定（現任八人與翁岳生、城仲模等特殊任期）。淺色未封口的橫條＝現任。
+        出身與留學地由官方經歷與維基百科條目逐人查核標註，標「待確認」者為兩邊都查不到可靠線索的早期大法官。
+      </p>
+    </section>
+  );
+}
+
 function GraphView() {
   const [selected, setSelected] = useState(null);
   const MIN_EDGE = 2;
@@ -922,6 +1064,7 @@ export default function ConstitutionalCourt() {
         {active === 'index' ? <IndexView /> : null}
         {active === 'timeline' ? <TimelineView /> : null}
         {active === 'justices' ? <JusticesView /> : null}
+        {active === 'tenure' ? <TenureView /> : null}
         {active === 'graph' ? <GraphView /> : null}
         {active === 'about' ? <AboutView /> : null}
       </main>
