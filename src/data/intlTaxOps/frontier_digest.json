@@ -1,0 +1,23 @@
+[
+  {
+    "id": "2026-07-06-un-inc5-dispute-protocol-drafts",
+    "date": "2026-07-06",
+    "sourceId": "un-tax-convention-negotiations",
+    "headline": {
+      "zh": "UN 稅務公約談判進入草案階段：第五輪 8 月開議，爭端議定書出現反 OECD 式強制仲裁的定調",
+      "en": "UN tax convention talks enter the drafting phase: fifth session opens in August, with anti-mandatory-arbitration positioning on the dispute protocol"
+    },
+    "analysis": {
+      "zh": "INC 第四輪談判已於 2026 年 2 月結束，第五輪定於 2026 年 8 月舉行，三個工作流預計在會前提交首批條文草案——框架公約承諾條款的改寫版，以及兩項自選早期議定書（跨境服務所得課稅、稅務爭端之預防與解決）的首份實質文本（TJN 第四輪後意見書，2026-04-03）。爭端議定書（Workstream 3）的走向值得盯：TJN 主張議定書不應納入 OECD 式的 MAP 強制拘束仲裁，仲裁「至少應為自選且非強制」，另提議把 MAP 設為稅務相關投資爭端的排他管道、建立 MAP 決定摘要資料庫。這與本桌的 MAP 爭點直接相接——若 UN 路線把仲裁邊緣化，將與 OECD Action 14 的強化路線正面分岔，也會影響 Danon 所分析的稅務投資仲裁互動。第五輪是取得 UN 一手文本、補「un-tax-convention-governance 主題僅靠二手評論支撐」這個驗證缺口的時點。",
+      "en": "The fourth INC session concluded in February 2026; the fifth is scheduled for August 2026, and all three workstreams are expected to table first draft texts beforehand — a reworked formulation of the framework-convention commitments, plus the first substantive text of the two optional early protocols (taxation of cross-border services income; prevention and resolution of tax disputes) (TJN post-fourth-session submission, 2026-04-03). The dispute protocol (Workstream 3) is the one to watch: TJN argues it should not include OECD-style mandatory binding MAP arbitration — arbitration 'should at a minimum be made both optional and non-mandatory' — and proposes making MAP the exclusive venue for tax-related investment disputes and building a database of MAP decision summaries. This connects directly to this desk's MAP controversy: if the UN track sidelines arbitration, it diverges head-on from the OECD Action 14 strengthening path and bears on the tax–investment-arbitration interactions Danon analyses. The fifth session is also the moment to obtain UN primary texts and close the verification gap in the un-tax-convention-governance topic, which currently rests on secondary commentary."
+    },
+    "sourceUrl": "https://taxjustice.net/2026/04/03/un-tax-convention-summary-of-fourth-session-stakeholder-input-by-the-tax-justice-network/",
+    "authorityTier": "secondary-signal",
+    "relatedTopicIds": ["un-tax-convention-governance", "danon-lausanne-disputes"],
+    "verification": "verified-against-source",
+    "evidencePaths": [
+      "data/snapshots/frontier/evidence/2026-07-06-un-inc5-dispute-protocol-drafts/01-taxjustice-net.txt",
+      "data/snapshots/frontier/evidence/2026-07-06-un-inc5-dispute-protocol-drafts/02-un-desa-closing-remarks.txt"
+    ]
+  }
+]

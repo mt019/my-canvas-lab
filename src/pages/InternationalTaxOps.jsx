@@ -28,6 +28,7 @@ import topics from '../data/intlTaxOps/topics.json';
 import schema from '../data/intlTaxOps/data_classification_schema.json';
 import watchlist from '../data/intlTaxOps/frontier_watchlist.json';
 import controversies from '../data/intlTaxOps/controversies.json';
+import digest from '../data/intlTaxOps/frontier_digest.json';
 import styles from './InternationalTaxOps.module.css';
 
 const ui = {
@@ -62,6 +63,8 @@ const ui = {
     relatedTopics: '相關議題',
     citation: '引用',
     liveCase: '對照案例頁面',
+    digest: '最新動態',
+    digestEmpty: '尚無研究過的動態。在資料倉庫執行 /frontier-research 之後，這裡會出現帶引註的動態研究。',
   },
   en: {
     app: 'International Tax Research Desk',
@@ -94,11 +97,14 @@ const ui = {
     relatedTopics: 'Related topics',
     citation: 'Citation',
     liveCase: 'See the applied case page',
+    digest: 'Latest Digest',
+    digestEmpty: 'No researched updates yet. Run /frontier-research in the data repo to populate this feed with cited research notes.',
   },
 };
 
 const MAIN_TABS = [
   { id: 'matrix', labelKey: 'matrix', Icon: Layers3 },
+  { id: 'digest', labelKey: 'digest', Icon: Activity },
   { id: 'sources', labelKey: 'sourceRegistry', Icon: Database },
   { id: 'frontier', labelKey: 'frontier', Icon: Radar },
   { id: 'relations', labelKey: 'relations', Icon: GitBranch },
@@ -164,6 +170,15 @@ function topicTitleById(id, lang) {
   return topics.find((topic) => topic.id === id)?.title?.[lang] ?? id;
 }
 
+function verificationLabel(value, lang) {
+  const labels = {
+    'verified-against-snapshot': { zh: '已對照快照核實', en: 'Verified against snapshot' },
+    'verified-against-source': { zh: '已對照原始來源', en: 'Verified against source' },
+    pending: { zh: '待核實', en: 'Pending verification' },
+  };
+  return labels[value]?.[lang] ?? value;
+}
+
 export default function InternationalTaxOps() {
   useEffect(() => {
     document.title = '國際稅法研究桌 · Canvas Lab';
@@ -205,6 +220,19 @@ export default function InternationalTaxOps() {
       source.institution,
       source.authorityTier,
       ...source.topicDomain,
+    ].join(' ').toLowerCase().includes(query));
+  }, [query]);
+
+  const filteredDigest = useMemo(() => {
+    const sorted = [...digest].sort((a, b) => (a.date < b.date ? 1 : -1));
+    if (!query) return sorted;
+    return sorted.filter((item) => [
+      item.headline.zh,
+      item.headline.en,
+      item.analysis.zh,
+      item.analysis.en,
+      item.sourceId,
+      ...(item.relatedTopicIds ?? []),
     ].join(' ').toLowerCase().includes(query));
   }, [query]);
 
@@ -449,6 +477,42 @@ export default function InternationalTaxOps() {
               </div>
             </section>
           </>
+        )}
+
+        {mainTab === 'digest' && (
+          <section className={styles.panel}>
+            <div className={styles.sectionHead}>
+              <h2>{t.digest}</h2>
+              <Activity size={18} />
+            </div>
+            {filteredDigest.length === 0 ? (
+              <p className={styles.filterDesc}>{t.digestEmpty}</p>
+            ) : (
+              <div className={styles.controversyList}>
+                {filteredDigest.map((item) => (
+                  <article key={item.id} className={styles.controversyCard}>
+                    <h3>{item.headline[lang]}</h3>
+                    <p>{item.analysis[lang]}</p>
+                    <div className={styles.tagRow}>
+                      <span>{item.date}</span>
+                      <span>{labelFor('authorityTier', item.authorityTier, lang)}</span>
+                      <span>{verificationLabel(item.verification, lang)}</span>
+                    </div>
+                    {item.relatedTopicIds?.length > 0 && (
+                      <div className={styles.controversyRelated}>
+                        <span>{t.relatedTopics}</span>
+                        {item.relatedTopicIds.map((id) => <span key={id}>{topicTitleById(id, lang)}</span>)}
+                      </div>
+                    )}
+                    <div className={styles.controversyCitation}>
+                      <span>{watchlist.find((w) => w.id === item.sourceId)?.label?.[lang] ?? item.sourceId}</span>
+                      <a href={item.sourceUrl} target="_blank" rel="noreferrer">{t.open}<ArrowUpRight size={14} /></a>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            )}
+          </section>
         )}
 
         {mainTab === 'sources' && (
