@@ -1,6 +1,6 @@
 import React, { Suspense, lazy, useEffect, useMemo } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import { ArrowRight, CalendarDays, Droplets, FileSearch, Gavel, Globe2, Landmark, Mic, Music, Music2, Piano, Scale, ScrollText, Wind } from 'lucide-react';
+import { ArrowRight, CalendarDays, Droplets, FileSearch, Gavel, Globe2, GraduationCap, Landmark, Languages, Mic, Music, Music2, Piano, Scale, ScrollText, Wind } from 'lucide-react';
 
 const pages = import.meta.glob('./pages/*.{jsx,tsx}');
 
@@ -91,6 +91,22 @@ const PAGE_META = {
     Icon: Gavel,
     accent: '#e8dae0',
     accentText: '#8f6071',
+    group: 'research',
+  },
+  GermanLawCourseTimeline: {
+    name: '德文法學課程時序',
+    desc: '德文法學名著選讀一的歷年教師開課時間軸，領域著色與課綱摘要',
+    Icon: GraduationCap,
+    accent: '#ece5d5',
+    accentText: '#8b6f25',
+    group: 'research',
+  },
+  TranslationAtlas: {
+    name: '翻譯工程總覽',
+    desc: '德英中譯工程儀表板：判決、文學、書籍與法規的進度與公版全文',
+    Icon: Languages,
+    accent: '#d5e0e8',
+    accentText: '#246b8f',
     group: 'research',
   },
   ECFAResearch: {

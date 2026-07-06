@@ -1,0 +1,232 @@
+{
+  "generatedAt": "2026-07-06T06:48:53.016430Z",
+  "projects": [
+    {
+      "id": "BVerfGE",
+      "name": "BVerfGE 德國聯邦憲法法院判決",
+      "topic": "德國聯邦憲法法院判決中文全譯：墮胎二案、Sonderabgaben 特別公課系列",
+      "rights": "public",
+      "rightsReason": "德國聯邦憲法法院判決全文為官方文書，不受著作權限制",
+      "works": [
+        {
+          "title": "BVerfGE 39 1",
+          "sizeBytes": 1395367,
+          "mtime": "2026-07-06T06:23:29.644505Z",
+          "pdf": "/pdfs/translation/BVerfGE/BVerfGE_39_1_中文全譯.pdf"
+        },
+        {
+          "title": "BVerfGE 88 203",
+          "sizeBytes": 1620932,
+          "mtime": "2026-07-06T06:23:40.258346Z",
+          "pdf": "/pdfs/translation/BVerfGE/BVerfGE_88_203_中文全譯.pdf"
+        },
+        {
+          "title": "BVerfGE 55 274",
+          "sizeBytes": 1109690,
+          "mtime": "2026-07-06T06:23:46.342711Z",
+          "pdf": "/pdfs/translation/BVerfGE/BVerfGE_55_274_中文全譯.pdf"
+        },
+        {
+          "title": "BVerfGE 91 186",
+          "sizeBytes": 816026,
+          "mtime": "2026-07-06T06:23:50.577174Z",
+          "pdf": "/pdfs/translation/BVerfGE/BVerfGE_91_186_中文全譯.pdf"
+        },
+        {
+          "title": "BVerfGE 108 186",
+          "sizeBytes": 983048,
+          "mtime": "2026-07-06T06:23:55.216106Z",
+          "pdf": "/pdfs/translation/BVerfGE/BVerfGE_108_186_中文全譯.pdf"
+        }
+      ]
+    },
+    {
+      "id": "KarlKraus",
+      "name": "Karl Kraus 文學翻譯",
+      "topic": "詩歌散文選譯、《人類末日》劇作選譯、Sidonie 書信選譯",
+      "rights": "public",
+      "rightsReason": "Karl Kraus 1936 年歿，保護期已滿",
+      "works": [
+        {
+          "title": "Sidonie Briefe",
+          "sizeBytes": 1061219,
+          "mtime": "2026-07-05T13:32:56.004245Z",
+          "pdf": "/pdfs/translation/KarlKraus/Sidonie_Briefe_選譯.pdf"
+        },
+        {
+          "title": "LetzteTageDerMenschheit",
+          "sizeBytes": 2540344,
+          "mtime": "2026-07-05T13:32:39.257766Z",
+          "pdf": "/pdfs/translation/KarlKraus/LetzteTageDerMenschheit.pdf"
+        },
+        {
+          "title": "KarlKraus",
+          "sizeBytes": 2398136,
+          "mtime": "2026-07-05T13:32:33.480059Z",
+          "pdf": "/pdfs/translation/KarlKraus/KarlKraus_中文全譯.pdf"
+        }
+      ]
+    },
+    {
+      "id": "Borchert",
+      "name": "Wolfgang Borchert 廢墟文學",
+      "topic": "短篇小說、詩、《門外》劇作全譯",
+      "rights": "public",
+      "rightsReason": "Wolfgang Borchert 1947 年歿，保護期已滿",
+      "works": [
+        {
+          "title": "Borchert",
+          "sizeBytes": 1460522,
+          "mtime": "2026-07-05T13:32:59.618826Z",
+          "pdf": "/pdfs/translation/Borchert/Borchert_中文全譯.pdf"
+        }
+      ]
+    },
+    {
+      "id": "Jelinek",
+      "name": "Elfriede Jelinek 散文與戲劇",
+      "topic": "2004 年諾貝爾文學獎得主作品選譯，《Im Abseits》等",
+      "rights": "copyrighted",
+      "rightsReason": "Elfriede Jelinek 在世作家，原文仍受著作權保護",
+      "works": [
+        {
+          "title": "Jelinek",
+          "sizeBytes": 705992,
+          "mtime": "2026-07-01T16:47:33.543304Z"
+        }
+      ]
+    },
+    {
+      "id": "WangLiu",
+      "name": "王周路璐 × 劉宏敏",
+      "topic": "演講訪談英譯中全譯",
+      "rights": "copyrighted",
+      "rightsReason": "當代講者演講訪談，未取得公開全文授權",
+      "works": [
+        {
+          "title": "WangLiu",
+          "sizeBytes": 1171885,
+          "mtime": "2026-07-05T13:33:08.237857Z"
+        }
+      ]
+    },
+    {
+      "id": "AmericanSpeeches",
+      "name": "美國歷代重要演說文獻選譯",
+      "topic": "美國建國以來重要演說與文獻選譯，23 篇五部",
+      "rights": "copyrighted",
+      "rightsReason": "整包暫標 copyrighted：含 MLK 等版權受限篇目，待人工逐篇細分",
+      "works": [
+        {
+          "title": "AmericanSpeeches 美國歷代重要演說文獻選譯",
+          "sizeBytes": 897165,
+          "mtime": "2026-07-05T13:36:58.455850Z"
+        }
+      ]
+    },
+    {
+      "id": "Bücher/MomTest",
+      "name": "《The Mom Test》",
+      "topic": "英文商業書籍中文全譯",
+      "rights": "copyrighted",
+      "rightsReason": "當代商業書籍，原文仍受著作權保護",
+      "works": [
+        {
+          "title": "The Mom Test",
+          "sizeBytes": 647971,
+          "mtime": "2026-07-05T13:33:03.259931Z"
+        }
+      ]
+    },
+    {
+      "id": "Bücher/Boulding_Economics_as_Moral_Science",
+      "name": "Boulding《Economics as a Moral Science》",
+      "topic": "英文學術書籍中文全譯",
+      "rights": "copyrighted",
+      "rightsReason": "原文著作權狀態未逐一核實，暫標 copyrighted",
+      "works": [
+        {
+          "title": "Boulding Economics as Moral Science",
+          "sizeBytes": 158308,
+          "mtime": "2026-07-05T13:33:05.365442Z"
+        }
+      ]
+    },
+    {
+      "id": "Bücher/Sino_American_Taiwan_Diplomacy",
+      "name": "Sino-American Taiwan Diplomacy",
+      "topic": "美中台外交多視角回憶錄選譯（含原 Reagan 卷合併）",
+      "rights": "copyrighted",
+      "rightsReason": "當代外交回憶錄選譯，原文仍受著作權保護",
+      "works": [
+        {
+          "title": "Sino American Taiwan Diplomacy",
+          "sizeBytes": 1341868,
+          "mtime": "2026-07-05T13:30:35.845188Z"
+        }
+      ]
+    },
+    {
+      "id": "Umweltabgaben",
+      "name": "外國環境公課法規",
+      "topic": "外國環境公課法規素材翻譯（論文比較法用）",
+      "rights": "public",
+      "rightsReason": "外國環境公課法規為官方文書，不受著作權限制",
+      "works": [
+        {
+          "title": "Umweltabgaben 外國立法例翻譯",
+          "sizeBytes": 1565917,
+          "mtime": "2026-06-29T19:51:21.887496Z",
+          "pdf": "/pdfs/translation/Umweltabgaben/Umweltabgaben_外國立法例翻譯.pdf"
+        }
+      ]
+    },
+    {
+      "id": "UmgrStG",
+      "name": "奧地利企業重組稅制法",
+      "topic": "奧地利改組稅法（UmgrStG）骨架翻譯",
+      "rights": "public",
+      "rightsReason": "奧地利法規原文為官方文書，不受著作權限制",
+      "works": [
+        {
+          "title": "UmgrStG 奧地利企業重組稅制法",
+          "sizeBytes": 985972,
+          "mtime": "2026-07-05T13:09:06.807381Z",
+          "pdf": "/pdfs/translation/UmgrStG/UmgrStG_奧地利企業重組稅制法.pdf"
+        }
+      ]
+    },
+    {
+      "id": "Freud",
+      "name": "Sigmund Freud",
+      "topic": "待啟動子專案",
+      "rights": "public",
+      "rightsReason": "Sigmund Freud 1939 年歿，保護期已滿",
+      "works": []
+    },
+    {
+      "id": "Hofmannsthal",
+      "name": "Hugo von Hofmannsthal",
+      "topic": "待啟動子專案",
+      "rights": "public",
+      "rightsReason": "Hugo von Hofmannsthal 1929 年歿，保護期已滿",
+      "works": []
+    },
+    {
+      "id": "Schoenberg",
+      "name": "Arnold Schoenberg",
+      "topic": "待啟動子專案",
+      "rights": "public",
+      "rightsReason": "Arnold Schoenberg 1951 年歿，多數法域保護期已滿（歿後70年）",
+      "works": []
+    },
+    {
+      "id": "Upanishads",
+      "name": "Upanishads 奧義書",
+      "topic": "待啟動子專案",
+      "rights": "public",
+      "rightsReason": "古印度典籍，無著作權歸屬",
+      "works": []
+    }
+  ]
+}
