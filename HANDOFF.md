@@ -180,13 +180,16 @@ described here in detail — update this section once that work lands.
   unmarked). Footer-menu pollution in the data repo's 相關法令 field
   was fixed (74 cases lost a spurious 選舉與政黨 topic; snapshot
   resynced).
-- Site-wide font change (user decision 2026-07-07): `--font-display`
-  is now Erikas Farbband (typewriter Latin) + Huiwen Mincho (CJK).
-  Radio Newsman and GenWanMin2 faces are no longer referenced by any
-  token; their `@font-face` blocks and subset files are kept for now —
-  cleanup candidates. Subset char extraction now includes punctuation
-  and lives in `scripts/font-chars.mjs`, shared by rebuild +
-  validate so the two can't drift apart again.
+- Site-wide font change (2026-07-07, settled after one same-day
+  reversal): `--font-display` is Radio Newsman (Latin) + Huiwen
+  Mincho (CJK — replacing GenWanMin2 so headings and body share one
+  Mincho). Erikas Farbband was tried in the display slot and reverted:
+  its ink-ribbon texture reads as noise on the inline digits these
+  CJK headings are full of; it stays eyebrow-only. GenWanMin2 is no
+  longer referenced by any token; its `@font-face` block and subset
+  file are kept for now — cleanup candidate. Subset char extraction
+  now includes punctuation and lives in `scripts/font-chars.mjs`,
+  shared by rebuild + validate so the two can't drift apart again.
 - Downloads are two-stage by design: the page exports a manifest of
   official URLs; actual batch download happens in the data repo via
   `npm run fetch-batch -- --manifest <file>` (or `--tag 稅法`). The
