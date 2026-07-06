@@ -141,6 +141,28 @@ Present in the working tree as of 2026-07-04
 `src/data/fiscalEnforcementRisk.json`) but not yet committed or
 described here in detail — update this section once that work lands.
 
+### `ConstitutionalCourt` (landed 2026-07-06)
+
+- Imports `src/data/constitutionalCourt.json` (~1.8MB), a copied
+  snapshot owned by the sibling repo
+  `../constitutional-court-research-data` (GitHub mt019, private).
+  Update flow: in that repo run `npm run update` (incremental crawl of
+  cons.judicial.gov.tw) → `npm run sync` → here rebuild font subsets
+  if new glyphs appeared → `npm run build`.
+- Five tabs: 案件索引 (filters + full-text cards + CSV/JSON/BibTeX/
+  引註/manifest export), 時間軸, 大法官, 意見書圖譜 (SVG circular
+  co-sign network, no chart lib), 資料說明.
+- Downloads are two-stage by design: the page exports a manifest of
+  official URLs; actual batch download happens in the data repo via
+  `npm run fetch-batch -- --manifest <file>` (or `--tag 稅法`). The
+  frontend never proxies or hosts official files.
+- Chart categorical palette `#a84f6e / #5a5fb0 / #3f7d44` was
+  validated with the dataviz skill's validator against surface
+  `#fbf7f4` — don't swap hues casually.
+- `scripts/validate-font-coverage.mjs` walks `src/` with pure node
+  (no ripgrep): this machine has no real `rg` binary — the shell `rg`
+  is Claude Code's wrapper, invisible to node's spawn.
+
 ## Canvas home entry
 
 Homepage is grouped by page type, not the old broad
