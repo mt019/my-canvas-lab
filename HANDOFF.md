@@ -152,6 +152,21 @@ described here in detail — update this section once that work lands.
 - Five tabs: 案件索引 (filters + full-text cards + CSV/JSON/BibTeX/
   引註/manifest export), 時間軸, 大法官, 意見書圖譜 (SVG circular
   co-sign network, no chart lib), 資料說明.
+- 2026-07-06 update: opinion parsing in the data repo was overhauled
+  (抄本 bundled-PDF filenames expanded into per-opinion records and
+  deduped against standalone PDFs; compound types normalized; names
+  joined by 及/與/分別 no longer dropped). New snapshot fields the page
+  now consumes: `子主題` (tax-law subtopics; topic select is
+  two-level with `└` indented entries), `審查基準` (review-standard
+  machine tag, new filter + card badge), `參與大法官`/`審判長`
+  (judgments/rulings only — 釋字 pages have no roster; needs the
+  justices-roster backfill), `收於抄本` (opinion only exists inside a
+  bundled 抄本 PDF). Timeline tab gained two hand-rolled SVG heatmaps
+  (主題×年代 5-year bins, 主題×審查結論 matrix) using a single-hue
+  plum sequential ramp — magnitude encoding, not categorical, so the
+  categorical palette note below doesn't apply to them. Rule docs +
+  how-to-rerun live in the data repo:
+  `docs/意見書解析與標籤規則.md`.
 - Downloads are two-stage by design: the page exports a manifest of
   official URLs; actual batch download happens in the data repo via
   `npm run fetch-batch -- --manifest <file>` (or `--tag 稅法`). The
@@ -180,6 +195,18 @@ wall of rounded cards, no count-heavy dashboard blocks. (This is a
 logical/`PAGE_META.group` grouping for the homepage display, separate
 from the question of whether `src/pages/` should be physically split
 into subfolders — see "Declined" below; the two aren't in tension.)
+
+## Design system (tokens + shared components)
+
+Single source of truth: `src/styles/tokens.css` (plain CSS custom properties,
+copy-pastable to MkDocs extra.css / vanilla projects). Tailwind reads it via
+`tailwind.config.js` theme.extend. Shared components in `src/components/`:
+LangSwitch/useLang (bilingual, dict keyed by Chinese source string),
+FontSizeControl/useFontScale (container-level `--fs` multiplier, prose only),
+PageShell, Eyebrow. Full spec, palette registry, and migration state:
+`docs/DESIGN.md`. `npm run validate:tokens` (in build) blocks bare hex in
+migrated files; `scripts/design-token-exceptions.txt` is the shrink-only
+list of unmigrated files.
 
 ## Font system (stable, don't re-derive)
 

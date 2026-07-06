@@ -13,12 +13,67 @@ import {
 } from 'lucide-react';
 import data from '../data/constitutionalCourt.json';
 
+const CC_VARS = { // token-exempt
+  '--cc-accent': '#8f6071',
+  '--cc-line': '#eadde2',
+  '--cc-eyebrow': '#a77b89',
+  '--cc-ink-soft': '#74636a',
+  '--cc-ink-strong': '#4b3b43',
+  '--cc-title-ink': '#45343c',
+  '--cc-highlight': '#a84f6e',
+  '--cc-ink-mid': '#5b4e55',
+  '--cc-border': '#e3d5da',
+  '--cc-link-hover': '#5f3f4b',
+  '--cc-link-underline': '#d8b7c2',
+  '--cc-hover-bg': '#f7edf0',
+  '--cc-track': '#f0e2e7',
+  '--cc-blue-ink': '#615982',
+  '--cc-type-judgment': '#5a5fb0',
+  '--cc-ink': '#3f3339',
+  '--cc-bg': '#fbf8f9',
+  '--cc-axis-text': '#8d7e85',
+  '--cc-table-head-ink': '#7f5b69',
+  '--cc-body-text': '#6f6369',
+  '--cc-ink-heavy': '#44343d',
+  '--cc-blue-ink-hover': '#3f3a5e',
+  '--cc-node-fill': '#fff',
+  '--cc-heat-text-light': '#fdf7f9',
+  '--cc-opinion-bg': '#f9f2f4',
+  '--cc-heat-zero': '#f7f3f4',
+  '--cc-badge-red-bg': '#f5dfe3',
+  '--cc-badge-gold-bg': '#f2e8d9',
+  '--cc-badge-plum-bg': '#f2e3e7',
+  '--cc-tab-active-bg': '#f1e3e8',
+  '--cc-row-border': '#f0e3e8',
+  '--cc-badge-slate-bg': '#eef1f2',
+  '--cc-badge-green-bg': '#e8efe5',
+  '--cc-badge-blue-bg': '#e8e5f1',
+  '--cc-table-border': '#e6ded2',
+  '--cc-node-related-fill': '#e3b6c4',
+  '--cc-edge-line': '#c9b3bc',
+  '--cc-dim-text': '#c4b4ba',
+  '--cc-placeholder': '#b09aa2',
+  '--cc-icon': '#9b6b7b',
+  '--cc-eyebrow-header': '#987483',
+  '--cc-badge-red-ink': '#984f62',
+  '--cc-badge-plum-ink': '#945d70',
+  '--cc-badge-gold-ink': '#8a6d3b',
+  '--cc-tab-inactive-text': '#806b74',
+  '--cc-figure-note': '#7d7076',
+  '--cc-tab-active-text': '#704c5a',
+  '--cc-heat-text-dark': '#6d5a62',
+  '--cc-badge-green-ink': '#566d50',
+  '--cc-badge-slate-ink': '#52616a',
+  '--cc-type-ruling': '#3f7d44',
+  '--cc-heading': '#2f2a2d',
+};
+
 const docs = data.文件;
 const justices = data.大法官;
 const coSign = data.共同具名;
 const citeEdges = data.引用網絡;
 
-const TYPE_COLOR = { 解釋: '#a84f6e', 判決: '#5a5fb0', 實體裁定: '#3f7d44' };
+const TYPE_COLOR = { 解釋: 'var(--cc-highlight)', 判決: 'var(--cc-type-judgment)', 實體裁定: 'var(--cc-type-ruling)' };
 
 const OUTCOME_TONE = {
   違憲: 'red',
@@ -28,6 +83,8 @@ const OUTCOME_TONE = {
   '其他/待人工': 'slate',
   未分類: 'slate',
 };
+
+const STANDARD_TONE = { 嚴格: 'red', 中度: 'gold', 寬鬆: 'green', '多重（待人工）': 'slate' };
 
 const tabs = [
   { id: 'index', label: '案件索引', icon: Search },
@@ -39,12 +96,12 @@ const tabs = [
 
 function Badge({ children, tone = 'slate' }) {
   const colors = {
-    slate: ['#eef1f2', '#52616a'],
-    gold: ['#f2e8d9', '#8a6d3b'],
-    green: ['#e8efe5', '#566d50'],
-    red: ['#f5dfe3', '#984f62'],
-    blue: ['#e8e5f1', '#615982'],
-    plum: ['#f2e3e7', '#945d70'],
+    slate: ['var(--cc-badge-slate-bg)', 'var(--cc-badge-slate-ink)'],
+    gold: ['var(--cc-badge-gold-bg)', 'var(--cc-badge-gold-ink)'],
+    green: ['var(--cc-badge-green-bg)', 'var(--cc-badge-green-ink)'],
+    red: ['var(--cc-badge-red-bg)', 'var(--cc-badge-red-ink)'],
+    blue: ['var(--cc-badge-blue-bg)', 'var(--cc-blue-ink)'],
+    plum: ['var(--cc-badge-plum-bg)', 'var(--cc-badge-plum-ink)'],
   };
   const [bg, color] = colors[tone] || colors.slate;
   return (
@@ -122,12 +179,12 @@ function OpinionLine({ op }) {
     <div className="flex flex-wrap items-center gap-2 py-1">
       <Badge tone={op.類型.includes('不同') ? 'red' : op.類型.includes('協同') ? 'blue' : 'slate'}>{op.類型}</Badge>
       {op.作者類別 !== '大法官' ? <Badge tone="slate">{op.作者類別}</Badge> : null}
-      <span className="text-[12px] font-bold text-[#4b3b43]">{who}</span>
+      <span className="text-[12px] font-bold text-[var(--cc-ink-strong)]">{who}</span>
       <a
         href={op.下載網址}
         target="_blank"
         rel="noreferrer"
-        className="inline-flex items-center gap-1 text-[11px] text-[#8f6071] underline decoration-[#d8b7c2] underline-offset-2 hover:text-[#5f3f4b]"
+        className="inline-flex items-center gap-1 text-[11px] text-[var(--cc-accent)] underline decoration-[var(--cc-link-underline)] underline-offset-2 hover:text-[var(--cc-link-hover)]"
       >
         官方 PDF <ExternalLink size={11} />
       </a>
@@ -137,17 +194,17 @@ function OpinionLine({ op }) {
 
 function CaseCard({ d }) {
   return (
-    <article className="border-t border-[#eadde2] py-5">
+    <article className="border-t border-[var(--cc-line)] py-5">
       <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
         <a
           href={d.官方頁}
           target="_blank"
           rel="noreferrer"
-          className="text-[16px] font-bold text-[#3f3339] underline decoration-[#d8b7c2] underline-offset-4 hover:text-[#8f6071]"
+          className="text-[16px] font-bold text-[var(--cc-ink)] underline decoration-[var(--cc-link-underline)] underline-offset-4 hover:text-[var(--cc-accent)]"
         >
           {d.字號}
         </a>
-        <span className="text-[12px] text-[#7d7076]">{d.日期}</span>
+        <span className="text-[12px] text-[var(--cc-figure-note)]">{d.日期}</span>
         <span className="inline-flex h-2.5 w-2.5 rounded-sm" style={{ background: TYPE_COLOR[d.類型] }} aria-hidden />
         <Badge tone="plum">{d.類型}{d.子類 ? `・${d.子類}` : ''}</Badge>
         {d.審查結論?.結論 && d.審查結論.結論 !== '未分類' ? (
@@ -155,28 +212,36 @@ function CaseCard({ d }) {
             {d.審查結論.結論 === '其他/待人工' ? '結論待人工判讀' : d.審查結論.結論}
           </Badge>
         ) : null}
+        {d.審查基準 && d.審查基準.基準 !== '未明示' ? (
+          <Badge tone={STANDARD_TONE[d.審查基準.基準] ?? 'slate'}>
+            {d.審查基準.基準 === '多重（待人工）' ? '審查基準待人工' : `${d.審查基準.基準}審查`}
+          </Badge>
+        ) : null}
         {d.主題.map((t) => (
           <Badge key={t} tone="blue">{t}</Badge>
+        ))}
+        {(d.子主題 ?? []).filter((t) => t !== '稅法：未細分').map((t) => (
+          <Badge key={t} tone="plum">{t}</Badge>
         ))}
       </div>
 
       {d.爭點 ? (
-        <p className="mt-2 max-w-4xl text-[13px] font-bold leading-relaxed text-[#44343d]">{d.爭點}</p>
+        <p className="mt-2 max-w-4xl text-[13px] font-bold leading-relaxed text-[var(--cc-ink-heavy)]">{d.爭點}</p>
       ) : null}
       {d.主文 ? (
-        <p className="mt-2 max-w-4xl whitespace-pre-line text-[12.5px] leading-relaxed text-[#5b4e55]">{d.主文}</p>
+        <p className="mt-2 max-w-4xl whitespace-pre-line text-[12.5px] leading-relaxed text-[var(--cc-ink-mid)]">{d.主文}</p>
       ) : null}
 
       {(d.憲法依據?.length || d.系爭法令?.length) ? (
-        <div className="mt-3 flex flex-wrap gap-x-6 gap-y-1 text-[11px] text-[#74636a]">
+        <div className="mt-3 flex flex-wrap gap-x-6 gap-y-1 text-[11px] text-[var(--cc-ink-soft)]">
           {d.憲法依據?.length ? (
             <span>
-              <strong className="text-[#8f6071]">憲法依據</strong>　{d.憲法依據.join('、')}
+              <strong className="text-[var(--cc-accent)]">憲法依據</strong>　{d.憲法依據.join('、')}
             </span>
           ) : null}
           {d.系爭法令?.length ? (
             <span>
-              <strong className="text-[#8f6071]">系爭法令</strong>　{d.系爭法令.slice(0, 6).join('、')}
+              <strong className="text-[var(--cc-accent)]">系爭法令</strong>　{d.系爭法令.slice(0, 6).join('、')}
               {d.系爭法令.length > 6 ? `　等 ${d.系爭法令.length} 項` : ''}
             </span>
           ) : null}
@@ -184,23 +249,23 @@ function CaseCard({ d }) {
       ) : null}
 
       {(d.主筆 || d.參與大法官?.length) ? (
-        <div className="mt-2 text-[11px] text-[#74636a]">
+        <div className="mt-2 text-[11px] text-[var(--cc-ink-soft)]">
           {d.主筆 ? (
             <span className="mr-4">
-              <strong className="text-[#8f6071]">主筆</strong>　{d.主筆}
+              <strong className="text-[var(--cc-accent)]">主筆</strong>　{d.主筆}
             </span>
           ) : null}
           {d.參與大法官?.length ? (
             <span>
-              <strong className="text-[#8f6071]">參與大法官</strong>　{d.參與大法官.join('、')}
+              <strong className="text-[var(--cc-accent)]">參與大法官</strong>　{d.參與大法官.join('、')}
             </span>
           ) : null}
         </div>
       ) : null}
 
       {d.意見書.length ? (
-        <div className="mt-3 rounded-lg bg-[#f9f2f4] px-3 py-2">
-          <p className="mb-1 text-[10px] font-bold uppercase tracking-[0.08em] text-[#a77b89]">意見書 {d.意見書.length} 份</p>
+        <div className="mt-3 rounded-lg bg-[var(--cc-opinion-bg)] px-3 py-2">
+          <p className="mb-1 text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">意見書 {d.意見書.length} 份</p>
           {d.意見書.map((op, i) => (
             <OpinionLine key={i} op={op} />
           ))}
@@ -208,11 +273,11 @@ function CaseCard({ d }) {
       ) : null}
 
       <div className="mt-3 flex flex-wrap items-center gap-4 text-[11px]">
-        <a href={d.官方頁} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 font-bold text-[#8f6071] hover:text-[#5f3f4b]">
+        <a href={d.官方頁} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 font-bold text-[var(--cc-accent)] hover:text-[var(--cc-link-hover)]">
           官方頁面（全文、理由書與下載） <ExternalLink size={11} />
         </a>
         {d.立場表下載 ? (
-          <a href={d.立場表下載} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 font-bold text-[#615982] hover:text-[#3f3a5e]">
+          <a href={d.立場表下載} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 font-bold text-[var(--cc-blue-ink)] hover:text-[var(--cc-blue-ink-hover)]">
             主文立場表 PDF <ExternalLink size={11} />
           </a>
         ) : null}
@@ -223,12 +288,12 @@ function CaseCard({ d }) {
 
 function Select({ label, value, onChange, options }) {
   return (
-    <label className="flex items-center gap-1.5 text-[11px] font-bold text-[#74636a]">
+    <label className="flex items-center gap-1.5 text-[11px] font-bold text-[var(--cc-ink-soft)]">
       {label}
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="rounded-md border border-[#e3d5da] bg-white px-2 py-1.5 text-[12px] font-bold text-[#4b3b43] focus:outline-none focus:ring-2 focus:ring-[#d8b7c2]"
+        className="rounded-md border border-[var(--cc-border)] bg-white px-2 py-1.5 text-[12px] font-bold text-[var(--cc-ink-strong)] focus:outline-none focus:ring-2 focus:ring-[var(--cc-link-underline)]"
       >
         {options.map(([v, l]) => (
           <option key={v} value={v}>{l}</option>
@@ -242,14 +307,27 @@ function IndexView() {
   const [type, setType] = useState('全部');
   const [topic, setTopic] = useState('全部');
   const [outcome, setOutcome] = useState('全部');
+  const [standard, setStandard] = useState('全部');
   const [decade, setDecade] = useState('全部');
   const [q, setQ] = useState('');
   const [limit, setLimit] = useState(30);
 
-  const topics = useMemo(() => {
+  // 主題兩級選單：大類依件數排序；有子主題的大類（目前是稅法）之後緊接其子主題（縮排顯示）
+  const { topicOptions, subtopicSet } = useMemo(() => {
     const c = new Map();
-    for (const d of docs) for (const t of d.主題) c.set(t, (c.get(t) ?? 0) + 1);
-    return [...c.entries()].sort((a, b) => b[1] - a[1]);
+    const sub = new Map();
+    for (const d of docs) {
+      for (const t of d.主題) c.set(t, (c.get(t) ?? 0) + 1);
+      for (const s of d.子主題 ?? []) sub.set(s, (sub.get(s) ?? 0) + 1);
+    }
+    const opts = [];
+    for (const [t, n] of [...c.entries()].sort((a, b) => b[1] - a[1])) {
+      opts.push([t, `${t}（${n}）`]);
+      if (t === '稅法') {
+        for (const [s, m] of [...sub.entries()].sort((a, b) => b[1] - a[1])) opts.push([s, `└ ${s}（${m}）`]);
+      }
+    }
+    return { topicOptions: opts, subtopicSet: new Set(sub.keys()) };
   }, []);
 
   const decades = useMemo(() => {
@@ -261,46 +339,50 @@ function IndexView() {
     const kw = q.trim();
     return docs.filter((d) => {
       if (type !== '全部' && d.類型 !== type) return false;
-      if (topic !== '全部' && !d.主題.includes(topic)) return false;
+      if (topic !== '全部') {
+        if (subtopicSet.has(topic) ? !d.子主題?.includes(topic) : !d.主題.includes(topic)) return false;
+      }
       if (outcome !== '全部') {
         const c = d.審查結論?.結論 ?? '未分類';
         if (outcome === '違憲（含定期失效）' ? !c.startsWith('違憲') : c !== outcome) return false;
       }
+      if (standard !== '全部' && (d.審查基準?.基準 ?? '') !== standard) return false;
       if (decade !== '全部' && d.日期?.slice(0, 3) !== decade.slice(0, 3)) return false;
       if (kw && !(d.字號.includes(kw) || d.爭點.includes(kw) || d.主文.includes(kw) || d.系爭法令?.some((x) => x.includes(kw)) || d.原理原則.some((x) => x.includes(kw)))) return false;
       return true;
     });
-  }, [type, topic, outcome, decade, q]);
+  }, [type, topic, outcome, standard, decade, q, subtopicSet]);
 
   const shown = filtered.slice(0, limit);
   const stamp = new Date().toISOString().slice(0, 10);
 
   return (
     <div>
-      <div className="sticky top-[49px] z-10 -mx-4 border-b border-[#eadde2] bg-[#fbf8f9]/95 px-4 py-3 backdrop-blur sm:-mx-6 sm:px-6">
+      <div className="sticky top-[49px] z-10 -mx-4 border-b border-[var(--cc-line)] bg-[var(--cc-bg)]/95 px-4 py-3 backdrop-blur sm:-mx-6 sm:px-6">
         <div className="flex flex-wrap items-center gap-3">
-          <label className="flex min-w-[200px] flex-1 items-center gap-2 rounded-md border border-[#e3d5da] bg-white px-2.5 py-1.5">
-            <Search size={13} className="text-[#a77b89]" />
+          <label className="flex min-w-[200px] flex-1 items-center gap-2 rounded-md border border-[var(--cc-border)] bg-white px-2.5 py-1.5">
+            <Search size={13} className="text-[var(--cc-eyebrow)]" />
             <input
               value={q}
               onChange={(e) => { setQ(e.target.value); setLimit(30); }}
               placeholder="搜尋字號、爭點、主文、系爭法令、原理原則"
-              className="w-full bg-transparent text-[12px] text-[#4b3b43] placeholder-[#b09aa2] focus:outline-none"
+              className="w-full bg-transparent text-[12px] text-[var(--cc-ink-strong)] placeholder-[var(--cc-placeholder)] focus:outline-none"
             />
           </label>
           <Select label="類型" value={type} onChange={(v) => { setType(v); setLimit(30); }} options={[['全部', '全部'], ['解釋', '釋字解釋'], ['判決', '憲法法庭判決'], ['實體裁定', '實體裁定']]} />
-          <Select label="主題" value={topic} onChange={(v) => { setTopic(v); setLimit(30); }} options={[['全部', '全部'], ...topics.map(([t, n]) => [t, `${t}（${n}）`])]} />
+          <Select label="主題" value={topic} onChange={(v) => { setTopic(v); setLimit(30); }} options={[['全部', '全部'], ...topicOptions]} />
           <Select label="結論" value={outcome} onChange={(v) => { setOutcome(v); setLimit(30); }} options={[['全部', '全部'], ['違憲（含定期失效）', '違憲（含定期失效）'], ['合憲', '合憲'], ['其他/待人工', '待人工判讀']]} />
+          <Select label="審查基準" value={standard} onChange={(v) => { setStandard(v); setLimit(30); }} options={[['全部', '全部'], ['嚴格', '嚴格'], ['中度', '中度'], ['寬鬆', '寬鬆'], ['多重（待人工）', '多重（待人工）'], ['未明示', '未明示']]} />
           <Select label="年代" value={decade} onChange={(v) => { setDecade(v); setLimit(30); }} options={[['全部', '全部'], ...decades.map((d) => [d, `${d} 年代`])]} />
         </div>
-        <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-[#74636a]">
-          <span className="font-bold text-[#4b3b43]">符合 {filtered.length} 件</span>
-          <span className="text-[#a77b89]">匯出目前篩選集：</span>
-          <button onClick={() => downloadFile(toCsv(filtered), `憲法案件_${stamp}.csv`, 'text/csv')} className="inline-flex items-center gap-1 font-bold text-[#8f6071] hover:text-[#5f3f4b]"><Download size={11} />CSV</button>
-          <button onClick={() => downloadFile(JSON.stringify(filtered, null, 1), `憲法案件_${stamp}.json`, 'application/json')} className="inline-flex items-center gap-1 font-bold text-[#8f6071] hover:text-[#5f3f4b]"><Download size={11} />JSON</button>
-          <button onClick={() => downloadFile(toBibtex(filtered), `憲法案件_${stamp}.bib`, 'text/plain')} className="inline-flex items-center gap-1 font-bold text-[#8f6071] hover:text-[#5f3f4b]"><Download size={11} />BibTeX</button>
-          <button onClick={() => downloadFile(filtered.map(citeString).join('\n'), `引註清單_${stamp}.txt`, 'text/plain')} className="inline-flex items-center gap-1 font-bold text-[#8f6071] hover:text-[#5f3f4b]"><Download size={11} />引註清單</button>
-          <button onClick={() => downloadFile(toManifest(filtered), `下載清單_${stamp}.json`, 'application/json')} className="inline-flex items-center gap-1 font-bold text-[#615982] hover:text-[#3f3a5e]"><Download size={11} />批次下載清單</button>
+        <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-[var(--cc-ink-soft)]">
+          <span className="font-bold text-[var(--cc-ink-strong)]">符合 {filtered.length} 件</span>
+          <span className="text-[var(--cc-eyebrow)]">匯出目前篩選集：</span>
+          <button onClick={() => downloadFile(toCsv(filtered), `憲法案件_${stamp}.csv`, 'text/csv')} className="inline-flex items-center gap-1 font-bold text-[var(--cc-accent)] hover:text-[var(--cc-link-hover)]"><Download size={11} />CSV</button>
+          <button onClick={() => downloadFile(JSON.stringify(filtered, null, 1), `憲法案件_${stamp}.json`, 'application/json')} className="inline-flex items-center gap-1 font-bold text-[var(--cc-accent)] hover:text-[var(--cc-link-hover)]"><Download size={11} />JSON</button>
+          <button onClick={() => downloadFile(toBibtex(filtered), `憲法案件_${stamp}.bib`, 'text/plain')} className="inline-flex items-center gap-1 font-bold text-[var(--cc-accent)] hover:text-[var(--cc-link-hover)]"><Download size={11} />BibTeX</button>
+          <button onClick={() => downloadFile(filtered.map(citeString).join('\n'), `引註清單_${stamp}.txt`, 'text/plain')} className="inline-flex items-center gap-1 font-bold text-[var(--cc-accent)] hover:text-[var(--cc-link-hover)]"><Download size={11} />引註清單</button>
+          <button onClick={() => downloadFile(toManifest(filtered), `下載清單_${stamp}.json`, 'application/json')} className="inline-flex items-center gap-1 font-bold text-[var(--cc-blue-ink)] hover:text-[var(--cc-blue-ink-hover)]"><Download size={11} />批次下載清單</button>
         </div>
       </div>
 
@@ -311,7 +393,7 @@ function IndexView() {
         <div className="py-6 text-center">
           <button
             onClick={() => setLimit(limit + 50)}
-            className="rounded-lg border border-[#e3d5da] bg-white px-5 py-2 text-[12px] font-bold text-[#8f6071] hover:bg-[#f7edf0]"
+            className="rounded-lg border border-[var(--cc-border)] bg-white px-5 py-2 text-[12px] font-bold text-[var(--cc-accent)] hover:bg-[var(--cc-hover-bg)]"
           >
             顯示更多（尚有 {filtered.length - limit} 件）
           </button>
@@ -353,10 +435,10 @@ function TimelineView() {
 
   return (
     <div>
-      <section className="border-t border-[#eadde2] py-5">
-        <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[#a77b89]">年度密度</p>
-        <h2 className="text-base font-bold text-[#45343c]">每年作成件數（1949–{y1}）</h2>
-        <div className="mt-1 flex flex-wrap gap-4 text-[11px] text-[#74636a]">
+      <section className="border-t border-[var(--cc-line)] py-5">
+        <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">年度密度</p>
+        <h2 className="text-base font-bold text-[var(--cc-title-ink)]">每年作成件數（1949–{y1}）</h2>
+        <div className="mt-1 flex flex-wrap gap-4 text-[11px] text-[var(--cc-ink-soft)]">
           {Object.entries(TYPE_COLOR).map(([k, c]) => (
             <span key={k} className="inline-flex items-center gap-1.5">
               <span className="h-2.5 w-2.5 rounded-sm" style={{ background: c }} />
@@ -382,12 +464,12 @@ function TimelineView() {
                     return <rect key={k} x={1.5} y={H - acc} width={W - 3} height={Math.max(h - 2, 1)} rx={2} fill={TYPE_COLOR[k]} opacity={hover && hover.y !== y ? 0.45 : 1} />;
                   })}
                   {y % 10 === 0 ? (
-                    <text x={W / 2} y={H + 16} textAnchor="middle" fontSize={10} fill="#8d7e85">{y}</text>
+                    <text x={W / 2} y={H + 16} textAnchor="middle" fontSize={10} fill="var(--cc-axis-text)">{y}</text>
                   ) : null}
                   {y === 2022 ? (
                     <>
-                      <line x1={0} y1={6} x2={0} y2={H} stroke="#5a5fb0" strokeDasharray="3 3" strokeWidth={1} />
-                      <text x={3} y={12} fontSize={9} fill="#5a5fb0">憲訴法施行</text>
+                      <line x1={0} y1={6} x2={0} y2={H} stroke="var(--cc-type-judgment)" strokeDasharray="3 3" strokeWidth={1} />
+                      <text x={3} y={12} fontSize={9} fill="var(--cc-type-judgment)">憲訴法施行</text>
                     </>
                   ) : null}
                 </g>
@@ -395,38 +477,172 @@ function TimelineView() {
             })}
           </svg>
           {hover ? (
-            <div className="pointer-events-none absolute left-4 top-1 rounded-md border border-[#e3d5da] bg-white px-3 py-1.5 text-[11px] shadow-sm">
-              <strong className="text-[#4b3b43]">{hover.y} 年</strong>　共 {hover.total} 件
+            <div className="pointer-events-none absolute left-4 top-1 rounded-md border border-[var(--cc-border)] bg-white px-3 py-1.5 text-[11px] shadow-sm">
+              <strong className="text-[var(--cc-ink-strong)]">{hover.y} 年</strong>　共 {hover.total} 件
               {hover.解釋 ? `　解釋 ${hover.解釋}` : ''}{hover.判決 ? `　判決 ${hover.判決}` : ''}{hover.實體裁定 ? `　裁定 ${hover.實體裁定}` : ''}
             </div>
           ) : null}
         </div>
-        <p className="mt-1 max-w-3xl text-[11px] leading-relaxed text-[#74636a]">
+        <p className="mt-1 max-w-3xl text-[11px] leading-relaxed text-[var(--cc-ink-soft)]">
           2022 年 1 月 4 日憲法訴訟法施行後，大法官解釋制度走入歷史，改由憲法法庭以判決與裁定行使職權；2024 年底起因大法官人數不足，作成件數明顯下降。
         </p>
       </section>
 
-      <section className="border-t border-[#eadde2] py-5">
-        <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[#a77b89]">引用網絡</p>
-        <h2 className="text-base font-bold text-[#45343c]">被後案引用最多的解釋（官方「相關法令」欄互引統計）</h2>
-        <div className="mt-3 max-w-3xl divide-y divide-[#eadde2]">
+      <TopicHeatmaps />
+
+      <section className="border-t border-[var(--cc-line)] py-5">
+        <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">引用網絡</p>
+        <h2 className="text-base font-bold text-[var(--cc-title-ink)]">被後案引用最多的解釋（官方「相關法令」欄互引統計）</h2>
+        <div className="mt-3 max-w-3xl divide-y divide-[var(--cc-line)]">
           {cited.map(([no, n]) => {
             const d = docByNo.get(no);
             return (
               <div key={no} className="grid items-baseline gap-2 py-2 sm:grid-cols-[130px_56px_1fr]">
                 {d ? (
-                  <a href={d.官方頁} target="_blank" rel="noreferrer" className="text-[12.5px] font-bold text-[#8f6071] underline decoration-[#d8b7c2] underline-offset-2">{no}</a>
+                  <a href={d.官方頁} target="_blank" rel="noreferrer" className="text-[12.5px] font-bold text-[var(--cc-accent)] underline decoration-[var(--cc-link-underline)] underline-offset-2">{no}</a>
                 ) : (
-                  <span className="text-[12.5px] font-bold text-[#4b3b43]">{no}</span>
+                  <span className="text-[12.5px] font-bold text-[var(--cc-ink-strong)]">{no}</span>
                 )}
-                <span className="text-[12px] font-bold text-[#4b3b43]">{n} 次</span>
-                <span className="text-[11.5px] leading-relaxed text-[#74636a]">{d?.爭點?.slice(0, 56) ?? ''}</span>
+                <span className="text-[12px] font-bold text-[var(--cc-ink-strong)]">{n} 次</span>
+                <span className="text-[11.5px] leading-relaxed text-[var(--cc-ink-soft)]">{d?.爭點?.slice(0, 56) ?? ''}</span>
               </div>
             );
           })}
         </div>
       </section>
     </div>
+  );
+}
+
+// 熱圖單一色相深淺（量的編碼）：頁面主色 plum，sqrt 比例讓低值仍可辨
+const heatFill = (v, max) => (v ? `hsl(338 34% ${94 - 58 * Math.sqrt(v / max)}%)` : 'var(--cc-heat-zero)');
+
+function TopicHeatmaps() {
+  const [cell, setCell] = useState(null);
+
+  const { topics, bins, grid, maxCell } = useMemo(() => {
+    const counts = new Map();
+    for (const d of docs) for (const t of d.主題) counts.set(t, (counts.get(t) ?? 0) + 1);
+    const topics = [...counts.entries()].sort((a, b) => b[1] - a[1]).map(([t]) => t);
+    const years = docs.map((d) => d.日期 && Number(d.日期.slice(0, 4))).filter(Boolean);
+    const b0 = Math.floor(Math.min(...years) / 5) * 5;
+    const b1 = Math.floor(Math.max(...years) / 5) * 5;
+    const bins = [];
+    for (let b = b0; b <= b1; b += 5) bins.push(b);
+    const grid = new Map();
+    for (const d of docs) {
+      if (!d.日期) continue;
+      const b = Math.floor(Number(d.日期.slice(0, 4)) / 5) * 5;
+      for (const t of d.主題) {
+        const k = `${t}|${b}`;
+        grid.set(k, (grid.get(k) ?? 0) + 1);
+      }
+    }
+    return { topics, bins, grid, maxCell: Math.max(...grid.values()) };
+  }, []);
+
+  const outcomes = ['違憲', '違憲定期失效', '合憲', '其他/待人工'];
+  const { oGrid, oMax } = useMemo(() => {
+    const g = new Map();
+    for (const d of docs) {
+      let c = d.審查結論?.結論 ?? '未分類';
+      if (c === '違憲即失效') c = '違憲';
+      if (c === '未分類') c = '其他/待人工';
+      for (const t of d.主題) g.set(`${t}|${c}`, (g.get(`${t}|${c}`) ?? 0) + 1);
+    }
+    return { oGrid: g, oMax: Math.max(...g.values()) };
+  }, []);
+
+  const LABEL_W = 130;
+  const CW = 17;
+  const RH = 17;
+  const H = topics.length * RH;
+
+  return (
+    <>
+      <section className="border-t border-[var(--cc-line)] py-5">
+        <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">主題×年代</p>
+        <h2 className="text-base font-bold text-[var(--cc-title-ink)]">哪個年代在吵哪些問題（每 5 年一格，色深＝件數）</h2>
+        <div className="relative mt-3 overflow-x-auto pb-2">
+          <svg width={LABEL_W + bins.length * CW + 12} height={H + 26} role="img" aria-label="主題與年代分布熱圖">
+            {topics.map((t, r) => (
+              <text key={t} x={LABEL_W - 8} y={r * RH + RH / 2 + 3.5} textAnchor="end" fontSize={10.5} fill="var(--cc-ink-mid)">{t}</text>
+            ))}
+            {bins.map((b, c) => (b % 10 === 0 ? (
+              <text key={b} x={LABEL_W + c * CW + CW / 2} y={H + 16} textAnchor="middle" fontSize={9.5} fill="var(--cc-axis-text)">{b}</text>
+            ) : null))}
+            {topics.map((t, r) => bins.map((b, c) => {
+              const v = grid.get(`${t}|${b}`) ?? 0;
+              return (
+                <rect
+                  key={`${t}${b}`}
+                  x={LABEL_W + c * CW} y={r * RH}
+                  width={CW - 2} height={RH - 2} rx={3}
+                  fill={heatFill(v, maxCell)}
+                  stroke={cell?.t === t && cell?.b === b ? 'var(--cc-highlight)' : 'none'}
+                  strokeWidth={1.5}
+                  onMouseEnter={() => setCell({ t, b, v, kind: 'year' })}
+                  onMouseLeave={() => setCell(null)}
+                />
+              );
+            }))}
+          </svg>
+          {cell?.kind === 'year' ? (
+            <div className="pointer-events-none absolute left-4 top-0 rounded-md border border-[var(--cc-border)] bg-white px-3 py-1.5 text-[11px] shadow-sm">
+              <strong className="text-[var(--cc-ink-strong)]">{cell.t}</strong>　{cell.b}–{cell.b + 4} 年　<strong className="text-[var(--cc-accent)]">{cell.v} 件</strong>
+            </div>
+          ) : null}
+        </div>
+        <div className="mt-1 flex items-center gap-2 text-[10.5px] text-[var(--cc-ink-soft)]">
+          少
+          {[0.08, 0.25, 0.5, 0.75, 1].map((f) => (
+            <span key={f} className="inline-block h-3 w-3 rounded-[3px]" style={{ background: heatFill(f * maxCell, maxCell) }} />
+          ))}
+          多（單格最高 {maxCell} 件）
+        </div>
+      </section>
+
+      <section className="border-t border-[var(--cc-line)] py-5">
+        <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">主題×審查結論</p>
+        <h2 className="text-base font-bold text-[var(--cc-title-ink)]">哪些領域最常被宣告違憲（機標結論，待人工欄為尚未覆核件）</h2>
+        <div className="relative mt-3 overflow-x-auto pb-2">
+          <svg width={LABEL_W + outcomes.length * 74 + 12} height={H + 30} role="img" aria-label="主題與審查結論矩陣">
+            {outcomes.map((o, c) => (
+              <text key={o} x={LABEL_W + c * 74 + 34} y={12} textAnchor="middle" fontSize={10} fontWeight={700} fill="var(--cc-table-head-ink)">{o === '其他/待人工' ? '待人工' : o}</text>
+            ))}
+            {topics.map((t, r) => (
+              <text key={t} x={LABEL_W - 8} y={r * RH + RH / 2 + 21.5} textAnchor="end" fontSize={10.5} fill="var(--cc-ink-mid)">{t}</text>
+            ))}
+            {topics.map((t, r) => outcomes.map((o, c) => {
+              const v = oGrid.get(`${t}|${o}`) ?? 0;
+              const dark = Math.sqrt(v / oMax) > 0.55;
+              return (
+                <g key={`${t}${o}`}>
+                  <rect
+                    x={LABEL_W + c * 74} y={r * RH + 18}
+                    width={68} height={RH - 2} rx={3}
+                    fill={heatFill(v, oMax)}
+                    onMouseEnter={() => setCell({ t, o, v, kind: 'outcome' })}
+                    onMouseLeave={() => setCell(null)}
+                  />
+                  {v ? (
+                    <text x={LABEL_W + c * 74 + 34} y={r * RH + 18 + RH / 2 + 3} textAnchor="middle" fontSize={9.5} fill={dark ? 'var(--cc-heat-text-light)' : 'var(--cc-heat-text-dark)'} pointerEvents="none">{v}</text>
+                  ) : null}
+                </g>
+              );
+            }))}
+          </svg>
+          {cell?.kind === 'outcome' ? (
+            <div className="pointer-events-none absolute left-4 top-0 rounded-md border border-[var(--cc-border)] bg-white px-3 py-1.5 text-[11px] shadow-sm">
+              <strong className="text-[var(--cc-ink-strong)]">{cell.t}</strong>　{cell.o}　<strong className="text-[var(--cc-accent)]">{cell.v} 件</strong>
+            </div>
+          ) : null}
+        </div>
+        <p className="mt-1 max-w-3xl text-[11px] leading-relaxed text-[var(--cc-ink-soft)]">
+          審查結論為文字規則機標（違憲即失效併入違憲欄），僅供分布觀察；個案請以卡片上的官方連結查證原文。
+        </p>
+      </section>
+    </>
   );
 }
 
@@ -439,17 +655,17 @@ function JusticesView() {
   const max = Math.max(...justices.map((j) => j.提出意見書));
 
   return (
-    <section className="border-t border-[#eadde2] py-5">
+    <section className="border-t border-[var(--cc-line)] py-5">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[#a77b89]">逐人統計</p>
-          <h2 className="text-base font-bold text-[#45343c]">大法官意見書行為（{justices.length} 位，來源：官方意見書檔名與判決欄位）</h2>
+          <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">逐人統計</p>
+          <h2 className="text-base font-bold text-[var(--cc-title-ink)]">大法官意見書行為（{justices.length} 位，來源：官方意見書檔名與判決欄位）</h2>
         </div>
         <Select label="排序" value={sortKey} onChange={setSortKey} options={[['提出意見書', '提出意見書數'], ['加入意見書', '加入意見書數'], ['主筆判決', '主筆判決數'], ['參與判決', '參與判決數']]} />
       </div>
-      <div className="mt-3 overflow-x-auto rounded-lg border border-[#e6ded2]">
+      <div className="mt-3 overflow-x-auto rounded-lg border border-[var(--cc-table-border)]">
         <table className="w-full min-w-[760px] border-collapse bg-white text-left text-[11.5px]">
-          <thead className="bg-[#f7edf0] text-[#7f5b69]">
+          <thead className="bg-[var(--cc-hover-bg)] text-[var(--cc-table-head-ink)]">
             <tr>
               <th className="px-3 py-2">大法官</th>
               <th className="px-3 py-2">提出意見書</th>
@@ -462,18 +678,18 @@ function JusticesView() {
           </thead>
           <tbody>
             {list.map((j) => (
-              <tr key={j.姓名} className="border-t border-[#f0e3e8]">
-                <td className="px-3 py-2 font-bold text-[#44343d]">{j.姓名}</td>
-                <td className="px-3 py-2 font-bold text-[#8f6071]">{j.提出意見書}</td>
+              <tr key={j.姓名} className="border-t border-[var(--cc-row-border)]">
+                <td className="px-3 py-2 font-bold text-[var(--cc-ink-heavy)]">{j.姓名}</td>
+                <td className="px-3 py-2 font-bold text-[var(--cc-accent)]">{j.提出意見書}</td>
                 <td className="px-3 py-2">
-                  <div className="h-1.5 rounded-full bg-[#f0e2e7]">
-                    <div className="h-1.5 rounded-full" style={{ width: `${(j.提出意見書 / max) * 100}%`, background: '#a84f6e' }} />
+                  <div className="h-1.5 rounded-full bg-[var(--cc-track)]">
+                    <div className="h-1.5 rounded-full" style={{ width: `${(j.提出意見書 / max) * 100}%`, background: 'var(--cc-highlight)' }} />
                   </div>
                 </td>
-                <td className="px-3 py-2 text-[#5b4e55]">{j.加入意見書}</td>
-                <td className="px-3 py-2 text-[#5b4e55]">{j.主筆判決 || '—'}</td>
-                <td className="px-3 py-2 text-[#5b4e55]">{j.參與判決 || '—'}</td>
-                <td className="px-3 py-2 text-[#74636a]">
+                <td className="px-3 py-2 text-[var(--cc-ink-mid)]">{j.加入意見書}</td>
+                <td className="px-3 py-2 text-[var(--cc-ink-mid)]">{j.主筆判決 || '—'}</td>
+                <td className="px-3 py-2 text-[var(--cc-ink-mid)]">{j.參與判決 || '—'}</td>
+                <td className="px-3 py-2 text-[var(--cc-ink-soft)]">
                   {Object.entries(j.意見書類型 ?? {}).map(([k, v]) => `${k.replace('意見書', '')} ${v}`).join('・') || '—'}
                 </td>
               </tr>
@@ -481,7 +697,7 @@ function JusticesView() {
           </tbody>
         </table>
       </div>
-      <p className="mt-2 max-w-3xl text-[11px] leading-relaxed text-[#74636a]">
+      <p className="mt-2 max-w-3xl text-[11px] leading-relaxed text-[var(--cc-ink-soft)]">
         統計基礎：{data.統計.總數} 件案件中具名的大法官意見書。屆次、任期、提名總統與出身欄位整理中；主筆與參與欄位僅新制憲法法庭判決有官方記載，釋字時期無此欄。
       </p>
     </section>
@@ -527,10 +743,10 @@ function GraphView() {
   }, [selected]);
 
   return (
-    <section className="border-t border-[#eadde2] py-5">
-      <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[#a77b89]">共同具名網絡</p>
-      <h2 className="text-base font-bold text-[#45343c]">誰常和誰一起署名意見書（共同具名 ≥ {MIN_EDGE} 次）</h2>
-      <p className="mt-1 max-w-3xl text-[11px] leading-relaxed text-[#74636a]">
+    <section className="border-t border-[var(--cc-line)] py-5">
+      <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">共同具名網絡</p>
+      <h2 className="text-base font-bold text-[var(--cc-title-ink)]">誰常和誰一起署名意見書（共同具名 ≥ {MIN_EDGE} 次）</h2>
+      <p className="mt-1 max-w-3xl text-[11px] leading-relaxed text-[var(--cc-ink-soft)]">
         邊的粗細＝兩人共同出現在同一份意見書（提出或加入）的次數。點選姓名可查看合作對象清單；資料來自官方意見書檔名，涵蓋釋字後期與憲法法庭時期。
       </p>
       <div className="mt-3 grid gap-5 lg:grid-cols-[minmax(0,540px)_1fr]">
@@ -543,7 +759,7 @@ function GraphView() {
                 <line
                   key={i}
                   x1={e.a.x} y1={e.a.y} x2={e.b.x} y2={e.b.y}
-                  stroke={active ? '#a84f6e' : '#c9b3bc'}
+                  stroke={active ? 'var(--cc-highlight)' : 'var(--cc-edge-line)'}
                   strokeWidth={0.6 + (e.次數 / maxEdge) * 3.4}
                   opacity={dim ? 0.08 : active ? 0.85 : 0.3}
                 />
@@ -556,12 +772,12 @@ function GraphView() {
               return (
                 <g key={n.姓名} transform={`translate(${n.x}, ${n.y})`} className="cursor-pointer"
                   onClick={() => setSelected(active ? null : n.姓名)}>
-                  <circle r={9} fill={active ? '#a84f6e' : related ? '#e3b6c4' : '#fff'} stroke="#a84f6e" strokeWidth={1.5} opacity={dim ? 0.25 : 1} />
+                  <circle r={9} fill={active ? 'var(--cc-highlight)' : related ? 'var(--cc-node-related-fill)' : 'var(--cc-node-fill)'} stroke="var(--cc-highlight)" strokeWidth={1.5} opacity={dim ? 0.25 : 1} />
                   <text
                     x={n.lx} y={n.ly}
                     textAnchor={n.anchor}
                     fontSize={11} fontWeight={active ? 700 : 500}
-                    fill={dim ? '#c4b4ba' : '#4b3b43'}
+                    fill={dim ? 'var(--cc-dim-text)' : 'var(--cc-ink-strong)'}
                   >
                     {n.姓名}
                   </text>
@@ -573,14 +789,14 @@ function GraphView() {
         <div>
           {selected ? (
             <div>
-              <h3 className="text-[14px] font-bold text-[#45343c]">{selected} 的共同具名對象</h3>
-              <div className="mt-2 max-w-sm divide-y divide-[#eadde2]">
+              <h3 className="text-[14px] font-bold text-[var(--cc-title-ink)]">{selected} 的共同具名對象</h3>
+              <div className="mt-2 max-w-sm divide-y divide-[var(--cc-line)]">
                 {partners.map((p) => (
                   <div key={p.對象} className="grid grid-cols-[80px_44px_1fr] items-center gap-2 py-1.5 text-[12px]">
-                    <button onClick={() => setSelected(p.對象)} className="text-left font-bold text-[#8f6071] hover:underline">{p.對象}</button>
-                    <span className="font-bold text-[#4b3b43]">{p.次數} 次</span>
-                    <div className="h-1.5 rounded-full bg-[#f0e2e7]">
-                      <div className="h-1.5 rounded-full bg-[#a84f6e]" style={{ width: `${(p.次數 / partners[0].次數) * 100}%` }} />
+                    <button onClick={() => setSelected(p.對象)} className="text-left font-bold text-[var(--cc-accent)] hover:underline">{p.對象}</button>
+                    <span className="font-bold text-[var(--cc-ink-strong)]">{p.次數} 次</span>
+                    <div className="h-1.5 rounded-full bg-[var(--cc-track)]">
+                      <div className="h-1.5 rounded-full bg-[var(--cc-highlight)]" style={{ width: `${(p.次數 / partners[0].次數) * 100}%` }} />
                     </div>
                   </div>
                 ))}
@@ -588,14 +804,14 @@ function GraphView() {
             </div>
           ) : (
             <div>
-              <h3 className="text-[14px] font-bold text-[#45343c]">最常共同具名的組合</h3>
-              <div className="mt-2 max-w-sm divide-y divide-[#eadde2]">
+              <h3 className="text-[14px] font-bold text-[var(--cc-title-ink)]">最常共同具名的組合</h3>
+              <div className="mt-2 max-w-sm divide-y divide-[var(--cc-line)]">
                 {coSign.slice(0, 12).map((e) => (
                   <div key={`${e.甲}${e.乙}`} className="grid grid-cols-[150px_44px_1fr] items-center gap-2 py-1.5 text-[12px]">
-                    <span className="font-bold text-[#4b3b43]">{e.甲}・{e.乙}</span>
-                    <span className="font-bold text-[#8f6071]">{e.次數} 次</span>
-                    <div className="h-1.5 rounded-full bg-[#f0e2e7]">
-                      <div className="h-1.5 rounded-full bg-[#a84f6e]" style={{ width: `${(e.次數 / coSign[0].次數) * 100}%` }} />
+                    <span className="font-bold text-[var(--cc-ink-strong)]">{e.甲}・{e.乙}</span>
+                    <span className="font-bold text-[var(--cc-accent)]">{e.次數} 次</span>
+                    <div className="h-1.5 rounded-full bg-[var(--cc-track)]">
+                      <div className="h-1.5 rounded-full bg-[var(--cc-highlight)]" style={{ width: `${(e.次數 / coSign[0].次數) * 100}%` }} />
                     </div>
                   </div>
                 ))}
@@ -611,10 +827,10 @@ function GraphView() {
 function AboutView() {
   return (
     <div className="max-w-3xl">
-      <section className="border-t border-[#eadde2] py-5">
-        <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[#a77b89]">資料來源</p>
-        <h2 className="text-base font-bold text-[#45343c]">全部資料取自憲法法庭官方網站的公開頁面</h2>
-        <div className="mt-2 space-y-2 text-[12.5px] leading-relaxed text-[#5b4e55]">
+      <section className="border-t border-[var(--cc-line)] py-5">
+        <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">資料來源</p>
+        <h2 className="text-base font-bold text-[var(--cc-title-ink)]">全部資料取自憲法法庭官方網站的公開頁面</h2>
+        <div className="mt-2 space-y-2 text-[12.5px] leading-relaxed text-[var(--cc-ink-mid)]">
           <p>
             收錄範圍：司法院大法官解釋全部 {data.統計.解釋} 件（釋字第 1–813 號，1949–2021）、憲法法庭判決 {data.統計.判決} 件（2022 年憲法訴訟法施行起）、實體裁定 {data.統計.實體裁定} 件（含暫時處分）。程序性不受理裁定未收錄。
           </p>
@@ -622,21 +838,24 @@ function AboutView() {
             每件案件的爭點、主文、相關法令、意見書清單與立場表連結均解析自官方頁面；文件下載一律連回官方網站，本站不代管任何檔案副本。
           </p>
           <p>
-            主題分類與審查結論由規則初步標註（卡片上標示「結論待人工判讀」者即尚未人工覆核），意見書作者與共同具名關係解析自官方檔名。中期釋字（約第 100–400 號）的意見書常整卷收於抄本檔案，該時期的意見書統計為下限而非全貌。
+            主題分類、稅法子主題與審查結論由規則初步標註（卡片上標示「結論待人工判讀」者即尚未人工覆核），意見書作者與共同具名關係解析自官方檔名；早期意見書僅收於抄本合訂檔者，已從抄本檔名拆出（卡片上仍連向抄本 PDF）。中期釋字（約第 100–400 號）的意見書常整卷收於抄本且檔名未列作者，該時期的意見書統計為下限而非全貌。
+          </p>
+          <p>
+            「審查基準」欄依湯德宗三級架構（寬鬆／中度／嚴格）機標：本院自釋字第 578 號起才明確區分寬嚴審查基準，之前案件不標；機標只認理由書明示字樣，多數案件為「未明示」，同案命中多級者標「待人工」。參與大法官名單僅憲法法庭判決與裁定的官方頁有記載，釋字時期需另建大法官屆次名冊回填（整理中）。
           </p>
         </div>
       </section>
-      <section className="border-t border-[#eadde2] py-5">
-        <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[#a77b89]">批次下載</p>
-        <h2 className="text-base font-bold text-[#45343c]">篩選後想把檔案抓回本機讀？</h2>
-        <p className="mt-2 text-[12.5px] leading-relaxed text-[#5b4e55]">
+      <section className="border-t border-[var(--cc-line)] py-5">
+        <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">批次下載</p>
+        <h2 className="text-base font-bold text-[var(--cc-title-ink)]">篩選後想把檔案抓回本機讀？</h2>
+        <p className="mt-2 text-[12.5px] leading-relaxed text-[var(--cc-ink-mid)]">
           瀏覽器無法代替你向官方網站批次下載。作法：在「案件索引」匯出「批次下載清單」，回到研究資料庫在本機執行批次下載命令，官方 PDF 就會下載到本機資料夾。清單裡每一筆都是官方網址，來源可驗證。
         </p>
       </section>
-      <section className="border-t border-[#eadde2] py-5">
-        <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[#a77b89]">更新</p>
-        <h2 className="text-base font-bold text-[#45343c]">資料怎麼保持最新</h2>
-        <p className="mt-2 text-[12.5px] leading-relaxed text-[#5b4e55]">
+      <section className="border-t border-[var(--cc-line)] py-5">
+        <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">更新</p>
+        <h2 className="text-base font-bold text-[var(--cc-title-ink)]">資料怎麼保持最新</h2>
+        <p className="mt-2 text-[12.5px] leading-relaxed text-[var(--cc-ink-mid)]">
           資料庫以官方清單頁差分更新：偵測新公布的判決與裁定、只抓新增案件、重建統計後同步到本頁。本頁資料產生於 {data.產生時間?.slice(0, 10)}。
         </p>
       </section>
@@ -652,18 +871,18 @@ export default function ConstitutionalCourt() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#fbf8f9] font-sans text-[#3f3339]" style={{ paddingBottom: 60 }}>
-      <header className="border-b border-[#eadde2] bg-white">
+    <div className="min-h-screen bg-[var(--cc-bg)] font-sans text-[var(--cc-ink)]" style={{ ...CC_VARS, paddingBottom: 60 }}>
+      <header className="border-b border-[var(--cc-line)] bg-white">
         <div className="mx-auto max-w-6xl px-4 py-7 sm:px-6">
-          <div className="mb-3 inline-flex items-center gap-2 font-accent text-[11px] font-bold uppercase tracking-[0.08em] text-[#987483]">
+          <div className="mb-3 inline-flex items-center gap-2 font-accent text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow-header)]">
             <Gavel size={13} />
             Constitutional Court Archive
           </div>
-          <h1 className="max-w-3xl leading-tight text-[#2f2a2d]">
+          <h1 className="max-w-3xl leading-tight text-[var(--cc-heading)]">
             <span className="font-sans text-2xl font-semibold sm:text-[2.15rem]">憲法法庭案例庫</span>
-            <span className="ml-3 align-baseline text-base text-[#6f6369]">釋字・憲判・暫時處分</span>
+            <span className="ml-3 align-baseline text-base text-[var(--cc-body-text)]">釋字・憲判・暫時處分</span>
           </h1>
-          <p className="mt-3 max-w-3xl text-sm leading-relaxed text-[#6f6369]">
+          <p className="mt-3 max-w-3xl text-sm leading-relaxed text-[var(--cc-body-text)]">
             把官方網站的 {data.統計.總數} 件解釋與裁判做成可檢索的研究工作台：主題與年代篩選、意見書作者與立場、
             共同具名網絡、引用統計，以及可直接進論文的引註與 BibTeX 匯出。
           </p>
@@ -675,22 +894,22 @@ export default function ConstitutionalCourt() {
               ['具名意見書', docs.reduce((s, d) => s + d.意見書.filter((o) => o.作者類別 === '大法官').length, 0)],
             ].map(([label, value]) => (
               <div key={label} className="flex items-baseline gap-2">
-                <span className="text-[11px] font-bold text-[#9b6b7b]">{label}</span>
-                <span className="font-display text-lg font-bold text-[#3f3339]">{value}</span>
+                <span className="text-[11px] font-bold text-[var(--cc-icon)]">{label}</span>
+                <span className="font-display text-lg font-bold text-[var(--cc-ink)]">{value}</span>
               </div>
             ))}
           </div>
         </div>
       </header>
 
-      <nav className="sticky top-0 z-20 border-b border-[#eadde2] bg-white/94 backdrop-blur">
+      <nav className="sticky top-0 z-20 border-b border-[var(--cc-line)] bg-white/94 backdrop-blur">
         <div className="mx-auto flex max-w-6xl gap-1 overflow-x-auto px-4 py-2 sm:px-6">
           {tabs.map(({ id, label, icon: Icon }) => (
             <button
               key={id}
               onClick={() => setActive(id)}
-              className="flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-2 text-[12px] font-bold transition hover:bg-[#f7edf0] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#a84f6e]"
-              style={{ background: active === id ? '#f1e3e8' : undefined, color: active === id ? '#704c5a' : '#806b74' }}
+              className="flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-2 text-[12px] font-bold transition hover:bg-[var(--cc-hover-bg)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--cc-highlight)]"
+              style={{ background: active === id ? 'var(--cc-tab-active-bg)' : undefined, color: active === id ? 'var(--cc-tab-active-text)' : 'var(--cc-tab-inactive-text)' }}
             >
               <Icon size={14} />
               {label}
