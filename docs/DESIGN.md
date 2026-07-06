@@ -35,7 +35,9 @@
 
 ## 色票庫
 
-**色票庫的家是 `/palettelab`（`src/pages/PaletteLab.jsx`）**：站內現用色票＋名畫取樣的候選票都在那裡，整頁即時試穿、可複製成 tokens.css 片段。全域預設色票由使用者在 PaletteLab 點名決定；在那之前 tokens.css 維持過渡中性（冷白／近黑／壓灰深藍）。
+**色票庫的家是 `/palettelab`（資料層在 `src/styles/palettes.js`）**：站內現用、名畫、器物、水果、中國色五組候選票，整頁即時試穿、可複製成 tokens.css 片段。**「設為全站配色」**把選定票寫進 localStorage（`canvaslab:palette`）並在開站時（`main.jsx` 的 `bootSitePalette()`）套到 `:root` 的 `--c-*` token——全站配色是每台瀏覽器的使用者設定，tokens.css 只是無設定時的中性 fallback。紙面材質（手工紙／簾紋／布紋／細點，全部程式生成、2–4% 透明度）同機制（`canvaslab:texture`），套在 body 的 `--paper-texture`。
+
+**閱讀面鐵律（2026-07-07 使用者裁定）**：色票只管裝飾與框架；每套色票的 `paper` 角色（大段正文的底）必須近白、只准帶極輕微色傾向，有色的 `surface` 只能用在邊框、側欄、badge 等鉻件。新色票不符此規則不收。
 
 頁面識別色票收在各頁頂部的 `*_VARS` 物件（`// token-exempt` 標記）：首頁與翻譯工程的藕粉玫瑰、ECFA 藕粉深玫瑰、AirPollution 陶土粉、ManusMeta 靛藍銅、IntlTaxOps 冷灰茶青（`--teal: #4c7971`，使用者點名保留）、FER 墨綠米。使用者不喜歡 GovernmentDebt 現行配色（「clunky」），待 PaletteLab 選定後重配。
 

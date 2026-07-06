@@ -71,6 +71,9 @@ body {
   font-size: var(--text-body);
   color: var(--c-ink);
   background-color: var(--c-paper);
+  /* 紙面材質（PaletteLab 可選，程式生成、極低透明度） */
+  background-image: var(--paper-texture, none);
+  background-size: var(--paper-texture-size, auto);
 }
 
 h1, h2, h3 {
