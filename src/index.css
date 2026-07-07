@@ -86,3 +86,22 @@ h1, h2, h3 {
   font-size: calc(var(--text-body) * var(--fs, 1));
 }
 
+/* Metallic foil sheen (e.g. Klimt gold). Sanctioned exception to the
+   opacity/transform-only motion rule: background-position pan, slow and
+   decorative, accent elements only — never backgrounds or body text. */
+@keyframes foil-sheen {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+.foil {
+  background-size: 200% auto;
+  animation: foil-sheen 4.5s linear infinite;
+}
+.foil-text {
+  background-size: 200% auto;
+  animation: foil-sheen 4.5s linear infinite;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+

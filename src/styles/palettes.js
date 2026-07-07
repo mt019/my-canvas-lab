@@ -10,6 +10,22 @@
  */
 
 // token-exempt: 本檔通篇是色票資料，hex 即內容本身。
+
+/*
+ * 金箔效果：真正的「金」是金屬漸層＋流光，不是一個單色。
+ * 配合 index.css 的 .foil（background-size 200% + 緩慢 sheen 動畫）使用；
+ * 只准出現在 accent 元件（按鈕、badge、kicker），禁止當底色或正文色。
+ */
+export const GOLD_FOIL =
+  'linear-gradient(115deg, #8a6a1c 0%, #c9a227 18%, #f3d565 38%, #fdf0b0 50%, #f3d565 62%, #c9a227 82%, #8a6a1c 100%)';
+export const GOLD_FOIL_INK = '#3a2d10'; // 金箔上的深褐字色
+
+/*
+ * vars 角色說明：
+ * paper＝閱讀紙面（強制近白）；surface＝框架鉻件；accent/accent2＝主副強調；
+ * pop（可選）＝撞色——一個畫面最多出現一處（badge、標記點），給版面一個亮點；
+ * accentGradient（可選）＝金屬質感漸層，取代 accent 用於按鈕/badge 的 bling 效果。
+ */
 export const PALETTES = [
   // ── 站內現用 ──
   {
@@ -17,7 +33,7 @@ export const PALETTES = [
     name: '藕粉玫瑰',
     story: '首頁與翻譯工程現用。藕粉作框、灰褐墨、深玫瑰點染。',
     origin: '站內',
-    vars: { paper: '#fdfbfc', surface: '#f7eef1', ink: '#332b30', inkMuted: '#74636a', inkFaint: '#a89ba0', line: '#eadde2', accent: '#8f6071', accent2: '#a77b89' },
+    vars: { paper: '#fdfbfc', surface: '#f7eef1', ink: '#332b30', inkMuted: '#74636a', inkFaint: '#a89ba0', line: '#eadde2', accent: '#8f6071', accent2: '#a77b89' , pop: '#6b7d5a' },
   },
   {
     id: 'terracotta',
@@ -60,21 +76,22 @@ export const PALETTES = [
     name: 'Monet 睡蓮',
     story: '橘園美術館那一圈水面：霧藍、水綠、一點薰衣草。',
     origin: '名畫',
-    vars: { paper: '#fbfcfc', surface: '#e9f0ee', ink: '#35434a', inkMuted: '#5f7276', inkFaint: '#8fa0a2', line: '#cfdedb', accent: '#6a8caf', accent2: '#8ba081' },
+    vars: { paper: '#fbfcfc', surface: '#e9f0ee', ink: '#35434a', inkMuted: '#5f7276', inkFaint: '#8fa0a2', line: '#cfdedb', accent: '#6a8caf', accent2: '#8ba081' , pop: '#9188c2' },
   },
   {
     id: 'wheatfield',
     name: 'Van Gogh 麥田',
     story: '麥田群鴉的金與那條土路：暖金壓灰，藍只留天際一線。',
     origin: '名畫',
-    vars: { paper: '#fdfbf5', surface: '#f2ecd9', ink: '#4a4234', inkMuted: '#7a6f58', inkFaint: '#a89c80', line: '#e3d9bd', accent: '#a8862e', accent2: '#5b7290' },
+    vars: { paper: '#fdfbf5', surface: '#f2ecd9', ink: '#4a4234', inkMuted: '#7a6f58', inkFaint: '#a89c80', line: '#e3d9bd', accent: '#a8862e', accent2: '#5b7290' , pop: '#b5443a' },
   },
   {
     id: 'klimt',
     name: 'Klimt 金衣',
-    story: '《吻》的金箔與深褐：金作點不作面，底色退成舊紙。',
+    story: '《吻》的金箔與深褐：金屬流光作點，草地的堇紫作撞色。',
     origin: '名畫',
-    vars: { paper: '#fcfaf5', surface: '#efe7d6', ink: '#3d3226', inkMuted: '#6f6250', inkFaint: '#9c8d76', line: '#e2d7bf', accent: '#b08d3e', accent2: '#7c5a43' },
+    vars: { paper: '#fcfaf5', surface: '#efe7d6', ink: '#3d3226', inkMuted: '#6f6250', inkFaint: '#9c8d76', line: '#e2d7bf', accent: '#c9a227', accent2: '#7c5a43', pop: '#8a5f9e' },
+    accentGradient: GOLD_FOIL,
   },
   {
     id: 'hammershoi',
@@ -96,7 +113,7 @@ export const PALETTES = [
     name: '芒果奶昔',
     story: '熟芒果的金黃打成霧，配一片葉子綠。',
     origin: '水果',
-    vars: { paper: '#fefdf9', surface: '#fdf3dd', ink: '#4a4232', inkMuted: '#8a7a58', inkFaint: '#bfae88', line: '#f0e2bd', accent: '#e0a13d', accent2: '#7ba05b' },
+    vars: { paper: '#fefdf9', surface: '#fdf3dd', ink: '#4a4232', inkMuted: '#8a7a58', inkFaint: '#bfae88', line: '#f0e2bd', accent: '#e0a13d', accent2: '#7ba05b' , pop: '#d4527e' },
   },
   {
     id: 'white-peach',
@@ -110,14 +127,14 @@ export const PALETTES = [
     name: '青梅',
     story: '梅子未熟的青與釀成之後的琥珀黃。',
     origin: '水果',
-    vars: { paper: '#fcfdfa', surface: '#eff5e4', ink: '#3d4634', inkMuted: '#6e7c5f', inkFaint: '#a0ad8d', line: '#dde6cb', accent: '#7f9e54', accent2: '#cf9f45' },
+    vars: { paper: '#fcfdfa', surface: '#eff5e4', ink: '#3d4634', inkMuted: '#6e7c5f', inkFaint: '#a0ad8d', line: '#dde6cb', accent: '#7f9e54', accent2: '#cf9f45' , pop: '#c94f6d' },
   },
   {
     id: 'mikan',
     name: '蜜柑',
     story: '冬天窗台上那顆蜜柑：橙皮的暖、葉梗的綠。',
     origin: '水果',
-    vars: { paper: '#fefdfb', surface: '#fcefe0', ink: '#4c4036', inkMuted: '#8b7461', inkFaint: '#bfa78f', line: '#f0dfc8', accent: '#d98a3f', accent2: '#5f7d6d' },
+    vars: { paper: '#fefdfb', surface: '#fcefe0', ink: '#4c4036', inkMuted: '#8b7461', inkFaint: '#bfa78f', line: '#f0dfc8', accent: '#d98a3f', accent2: '#5f7d6d' , pop: '#4e6e8e' },
   },
   // ── 中國色 ──
   {
@@ -125,7 +142,7 @@ export const PALETTES = [
     name: '黛藍月白',
     story: '黛色遠山、月白宣紙：一點緗黃收筆。',
     origin: '中國色',
-    vars: { paper: '#fbfcfd', surface: '#e8edf2', ink: '#2b3a4a', inkMuted: '#5d6f80', inkFaint: '#91a1b0', line: '#d2dce4', accent: '#45617e', accent2: '#b28e5a' },
+    vars: { paper: '#fbfcfd', surface: '#e8edf2', ink: '#2b3a4a', inkMuted: '#5d6f80', inkFaint: '#91a1b0', line: '#d2dce4', accent: '#45617e', accent2: '#b28e5a' , pop: '#b3452e' },
   },
   {
     id: 'yanzhi',
@@ -196,10 +213,10 @@ export function getPalette(id) {
 
 export function applySitePalette(id) {
   const root = document.documentElement;
+  const extras = ['--c-line-soft', '--c-accent-soft', '--c-pop', '--c-accent-grad'];
   if (!id || id === DEFAULT_PALETTE_ID) {
     Object.values(ROLE_TO_TOKEN).forEach((t) => root.style.removeProperty(t));
-    root.style.removeProperty('--c-line-soft');
-    root.style.removeProperty('--c-accent-soft');
+    extras.forEach((t) => root.style.removeProperty(t));
     return;
   }
   const p = getPalette(id);
@@ -209,6 +226,10 @@ export function applySitePalette(id) {
   });
   root.style.setProperty('--c-line-soft', p.vars.surface);
   root.style.setProperty('--c-accent-soft', p.vars.surface);
+  if (p.vars.pop) root.style.setProperty('--c-pop', p.vars.pop);
+  else root.style.removeProperty('--c-pop');
+  if (p.accentGradient) root.style.setProperty('--c-accent-grad', p.accentGradient);
+  else root.style.removeProperty('--c-accent-grad');
 }
 
 export function getSitePaletteId() {
@@ -265,5 +286,7 @@ export function bootSitePalette() {
 
 export function tokensSnippet(p) {
   const lines = Object.entries(ROLE_TO_TOKEN).map(([role, token]) => `  ${token}: ${p.vars[role]};`);
+  if (p.vars.pop) lines.push(`  --c-pop: ${p.vars.pop};`);
+  if (p.accentGradient) lines.push(`  --c-accent-grad: ${p.accentGradient};`);
   return `/* palette: ${p.name} (${p.id}) — from PaletteLab */\n:root {\n${lines.join('\n')}\n  --c-line-soft: ${p.vars.surface};\n  --c-accent-soft: ${p.vars.surface};\n}`;
 }

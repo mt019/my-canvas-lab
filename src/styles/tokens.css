@@ -26,6 +26,8 @@
   --c-warn: #9a6700;
   --c-danger: #a3403a;
   --c-info: #4a6d8c;
+  --c-pop: #a3403a;            /* clash color — at most one appearance per view */
+  --c-accent-grad: none;       /* metallic accent gradient (e.g. gold foil), set by palette */
 
   /* Type scale (rem). Body is 18px: Huiwen Mincho strokes are thin and
      CJK Ming faces need one step up from Latin defaults. */

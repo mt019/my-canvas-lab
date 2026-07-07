@@ -35,6 +35,7 @@ export default {
         warn: 'var(--c-warn)',
         danger: 'var(--c-danger)',
         info: 'var(--c-info)',
+        pop: 'var(--c-pop)',
       },
       fontSize: {
         'token-xs': 'var(--text-xs)',

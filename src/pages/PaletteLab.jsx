@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Check, Copy, Palette, Pin } from 'lucide-react';
 import {
+  GOLD_FOIL_INK,
   PALETTES,
   TEXTURES,
   getSitePaletteId,
@@ -49,7 +50,9 @@ export default function PaletteLab() {
     '--pl-line': v.line,
     '--pl-accent': v.accent,
     '--pl-accent2': v.accent2,
+    '--pl-pop': v.pop ?? v.accent2,
   };
+  const foil = active.accentGradient ?? null;
 
   const copy = async (p) => {
     try {
@@ -148,8 +151,15 @@ export default function PaletteLab() {
                             )}
                           </span>
                           <span className="flex shrink-0 gap-1">
-                            {['paper', 'surface', 'line', 'inkMuted', 'accent', 'accent2'].map((k) => (
-                              <span key={k} className="h-3.5 w-3.5 rounded-full border" style={{ background: p.vars[k], borderColor: 'rgba(0,0,0,0.12)' }} />
+                            {['paper', 'surface', 'line', 'inkMuted', 'accent', 'accent2', 'pop'].filter((k) => p.vars[k]).map((k) => (
+                              <span
+                                key={k}
+                                className="h-3.5 w-3.5 rounded-full border"
+                                style={{
+                                  background: k === 'accent' && p.accentGradient ? p.accentGradient : p.vars[k],
+                                  borderColor: 'rgba(0,0,0,0.12)',
+                                }}
+                              />
                             ))}
                           </span>
                         </div>
@@ -188,11 +198,24 @@ export default function PaletteLab() {
           {/* 試穿樣本：外框吃 surface，閱讀區坐 paper——「色票作框、正文近白」的示範 */}
           <div className="self-start rounded-lg border p-4 sm:p-5" style={{ background: 'var(--pl-surface)', borderColor: 'var(--pl-line)' }}>
             <div className="mb-3 flex items-center justify-between gap-3">
-              <div className="font-accent text-[10px] font-bold uppercase tracking-[0.28em]" style={{ color: 'var(--pl-accent2)' }}>
-                Sample · {active.name}
-              </div>
+              {foil ? (
+                <div className="foil-text font-accent text-[11px] font-bold uppercase tracking-[0.28em]" style={{ backgroundImage: foil }}>
+                  Sample · {active.name}
+                </div>
+              ) : (
+                <div className="font-accent text-[10px] font-bold uppercase tracking-[0.28em]" style={{ color: 'var(--pl-accent2)' }}>
+                  Sample · {active.name}
+                </div>
+              )}
               <div className="flex items-center gap-2">
-                <button className="rounded-md px-3 py-1.5 text-[12px] font-bold" style={{ background: 'var(--pl-accent)', color: 'var(--pl-paper)' }}>主要動作</button>
+                <button
+                  className={`rounded-md px-3 py-1.5 text-[12px] font-bold ${foil ? 'foil' : ''}`}
+                  style={foil
+                    ? { backgroundImage: foil, color: GOLD_FOIL_INK, textShadow: '0 1px 0 rgba(255,240,180,0.6)' }
+                    : { background: 'var(--pl-accent)', color: 'var(--pl-paper)' }}
+                >
+                  主要動作
+                </button>
                 <button className="rounded-md border px-3 py-1.5 text-[12px] font-bold" style={{ borderColor: 'var(--pl-line)', color: 'var(--pl-ink-muted)', background: 'var(--pl-paper)' }}>次要</button>
               </div>
             </div>
@@ -208,15 +231,25 @@ export default function PaletteLab() {
 
               <div className="mt-4">
                 <div className="mb-1 text-[10px] font-bold uppercase tracking-[0.14em]" style={{ color: 'var(--pl-ink-faint)' }}>密集列表</div>
-                {DEMO_ROWS.map((row) => (
+                {DEMO_ROWS.map((row, i) => (
                   <div key={row.title} className="flex items-center justify-between gap-3 border-b py-2" style={{ borderColor: 'var(--pl-line)' }}>
-                    <div className="min-w-0">
+                    <div className="flex min-w-0 items-center gap-2">
+                      {/* 撞色示範：一個畫面最多一處 —— 只給第一列一顆 pop 標記 */}
+                      {i === 0 && active.vars.pop && (
+                        <span className="h-2 w-2 shrink-0 rounded-full" style={{ background: 'var(--pl-pop)' }} title="撞色標記" />
+                      )}
                       <span className="text-[13px] font-bold">{row.title}</span>
-                      <span className="ml-2 text-[12px]" style={{ color: 'var(--pl-ink-muted)' }}>{row.desc}</span>
+                      <span className="text-[12px]" style={{ color: 'var(--pl-ink-muted)' }}>{row.desc}</span>
                     </div>
-                    <span className="shrink-0 rounded-full border px-2 py-0.5 text-[10px] font-bold" style={{ borderColor: 'var(--pl-line)', color: 'var(--pl-accent)', background: 'var(--pl-surface)' }}>
-                      {row.tag}
-                    </span>
+                    {i === 0 && active.vars.pop ? (
+                      <span className="shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold" style={{ background: 'var(--pl-pop)', color: 'var(--pl-paper)' }}>
+                        NEW
+                      </span>
+                    ) : (
+                      <span className="shrink-0 rounded-full border px-2 py-0.5 text-[10px] font-bold" style={{ borderColor: 'var(--pl-line)', color: 'var(--pl-accent)', background: 'var(--pl-surface)' }}>
+                        {row.tag}
+                      </span>
+                    )}
                   </div>
                 ))}
               </div>
