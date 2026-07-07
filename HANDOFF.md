@@ -232,9 +232,17 @@ work.
   header row shows the 5 columns with real per-topic numbers, no console
   errors). 審查基準 (未明示 228＋多重 16) remains deliberately untouched
   for human 覆核 (auto-picking a scrutiny tier = deciding the case's
-  standard of review; too risky). Still not built: a 人工 override layer
-  for 審查結論 (classifyOutcome recomputes all 874 every run, so a
-  hand-corrected 結論 would be clobbered — add before any manual 覆核).
+  standard of review; too risky). 審查結論 override layer NOW built
+  (2026-07-07, data repo): `data/materials/審查結論-overrides.json` (keyed
+  by 字號) is the authoritative source `build-app-json.mjs`'s `outcomeFor()`
+  consults before falling back to `classifyOutcome`, so a 覆核 verdict now
+  survives every rebuild instead of being clobbered. Shared by 人工 and
+  agent review — each entry self-reports `標註方式` (人工核定/agent覆核) plus
+  `依據`/`來源`; `validate-processed.mjs` guards it (unknown 字號, illegal
+  結論/標註方式 all fail loudly, since a typo'd 字號 would silently no-op).
+  Ships empty; filling the 217 待人工 cases is a later agent-analysis pass
+  writing into this same file (propose→confirm staging recommended — see
+  the data repo's `docs/審查結論分類規則.md`「覆核 override 層」/「尚缺」).
 - 2026-07-07 沿革 tab (landed, `62691c4`): 7th tab `?tab=history`
   (`HistoryView`) — two stacked axes: the four-stage
   interpretation-organ timeline (大理院統字 → 最高法院解字 →
