@@ -180,6 +180,21 @@ described here in detail — update this section once that work lands.
   unmarked). Footer-menu pollution in the data repo's 相關法令 field
   was fixed (74 cases lost a spurious 選舉與政黨 topic; snapshot
   resynced).
+- 2026-07-07 (later): interpretation-era participation is now REAL
+  data — the data repo parses the justice signature roster embedded at
+  the tail of each 解釋's 理由書/解釋文 (813/813 coverage; recused
+  justices are absent from the roster, so this is per-case evidence,
+  not tenure inference). Snapshot cases carry `參與大法官`, `主席`,
+  `名單來源`; the justices array carries split `參與解釋`/`參與判決`
+  counts. The justice detail page merged its two case sections into one
+  「案件參與」 section: full rows for cases with own opinions (now with
+  主筆/主席 badges and `加入註記` partial-join notes shown verbatim from
+  the filename, e.g. 呂太郎加入第四部分), plus a compact chip cloud for
+  participation-only cases (＊=主筆, †=主席). The overview table gained
+  a 參與解釋 column. Known data caveat: 12 justices' recorded tenures
+  conflict with their signature activity (queue in the data repo's
+  `data/materials/參與解釋查核佇列.md`) — fix tenures in overrides, the
+  rosters are the more reliable side.
 - Site-wide font change (2026-07-07, settled after one same-day
   reversal): `--font-display` is Radio Newsman (Latin) + Huiwen
   Mincho (CJK — replacing GenWanMin2 so headings and body share one
@@ -200,6 +215,31 @@ described here in detail — update this section once that work lands.
 - `scripts/validate-font-coverage.mjs` walks `src/` with pure node
   (no ripgrep): this machine has no real `rg` binary — the shell `rg`
   is Claude Code's wrapper, invisible to node's spawn.
+- Early 釋字 (≲431 號) opinions are embedded in the official page body,
+  not PDFs; the snapshot marks them `內嵌: true` and both CaseCard and
+  the justice detail page already render them (link label 官方頁正文/
+  官方頁). A 2026-07-07 screenshot showing 王澤鑑 with 4 opinions
+  predates this fix — current data has 6 (436/437 are 內嵌).
+- **Outstanding — spec for Codex: 屆次/任期 convergence** on the
+  justice detail page (`src/pages/ConstitutionalCourt.jsx:806-807`,
+  `tenureText` built at `:787-789`). Today the two spans duplicate
+  each other for the 64 justices with `任期來源 === '屆次推定'`
+  (任期 is mechanically derived from the 屆次 label). New rule:
+  - Base display is a single 屆次 line (label strings joined by 、).
+  - `任期來源 === '屆次推定'`: drop the separate 任期 span; append
+    small muted text 「任期依屆次推定」 to the 屆次 line. Keep the
+    caveat visible — 推定 can be wrong (張式彝 died in office
+    1948-11 but 推定 says 1958-09; pending data fix).
+  - `簡歷頁` / `人工核定` (60 justices): keep the 任期 detail next to
+    the 屆次 line — multi-segment tenures with 職稱 (連任, 辭職,
+    卒於任內) are the genuine special cases and must stay visible;
+    tag 人工核定 as today (`任期來源 !== '簡歷頁'` suffix).
+  - `現任大法官` roster label carries no dates: show 屆次 as 現任 and
+    the 任期 span with real start date–現任.
+  - Acceptance: a 推定 justice (e.g. 黃虹霞) shows one line with the
+    推定 caveat and no duplicated date range; 翁岳生 (5 屆次 entries,
+    人工核定 1972–2007-09-30) still shows full tenure detail; current
+    justices show their real start dates.
 
 ## Canvas home entry
 

@@ -174,24 +174,31 @@ function toManifest(list) {
   );
 }
 
-function OpinionLine({ op }) {
+function OpinionLine({ op, officialUrl }) {
   const who =
     op.作者類別 === '大法官'
       ? `${(op.提出 ?? []).join('、')}${op.加入?.length ? `（${op.加入.join('、')}加入）` : ''}`
-      : op.文件名.replace(/\.(pdf|doc|docx)$/i, '');
+      : (op.文件名 ?? '').replace(/\.(pdf|doc|docx)$/i, '');
+  // 內嵌記錄（早期釋字，意見書全文嵌在官方頁正文）沒有 PDF，連官方頁
+  const href = op.下載網址 ?? (op.內嵌 ? officialUrl : undefined);
   return (
     <div className="flex flex-wrap items-center gap-2 py-1">
       <Badge tone={op.類型.includes('不同') ? 'red' : op.類型.includes('協同') ? 'blue' : 'slate'}>{op.類型}</Badge>
       {op.作者類別 !== '大法官' ? <Badge tone="slate">{op.作者類別}</Badge> : null}
       <span className="text-[12px] font-bold text-[var(--cc-ink-strong)]">{who}</span>
-      <a
-        href={op.下載網址}
-        target="_blank"
-        rel="noreferrer"
-        className="inline-flex items-center gap-1 text-[11px] text-[var(--cc-accent)] underline decoration-[var(--cc-link-underline)] underline-offset-2 hover:text-[var(--cc-link-hover)]"
-      >
-        官方 PDF <ExternalLink size={11} />
-      </a>
+      {op.加入註記?.length ? (
+        <span className="text-[10.5px] text-[var(--cc-figure-note)]">（{op.加入註記.join('；')}）</span>
+      ) : null}
+      {href ? (
+        <a
+          href={href}
+          target="_blank"
+          rel="noreferrer"
+          className="inline-flex items-center gap-1 text-[11px] text-[var(--cc-accent)] underline decoration-[var(--cc-link-underline)] underline-offset-2 hover:text-[var(--cc-link-hover)]"
+        >
+          {op.下載網址 ? '官方 PDF' : '官方頁正文'} <ExternalLink size={11} />
+        </a>
+      ) : null}
     </div>
   );
 }
@@ -271,7 +278,7 @@ function CaseCard({ d }) {
         <div className="mt-3 rounded-lg bg-[var(--cc-opinion-bg)] px-3 py-2">
           <p className="mb-1 text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">意見書 {d.意見書.length} 份</p>
           {d.意見書.map((op, i) => (
-            <OpinionLine key={i} op={op} />
+            <OpinionLine key={i} op={op} officialUrl={d.官方頁} />
           ))}
         </div>
       ) : null}
@@ -665,7 +672,7 @@ function JusticesView({ onOpen }) {
           <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">逐人統計</p>
           <h2 className="text-base font-bold text-[var(--cc-title-ink)]">大法官意見書行為（{justices.length} 位，來源：官方意見書檔名與判決欄位）</h2>
         </div>
-        <Select label="排序" value={sortKey} onChange={setSortKey} options={[['提出意見書', '提出意見書數'], ['加入意見書', '加入意見書數'], ['主筆判決', '主筆判決數'], ['參與判決', '參與判決數']]} />
+        <Select label="排序" value={sortKey} onChange={setSortKey} options={[['提出意見書', '提出意見書數'], ['加入意見書', '加入意見書數'], ['主筆判決', '主筆判決數'], ['參與解釋', '參與解釋數'], ['參與判決', '參與裁判數']]} />
       </div>
       <div className="mt-3 overflow-x-auto rounded-lg border border-[var(--cc-table-border)]">
         <table className="w-full min-w-[760px] border-collapse bg-white text-left text-[11.5px]">
@@ -676,7 +683,8 @@ function JusticesView({ onOpen }) {
               <th className="px-3 py-2 w-[180px]"></th>
               <th className="px-3 py-2">加入意見書</th>
               <th className="px-3 py-2">主筆判決</th>
-              <th className="px-3 py-2">參與判決</th>
+              <th className="px-3 py-2">參與解釋</th>
+              <th className="px-3 py-2">參與裁判</th>
               <th className="px-3 py-2">意見書類型</th>
             </tr>
           </thead>
@@ -694,6 +702,7 @@ function JusticesView({ onOpen }) {
                 </td>
                 <td className="px-3 py-2 text-[var(--cc-ink-mid)]">{j.加入意見書}</td>
                 <td className="px-3 py-2 text-[var(--cc-ink-mid)]">{j.主筆判決 || '—'}</td>
+                <td className="px-3 py-2 text-[var(--cc-ink-mid)]">{j.參與解釋 || '—'}</td>
                 <td className="px-3 py-2 text-[var(--cc-ink-mid)]">{j.參與判決 || '—'}</td>
                 <td className="px-3 py-2 text-[var(--cc-ink-soft)]">
                   {Object.entries(j.意見書類型 ?? {}).map(([k, v]) => `${k.replace('意見書', '')} ${v}`).join('・') || '—'}
@@ -704,7 +713,8 @@ function JusticesView({ onOpen }) {
         </table>
       </div>
       <p className="mt-2 max-w-3xl text-[11px] leading-relaxed text-[var(--cc-ink-soft)]">
-        統計基礎：{data.統計.總數} 件案件中具名的大法官意見書。屆次、任期、提名總統與出身欄位整理中；主筆與參與欄位僅新制憲法法庭判決有官方記載，釋字時期無此欄。
+        統計基礎：{data.統計.總數} 件案件中具名的大法官意見書。參與解釋計自官方頁末尾的大法官署名列（813 件全覆蓋；
+        迴避或未參與評議者不在署名列，故非任期推定）；參與裁判計自憲法法庭判決/裁定的官方合議庭名單。點姓名開個人頁。
       </p>
     </section>
   );
@@ -743,6 +753,12 @@ function JusticeDetail({ name, onBack, onOpen }) {
     return [...m.values()].sort((a, b) => (b.日期 ?? '').localeCompare(a.日期 ?? ''));
   }, [opinions, participated]);
 
+  // 僅參與（署名列/合議庭名單有名，但無個人意見書）——以緊湊字號 chips 呈現
+  const participationOnly = useMemo(() => {
+    const withOpinion = new Set(opinions.map(({ d }) => d.字號));
+    return participated.filter((d) => !withOpinion.has(d.字號));
+  }, [opinions, participated]);
+
   if (!j) {
     return (
       <div className="py-8">
@@ -768,10 +784,10 @@ function JusticeDetail({ name, onBack, onOpen }) {
       字號: d.字號,
       官方頁: d.官方頁,
       意見書: d.意見書
-        .filter((op) => op.提出?.includes(name) || op.加入?.includes(name))
+        .filter((op) => (op.提出?.includes(name) || op.加入?.includes(name)) && op.下載網址)
         .map((op) => ({ 文件名: op.文件名, 下載網址: op.下載網址 })),
       ...(d.立場表下載 && d.參與大法官?.includes(name) ? { 立場表: d.立場表下載 } : {}),
-    })),
+    })).filter((e) => e.意見書.length || e.立場表), // 僅參與而無可下載文件的案件不進下載清單
   }, null, 1), `${name}_下載清單_${stamp}.json`, 'application/json');
 
   const tenureText = (j.任期 ?? [])
@@ -806,7 +822,7 @@ function JusticeDetail({ name, onBack, onOpen }) {
           ) : null}
         </div>
         <div className="mt-3 flex flex-wrap gap-x-8 gap-y-2">
-          {[['提出意見書', j.提出意見書], ['加入意見書', j.加入意見書], ['主筆判決', j.主筆判決], ['參與判決', j.參與判決]].map(([label, value]) => (
+          {[['提出意見書', j.提出意見書], ['加入意見書', j.加入意見書], ['主筆判決', j.主筆判決], ['參與解釋', j.參與解釋 ?? 0], ['參與裁判', j.參與判決]].map(([label, value]) => (
             <div key={label} className="flex items-baseline gap-2">
               <span className="text-[11px] font-bold text-[var(--cc-icon)]">{label}</span>
               <span className="font-display text-lg font-bold text-[var(--cc-ink)]">{value}</span>
@@ -815,44 +831,55 @@ function JusticeDetail({ name, onBack, onOpen }) {
         </div>
       </section>
 
-      {opinions.length ? (
+      {involvedCases.length ? (
         <section className="border-t border-[var(--cc-line)] py-5">
-          <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">意見書 {opinions.length} 份</p>
-          <h3 className="text-base font-bold text-[var(--cc-title-ink)]">
-            {Object.entries(j.意見書類型 ?? {}).map(([k, v]) => `${k.replace('意見書', '')} ${v}`).join('・') || '意見書'}
-          </h3>
-          <div className="mt-2 divide-y divide-[var(--cc-row-border)]">
-            {opinions.map(({ d, op, role }, i) => (
-              <div key={i} className="flex flex-wrap items-center gap-x-3 gap-y-1 py-1.5 text-[12px]">
-                <span className="w-[76px] text-[11px] text-[var(--cc-figure-note)]">{d.日期}</span>
-                <a href={d.官方頁} target="_blank" rel="noreferrer" className="w-[130px] font-bold text-[var(--cc-ink-strong)] underline decoration-[var(--cc-link-underline)] underline-offset-2 hover:text-[var(--cc-accent)]">{d.字號}</a>
-                <Badge tone={op.類型.includes('不同') ? 'red' : op.類型.includes('協同') ? 'blue' : 'slate'}>{op.類型}</Badge>
-                {role === '加入' ? <Badge tone="slate">加入</Badge> : null}
-                {op.收於抄本 ? <Badge tone="gold">收於抄本</Badge> : null}
-                <span className="max-w-[400px] truncate text-[11px] text-[var(--cc-ink-soft)]">{d.爭點?.slice(0, 40)}</span>
-                <a href={op.下載網址} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-[11px] text-[var(--cc-accent)] underline decoration-[var(--cc-link-underline)] underline-offset-2">PDF <ExternalLink size={10} /></a>
+          <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">案件參與 {involvedCases.length} 件</p>
+          {opinions.length ? (
+            <>
+              <h3 className="text-base font-bold text-[var(--cc-title-ink)]">
+                意見書 {opinions.length} 份：{Object.entries(j.意見書類型 ?? {}).map(([k, v]) => `${k.replace('意見書', '')} ${v}`).join('・') || ''}
+              </h3>
+              <div className="mt-2 divide-y divide-[var(--cc-row-border)]">
+                {opinions.map(({ d, op, role }, i) => (
+                  <div key={i} className="flex flex-wrap items-center gap-x-3 gap-y-1 py-1.5 text-[12px]">
+                    <span className="w-[76px] text-[11px] text-[var(--cc-figure-note)]">{d.日期}</span>
+                    <a href={d.官方頁} target="_blank" rel="noreferrer" className="w-[130px] font-bold text-[var(--cc-ink-strong)] underline decoration-[var(--cc-link-underline)] underline-offset-2 hover:text-[var(--cc-accent)]">{d.字號}</a>
+                    <Badge tone={op.類型.includes('不同') ? 'red' : op.類型.includes('協同') ? 'blue' : 'slate'}>{op.類型}</Badge>
+                    {role === '加入' ? <Badge tone="slate">加入</Badge> : null}
+                    {d.主筆 === name ? <Badge tone="plum">主筆</Badge> : null}
+                    {d.主席 === name ? <Badge tone="plum">主席</Badge> : null}
+                    {op.收於抄本 ? <Badge tone="gold">收於抄本</Badge> : null}
+                    {op.加入註記?.some((s) => s.startsWith(name)) ? (
+                      <span className="text-[10.5px] text-[var(--cc-figure-note)]">（{op.加入註記.filter((s) => s.startsWith(name)).join('；')}）</span>
+                    ) : null}
+                    <span className="max-w-[400px] truncate text-[11px] text-[var(--cc-ink-soft)]">{d.爭點?.slice(0, 40)}</span>
+                    {op.下載網址 ?? (op.內嵌 ? d.官方頁 : null) ? (
+                      <a href={op.下載網址 ?? d.官方頁} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-[11px] text-[var(--cc-accent)] underline decoration-[var(--cc-link-underline)] underline-offset-2">{op.下載網址 ? 'PDF' : '官方頁'} <ExternalLink size={10} /></a>
+                    ) : null}
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-        </section>
-      ) : null}
-
-      {participated.length ? (
-        <section className="border-t border-[var(--cc-line)] py-5">
-          <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">參與裁判 {participated.length} 件（憲法法庭時期）</p>
-          <div className="mt-2 divide-y divide-[var(--cc-row-border)]">
-            {participated.map((d) => (
-              <div key={d.字號} className="flex flex-wrap items-center gap-x-3 gap-y-1 py-1.5 text-[12px]">
-                <span className="w-[76px] text-[11px] text-[var(--cc-figure-note)]">{d.日期}</span>
-                <a href={d.官方頁} target="_blank" rel="noreferrer" className="w-[130px] font-bold text-[var(--cc-ink-strong)] underline decoration-[var(--cc-link-underline)] underline-offset-2 hover:text-[var(--cc-accent)]">{d.字號}</a>
-                {d.主筆 === name ? <Badge tone="plum">主筆</Badge> : null}
-                {d.審查結論?.結論 && d.審查結論.結論 !== '未分類' ? (
-                  <Badge tone={OUTCOME_TONE[d.審查結論.結論] ?? 'slate'}>{d.審查結論.結論 === '其他/待人工' ? '待人工' : d.審查結論.結論}</Badge>
-                ) : null}
-                <span className="max-w-[440px] truncate text-[11px] text-[var(--cc-ink-soft)]">{d.爭點?.slice(0, 44)}</span>
+            </>
+          ) : null}
+          {participationOnly.length ? (
+            <div className="mt-4">
+              <p className="text-[11px] font-bold text-[var(--cc-ink-soft)]">
+                僅參與、無個人意見書（{participationOnly.length} 件；解釋為署名列、裁判為官方合議庭名單）
+              </p>
+              <div className="mt-1.5 flex flex-wrap gap-x-2.5 gap-y-1">
+                {participationOnly.map((d) => (
+                  <a key={d.字號} href={d.官方頁} target="_blank" rel="noreferrer" title={`${d.日期}　${d.爭點?.slice(0, 60) ?? ''}`}
+                    className="text-[11px] text-[var(--cc-ink-mid)] underline decoration-[var(--cc-link-underline)] underline-offset-2 hover:text-[var(--cc-accent)]">
+                    {d.字號.startsWith('釋字第') ? `釋${d.字號.slice(3, -1)}` : d.字號}
+                    {d.主筆 === name ? '＊' : ''}{d.主席 === name ? '†' : ''}
+                  </a>
+                ))}
               </div>
-            ))}
-          </div>
+              {participationOnly.some((d) => d.主筆 === name || d.主席 === name) ? (
+                <p className="mt-1 text-[10.5px] text-[var(--cc-figure-note)]">＊＝主筆　†＝會議主席</p>
+              ) : null}
+            </div>
+          ) : null}
         </section>
       ) : null}
 
@@ -871,8 +898,9 @@ function JusticeDetail({ name, onBack, onOpen }) {
       ) : null}
 
       <p className="border-t border-[var(--cc-line)] py-4 text-[11px] leading-relaxed text-[var(--cc-ink-soft)]">
-        意見書清單解析自官方附件檔名；「收於抄本」表示該意見書僅收於全案合訂 PDF。參與裁判僅憲法法庭時期
-        （2022 起）有官方合議庭記載，釋字時期的參與名單待屆次名冊回填。批次下載清單需回研究資料庫執行
+        意見書清單解析自官方附件檔名與內嵌正文；「收於抄本」表示該意見書僅收於全案合訂 PDF。參與名單皆為官方實據：
+        解釋來自官方頁末尾的大法官署名列（813 件全覆蓋，迴避或未參與評議者不在列），裁判來自官方合議庭名單；
+        「加入◯◯部分」等範圍限定照檔名原文附註。批次下載清單需回研究資料庫執行
         <code className="mx-1 rounded bg-[var(--cc-hover-bg)] px-1">npm run fetch-batch -- --manifest</code>下載官方 PDF。
       </p>
     </div>
@@ -1222,7 +1250,7 @@ function AboutView() {
             主題分類、稅法子主題與審查結論由規則初步標註（卡片上標示「結論待人工判讀」者即尚未人工覆核），意見書作者與共同具名關係解析自官方檔名；早期意見書僅收於抄本合訂檔者，已從抄本檔名拆出（卡片上仍連向抄本 PDF）。中期釋字（約第 100–400 號）的意見書常整卷收於抄本且檔名未列作者，該時期的意見書統計為下限而非全貌。
           </p>
           <p>
-            「審查基準」欄依湯德宗三級架構（寬鬆／中度／嚴格）機標：本院自釋字第 578 號起才明確區分寬嚴審查基準，之前案件不標；機標只認理由書明示字樣，多數案件為「未明示」，同案命中多級者標「待人工」。參與大法官名單僅憲法法庭判決與裁定的官方頁有記載，釋字時期需另建大法官屆次名冊回填（整理中）。
+            「審查基準」欄依湯德宗三級架構（寬鬆／中度／嚴格）機標：本院自釋字第 578 號起才明確區分寬嚴審查基準，之前案件不標；機標只認理由書明示字樣，多數案件為「未明示」，同案命中多級者標「待人工」。參與大法官名單：釋字取自官方頁解釋文／理由書末尾的大法官署名列（813 件全覆蓋，署名列不含迴避或未參與評議者），憲法法庭判決與裁定取自官方合議庭名單欄。
           </p>
         </div>
       </section>
