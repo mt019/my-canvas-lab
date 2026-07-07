@@ -98,7 +98,7 @@ const PAGE_META = { // token-exempt: per-page identity chip colors (data, not st
     desc: '德文法學名著選讀一的歷年教師開課時間軸，領域著色與課綱摘要',
     Icon: GraduationCap,
     accent: '#ece5d5',
-    accentText: '#8b6f25',
+    accentText: '#7c5a43',
     group: 'research',
   },
   TranslationAtlas: {

@@ -921,7 +921,7 @@ export default function AutoTuner() {
               onClick={toggleHalfDown}
               className={`rounded-xl border p-2 sm:p-2.5 transition-all ${
                 isHalfDown
-                  ? 'bg-[#f0e4d7] text-[#d4a373]'
+                  ? 'bg-[#f0e4d7] text-[#b08060]'
                   : 'bg-white text-[#b09e9c] hover:bg-[#fafafa]'
               }`}
               aria-label="切換降半音模式"
@@ -977,7 +977,7 @@ export default function AutoTuner() {
               className={`absolute top-1/2 z-30 ${compactViewport ? 'h-8 w-2' : 'h-10 w-2.5'} -translate-y-1/2 rounded-full shadow-sm transition-all duration-150 ${
                 isPerfect
                   ? 'bg-[#8d9e8c] shadow-[#8d9e8c]/50'
-                  : 'bg-[#d4a373]'
+                  : 'bg-[#b08060]'
               }`}
               style={{
                 left: `calc(50% + ${(clampedMeterOffset / DISPLAY_CENT_CLAMP) * 48}% )`,

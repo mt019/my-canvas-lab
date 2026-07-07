@@ -12,20 +12,20 @@ const MMA_VARS = { // token-exempt
   '--mma-bg': '#f2f4f8',
   '--mma-border': '#dde2ef',
   '--mma-primary': '#3b4f78',
-  '--mma-accent': '#b87333',
+  '--mma-accent': '#b08060',
   '--mma-muted': '#8892a8',
   '--mma-faint': '#edf0f7',
   '--mma-update-bg': '#fff3e0',
-  '--mma-update-border': '#f0a040',
-  '--mma-update-dot': '#e07000',
-  '--mma-amber-label': '#804000',
-  '--mma-amber-body': '#5a3000',
+  '--mma-update-border': '#dd8f78',
+  '--mma-update-dot': '#a44a4a',
+  '--mma-amber-label': '#45302f',
+  '--mma-amber-body': '#5a4b48',
   '--mma-rq-banner-bg': '#eef1fa',
   '--mma-rq-banner-border': '#c8d0e8',
   '--mma-body-text': '#3a4a5a',
   '--mma-taxnote-bg': '#fffbf0',
   '--mma-taxnote-border': '#e8d8a0',
-  '--mma-taxnote-label': '#806020',
+  '--mma-taxnote-label': '#3d3226',
   '--mma-taxnote-body': '#5a4820',
   '--mma-taxnote-item-bg': '#f8f0d8',
   '--mma-meta-bg': '#d0e8d0',
@@ -49,11 +49,11 @@ const MMA_VARS = { // token-exempt
   '--mma-cn-body': '#602010',
   '--mma-scholar-banner-bg': '#f8f4ee',
   '--mma-scholar-banner-border': '#d8c8a8',
-  '--mma-scholar-banner-label': '#906030',
+  '--mma-scholar-banner-label': '#6f6250',
   '--mma-scholar-banner-body': '#604020',
   '--mma-scholar-methodology': '#4a5a6a',
   '--mma-book-bg': '#fffbf2',
-  '--mma-book-border': '#e0c880',
+  '--mma-book-border': '#e3d9bd',
   '--mma-book-desc': '#5a4a20',
 };
 
@@ -641,7 +641,7 @@ export default function ManusMetaAcquisition() {
               <div className="flex gap-3 text-[10px] mt-2 mb-1">
                 {[ // token-exempt: status legend, colors looked up by key
                   { s: 'confirmed', icon: CheckCircle, color: '#307050', bg: '#d0f0e0', zh: '已確認', en: 'Confirmed' },
-                  { s: 'partial', icon: AlertCircle, color: '#805020', bg: '#f0e0c0', zh: '部分確認', en: 'Partial' },
+                  { s: 'partial', icon: AlertCircle, color: '#7c5a43', bg: '#f0e0c0', zh: '部分確認', en: 'Partial' },
                   { s: 'unknown', icon: XCircle, color: '#705030', bg: '#f0e0d0', zh: '待查核', en: 'Unverified' },
                 ].map((leg) => (
                   <div key={leg.s} className="flex items-center gap-1 px-2 py-1 rounded-lg" style={{ background: leg.bg }}>
@@ -656,7 +656,7 @@ export default function ManusMetaAcquisition() {
               {FACTS.map((f, i) => {
                 const cfg = { // token-exempt: status lookup, colors looked up by key
                   confirmed: { Icon: CheckCircle, color: '#307050', bg: '#d0f0e0', border: '#90d0b0' },
-                  partial: { Icon: AlertCircle, color: '#805020', bg: '#f0e0c0', border: '#d0a060' },
+                  partial: { Icon: AlertCircle, color: '#7c5a43', bg: '#f0e0c0', border: '#b08060' },
                   unknown: { Icon: XCircle, color: '#705030', bg: '#f0e0d0', border: '#d0a080' },
                 }[f.status];
                 return (

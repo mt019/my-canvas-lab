@@ -196,10 +196,19 @@ work.
   主筆/主席 badges and `加入註記` partial-join notes shown verbatim from
   the filename, e.g. 呂太郎加入第四部分), plus a compact chip cloud for
   participation-only cases (＊=主筆, †=主席). The overview table gained
-  a 參與解釋 column. Known data caveat: 12 justices' recorded tenures
-  conflict with their signature activity (queue in the data repo's
-  `data/materials/參與解釋查核佇列.md`) — fix tenures in overrides, the
-  rosters are the more reliable side.
+  a 參與解釋 column. 2026-07-07 **RESOLVED**: the 12 tenure-vs-signature
+  conflicts were researched (11 confirmed + 1 partial: 黃亮, third-term
+  end date unfindable, provisionally 屆次推定 1976-09), written into the
+  data repo's `justices-overrides.json` as full multi-segment tenures,
+  and the cross-check flag dropped **684→0 出界**. Full sourced findings:
+  data repo `data/materials/參與解釋查核結果.md`. Structural finding worth
+  reusing: 5 of them (田炯錦/戴炎輝/城仲模/謝在全/賴英照) kept signing
+  interpretations *after* their 大法官 title ended because they'd moved
+  up to 院長/副院長, who by 司法院大法官會議法 §3 chairs the conference —
+  so their `任期` now carries `司法院院長`/`司法院副院長` segments after the
+  大法官 segment, and the frontend's `formatTenureRange` prefixes the
+  non-大法官 role (verified rendering on 戴炎輝's page). 黃正銘's third-term
+  end was also corrected in passing (1976 → 1972-07-04 呈請退職).
 - 2026-07-07 審查結論 typology (data-side + frontend + sync **DONE**):
   the data repo reworked `classifyOutcome` so early 釋字 that aren't
   constitutionality review get real categories. `審查結論.結論` now has,
@@ -257,12 +266,19 @@ work.
   official URLs; actual batch download happens in the data repo via
   `npm run fetch-batch -- --manifest <file>` (or `--tag 稅法`). The
   frontend never proxies or hosts official files.
-- Chart categorical palette — superseded 2026-07-07, see the dated
-  entry further down (the original `#a84f6e / #5a5fb0 / #3f7d44` set
-  is gone; don't resurrect it, it's the combination the user rejected
-  as an ugly clash). Current hexes are in `TENURE_BG_COLOR` /
-  `TENURE_ABROAD_COLOR` / `PRES_COLOR` themselves — don't swap those
-  casually either without re-running the dataviz skill's validator.
+- Chart categorical palette — went through three revisions on
+  2026-07-07, final state is a **site-wide color-philosophy rule** now
+  documented in `docs/DESIGN.md` (色票庫 → 色彩哲學). The short version:
+  every chart/identity color must be a real hex pulled from
+  `src/styles/palettes.js` (not formula-generated), and no color may sit
+  in OKLCH hue 50°–140° at chroma ≥0.08 (that band reads as
+  mustard/olive — a computable property, not taste). Current values live
+  in `TENURE_BG_COLOR` / `TENURE_ABROAD_COLOR` / `PRES_COLOR`
+  (rose/indigo/teal/copper `#aa4d75`/`#3b4f78`/`#4c7971`/`#b08060` for
+  the 4-class ones; `PRES_COLOR` is an 8-hue set with 嚴家淦/蔣經國
+  swapped off the old gold/olive to `#a44a4a`/`#b3452e`). Don't swap any
+  of these without re-running the dataviz skill's `validate_palette.js`
+  *and* checking the new hue against the 50°–140° rule.
 - `scripts/validate-font-coverage.mjs` walks `src/` with pure node
   (no ripgrep): this machine has no real `rg` binary — the shell `rg`
   is Claude Code's wrapper, invisible to node's spawn.
@@ -320,22 +336,17 @@ work.
   Playwright script driven against a local dev server (screenshots +
   `console --errors` check, zero console errors) before being called
   done — see the plan file for the verification transcript if useful.
-  Update (same session, immediately after): the tenure-timeline
-  categorical palette was redrawn — `TENURE_BG_COLOR`/
-  `TENURE_ABROAD_COLOR` are now rose/steel-blue/moss-green/ochre
-  (`#aa4d75`/`#007dae`/`#4a9a5e`/`#a76c12`) and `PRES_COLOR` is an
-  8-hue rose→plum rotation with alternating lightness, both
-  re-validated with the dataviz skill's `validate_palette.js`
-  (`--pairs all` against this page's own surface, not just adjacent
-  pairs, since sort order can put any two categories next to each
-  other) — replaces the old violet-blue/green pairing the user
-  called an ugly clash despite it having passed the original
-  CVD/contrast validation (accessibility-valid ≠ aesthetically
-  harmonious was the actual gap). Two swatches sit in the CVD 8–12
-  warn band / sub-3:1 contrast band respectively, which the skill
-  says is legal only with secondary encoding — already satisfied
-  here since the legend and hover tooltip always show the category
-  name as text, never color alone. Also added three deeper paper-
+  Update (same session): the tenure-timeline categorical palette was
+  redrawn twice more that day — first to rose/steel-blue/moss/ochre,
+  then (final) to the current rose/indigo/teal/copper after the
+  site-wide color-philosophy audit flagged the steel-blue/moss/ochre
+  set's green and ochre as still-muddy; the ochre/copper cross-
+  contamination fix and the `PRES_COLOR` 嚴家淦/蔣經國 gold-olive swap
+  both belong to that same audit. See the color-philosophy bullet above
+  and `docs/DESIGN.md` for the final rule; the two swatches still sitting
+  in the CVD 8–12 warn / sub-3:1 contrast bands are legal only because
+  the legend + hover tooltip always show the category name as text,
+  never color alone. Also added three deeper paper-
   texture options to `palettes.js` (`fiber-deep`, `chain-laid`,
   `cold-press` — each layers two noise/line frequencies plus, for
   `fiber-deep`, a faint edge shadow) alongside the original four
@@ -350,6 +361,18 @@ work.
   backlog beyond 443/371, and the large-scale 待人工 classification
   backlog are all written up as TODO.md items with ready-to-paste
   handoff prompts in the plan file above.
+- WHY_CITED expansion (2026-07-07, `~/.claude/plans/lovely-tumbling-star.md`):
+  the citation "why" backlog noted above is now cleared for the visible
+  list. `WHY_CITED` grew from 2 → 15 entries, covering the full
+  `cited.slice(0, 15)` most-cited ranking. Each new doctrinal one-liner
+  was web-verified against the official 憲法法庭 / 全國法規資料庫 pages and
+  secondary summaries (極憲焦點, 都更研究基金會) — not written from memory;
+  source URLs are in the plan file. Notable resolutions during research:
+  釋字682 is 應考試權 + 判斷餘地低密度審查; 709 is the court's self-described
+  first strengthening of 正當行政程序; 594 earned a 法律明確性 entry rather
+  than staying blank. Ranks deeper than 15 stay blank by design (the list
+  only renders 15). Frontend-only, hardcoded in `ConstitutionalCourt.jsx`
+  per existing convention — does not flow through the data-repo sync.
 - 屆次/任期 convergence (landed 2026-07-07): the justice detail page
   no longer renders two duplicated spans. Single 屆次 line is the
   base; `任期來源 === '屆次推定'` (64 justices, 任期 mechanically

@@ -239,7 +239,7 @@ function drawPianoRoll(canvas, cssW, cssH, trail, viewCenter, targetMidi, detect
         const y = midiToY(pt.midi);
         if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
       });
-      ctx.strokeStyle = '#c4906a';
+      ctx.strokeStyle = '#b08060';
       ctx.lineWidth = 2.5;
       ctx.stroke();
     }
@@ -252,7 +252,7 @@ function drawPianoRoll(canvas, cssW, cssH, trail, viewCenter, targetMidi, detect
       const y = midiToY(lastVal);
       const centsOff = (lastVal - Math.round(lastVal)) * 100;
       const color = Math.abs(centsOff) < PERFECT_CENTS ? '#8d9e8c'
-        : Math.abs(centsOff) < 25 ? '#d4a373' : '#e08080';
+        : Math.abs(centsOff) < 25 ? '#b08060' : '#e08080';
       ctx.shadowColor = color;
       ctx.shadowBlur = 12;
       ctx.beginPath();
@@ -715,7 +715,7 @@ export default function VocalTuner() {
               {!isTooQuiet && detectedFreq ? `${detectedFreq.toFixed(1)} Hz` : ''}
             </div>
             {!isTooQuiet && (
-              <div className={`text-xs font-black mt-0.5 ${isPerfect ? 'text-[#8d9e8c]' : Math.abs(activeCents) > 50 ? 'text-rose-400' : 'text-[#d4a373]'}`}>
+              <div className={`text-xs font-black mt-0.5 ${isPerfect ? 'text-[#8d9e8c]' : Math.abs(activeCents) > 50 ? 'text-rose-400' : 'text-[#b08060]'}`}>
                 {isPerfect ? 'PERFECT ✓' : `${activeCents > 0 ? '+' : ''}${activeCents.toFixed(1)} ¢`}
               </div>
             )}

@@ -671,7 +671,7 @@ const styles = `
   --fer-badge-green-bg: #dfeee6;
   --fer-badge-green-text: #246045;
   --fer-badge-amber-bg: #f2e8c9;
-  --fer-badge-amber-text: #765820;
+  --fer-badge-amber-text: #68483f;
   --fer-badge-red-bg: #f1d9d3;
   --fer-badge-red-text: #884232;
   --fer-border-tan-light: #eee6da;
