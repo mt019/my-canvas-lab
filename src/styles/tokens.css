@@ -29,6 +29,50 @@
   --c-pop: #a3403a;            /* clash color — at most one appearance per view */
   --c-accent-grad: none;       /* metallic accent gradient (e.g. gold foil), set by palette */
 
+  /* ── Semantic color system (2026-07-08) ──────────────────────────────────
+     Two layers, Primer/Obsidian model: Layer 0 primitive tone pairs (the
+     calibrated palette), Layer 1 semantic aliases via var() (name by purpose,
+     not by hue). The whole thing is Notion's harmony rule made computable:
+     every -tx (text/mark) sits in a tight uniform lightness band (OKLCH
+     L≈0.48–0.55, muted C≈0.05–0.10) and every -bg is near-white with the same
+     hue (OKLCH L≈0.92–0.96). `scripts/validate-color-system.mjs` enforces the
+     bands at build time, so a categorical/status color can never drift out of
+     the harmony envelope by hand. These are STABLE across page palettes (status
+     meaning and category identity don't change with theme); a future dark mode
+     swaps the Layer 0 values only, the Layer 1 names stay. Why these hues: the
+     site's own Badge tones, already user-approved. Full rationale + research
+     sources: docs/DESIGN.md 色彩哲學, and scratchpad research-*.md. */
+
+  /* Layer 0 — primitive tone pairs (text/mark + near-white bg, same hue) */
+  --tone-rose-tx:  #8f6071;  --tone-rose-bg:  #f7edf0;
+  --tone-red-tx:   #984f62;  --tone-red-bg:   #f5dfe3;
+  --tone-amber-tx: #8a6d3b;  --tone-amber-bg: #f2e8d9;
+  --tone-green-tx: #566d50;  --tone-green-bg: #e8efe5;
+  --tone-teal-tx:  #4c7971;  --tone-teal-bg:  #e3edeb;
+  --tone-blue-tx:  #615982;  --tone-blue-bg:  #e8e5f1;
+  --tone-plum-tx:  #945d70;  --tone-plum-bg:  #f2e3e7;
+  --tone-slate-tx: #52616a;  --tone-slate-bg: #eef1f2;
+
+  /* Layer 1a — semantic status (by meaning; ink + pale bg) */
+  --status-danger-tx:  var(--tone-red-tx);    --status-danger-bg:  var(--tone-red-bg);
+  --status-warning-tx: var(--tone-amber-tx);  --status-warning-bg: var(--tone-amber-bg);
+  --status-success-tx: var(--tone-green-tx);  --status-success-bg: var(--tone-green-bg);
+  --status-info-tx:    var(--tone-blue-tx);   --status-info-bg:    var(--tone-blue-bg);
+  --status-neutral-tx: var(--tone-slate-tx);  --status-neutral-bg: var(--tone-slate-bg);
+
+  /* Layer 1b — categorical identity slots (fixed order, never reshuffled;
+     for charts / legends / multi-category badges). Distinguishability leans on
+     the always-present text label; the colors carry harmony, the label carries
+     identity (see DESIGN.md on the harmony-vs-distinguishability trade-off). */
+  --cat-1-tx: var(--tone-plum-tx);   --cat-1-bg: var(--tone-plum-bg);
+  --cat-2-tx: var(--tone-blue-tx);   --cat-2-bg: var(--tone-blue-bg);
+  --cat-3-tx: var(--tone-green-tx);  --cat-3-bg: var(--tone-green-bg);
+  --cat-4-tx: var(--tone-amber-tx);  --cat-4-bg: var(--tone-amber-bg);
+  --cat-5-tx: var(--tone-teal-tx);   --cat-5-bg: var(--tone-teal-bg);
+  --cat-6-tx: var(--tone-red-tx);    --cat-6-bg: var(--tone-red-bg);
+  --cat-7-tx: var(--tone-rose-tx);   --cat-7-bg: var(--tone-rose-bg);
+  --cat-8-tx: var(--tone-slate-tx);  --cat-8-bg: var(--tone-slate-bg);
+
   /* Type scale (rem). Body is 18px: Huiwen Mincho strokes are thin and
      CJK Ming faces need one step up from Latin defaults. */
   --text-xs: 0.75rem;

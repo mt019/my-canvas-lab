@@ -540,6 +540,29 @@ PageShell, Eyebrow. Full spec, palette registry, and migration state:
 migrated files; `scripts/design-token-exceptions.txt` is the shrink-only
 list of unmigrated files.
 
+**Semantic color token system (2026-07-08, built after six rounds of color
+thrashing — read `docs/DESIGN.md` 色彩哲學 → 語意色 token 系統 before touching
+any chart/badge/category color).** Two layers in `tokens.css`: Layer 0
+`--tone-{rose,red,amber,green,teal,blue,plum,slate}-{tx,bg}` primitives (8
+calibrated pairs, values = the user-approved Badge hues), Layer 1
+`--status-{danger,warning,success,info,neutral}-{tx,bg}` (by meaning) +
+`--cat-1..8-{tx,bg}` (fixed-order categorical slots) as `var()` aliases. A
+third build validator, `scripts/validate-color-system.mjs` (`npm run
+validate:colors`, wired into build), enforces Notion's harmony rule
+computably: every `-tx` must sit in OKLCH L 0.46–0.58 with total spread ≤0.10
+(uniform lightness) and C 0.045–0.13 (muted); every `-bg` L 0.90–0.97
+(near-white). A mustard tone literally can't be added without failing the
+build (verified: `#a8862e` → build red). Design decision baked in: ONE palette
+serves both badges and charts, relying on the always-present text
+label/legend for distinguishability (the harmony-vs-CVD trade-off, resolved
+per research — sources in scratchpad `research-*.md`, proposal in
+`PROPOSAL-color-token-system.md`). Reference implementation landed in
+`ConstitutionalCourt` (Badge tones + `TENURE_*` now consume tokens, 13
+`--cc-badge-*` islands removed). **Phase 2 (not done): the other 7 pages'
+`*_VARS` raw-hex islands still need consolidating into the semantic tokens —
+do it incrementally, don't open new hex islands.** Rule for any new
+chart/status color: reference `--status-*` / `--cat-*`, never a fresh page hex.
+
 ## Font system (stable, don't re-derive)
 
 `src/index.css` defines three CSS variables:

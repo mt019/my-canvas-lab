@@ -54,6 +54,20 @@ Notion 的 tag／badge 色系從不出醜，原因是四條紀律，本站色彩
 
 **技術落地**：任何要生成新色階（漸層、分類色、圖表色）的地方，優先直接抄站內 `PALETTES`（`src/styles/palettes.js`）或既有 Badge 元件裡已經在用、已經被使用者看過不反感的真實色碼——不要用公式對一整個色相環套同一組飽和度/明度算出一批新顏色。公式對某個色相剛好好看，換一個色相不一定還好看（尤其黃、黃綠一帶，即使中等彩度也容易讀成土黃／土綠，這條在 OKLCH 色彩空間裡是可驗證的物理現象，不是玄學）；只有在「淡底」這種低風險、幾乎所有色相都安全的轉換上才准公式生成，「墨色」本身永遠用已審過的真實值。工作範例：`ConstitutionalCourt.jsx` 的 `Badge` 元件（bg/ink 兩色一組）、`PaletteLab.jsx` 的 `TasteQuiz`／`tagTones()`（2026-07-07 從「公式生成色塊」改成「抄 PALETTES 真實色碼＋只算淡底」，過程與教訓見 `HANDOFF.md`）。
 
+### 語意色 token 系統（2026-07-08，前六輪配色鬼打牆後建立）
+
+上面那條「優先抄真實色碼」的原則，現在有一套**可計算、可強制**的 token 系統把它固化下來。研究了 GitHub Primer／Material 3／Atlassian／Radix／Notion／Obsidian（研究筆記在 scratchpad `research-*.md`、提案在 `PROPOSAL-color-token-system.md`）後，抄了三件事落地在 `src/styles/tokens.css`：
+
+**兩層架構（Primer／Obsidian 模型）**：
+- **Layer 0 primitive**——`--tone-{rose,red,amber,green,teal,blue,plum,slate}-{tx,bg}`，8 個校準色調，每個一對「文字/標記色 `-tx`」＋「近白底色 `-bg`」，同色相。值＝站內已認可的 Badge 色。
+- **Layer 1 semantic**——用途命名、`var()` 指向 primitive，不寫死 hex：狀態色 `--status-{danger,warning,success,info,neutral}-{tx,bg}`（依意義）；分類色 `--cat-1..8-{tx,bg}`（固定順序身分槽，供圖表/圖例/多類別 badge）。改一個 primitive，全站語意色跟著動；產物是純 CSS，複製到 MkDocs 零依賴。
+
+**Notion 的和諧規律，用 validator 強制（`scripts/validate-color-system.mjs`，接進 `npm run build`）**：每個 `-tx` 的 OKLCH 明度鎖在 L 0.46–0.58（且全體明度極差 ≤0.10＝「看起來一樣亮」）、彩度 0.045–0.13（莫蘭迪，不純不灰）；每個 `-bg` 鎖在 L 0.90–0.97 近白。任一色調飄出帶就 **build 失敗**。這把「挑一個好看的顏色」從品味變成過機器——土黃色（H79 那種）想混進來，明度一驗就被擋（實測 `#a8862e` 會讓 build 紅）。
+
+**和諧 vs 可辨識的取捨（一手實證：同明度和諧色在無標籤時難辨）**：本站選擇「一組色盤通吃 badge 與圖表」，因為圖表一律有文字圖例＋hover 標籤——**讓標籤負責辨識、讓顏色負責和諧**。這是明知取捨的決定，不是忽略衝突；未來若出現無標籤圖表才需要另備高區辨分類色。
+
+**規則**：要配任何分類/狀態色，**引用 `--status-*` 或 `--cat-*`，不要再開頁面級 hex 孤島**（`ConstitutionalCourt` 的 `Badge`／`TENURE_*` 已示範改吃 token，移除了 13 個 `--cc-badge-*`）。其餘 7 頁的 `*_VARS` hex 孤島列為 Phase 2 增量收斂（見 HANDOFF）。深色模式現在不做，但兩層結構讓未來只需換 Layer 0 值、語意名不變（Obsidian 模型）。
+
 ## 品味參照 → 具體規則
 
 | 參照 | 落地規則 |

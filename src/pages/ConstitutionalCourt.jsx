@@ -45,15 +45,8 @@ const CC_VARS = { // token-exempt
   '--cc-heat-text-light': '#fdf7f9',
   '--cc-opinion-bg': '#f9f2f4',
   '--cc-heat-zero': '#f7f3f4',
-  '--cc-badge-red-bg': '#f5dfe3',
-  '--cc-badge-gold-bg': '#f2e8d9',
-  '--cc-badge-plum-bg': '#f2e3e7',
   '--cc-tab-active-bg': '#f1e3e8',
   '--cc-row-border': '#f0e3e8',
-  '--cc-badge-slate-bg': '#eef1f2',
-  '--cc-badge-green-bg': '#e8efe5',
-  '--cc-badge-blue-bg': '#e8e5f1',
-  '--cc-badge-teal-bg': '#e3edeb',
   '--cc-table-border': '#e6ded2',
   '--cc-node-related-fill': '#e3b6c4',
   '--cc-edge-line': '#c9b3bc',
@@ -61,16 +54,10 @@ const CC_VARS = { // token-exempt
   '--cc-placeholder': '#b09aa2',
   '--cc-icon': '#9b6b7b',
   '--cc-eyebrow-header': '#987483',
-  '--cc-badge-red-ink': '#984f62',
-  '--cc-badge-plum-ink': '#945d70',
-  '--cc-badge-gold-ink': '#8a6d3b',
   '--cc-tab-inactive-text': '#806b74',
   '--cc-figure-note': '#7d7076',
   '--cc-tab-active-text': '#704c5a',
   '--cc-heat-text-dark': '#6d5a62',
-  '--cc-badge-green-ink': '#566d50',
-  '--cc-badge-slate-ink': '#52616a',
-  '--cc-badge-teal-ink': '#4c7971',
   '--cc-type-ruling': '#3f7d44',
   '--cc-heading': '#2f2a2d',
 };
@@ -130,13 +117,14 @@ const tabs = [
 
 function Badge({ children, tone = 'slate' }) {
   const colors = {
-    slate: ['var(--cc-badge-slate-bg)', 'var(--cc-badge-slate-ink)'],
-    gold: ['var(--cc-badge-gold-bg)', 'var(--cc-badge-gold-ink)'],
-    green: ['var(--cc-badge-green-bg)', 'var(--cc-badge-green-ink)'],
-    red: ['var(--cc-badge-red-bg)', 'var(--cc-badge-red-ink)'],
-    blue: ['var(--cc-badge-blue-bg)', 'var(--cc-blue-ink)'],
-    plum: ['var(--cc-badge-plum-bg)', 'var(--cc-badge-plum-ink)'],
-    teal: ['var(--cc-badge-teal-bg)', 'var(--cc-badge-teal-ink)'],
+    // 全站語意色 token（tokens.css Layer 0 tone pairs）；tone 名對映到校準過的色調
+    slate: ['var(--tone-slate-bg)', 'var(--tone-slate-tx)'],
+    gold: ['var(--tone-amber-bg)', 'var(--tone-amber-tx)'],
+    green: ['var(--tone-green-bg)', 'var(--tone-green-tx)'],
+    red: ['var(--tone-red-bg)', 'var(--tone-red-tx)'],
+    blue: ['var(--tone-blue-bg)', 'var(--tone-blue-tx)'],
+    plum: ['var(--tone-plum-bg)', 'var(--tone-plum-tx)'],
+    teal: ['var(--tone-teal-bg)', 'var(--tone-teal-tx)'],
   };
   const [bg, color] = colors[tone] || colors.slate;
   return (
@@ -999,16 +987,13 @@ function JusticeDetail({ name, onBack, onOpen }) {
 }
 
 // 任期時間軸（生涯甘特圖）。124 人官方名冊＋簡歷/屆次/人工核定三層任期。
-// 著色 2026-07-07 五次重配（使用者關鍵指正：不要憑空造色也不要逃去灰色，直接沿用站內
-// 那組「看起來很和諧」的 badge 色票——判決藍、合憲綠、違憲定期失效金、刑事法紫都好看，
-// 原因是它們明度一致（L≈0.5）、彩度中低、色相各異，這正是 Notion tag 的和諧原理）。
-// 所以四職業直接吃 Badge tone 的 ink 色：學者＝plum 紫、法官＝blue 藍、
-// 律師＝green 綠（＝合憲綠同一色）、檢察官＝gold 金（＝違憲定期失效金同一色），站內已證明和諧。
-// 這組是「明度齊一＋色相多樣」的鮮明和諧，不是先前那版混灰的低飽和暖色調。土黃土綠的
-// 50–140 色相禁區只約束「大面積、離群、臨時生成」的填色；站內 badge 已校準的金/綠屬和諧色
-// 系例外，可用。灰色（其他／待確認）保持淺灰退場，讓未知類別自然後退。
-const TENURE_BG_COLOR = { // token-exempt: 沿用站內 Badge tone ink（和諧色系，非臨時生成）
-  學者: '#945d70', 法官: '#615982', 律師: '#566d50', 檢察官: '#8a6d3b', 其他: '#b3a8ad', 待確認: '#b3a8ad',
+// 著色改吃全站語意色 token 的分類色 --cat-N-tx（2026-07-08，tokens.css Layer 1b）：
+// 學者=cat-1 紫、法官=cat-2 藍、律師=cat-3 綠、檢察官=cat-4 金——這組 cat 色的值就是
+// 站內 Badge 校準色調，明度齊一（L≈0.5）、彩度中低、色相各異（Notion tag 的和諧原理），
+// 由 validate:colors 在 build 時鎖住明度帶，改色相不超出帶才過得了 build。其他／待確認
+// 保持淺灰退場（不在分類色內，是「無類別」的中性退場色，故留字面值）。
+const TENURE_BG_COLOR = { // token-exempt: 分類色改用 --cat-* token；#b3a8ad 為退場中性色
+  學者: 'var(--cat-1-tx)', 法官: 'var(--cat-2-tx)', 律師: 'var(--cat-3-tx)', 檢察官: 'var(--cat-4-tx)', 其他: '#b3a8ad', 待確認: '#b3a8ad',
 };
 // 留學地分群：null 再分「國內」（逐人查核確認無外國學位）與「待確認」（查不到可靠線索）
 const ABROAD_GROUP = (j) => {
@@ -1019,9 +1004,9 @@ const ABROAD_GROUP = (j) => {
   if (c) return '其他';
   return (j.留學國來源 ?? '').includes('查核') ? '國內' : '待確認';
 };
-// 與 TENURE_BG_COLOR 共用同一組四色（同樣 4 類＋中性灰的結構），維持兩種著色模式視覺一致
-const TENURE_ABROAD_COLOR = { // token-exempt: dataviz categorical palette, validated 2026-07-07
-  德語圈: '#945d70', 英美: '#615982', 日本: '#566d50', 其他: '#8a6d3b', 國內: '#b3a8ad', 待確認: '#b3a8ad',
+// 與 TENURE_BG_COLOR 共用同一組分類色（--cat-1..4），維持兩種著色模式視覺一致
+const TENURE_ABROAD_COLOR = { // token-exempt: 分類色改用 --cat-* token；#b3a8ad 為退場中性色
+  德語圈: 'var(--cat-1-tx)', 英美: 'var(--cat-2-tx)', 日本: 'var(--cat-3-tx)', 其他: 'var(--cat-4-tx)', 國內: '#b3a8ad', 待確認: '#b3a8ad',
 };
 // 提名總統 8 色。2026-07-07 二次重配：原本嚴家淦／蔣經國兩色的色相分別落在
 // OKLCH H69.8°／H120.8°，正是這頁 TenureView 出身/留學國配色
@@ -1373,7 +1358,7 @@ const provYear = (s) => {
 };
 
 const PROV_SEGMENTS = [ // token-exempt: 沿革機關時間軸分類色（資料，非樣式）
-  // 大理院＝深酒紅 #7d4256（原借用 --cc-badge-gold-ink 金色，色相 H79.7 落在土黃區，
+  // 大理院＝深酒紅 #7d4256（原借用金色 badge ink，色相 H79.7 落在土黃區，
   // 2026-07-07 色彩稽核換成同暖色系深酒紅，與其餘四段的 mauve/rose/rose/indigo 協調）
   { key: 'dali', 機關: '大理院・統字', 起: '1913-01-15', 迄: '1927-10-22', 號數: '統字 1–2012', color: '#7d4256', card: 'dali', 定性: '統一解釋法令，約法解釋不在其權限，惟屢援約法補法令之缺' },
   { key: 'zuigao', 機關: '最高法院・解字', 起: '1927-12-25', 迄: '1928-11-20', 號數: '解字 1–245', color: 'var(--cc-eyebrow)', card: 'zuigao', 定性: '不滿一年的過渡期，體例承襲大理院，統一解釋權旋移司法院' },
