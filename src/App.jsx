@@ -231,7 +231,7 @@ function HomePage({ routes }) {
   const unknown = routes.filter((r) => !r.meta);
   return (
     <div
-      className="min-h-screen bg-[var(--home-bg)] px-4 font-sans text-[var(--home-ink)] sm:px-6"
+      className="min-h-screen paper-texture bg-[var(--home-bg)] px-4 font-sans text-[var(--home-ink)] sm:px-6"
       style={{ ...HOME_VARS, paddingTop: 46, paddingBottom: 64 }}
     >
       <div className="mx-auto w-full max-w-5xl">

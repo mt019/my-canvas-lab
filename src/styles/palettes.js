@@ -165,6 +165,8 @@ export const PALETTES = [
  * 透明度壓到 2–4%，只在近看時給紙一點手感，不搶正文。
  */
 const FIBER_SVG = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.04 0'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)'/%3E%3C/svg%3E")`;
+// 粗纖維層（低頻，模擬手工紙較大片的纖維團塊），疊在 FIBER_SVG 細顆粒之下加深層次
+const FIBER_COARSE_SVG = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='320'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.15' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='320' height='320' filter='url(%23n)'/%3E%3C/svg%3E")`;
 
 export const TEXTURES = [
   { id: 'none', name: '無', story: '素面，最乾淨。', css: 'none' },
@@ -187,6 +189,28 @@ export const TEXTURES = [
     story: '版畫紙的細顆粒。',
     css: 'radial-gradient(rgba(60,50,40,0.035) 0.5px, transparent 0.5px)',
     size: '7px 7px',
+  },
+  // 以下三款是既有材質的「加深層次」版：疊兩種頻率/尺度，並在手工紙加一圈極淡邊緣陰影，
+  // 給紙一點立體感，不再是單層純噪點。
+  {
+    id: 'fiber-deep',
+    name: '手工紙・深',
+    story: '粗纖維團塊＋細顆粒兩層疊加，邊緣一圈極淡陰影，比手工紙更有厚度。',
+    css: `radial-gradient(ellipse at 50% 35%, rgba(255,255,255,0) 55%, rgba(60,50,40,0.03) 100%), ${FIBER_SVG}, ${FIBER_COARSE_SVG}`,
+    size: 'auto, 240px 240px, 320px 320px',
+  },
+  {
+    id: 'chain-laid',
+    name: '簾紋・雙層',
+    story: '橫向簾線加直向較粗的織紋，古法抄紙簾紋與織理交錯的真實結構。',
+    css: 'repeating-linear-gradient(0deg, rgba(60,50,40,0.022) 0px, rgba(60,50,40,0.022) 1px, transparent 1px, transparent 4px), repeating-linear-gradient(90deg, rgba(60,50,40,0.03) 0px, rgba(60,50,40,0.03) 1.5px, transparent 1.5px, transparent 28px)',
+  },
+  {
+    id: 'cold-press',
+    name: '冷壓水彩',
+    story: '兩種尺度的顆粒疊在一起，模擬冷壓水彩紙不規則的紙紋齒理。',
+    css: 'radial-gradient(rgba(60,50,40,0.045) 0.6px, transparent 0.6px), radial-gradient(rgba(60,50,40,0.025) 1px, transparent 1px)',
+    size: '7px 7px, 19px 19px',
   },
 ];
 

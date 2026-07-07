@@ -106,7 +106,7 @@ export default function ManusMetaAcquisition() {
     : ['Timeline', 'Structure', 'Legal', 'Research', 'Fact-Check'];
 
   return (
-    <div className="min-h-screen font-sans" style={{ ...MMA_VARS, background: P.bg }}>
+    <div className="min-h-screen paper-texture font-sans" style={{ ...MMA_VARS, background: P.bg }}>
       <div className="max-w-2xl mx-auto px-4 pt-10 pb-20">
 
         {/* ── Header ── */}

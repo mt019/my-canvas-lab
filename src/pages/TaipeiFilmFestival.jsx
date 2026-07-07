@@ -721,7 +721,7 @@ export default function TaipeiFilmFestival() {
   };
 
   return (
-    <div className="min-h-screen bg-[var(--tff-bg)] text-slate-950" style={TFF_VARS}>
+    <div className="min-h-screen paper-texture bg-[var(--tff-bg)] text-slate-950" style={TFF_VARS}>
       <header className="border-b border-slate-200 bg-white">
         <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-5 sm:px-6 lg:px-8">
           <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">

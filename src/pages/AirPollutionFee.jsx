@@ -481,7 +481,7 @@ export default function AirPollutionFee() {
   ];
 
   return (
-    <div className="min-h-screen bg-[var(--apf-bg)] font-sans" style={{ ...APF_VARS, paddingBottom: 64 }}>
+    <div className="min-h-screen paper-texture bg-[var(--apf-bg)] font-sans" style={{ ...APF_VARS, paddingBottom: 64 }}>
 
       {/* Header */}
       <header className="sticky top-0 z-10 bg-[var(--apf-bg)]/90 backdrop-blur-md border-b border-[var(--apf-line)] px-4 py-3 flex items-center gap-3">

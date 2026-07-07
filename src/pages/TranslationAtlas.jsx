@@ -141,7 +141,7 @@ export default function TranslationAtlas() {
 
   return (
     <div
-      className="min-h-screen bg-[var(--ta-bg)] px-4 font-sans text-[var(--ta-ink)] sm:px-6"
+      className="min-h-screen paper-texture bg-[var(--ta-bg)] px-4 font-sans text-[var(--ta-ink)] sm:px-6"
       style={{ ...TA_VARS, paddingTop: 46, paddingBottom: 64 }}
     >
       <div className="mx-auto w-full max-w-5xl">

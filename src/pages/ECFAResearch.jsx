@@ -839,7 +839,7 @@ export default function ECFAResearch() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[var(--ecfa-bg)] font-sans text-[var(--ecfa-ink-strong)]" style={{ ...ECFA_VARS, paddingBottom: 60, zoom: fontScale }}>
+    <div className="min-h-screen paper-texture bg-[var(--ecfa-bg)] font-sans text-[var(--ecfa-ink-strong)]" style={{ ...ECFA_VARS, paddingBottom: 60, zoom: fontScale }}>
       <header className="border-b border-[var(--ecfa-line)] bg-white">
         <div className="mx-auto max-w-6xl px-4 py-7 sm:px-6">
           <div className="flex items-start justify-between gap-3">

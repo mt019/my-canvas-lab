@@ -32,7 +32,7 @@ export default function PageShell({
   const scaleStyle = fontScale != null ? { zoom: fontScale } : undefined;
 
   return (
-    <main className="min-h-screen bg-paper text-ink" style={scaleStyle}>
+    <main className="min-h-screen bg-paper paper-texture text-ink" style={scaleStyle}>
       <div className={`mx-auto px-4 py-10 sm:px-6 ${WIDTHS[width] ?? WIDTHS.prose}`}>
         <header className="mb-8">
           <div className="mb-4 flex items-center justify-between gap-4">

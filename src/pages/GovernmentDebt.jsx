@@ -215,7 +215,7 @@ export default function GovernmentDebt() {
   ];
 
   return (
-    <div className="min-h-screen font-sans" style={{ ...GD_VARS, background: 'var(--gd-bg)', paddingBottom: 60 }}>
+    <div className="min-h-screen paper-texture font-sans" style={{ ...GD_VARS, background: 'var(--gd-bg)', paddingBottom: 60 }}>
 
       {/* ── Header ── */}
       <div style={{ background: 'linear-gradient(135deg, var(--gd-nav-bg) 0%, var(--gd-nav-bg-end) 100%)', paddingTop: 48, paddingBottom: 28 }}>

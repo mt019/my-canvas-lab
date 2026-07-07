@@ -195,6 +195,30 @@ described here in detail — update this section once that work lands.
   conflict with their signature activity (queue in the data repo's
   `data/materials/參與解釋查核佇列.md`) — fix tenures in overrides, the
   rosters are the more reliable side.
+- 2026-07-07 審查結論 typology (data-side DONE, **frontend + sync
+  PENDING — pick this up next**): the data repo reworked
+  `classifyOutcome` so early 釋字 that aren't constitutionality review
+  get real categories. `審查結論.結論` now has, besides 違憲*/合憲,
+  three NEW values: `法令解釋` (83, statutory/unified interpretation),
+  `補充前解釋` (30), `變更前解釋` (10). 待人工 dropped 434→217; 違憲*
+  and existing 合憲 are byte-unchanged. Rules + 16-case sample table:
+  data repo `docs/審查結論分類規則.md`. **The rebuilt
+  `data/processed/constitutional-court-app.json` is NOT yet synced to
+  this repo's snapshot** — deliberately, so the page updates atomically
+  once the frontend handles the new values. TODO in
+  `ConstitutionalCourt.jsx`: (1) `OUTCOME_TONE` map (~L83) — add tones
+  for 法令解釋/補充前解釋/變更前解釋 (they currently fall to the `?? 'slate'`
+  default, so it renders but flat); (2) 結論 filter `Select` (~L432,
+  hardcoded 違憲/合憲/待人工 options) — add the new categories or a
+  「非合憲性審查」grouping; (3) 主題×審查結論 matrix axis (~L612,
+  hardcoded `['違憲','違憲定期失效','合憲','其他/待人工']`) — decide whether
+  to add a 「非合憲性審查」column so it doesn't dilute the 違憲-hotspot
+  read. Then in the data repo: `npm run sync` → here `npm run build`.
+  審查基準 (未明示 228＋多重 16) was deliberately left untouched for human
+  覆核 (auto-picking a scrutiny tier = deciding the case's standard of
+  review; too risky). Not-yet-built: a 人工 override layer for
+  審查結論 (classifyOutcome recomputes all 874 every run, so a
+  hand-corrected 結論 would be clobbered — add before any manual 覆核).
 - Site-wide font change (2026-07-07, settled after one same-day
   reversal): `--font-display` is Radio Newsman (Latin) + Huiwen
   Mincho (CJK — replacing GenWanMin2 so headings and body share one
@@ -209,9 +233,12 @@ described here in detail — update this section once that work lands.
   official URLs; actual batch download happens in the data repo via
   `npm run fetch-batch -- --manifest <file>` (or `--tag 稅法`). The
   frontend never proxies or hosts official files.
-- Chart categorical palette `#a84f6e / #5a5fb0 / #3f7d44` was
-  validated with the dataviz skill's validator against surface
-  `#fbf7f4` — don't swap hues casually.
+- Chart categorical palette — superseded 2026-07-07, see the dated
+  entry further down (the original `#a84f6e / #5a5fb0 / #3f7d44` set
+  is gone; don't resurrect it, it's the combination the user rejected
+  as an ugly clash). Current hexes are in `TENURE_BG_COLOR` /
+  `TENURE_ABROAD_COLOR` / `PRES_COLOR` themselves — don't swap those
+  casually either without re-running the dataviz skill's validator.
 - `scripts/validate-font-coverage.mjs` walks `src/` with pure node
   (no ripgrep): this machine has no real `rg` binary — the shell `rg`
   is Claude Code's wrapper, invisible to node's spawn.
@@ -220,6 +247,85 @@ described here in detail — update this section once that work lands.
   the justice detail page already render them (link label 官方頁正文/
   官方頁). A 2026-07-07 screenshot showing 王澤鑑 with 4 opinions
   predates this fix — current data has 6 (436/437 are 內嵌).
+- 2026-07-07 (UI batch, triaged from one long user feedback message —
+  full triage + ready-to-paste handoff prompts for the deferred items
+  live in `~/.claude/plans/ui-sleepy-pebble.md`): PaletteLab's swatch
+  sidebar is now `lg:sticky` + independently `overflow-y-auto` so the
+  live preview stays put while comparing swatches. Site-wide paper
+  texture (`--paper-texture` var, set by `applySiteTexture`) was wired
+  correctly all along but every page's own opaque `min-h-screen`
+  wrapper painted over `body`'s texture layer — added a shared
+  `.paper-texture` class (index.css) carrying the same
+  background-image/-size, applied to `PageShell.jsx`, `App.jsx`
+  (home + Suspense fallback), and every page with its own root
+  background (`ConstitutionalCourt`, `ECFAResearch`,
+  `AirPollutionFee`, `ManusMetaAcquisition`, `GovernmentDebt`,
+  `TaipeiFilmFestival`, `TranslationAtlas`). `FuelTaxBreakdown`'s price
+  slider had an invisible thumb: `appearance-none` strips WebKit's
+  native thumb entirely and `accent-color` does nothing once
+  `appearance` is removed — fixed with explicit
+  `[&::-webkit-slider-thumb]`/`[&::-moz-range-thumb]` Tailwind
+  arbitrary-variant rules. In `ConstitutionalCourt.jsx`: tenure date
+  ranges now use a shared `formatTenureRange()` with a spaced en dash
+  (`1948-07 – 1949-03`) instead of the bare-dash-next-to-bare-dash
+  original; president bands show `（提名 N 位）` for wide-enough bands
+  (`PRES_NOM_COUNT`, derived from each justice's `提名總統`); the
+  tenure gantt gained an asc/desc row-order toggle (`最早在上`/
+  `最新在上`); 案件索引's 類型/結論/審查基準 selects gained `（n）`
+  counts (主題 already had them); a date sort toggle (`新→舊`/`舊→新`)
+  was added (previously no `.sort()` existed at all — always raw
+  array order); 主題 filter split its fake `└`-indented sub-category
+  rows into a second, conditionally-shown 細分 select (scales cleanly
+  whenever a category besides 稅法 grows subtopics, since it's
+  computed by co-occurrence with `d.主題`, not hardcoded to 稅法); the
+  ~200 docs whose 主文 concatenates numbered clauses ("1 … 2 … 3 …")
+  with a bare space (no real `\n`, so `whitespace-pre-line` had
+  nothing to preserve) now split into separate `<p>` blocks at
+  `。<space>(\d+)<space>` boundaries — user explicitly chose plain
+  paragraph breaks over any added marker glyph; a small 相關外部連結
+  section (official `cons.judicial.gov.tw` link only) was added to
+  AboutView. Also discovered while implementing: 「被引用最多的解釋」
+  ranking (TimelineView, from the `引用網絡` snapshot field, 1791
+  citation edges) already existed and was already wired up — it was
+  *not* missing data as initially assumed; only the "why is this one
+  so cited" explanation was missing. Added a `WHY_CITED` lookup with
+  exactly two entries this session is confident about without
+  guessing (443 層級化法律保留, 371 法官聲請釋憲) — deliberately left
+  the rest blank rather than invent doctrine attributions; expanding
+  it is queued in `TODO.md`. All of the above verified with a
+  Playwright script driven against a local dev server (screenshots +
+  `console --errors` check, zero console errors) before being called
+  done — see the plan file for the verification transcript if useful.
+  Update (same session, immediately after): the tenure-timeline
+  categorical palette was redrawn — `TENURE_BG_COLOR`/
+  `TENURE_ABROAD_COLOR` are now rose/steel-blue/moss-green/ochre
+  (`#aa4d75`/`#007dae`/`#4a9a5e`/`#a76c12`) and `PRES_COLOR` is an
+  8-hue rose→plum rotation with alternating lightness, both
+  re-validated with the dataviz skill's `validate_palette.js`
+  (`--pairs all` against this page's own surface, not just adjacent
+  pairs, since sort order can put any two categories next to each
+  other) — replaces the old violet-blue/green pairing the user
+  called an ugly clash despite it having passed the original
+  CVD/contrast validation (accessibility-valid ≠ aesthetically
+  harmonious was the actual gap). Two swatches sit in the CVD 8–12
+  warn band / sub-3:1 contrast band respectively, which the skill
+  says is legal only with secondary encoding — already satisfied
+  here since the legend and hover tooltip always show the category
+  name as text, never color alone. Also added three deeper paper-
+  texture options to `palettes.js` (`fiber-deep`, `chain-laid`,
+  `cold-press` — each layers two noise/line frequencies plus, for
+  `fiber-deep`, a faint edge shadow) alongside the original four
+  rather than replacing them; computed-style-checked to confirm all
+  layers actually render (screenshots alone don't show much
+  difference at normal zoom, by design — these stay in the same
+  2–4%-alpha "near-white reading surface" register as the originals).
+  Both changes need your own eyes in `/palettelab` and the tenure tab
+  before being treated as settled, same as any other palette pick.
+  Still open (not touched this session, by design — see the plan
+  file's Group C): the GraphView circular layout, the citation "why"
+  backlog beyond 443/371, and the large-scale 待人工 classification
+  backlog are all written up as TODO.md items with ready-to-paste
+  handoff prompts in the plan file above.
 - 屆次/任期 convergence (landed 2026-07-07): the justice detail page
   no longer renders two duplicated spans. Single 屆次 line is the
   base; `任期來源 === '屆次推定'` (64 justices, 任期 mechanically
@@ -292,6 +398,13 @@ repo-scoped decision (`public/fonts/LICENSES.md`). Re-confirm with the
 user before reusing them in a new project. Full recipe:
 `~/.claude/skills/mincho-typewriter-type-system/SKILL.md`.
 
+Two queued tasks touch this system (see TODO「全局」, 2026-07-07): a
+sonnet evaluation of the `huiwenmincho-improved` upstream (could remove
+the 19-char Chiron Sung HK fallback) plus a Planschrift_Project ID, and
+a footer font-credit line linking `/fonts/LICENSES.md`. Until the user
+rules on that evaluation, DESIGN.md's "no new fonts, don't touch
+@font-face" ban stands — the evaluation itself changes no files.
+
 ## Security (done, stable — do not revisit)
 
 Local machine paths (`/Users/iw/...`) were removed from both
@@ -339,6 +452,16 @@ neither proposed fix has landed:
 2. Retry UN FSDO ingestion with browser-realistic headers before
    reaching for a headless browser (needed only for the
    Cloudflare-gated OECD BEPS page specifically).
+
+3. ConstitutionalCourt「沿革」tab — 7th tab (`?tab=history`), two axes:
+   the four-stage interpretation-organ timeline plus a 憲政時期 band
+   (北京政府→國民政府（訓政）→制憲→行憲) overlaid the way TenureView
+   overlays presidential terms. Spec: constitutional-court-research-data
+   `docs/司法解釋沿革設計.md` (incl. the 2026-07-07「Phase A 增補」
+   section). Blocked on (a) user sign-off of the four summary drafts
+   (`docs/沿革摘要草稿.md` §五, five pending decisions) and (b) a sonnet
+   research pass filling the period-boundary dates. UI first-draft only;
+   copy comes verbatim from the approved drafts.
 
 ## Decided against (don't redo without new information)
 

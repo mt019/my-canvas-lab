@@ -92,9 +92,9 @@ export default function PaletteLab() {
           鐵律：色票只管框架與裝飾，<strong>大段正文的底永遠是近白的紙面</strong>。
         </p>
 
-        <div className="mt-8 grid gap-8 lg:grid-cols-[300px_1fr]">
-          {/* 色票清單（按來源分組） */}
-          <div>
+        <div className="mt-8 grid gap-8 lg:grid-cols-[300px_1fr] lg:items-start">
+          {/* 色票清單（按來源分組）：lg 以上獨立捲動＋sticky，比對色票時右側預覽不會被捲走 */}
+          <div className="lg:sticky lg:top-4 lg:max-h-[calc(100vh-2rem)] lg:overflow-y-auto lg:pr-1">
             <div className="mb-4">
               <div className="mb-1.5 text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: 'var(--pl-ink-faint)' }}>紙面材質</div>
               <div className="flex flex-wrap gap-1.5">

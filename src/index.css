@@ -76,6 +76,13 @@ body {
   background-size: var(--paper-texture-size, auto);
 }
 
+/* 各頁自己的不透明底色容器（PageShell、首頁）疊在 body 之上，
+   單靠 body 的材質背景會被蓋住；套這個 class 讓材質在任何頁面底色上都顯示。 */
+.paper-texture {
+  background-image: var(--paper-texture, none);
+  background-size: var(--paper-texture-size, auto);
+}
+
 h1, h2, h3 {
   font-family: var(--font-display);
 }

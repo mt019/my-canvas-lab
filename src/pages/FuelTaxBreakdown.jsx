@@ -118,7 +118,13 @@ export default function FuelTaxBreakdown() {
           <input
             type="range" min="140" max="220" value={totalPrice}
             onChange={(e) => setTotalPrice(parseInt(e.target.value))}
-            className="h-1.5 flex-1 cursor-pointer appearance-none rounded-token-full bg-line-soft accent-[var(--c-accent)]"
+            className="h-1.5 flex-1 cursor-pointer appearance-none rounded-token-full bg-line-soft
+              [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:appearance-none
+              [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[var(--c-accent)]
+              [&::-webkit-slider-thumb]:shadow-token-sm [&::-webkit-slider-thumb]:cursor-pointer
+              [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:appearance-none
+              [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-0
+              [&::-moz-range-thumb]:bg-[var(--c-accent)] [&::-moz-range-thumb]:cursor-pointer"
           />
           <span className="min-w-[64px] text-right text-token-lg font-bold tabular-nums text-accent">¥{totalPrice}</span>
         </div>
