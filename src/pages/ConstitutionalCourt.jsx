@@ -53,6 +53,7 @@ const CC_VARS = { // token-exempt
   '--cc-badge-slate-bg': '#eef1f2',
   '--cc-badge-green-bg': '#e8efe5',
   '--cc-badge-blue-bg': '#e8e5f1',
+  '--cc-badge-teal-bg': '#e3edeb',
   '--cc-table-border': '#e6ded2',
   '--cc-node-related-fill': '#e3b6c4',
   '--cc-edge-line': '#c9b3bc',
@@ -69,6 +70,7 @@ const CC_VARS = { // token-exempt
   '--cc-heat-text-dark': '#6d5a62',
   '--cc-badge-green-ink': '#566d50',
   '--cc-badge-slate-ink': '#52616a',
+  '--cc-badge-teal-ink': '#4c7971',
   '--cc-type-ruling': '#3f7d44',
   '--cc-heading': '#2f2a2d',
 };
@@ -86,6 +88,9 @@ const OUTCOME_TONE = {
   違憲即失效: 'red',
   違憲定期失效: 'gold',
   合憲: 'green',
+  法令解釋: 'teal',
+  補充前解釋: 'teal',
+  變更前解釋: 'teal',
   '其他/待人工': 'slate',
   未分類: 'slate',
 };
@@ -117,6 +122,7 @@ function Badge({ children, tone = 'slate' }) {
     red: ['var(--cc-badge-red-bg)', 'var(--cc-badge-red-ink)'],
     blue: ['var(--cc-badge-blue-bg)', 'var(--cc-blue-ink)'],
     plum: ['var(--cc-badge-plum-bg)', 'var(--cc-badge-plum-ink)'],
+    teal: ['var(--cc-badge-teal-bg)', 'var(--cc-badge-teal-ink)'],
   };
   const [bg, color] = colors[tone] || colors.slate;
   return (
@@ -370,12 +376,15 @@ function IndexView() {
   const subtopicOptions = subtopicsByTopic.get(topic);
 
   const { outcomeCounts, standardCounts } = useMemo(() => {
-    const oc = { '違憲（含定期失效）': 0, 合憲: 0, '其他/待人工': 0 };
+    const oc = { '違憲（含定期失效）': 0, 合憲: 0, 法令解釋: 0, 補充前解釋: 0, 變更前解釋: 0, '其他/待人工': 0 };
     const sc = new Map();
     for (const d of docs) {
       const o = d.審查結論?.結論 ?? '未分類';
       if (o.startsWith('違憲')) oc['違憲（含定期失效）'] += 1;
       else if (o === '合憲') oc.合憲 += 1;
+      else if (o === '法令解釋') oc.法令解釋 += 1;
+      else if (o === '補充前解釋') oc.補充前解釋 += 1;
+      else if (o === '變更前解釋') oc.變更前解釋 += 1;
       else oc['其他/待人工'] += 1;
       const s = d.審查基準?.基準;
       if (s) sc.set(s, (sc.get(s) ?? 0) + 1);
@@ -432,7 +441,7 @@ function IndexView() {
           {subtopicOptions ? (
             <Select label="細分" value={subtopic} onChange={(v) => { setSubtopic(v); setLimit(30); }} options={[['全部', '全部'], ...subtopicOptions.map(([s, n]) => [s, `${s}（${n}）`])]} />
           ) : null}
-          <Select label="結論" value={outcome} onChange={(v) => { setOutcome(v); setLimit(30); }} options={[['全部', '全部'], ['違憲（含定期失效）', `違憲（含定期失效）（${outcomeCounts['違憲（含定期失效）']}）`], ['合憲', `合憲（${outcomeCounts.合憲}）`], ['其他/待人工', `待人工判讀（${outcomeCounts['其他/待人工']}）`]]} />
+          <Select label="結論" value={outcome} onChange={(v) => { setOutcome(v); setLimit(30); }} options={[['全部', '全部'], ['違憲（含定期失效）', `違憲（含定期失效）（${outcomeCounts['違憲（含定期失效）']}）`], ['合憲', `合憲（${outcomeCounts.合憲}）`], ['法令解釋', `法令解釋（${outcomeCounts.法令解釋}）`], ['補充前解釋', `補充前解釋（${outcomeCounts.補充前解釋}）`], ['變更前解釋', `變更前解釋（${outcomeCounts.變更前解釋}）`], ['其他/待人工', `待人工判讀（${outcomeCounts['其他/待人工']}）`]]} />
           <Select label="審查基準" value={standard} onChange={(v) => { setStandard(v); setLimit(30); }} options={[['全部', '全部'], ['嚴格', `嚴格（${standardCounts.get('嚴格') ?? 0}）`], ['中度', `中度（${standardCounts.get('中度') ?? 0}）`], ['寬鬆', `寬鬆（${standardCounts.get('寬鬆') ?? 0}）`], ['多重（待人工）', `多重（待人工）（${standardCounts.get('多重（待人工）') ?? 0}）`], ['未明示', `未明示（${standardCounts.get('未明示') ?? 0}）`]]} />
           <Select label="年代" value={decade} onChange={(v) => { setDecade(v); setLimit(30); }} options={[['全部', '全部'], ...decades.map((d) => [d, `${d} 年代`])]} />
         </div>
@@ -612,13 +621,14 @@ function TopicHeatmaps() {
     return { topics, bins, grid, maxCell: Math.max(...grid.values()) };
   }, []);
 
-  const outcomes = ['違憲', '違憲定期失效', '合憲', '其他/待人工'];
+  const outcomes = ['違憲', '違憲定期失效', '合憲', '非合憲性審查', '其他/待人工'];
   const { oGrid, oMax } = useMemo(() => {
     const g = new Map();
     for (const d of docs) {
       let c = d.審查結論?.結論 ?? '未分類';
       if (c === '違憲即失效') c = '違憲';
       if (c === '未分類') c = '其他/待人工';
+      if (c === '法令解釋' || c === '補充前解釋' || c === '變更前解釋') c = '非合憲性審查';
       for (const t of d.主題) g.set(`${t}|${c}`, (g.get(`${t}|${c}`) ?? 0) + 1);
     }
     return { oGrid: g, oMax: Math.max(...g.values()) };
@@ -710,7 +720,7 @@ function TopicHeatmaps() {
           ) : null}
         </div>
         <p className="mt-1 max-w-3xl text-[11px] leading-relaxed text-[var(--cc-ink-soft)]">
-          審查結論為文字規則機標（違憲即失效併入違憲欄），僅供分布觀察；個案請以卡片上的官方連結查證原文。
+          審查結論為文字規則機標（違憲即失效併入違憲欄；法令解釋／補充前解釋／變更前解釋併入非合憲性審查欄），僅供分布觀察；個案請以卡片上的官方連結查證原文。
         </p>
       </section>
     </>
@@ -975,13 +985,17 @@ function JusticeDetail({ name, onBack, onOpen }) {
 }
 
 // 任期時間軸（生涯甘特圖）。124 人官方名冊＋簡歷/屆次/人工核定三層任期。
-// 著色四色 2026-07-07 重配：原本紫藍＋綠雖通過驗證但撞色刺眼，改用 OKLCH 種子
-// （玫瑰／鋼藍／深綠／土黃）重新以 dataviz skill validator 過驗（against 本頁 --cc-bg 底色，
-// --pairs all）：全通過，最差 CVD 對 ΔE 21（遠高於 12 目標）。灰色（其他／待確認）
-// 刻意留在色度下限之下——它本來就是退場用的中性色，且畫面上一律用空心描邊或
+// 著色四色 2026-07-07 二次重配：上一版鋼藍／深綠／土黃雖通過驗證，使用者仍覺得刺眼；
+// 這版改直接沿用站內其他頁已上線、使用者喜歡的識別色——玫瑰（本頁自己的 rose 色票）、
+// 靛藍／銅棕（ManusMeta 頁 indigo-copper 色票）、茶青（IntlTaxOps 頁 cool-teal 色票，
+// 與本頁「審查結論」矩陣的法令解釋類 teal badge 同一色號）。以 dataviz skill validator 過驗
+// （against 本頁 --cc-bg 底色，--pairs all）：CVD 分離全通過（最差 ΔE 14，高於 12 目標）；
+// 色度下限未過（這幾色本來就偏低飽和的莫蘭迪調——本站所有頁面識別色皆同一路數），
+// 判定可接受：圖例與每位大法官任期列一律有文字標籤同時呈現，並非純靠顏色識別。
+// 灰色（其他／待確認）刻意留在色度下限之下——它是退場用的中性色，畫面上一律用空心描邊或
 // 灰底跟其餘四色區分，不需要通過分類色的可辨識檢查。
 const TENURE_BG_COLOR = { // token-exempt: dataviz categorical palette, validated 2026-07-07
-  學者: '#aa4d75', 法官: '#007dae', 律師: '#4a9a5e', 檢察官: '#a76c12', 其他: '#b3a8ad', 待確認: '#b3a8ad',
+  學者: '#aa4d75', 法官: '#3b4f78', 律師: '#4c7971', 檢察官: '#b87333', 其他: '#b3a8ad', 待確認: '#b3a8ad',
 };
 // 留學地分群：null 再分「國內」（逐人查核確認無外國學位）與「待確認」（查不到可靠線索）
 const ABROAD_GROUP = (j) => {
@@ -994,7 +1008,7 @@ const ABROAD_GROUP = (j) => {
 };
 // 與 TENURE_BG_COLOR 共用同一組四色（同樣 4 類＋中性灰的結構），維持兩種著色模式視覺一致
 const TENURE_ABROAD_COLOR = { // token-exempt: dataviz categorical palette, validated 2026-07-07
-  德語圈: '#aa4d75', 英美: '#007dae', 日本: '#4a9a5e', 其他: '#a76c12', 國內: '#b3a8ad', 待確認: '#b3a8ad',
+  德語圈: '#aa4d75', 英美: '#3b4f78', 日本: '#4c7971', 其他: '#b87333', 國內: '#b3a8ad', 待確認: '#b3a8ad',
 };
 // 提名總統 8 色 2026-07-07 重配：45°上下的色相輪轉＋交錯明度，同樣以 dataviz
 // validator 過驗（against 本頁 --cc-bg 底色，--pairs all，全通過；兩項落在警戒帶的提示——

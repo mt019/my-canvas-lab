@@ -5,14 +5,14 @@
 | 來源 repo | 用途 | 最近同步/更新日期 | 過期風險 |
 |---|---|---|---|
 | `1142/government-debt-research-data` | `src/data/governmentDebt.json`（政府債務比較頁） | 2026-07-02（來源與快照 mtime 一致） | 低——雙方皆已 commit，明文標示 sync 流程 |
-| `1142/ecfa-research-data` | `src/data/ecfaResearch.json`（ECFA 研究頁） | 2026-07-05（來源剛完成首次 commit；快照與來源 mtime 一致） | 中——快照未進 `my-canvas-lab` 版控（`git status` 顯示 `?? src/data/ecfaResearch.json`） |
-| `1142/local-fiscal-enforcement-risk-research-data` | `src/data/fiscalEnforcementRisk.json`（地方財政執行風險頁） | 2026-07-02（來源剛完成首次 commit；快照與來源 mtime 一致） | 中——快照未進 `my-canvas-lab` 版控（`git status` 顯示 `?? src/data/fiscalEnforcementRisk.json`） |
+| `1142/ecfa-research-data` | `src/data/ecfaResearch.json`（ECFA 研究頁） | 2026-07-05 同步；快照 2026-07-06 隨 `1157d6e` 入版控 | 低——雙方皆已 commit |
+| `1142/local-fiscal-enforcement-risk-research-data` | `src/data/fiscalEnforcementRisk.json`（地方財政執行風險頁） | 2026-07-02 同步；快照 2026-07-06 隨 `1157d6e` 入版控 | 低——雙方皆已 commit |
 | `1142/intl-tax-ops-lab` | `src/data/intlTaxOps/`（國際稅法研究頁） | 2026-07-02（多檔快照與來源 mtime 一致） | 低——已 commit（`d8dc6f6`／`43210fb`） |
-| `1142/2026_台北電影節` | `src/data/taipeiffPrograms.json`（台北電影節節目頁） | 2026-07-02（來源與快照大小一致） | 中——來源倉庫本身尚未 `git init`，上游沒有版控保障 |
-| `1142/constitutional-court-research-data` | `src/data/constitutionalCourt.json`（憲法法庭案例庫頁） | 2026-07-06（來源 `data/processed/constitutional-court-app.json` mtime 19:49:05，快照 mtime 19:50:02，約 1 分鐘內同步） | 中——快照目前有未 commit 變更（`git status --porcelain` 顯示 `M src/data/constitutionalCourt.json`），來源倉庫本身已 commit（最後 commit 2026-07-06 19:21:36） |
+| `1142/2026_台北電影節` | `src/data/taipeiffPrograms.json`（台北電影節節目頁） | 2026-07-02（來源與快照大小一致） | 中——來源倉庫本身尚未 `git init`（2026-07-07 復查仍未 init），上游沒有版控保障 |
+| `1142/constitutional-court-research-data` | `src/data/constitutionalCourt.json`（憲法法庭案例庫頁） | 2026-07-07（前端已補上審查結論新類別支援後，`npm run sync` 原子更新快照；含法令解釋/補充前解釋/變更前解釋三新類，待人工降至 217） | 低——快照與來源已同步，前端 `OUTCOME_TONE`／篩選器／矩陣三處皆已支援新值（見 HANDOFF「審查結論 typology」條） |
 | `1142/ntu-coursemap-research-data` | `src/data/germanLawCourseTimeline.json`（德國法課程時間軸頁） | 2026-07-06（來源 `data/teacher_timeline.json` 最後 commit 2026-07-06 14:42:10；快照 mtime 14:47:22，大小與來源一致，均為 102492 bytes） | 低——雙方皆已 commit，但無 `sync-to-canvas.mjs` 這類自動化腳本，靠 `scripts/generate_teacher_timeline.py` 產出後手動複製（見該倉庫 AGENTS.md），忘記重跑不會有任何自動提示 |
 
 ## 使用說明
 
-- 新增或更新任何快照前，先確認來源倉庫該筆資料已 commit（`government-debt-research-data`、`intl-tax-ops-lab`、`constitutional-court-research-data`、`ntu-coursemap-research-data` 已符合；`ecfa-research-data`、`local-fiscal-enforcement-risk-research-data` 剛完成首次 commit，尚待下次同步後一併 commit 快照；`2026_台北電影節` 尚未版控，同步前建議先替它 `git init`）。
-- 本表由 mtime／git log 實查產生（2026-07-05；constitutional-court-research-data 與 ntu-coursemap-research-data 兩列於 2026-07-06 補查），非依賴 README 自述；下次更新請重新核實，不要只改日期。
+- 新增或更新任何快照前，先確認來源倉庫該筆資料已 commit（除 `2026_台北電影節` 尚未版控外，其餘六個來源倉與其快照均已 commit；替電影節同步前建議先 `git init`）。
+- 本表由 mtime／git log 實查產生（2026-07-05 首查；2026-07-06 補查 constitutional-court 與 ntu-coursemap 兩列；2026-07-07 復查 ecfa、fiscalEnforcementRisk（均已入版控）、constitutionalCourt（刻意落後）、台北電影節（仍未 init）四列），非依賴 README 自述；下次更新請重新核實，不要只改日期。

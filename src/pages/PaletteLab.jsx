@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Check, Copy, Palette, Pin } from 'lucide-react';
+import { Check, ClipboardCopy, Copy, Palette, Pin, RotateCcw, Sparkles } from 'lucide-react';
 import {
   GOLD_FOIL_INK,
   PALETTES,
@@ -11,6 +11,214 @@ import {
   setSiteTexture,
   tokensSnippet,
 } from '../styles/palettes.js';
+
+/*
+ * 這個測驗不再生成任何顏色——上一版用公式硬算色塊，結果跟站內真正的色票庫（PALETTES，
+ * 「試穿色票」那邊看起來都順眼的那些）是兩套不同的東西：公式套一個固定飽和度/明度到
+ * 所有色相上，但每個色相能撐住不難看的飽和度/明度其實都不一樣，這正是專業配色系統
+ * （Notion 的 tag 色、Radix Colors 之類）從來不用單一公式硬套的原因。改成：每個測驗選項
+ * 的「墨色」（ink，實際看得見色相的那個顏色）都直接抄站內 PALETTES 裡已經有人挑過、
+ * 用在真實頁面上的 accent／accent2 原始色碼；只有淡底色（bg）是算出來的，而淡底色不管
+ * 什麼色相都很難出事——難看幾乎只在中高彩度才會發生。呈現方式也改成 Notion 風格的小
+ * 標籤（淡底＋深墨色文字，不是實色色塊），never 一次擺三種色相互相撞色——pop／撞色在
+ * 這個站的規矩本來就是「一畫面最多一處」，測驗不該逼使用者一次看三色打架。
+ */
+
+// hex → OKLCH，正向轉換（跟下面 tagTones 用的反向轉換矩陣同源），只用來幫 PALETTES
+// 裡的真實色碼標色相角度/飽和度，好分組跟計分，不用來生成任何新顏色。
+function hexToOklch(hex) {
+  const h = hex.replace('#', '');
+  const [r, g, b] = [0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16) / 255);
+  const s2lin = (c) => (c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4);
+  const [rl, gl, bl] = [r, g, b].map(s2lin);
+  const l = Math.cbrt(0.4122214708 * rl + 0.5363325363 * gl + 0.0514459929 * bl);
+  const m = Math.cbrt(0.2119034982 * rl + 0.6806995451 * gl + 0.1073969566 * bl);
+  const s = Math.cbrt(0.0883024619 * rl + 0.2817188376 * gl + 0.6299787005 * bl);
+  const L = 0.2104542553 * l + 0.7936177850 * m - 0.0040720468 * s;
+  const a = 1.9779984951 * l - 2.4285922050 * m + 0.4505937099 * s;
+  const bb = 0.0259040371 * l + 0.7827717662 * m - 0.8086757660 * s;
+  const C = Math.hypot(a, bb);
+  const H = ((Math.atan2(bb, a) * 180) / Math.PI + 360) % 360;
+  return { L, C, H };
+}
+
+// OKLCH → sRGB hex（反向），只用來把某個真實色相的「淡底色」算出來——不生成 ink。
+function oklchToHex(L, C, hueDeg) {
+  const hr = (hueDeg * Math.PI) / 180;
+  const a = C * Math.cos(hr);
+  const b = C * Math.sin(hr);
+  const l_ = L + 0.3963377774 * a + 0.2158037573 * b;
+  const m_ = L - 0.1055613458 * a - 0.0638541728 * b;
+  const s_ = L - 0.0894841775 * a - 1.2914855480 * b;
+  const l = l_ ** 3, m = m_ ** 3, s = s_ ** 3;
+  const r = 4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s;
+  const g = -1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s;
+  const bl = -0.0041960863 * l - 0.7034186147 * m + 1.7076147010 * s;
+  const gamma = (c) => { const cc = Math.max(0, Math.min(1, c)); return cc <= 0.0031308 ? 12.92 * cc : 1.055 * cc ** (1 / 2.4) - 0.055; };
+  const toHex = (c) => Math.round(Math.max(0, Math.min(1, gamma(c))) * 255).toString(16).padStart(2, '0');
+  return `#${toHex(r)}${toHex(g)}${toHex(bl)}`;
+}
+
+// Notion 風格標籤色：ink 是真實色票原色（不動），bg 是同色相算出來的極淡底
+function tagTones(hex) {
+  const { C, H } = hexToOklch(hex);
+  return { bg: oklchToHex(0.94, Math.min(C * 0.28, 0.045), H), ink: hex };
+}
+
+const hueDist = (a, b) => { const d = Math.abs(a - b) % 360; return Math.min(d, 360 - d); };
+
+// 8 個色相分組的目標角度／名字——只用來把 PALETTES 裡的真實色票分組，本身不是顏色
+const HUE_BUCKETS = [
+  { h: 15, name: '玫瑰胭脂' },
+  { h: 40, name: '陶土銅棕' },
+  { h: 150, name: '草木綠' },
+  { h: 175, name: '茶青' },
+  { h: 220, name: '鋼藍' },
+  { h: 260, name: '靛藍' },
+  { h: 300, name: '堇紫' },
+  { h: 330, name: '紫紅' },
+];
+
+// 真實色票池：只收 accent／accent2，不收 pop——pop 定義就是「一畫面最多一處」的撞色裝飾，
+// 不該進常態比較（這正是使用者說的「跳色」）。
+const REAL_ACCENTS = PALETTES.flatMap((p) => {
+  const list = [{ hex: p.vars.accent, from: p.id }];
+  if (p.vars.accent2) list.push({ hex: p.vars.accent2, from: p.id });
+  return list;
+}).map((e) => ({ ...e, ...hexToOklch(e.hex) }));
+
+// 每個分組挑站內離目標角度最近的一顆真實色票值——顏色本身完全不是算出來的
+const HUE_ANCHORS = HUE_BUCKETS.map((bucket) => {
+  const nearest = REAL_ACCENTS.reduce((best, e) => (hueDist(e.H, bucket.h) < hueDist(best.H, bucket.h) ? e : best));
+  return { ...bucket, hex: nearest.hex, L: nearest.L, C: nearest.C, from: nearest.from };
+});
+const WARM_IDX = new Set([0, 1, 7]);
+
+// 5 組：「同一色票裡設計好的 accent+accent2」vs「跨色票硬湊的兩個 accent」
+const HARMONY_SPEC = [
+  { pid: 'rose', mismatchWith: 'greengage' },
+  { pid: 'terracotta', mismatchWith: 'ru-ware' },
+  { pid: 'indigo-copper', mismatchWith: 'wheatfield' },
+  { pid: 'cool-teal', mismatchWith: 'yanzhi' },
+  { pid: 'dai-blue', mismatchWith: 'mango' },
+];
+const paletteVars = (id) => PALETTES.find((p) => p.id === id).vars;
+
+// 底色情境：4 組真實取自 PALETTES 的紙面／鉻件底色，不新配顏色
+const _rose = paletteVars('rose');
+const _indigo = paletteVars('indigo-copper');
+const _teal = paletteVars('cool-teal');
+const CONTEXT_BG = [
+  { hex: _rose.paper, name: '近白紙面' },
+  { hex: _indigo.surface, name: '冷靛藍底' },
+  { hex: _rose.surface, name: '暖玫瑰底' },
+  { hex: _teal.surface, name: '冷茶青底' },
+];
+const CONTEXT_PAIRS = [
+  { hueIdx: 0, bgA: 0, bgB: 1 }, // 玫瑰：紙面 vs 靛藍底
+  { hueIdx: 3, bgA: 0, bgB: 2 }, // 茶青：紙面 vs 玫瑰底
+  { hueIdx: 5, bgA: 0, bgB: 3 }, // 靛藍：紙面 vs 茶青底
+  { hueIdx: 2, bgA: 2, bgB: 3 }, // 草木綠：玫瑰底 vs 茶青底
+];
+
+function buildTrials() {
+  const trials = [];
+  const n = HUE_ANCHORS.length;
+  for (let i = 0; i < n; i++) {
+    trials.push({ kind: 'hue', aIdx: i, bIdx: (i + 1) % n });
+  }
+  [[0, 4], [2, 6], [1, 7]].forEach(([i, j]) => trials.push({ kind: 'hue', aIdx: i, bIdx: j }));
+  HARMONY_SPEC.forEach((_spec, idx) => trials.push({ kind: 'harmony', idx }));
+  for (const pair of CONTEXT_PAIRS) {
+    trials.push({ kind: 'context', ...pair });
+  }
+  return trials;
+}
+
+function trialSwatches(trial) {
+  if (trial.kind === 'hue') {
+    return {
+      a: { tags: [tagTones(HUE_ANCHORS[trial.aIdx].hex)], tag: trial.aIdx },
+      b: { tags: [tagTones(HUE_ANCHORS[trial.bIdx].hex)], tag: trial.bIdx },
+    };
+  }
+  if (trial.kind === 'harmony') {
+    const spec = HARMONY_SPEC[trial.idx];
+    const p = paletteVars(spec.pid);
+    const m = paletteVars(spec.mismatchWith);
+    return {
+      a: { tags: [tagTones(p.accent), tagTones(p.accent2)], tag: 'designed' },
+      b: { tags: [tagTones(p.accent), tagTones(m.accent)], tag: 'mismatched' },
+    };
+  }
+  // context：同一顆真實色票標籤放在兩種不同底色上，測的是「底色會不會影響這個顏色好不好看」
+  const t = tagTones(HUE_ANCHORS[trial.hueIdx].hex);
+  return {
+    a: { tags: [t], bg: CONTEXT_BG[trial.bgA].hex, tag: trial.bgA },
+    b: { tags: [t], bg: CONTEXT_BG[trial.bgB].hex, tag: trial.bgB },
+  };
+}
+
+function scoreTaste(trials, picks) {
+  const hueWins = HUE_ANCHORS.map(() => 0);
+  const bgWins = CONTEXT_BG.map(() => 0);
+  let designedPicks = 0, harmonyN = 0, contextN = 0, dL = 0, dC = 0, hueN = 0;
+  trials.forEach((trial, i) => {
+    const picked = picks[i];
+    if (picked == null) return;
+    const sw = trialSwatches(trial);
+    const chosenTag = picked === 'a' ? sw.a.tag : sw.b.tag;
+    if (trial.kind === 'hue') {
+      hueWins[chosenTag] += 1;
+      const otherTag = picked === 'a' ? sw.b.tag : sw.a.tag;
+      dL += HUE_ANCHORS[chosenTag].L - HUE_ANCHORS[otherTag].L;
+      dC += HUE_ANCHORS[chosenTag].C - HUE_ANCHORS[otherTag].C;
+      hueN += 1;
+    } else if (trial.kind === 'harmony') {
+      harmonyN += 1;
+      if (chosenTag === 'designed') designedPicks += 1;
+    } else {
+      contextN += 1;
+      bgWins[chosenTag] += 1;
+    }
+  });
+  const ranked = HUE_ANCHORS.map((h, i) => ({ ...h, wins: hueWins[i] })).sort((x, y) => y.wins - x.wins);
+  const warmWins = HUE_ANCHORS.reduce((s, _, i) => s + (WARM_IDX.has(i) ? hueWins[i] : 0), 0) / WARM_IDX.size;
+  const coolWins = HUE_ANCHORS.reduce((s, _, i) => s + (WARM_IDX.has(i) ? 0 : hueWins[i]), 0) / (HUE_ANCHORS.length - WARM_IDX.size);
+  const bgRanked = CONTEXT_BG.map((b, i) => ({ ...b, wins: bgWins[i] })).sort((x, y) => y.wins - x.wins);
+  return {
+    ranked,
+    chromaLean: hueN ? dC / hueN : null,
+    lightnessLean: hueN ? dL / hueN : null,
+    warmLean: warmWins - coolWins,
+    designedPref: harmonyN ? designedPicks / harmonyN : null,
+    bgRanked,
+    contextN,
+  };
+}
+
+function tasteSummaryText(result) {
+  const topWithSource = result.ranked.slice(0, 3).map((h) => `${h.name}(${h.from})`).join('、');
+  const bottom = result.ranked.slice(-2).map((h) => h.name).join('、');
+  const chroma = result.chromaLean == null ? '未測' :
+    result.chromaLean > 0.01 ? '選中的色相普遍比落選的更飽和一點' :
+    result.chromaLean < -0.01 ? '選中的色相普遍比落選的更低調一點' :
+    '飽和度沒有明顯偏好';
+  const light = result.lightnessLean == null ? '未測' :
+    result.lightnessLean > 0.02 ? '選中的色相普遍比落選的更淺淡' :
+    result.lightnessLean < -0.02 ? '選中的色相普遍比落選的更深沉' :
+    '明度沒有明顯偏好';
+  const warm = result.warmLean > 0.3 ? '整體偏暖色' : result.warmLean < -0.3 ? '整體偏冷色' : '冷暖沒有明顯偏向';
+  const harmony = result.designedPref == null ? '未測' :
+    result.designedPref >= 0.7 ? '明顯偏好色票本身設計好的搭配，不喜歡跨色票硬湊' :
+    result.designedPref <= 0.3 ? '對「硬湊的組合」意外地不排斥' :
+    '兩種都能接受，沒有強烈偏好';
+  const bgTop = result.bgRanked[0];
+  const bgLine = result.contextN ? `同一個顏色放在不同底色上時，比較常選「${bgTop.name}」這組底色（${bgTop.wins}/${result.contextN}）——同一個顏色換底色可能就不耐看了，選色時建議連底色一起看，不要只看色塊本身。` : '未測';
+  return `【色票品味測驗結果】（每個顏色都直接取自站內既有 PALETTES 色票庫，不是生成的）\n最愛色相（前三，附來源色票）：${topWithSource}\n最不愛色相（後二）：${bottom}\n飽和度傾向：${chroma}\n明度傾向：${light}\n冷暖傾向：${warm}（warmLean=${result.warmLean.toFixed(2)}）\n配色和諧偏好：${harmony}\n底色搭配：${bgLine}`;
+}
+
+const QUIZ_KEY = 'canvaslab:tastequiz:v3'; // v3：全面改抄 PALETTES 真實色票，不再生成任何顏色，跟舊題組不相容
 
 /*
  * 色票試穿間。鐵律：色票管裝飾與框架，正文閱讀面永遠近白——
@@ -28,7 +236,190 @@ const DEMO_ROWS = [
   { title: '翻譯工程總覽', desc: '判決、文學、書籍與法規的進度與公版全文', tag: '翻譯' },
 ];
 
+function TasteQuiz() {
+  const trials = useMemo(() => buildTrials(), []);
+  const [step, setStep] = useState(0);
+  const [picks, setPicks] = useState(() => trials.map(() => null));
+  const [copied, setCopied] = useState(false);
+  const [saved, setSaved] = useState(() => {
+    try {
+      const raw = localStorage.getItem(QUIZ_KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch { return null; }
+  });
+
+  const done = step >= trials.length;
+  const result = useMemo(() => (done ? scoreTaste(trials, picks) : null), [done, trials, picks]);
+
+  useEffect(() => {
+    if (!done || !result) return;
+    try {
+      const record = { picks, completedAt: new Date().toISOString() };
+      localStorage.setItem(QUIZ_KEY, JSON.stringify(record));
+      setSaved(record);
+    } catch { /* localStorage unavailable */ }
+  }, [done, result, picks]);
+
+  const pick = (side) => {
+    setPicks((p) => { const next = [...p]; next[step] = side; return next; });
+    setStep((s) => s + 1);
+  };
+
+  const restart = () => {
+    setStep(0);
+    setPicks(trials.map(() => null));
+  };
+
+  const copySummary = async () => {
+    if (!result) return;
+    try {
+      await navigator.clipboard.writeText(tasteSummaryText(result));
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1600);
+    } catch { /* clipboard unavailable */ }
+  };
+
+  if (!done) {
+    const trial = trials[step];
+    const sw = trialSwatches(trial);
+    const KIND_LABEL = { hue: '色相偏好', harmony: '配色和諧感', context: '底色情境' };
+    const KIND_PROMPT = {
+      hue: '比較喜歡哪一個顏色？（Aa 標籤取自站內真實色票，不是生成的）',
+      harmony: '哪一組配色比較耐看？（色票本身設計好的搭配 vs 跨色票硬湊）',
+      context: '同一個顏色，放在哪個底色上比較好看？',
+    };
+    return (
+      <div className="mx-auto max-w-xl text-center">
+        <div className="mb-1 text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: 'var(--pl-ink-faint)' }}>
+          {KIND_LABEL[trial.kind]}・第 {step + 1} / {trials.length} 題
+        </div>
+        <div className="mb-6 h-1 w-full overflow-hidden rounded-full" style={{ background: 'var(--pl-surface)' }}>
+          <div className="h-full rounded-full transition-all duration-300" style={{ width: `${(step / trials.length) * 100}%`, background: 'var(--pl-accent)' }} />
+        </div>
+        <p className="mb-4 text-[14px]" style={{ color: 'var(--pl-ink-muted)' }}>{KIND_PROMPT[trial.kind]}</p>
+        {/* Notion 風格：淡底＋深墨色文字的小標籤，不是實色色塊——每個 ink 都是站內
+            PALETTES 裡已經在用的真實色碼，bg 只是同色相算出來的極淡底，never 三色並排撞色。 */}
+        <div className="grid grid-cols-2 gap-4">
+          {[['a', sw.a], ['b', sw.b]].map(([side, s]) => (
+            <button
+              key={side}
+              onClick={() => pick(side)}
+              className="flex h-28 items-center justify-center gap-2 overflow-hidden rounded-lg border transition-transform duration-150 hover:scale-[1.02] focus-visible:outline focus-visible:outline-2"
+              style={{ borderColor: 'var(--pl-line)', outlineColor: 'var(--pl-accent)', background: s.bg ?? 'var(--pl-paper)' }}
+              aria-label={trial.kind === 'harmony' ? '選這組配色' : trial.kind === 'context' ? '選這個底色' : '選這個顏色'}
+            >
+              {s.tags.map((t, i) => (
+                <span
+                  key={i}
+                  className="rounded-md border px-3 py-1.5 text-[13px] font-bold"
+                  style={{ background: t.bg, color: t.ink, borderColor: `${t.ink}33` }}
+                >
+                  Aa
+                </span>
+              ))}
+            </button>
+          ))}
+        </div>
+        {step > 0 && (
+          <button
+            onClick={() => setStep((s) => Math.max(0, s - 1))}
+            className="mt-5 text-[11px] font-bold uppercase tracking-wider hover:underline"
+            style={{ color: 'var(--pl-ink-faint)' }}
+          >
+            ← 上一題重選
+          </button>
+        )}
+      </div>
+    );
+  }
+
+  return (
+    <div className="mx-auto max-w-2xl">
+      <div className="mb-4 flex items-center gap-2">
+        <Sparkles size={14} style={{ color: 'var(--pl-accent)' }} />
+        <h2 className="font-display text-xl">你的色票品味</h2>
+      </div>
+
+      <div className="mb-5 rounded-lg border p-4" style={{ borderColor: 'var(--pl-line)', background: 'var(--pl-surface)' }}>
+        <div className="mb-1 text-[10px] font-bold uppercase tracking-[0.14em]" style={{ color: 'var(--pl-ink-faint)' }}>色相排行</div>
+        <div className="flex flex-wrap gap-2">
+          {result.ranked.map((h, i) => (
+            <span
+              key={h.name}
+              className="inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[12px] font-bold"
+              style={{ borderColor: 'var(--pl-line)', background: 'var(--pl-paper)', opacity: i < 3 ? 1 : i >= result.ranked.length - 2 ? 0.45 : 0.75 }}
+            >
+              <i className="h-3 w-3 rounded-full" style={{ background: h.hex }} />
+              {h.name}
+              <span style={{ color: 'var(--pl-ink-faint)' }}>{h.wins}</span>
+            </span>
+          ))}
+        </div>
+        <p className="mt-2 text-[11px] leading-relaxed" style={{ color: 'var(--pl-ink-faint)' }}>依對戰勝場排序，越靠前越常被選中；每個色相只比較 2-4 次，樣本小，當作粗略傾向看，不是精確排名。每個色點都是站內真實色票的原色，不是生成的。</p>
+      </div>
+
+      <div className="mb-5 grid gap-3 sm:grid-cols-2">
+        <div className="rounded-lg border p-4" style={{ borderColor: 'var(--pl-line)' }}>
+          <div className="mb-1 text-[10px] font-bold uppercase tracking-[0.14em]" style={{ color: 'var(--pl-ink-faint)' }}>飽和度傾向</div>
+          <p className="text-[13px]" style={{ color: 'var(--pl-ink-muted)' }}>
+            {result.chromaLean > 0.01 ? '選中的比落選的更飽和一點' : result.chromaLean < -0.01 ? '選中的比落選的更低調一點' : '沒有明顯偏好'}
+          </p>
+        </div>
+        <div className="rounded-lg border p-4" style={{ borderColor: 'var(--pl-line)' }}>
+          <div className="mb-1 text-[10px] font-bold uppercase tracking-[0.14em]" style={{ color: 'var(--pl-ink-faint)' }}>明度傾向</div>
+          <p className="text-[13px]" style={{ color: 'var(--pl-ink-muted)' }}>
+            {result.lightnessLean > 0.02 ? '選中的比落選的更淺淡' : result.lightnessLean < -0.02 ? '選中的比落選的更深沉' : '沒有明顯偏好'}
+          </p>
+        </div>
+        <div className="rounded-lg border p-4" style={{ borderColor: 'var(--pl-line)' }}>
+          <div className="mb-1 text-[10px] font-bold uppercase tracking-[0.14em]" style={{ color: 'var(--pl-ink-faint)' }}>配色和諧偏好</div>
+          <p className="text-[13px]" style={{ color: 'var(--pl-ink-muted)' }}>
+            {result.designedPref >= 0.7 ? '明顯偏好色票設計好的搭配，不喜歡硬湊' : result.designedPref <= 0.3 ? '對硬湊的組合意外不排斥' : '兩種都能接受'}
+          </p>
+        </div>
+        <div className="rounded-lg border p-4 sm:col-span-2" style={{ borderColor: 'var(--pl-line)' }}>
+          <div className="mb-1 text-[10px] font-bold uppercase tracking-[0.14em]" style={{ color: 'var(--pl-ink-faint)' }}>底色搭配（同一顏色換底色，好不好看會不會變）</div>
+          <div className="flex flex-wrap gap-2">
+            {result.bgRanked.map((b) => (
+              <span key={b.name} className="inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[12px] font-bold" style={{ borderColor: 'var(--pl-line)', background: b.hex }}>
+                {b.name}<span style={{ color: 'var(--pl-ink-faint)' }}>{b.wins}</span>
+              </span>
+            ))}
+          </div>
+          <p className="mt-2 text-[11px] leading-relaxed" style={{ color: 'var(--pl-ink-faint)' }}>
+            這裡測的是同一顆色塊分別放在不同底色上時你選誰，不是底色本身好不好看——如果票數很集中在某個底色，代表你選色時對「搭配的底色」很敏感，不能只看色塊單獨長什麼樣子。
+          </p>
+        </div>
+      </div>
+
+      <div className="flex flex-wrap items-center gap-3">
+        <button
+          onClick={copySummary}
+          className="inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-[12px] font-bold"
+          style={{ background: 'var(--pl-accent)', color: 'var(--pl-paper)' }}
+        >
+          {copied ? <Check size={13} /> : <ClipboardCopy size={13} />}
+          {copied ? '已複製' : '複製摘要（貼給 Claude 存成品味檔案）'}
+        </button>
+        <button
+          onClick={restart}
+          className="inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-[12px] font-bold"
+          style={{ borderColor: 'var(--pl-line)', color: 'var(--pl-ink-muted)' }}
+        >
+          <RotateCcw size={13} /> 重新測驗
+        </button>
+      </div>
+      {saved && (
+        <p className="mt-2 text-[10px]" style={{ color: 'var(--pl-ink-faint)' }}>
+          結果已存在這台瀏覽器（{new Date(saved.completedAt).toLocaleString('zh-TW')}），下次開頁會記得。
+        </p>
+      )}
+    </div>
+  );
+}
+
 export default function PaletteLab() {
+  const [mode, setMode] = useState('browse');
   const [activeId, setActiveId] = useState(() => getSitePaletteId());
   const [siteId, setSiteId] = useState(() => getSitePaletteId());
   const [textureId, setTextureId] = useState(() => getSiteTextureId());
@@ -92,6 +483,27 @@ export default function PaletteLab() {
           鐵律：色票只管框架與裝飾，<strong>大段正文的底永遠是近白的紙面</strong>。
         </p>
 
+        <div className="mt-5 inline-flex rounded-md border p-0.5" style={{ borderColor: 'var(--pl-line)' }}>
+          {[['browse', '試穿色票'], ['quiz', '品味測驗']].map(([id, label]) => (
+            <button
+              key={id}
+              onClick={() => setMode(id)}
+              className="rounded px-3 py-1.5 text-[12px] font-bold transition-colors duration-150"
+              style={{
+                background: mode === id ? 'var(--pl-accent)' : 'transparent',
+                color: mode === id ? 'var(--pl-paper)' : 'var(--pl-ink-muted)',
+              }}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+
+        {mode === 'quiz' ? (
+          <div className="mt-8 rounded-lg border p-6 sm:p-8" style={{ borderColor: 'var(--pl-line)', background: 'var(--pl-surface)' }}>
+            <TasteQuiz />
+          </div>
+        ) : (
         <div className="mt-8 grid gap-8 lg:grid-cols-[300px_1fr] lg:items-start">
           {/* 色票清單（按來源分組）：lg 以上獨立捲動＋sticky，比對色票時右側預覽不會被捲走 */}
           <div className="lg:sticky lg:top-4 lg:max-h-[calc(100vh-2rem)] lg:overflow-y-auto lg:pr-1">
@@ -291,6 +703,7 @@ export default function PaletteLab() {
             </div>
           </div>
         </div>
+        )}
       </div>
     </div>
   );

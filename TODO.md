@@ -18,7 +18,7 @@
 ### ConstitutionalCourt 憲法法庭案例庫
 - [ ] 意見書圖譜（GraphView）佈局重設計：現況節點依意見書總數排名後平均分佈在固定圓上（`ConstitutionalCourt.jsx` `GraphView`），相鄰關係與實際共同具名意見書無關，也無 zoom/pan。改為佈局本身能傳達關係強度（如 d3-force 依共同具名邊權重吸引，或依表決陣營/年代分群）。適合 Codex 出視覺原型；現成交辦 prompt 見 `~/.claude/plans/ui-sleepy-pebble.md` 第 4 條
 - [ ] 被引用最多的解釋「為何被引用」說明擴充：`WHY_CITED`（`ConstitutionalCourt.jsx`）目前只收錄 443（層級化法律保留）、371（法官聲請釋憲）兩筆有把握的說明，其餘暫缺不猜——引註排名本身（`引用網絡` 欄位，1791 筆邊）已存在多時且已在用，缺的只是逐筆研究「為什麼」。交辦 prompt 見上述計畫檔第 3 條
-- [~] 審查結論規則式類型化（2026-07-07，資料側已做）：待人工 434→217，新增 法令解釋/補充前解釋/變更前解釋 三非合憲性審查類＋合憲擴充；規則見資料 repo `docs/審查結論分類規則.md`。**前端未完＋快照未 sync**：`ConstitutionalCourt.jsx` 需補新結論類別的配色（`OUTCOME_TONE` ~L83）、篩選器（~L432）、主題×審查結論矩陣軸（~L612），再於資料 repo `npm run sync`→此處 `npm run build`。詳見 HANDOFF「審查結論 typology」條。審查基準 244 件（16 多重＋228 未明示）依裁示**不自動判、留人工覆核**。殘餘 217 待人工可再抽樣迭代。
+- [x] 審查結論規則式類型化（2026-07-07 完成，資料側＋前端）：待人工 434→217，新增 法令解釋（83）/補充前解釋（30）/變更前解釋（10）三非合憲性審查類＋合憲擴充；規則見資料 repo `docs/審查結論分類規則.md`。前端：`ConstitutionalCourt.jsx` 新增 teal badge 色調（沿用 IntlTaxOps 頁使用者點名保留的 `--teal: #4c7971`）套用三新類別、結論篩選器保留三個獨立選項、主題×審查結論矩陣把三者合併成「非合憲性審查」欄（避免稀釋違憲熱區判讀）；已 `npm run sync`＋`npm run build`，Playwright 實機驗證 badge/篩選器/矩陣三處皆通過。詳見 HANDOFF「審查結論 typology」條。審查基準 244 件（16 多重＋228 未明示）依裁示**不自動判、留人工覆核**。殘餘 217 待人工可再抽樣迭代；`classifyOutcome` 人工 override 層尚未建（見資料 repo 分類規則文件「尚缺」節）。
 - [ ] 大法官出身／留學國「待確認」共 19 人（2 出身＋17 留學國，`TENURE_BG_COLOR`／`ABROAD_GROUP` 待確認分支）：範圍小、來源明確，適合直接研究。交辦 prompt 見上述計畫檔第 1 條
 - [ ] 湯德宗對憲訴法改制後裁判編號系統變更表示遺憾——待使用者提供出處（文獻或演講）後放上 About 或案件時間軸的憲訴法標記旁；無出處不上正文
 - [ ] 意見書全文抽取（1578 份 PDF 批次下載→抽純文字→刪檔，資料 repo 硬規則流程；>50 件抓取已知需使用者確認）→ 之後才做意見書全文靜態索引（MiniSearch 類、lazy load）。Elasticsearch 不採用：靜態站無伺服器，且現有 1.9MB 快照客戶端篩選已足，只有意見書全文語料（估數十 MB）才需要重新評估
@@ -54,3 +54,4 @@
 - [x] GovernmentDebt、ManusMetaAcquisition 頁面
 - [x] InternationalTaxOps 改為分頁式介面（議題矩陣／來源登錄／前沿監測／關係圖譜／案例與爭議），詳見 `HANDOFF.md`
 - [x] 站內字體系統統一（Huiwen-mincho + GenWanMin2/Radio Newsman + Erikas Farbband），詳見 `HANDOFF.md`
+- [x] PaletteLab 色票品味測驗（2026-07-07，經三版才定案，過程見 `HANDOFF.md`）：新「品味測驗」標籤，20 題成對比較（色相 11／配色和諧 5／底色情境 4），色塊一律直接抄站內 `PALETTES` 真實色碼，不再公式生成；呈現改 Notion 風格淡底＋深墨色 tag（`tagTones()`），never 三色並排撞色。「色彩哲學」已寫進 `docs/DESIGN.md` 色票庫節，全站色彩決策都適用，不只這個測驗。結果存 localStorage＋一鍵複製摘要貼給 Claude 存品味檔案。

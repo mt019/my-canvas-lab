@@ -134,12 +134,16 @@ canvas-lab page. Component is now 695 lines, rendering logic only. Icon
 components can't survive JSON serialization — stored as string `iconId`
 and remapped to components in the JSX header.
 
-### `FiscalEnforcementRisk` (new, in progress)
+### `FiscalEnforcementRisk`
 
-Present in the working tree as of 2026-07-04
-(`src/pages/FiscalEnforcementRisk.jsx`,
-`src/data/fiscalEnforcementRisk.json`) but not yet committed or
-described here in detail — update this section once that work lands.
+Landed — committed 2026-07-06 in `1157d6e` together with
+`ECFAResearch`. `src/pages/FiscalEnforcementRisk.jsx` (~1,260 lines)
+renders `src/data/fiscalEnforcementRisk.json`, a public snapshot
+synced from the sibling `../local-fiscal-enforcement-risk-research-data`
+repo (sync state: `docs/DATA_SOURCES.md`). Page identity palette: FER
+墨綠米 (`docs/DESIGN.md` 色票庫). Per-tab implementation notes were
+never written down here — add them the next time this page gets real
+work.
 
 ### `ConstitutionalCourt` (landed 2026-07-06)
 
@@ -149,9 +153,10 @@ described here in detail — update this section once that work lands.
   Update flow: in that repo run `npm run update` (incremental crawl of
   cons.judicial.gov.tw) → `npm run sync` → here rebuild font subsets
   if new glyphs appeared → `npm run build`.
-- Five tabs: 案件索引 (filters + full-text cards + CSV/JSON/BibTeX/
-  引註/manifest export), 時間軸, 大法官, 意見書圖譜 (SVG circular
-  co-sign network, no chart lib), 資料說明.
+- Seven tabs: 案件索引 (filters + full-text cards + CSV/JSON/BibTeX/
+  引註/manifest export), 案件時間軸, 大法官, 任期時間軸 (tenure
+  gantt), 意見書圖譜 (SVG circular co-sign network, no chart lib),
+  沿革 (`HistoryView`, see the 2026-07-07 沿革 entry below), 資料說明.
 - 2026-07-06 update: opinion parsing in the data repo was overhauled
   (抄本 bundled-PDF filenames expanded into per-opinion records and
   deduped against standalone PDFs; compound types normalized; names
@@ -195,30 +200,49 @@ described here in detail — update this section once that work lands.
   conflict with their signature activity (queue in the data repo's
   `data/materials/參與解釋查核佇列.md`) — fix tenures in overrides, the
   rosters are the more reliable side.
-- 2026-07-07 審查結論 typology (data-side DONE, **frontend + sync
-  PENDING — pick this up next**): the data repo reworked
-  `classifyOutcome` so early 釋字 that aren't constitutionality review
-  get real categories. `審查結論.結論` now has, besides 違憲*/合憲,
-  three NEW values: `法令解釋` (83, statutory/unified interpretation),
-  `補充前解釋` (30), `變更前解釋` (10). 待人工 dropped 434→217; 違憲*
-  and existing 合憲 are byte-unchanged. Rules + 16-case sample table:
-  data repo `docs/審查結論分類規則.md`. **The rebuilt
-  `data/processed/constitutional-court-app.json` is NOT yet synced to
-  this repo's snapshot** — deliberately, so the page updates atomically
-  once the frontend handles the new values. TODO in
-  `ConstitutionalCourt.jsx`: (1) `OUTCOME_TONE` map (~L83) — add tones
-  for 法令解釋/補充前解釋/變更前解釋 (they currently fall to the `?? 'slate'`
-  default, so it renders but flat); (2) 結論 filter `Select` (~L432,
-  hardcoded 違憲/合憲/待人工 options) — add the new categories or a
-  「非合憲性審查」grouping; (3) 主題×審查結論 matrix axis (~L612,
-  hardcoded `['違憲','違憲定期失效','合憲','其他/待人工']`) — decide whether
-  to add a 「非合憲性審查」column so it doesn't dilute the 違憲-hotspot
-  read. Then in the data repo: `npm run sync` → here `npm run build`.
-  審查基準 (未明示 228＋多重 16) was deliberately left untouched for human
-  覆核 (auto-picking a scrutiny tier = deciding the case's standard of
-  review; too risky). Not-yet-built: a 人工 override layer for
-  審查結論 (classifyOutcome recomputes all 874 every run, so a
+- 2026-07-07 審查結論 typology (data-side + frontend + sync **DONE**):
+  the data repo reworked `classifyOutcome` so early 釋字 that aren't
+  constitutionality review get real categories. `審查結論.結論` now has,
+  besides 違憲*/合憲, three NEW values: `法令解釋` (83, statutory/unified
+  interpretation), `補充前解釋` (30), `變更前解釋` (10). 待人工 dropped
+  434→217; 違憲* and existing 合憲 are byte-unchanged. Rules + 16-case
+  sample table: data repo `docs/審查結論分類規則.md`. Frontend
+  (`ConstitutionalCourt.jsx`): (1) `OUTCOME_TONE` map (~L84) — new `teal`
+  badge tone for all three (ink reuses the user-approved IntlTaxOps
+  `--teal: #4c7971`, new pale bg `--cc-badge-teal-bg: #e3edeb` added to
+  `CC_VARS` ~L53 and the `Badge` colors map ~L119 — existing blue/plum
+  were already spoken for by 主題/類型 badges on the same card row, so
+  reusing either would've collided); (2) 結論 filter `Select` (~L435) —
+  kept the three new categories as **individual** options (precise
+  browsing) per user's call; (3) 主題×審查結論 matrix (~L615-625) —
+  **merged** the three into one `非合憲性審查` column (user's call: keeps
+  the 違憲-hotspot read undiluted; filter vs. matrix deliberately treated
+  differently). Synced (`npm run validate` → `npm run sync` in the data
+  repo → `npm run build` here) and Playwright-verified (badge tone/label
+  on 釋字第63號/28號/51號, filter option counts 83/30/10 match, matrix
+  header row shows the 5 columns with real per-topic numbers, no console
+  errors). 審查基準 (未明示 228＋多重 16) remains deliberately untouched
+  for human 覆核 (auto-picking a scrutiny tier = deciding the case's
+  standard of review; too risky). Still not built: a 人工 override layer
+  for 審查結論 (classifyOutcome recomputes all 874 every run, so a
   hand-corrected 結論 would be clobbered — add before any manual 覆核).
+- 2026-07-07 沿革 tab (landed, `62691c4`): 7th tab `?tab=history`
+  (`HistoryView`) — two stacked axes: the four-stage
+  interpretation-organ timeline (大理院統字 → 最高法院解字 →
+  司法院院字/院解字 → 大法官釋字 → 憲法法庭憲判, proportional bars
+  from 1913) under a 憲政時期 band (北京政府 → 訓政 → 行憲, with 制憲
+  as an embedded marker — TenureView-band style), plus four organ
+  cards and four period cards, all default-expanded. 憲判 count binds
+  to `data.統計` so it tracks the snapshot. Card copy is
+  user-approved final text (data repo `docs/沿革摘要草稿.md`; period
+  years verified in `docs/沿革素材查證.md` §E) — **don't reword it
+  without user sign-off**. Spec: data repo `docs/司法解釋沿革設計.md`
+  (incl. the「Phase A 增補」dual-axis section). Implemented directly
+  by Claude Code at the user's instruction; the Codex handoff draft
+  (`~/.claude/plans/constcourt-provenance-ui-codex.md`) is superseded.
+  Build/lint/Playwright (14 checks) green. Phase B (pre-1948
+  interpretations catalog) is still scoping-only — see the data repo
+  design doc before touching it.
 - Site-wide font change (2026-07-07, settled after one same-day
   reversal): `--font-display` is Radio Newsman (Latin) + Huiwen
   Mincho (CJK — replacing GenWanMin2 so headings and body share one
@@ -338,6 +362,106 @@ described here in detail — update this section once that work lands.
   start date–現任. Verified via Playwright against 黃虹霞/翁岳生/
   張式彝/楊惠欽.
 
+### `PaletteLab` (品味測驗 landed 2026-07-07, v3 architecture)
+
+New second mode on the existing single-page palette browser: a
+top-of-page toggle (`試穿色票` / `品味測驗`) switches between the
+original browse UI and `TasteQuiz`, both defined in `PaletteLab.jsx`
+(no new file). Motivation: repeated rounds of manually guessing
+categorical chart colors for `ConstitutionalCourt`'s TenureView legend
+(see that section above) all missed — the user pushed back that
+isolated single-swatch taste doesn't predict combination harmony or
+how a color reads against different backgrounds. The quiz measures
+that directly instead of guessing.
+
+**Went through two failed architectures before landing on the current
+one — read this before touching hue generation again.**
+
+- **v1**: swatches generated procedurally from a fixed OKLCH formula
+  applied to 10 hue anchors spanning the full 360° wheel, rendered as
+  giant solid rectangles. Broke twice: (a) the 50°-140° band (gold →
+  olive) reads as muddy/dirty at almost any chroma — a real OKLCH
+  property, not taste, and exactly the hue range this site's own
+  Morandi/Monet palettes already dodge by crushing chroma near zero;
+  (b) giant solid-color panels violate this repo's own rule that color
+  is chrome, never a large fill — true regardless of which hue.
+- **v2**: dropped the bad hue band (8 anchors left), shrunk every
+  swatch to a small badge-scale chip. Still broke: the user pointed
+  out the actual `PALETTES` browse view *always* looks fine, but the
+  quiz — even fixed — didn't, and asked why. Answer: `PALETTES` values
+  are hand-picked by a person; a single formula plugged into different
+  hues is not equivalent even when the target hue is "safe," because
+  each hue needs its own tuning to read as elegant rather than
+  harsh/flat. No uniform formula reproduces that.
+- **v3 (current)**: **stopped generating colors.** Every visible hue in
+  the quiz is now a real `accent`/`accent2` value pulled live from
+  `PALETTES` — never invented. Also adopted a documented "Notion 色彩
+  哲學" principle (now in `docs/DESIGN.md` under 色票庫, not just this
+  component): color is always a pale-background + saturated-ink *pair*
+  (`tagTones(hex)` — `ink` is the real value unchanged, `bg` is the
+  only thing still computed, a near-white tint of the same hue, which
+  is safe at virtually any hue because muddiness is a moderate/high-
+  chroma phenomenon), rendered as small "Aa" tag chips (genuinely
+  Notion-tag-shaped, not solid blocks), and **never more than 2 hues
+  side by side** — matches `palettes.js`'s own `pop` role doc-comment
+  ("一個畫面最多出現一處"), generalized: any 3+ contrasting hues
+  shown together reads as a clash even if each hue alone is fine.
+
+**Mechanism** (`hexToOklch`/`oklchToHex` at the top of the file, hand-
+rolled, matrices kept in sync with the dataviz skill's
+`scripts/validate_palette.js`): `hexToOklch` tags every
+`PALETTES` accent/accent2 with its hue/L/C so real colors can be
+grouped and scored; `oklchToHex` is used *only* to synthesize the pale
+`bg` half of a tag pair, never an `ink`. `REAL_ACCENTS` is the pool
+(accent + accent2 across all 18 palettes; `pop` deliberately excluded
+— it's a clash color by definition, shouldn't enter routine
+comparisons). `HUE_ANCHORS` picks, per each of 8 target hue positions,
+whichever real accent in the pool is closest — so "the rose anchor"
+is literally some real palette's actual accent hex, not a lookalike.
+
+20 trials, 3 rounds: **hue** (11 — round-robin over 8 anchors + 3
+cross pairs), **combination** (5 — for 5 named palettes, "its own
+designed accent+accent2 pair" vs. "its accent mismatched with an
+unrelated palette's accent," via `HARMONY_SPEC`; always exactly 2 tags
+per option, never 3+), **background context** (4 — same real accent
+chip on two different real `PALETTES` surface/paper tones, derived
+live via `PALETTES.find(...)`, not hardcoded — a `validate:tokens`
+bare-hex catch during v1/v2 already forced this). `scoreTaste()`
+outputs a hue win-ranking (each entry carries which palette it came
+from, via `.from`), a *derived* chroma/lightness lean (v3 dropped the
+old dedicated muted-vs-vivid/pale-vs-deep synthetic rounds entirely —
+that was still formula generation; instead it diffs the real L/C of
+chosen vs. rejected hue-anchors across the hue round, so the lean is
+observed from real picks, not tested via synthetic extremes), a
+warm/cool lean, a designed-vs-mismatched combination preference, and a
+background win-tally. Results screen shows all of it plus "複製摘要"
+(`tasteSummaryText()`) — copies a plain-text profile including which
+source palette each favorite hue came from, meant to be pasted back to
+Claude in chat and saved as project memory (**intentionally not
+auto-saved to any memory system** — the harness can't read browser
+localStorage). Raw picks also persist to
+`localStorage['canvaslab:tastequiz:v3']` (bumped twice already as the
+trial structure changed shape — bump again if you change trial count
+or meaning, old positional picks silently mean something else
+otherwise).
+
+Font-coverage trap worth remembering: `npm run validate:fonts` scans
+raw source text across `src/`, `HANDOFF.md`, `TODO.md`, and
+`README.md` for CJK glyphs, **comments included**, not just rendered
+strings — writing the literal characters for a rejected hue name into
+this handoff (to document what got renamed) trips the same check that
+fired in the component. Describe by Unicode codepoint instead of
+pasting the character if you need to reference a rejected one in prose
+anywhere in this repo, not just component files.
+
+Playwright-verified end to end at each architecture revision (final
+v3: 20-trial run, tag-pair rendering confirmed visually at all 3 round
+types — pale-bg/ink pairs, 2-tag combination groups, chip-on-real-
+background — no muddy hues, no 3-way clashes), results math cross-
+checked against a deterministic always-pick-left run, `localStorage`
+write confirmed, no console errors, `npm run build` (incl.
+`validate:fonts`/`validate:tokens`) clean at every revision.
+
 ## Canvas home entry
 
 Homepage is grouped by page type, not the old broad
@@ -452,16 +576,6 @@ neither proposed fix has landed:
 2. Retry UN FSDO ingestion with browser-realistic headers before
    reaching for a headless browser (needed only for the
    Cloudflare-gated OECD BEPS page specifically).
-
-3. ConstitutionalCourt「沿革」tab — 7th tab (`?tab=history`), two axes:
-   the four-stage interpretation-organ timeline plus a 憲政時期 band
-   (北京政府→國民政府（訓政）→制憲→行憲) overlaid the way TenureView
-   overlays presidential terms. Spec: constitutional-court-research-data
-   `docs/司法解釋沿革設計.md` (incl. the 2026-07-07「Phase A 增補」
-   section). Blocked on (a) user sign-off of the four summary drafts
-   (`docs/沿革摘要草稿.md` §五, five pending decisions) and (b) a sonnet
-   research pass filling the period-boundary dates. UI first-draft only;
-   copy comes verbatim from the approved drafts.
 
 ## Decided against (don't redo without new information)
 
