@@ -274,19 +274,36 @@ work.
   official URLs; actual batch download happens in the data repo via
   `npm run fetch-batch -- --manifest <file>` (or `--tag 稅法`). The
   frontend never proxies or hosts official files.
-- Chart categorical palette — went through three revisions on
-  2026-07-07, final state is a **site-wide color-philosophy rule** now
-  documented in `docs/DESIGN.md` (色票庫 → 色彩哲學). The short version:
-  every chart/identity color must be a real hex pulled from
+- Chart categorical palette — iterated several times on 2026-07-07,
+  final state is a **site-wide color-philosophy rule** now documented in
+  `docs/DESIGN.md` (色票庫 → 色彩哲學). The short version: every
+  chart/identity color must be a real hex pulled from
   `src/styles/palettes.js` (not formula-generated), and no color may sit
-  in OKLCH hue 50°–140° at chroma ≥0.08 (that band reads as
-  mustard/olive — a computable property, not taste). Current values live
-  in `TENURE_BG_COLOR` / `TENURE_ABROAD_COLOR` / `PRES_COLOR`
-  (rose/indigo/teal/copper `#aa4d75`/`#3b4f78`/`#4c7971`/`#b08060` for
-  the 4-class ones; `PRES_COLOR` is an 8-hue set with 嚴家淦/蔣經國
-  swapped off the old gold/olive to `#a44a4a`/`#b3452e`). Don't swap any
-  of these without re-running the dataviz skill's `validate_palette.js`
-  *and* checking the new hue against the 50°–140° rule.
+  in OKLCH hue 50°–140° (mustard/olive — computable, not taste). **Two
+  hard lessons that turned into rules:** (1) the hex-literal grep audit
+  MISSED the 沿革 `大理院` timeline bar because it referenced its color
+  via `var(--cc-badge-gold-ink)`, not a hex literal — a full audit must
+  **resolve `var(--cc-*)` to CC_VARS hex** before checking hue (script:
+  scratchpad `scan-cc.mjs`). (2) The C≥0.08 chroma cutoff was too
+  lenient for **large fills** — `#8a6d3b` (H79.7, C0.077) and `#b08060`
+  (H54.6, C0.075) both slipped under it but read as ugly olive/tan as
+  big bars; for anything larger than a small badge, treat hue 50°–140°
+  as suspect down to **C≥0.04**. Current `TENURE_BG_COLOR` /
+  `TENURE_ABROAD_COLOR` (per user directive "深藍深綠消失、紫色降飽和")
+  are a muted warm-only 4-class set — 學者 rose `#8f6071`, 法官 muted
+  purple `#6f5080`, 律師 mauve `#9a7f96`, 檢察官 brick `#a44a4a`, gray for
+  其他/待確認 — all in the 290°–360°/0°–50° warm arc, no blue, no green,
+  distinguished mainly by lightness + text labels (CVD warn-band is
+  accepted because legend + hover always show the category name).
+  `PRES_COLOR` 嚴家淦/蔣經國 are off the old gold/olive to
+  `#a44a4a`/`#b3452e`; 沿革 大理院 bar is now `#7d4256` deep wine.
+  Two small **semantic status badge inks deliberately kept** despite
+  sitting in-band: `--cc-badge-gold-ink #8a6d3b` (違憲定期失效 amber
+  warning) and `--cc-badge-green-ink #566d50` (合憲 green) — small inline
+  chrome with universally-read status meaning (green=合憲, amber=warning),
+  the philosophy's reserved-status exception; revisit only if the user
+  objects. Don't swap any chart color without re-running
+  `validate_palette.js` *and* the hue-50–140 check.
 - `scripts/validate-font-coverage.mjs` walks `src/` with pure node
   (no ripgrep): this machine has no real `rg` binary — the shell `rg`
   is Claude Code's wrapper, invisible to node's spawn.
