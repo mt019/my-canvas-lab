@@ -809,8 +809,17 @@ function JusticeDetail({ name, onBack, onOpen }) {
       <section className="py-5">
         <h2 className="text-2xl font-bold text-[var(--cc-heading)]">{j.姓名}</h2>
         <div className="mt-2 flex flex-wrap gap-x-6 gap-y-1 text-[12px] text-[var(--cc-ink-mid)]">
-          {j.屆次?.length ? <span><strong className="text-[var(--cc-accent)]">屆次</strong>　{j.屆次.join('、')}</span> : null}
-          {tenureText ? <span><strong className="text-[var(--cc-accent)]">任期</strong>　{tenureText}{j.任期來源 !== '簡歷頁' ? `（${j.任期來源}）` : ''}</span> : null}
+          {/* 屆次推定的任期純由屆次標籤推出，兩欄重複，只留屆次一行；
+              簡歷頁/人工核定者任期有獨立資訊（多段、辭職、卒於任內、現任起日）才另列 */}
+          {j.屆次?.length ? (
+            <span>
+              <strong className="text-[var(--cc-accent)]">屆次</strong>　{j.屆次.join('、')}
+              {j.任期來源 === '屆次推定' ? <span className="text-[10.5px] text-[var(--cc-figure-note)]">（任期依屆次推定）</span> : null}
+            </span>
+          ) : null}
+          {tenureText && j.任期來源 !== '屆次推定' ? (
+            <span><strong className="text-[var(--cc-accent)]">任期</strong>　{tenureText}{j.任期來源 === '人工核定' ? '（人工核定）' : ''}</span>
+          ) : null}
           {j.提名總統 ? <span><strong className="text-[var(--cc-accent)]">提名</strong>　{j.提名總統}{j.提名總統標註 === '依就任日推定' ? '（推定）' : ''}</span> : null}
           {j.出身 && j.出身 !== '待確認' ? <span><strong className="text-[var(--cc-accent)]">出身</strong>　{j.出身}</span> : null}
           {j.留學國 ? <span><strong className="text-[var(--cc-accent)]">留學</strong>　{j.留學國}</span> : null}

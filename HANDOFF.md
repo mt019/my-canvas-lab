@@ -215,31 +215,22 @@ described here in detail — update this section once that work lands.
 - `scripts/validate-font-coverage.mjs` walks `src/` with pure node
   (no ripgrep): this machine has no real `rg` binary — the shell `rg`
   is Claude Code's wrapper, invisible to node's spawn.
-- Early 釋字 (≲431 號) opinions are embedded in the official page body,
+- Early 釋字 (約 431 號以前) opinions are embedded in the official page body,
   not PDFs; the snapshot marks them `內嵌: true` and both CaseCard and
   the justice detail page already render them (link label 官方頁正文/
   官方頁). A 2026-07-07 screenshot showing 王澤鑑 with 4 opinions
   predates this fix — current data has 6 (436/437 are 內嵌).
-- **Outstanding — spec for Codex: 屆次/任期 convergence** on the
-  justice detail page (`src/pages/ConstitutionalCourt.jsx:806-807`,
-  `tenureText` built at `:787-789`). Today the two spans duplicate
-  each other for the 64 justices with `任期來源 === '屆次推定'`
-  (任期 is mechanically derived from the 屆次 label). New rule:
-  - Base display is a single 屆次 line (label strings joined by 、).
-  - `任期來源 === '屆次推定'`: drop the separate 任期 span; append
-    small muted text 「任期依屆次推定」 to the 屆次 line. Keep the
-    caveat visible — 推定 can be wrong (張式彝 died in office
-    1948-11 but 推定 says 1958-09; pending data fix).
-  - `簡歷頁` / `人工核定` (60 justices): keep the 任期 detail next to
-    the 屆次 line — multi-segment tenures with 職稱 (連任, 辭職,
-    卒於任內) are the genuine special cases and must stay visible;
-    tag 人工核定 as today (`任期來源 !== '簡歷頁'` suffix).
-  - `現任大法官` roster label carries no dates: show 屆次 as 現任 and
-    the 任期 span with real start date–現任.
-  - Acceptance: a 推定 justice (e.g. 黃虹霞) shows one line with the
-    推定 caveat and no duplicated date range; 翁岳生 (5 屆次 entries,
-    人工核定 1972–2007-09-30) still shows full tenure detail; current
-    justices show their real start dates.
+- 屆次/任期 convergence (landed 2026-07-07): the justice detail page
+  no longer renders two duplicated spans. Single 屆次 line is the
+  base; `任期來源 === '屆次推定'` (64 justices, 任期 mechanically
+  derived from the 屆次 label) appends muted 「任期依屆次推定」
+  instead of a 任期 span — the caveat stays visible because 推定 can
+  be wrong (張式彝 died in office 1948-11 but 推定 says 1958-09; data
+  fix queued in the data repo's 傳記查核 batch). `簡歷頁`/`人工核定`
+  justices keep the separate 任期 detail (multi-segment, 辭職,
+  卒於任內, 連任; 人工核定 tagged); `現任大法官` shows the real
+  start date–現任. Verified via Playwright against 黃虹霞/翁岳生/
+  張式彝/楊惠欽.
 
 ## Canvas home entry
 
