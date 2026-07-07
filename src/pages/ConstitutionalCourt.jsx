@@ -220,13 +220,13 @@ function OpinionLine({ op, officialUrl }) {
   );
 }
 
-// 約 200 件主文把多項裁判項次「1 … 2 … 3 …」用單一空格接成一整串（原文本身如此，非本站編號），
-// 只在「句號後接『數字+空白』」處斷開成段，維持原始號碼與文字、不新增任何符號；
-// 找不到這種邊界（多數案件）就整段原樣輸出。
+// 資料層（constitutional-court-research-data engineering/scripts/lib.mjs
+// stripParagraphAware）已把官方頁「解釋文/主文」逐段的 <li> 結構轉存成真分段
+// （連續換行），這裡依此分段成獨立 <p>；找不到分段（單段案件）就整段原樣輸出。
 function splitClauses(text) {
   if (!text) return [];
-  const parts = text.split(/(?<=。)\s+(?=\d+\s)/);
-  return parts.length > 1 ? parts : [text];
+  const parts = text.split(/\n{2,}/).map((s) => s.trim()).filter(Boolean);
+  return parts.length ? parts : [text];
 }
 
 function CaseCard({ d }) {
@@ -1010,13 +1010,18 @@ const ABROAD_GROUP = (j) => {
 const TENURE_ABROAD_COLOR = { // token-exempt: dataviz categorical palette, validated 2026-07-07
   德語圈: '#aa4d75', 英美: '#3b4f78', 日本: '#4c7971', 其他: '#b87333', 國內: '#b3a8ad', 待確認: '#b3a8ad',
 };
-// 提名總統 8 色 2026-07-07 重配：45°上下的色相輪轉＋交錯明度，同樣以 dataviz
-// validator 過驗（against 本頁 --cc-bg 底色，--pairs all，全通過；兩項落在警戒帶的提示——
-// 嚴家淦金色對比略低、蔡英文對陳水扁的 CVD 落在 8–12 帶——都已有輔助編碼：
-// 圖例與 hover tooltip 全程顯示文字名稱，非純色彩判讀）。賴清德任期尚短、
-// 沿用既有中性灰，不特別配色。token-exempt: dataviz categorical palette, validated 2026-07-07
+// 提名總統 8 色。2026-07-07 二次重配：原本嚴家淦／蔣經國兩色的色相分別落在
+// OKLCH H69.8°／H120.8°，正是這頁 TenureView 出身/留學國配色
+// 已經修過一次的同一個土黃土綠危險區間（見上方 ABROAD_GROUP 附近說明）——這組
+// 8 色是同一張圖表的另一種著色模式，卻沒跟著改到，直到使用者回頭問「色彩哲學
+// 沒套用到這頁」才發現。改用 dataviz validator（--pairs all）從 palettes.js
+// 真實色票裡窮舉找替代：嚴家淦→yanzhi.accent、蔣經國→dai-blue.pop，兩者色相
+// 都在安全區間，且與其餘 7 色的 CVD 最差對（蔡英文↔陳水扁，非本次新色）落在
+// 8–12 warn 帶，跟改色前同一標準（圖例與 hover tooltip 全程顯示文字名稱，非
+// 純色彩判讀，此為既有輔助編碼）。賴清德任期尚短、沿用既有中性灰，不特別配色。
+// token-exempt: dataviz categorical palette, validated 2026-07-07
 const PRES_COLOR = {
-  蔣中正: '#a73b6d', '李宗仁（代）': '#cd605a', 嚴家淦: '#df9b44', 蔣經國: '#4b5b00',
+  蔣中正: '#a73b6d', '李宗仁（代）': '#cd605a', 嚴家淦: '#a44a4a', 蔣經國: '#b3452e',
   李登輝: '#029e72', 陳水扁: '#007d9a', 馬英九: '#3b5eb2', 蔡英文: '#b862a7', 賴清德: '#b3a8ad',
 };
 // 各總統提名大法官人數（鍵與 presidents[].總統／PRES_COLOR 同一套字串，含「（代）」）
