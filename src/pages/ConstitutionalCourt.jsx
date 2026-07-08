@@ -97,7 +97,7 @@ function CaseRef({ 字號, className = '' }) {
 
 // 釋憲文件類型 ↔ 制度沿革機關階段 的單一對應表：同一機關作成的文件與其沿革階段共用 --cat-* 分類色位，
 // 讓「案件時間軸」的色條與「制度沿革」四段對得起來。解釋(釋字)＝大法官階段(shizi)、判決/裁定(憲判)＝
-// 憲法法庭階段(xianpan)；1949 前的大理院/最高法院/司法院三段案件時間軸不含，僅出現在沿革圖。
+// 憲法法庭階段(xianpan)、最高法院解字＝zuigao、司法院院字/院解字＝sifayuan；四段在同一條合併時間軸相接。
 const ERA_TONE = { dali: 6, zuigao: 8, sifayuan: 4, shizi: 7, xianpan: 2 };
 const catPair = (n) => ({ fill: `var(--cat-${n}-bg)`, ink: `var(--cat-${n}-tx)` });
 // 年度密度堆疊條＝淡底＋ink 細線：解釋吃 shizi 色位（rose，維持頁面 rose 識別）、判決吃 xianpan 色位（blue），
@@ -105,6 +105,23 @@ const catPair = (n) => ({ fill: `var(--cat-${n}-bg)`, ink: `var(--cat-${n}-tx)` 
 const TYPE_TONE = { 解釋: ERA_TONE.shizi, 判決: ERA_TONE.xianpan, 實體裁定: 3 };
 const typeFill = (k) => `var(--cat-${TYPE_TONE[k]}-bg)`;
 const typeInk = (k) => `var(--cat-${TYPE_TONE[k]}-tx)`;
+
+// 合併案件時間軸的四條「解釋機制」色帶（沿革同色，時間上前後相接、幾乎不重疊）：
+// 最高法院解字→司法院院字/院解字（統一解釋）→大法官釋字→憲法法庭憲判/裁定。大理院統字無日期，不入此軸。
+const BANDS = [
+  { key: '最高法院解字', tone: ERA_TONE.zuigao, label: '最高法院　解字' },
+  { key: '司法院統一解釋', tone: ERA_TONE.sifayuan, label: '司法院　院字・院解字' },
+  { key: '大法官釋字', tone: ERA_TONE.shizi, label: '大法官　釋字' },
+  { key: '憲法法庭', tone: ERA_TONE.xianpan, label: '憲法法庭　判決・裁定' },
+];
+const BAND_TONE = Object.fromEntries(BANDS.map((b) => [b.key, b.tone]));
+const bandOf = (d) => {
+  if (d.系列 === '統字') return null; // 大理院，無作成日期
+  if (d.系列 === '解字') return '最高法院解字';
+  if (d.系列 === '院字' || d.系列 === '院解字') return '司法院統一解釋';
+  if (!d.系列) return d.類型 === '解釋' ? '大法官釋字' : '憲法法庭';
+  return null;
+};
 
 const OUTCOME_TONE = {
   違憲: 'red',
@@ -669,28 +686,42 @@ function IndexView() {
 
 function TimelineView() {
   const [hover, setHover] = useState(null);
-  const [era, setEra] = useState('行憲後');
-  const byYear = useMemo(() => {
+  // 合併時間軸：四種解釋機制沿革相接（最高法院解字→司法院院字/院解字→大法官釋字→憲法法庭憲判/裁定）。
+  // 各年幾乎只落在單一機制，故一年一柱、依色帶著色；年別件數跨兩量級，y 軸取對數。大理院統字無日期，不入軸。
+  const { byYear, span, y0, y1, maxTotal } = useMemo(() => {
     const m = new Map();
     for (const d of docs) {
-      if (d.系列) continue; // 行憲前統一解釋不進大法官時代的案件時間軸（其沿革在「沿革」分頁）
       if (!d.日期) continue;
+      const band = bandOf(d);
+      if (!band) continue;
       const y = Number(d.日期.slice(0, 4));
-      if (!m.has(y)) m.set(y, { 解釋: 0, 判決: 0, 實體裁定: 0 });
-      m.get(y)[d.類型]++;
+      if (!Number.isFinite(y)) continue;
+      if (!m.has(y)) m.set(y, { band, total: 0, detail: {} });
+      const rec = m.get(y);
+      rec.total++;
+      const sub = d.系列 || (d.類型 === '解釋' ? '釋字' : d.類型);
+      rec.detail[sub] = (rec.detail[sub] ?? 0) + 1;
     }
-    return m;
+    const ys = [...m.keys()].sort((a, b) => a - b);
+    const y0 = ys[0];
+    const y1 = ys[ys.length - 1];
+    const span = [];
+    for (let y = y0; y <= y1; y++) span.push(y);
+    const maxTotal = Math.max(...[...m.values()].map((v) => v.total));
+    return { byYear: m, span, y0, y1, maxTotal };
   }, []);
-  const years = [...byYear.keys()].sort();
-  const y0 = years[0];
-  const y1 = years[years.length - 1];
-  const span = [];
-  for (let y = y0; y <= y1; y++) span.push(y);
-  const max = Math.max(...[...byYear.values()].map((v) => v.解釋 + v.判決 + v.實體裁定));
 
-  const W = 12;
-  const H = 190;
+  const W = 9;
+  const H = 200;
+  const PAD_L = 30;
+  const PAD_T = 6;
+  const PAD_B = 22;
   const chartW = span.length * W;
+  // 對數 y 軸：count=1 落在略高於軸底處仍可見；每格 ×10。
+  const LMIN = Math.log10(0.72);
+  const LMAX = Math.log10(maxTotal) + 0.04;
+  const yAt = (v) => PAD_T + H - ((Math.log10(v) - LMIN) / (LMAX - LMIN)) * H;
+  const idxOf = (yr) => span.indexOf(yr);
 
   const cited = useMemo(() => {
     const c = new Map();
@@ -699,65 +730,71 @@ function TimelineView() {
   }, []);
   const docByNo = useMemo(() => new Map(docs.map((d) => [d.字號, d])), []);
 
+  const svgW = PAD_L + chartW + 12;
+  const svgH = PAD_T + H + PAD_B;
   return (
     <div>
-      <div className="border-t border-[var(--cc-line)] pt-5">
-        <SegControl value={era} onChange={setEra} options={[['行憲後', '行憲後　釋字・憲判'], ['行憲前', '行憲前　統一解釋']]} />
-      </div>
-      {era === '行憲前' ? <Pre1947Timeline /> : (
-      <>
-      <section className="border-t border-[var(--cc-line)] py-5">
+      <section className="border-t border-[var(--cc-line)] pt-5 pb-5">
         <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">年度密度</p>
-        <h2 className="text-base sm:text-lg font-bold text-[var(--cc-title-ink)]">每年作成件數（1949–{y1}）</h2>
-        <div className="mt-1 flex flex-wrap gap-4 text-[12px] text-[var(--cc-ink-soft)]">
-          {Object.keys(TYPE_TONE).map((k) => (
-            <span key={k} className="inline-flex items-center gap-1.5">
-              <span className="h-2.5 w-2.5 rounded-sm border" style={{ background: typeFill(k), borderColor: typeInk(k) }} />
-              {k === '解釋' ? '大法官解釋' : k === '判決' ? '憲法法庭判決' : '實體裁定'}
+        <h2 className="text-base sm:text-lg font-bold text-[var(--cc-title-ink)]">每年作成件數（{y0}–{y1}，對數刻度）</h2>
+        <div className="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-[12px] text-[var(--cc-ink-soft)]">
+          {BANDS.map((b) => (
+            <span key={b.key} className="inline-flex items-center gap-1.5">
+              <span className="h-2.5 w-2.5 rounded-sm border" style={{ background: `var(--cat-${b.tone}-bg)`, borderColor: `var(--cat-${b.tone}-tx)` }} />
+              {b.label}
             </span>
           ))}
         </div>
         <div className="relative mt-3 overflow-x-auto pb-2">
-          <svg viewBox={`0 0 ${chartW + 40} ${H + 40}`} preserveAspectRatio="xMinYMin meet" role="img" aria-label="每年案件數長條圖" style={{ width: '100%', height: 'auto', maxWidth: chartW + 40 }}>
+          <svg viewBox={`0 0 ${svgW} ${svgH}`} preserveAspectRatio="xMinYMin meet" role="img" aria-label="每年作成件數對數長條圖" style={{ width: '100%', height: 'auto', maxWidth: svgW }}>
+            {[1, 10, 100].filter((g) => g <= maxTotal).map((g) => (
+              <g key={g}>
+                <line x1={PAD_L} y1={yAt(g)} x2={PAD_L + chartW} y2={yAt(g)} stroke="var(--cc-line)" strokeWidth={1} />
+                <text x={PAD_L - 5} y={yAt(g) + 3} textAnchor="end" fontSize={9} fill="var(--cc-axis-text)">{g}</text>
+              </g>
+            ))}
             {span.map((y, i) => {
-              const v = byYear.get(y) ?? { 解釋: 0, 判決: 0, 實體裁定: 0 };
-              const total = v.解釋 + v.判決 + v.實體裁定;
-              let acc = 0;
+              const v = byYear.get(y);
+              if (!v) return null;
+              const tone = BAND_TONE[v.band];
+              const top = yAt(v.total);
               return (
-                <g key={y} transform={`translate(${i * W + 20}, 0)`}
-                  onMouseEnter={() => setHover({ y, ...v, total })}
+                <g key={y} transform={`translate(${PAD_L + i * W}, 0)`}
+                  onMouseEnter={() => setHover({ y, ...v })}
                   onMouseLeave={() => setHover(null)}>
-                  <rect x={0} y={0} width={W} height={H} fill="transparent" />
-                  {['解釋', '判決', '實體裁定'].map((k) => {
-                    if (!v[k]) return null;
-                    const h = (v[k] / max) * (H - 10);
-                    acc += h;
-                    return <rect key={k} x={1.5} y={H - acc} width={W - 3} height={Math.max(h - 2, 1)} rx={2} fill={typeFill(k)} stroke={typeInk(k)} strokeWidth={0.75} opacity={hover && hover.y !== y ? 0.45 : 1} />;
-                  })}
+                  <rect x={0} y={PAD_T} width={W} height={H} fill="transparent" />
+                  <rect x={0.75} y={top} width={W - 1.5} height={PAD_T + H - top} rx={1} fill={`var(--cat-${tone}-bg)`} stroke={`var(--cat-${tone}-tx)`} strokeWidth={0.6} opacity={hover && hover.y !== y ? 0.4 : 1} />
                   {y % 10 === 0 ? (
-                    <text x={W / 2} y={H + 16} textAnchor="middle" fontSize={10} fill="var(--cc-axis-text)">{y}</text>
+                    <text x={W / 2} y={PAD_T + H + 14} textAnchor="middle" fontSize={9.5} fill="var(--cc-axis-text)">{y}</text>
                   ) : null}
-                  {y === 2022 ? (
-                    <>
-                      <line x1={0} y1={6} x2={0} y2={H} stroke="var(--cc-type-judgment)" strokeDasharray="3 3" strokeWidth={1} />
-                      <text x={3} y={12} fontSize={9} fill="var(--cc-type-judgment)">憲訴法施行</text>
-                    </>
-                  ) : null}
+                </g>
+              );
+            })}
+            {[[1949, '行憲 1947.12'], [2022, '憲訴法']].map(([yr, label]) => {
+              const i = idxOf(yr);
+              if (i < 0) return null;
+              const x = PAD_L + i * W;
+              return (
+                <g key={yr}>
+                  <line x1={x} y1={PAD_T} x2={x} y2={PAD_T + H} stroke="var(--cc-type-judgment)" strokeDasharray="3 3" strokeWidth={1} />
+                  <text x={x + 3} y={PAD_T + 9} fontSize={9} fill="var(--cc-type-judgment)">{label}</text>
                 </g>
               );
             })}
           </svg>
           {hover ? (
-            <div className="pointer-events-none absolute left-4 top-1 rounded-md border border-[var(--cc-border)] bg-white px-3 py-1.5 text-[12px] shadow-sm">
+            <div className="pointer-events-none absolute left-8 top-1 rounded-md border border-[var(--cc-border)] bg-white px-3 py-1.5 text-[12px] shadow-sm">
               <strong className="text-[var(--cc-ink-strong)]">{hover.y} 年</strong>　共 {hover.total} 件
-              {hover.解釋 ? `　解釋 ${hover.解釋}` : ''}{hover.判決 ? `　判決 ${hover.判決}` : ''}{hover.實體裁定 ? `　裁定 ${hover.實體裁定}` : ''}
+              {Object.entries(hover.detail).map(([k, n]) => `　${k} ${n}`).join('')}
             </div>
           ) : null}
         </div>
         <p className="mt-1 max-w-3xl text-[12px] leading-relaxed text-[var(--cc-ink-soft)]">
-          2022 年 1 月 4 日憲法訴訟法施行後，大法官解釋制度走入歷史，改由憲法法庭以判決與裁定行使職權；2024 年底起因大法官人數不足，作成件數明顯下降。
+          縱軸為對數刻度（每格 ×10）：統一解釋期每年上百件、釋字期每年個位到十餘件，跨兩個量級，對數軸方能同框並列。1948 年院解字止、1949 年釋字起，中間無縫接續——司法院的統一解釋轉為大法官解釋，同一釋憲脈絡的延續。大理院統字 2,011 件未載作成日期，號次雖為大致時序卻無公曆年，不入此軸（見下）。2022 年憲法訴訟法施行後，改由憲法法庭以判決、裁定行使職權；2024 年底起大法官人數不足，作成件數明顯下降。
         </p>
       </section>
+
+      <Pre1947Supplement />
 
       <TopicHeatmaps />
 
@@ -785,48 +822,25 @@ function TimelineView() {
           })}
         </div>
       </section>
-      </>
-      )}
     </div>
   );
 }
 
-// 行憲前（統一解釋）視覺化：有日期者上真實年度軸（依機關堆疊，色＝沿革頁 ERA_TONE），
-// 無日期者（幾乎全是大理院統字）不虛構日期，改以總量＋號次序列密度呈現；另附系列／時期分類（類型化）。
-function Pre1947Timeline() {
-  const [hover, setHover] = useState(null);
-  const 機關TONE = { 大理院: ERA_TONE.dali, 最高法院: ERA_TONE.zuigao, 司法院: ERA_TONE.sifayuan };
-  const 機關序 = ['大理院', '最高法院', '司法院'];
-  const { byYear, span, y0, y1, ymax, undated, seriesRows, eraRows, total } = useMemo(() => {
+// 行憲前補充：大理院統字無作成日期、不入上方合併時間軸，此處說明其整全性（號次連續無斷）與極簡性；
+// 另以系列／時期做類型化辨識（行憲前「類型」欄一律為「解釋」，無語意主題標籤）。
+function Pre1947Supplement() {
+  const { seriesRows, eraRows, total } = useMemo(() => {
     const pre = docs.filter((d) => d.系列);
-    const dated = pre.filter((d) => d.日期);
-    const undated = pre.filter((d) => !d.日期);
-    const m = new Map();
-    for (const d of dated) {
-      const y = Number(d.日期.slice(0, 4));
-      if (!Number.isFinite(y)) continue;
-      if (!m.has(y)) m.set(y, { 大理院: 0, 最高法院: 0, 司法院: 0 });
-      if (d.機關 in m.get(y)) m.get(y)[d.機關]++;
-    }
-    const ys = [...m.keys()].sort((a, b) => a - b);
-    const y0 = ys[0];
-    const y1 = ys[ys.length - 1];
-    const span = [];
-    for (let y = y0; y <= y1; y++) span.push(y);
-    const ymax = Math.max(1, ...[...m.values()].map((v) => v.大理院 + v.最高法院 + v.司法院));
     // 系列（統字/院字/院解字/解字）＝行憲前的自然「類型」；時期＝北京政府/訓政/行憲。
     const tally = (key) => {
       const c = new Map();
       for (const d of pre) { const k = d[key] ?? '未標'; c.set(k, (c.get(k) ?? 0) + 1); }
       return [...c.entries()].sort((a, b) => b[1] - a[1]);
     };
-    return { byYear: m, span, y0, y1, ymax, undated, seriesRows: tally('系列'), eraRows: tally('時期'), total: pre.length };
+    return { seriesRows: tally('系列'), eraRows: tally('時期'), total: pre.length };
   }, []);
 
-  const W = 6;
-  const H = 170;
-  const chartW = span.length * W;
-  // 無日期統字：號次是等差序列，依號次分桶的密度圖必然近均勻、不含資訊，故不作。
+  // 號次是等差序列，依號次分桶的密度圖必然近均勻、不含資訊，故不作圖；
   // 只報可驗證的整全性（號次連續無斷）與極簡性（主文長度中位），數字全由快照即時算出。
   const undatedStat = useMemo(() => {
     const tong = docs.filter((d) => d.系列 === '統字');
@@ -864,59 +878,12 @@ function Pre1947Timeline() {
   return (
     <>
       <section className="border-t border-[var(--cc-line)] py-5">
-        <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">年度密度 · 有作成日期者</p>
-        <h2 className="text-base sm:text-lg font-bold text-[var(--cc-title-ink)]">每年作成件數（{y0}–{y1}）</h2>
-        <div className="mt-1 flex flex-wrap gap-4 text-[12px] text-[var(--cc-ink-soft)]">
-          {機關序.map((k) => (
-            <span key={k} className="inline-flex items-center gap-1.5">
-              <span className="h-2.5 w-2.5 rounded-sm border" style={{ background: `var(--cat-${機關TONE[k]}-bg)`, borderColor: `var(--cat-${機關TONE[k]}-tx)` }} />
-              {k}
-            </span>
-          ))}
-        </div>
-        <div className="relative mt-3 overflow-x-auto pb-2">
-          <svg viewBox={`0 0 ${chartW + 40} ${H + 40}`} preserveAspectRatio="xMinYMin meet" role="img" aria-label="行憲前每年統一解釋件數長條圖" style={{ width: '100%', height: 'auto', maxWidth: chartW + 40 }}>
-            {span.map((y, i) => {
-              const v = byYear.get(y) ?? { 大理院: 0, 最高法院: 0, 司法院: 0 };
-              const totalY = v.大理院 + v.最高法院 + v.司法院;
-              let acc = 0;
-              return (
-                <g key={y} transform={`translate(${i * W + 20}, 0)`}
-                  onMouseEnter={() => setHover({ y, ...v, total: totalY })}
-                  onMouseLeave={() => setHover(null)}>
-                  <rect x={0} y={0} width={W} height={H} fill="transparent" />
-                  {機關序.map((k) => {
-                    if (!v[k]) return null;
-                    const h = (v[k] / ymax) * (H - 10);
-                    acc += h;
-                    return <rect key={k} x={0.5} y={H - acc} width={W - 1} height={Math.max(h - 1, 1)} rx={1} fill={`var(--cat-${機關TONE[k]}-bg)`} stroke={`var(--cat-${機關TONE[k]}-tx)`} strokeWidth={0.6} opacity={hover && hover.y !== y ? 0.45 : 1} />;
-                  })}
-                  {y % 10 === 0 ? (
-                    <text x={W / 2} y={H + 16} textAnchor="middle" fontSize={10} fill="var(--cc-axis-text)">{y}</text>
-                  ) : null}
-                </g>
-              );
-            })}
-          </svg>
-          {hover ? (
-            <div className="pointer-events-none absolute left-4 top-1 rounded-md border border-[var(--cc-border)] bg-white px-3 py-1.5 text-[12px] shadow-sm">
-              <strong className="text-[var(--cc-ink-strong)]">{hover.y} 年</strong>　共 {hover.total} 件
-              {hover.大理院 ? `　大理院 ${hover.大理院}` : ''}{hover.最高法院 ? `　最高法院 ${hover.最高法院}` : ''}{hover.司法院 ? `　司法院 ${hover.司法院}` : ''}
-            </div>
-          ) : null}
-        </div>
-        <p className="mt-1 max-w-3xl text-[12px] leading-relaxed text-[var(--cc-ink-soft)]">
-          司法院（院字／院解字）與最高法院（解字）多有明確作成日期，故上年度軸；配色與「沿革」頁機關色帶一致。
-        </p>
-      </section>
-
-      <section className="border-t border-[var(--cc-line)] py-5">
-        <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">無作成日期 · 大理院統字</p>
+        <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">行憲前補充 · 大理院統字（無日期，未入上軸）</p>
         <h2 className="text-base sm:text-lg font-bold text-[var(--cc-title-ink)]">
           統字第 <span className="text-[var(--cc-highlight)]">{undatedStat.lo}</span>–<span className="text-[var(--cc-highlight)]">{undatedStat.hi}</span> 號完整收錄，{undatedStat.missing === 0 ? '號次連續無缺' : `範圍內缺 ${undatedStat.missing} 號`}
         </h2>
         <p className="mt-1 max-w-3xl text-[13px] leading-relaxed text-[var(--cc-ink-soft)]">
-          大理院統字共 <strong className="text-[var(--cc-ink-strong)]">{undatedStat.total.toLocaleString()}</strong> 件，號次第 {undatedStat.lo}–{undatedStat.hi} 號連續無斷；其中 <strong className="text-[var(--cc-ink-strong)]">{undatedStat.undated.toLocaleString()}</strong> 件未載作成日期，號次即其大致時序卻無法對應公曆日，故不上時間軸。這批解釋多為一句古文了結，主文長度中位約 <strong className="text-[var(--cc-ink-strong)]">{undatedStat.median}</strong> 字。號次是等差序列，任何依號次分桶的密度圖都必然接近均勻、不含資訊，故不作圖。
+          上方合併時間軸未納入大理院統字：其 <strong className="text-[var(--cc-ink-strong)]">{undatedStat.undated.toLocaleString()}</strong> 件未載作成日期，號次雖為大致時序卻無法對應公曆年，故不虛構年份上軸。就整全性而言，統字共 <strong className="text-[var(--cc-ink-strong)]">{undatedStat.total.toLocaleString()}</strong> 件、第 {undatedStat.lo}–{undatedStat.hi} 號連續無斷，等於完整收錄；這批解釋多為一句古文了結，主文長度中位約 <strong className="text-[var(--cc-ink-strong)]">{undatedStat.median}</strong> 字。號次是等差序列，依號次分桶的密度圖必然接近均勻、不含資訊，故不作圖。
         </p>
       </section>
 
