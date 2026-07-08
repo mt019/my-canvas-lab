@@ -244,7 +244,29 @@ function splitClauses(text) {
   return parts.length ? parts : [text];
 }
 
+// 行憲前全文懶載：快照只有 60 字預覽，展開卡片時才動態 import 全文檔（Vite 分塊，只抓一次快取）。
+let pre1947Cache = null;
+let pre1947Promise = null;
+function loadPre1947() {
+  if (pre1947Cache) return Promise.resolve(pre1947Cache);
+  if (!pre1947Promise) {
+    pre1947Promise = import('../data/constitutionalCourt-pre1947-fulltext.json')
+      .then((m) => { pre1947Cache = m.default; return pre1947Cache; })
+      .catch(() => ({}));
+  }
+  return pre1947Promise;
+}
+
 function CaseCard({ d }) {
+  const [full, setFull] = useState(null);
+  const [loadingFull, setLoadingFull] = useState(false);
+  const showFull = async () => {
+    if (full || loadingFull) return;
+    setLoadingFull(true);
+    const m = await loadPre1947();
+    setFull(m[d.字號] ?? { 主文: d.主文 });
+    setLoadingFull(false);
+  };
   return (
     <article className="border-t border-[var(--cc-line)] py-5">
       <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
@@ -280,9 +302,31 @@ function CaseCard({ d }) {
       {d.爭點 ? (
         <p className="mt-2 max-w-4xl text-[13px] font-bold leading-relaxed text-[var(--cc-ink-heavy)]">{d.爭點}</p>
       ) : null}
-      {d.主文 ? splitClauses(d.主文).map((clause, i) => (
-        <p key={i} className="mt-2 max-w-4xl whitespace-pre-line text-[12.5px] leading-relaxed text-[var(--cc-ink-mid)]">{clause}</p>
-      )) : null}
+      {d.系列 ? (
+        <>
+          {splitClauses(full ? full.主文 : d.主文).map((clause, i) => (
+            <p key={i} className="mt-2 max-w-4xl whitespace-pre-line text-[12.5px] leading-relaxed text-[var(--cc-ink-mid)]">{clause}</p>
+          ))}
+          {full?.全文內容 ? (
+            <div className="mt-2 border-l-2 border-[var(--cc-line)] pl-3">
+              <p className="mb-1 text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">全文（訓令／原函）</p>
+              {splitClauses(full.全文內容).map((clause, i) => (
+                <p key={i} className="mt-1 max-w-4xl whitespace-pre-line text-[12px] leading-relaxed text-[var(--cc-ink-soft)]">{clause}</p>
+              ))}
+            </div>
+          ) : null}
+          {!full && d.主文.endsWith('…') ? (
+            <button onClick={showFull} className="mt-2 inline-flex items-center gap-1 text-[12px] font-bold text-[var(--cc-accent)] hover:text-[var(--cc-link-hover)]">
+              {loadingFull ? '載入全文中…' : '展開全文'}
+              {loadingFull ? null : <ChevronDown size={12} />}
+            </button>
+          ) : null}
+        </>
+      ) : (
+        d.主文 ? splitClauses(d.主文).map((clause, i) => (
+          <p key={i} className="mt-2 max-w-4xl whitespace-pre-line text-[12.5px] leading-relaxed text-[var(--cc-ink-mid)]">{clause}</p>
+        )) : null
+      )}
 
       {(d.憲法依據?.length || d.系爭法令?.length) ? (
         <div className="mt-3 flex flex-wrap gap-x-6 gap-y-1 text-[11px] text-[var(--cc-ink-soft)]">
@@ -1418,6 +1462,7 @@ function GraphView() {
   const [selName, setSelName] = useState(null);
   const [selPair, setSelPair] = useState(null);
   const [hover, setHover] = useState(null);
+  const [colorByPres, setColorByPres] = useState(false); // 預設關：姓名走中性墨，畫面不花
 
   const presByName = useMemo(() => new Map(justices.map((j) => [j.姓名, j.提名總統 ?? null])), []);
 
@@ -1539,7 +1584,7 @@ function GraphView() {
   const tone = MODE_TONE[mode];
   const modeLabel = GRAPH_MODES.find((m) => m[0] === mode)?.[1] ?? mode;
   const eraLabel = GRAPH_ERAS.find((e) => e.key === eraKey)?.label ?? '';
-  const presInk = (name) => PRES_COLOR[presByName.get(name)] ?? 'var(--cc-ink-mid)';
+  const presInk = (name) => (colorByPres ? (PRES_COLOR[presByName.get(name)] ?? 'var(--cc-ink-mid)') : 'var(--cc-ink-strong)');
 
   const n = members.length;
   const CW = Math.max(10, Math.min(20, Math.floor(560 / Math.max(n, 1))));
@@ -1560,13 +1605,17 @@ function GraphView() {
       <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">共同具名矩陣</p>
       <h2 className="text-base font-bold text-[var(--cc-title-ink)]">誰和誰一起署名意見書（分期・資料驅動分群・{modeLabel}）</h2>
       <p className="mt-1 max-w-3xl text-[11px] leading-relaxed text-[var(--cc-ink-soft)]">
-        共同具名只在同時在任時才可能，故按制度斷點分四期各一張矩陣。行列順序由共同具名關係自動分群，聯盟沿對角線成塊；姓名顏色為提名總統——同色成塊表示聯盟吻合任命世代，混色表示跨世代結盟。切換「關係」可分看協同聯盟、不同聯盟，或「主筆→加入」的有向影響；點格子看該對實際共同署名的意見書。
+        共同具名只在同時在任時才可能，故按制度斷點分四期各一張矩陣。行列順序由共同具名關係自動分群，聯盟沿對角線成塊。切換「關係」可分看協同聯盟、不同聯盟，或「主筆→加入」的有向影響；點格子看該對實際共同署名的意見書。勾「依提名總統上色」才會為姓名套色（用來檢驗聯盟是否吻合任命世代），預設關閉以免畫面過花。
       </p>
 
       <div className="mt-3 flex flex-wrap items-center gap-4">
         <Select label="時期" value={eraKey} onChange={setEraKey} options={GRAPH_ERAS.map((e) => [e.key, e.label])} />
         <Select label="關係" value={mode} onChange={setMode} options={GRAPH_MODES} />
         <Select label="門檻" value={String(minEdge)} onChange={(v) => setMinEdge(Number(v))} options={[['1', '≥1 次'], ['2', '≥2 次'], ['3', '≥3 次']]} />
+        <label className="flex items-center gap-1.5 text-[11px] font-bold text-[var(--cc-ink-soft)]">
+          <input type="checkbox" checked={colorByPres} onChange={(e) => setColorByPres(e.target.checked)} />
+          依提名總統為姓名上色
+        </label>
       </div>
 
       <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-[10.5px] text-[var(--cc-ink-soft)]">
@@ -1645,7 +1694,7 @@ function GraphView() {
               ))}
               多{maxVal ? `（單格最高 ${maxVal}）` : ''}
             </div>
-            {presLegend.length ? (
+            {colorByPres && presLegend.length ? (
               <div className="flex flex-wrap gap-x-3 gap-y-1 text-[10.5px] text-[var(--cc-ink-soft)]">
                 {presLegend.map((p) => (
                   <span key={p} className="inline-flex items-center gap-1.5">

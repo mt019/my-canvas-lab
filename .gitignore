@@ -23,3 +23,6 @@ dist-ssr
 *.sln
 *.sw?
 src/data/intlTaxOps/.sync-manifest.json
+
+# 斷點續作機制的 transient session 狀態（見 ~/.claude/rules/斷點續作.md）
+.claude/CHECKPOINT.md
