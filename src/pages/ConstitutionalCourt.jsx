@@ -17,6 +17,7 @@ import {
   Landmark,
 } from 'lucide-react';
 import data from '../data/constitutionalCourt.json';
+import { formatDate, formatDateRange } from '../utils/date';
 
 const CC_VARS = { // token-exempt
   '--cc-accent': '#8f6071',
@@ -52,6 +53,10 @@ const CC_VARS = { // token-exempt
   '--cc-edge-line': '#c9b3bc',
   '--cc-dim-text': '#c4b4ba',
   '--cc-placeholder': '#b09aa2',
+  // 退場中性色：非分類色的「其他／待確認／國內／任期尚短」用，刻意不佔 --cat-* 身分槽。
+  // ink 為已審過的暖灰，bg 為近白（淡底屬 DESIGN.md 准許新增的低風險轉換）。走 -tx/-bg 慣例讓 inkToFill 自動導出淡底。
+  '--cc-retire-tx': '#b3a8ad',
+  '--cc-retire-bg': '#ece9ea',
   '--cc-icon': '#9b6b7b',
   '--cc-eyebrow-header': '#987483',
   '--cc-tab-inactive-text': '#806b74',
@@ -153,7 +158,7 @@ function downloadFile(content, filename, mime) {
 }
 
 function citeString(d) {
-  const dt = d.日期 ? `（${d.日期}）` : '';
+  const dt = d.日期 ? `（${formatDate(d.日期)}）` : '';
   if (d.類型 === '解釋') return `司法院${d.字號}解釋${dt}`;
   return `憲法法庭${d.字號}${d.類型 === '實體裁定' ? '裁定' : '判決'}${dt}`;
 }
@@ -251,7 +256,7 @@ function CaseCard({ d }) {
         >
           {d.字號}
         </a>
-        <span className="text-[12px] text-[var(--cc-figure-note)]">{d.日期}</span>
+        <span className="text-[12px] text-[var(--cc-figure-note)]">{formatDate(d.日期)}</span>
         <span className="inline-flex h-2.5 w-2.5 rounded-sm" style={{ background: typeInk(d.類型) }} aria-hidden />
         <Badge tone="plum">{d.類型}{d.子類 ? `・${d.子類}` : ''}</Badge>
         {d.審查結論?.結論 && d.審查結論.結論 !== '未分類' ? (
@@ -350,7 +355,24 @@ function Select({ label, value, onChange, options }) {
   );
 }
 
+// 機關維度（行憲前後切分）：預設只顯示行憲後（大法官＋憲法法庭），行憲前 6,354 件 opt-in，
+// 避免舊號淹沒 874 新號。順序＝解釋權沿革時序。
+const 機關_序 = ['大理院', '最高法院', '司法院', '大法官', '憲法法庭'];
+const 機關_ERA = { 行憲後: ['大法官', '憲法法庭'], 行憲前: ['大理院', '最高法院', '司法院'] };
+function inScope(d, sel) {
+  if (sel === '全部') return true;
+  if (機關_ERA[sel]) return 機關_ERA[sel].includes(d.機關);
+  return d.機關 === sel;
+}
+// 沿革分頁的機關段可深連到 ?tab=index&機關=大理院，開啟即預篩該機關。
+function readInitial機關() {
+  if (typeof window === 'undefined') return '行憲後';
+  const v = new URLSearchParams(window.location.search).get('機關');
+  return v === '全部' || v === '行憲前' || 機關_序.includes(v) ? v : '行憲後';
+}
+
 function IndexView() {
+  const [機關, set機關] = useState(readInitial機關);
   const [type, setType] = useState('全部');
   const [topic, setTopic] = useState('全部');
   const [subtopic, setSubtopic] = useState('全部');
@@ -361,12 +383,22 @@ function IndexView() {
   const [limit, setLimit] = useState(30);
   const [sortDir, setSortDir] = useState('desc');
 
+  // 機關維度切分（預設行憲後）；其餘所有面向的件數都以選定機關為母體重算。
+  const 機關Counts = useMemo(() => {
+    const m = new Map();
+    for (const d of docs) m.set(d.機關, (m.get(d.機關) ?? 0) + 1);
+    const 行憲後 = 機關_ERA.行憲後.reduce((s, k) => s + (m.get(k) ?? 0), 0);
+    const 行憲前 = 機關_ERA.行憲前.reduce((s, k) => s + (m.get(k) ?? 0), 0);
+    return { m, 行憲後, 行憲前 };
+  }, []);
+  const scoped = useMemo(() => docs.filter((d) => inScope(d, 機關)), [機關]);
+
   // 主題一級選單只列大類＋件數；子主題另開一顆獨立選單，只在選到的大類確實有子主題時才出現
   // （目前只有稅法有子主題，但用「跟選定大類同時出現在同一文件」動態算，未來任何大類展開子主題都自動適用）
   const { typeCounts, topicOptions, subtopicsByTopic } = useMemo(() => {
     const tc = new Map();
     const c = new Map();
-    for (const d of docs) {
+    for (const d of scoped) {
       tc.set(d.類型, (tc.get(d.類型) ?? 0) + 1);
       for (const t of d.主題) c.set(t, (c.get(t) ?? 0) + 1);
     }
@@ -374,21 +406,21 @@ function IndexView() {
     const subtopicsByTopic = new Map();
     for (const [t] of c) {
       const sub = new Map();
-      for (const d of docs) {
+      for (const d of scoped) {
         if (!d.主題.includes(t)) continue;
         for (const s of d.子主題 ?? []) sub.set(s, (sub.get(s) ?? 0) + 1);
       }
       if (sub.size) subtopicsByTopic.set(t, [...sub.entries()].sort((a, b) => b[1] - a[1]));
     }
     return { typeCounts: tc, topicOptions, subtopicsByTopic };
-  }, []);
+  }, [scoped]);
 
   const subtopicOptions = subtopicsByTopic.get(topic);
 
   const { outcomeCounts, standardCounts } = useMemo(() => {
     const oc = { '違憲（含定期失效）': 0, 合憲: 0, 法令解釋: 0, 補充前解釋: 0, 變更前解釋: 0, '其他/待人工': 0 };
     const sc = new Map();
-    for (const d of docs) {
+    for (const d of scoped) {
       const o = d.審查結論?.結論 ?? '未分類';
       if (o.startsWith('違憲')) oc['違憲（含定期失效）'] += 1;
       else if (o === '合憲') oc.合憲 += 1;
@@ -400,16 +432,16 @@ function IndexView() {
       if (s) sc.set(s, (sc.get(s) ?? 0) + 1);
     }
     return { outcomeCounts: oc, standardCounts: sc };
-  }, []);
+  }, [scoped]);
 
   const decades = useMemo(() => {
-    const s = new Set(docs.map((d) => d.日期?.slice(0, 3)).filter(Boolean));
+    const s = new Set(scoped.map((d) => d.日期?.slice(0, 3)).filter(Boolean));
     return [...s].sort().map((p) => `${p}0`);
-  }, []);
+  }, [scoped]);
 
   const filtered = useMemo(() => {
     const kw = q.trim();
-    return docs.filter((d) => {
+    return scoped.filter((d) => {
       if (type !== '全部' && d.類型 !== type) return false;
       if (topic !== '全部' && !d.主題.includes(topic)) return false;
       if (subtopic !== '全部' && !d.子主題?.includes(subtopic)) return false;
@@ -422,7 +454,7 @@ function IndexView() {
       if (kw && !(d.字號.includes(kw) || d.爭點.includes(kw) || d.主文.includes(kw) || d.系爭法令?.some((x) => x.includes(kw)) || d.原理原則.some((x) => x.includes(kw)))) return false;
       return true;
     });
-  }, [type, topic, subtopic, outcome, standard, decade, q]);
+  }, [scoped, type, topic, subtopic, outcome, standard, decade, q]);
 
   const sorted = useMemo(() => {
     const arr = [...filtered];
@@ -446,7 +478,8 @@ function IndexView() {
               className="w-full bg-transparent text-[12px] text-[var(--cc-ink-strong)] placeholder-[var(--cc-placeholder)] focus:outline-none"
             />
           </label>
-          <Select label="類型" value={type} onChange={(v) => { setType(v); setLimit(30); }} options={[['全部', '全部'], ['解釋', `釋字解釋（${typeCounts.get('解釋') ?? 0}）`], ['判決', `憲法法庭判決（${typeCounts.get('判決') ?? 0}）`], ['實體裁定', `實體裁定（${typeCounts.get('實體裁定') ?? 0}）`]]} />
+          <Select label="機關" value={機關} onChange={(v) => { set機關(v); setTopic('全部'); setSubtopic('全部'); setLimit(30); }} options={[['行憲後', `行憲後（${機關Counts.行憲後}）`], ['全部', `全部（${docs.length}）`], ['行憲前', `行憲前（${機關Counts.行憲前}）`], ...機關_序.map((k) => [k, `${k}（${機關Counts.m.get(k) ?? 0}）`])]} />
+          <Select label="類型" value={type} onChange={(v) => { setType(v); setLimit(30); }} options={[['全部', '全部'], ['解釋', `解釋（${typeCounts.get('解釋') ?? 0}）`], ['判決', `憲法法庭判決（${typeCounts.get('判決') ?? 0}）`], ['實體裁定', `實體裁定（${typeCounts.get('實體裁定') ?? 0}）`]]} />
           <Select label="主題" value={topic} onChange={(v) => { setTopic(v); setSubtopic('全部'); setLimit(30); }} options={[['全部', '全部'], ...topicOptions]} />
           {subtopicOptions ? (
             <Select label="細分" value={subtopic} onChange={(v) => { setSubtopic(v); setLimit(30); }} options={[['全部', '全部'], ...subtopicOptions.map(([s, n]) => [s, `${s}（${n}）`])]} />
@@ -494,6 +527,7 @@ function TimelineView() {
   const byYear = useMemo(() => {
     const m = new Map();
     for (const d of docs) {
+      if (d.系列) continue; // 行憲前統一解釋不進大法官時代的案件時間軸（其沿革在「沿革」分頁）
       if (!d.日期) continue;
       const y = Number(d.日期.slice(0, 4));
       if (!m.has(y)) m.set(y, { 解釋: 0, 判決: 0, 實體裁定: 0 });
@@ -614,7 +648,7 @@ function TopicHeatmaps() {
     const counts = new Map();
     for (const d of docs) for (const t of d.主題) counts.set(t, (counts.get(t) ?? 0) + 1);
     const topics = [...counts.entries()].sort((a, b) => b[1] - a[1]).map(([t]) => t);
-    const years = docs.map((d) => d.日期 && Number(d.日期.slice(0, 4))).filter(Boolean);
+    const years = docs.filter((d) => !d.系列).map((d) => d.日期 && Number(d.日期.slice(0, 4))).filter(Boolean);
     const b0 = Math.floor(Math.min(...years) / 5) * 5;
     const b1 = Math.floor(Math.max(...years) / 5) * 5;
     const bins = [];
@@ -850,7 +884,7 @@ function JusticeDetail({ name, onBack, onOpen }) {
 
   const stamp = new Date().toISOString().slice(0, 10);
   const opinionCite = ({ d, op }) =>
-    `${citeString(d).replace(/（.*?）$/, '')}${(op.提出 ?? []).join('、')}大法官${op.類型}${d.日期 ? `（${d.日期}）` : ''}`;
+    `${citeString(d).replace(/（.*?）$/, '')}${(op.提出 ?? []).join('、')}大法官${op.類型}${d.日期 ? `（${formatDate(d.日期)}）` : ''}`;
   const exportCites = () => downloadFile(
     [...opinions.map(opinionCite), ...participated.map(citeString)].join('\n'),
     `${name}_引註清單_${stamp}.txt`, 'text/plain',
@@ -929,7 +963,7 @@ function JusticeDetail({ name, onBack, onOpen }) {
               <div className="mt-2 divide-y divide-[var(--cc-row-border)]">
                 {opinions.map(({ d, op, role }, i) => (
                   <div key={i} className="flex flex-wrap items-center gap-x-3 gap-y-1 py-1.5 text-[12px]">
-                    <span className="w-[76px] text-[11px] text-[var(--cc-figure-note)]">{d.日期}</span>
+                    <span className="w-[76px] text-[11px] text-[var(--cc-figure-note)]">{formatDate(d.日期)}</span>
                     <a href={d.官方頁} target="_blank" rel="noreferrer" className="w-[130px] font-bold text-[var(--cc-ink-strong)] underline decoration-[var(--cc-link-underline)] underline-offset-2 hover:text-[var(--cc-accent)]">{d.字號}</a>
                     <Badge tone={op.類型.includes('不同') ? 'red' : op.類型.includes('協同') ? 'blue' : 'slate'}>{op.類型}</Badge>
                     {role === '加入' ? <Badge tone="slate">加入</Badge> : null}
@@ -955,7 +989,7 @@ function JusticeDetail({ name, onBack, onOpen }) {
               </p>
               <div className="mt-1.5 flex flex-wrap gap-x-2.5 gap-y-1">
                 {participationOnly.map((d) => (
-                  <a key={d.字號} href={d.官方頁} target="_blank" rel="noreferrer" title={`${d.日期}　${d.爭點?.slice(0, 60) ?? ''}`}
+                  <a key={d.字號} href={d.官方頁} target="_blank" rel="noreferrer" title={`${formatDate(d.日期)}　${d.爭點?.slice(0, 60) ?? ''}`}
                     className="text-[11px] text-[var(--cc-ink-mid)] underline decoration-[var(--cc-link-underline)] underline-offset-2 hover:text-[var(--cc-accent)]">
                     {d.字號.startsWith('釋字第') ? `釋${d.字號.slice(3, -1)}` : d.字號}
                     {d.主筆 === name ? '＊' : ''}{d.主席 === name ? '†' : ''}
@@ -1000,8 +1034,8 @@ function JusticeDetail({ name, onBack, onOpen }) {
 // 站內 Badge 校準色調，明度齊一（L≈0.5）、彩度中低、色相各異（Notion tag 的和諧原理），
 // 由 validate:colors 在 build 時鎖住明度帶，改色相不超出帶才過得了 build。其他／待確認
 // 保持淺灰退場（不在分類色內，是「無類別」的中性退場色，故留字面值）。
-const TENURE_BG_COLOR = { // token-exempt: 分類色改用 --cat-* token；#b3a8ad 為退場中性色
-  學者: 'var(--cat-1-tx)', 法官: 'var(--cat-2-tx)', 律師: 'var(--cat-3-tx)', 檢察官: 'var(--cat-4-tx)', 其他: '#b3a8ad', 待確認: '#b3a8ad',
+const TENURE_BG_COLOR = { // token-exempt: 分類色引用 --cat-* token；退場中性用 --cc-retire-*
+  學者: 'var(--cat-1-tx)', 法官: 'var(--cat-2-tx)', 律師: 'var(--cat-3-tx)', 檢察官: 'var(--cat-4-tx)', 其他: 'var(--cc-retire-tx)', 待確認: 'var(--cc-retire-tx)',
 };
 // 留學地分群：null 再分「國內」（逐人查核確認無外國學位）與「待確認」（查不到可靠線索）
 const ABROAD_GROUP = (j) => {
@@ -1013,8 +1047,8 @@ const ABROAD_GROUP = (j) => {
   return (j.留學國來源 ?? '').includes('查核') ? '國內' : '待確認';
 };
 // 與 TENURE_BG_COLOR 共用同一組分類色（--cat-1..4），維持兩種著色模式視覺一致
-const TENURE_ABROAD_COLOR = { // token-exempt: 分類色改用 --cat-* token；#b3a8ad 為退場中性色
-  德語圈: 'var(--cat-1-tx)', 英美: 'var(--cat-2-tx)', 日本: 'var(--cat-3-tx)', 其他: 'var(--cat-4-tx)', 國內: '#b3a8ad', 待確認: '#b3a8ad',
+const TENURE_ABROAD_COLOR = { // token-exempt: 分類色引用 --cat-* token；退場中性用 --cc-retire-*
+  德語圈: 'var(--cat-1-tx)', 英美: 'var(--cat-2-tx)', 日本: 'var(--cat-3-tx)', 其他: 'var(--cat-4-tx)', 國內: 'var(--cc-retire-tx)', 待確認: 'var(--cc-retire-tx)',
 };
 // 提名總統著色。2026-07-08 改吃全站語意色 token 的分類色 --cat-1..8：原本這 8 色
 // 是另外硬配的一組，彩度普遍偏高（李登輝鮮綠 C0.13、馬英九鮮藍、
@@ -1022,13 +1056,13 @@ const TENURE_ABROAD_COLOR = { // token-exempt: 分類色改用 --cat-* token；#
 // 的「按提名總統」那組刺眼配色。改用校準過的 --cat-* 分類色後，與出身/留學著色同一套
 // 和諧色系，且由 validate:colors 鎖住明度/彩度帶。8 位主要總統配 cat-1..8（其中 cat-8
 // 為 slate，給任內提名最少的李宗仁代總統），賴清德任期尚短、沿用淺灰退場不特別配色。
-const PRES_COLOR = { // token-exempt: 分類色改用 --cat-* token；#b3a8ad 為退場中性色
+const PRES_COLOR = { // token-exempt: 分類色引用 --cat-* token；退場中性用 --cc-retire-*
   蔣中正: 'var(--cat-1-tx)', '李宗仁（代）': 'var(--cat-8-tx)', 嚴家淦: 'var(--cat-4-tx)', 蔣經國: 'var(--cat-6-tx)',
-  李登輝: 'var(--cat-3-tx)', 陳水扁: 'var(--cat-2-tx)', 馬英九: 'var(--cat-7-tx)', 蔡英文: 'var(--cat-5-tx)', 賴清德: '#b3a8ad',
+  李登輝: 'var(--cat-3-tx)', 陳水扁: 'var(--cat-2-tx)', 馬英九: 'var(--cat-7-tx)', 蔡英文: 'var(--cat-5-tx)', 賴清德: 'var(--cc-retire-tx)',
 };
 // 大條橫條一律「淡底＋ink 細框」：深墨 ink 只留給邊框與圖例點，大面積填近白淡底。
-// 由 ink（--cat-N-tx）導出同色相的近白底（--cat-N-bg）；退場中性灰則落到淡中性 --cc-track。
-const inkToFill = (v) => (v && v.includes('-tx)') ? v.replace('-tx)', '-bg)') : 'var(--cc-track)'); // token-exempt: 由 token 值機械導出
+// 由任一 ink token（--cat-N-tx／--cc-retire-tx）機械導出同色相的近白底（把 -tx 換成 -bg），大條吃淡底。
+const inkToFill = (v) => (v && v.includes('-tx)') ? v.replace('-tx)', '-bg)') : 'var(--cc-track)');
 // 各總統提名大法官人數（鍵與 presidents[].總統／PRES_COLOR 同一套字串，含「（代）」）
 const PRES_NOM_COUNT = justices.reduce((m, j) => {
   if (j.提名總統) m.set(j.提名總統, (m.get(j.提名總統) ?? 0) + 1);
@@ -1064,8 +1098,7 @@ function tenureSpans(tenures, openEnd) {
 // 起訖範圍的 en dash 兩側加空格，跟日期本身的 "-" 分隔開，避免視覺上分不清哪個是範圍分隔符
 function formatTenureRange(t) {
   const role = t.職 !== '大法官' ? `${t.職} ` : '';
-  const end = t.訖 ? String(t.訖) : '現任';
-  return `${role}${String(t.起)} – ${end}`;
+  return `${role}${formatDateRange(t.起, t.訖)}`;
 }
 
 function TenureView({ onOpen }) {
@@ -1253,122 +1286,389 @@ function TenureView({ onOpen }) {
   );
 }
 
-function GraphView() {
-  const [selected, setSelected] = useState(null);
-  const MIN_EDGE = 2;
+// ── 意見書圖譜：分期共同具名矩陣 ───────────────────────────────────────────
+// 全部現算自 docs[].意見書，對缺漏免疫（意見書資料仍在增補）。色彩全走 token：量值以
+// color-mix 在校準過的 --tone-*-bg（近白淡底）↔ --tone-*-tx（墨色）之間插值，不寫死任何 hex；
+// 量值靠色深、身分/狀態靠形狀與細框（見 docs/DESIGN.md 色彩哲學 2026-07-08 裁定）。
+const GRAPH_ERAS = [
+  { key: 'xianfa', label: '2022– 憲法法庭', short: '憲法法庭', test: (y) => y >= 2022 },
+  { key: 'late', label: '2015–2021 釋字晚期', short: '釋字晚期', test: (y) => y >= 2015 && y < 2022 },
+  { key: 'reform', label: '2003–2014 改制後', short: '改制後', test: (y) => y >= 2003 && y < 2015 },
+  { key: 'early', label: '2003 前 釋字早中', short: '早中期', test: (y) => y < 2003 },
+];
+const GRAPH_MODES = [
+  ['合計', '合計共同具名'],
+  ['協同', '協同聯盟'],
+  ['不同', '不同聯盟'],
+  ['有向', '主筆→加入（有向）'],
+];
+// 四模式各給一個清楚可辨的校準色調（tokens.css Layer 0），並對齊 Badge 語意：
+// 合計＝slate 中性、協同＝blue、不同＝red（與 Badge 同）、有向＝teal（與前三者拉開色相）。
+const MODE_TONE = { 合計: 'slate', 協同: 'blue', 不同: 'red', 有向: 'teal' };
+const SEP = ' ';
+const pairKey = (a, b) => (a < b ? `${a}${SEP}${b}` : `${b}${SEP}${a}`);
 
-  const { nodes, edges } = useMemo(() => {
-    const strong = coSign.filter((e) => e.次數 >= MIN_EDGE);
-    const names = new Set();
-    for (const e of strong) { names.add(e.甲); names.add(e.乙); }
-    const arr = [...names].map((n) => justices.find((j) => j.姓名 === n)).filter(Boolean)
-      .sort((a, b) => b.提出意見書 + b.加入意見書 - a.提出意見書 - a.加入意見書);
-    const R = 200, cx = 260, cy = 250;
-    const pos = new Map();
-    arr.forEach((j, i) => {
-      const angle = (i / arr.length) * Math.PI * 2 - Math.PI / 2;
-      const cos = Math.cos(angle);
-      const sin = Math.sin(angle);
-      const vertical = Math.abs(cos) <= 0.4;
-      const r = 14 + (vertical && i % 2 ? 15 : 0);
-      pos.set(j.姓名, {
-        x: cx + R * cos,
-        y: cy + R * sin,
-        lx: r * cos,
-        ly: r * sin + 4,
-        anchor: cos > 0.4 ? 'start' : cos < -0.4 ? 'end' : 'middle',
-      });
+// 量值→填色：同色相 --tone-*-bg ↔ -tx 之間 color-mix，全 token、零硬寫色；v=0 用中性極淡底。
+const rampFill = (v, max, tone) =>
+  v > 0 && max > 0
+    ? `color-mix(in oklab, var(--tone-${tone}-tx) ${Math.round(Math.sqrt(v / max) * 100)}%, var(--tone-${tone}-bg))`
+    : 'var(--cc-heat-zero)';
+
+// spectral seriation：以扣掉常數分量的冪次迭代逼近 Fiedler 向量，讓高權重對相鄰、聯盟沿對角線成塊。
+function seriateOrder(n, weight) {
+  const idx = Array.from({ length: n }, (_, i) => i);
+  if (n < 3) return idx;
+  const w = idx.map((i) => idx.map((j) => (i === j ? 0 : weight(i, j))));
+  const deg = w.map((row) => row.reduce((a, b) => a + b, 0));
+  const maxDeg = Math.max(1, ...deg);
+  const mean = (x) => x.reduce((a, b) => a + b, 0) / x.length;
+  const unit = (x) => { const m = Math.sqrt(x.reduce((a, b) => a + b * b, 0)) || 1; return x.map((e) => e / m); };
+  let v = idx.map((i) => { const s = Math.sin((i + 1) * 12.9898) * 43758.5453; return s - Math.floor(s); });
+  v = unit(v.map((x) => x - mean(v)));
+  for (let it = 0; it < 120; it++) {
+    const nv = idx.map((i) => {
+      let s = (maxDeg - deg[i]) * v[i];            // B = maxDeg·I − Laplacian
+      for (let j = 0; j < n; j++) if (j !== i) s += w[i][j] * v[j];
+      return s;
     });
-    return { nodes: arr.map((j) => ({ ...j, ...pos.get(j.姓名) })), edges: strong.map((e) => ({ ...e, a: pos.get(e.甲), b: pos.get(e.乙) })) };
+    v = unit(nv.map((x) => x - mean(nv)));         // 扣掉常數分量 → 收斂到第二特徵向量
+  }
+  return idx.sort((a, b) => v[a] - v[b]);
+}
+
+// 右欄：預設 top 組合排行
+function TopPairs({ list, mode, onPick }) {
+  const label = mode === '有向' ? '最多加入的組合（加入者→提出者）' : `最常一起${mode === '合計' ? '共同具名' : mode}的組合`;
+  const max = list[0]?.v ?? 1;
+  return (
+    <div>
+      <h3 className="text-[13px] font-bold text-[var(--cc-title-ink)]">{label}</h3>
+      <div className="mt-2 divide-y divide-[var(--cc-line)]">
+        {list.map((e) => (
+          <button key={`${e.a}-${e.b}`} onClick={() => onPick(e.a, e.b)}
+            className="grid w-full grid-cols-[1fr_44px_84px] items-center gap-2 py-1.5 text-left text-[12px] hover:bg-[var(--cc-hover-bg)]">
+            <span className="font-bold text-[var(--cc-ink-strong)]">{mode === '有向' ? `${e.b}→${e.a}` : `${e.a}・${e.b}`}</span>
+            <span className="font-bold text-[var(--cc-accent)]">{e.v} 次</span>
+            <span className="block h-1.5 rounded-full bg-[var(--cc-track)]">
+              <span className="block h-1.5 rounded-full" style={{ width: `${(e.v / max) * 100}%`, background: 'var(--cc-highlight)' }} />
+            </span>
+          </button>
+        ))}
+        {!list.length ? <p className="py-2 text-[12px] text-[var(--cc-ink-soft)]">本期無資料。</p> : null}
+      </div>
+    </div>
+  );
+}
+
+// 右欄：選定大法官 → 夥伴協同/不同雙色拆分
+function NameDetail({ name, partners, onName }) {
+  const max = Math.max(1, ...partners.map((p) => p.合計));
+  return (
+    <div>
+      <h3 className="text-[13px] font-bold text-[var(--cc-title-ink)]">{name}　本期共同具名對象</h3>
+      <div className="mt-2 divide-y divide-[var(--cc-line)]">
+        {partners.map((p) => (
+          <button key={p.對象} onClick={() => onName(p.對象)}
+            className="grid w-full grid-cols-[68px_1fr] items-center gap-2 py-1.5 text-left text-[12px] hover:bg-[var(--cc-hover-bg)]">
+            <span className="font-bold text-[var(--cc-accent)]">{p.對象}</span>
+            <span className="flex items-center gap-2">
+              <span className="flex h-2 flex-1 overflow-hidden rounded-full bg-[var(--cc-track)]">
+                <span className="h-2" style={{ width: `${(p.協同 / max) * 100}%`, background: 'var(--tone-blue-tx)' }} />
+                <span className="h-2" style={{ width: `${(p.不同 / max) * 100}%`, background: 'var(--tone-red-tx)' }} />
+              </span>
+              <span className="shrink-0 text-[10.5px] text-[var(--cc-ink-soft)]">協{p.協同}・不{p.不同}</span>
+            </span>
+          </button>
+        ))}
+        {!partners.length ? <p className="py-2 text-[12px] text-[var(--cc-ink-soft)]">本期無共同具名。</p> : null}
+      </div>
+    </div>
+  );
+}
+
+// 右欄：點格子 → 該對實際共同署名的意見書（含類型 Badge 與 PDF）
+function PairDetail({ pair, list, onClose }) {
+  const toneOf = (t) => (t.includes('不同') ? 'red' : t.includes('協同') ? 'blue' : 'slate');
+  return (
+    <div>
+      <div className="flex items-center justify-between gap-2">
+        <h3 className="text-[13px] font-bold text-[var(--cc-title-ink)]">{pair.a}・{pair.b}　共同署名 {list.length} 份</h3>
+        <button onClick={onClose} className="shrink-0 text-[11px] font-bold text-[var(--cc-accent)] hover:underline">清除</button>
+      </div>
+      <div className="mt-2 max-h-[460px] space-y-1.5 overflow-y-auto pr-1">
+        {list.map((d, i) => (
+          <div key={i} className="flex flex-wrap items-center gap-2 text-[12px]">
+            <span className="font-bold text-[var(--cc-ink-strong)]">{d.字號}</span>
+            <Badge tone={toneOf(d.類型 ?? '')}>{(d.類型 ?? '意見書').replace('意見書', '') || '意見書'}</Badge>
+            {d.下載網址 ? (
+              <a href={d.下載網址} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-[var(--cc-blue-ink)] hover:text-[var(--cc-blue-ink-hover)]">PDF <ExternalLink size={11} /></a>
+            ) : <span className="text-[10.5px] text-[var(--cc-figure-note)]">（內嵌官方頁）</span>}
+          </div>
+        ))}
+        {!list.length ? <p className="py-2 text-[12px] text-[var(--cc-ink-soft)]">無可列意見書。</p> : null}
+      </div>
+    </div>
+  );
+}
+
+function GraphView() {
+  const [eraKey, setEraKey] = useState(GRAPH_ERAS[0].key);
+  const [mode, setMode] = useState('合計');
+  const [minEdge, setMinEdge] = useState(2);
+  const [selName, setSelName] = useState(null);
+  const [selPair, setSelPair] = useState(null);
+  const [hover, setHover] = useState(null);
+
+  const presByName = useMemo(() => new Map(justices.map((j) => [j.姓名, j.提名總統 ?? null])), []);
+
+  // 每段現算：pairStats / directed / byPair / degree（缺欄跳過不 throw）
+  const eraData = useMemo(() => {
+    // pairs/directed/deg 優先讀資料層預算好的 data.共同具名圖譜（單一事實來源，build-justices.mjs 產出）；
+    // 缺時（資料層尚未重跑）退回就地現算，圖不斷線。byPair（點格子下鑽的意見書清單）不在資料層，永遠現算自 docs。
+    const graphByKey = new Map((data.共同具名圖譜?.分期 ?? []).map((e) => [e.key, e]));
+    const out = {};
+    for (const era of GRAPH_ERAS) {
+      const pairs = new Map();     // pairKey → {協同,不同,合計}
+      const directed = new Map();  // `${提出者}${SEP}${加入者}` → n
+      const byPair = new Map();    // pairKey → [{字號,類型,下載網址,日期}]
+      const deg = new Map();       // 姓名 → 合計 degree
+      for (const d of docs) {
+        const y = d.日期 ? Number(String(d.日期).slice(0, 4)) : null;
+        if (!y || !era.test(y)) continue;
+        for (const op of d.意見書 ?? []) {
+          const proposers = op.提出 ?? [];
+          const joiners = op.加入 ?? [];
+          const signers = [...new Set([...proposers, ...joiners])];
+          const t = op.類型 ?? '';
+          const isD = t.includes('不同');
+          const isC = t.includes('協同');
+          for (let i = 0; i < signers.length; i++) for (let j = i + 1; j < signers.length; j++) {
+            const k = pairKey(signers[i], signers[j]);
+            const o = pairs.get(k) ?? { 協同: 0, 不同: 0, 合計: 0 };
+            o.合計 += 1; if (isD) o.不同 += 1; if (isC) o.協同 += 1;
+            pairs.set(k, o);
+            const arr = byPair.get(k) ?? [];
+            arr.push({ 字號: d.字號, 類型: t, 下載網址: op.下載網址 ?? null, 日期: d.日期 ?? null });
+            byPair.set(k, arr);
+            deg.set(signers[i], (deg.get(signers[i]) ?? 0) + 1);
+            deg.set(signers[j], (deg.get(signers[j]) ?? 0) + 1);
+          }
+          for (const p of proposers) for (const jn of joiners) {
+            if (p === jn) continue;
+            const dk = `${p}${SEP}${jn}`;
+            directed.set(dk, (directed.get(dk) ?? 0) + 1);
+          }
+        }
+      }
+      const g = graphByKey.get(era.key);
+      if (g) { // 資料層優先：以預算好的計數覆蓋 pairs/directed/deg，byPair 仍用 docs 下鑽
+        const gp = new Map(), gd = new Map(), gdeg = new Map();
+        for (const p of g.共同具名 ?? []) {
+          gp.set(pairKey(p.甲, p.乙), { 協同: p.協同 ?? 0, 不同: p.不同 ?? 0, 合計: p.合計 ?? 0 });
+          gdeg.set(p.甲, (gdeg.get(p.甲) ?? 0) + (p.合計 ?? 0));
+          gdeg.set(p.乙, (gdeg.get(p.乙) ?? 0) + (p.合計 ?? 0));
+        }
+        for (const dd of g.主筆加入 ?? []) gd.set(`${dd.提出}${SEP}${dd.加入}`, dd.次數 ?? 0);
+        out[era.key] = { pairs: gp, directed: gd, byPair, deg: gdeg };
+      } else {
+        out[era.key] = { pairs, directed, byPair, deg };
+      }
+    }
+    return out;
   }, []);
 
-  const maxEdge = Math.max(...edges.map((e) => e.次數));
-  const partners = useMemo(() => {
-    if (!selected) return [];
-    return coSign
-      .filter((e) => e.甲 === selected || e.乙 === selected)
-      .map((e) => ({ 對象: e.甲 === selected ? e.乙 : e.甲, 次數: e.次數 }))
-      .sort((a, b) => b.次數 - a.次數);
-  }, [selected]);
+  const ed = eraData[eraKey] ?? { pairs: new Map(), directed: new Map(), byPair: new Map(), deg: new Map() };
+
+  const density = useMemo(() => {
+    const m = {};
+    for (const era of GRAPH_ERAS) {
+      let s = 0;
+      for (const o of eraData[era.key]?.pairs.values() ?? []) s += o.合計;
+      m[era.key] = s;
+    }
+    return m;
+  }, [eraData]);
+  const maxDensity = Math.max(1, ...Object.values(density));
+
+  // members（合計-degree ≥ minEdge）＋ seriation 排序（用合計權重，跨模式穩定）
+  const members = useMemo(() => {
+    const names = [...ed.deg.entries()].filter(([, v]) => v >= minEdge).map(([nm]) => nm);
+    const wOf = (i, j) => ed.pairs.get(pairKey(names[i], names[j]))?.合計 ?? 0;
+    return seriateOrder(names.length, wOf).map((i) => names[i]);
+  }, [ed, minEdge]);
+
+  const cellVal = (a, b) => (mode === '有向'
+    ? ed.directed.get(`${a}${SEP}${b}`) ?? 0
+    : ed.pairs.get(pairKey(a, b))?.[mode] ?? 0);
+
+  const maxVal = useMemo(() => {
+    let mx = 0;
+    for (let i = 0; i < members.length; i++) for (let j = 0; j < members.length; j++) {
+      if (mode !== '有向' && i === j) continue;
+      mx = Math.max(mx, cellVal(members[i], members[j]));
+    }
+    return mx;
+  }, [members, mode, ed]);
+
+  const namePartners = useMemo(() => {
+    if (!selName) return [];
+    const res = [];
+    for (const [k, o] of ed.pairs) {
+      const [x, z] = k.split(SEP);
+      if (x === selName || z === selName) res.push({ 對象: x === selName ? z : x, ...o });
+    }
+    const sk = mode === '有向' ? '合計' : mode;
+    return res.sort((a, b) => b[sk] - a[sk]);
+  }, [ed, selName, mode]);
+
+  const topPairs = useMemo(() => {
+    if (mode === '有向') {
+      return [...ed.directed.entries()].map(([k, v]) => { const [a, b] = k.split(SEP); return { a, b, v }; })
+        .sort((x, y) => y.v - x.v).slice(0, 12);
+    }
+    return [...ed.pairs.entries()].map(([k, o]) => { const [a, b] = k.split(SEP); return { a, b, v: o[mode] }; })
+      .filter((x) => x.v > 0).sort((x, y) => y.v - x.v).slice(0, 12);
+  }, [ed, mode]);
+
+  const pairDocs = selPair ? (ed.byPair.get(pairKey(selPair.a, selPair.b)) ?? []) : [];
+  const presLegend = useMemo(() => {
+    const seen = new Set(members.map((nm) => presByName.get(nm)).filter(Boolean));
+    return Object.keys(PRES_COLOR).filter((p) => seen.has(p));
+  }, [members, presByName]);
+
+  const tone = MODE_TONE[mode];
+  const modeLabel = GRAPH_MODES.find((m) => m[0] === mode)?.[1] ?? mode;
+  const eraLabel = GRAPH_ERAS.find((e) => e.key === eraKey)?.label ?? '';
+  const presInk = (name) => PRES_COLOR[presByName.get(name)] ?? 'var(--cc-ink-mid)';
+
+  const n = members.length;
+  const CW = Math.max(10, Math.min(20, Math.floor(560 / Math.max(n, 1))));
+  const LABEL_W = 68;
+  const TOP = 72;
+  const nameFont = Math.max(9, Math.min(11, CW - 2));
+
+  const hoverText = (() => {
+    if (!hover || !members[hover.r] || !members[hover.c]) return '';
+    const a = members[hover.r], b = members[hover.c];
+    if (mode === '有向') return `${b} 加入 ${a} 主筆意見書 ${ed.directed.get(`${a}${SEP}${b}`) ?? 0} 次`;
+    const o = ed.pairs.get(pairKey(a, b)) ?? { 協同: 0, 不同: 0, 合計: 0 };
+    return `${a} × ${b} — 協同 ${o.協同}・不同 ${o.不同}・合計 ${o.合計}`;
+  })();
 
   return (
     <section className="border-t border-[var(--cc-line)] py-5">
-      <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">共同具名網絡</p>
-      <h2 className="text-base font-bold text-[var(--cc-title-ink)]">誰常和誰一起署名意見書（共同具名 ≥ {MIN_EDGE} 次）</h2>
+      <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">共同具名矩陣</p>
+      <h2 className="text-base font-bold text-[var(--cc-title-ink)]">誰和誰一起署名意見書（分期・資料驅動分群・{modeLabel}）</h2>
       <p className="mt-1 max-w-3xl text-[11px] leading-relaxed text-[var(--cc-ink-soft)]">
-        邊的粗細＝兩人共同出現在同一份意見書（提出或加入）的次數。點選姓名可查看合作對象清單；資料來自官方意見書檔名，涵蓋釋字後期與憲法法庭時期。
+        共同具名只在同時在任時才可能，故按制度斷點分四期各一張矩陣。行列順序由共同具名關係自動分群，聯盟沿對角線成塊；姓名顏色為提名總統——同色成塊表示聯盟吻合任命世代，混色表示跨世代結盟。切換「關係」可分看協同聯盟、不同聯盟，或「主筆→加入」的有向影響；點格子看該對實際共同署名的意見書。
       </p>
-      <div className="mt-3 grid gap-5 lg:grid-cols-[minmax(0,540px)_1fr]">
-        <div className="overflow-x-auto">
-          <svg width={520} height={505} role="img" aria-label="大法官共同具名網絡圖">
-            {edges.map((e, i) => {
-              const active = selected && (e.甲 === selected || e.乙 === selected);
-              const dim = selected && !active;
-              return (
-                <line
-                  key={i}
-                  x1={e.a.x} y1={e.a.y} x2={e.b.x} y2={e.b.y}
-                  stroke={active ? 'var(--cc-highlight)' : 'var(--cc-edge-line)'}
-                  strokeWidth={0.6 + (e.次數 / maxEdge) * 3.4}
-                  opacity={dim ? 0.08 : active ? 0.85 : 0.3}
-                />
-              );
-            })}
-            {nodes.map((n) => {
-              const active = selected === n.姓名;
-              const related = selected && partners.some((p) => p.對象 === n.姓名);
-              const dim = selected && !active && !related;
-              return (
-                <g key={n.姓名} transform={`translate(${n.x}, ${n.y})`} className="cursor-pointer"
-                  onClick={() => setSelected(active ? null : n.姓名)}>
-                  <circle r={9} fill={active ? 'var(--cc-highlight)' : related ? 'var(--cc-node-related-fill)' : 'var(--cc-node-fill)'} stroke="var(--cc-highlight)" strokeWidth={1.5} opacity={dim ? 0.25 : 1} />
-                  <text
-                    x={n.lx} y={n.ly}
-                    textAnchor={n.anchor}
-                    fontSize={11} fontWeight={active ? 700 : 500}
-                    fill={dim ? 'var(--cc-dim-text)' : 'var(--cc-ink-strong)'}
-                  >
-                    {n.姓名}
-                  </text>
-                </g>
-              );
-            })}
-          </svg>
-        </div>
-        <div>
-          {selected ? (
-            <div>
-              <h3 className="text-[14px] font-bold text-[var(--cc-title-ink)]">{selected} 的共同具名對象</h3>
-              <div className="mt-2 max-w-sm divide-y divide-[var(--cc-line)]">
-                {partners.map((p) => (
-                  <div key={p.對象} className="grid grid-cols-[80px_44px_1fr] items-center gap-2 py-1.5 text-[12px]">
-                    <button onClick={() => setSelected(p.對象)} className="text-left font-bold text-[var(--cc-accent)] hover:underline">{p.對象}</button>
-                    <span className="font-bold text-[var(--cc-ink-strong)]">{p.次數} 次</span>
-                    <div className="h-1.5 rounded-full bg-[var(--cc-track)]">
-                      <div className="h-1.5 rounded-full bg-[var(--cc-highlight)]" style={{ width: `${(p.次數 / partners[0].次數) * 100}%` }} />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+
+      <div className="mt-3 flex flex-wrap items-center gap-4">
+        <Select label="時期" value={eraKey} onChange={setEraKey} options={GRAPH_ERAS.map((e) => [e.key, e.label])} />
+        <Select label="關係" value={mode} onChange={setMode} options={GRAPH_MODES} />
+        <Select label="門檻" value={String(minEdge)} onChange={(v) => setMinEdge(Number(v))} options={[['1', '≥1 次'], ['2', '≥2 次'], ['3', '≥3 次']]} />
+      </div>
+
+      <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-[10.5px] text-[var(--cc-ink-soft)]">
+        {GRAPH_ERAS.map((e) => (
+          <button key={e.key} onClick={() => setEraKey(e.key)}
+            className={`inline-flex items-center gap-1.5 ${e.key === eraKey ? 'font-bold text-[var(--cc-accent)]' : 'hover:text-[var(--cc-accent)]'}`}>
+            {e.short}
+            <span className="block h-1.5 w-12 rounded-full bg-[var(--cc-track)]">
+              <span className="block h-1.5 rounded-full" style={{ width: `${(density[e.key] / maxDensity) * 100}%`, background: 'var(--tone-rose-tx)' }} />
+            </span>
+            <span className="text-[var(--cc-figure-note)]">{density[e.key]}</span>
+          </button>
+        ))}
+      </div>
+
+      <div className="mt-3 grid gap-5 lg:grid-cols-[minmax(0,600px)_1fr]">
+        <div className="relative overflow-x-auto pb-2">
+          {n < 2 ? (
+            <p className="py-8 text-[12px] text-[var(--cc-ink-soft)]">本期尚無足量具名意見書（門檻 ≥{minEdge} 次）。可調低門檻或切換時期。</p>
           ) : (
-            <div>
-              <h3 className="text-[14px] font-bold text-[var(--cc-title-ink)]">最常共同具名的組合</h3>
-              <div className="mt-2 max-w-sm divide-y divide-[var(--cc-line)]">
-                {coSign.slice(0, 12).map((e) => (
-                  <div key={`${e.甲}${e.乙}`} className="grid grid-cols-[150px_44px_1fr] items-center gap-2 py-1.5 text-[12px]">
-                    <span className="font-bold text-[var(--cc-ink-strong)]">{e.甲}・{e.乙}</span>
-                    <span className="font-bold text-[var(--cc-accent)]">{e.次數} 次</span>
-                    <div className="h-1.5 rounded-full bg-[var(--cc-track)]">
-                      <div className="h-1.5 rounded-full bg-[var(--cc-highlight)]" style={{ width: `${(e.次數 / coSign[0].次數) * 100}%` }} />
-                    </div>
-                  </div>
+            <svg width={LABEL_W + n * CW + 8} height={TOP + n * CW + 8} role="img" aria-label={`${eraLabel} 大法官共同具名矩陣`}>
+              {members.map((name, r) => {
+                const active = selName === name;
+                return (
+                  <text key={`r${name}`} x={LABEL_W - 6} y={TOP + r * CW + CW / 2 + 3} textAnchor="end"
+                    fontSize={nameFont} fontWeight={active ? 700 : 500}
+                    style={{ fill: presInk(name), cursor: 'pointer' }}
+                    onClick={() => { setSelName(active ? null : name); setSelPair(null); }}>{name}</text>
+                );
+              })}
+              {members.map((name, c) => {
+                const active = selName === name;
+                const x = LABEL_W + c * CW + CW / 2;
+                return (
+                  <text key={`c${name}`} x={x} y={TOP - 6} textAnchor="start"
+                    transform={`rotate(-90 ${x} ${TOP - 6})`}
+                    fontSize={nameFont} fontWeight={active ? 700 : 500}
+                    style={{ fill: presInk(name), cursor: 'pointer' }}
+                    onClick={() => { setSelName(active ? null : name); setSelPair(null); }}>{name}</text>
+                );
+              })}
+              {members.map((rowName, r) => members.map((colName, c) => {
+                if (mode !== '有向' && r === c) {
+                  return <rect key={`${r}-${c}`} x={LABEL_W + c * CW} y={TOP + r * CW} width={CW - 1.6} height={CW - 1.6} rx={2} fill="var(--cc-track)" opacity={0.55} />;
+                }
+                const v = cellVal(rowName, colName);
+                const inRowCol = selName && (selName === rowName || selName === colName);
+                const isHover = hover && hover.r === r && hover.c === c;
+                const isSelPair = selPair && ((selPair.a === rowName && selPair.b === colName) || (selPair.a === colName && selPair.b === rowName));
+                return (
+                  <rect key={`${r}-${c}`}
+                    x={LABEL_W + c * CW} y={TOP + r * CW}
+                    width={CW - 1.6} height={CW - 1.6} rx={2}
+                    style={{ fill: rampFill(v, maxVal, tone), cursor: v ? 'pointer' : 'default' }}
+                    stroke={isSelPair || isHover ? 'var(--cc-highlight)' : 'none'} strokeWidth={1.4}
+                    opacity={selName && !inRowCol ? 0.3 : 1}
+                    onMouseEnter={() => setHover({ r, c })}
+                    onMouseLeave={() => setHover(null)}
+                    onClick={() => v && setSelPair({ a: rowName, b: colName })}
+                  />
+                );
+              }))}
+            </svg>
+          )}
+          {hoverText ? (
+            <div className="pointer-events-none absolute left-2 top-0 z-10 rounded-md border border-[var(--cc-border)] bg-white px-3 py-1.5 text-[11px] shadow-sm">{hoverText}</div>
+          ) : null}
+        </div>
+
+        <div>
+          <div className="mb-3 space-y-1.5">
+            <div className="flex items-center gap-2 text-[10.5px] text-[var(--cc-ink-soft)]">
+              少
+              {[0.1, 0.3, 0.55, 0.8, 1].map((f) => (
+                <span key={f} className="inline-block h-3 w-3 rounded-[2px]" style={{ background: rampFill(f * (maxVal || 1), maxVal || 1, tone) }} />
+              ))}
+              多{maxVal ? `（單格最高 ${maxVal}）` : ''}
+            </div>
+            {presLegend.length ? (
+              <div className="flex flex-wrap gap-x-3 gap-y-1 text-[10.5px] text-[var(--cc-ink-soft)]">
+                {presLegend.map((p) => (
+                  <span key={p} className="inline-flex items-center gap-1.5">
+                    <span className="h-2.5 w-2.5 rounded-sm border" style={{ background: inkToFill(PRES_COLOR[p]), borderColor: PRES_COLOR[p] }} />{p}
+                  </span>
                 ))}
               </div>
-            </div>
+            ) : null}
+          </div>
+
+          {selPair ? (
+            <PairDetail pair={selPair} list={pairDocs} onClose={() => setSelPair(null)} />
+          ) : selName ? (
+            <NameDetail name={selName} partners={namePartners} onName={(nm) => { setSelName(nm); setSelPair(null); }} />
+          ) : (
+            <TopPairs list={topPairs} mode={mode} onPick={(a, b) => setSelPair({ a, b })} />
           )}
         </div>
       </div>
+
+      <p className="mt-4 max-w-3xl text-[10.5px] leading-relaxed text-[var(--cc-figure-note)]">
+        資料註：合計每份意見書計一次共同具名；「部分協同部分不同」等混合類型同時計入協同與不同，故各對「協同＋不同」可能大於合計。「主筆→加入」為有向：列＝提出者、欄＝加入者，格值＝該加入者加入該提出者意見書的次數，矩陣不對稱即資訊本身。早期釋字意見書多整卷收於抄本、作者未逐一標，故早中期為下限。意見書資料仍在增補。
+      </p>
     </section>
   );
 }
@@ -1454,7 +1754,10 @@ const PROV_MARKERS = [
   { yr: 2022, label: '憲訴法', color: 'var(--cc-type-judgment)' },
 ];
 
-function HistoryView() {
+// 沿革敘事卡 → 案件索引深連：階段 key 對映到「機關」facet 值（daifaguan 段含大法官＋憲法法庭＝行憲後）。
+const STAGE_機關 = { dali: '大理院', zuigao: '最高法院', sifayuan: '司法院', daifaguan: '行憲後' };
+
+function HistoryView({ onOpenIndex }) {
   const [openCards, setOpenCards] = useState(
     () => new Set([...PROV_STAGES.map((s) => s.key), ...PROV_ERAS.map((e) => `era-${e.key}`)]),
   );
@@ -1499,7 +1802,7 @@ function HistoryView() {
           {hoverSeg ? (
             <span className="flex flex-wrap items-baseline gap-x-3 gap-y-0.5 text-[var(--cc-ink-strong)]">
               <strong>{hoverSeg.機關}</strong>
-              <span>{hoverSeg.起} – {hoverSeg.迄 ?? '迄今'}</span>
+              <span>{formatDateRange(hoverSeg.起, hoverSeg.迄, { openLabel: '迄今' })}</span>
               <span className="text-[var(--cc-ink-soft)]">{hoverSeg.號數}</span>
               <span className="text-[var(--cc-ink-soft)]">{hoverSeg.定性}</span>
             </span>
@@ -1575,7 +1878,19 @@ function HistoryView() {
               </span>
               <ChevronDown size={16} className="shrink-0 text-[var(--cc-icon)] transition-transform" style={{ transform: open ? 'rotate(180deg)' : 'none' }} />
             </button>
-            {open ? <p className="mt-2 max-w-3xl text-[13px] leading-[1.9] text-[var(--cc-ink-mid)]">{s.text}</p> : null}
+            {open ? (
+              <>
+                <p className="mt-2 max-w-3xl text-[13px] leading-[1.9] text-[var(--cc-ink-mid)]">{s.text}</p>
+                {onOpenIndex && STAGE_機關[s.key] ? (
+                  <button
+                    onClick={() => onOpenIndex(STAGE_機關[s.key])}
+                    className="mt-2 inline-flex items-center gap-1 text-[12px] font-bold text-[var(--cc-accent)] hover:text-[var(--cc-link-hover)]"
+                  >
+                    檢視這 {STAGE_機關[s.key] === '行憲後' ? data.統計.行憲後 : (data.統計.機關?.[STAGE_機關[s.key]] ?? 0)} 件案件 →
+                  </button>
+                ) : null}
+              </>
+            ) : null}
           </section>
         );
       })}
@@ -1593,7 +1908,7 @@ function HistoryView() {
                   <button onClick={() => toggle(key)} className="flex w-full items-baseline justify-between gap-3 px-3 py-2 text-left">
                     <span className="flex flex-wrap items-baseline gap-x-3">
                       <span className="text-[13px] font-bold text-[var(--cc-ink-strong)]">{e.時期}</span>
-                      <span className="text-[11px] text-[var(--cc-ink-soft)]">{e.起}–{e.迄 ?? '迄今'}</span>
+                      <span className="text-[11px] text-[var(--cc-ink-soft)]">{formatDateRange(e.起, e.迄, { openLabel: '迄今' })}</span>
                     </span>
                     <ChevronDown size={15} className="shrink-0 text-[var(--cc-icon)]" style={{ transform: open ? 'rotate(180deg)' : 'none' }} />
                   </button>
@@ -1745,7 +2060,7 @@ export default function ConstitutionalCourt() {
         ) : null}
         {active === 'tenure' ? <TenureView onOpen={openJustice} /> : null}
         {active === 'graph' ? <GraphView /> : null}
-        {active === 'history' ? <HistoryView /> : null}
+        {active === 'history' ? <HistoryView onOpenIndex={(機關) => setParams(機關 && 機關 !== '行憲後' ? { 機關 } : {})} /> : null}
         {active === 'about' ? <AboutView /> : null}
       </main>
     </div>
