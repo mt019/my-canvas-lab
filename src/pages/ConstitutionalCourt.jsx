@@ -67,10 +67,14 @@ const coSign = data.共同具名;
 const citeEdges = data.引用網絡;
 const presidents = data.總統任期 ?? [];
 
-// 年度密度堆疊條＝淡底＋ink 細線：類型配校準過的 --cat-* 分類色位（解釋=rose 維持頁面 rose 識別、
-// 判決=blue、實體裁定=green），大面積吃淡底 -bg、境界與圖例用 ink -tx。原本的 --cc-* 生 hex（鮮玫瑰/
-// 鮮紫/鮮綠）在大條上讀成刺眼深色，僅保留給小面積文字與細線用途。
-const TYPE_TONE = { 解釋: 7, 判決: 2, 實體裁定: 3 };
+// 釋憲文件類型 ↔ 制度沿革機關階段 的單一對應表：同一機關作成的文件與其沿革階段共用 --cat-* 分類色位，
+// 讓「案件時間軸」的色條與「制度沿革」四段對得起來。解釋(釋字)＝大法官階段(shizi)、判決/裁定(憲判)＝
+// 憲法法庭階段(xianpan)；1949 前的大理院/最高法院/司法院三段案件時間軸不含，僅出現在沿革圖。
+const ERA_TONE = { dali: 6, zuigao: 8, sifayuan: 4, shizi: 7, xianpan: 2 };
+const catPair = (n) => ({ fill: `var(--cat-${n}-bg)`, ink: `var(--cat-${n}-tx)` });
+// 年度密度堆疊條＝淡底＋ink 細線：解釋吃 shizi 色位（rose，維持頁面 rose 識別）、判決吃 xianpan 色位（blue），
+// 兩者與沿革同機關階段同色；實體裁定同屬憲法法庭時期、另給 green 以在堆疊中可辨。大面積吃淡底 -bg、境界與圖例用 ink -tx。
+const TYPE_TONE = { 解釋: ERA_TONE.shizi, 判決: ERA_TONE.xianpan, 實體裁定: 3 };
 const typeFill = (k) => `var(--cat-${TYPE_TONE[k]}-bg)`;
 const typeInk = (k) => `var(--cat-${TYPE_TONE[k]}-tx)`;
 
@@ -1039,6 +1043,24 @@ function tenureYear(s, isEnd) {
   return y + (m - 0.5) / 12;
 }
 
+// 合併同一人相接／重疊的任期段。連任（第 N 屆→第 N+1 屆）在「只到年」的精度下，會因 tenureYear
+// 把起點寄到 1 月、訖點寄到 12 月，於交界年重疊約 0.9 年——這是解析造成的假重疊，非真的同時任兩職。
+// 相隔在容差內就併成一條連續橫條；真正離任多年後再回任（間隔逾容差）才保留為分段。openEnd＝現任的畫圖終點。
+function tenureSpans(tenures, openEnd) {
+  const segs = (tenures ?? [])
+    .map((t) => ({ a: tenureYear(t.起, false), b: t.訖 ? tenureYear(t.訖, true) : openEnd, open: !t.訖 }))
+    .filter((s) => s.a != null)
+    .sort((p, q) => p.a - q.a);
+  const out = [];
+  for (const s of segs) {
+    const last = out[out.length - 1];
+    if (last && s.a <= last.b + 0.3) { // 0.3 年容差：吸收年精度交界重疊與數月行政空檔，不併真正的多年中斷
+      if (s.b > last.b) { last.b = s.b; last.open = s.open; }
+    } else out.push({ ...s });
+  }
+  return out;
+}
+
 // 起訖範圍的 en dash 兩側加空格，跟日期本身的 "-" 分隔開，避免視覺上分不清哪個是範圍分隔符
 function formatTenureRange(t) {
   const role = t.職 !== '大法官' ? `${t.職} ` : '';
@@ -1191,20 +1213,18 @@ function TenureView({ onOpen }) {
                     onClick={() => onOpen?.(j.姓名)}>
                     {j.姓名}
                   </text>
-                  {j.任期.map((t, k) => {
-                    const a = tenureYear(t.起, false);
-                    const b = t.訖 ? tenureYear(t.訖, true) : Y1 - 0.4;
-                    const w = Math.max(x(b) - x(a), 2.5);
+                  {tenureSpans(j.任期, Y1 - 0.4).map((s, k) => {
+                    const w = Math.max(x(s.b) - x(s.a), 2.5);
                     return (
                       <g key={k}>
-                        <rect x={x(a)} y={y + 3} width={w} height={ROW - 6} rx={2}
+                        <rect x={x(s.a)} y={y + 3} width={w} height={ROW - 6} rx={2}
                           fill={isHollow(j) ? 'var(--cc-bg)' : fillOf(j)}
                           stroke={colorOf(j)} strokeWidth={1}
-                          strokeDasharray={isHollow(j) || !t.訖 ? '3 2' : undefined}
+                          strokeDasharray={isHollow(j) || s.open ? '3 2' : undefined}
                           opacity={dim ? 0.3 : 1} />
                         {j.性別 === '女' && !isHollow(j) ? (
-                          <rect x={x(a)} y={y + 3} width={w} height={ROW - 6} rx={2}
-                            fill="url(#tenure-hatch-f)" opacity={dim ? 0.25 : 1} />
+                          <rect x={x(s.a)} y={y + 3} width={w} height={ROW - 6} rx={2}
+                            fill="url(#tenure-hatch-f)" opacity={dim ? 0.3 : 1} />
                         ) : null}
                       </g>
                     );
@@ -1364,12 +1384,13 @@ const provYear = (s) => {
 
 const PROV_SEGMENTS = [ // token-exempt: 沿革機關時間軸分類色（資料，非樣式）
   // 大條一律淡底（-bg）＋同色 ink 細框：色相辨識交給邊框與圖例，深色不塗大面積。
-  // 五段配校準過的 --cat-* 分類色位（red/slate/rose/blue/green），由 validate:colors 鎖住色帶。
-  { key: 'dali', 機關: '大理院・統字', 起: '1913-01-15', 迄: '1927-10-22', 號數: '統字 1–2012', color: { fill: 'var(--cat-6-bg)', ink: 'var(--cat-6-tx)' }, card: 'dali', 定性: '統一解釋法令，約法解釋不在其權限，惟屢援約法補法令之缺' },
-  { key: 'zuigao', 機關: '最高法院・解字', 起: '1927-12-25', 迄: '1928-11-20', 號數: '解字 1–245', color: { fill: 'var(--cat-8-bg)', ink: 'var(--cat-8-tx)' }, card: 'zuigao', 定性: '不滿一年的過渡期，體例承襲大理院，統一解釋權旋移司法院' },
-  { key: 'sifayuan', 機關: '司法院・院字／院解字', 起: '1929-02-16', 迄: '1948-06-23', 號數: '院字 1–2875；院解字 2876–4097', color: { fill: 'var(--cat-7-bg)', ink: 'var(--cat-7-tx)' }, card: 'sifayuan', 定性: '訓政時期最高司法機關統一解釋；行憲後空窗期直接解釋新憲法' },
-  { key: 'shizi', 機關: '大法官・釋字', 起: '1949-01-06', 迄: '2021-12-24', 號數: '釋字 1–813', color: { fill: 'var(--cat-2-bg)', ink: 'var(--cat-2-tx)' }, card: 'daifaguan', 定性: '依憲法作成、具憲法位階的憲法解釋與統一解釋' },
-  { key: 'xianpan', 機關: '憲法法庭・憲判', 起: '2022-01-04', 迄: null, 號數: `憲判 ${data.統計.判決}＋實體裁定 ${data.統計.實體裁定}（迄今）`, color: { fill: 'var(--cat-3-bg)', ink: 'var(--cat-3-tx)' }, card: 'daifaguan', 定性: '大法官改組為憲法法庭，以判決運作，納入裁判憲法審查' },
+  // 色位取自 ERA_TONE：shizi(大法官・釋字) 與案件圖「解釋」同 rose、xianpan(憲法法庭) 與「判決」同 blue，
+  // 兩圖對得起來；1949 前三段（red/slate/amber）案件圖不含。由 validate:colors 鎖住色帶。
+  { key: 'dali', 機關: '大理院・統字', 起: '1913-01-15', 迄: '1927-10-22', 號數: '統字 1–2012', color: catPair(ERA_TONE.dali), card: 'dali', 定性: '統一解釋法令，約法解釋不在其權限，惟屢援約法補法令之缺' },
+  { key: 'zuigao', 機關: '最高法院・解字', 起: '1927-12-25', 迄: '1928-11-20', 號數: '解字 1–245', color: catPair(ERA_TONE.zuigao), card: 'zuigao', 定性: '不滿一年的過渡期，體例承襲大理院，統一解釋權旋移司法院' },
+  { key: 'sifayuan', 機關: '司法院・院字／院解字', 起: '1929-02-16', 迄: '1948-06-23', 號數: '院字 1–2875；院解字 2876–4097', color: catPair(ERA_TONE.sifayuan), card: 'sifayuan', 定性: '訓政時期最高司法機關統一解釋；行憲後空窗期直接解釋新憲法' },
+  { key: 'shizi', 機關: '大法官・釋字', 起: '1949-01-06', 迄: '2021-12-24', 號數: '釋字 1–813', color: catPair(ERA_TONE.shizi), card: 'daifaguan', 定性: '依憲法作成、具憲法位階的憲法解釋與統一解釋' },
+  { key: 'xianpan', 機關: '憲法法庭・憲判', 起: '2022-01-04', 迄: null, 號數: `憲判 ${data.統計.判決}＋實體裁定 ${data.統計.實體裁定}（迄今）`, color: catPair(ERA_TONE.xianpan), card: 'daifaguan', 定性: '大法官改組為憲法法庭，以判決運作，納入裁判憲法審查' },
 ];
 
 const PROV_STAGES = [
