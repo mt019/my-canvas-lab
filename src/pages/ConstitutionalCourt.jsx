@@ -708,7 +708,7 @@ function TimelineView() {
       <>
       <section className="border-t border-[var(--cc-line)] py-5">
         <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">年度密度</p>
-        <h2 className="text-lg font-bold text-[var(--cc-title-ink)]">每年作成件數（1949–{y1}）</h2>
+        <h2 className="text-base sm:text-lg font-bold text-[var(--cc-title-ink)]">每年作成件數（1949–{y1}）</h2>
         <div className="mt-1 flex flex-wrap gap-4 text-[12px] text-[var(--cc-ink-soft)]">
           {Object.keys(TYPE_TONE).map((k) => (
             <span key={k} className="inline-flex items-center gap-1.5">
@@ -763,7 +763,7 @@ function TimelineView() {
 
       <section className="border-t border-[var(--cc-line)] py-5">
         <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">引用網絡</p>
-        <h2 className="text-lg font-bold text-[var(--cc-title-ink)]">被後案引用最多的解釋（官方「相關法令」欄互引統計）</h2>
+        <h2 className="text-base sm:text-lg font-bold text-[var(--cc-title-ink)]">被後案引用最多的解釋（官方「相關法令」欄互引統計）</h2>
         <div className="mt-3 max-w-3xl divide-y divide-[var(--cc-line)]">
           {cited.map(([no, n]) => {
             const d = docByNo.get(no);
@@ -861,7 +861,7 @@ function Pre1947Timeline() {
     <>
       <section className="border-t border-[var(--cc-line)] py-5">
         <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">年度密度 · 有作成日期者</p>
-        <h2 className="text-lg font-bold text-[var(--cc-title-ink)]">每年作成件數（{y0}–{y1}）</h2>
+        <h2 className="text-base sm:text-lg font-bold text-[var(--cc-title-ink)]">每年作成件數（{y0}–{y1}）</h2>
         <div className="mt-1 flex flex-wrap gap-4 text-[12px] text-[var(--cc-ink-soft)]">
           {機關序.map((k) => (
             <span key={k} className="inline-flex items-center gap-1.5">
@@ -908,7 +908,7 @@ function Pre1947Timeline() {
 
       <section className="border-t border-[var(--cc-line)] py-5">
         <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">無作成日期 · 大理院統字</p>
-        <h2 className="text-lg font-bold text-[var(--cc-title-ink)]">
+        <h2 className="text-base sm:text-lg font-bold text-[var(--cc-title-ink)]">
           <span className="text-[var(--cc-highlight)]">{undatedByNo.n.toLocaleString()}</span> 件無作成日期，依號次序列看分佈
         </h2>
         <p className="mt-1 max-w-3xl text-[12px] leading-relaxed text-[var(--cc-ink-soft)]">
@@ -924,7 +924,7 @@ function Pre1947Timeline() {
 
       <section className="border-t border-[var(--cc-line)] py-5">
         <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">類型化 · 依既有結構欄位</p>
-        <h2 className="text-lg font-bold text-[var(--cc-title-ink)]">系列與時期分佈（共 {total.toLocaleString()} 件）</h2>
+        <h2 className="text-base sm:text-lg font-bold text-[var(--cc-title-ink)]">系列與時期分佈（共 {total.toLocaleString()} 件）</h2>
         <div className="mt-3 grid max-w-4xl gap-6 sm:grid-cols-2">
           <div>
             <p className="text-[12px] font-bold text-[var(--cc-title-ink)]">系列（＝行憲前的解釋類型）</p>
@@ -992,7 +992,7 @@ function TopicHeatmaps() {
     <>
       <section className="border-t border-[var(--cc-line)] py-5">
         <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">主題×年代</p>
-        <h2 className="text-lg font-bold text-[var(--cc-title-ink)]">哪個年代在吵哪些問題（每 5 年一格，色深＝件數）</h2>
+        <h2 className="text-base sm:text-lg font-bold text-[var(--cc-title-ink)]">哪個年代在吵哪些問題（每 5 年一格，色深＝件數）</h2>
         <div className="relative mt-3 overflow-x-auto pb-2">
           <svg width={LABEL_W + bins.length * CW + 12} height={H + 26} role="img" aria-label="主題與年代分布熱圖">
             {topics.map((t, r) => (
@@ -1034,7 +1034,7 @@ function TopicHeatmaps() {
 
       <section className="border-t border-[var(--cc-line)] py-5">
         <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">主題×審查結論</p>
-        <h2 className="text-lg font-bold text-[var(--cc-title-ink)]">哪些領域最常被宣告違憲（機標結論，待人工欄為尚未覆核件）</h2>
+        <h2 className="text-base sm:text-lg font-bold text-[var(--cc-title-ink)]">哪些領域最常被宣告違憲（機標結論，待人工欄為尚未覆核件）</h2>
         <div className="relative mt-3 overflow-x-auto pb-2">
           <svg width={LABEL_W + outcomes.length * 74 + 12} height={H + 30} role="img" aria-label="主題與審查結論矩陣">
             {outcomes.map((o, c) => (
@@ -1089,7 +1089,7 @@ function JusticesView({ onOpen }) {
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">逐人統計</p>
-          <h2 className="text-lg font-bold text-[var(--cc-title-ink)]">大法官意見書行為（{justices.length} 位，來源：官方意見書檔名與判決欄位）</h2>
+          <h2 className="text-base sm:text-lg font-bold text-[var(--cc-title-ink)]">大法官意見書行為（{justices.length} 位，來源：官方意見書檔名與判決欄位）</h2>
         </div>
         <Select label="排序" value={sortKey} onChange={setSortKey} options={[['提出意見書', '提出意見書數'], ['加入意見書', '加入意見書數'], ['主筆判決', '主筆判決數'], ['參與解釋', '參與解釋數'], ['參與判決', '參與裁判數']]} />
       </div>
@@ -1251,7 +1251,7 @@ function JusticeDetail({ name, onBack, onOpen }) {
           {[['提出意見書', j.提出意見書], ['加入意見書', j.加入意見書], ['主筆判決', j.主筆判決], ['參與解釋', j.參與解釋 ?? 0], ['參與裁判', j.參與判決]].map(([label, value]) => (
             <div key={label} className="flex items-baseline gap-2">
               <span className="text-[12px] font-bold text-[var(--cc-icon)]">{label}</span>
-              <span className="font-display text-xl font-bold text-[var(--cc-ink)]">{value}</span>
+              <span className="font-display text-lg sm:text-xl font-bold text-[var(--cc-ink)]">{value}</span>
             </div>
           ))}
         </div>
@@ -1262,7 +1262,7 @@ function JusticeDetail({ name, onBack, onOpen }) {
           <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">案件參與 {involvedCases.length} 件</p>
           {opinions.length ? (
             <>
-              <h3 className="text-lg font-bold text-[var(--cc-title-ink)]">
+              <h3 className="text-base sm:text-lg font-bold text-[var(--cc-title-ink)]">
                 意見書 {opinions.length} 份：{Object.entries(j.意見書類型 ?? {}).map(([k, v]) => `${k.replace('意見書', '')} ${v}`).join('・') || ''}
               </h3>
               <div className="mt-2 divide-y divide-[var(--cc-row-border)]">
@@ -1442,7 +1442,7 @@ function TenureView({ onOpen }) {
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">制度 77 年</p>
-          <h2 className="text-lg font-bold text-[var(--cc-title-ink)]">歷任大法官任期時間軸（{rows.length} 人）</h2>
+          <h2 className="text-base sm:text-lg font-bold text-[var(--cc-title-ink)]">歷任大法官任期時間軸（{rows.length} 人）</h2>
         </div>
         <div className="flex flex-wrap items-center gap-4">
           <Select label="著色" value={colorBy} onChange={setColorBy} options={[['出身', '按出身'], ['留學國', '按留學地'], ['提名總統', '按提名總統']]} />
@@ -1750,6 +1750,50 @@ const LCT_RESULT = {
   ],
 };
 
+// 意見書覆蓋（逐時期）：哪些時期、哪些號沒有大法官意見書。讀資料層稽核鍵 data.意見書覆蓋
+// （audit-opinion-coverage.mjs 產，含官方原始頁漏抓交叉核對）；點時期下鑽該期無意見書字號。
+function OpinionCoverage() {
+  const cov = data.意見書覆蓋;
+  const 是行憲前 = (名) => 名.includes('行憲前');
+  const withGaps = (cov?.期 ?? []).filter((p) => p.無意見書 > 0 && !是行憲前(p.期名));
+  const [sel, setSel] = useState(withGaps[0]?.期名 ?? null);
+  if (!cov?.期?.length) return null;
+  const selP = cov.期.find((p) => p.期名 === sel);
+  return (
+    <div className="mt-4">
+      <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">證據一補充 · 意見書覆蓋</p>
+      <h3 className="text-[15px] font-bold text-[var(--cc-title-ink)]">哪些時期、哪些號沒有大法官意見書</h3>
+      <div className="mt-2 max-w-xl space-y-0.5">
+        {cov.期.map((p) => {
+          const active = p.期名 === sel;
+          return (
+            <button
+              key={p.期名} type="button" onClick={() => setSel(active ? null : p.期名)}
+              className={`grid w-full grid-cols-[152px_1fr_104px] items-center gap-2 rounded px-1 py-0.5 text-left text-[13px] ${active ? 'bg-[var(--cc-track)]' : ''} ${是行憲前(p.期名) ? 'cursor-default' : 'hover:bg-[var(--cc-track)]'}`}
+              disabled={是行憲前(p.期名)}
+            >
+              <span className={active ? 'font-bold text-[var(--cc-ink-strong)]' : 'text-[var(--cc-ink-mid)]'}>{p.期名}</span>
+              <span className="block h-2 rounded-full bg-[var(--cc-track)]"><span className="block h-2 rounded-full" style={{ width: `${p.覆蓋率 * 100}%`, background: 'var(--cc-highlight)' }} /></span>
+              <span className="text-right text-[var(--cc-ink-soft)]">{p.有意見書}/{p.件數}・{Math.round(p.覆蓋率 * 100)}%</span>
+            </button>
+          );
+        })}
+      </div>
+      {selP && selP.無意見書 > 0 && (
+        <div className="mt-2 max-w-xl rounded-lg border border-[var(--cc-line)] p-2.5">
+          <p className="text-[12px] font-bold text-[var(--cc-ink-strong)]">{selP.期名}：無意見書 {selP.無意見書} 號</p>
+          <p className="mt-1 max-h-28 overflow-y-auto text-[12px] leading-relaxed text-[var(--cc-ink-soft)]">
+            {selP.無意見書字號.slice(0, 200).join('、')}{selP.無意見書字號.length > 200 ? ` …共 ${selP.無意見書} 號` : ''}
+          </p>
+        </div>
+      )}
+      <p className="mt-1.5 max-w-2xl text-[12px] leading-relaxed text-[var(--cc-figure-note)]">
+        覆蓋＝官方數位記錄有本案大法官意見書；點時期看該期無意見書號次。「無」已對官方原始頁逐件交叉核對（{cov.核對?.已核對0紀錄件} 件，疑漏抓 {cov.核對?.疑漏抓 ?? 0}）＝確認非漏抓，係當年即無個別意見書或官方未數位化。核對限官方數位記錄，紙本彙編未稽核，故為<strong className="text-[var(--cc-ink-strong)]">下限</strong>；行憲前統一解釋無個別意見書制度。
+      </p>
+    </div>
+  );
+}
+
 // 問題意識（仿財政頁 Research Problem＋Model Gate 紀律）：分殊化＝審議專業化 vs 任命政治化。
 // 全部統計現算自 docs/justices（運維導向，資料一增補即更新）；共同具名同質性附置換檢定。
 function ResearchProblem() {
@@ -1825,7 +1869,7 @@ function ResearchProblem() {
   return (
     <section className="border-t border-[var(--cc-line)] py-5">
       <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">問題意識 · Research Problem</p>
-      <h2 className="text-lg font-bold text-[var(--cc-title-ink)]">分殊化：審議專業化，還是任命政治化？</h2>
+      <h2 className="text-base sm:text-lg font-bold text-[var(--cc-title-ink)]">分殊化：審議專業化，還是任命政治化？</h2>
       <p className="mt-2 max-w-3xl text-[13.5px] leading-relaxed text-[var(--cc-ink-mid)]">
         台灣大法官長期被理解為「合議共識型」法院——判決以機關名義作成、不同意見稀少。資料推翻了這個圖像：每案分別意見數從 1990 年代前的不到一份，升到 2015–2021 年的每案 {peak ? peak.avg.toFixed(1) : '7'} 份。核心問題是這場「意見分殊化」代表什麼？兩種對立的說法：
       </p>
@@ -1855,6 +1899,7 @@ function ResearchProblem() {
         <p className="mt-1.5 max-w-2xl text-[12px] leading-relaxed text-[var(--cc-figure-note)]">
           資料完整度：晚近（釋字 701 號後）與憲法法庭意見書覆蓋 100%；早／中期為<strong className="text-[var(--cc-ink-strong)]">下限</strong>——8 件釋字（115/150/153/156/393/503/517/564）的意見書藏在「意見書、抄本等文件」欄未解析（約 13+ 份，含王澤鑑、蘇俊雄、劉鐵錚等），另約 103 件的意見書收於影像抄本／OCR，官方頁不提供機讀文字。故上升「趨勢」穩健，早期「水準」偏低估。
         </p>
+        <OpinionCoverage />
       </div>
 
       <div className="mt-5">
@@ -2114,7 +2159,7 @@ function GraphView() {
   return (
     <section className="border-t border-[var(--cc-line)] py-5">
       <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">共同具名矩陣</p>
-      <h2 className="text-lg font-bold text-[var(--cc-title-ink)]">誰和誰一起署名意見書（分期・資料驅動分群・{modeLabel}）</h2>
+      <h2 className="text-base sm:text-lg font-bold text-[var(--cc-title-ink)]">誰和誰一起署名意見書（分期・資料驅動分群・{modeLabel}）</h2>
       <p className="mt-1 max-w-3xl text-[12px] leading-relaxed text-[var(--cc-ink-soft)]">
         共同具名只在同時在任時才可能，故按制度斷點分四期各一張矩陣。行列順序由共同具名關係自動分群，聯盟沿對角線成塊。切換「關係」可分看協同聯盟、不同聯盟，或「主筆→加入」的有向影響；點格子看該對實際共同署名的意見書。勾「依提名總統上色」才會為姓名套色（用來檢驗聯盟是否吻合任命世代），預設關閉以免畫面過花。
       </p>
@@ -2354,7 +2399,7 @@ function HistoryView({ onOpenIndex }) {
     <div className="max-w-4xl">
       <section className="border-t border-[var(--cc-line)] py-5">
         <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">制度沿革</p>
-        <h2 className="text-lg font-bold text-[var(--cc-title-ink)]">中華民國司法解釋的四個階段</h2>
+        <h2 className="text-base sm:text-lg font-bold text-[var(--cc-title-ink)]">中華民國司法解釋的四個階段</h2>
         <p className="mt-2 max-w-3xl text-[13.5px] leading-relaxed text-[var(--cc-ink-mid)]">
           本庫收錄始於 1949 年第一屆大法官。在此之前，統一解釋法令之權歷經大理院（統字）、最高法院（解字）、
           司法院（院字／院解字）三個機關，行憲前已作成逾 6,000 號解釋，其中不少實質觸及約法與憲法問題。
@@ -2437,7 +2482,7 @@ function HistoryView({ onOpenIndex }) {
           <section key={s.key} id={`prov-card-${s.key}`} className="scroll-mt-16 border-t border-[var(--cc-line)] py-4">
             <button onClick={() => toggle(s.key)} className="flex w-full items-baseline justify-between gap-3 text-left">
               <span className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                <span className="text-lg font-bold text-[var(--cc-title-ink)]">{s.機關}</span>
+                <span className="text-base sm:text-lg font-bold text-[var(--cc-title-ink)]">{s.機關}</span>
                 <span className="text-[12px] font-bold text-[var(--cc-eyebrow)]">{s.期間}</span>
                 <span className="text-[12px] text-[var(--cc-ink-soft)]">{s.號數}</span>
               </span>
@@ -2463,7 +2508,7 @@ function HistoryView({ onOpenIndex }) {
       {PROV_ERAS.length ? (
         <section className="border-t border-[var(--cc-line)] py-4">
           <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">憲政時期</p>
-          <h2 className="text-lg font-bold text-[var(--cc-title-ink)]">同一段歷史的另一條軸：憲政基本法與解釋權歸屬</h2>
+          <h2 className="text-base sm:text-lg font-bold text-[var(--cc-title-ink)]">同一段歷史的另一條軸：憲政基本法與解釋權歸屬</h2>
           <div className="mt-3 space-y-2">
             {PROV_ERAS.map((e) => {
               const key = `era-${e.key}`;
@@ -2493,7 +2538,7 @@ function HistoryView({ onOpenIndex }) {
 
       <section className="border-t border-[var(--cc-line)] py-5">
         <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">原始出處</p>
-        <h2 className="text-lg font-bold text-[var(--cc-title-ink)]">各階段解釋的公開原文與研究文獻</h2>
+        <h2 className="text-base sm:text-lg font-bold text-[var(--cc-title-ink)]">各階段解釋的公開原文與研究文獻</h2>
         <div className="mt-2 space-y-1.5 text-[13.5px] leading-relaxed">
           {PROV_LINKS.map((l) => (
             <a key={l.href} href={l.href} target="_blank" rel="noreferrer"
@@ -2512,7 +2557,7 @@ function AboutView() {
     <div className="max-w-3xl">
       <section className="border-t border-[var(--cc-line)] py-5">
         <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">資料來源</p>
-        <h2 className="text-lg font-bold text-[var(--cc-title-ink)]">行憲後取自憲法法庭官網，行憲前取自維基文庫（公有領域）</h2>
+        <h2 className="text-base sm:text-lg font-bold text-[var(--cc-title-ink)]">行憲後取自憲法法庭官網，行憲前取自維基文庫（公有領域）</h2>
         <div className="mt-2 space-y-2 text-[13.5px] leading-relaxed text-[var(--cc-ink-mid)]">
           <p>
             <strong className="text-[var(--cc-accent)]">行憲後</strong>：司法院大法官解釋 {data.統計.機關?.大法官 ?? 0} 件（釋字第 1–813 號，1949–2021）、憲法法庭判決 {data.統計.判決} 件（2022 年憲法訴訟法施行起）、實體裁定 {data.統計.實體裁定} 件（含暫時處分），取自憲法法庭官網。程序性不受理裁定未收錄。
@@ -2533,21 +2578,21 @@ function AboutView() {
       </section>
       <section className="border-t border-[var(--cc-line)] py-5">
         <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">批次下載</p>
-        <h2 className="text-lg font-bold text-[var(--cc-title-ink)]">篩選後想把檔案抓回本機讀？</h2>
+        <h2 className="text-base sm:text-lg font-bold text-[var(--cc-title-ink)]">篩選後想把檔案抓回本機讀？</h2>
         <p className="mt-2 text-[13.5px] leading-relaxed text-[var(--cc-ink-mid)]">
           瀏覽器無法代替你向官方網站批次下載。作法：在「案件索引」匯出「批次下載清單」，回到研究資料庫在本機執行批次下載命令，官方 PDF 就會下載到本機資料夾。清單裡每一筆都是官方網址，來源可驗證。
         </p>
       </section>
       <section className="border-t border-[var(--cc-line)] py-5">
         <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">更新</p>
-        <h2 className="text-lg font-bold text-[var(--cc-title-ink)]">資料怎麼保持最新</h2>
+        <h2 className="text-base sm:text-lg font-bold text-[var(--cc-title-ink)]">資料怎麼保持最新</h2>
         <p className="mt-2 text-[13.5px] leading-relaxed text-[var(--cc-ink-mid)]">
           資料庫以官方清單頁差分更新：偵測新公布的判決與裁定、只抓新增案件、重建統計後同步到本頁。本頁資料產生於 {data.產生時間?.slice(0, 10)}。
         </p>
       </section>
       <section className="border-t border-[var(--cc-line)] py-5">
         <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">相關外部連結</p>
-        <h2 className="text-lg font-bold text-[var(--cc-title-ink)]">原始資料的官方出處</h2>
+        <h2 className="text-base sm:text-lg font-bold text-[var(--cc-title-ink)]">原始資料的官方出處</h2>
         <div className="mt-2 space-y-1.5 text-[13.5px] leading-relaxed">
           <a href="https://cons.judicial.gov.tw/" target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 font-bold text-[var(--cc-accent)] hover:text-[var(--cc-link-hover)]">
             憲法法庭全球資訊網（大法官解釋、憲法法庭判決與裁定官方查詢系統） <ExternalLink size={11} />
@@ -2595,7 +2640,7 @@ function Case1Analysis() {
     <div>
       <section className="border-t border-[var(--cc-line)] py-5">
         <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">深度解析 · Case Study</p>
-        <h2 className="text-lg font-bold text-[var(--cc-title-ink)]"><CaseRef 字號={doc.字號} />：{da.案名}</h2>
+        <h2 className="text-base sm:text-lg font-bold text-[var(--cc-title-ink)]"><CaseRef 字號={doc.字號} />：{da.案名}</h2>
         <p className="mt-2 max-w-3xl text-[13.5px] leading-relaxed text-[var(--cc-ink-mid)]">{da.一句話}</p>
         <p className="mt-2 max-w-3xl text-[13px] leading-relaxed text-[var(--cc-ink-soft)]">{da.背景}</p>
         <p className="mt-3 max-w-3xl rounded-lg border border-[var(--cc-line)] p-2.5 text-[12px] leading-relaxed text-[var(--cc-figure-note)]">
@@ -2739,7 +2784,7 @@ export default function ConstitutionalCourt() {
           </div>
           <h1 className="max-w-3xl leading-tight text-[var(--cc-heading)]">
             <span className="font-sans text-2xl font-semibold sm:text-[2.15rem]">憲法法庭案例庫</span>
-            <span className="ml-3 align-baseline text-lg text-[var(--cc-body-text)]">釋字・憲判・暫時處分</span>
+            <span className="ml-3 align-baseline text-base sm:text-lg text-[var(--cc-body-text)]">釋字・憲判・暫時處分</span>
           </h1>
           <p className="mt-3 max-w-3xl text-base leading-relaxed text-[var(--cc-body-text)]">
             把中華民國司法解釋沿革——行憲後 {data.統計.行憲後} 件（大法官釋字・憲法法庭裁判，取自憲法法庭官網）與
@@ -2755,13 +2800,13 @@ export default function ConstitutionalCourt() {
             ].map(([label, value]) => (
               <div key={label} className="flex items-baseline gap-2">
                 <span className="text-[12px] font-bold text-[var(--cc-icon)]">{label}</span>
-                <span className="font-display text-xl font-bold text-[var(--cc-ink)]">{value}</span>
+                <span className="font-display text-lg sm:text-xl font-bold text-[var(--cc-ink)]">{value}</span>
               </div>
             ))}
             {/* 行憲前另列一段、以分隔線區隔——非大法官解釋，不併入上面計數 */}
             <div className="flex items-baseline gap-2 border-l border-[var(--cc-line)] pl-8">
               <span className="text-[12px] font-bold text-[var(--cc-eyebrow)]">行憲前統一解釋</span>
-              <span className="font-display text-xl font-bold text-[var(--cc-ink)]">{data.統計.行憲前}</span>
+              <span className="font-display text-lg sm:text-xl font-bold text-[var(--cc-ink)]">{data.統計.行憲前}</span>
               <span className="text-[12px] text-[var(--cc-ink-soft)]">
                 大理院 {data.統計.機關?.大理院}・最高法院 {data.統計.機關?.最高法院}・司法院 {data.統計.機關?.司法院}
               </span>
