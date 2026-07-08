@@ -53,7 +53,7 @@ const CC_VARS = { // token-exempt
   '--cc-edge-line': '#c9b3bc',
   '--cc-dim-text': '#c4b4ba',
   '--cc-placeholder': '#b09aa2',
-  // 退場中性色：非分類色的「其他／待確認／國內／任期尚短」用，刻意不佔 --cat-* 身分槽。
+  // 退場中性色：非分類色的「其他／待確認／國內／任期尚短」用，刻意不佔 --cat-* 身分位。
   // ink 為已審過的暖灰，bg 為近白（淡底屬 DESIGN.md 准許新增的低風險轉換）。走 -tx/-bg 慣例讓 inkToFill 自動導出淡底。
   '--cc-retire-tx': '#b3a8ad',
   '--cc-retire-bg': '#ece9ea',
@@ -1314,7 +1314,7 @@ const rampFill = (v, max, tone) =>
     ? `color-mix(in oklab, var(--tone-${tone}-tx) ${Math.round(Math.sqrt(v / max) * 100)}%, var(--tone-${tone}-bg))`
     : 'var(--cc-heat-zero)';
 
-// spectral seriation：以扣掉常數分量的冪次迭代逼近 Fiedler 向量，讓高權重對相鄰、聯盟沿對角線成塊。
+// spectral seriation：以扣掉常數分量的 power iteration 逼近 Fiedler 向量，讓高權重對相鄰、聯盟沿對角線成塊。
 function seriateOrder(n, weight) {
   const idx = Array.from({ length: n }, (_, i) => i);
   if (n < 3) return idx;
@@ -1424,7 +1424,7 @@ function GraphView() {
   // 每段現算：pairStats / directed / byPair / degree（缺欄跳過不 throw）
   const eraData = useMemo(() => {
     // pairs/directed/deg 優先讀資料層預算好的 data.共同具名圖譜（單一事實來源，build-justices.mjs 產出）；
-    // 缺時（資料層尚未重跑）退回就地現算，圖不斷線。byPair（點格子下鑽的意見書清單）不在資料層，永遠現算自 docs。
+    // 缺時（資料層尚未重跑）退回就地現算，圖不斷線。byPair（點格子下探的意見書清單）不在資料層，永遠現算自 docs。
     const graphByKey = new Map((data.共同具名圖譜?.分期 ?? []).map((e) => [e.key, e]));
     const out = {};
     for (const era of GRAPH_ERAS) {
@@ -1461,7 +1461,7 @@ function GraphView() {
         }
       }
       const g = graphByKey.get(era.key);
-      if (g) { // 資料層優先：以預算好的計數覆蓋 pairs/directed/deg，byPair 仍用 docs 下鑽
+      if (g) { // 資料層優先：以預算好的計數覆蓋 pairs/directed/deg，byPair 仍用 docs 下探
         const gp = new Map(), gd = new Map(), gdeg = new Map();
         for (const p of g.共同具名 ?? []) {
           gp.set(pairKey(p.甲, p.乙), { 協同: p.協同 ?? 0, 不同: p.不同 ?? 0, 合計: p.合計 ?? 0 });
