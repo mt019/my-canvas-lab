@@ -826,17 +826,21 @@ function Pre1947Timeline() {
   const W = 6;
   const H = 170;
   const chartW = span.length * W;
-  // 無日期統字的號次序列密度（不含時間、純序列分佈）：分 40 桶。
-  const undatedByNo = useMemo(() => {
-    const nums = undated.map((d) => Number(d.號次)).filter((n) => Number.isFinite(n));
-    if (!nums.length) return { bins: [], bmax: 1, lo: 0, hi: 0, n: undated.length };
-    const lo = Math.min(...nums);
-    const hi = Math.max(...nums);
-    const BINS = 40;
-    const bins = new Array(BINS).fill(0);
-    for (const n of nums) bins[Math.min(BINS - 1, Math.floor(((n - lo) / (hi - lo || 1)) * BINS))]++;
-    return { bins, bmax: Math.max(1, ...bins), lo, hi, n: undated.length };
-  }, [undated]);
+  // 無日期統字：號次是等差序列，依號次分桶的密度圖必然近均勻、不含資訊，故不作。
+  // 只報可驗證的整全性（號次連續無斷）與極簡性（主文長度中位），數字全由快照即時算出。
+  const undatedStat = useMemo(() => {
+    const tong = docs.filter((d) => d.系列 === '統字');
+    const nums = tong.map((d) => Number(d.號次)).filter((n) => Number.isFinite(n)).sort((a, b) => a - b);
+    const lo = nums[0] ?? 0;
+    const hi = nums[nums.length - 1] ?? 0;
+    const present = new Set(nums);
+    let missing = 0;
+    for (let x = lo; x <= hi; x++) if (!present.has(x)) missing++;
+    const undatedTong = tong.filter((d) => !d.日期).length;
+    const lens = tong.map((d) => (d.主文 || '').length).filter((l) => l > 0).sort((a, b) => a - b);
+    const median = lens.length ? lens[Math.floor(lens.length / 2)] : 0;
+    return { total: tong.length, lo, hi, missing, undated: undatedTong, median };
+  }, []);
 
   const barRow = (rows, palette) => {
     const rmax = Math.max(1, ...rows.map(([, n]) => n));
@@ -2775,7 +2779,7 @@ export default function ConstitutionalCourt() {
   }, [justiceName]);
 
   return (
-    <div className="min-h-screen paper-texture bg-[var(--cc-bg)] font-sans text-[var(--cc-ink)]" style={{ ...CC_VARS, paddingBottom: 60 }}>
+    <div className="min-h-screen paper-texture bg-[var(--cc-bg)] font-sans text-[var(--cc-ink)]" style={{ ...CC_VARS, paddingBottom: 60, overflowX: 'clip' }}>
       <header className="border-b border-[var(--cc-line)] bg-white">
         <div className="mx-auto max-w-6xl px-4 py-7 sm:px-6">
           <div className="mb-3 inline-flex items-center gap-2 font-accent text-[12px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow-header)]">
