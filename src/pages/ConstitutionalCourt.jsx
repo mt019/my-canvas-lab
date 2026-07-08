@@ -64,6 +64,9 @@ const CC_VARS = { // token-exempt
   '--cc-tab-active-text': '#704c5a',
   '--cc-heat-text-dark': '#6d5a62',
   '--cc-heading': '#2f2a2d',
+  // 搜尋命中高亮：淡琥珀近白底＋墨字，刻意不佔 --cat-* 分類身分位（見 hl()）。
+  '--cc-mark-bg': '#f6e6c2',
+  '--cc-mark-tx': '#6d4c1e',
 };
 
 const docs = data.文件;
@@ -71,6 +74,26 @@ const justices = data.大法官;
 const coSign = data.共同具名;
 const citeEdges = data.引用網絡;
 const presidents = data.總統任期 ?? [];
+
+// 字號 → 案件文件的全域查找表，供 <CaseRef> 由任一處字號回連官方頁並取一句話爭點預覽。
+const docByNo = new Map(docs.map((d) => [d.字號, d]));
+
+// 只要顯示字號的地方都用它：連回官方頁，hover（title）顯示一句話爭點預覽。查無 doc／官方頁時退化為純文字。
+function CaseRef({ 字號, className = '' }) {
+  const d = docByNo.get(字號);
+  if (!d?.官方頁) return <span className={className}>{字號}</span>;
+  return (
+    <a
+      href={d.官方頁}
+      target="_blank"
+      rel="noreferrer"
+      title={d.爭點 || undefined}
+      className={`underline decoration-[var(--cc-link-underline)] underline-offset-2 hover:text-[var(--cc-accent)] ${className}`}
+    >
+      {字號}
+    </a>
+  );
+}
 
 // 釋憲文件類型 ↔ 制度沿革機關階段 的單一對應表：同一機關作成的文件與其沿革階段共用 --cat-* 分類色位，
 // 讓「案件時間軸」的色條與「制度沿革」四段對得起來。解釋(釋字)＝大法官階段(shizi)、判決/裁定(憲判)＝
@@ -143,7 +166,7 @@ function Badge({ children, tone = 'slate' }) {
   };
   const [bg, color] = colors[tone] || colors.slate;
   return (
-    <span className="inline-flex items-center rounded-md px-2 py-0.5 text-[10px] font-bold" style={{ background: bg, color }}>
+    <span className="inline-flex items-center rounded-md px-2 py-0.5 text-[11px] font-bold" style={{ background: bg, color }}>
       {children}
     </span>
   );
@@ -219,16 +242,16 @@ function OpinionLine({ op, officialUrl }) {
     <div className="flex flex-wrap items-center gap-2 py-1">
       <Badge tone={op.類型.includes('不同') ? 'red' : op.類型.includes('協同') ? 'blue' : 'slate'}>{op.類型}</Badge>
       {op.作者類別 !== '大法官' ? <Badge tone="slate">{op.作者類別}</Badge> : null}
-      <span className="text-[12px] font-bold text-[var(--cc-ink-strong)]">{who}</span>
+      <span className="text-[13px] font-bold text-[var(--cc-ink-strong)]">{who}</span>
       {op.加入註記?.length ? (
-        <span className="text-[10.5px] text-[var(--cc-figure-note)]">（{op.加入註記.join('；')}）</span>
+        <span className="text-[11.5px] text-[var(--cc-figure-note)]">（{op.加入註記.join('；')}）</span>
       ) : null}
       {href ? (
         <a
           href={href}
           target="_blank"
           rel="noreferrer"
-          className="inline-flex items-center gap-1 text-[11px] text-[var(--cc-accent)] underline decoration-[var(--cc-link-underline)] underline-offset-2 hover:text-[var(--cc-link-hover)]"
+          className="inline-flex items-center gap-1 text-[12px] text-[var(--cc-accent)] underline decoration-[var(--cc-link-underline)] underline-offset-2 hover:text-[var(--cc-link-hover)]"
         >
           {op.下載網址 ? '官方 PDF' : '官方頁正文'} <ExternalLink size={11} />
         </a>
@@ -259,7 +282,21 @@ function loadPre1947() {
   return pre1947Promise;
 }
 
-function CaseCard({ d }) {
+// 搜尋命中高亮：把 text 中出現 kw 的片段包成 <mark>（淡琥珀底＋墨字）。kw 空白則原樣返回字串。
+function hl(text, kw) {
+  const s = String(text ?? '');
+  const q = (kw ?? '').trim();
+  if (!q) return s;
+  const esc = q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const parts = s.split(new RegExp(`(${esc})`, 'gi'));
+  return parts.map((p, i) =>
+    p.toLowerCase() === q.toLowerCase()
+      ? <mark key={i} className="rounded-[2px] bg-[var(--cc-mark-bg)] px-0.5 text-[var(--cc-mark-tx)]">{p}</mark>
+      : p,
+  );
+}
+
+function CaseCard({ d, q }) {
   const [full, setFull] = useState(null);
   const [loadingFull, setLoadingFull] = useState(false);
   const showFull = async () => {
@@ -281,11 +318,11 @@ function CaseCard({ d }) {
           href={d.官方頁}
           target="_blank"
           rel="noreferrer"
-          className="text-[16px] font-bold text-[var(--cc-ink)] underline decoration-[var(--cc-link-underline)] underline-offset-4 hover:text-[var(--cc-accent)]"
+          className="text-[17px] font-bold text-[var(--cc-ink)] underline decoration-[var(--cc-link-underline)] underline-offset-4 hover:text-[var(--cc-accent)]"
         >
-          {d.字號}
+          {hl(d.字號, q)}
         </a>
-        <span className="text-[12px] text-[var(--cc-figure-note)]">{formatDate(d.日期)}</span>
+        <span className="text-[13px] text-[var(--cc-figure-note)]">{formatDate(d.日期)}</span>
         <span className="inline-flex h-2.5 w-2.5 rounded-sm" style={{ background: typeInk(d.類型) }} aria-hidden />
         <Badge tone="plum">{d.類型}{d.子類 ? `・${d.子類}` : ''}</Badge>
         {d.審查結論?.結論 && d.審查結論.結論 !== '未分類' ? (
@@ -307,23 +344,23 @@ function CaseCard({ d }) {
       </div>
 
       {d.爭點 ? (
-        <p className="mt-2 max-w-4xl text-[13px] font-bold leading-relaxed text-[var(--cc-ink-heavy)]">{d.爭點}</p>
+        <p className="mt-2 max-w-4xl text-[14px] font-bold leading-relaxed text-[var(--cc-ink-heavy)]">{hl(d.爭點, q)}</p>
       ) : null}
       {d.系列 ? (
         <>
           {splitClauses(full ? full.主文 : d.主文).map((clause, i) => (
-            <p key={i} className="mt-2 max-w-4xl whitespace-pre-line text-[12.5px] leading-relaxed text-[var(--cc-ink-mid)]">{clause}</p>
+            <p key={i} className="mt-2 max-w-4xl whitespace-pre-line text-[13.5px] leading-relaxed text-[var(--cc-ink-mid)]">{hl(clause, q)}</p>
           ))}
           {full?.全文內容 ? (
             <div className="mt-2 border-l-2 border-[var(--cc-line)] pl-3">
-              <p className="mb-1 text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">全文（訓令／原函）</p>
+              <p className="mb-1 text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">全文（訓令／原函）</p>
               {splitClauses(full.全文內容).map((clause, i) => (
-                <p key={i} className="mt-1 max-w-4xl whitespace-pre-line text-[12px] leading-relaxed text-[var(--cc-ink-soft)]">{clause}</p>
+                <p key={i} className="mt-1 max-w-4xl whitespace-pre-line text-[13px] leading-relaxed text-[var(--cc-ink-soft)]">{clause}</p>
               ))}
             </div>
           ) : null}
           {!full && d.主文.endsWith('…') ? (
-            <button onClick={showFull} className="mt-2 inline-flex items-center gap-1 text-[12px] font-bold text-[var(--cc-accent)] hover:text-[var(--cc-link-hover)]">
+            <button onClick={showFull} className="mt-2 inline-flex items-center gap-1 text-[13px] font-bold text-[var(--cc-accent)] hover:text-[var(--cc-link-hover)]">
               {loadingFull ? '載入全文中…' : '展開全文'}
               {loadingFull ? null : <ChevronDown size={12} />}
             </button>
@@ -331,12 +368,12 @@ function CaseCard({ d }) {
         </>
       ) : (
         d.主文 ? splitClauses(d.主文).map((clause, i) => (
-          <p key={i} className="mt-2 max-w-4xl whitespace-pre-line text-[12.5px] leading-relaxed text-[var(--cc-ink-mid)]">{clause}</p>
+          <p key={i} className="mt-2 max-w-4xl whitespace-pre-line text-[13.5px] leading-relaxed text-[var(--cc-ink-mid)]">{hl(clause, q)}</p>
         )) : null
       )}
 
       {(d.憲法依據?.length || d.系爭法令?.length) ? (
-        <div className="mt-3 flex flex-wrap gap-x-6 gap-y-1 text-[11px] text-[var(--cc-ink-soft)]">
+        <div className="mt-3 flex flex-wrap gap-x-6 gap-y-1 text-[12px] text-[var(--cc-ink-soft)]">
           {d.憲法依據?.length ? (
             <span>
               <strong className="text-[var(--cc-accent)]">憲法依據</strong>　{d.憲法依據.join('、')}
@@ -344,7 +381,7 @@ function CaseCard({ d }) {
           ) : null}
           {d.系爭法令?.length ? (
             <span>
-              <strong className="text-[var(--cc-accent)]">系爭法令</strong>　{d.系爭法令.slice(0, 6).join('、')}
+              <strong className="text-[var(--cc-accent)]">系爭法令</strong>　{hl(d.系爭法令.slice(0, 6).join('、'), q)}
               {d.系爭法令.length > 6 ? `　等 ${d.系爭法令.length} 項` : ''}
             </span>
           ) : null}
@@ -352,7 +389,7 @@ function CaseCard({ d }) {
       ) : null}
 
       {(d.主筆 || d.參與大法官?.length) ? (
-        <div className="mt-2 text-[11px] text-[var(--cc-ink-soft)]">
+        <div className="mt-2 text-[12px] text-[var(--cc-ink-soft)]">
           {d.主筆 ? (
             <span className="mr-4">
               <strong className="text-[var(--cc-accent)]">主筆</strong>　{d.主筆}
@@ -368,14 +405,14 @@ function CaseCard({ d }) {
 
       {d.意見書.length ? (
         <div className="mt-3 rounded-lg bg-[var(--cc-opinion-bg)] px-3 py-2">
-          <p className="mb-1 text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">意見書 {d.意見書.length} 份</p>
+          <p className="mb-1 text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">意見書 {d.意見書.length} 份</p>
           {d.意見書.map((op, i) => (
             <OpinionLine key={i} op={op} officialUrl={d.官方頁} />
           ))}
         </div>
       ) : null}
 
-      <div className="mt-3 flex flex-wrap items-center gap-4 text-[11px]">
+      <div className="mt-3 flex flex-wrap items-center gap-4 text-[12px]">
         <a href={d.官方頁} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 font-bold text-[var(--cc-accent)] hover:text-[var(--cc-link-hover)]">
           {d.系列 ? '維基文庫原文（彙編校勘本）' : '官方頁面（全文、理由書與下載）'} <ExternalLink size={11} />
         </a>
@@ -391,12 +428,12 @@ function CaseCard({ d }) {
 
 function Select({ label, value, onChange, options }) {
   return (
-    <label className="flex items-center gap-1.5 text-[11px] font-bold text-[var(--cc-ink-soft)]">
+    <label className="flex items-center gap-1.5 text-[12px] font-bold text-[var(--cc-ink-soft)]">
       {label}
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="rounded-md border border-[var(--cc-border)] bg-white px-2 py-1.5 text-[12px] font-bold text-[var(--cc-ink-strong)] focus:outline-none focus:ring-2 focus:ring-[var(--cc-link-underline)]"
+        className="rounded-md border border-[var(--cc-border)] bg-white px-2 py-1.5 text-[13px] font-bold text-[var(--cc-ink-strong)] focus:outline-none focus:ring-2 focus:ring-[var(--cc-link-underline)]"
       >
         {options.map(([v, l]) => (
           <option key={v} value={v}>{l}</option>
@@ -438,7 +475,7 @@ function SegControl({ value, onChange, options }) {
         <button
           key={v}
           onClick={() => onChange(v)}
-          className="rounded-md px-3 py-1.5 text-[12.5px] font-bold transition"
+          className="rounded-md px-3 py-1.5 text-[13.5px] font-bold transition"
           style={{
             background: value === v ? 'var(--cc-tab-active-bg)' : 'transparent',
             color: value === v ? 'var(--cc-tab-active-text)' : 'var(--cc-tab-inactive-text)',
@@ -566,19 +603,21 @@ function IndexView() {
             <Select label="機關" value={機關 === '行憲前' ? '行憲前' : 機關} onChange={(v) => { set機關(v); setLimit(30); }} options={[['行憲前', `全部機關（${機關Counts.行憲前}）`], ...機關_ERA.行憲前.map((k) => [k, `${k}（${機關Counts.m.get(k) ?? 0}）`])]} />
           ) : null}
           {seg === '行憲前' ? (
-            <span className="text-[11px] text-[var(--cc-ink-soft)]">大理院／最高法院／司法院的統一解釋，非大法官憲法解釋；主題與審查基準為大法官時代機標，此處不適用。</span>
+            <span className="text-[12px] text-[var(--cc-ink-soft)]">大理院／最高法院／司法院的統一解釋，非大法官憲法解釋；主題與審查基準為大法官時代機標，此處不適用。</span>
           ) : null}
         </div>
-        <div className="flex flex-wrap items-center gap-3">
-          <label className="flex min-w-[200px] flex-1 items-center gap-2 rounded-md border border-[var(--cc-border)] bg-white px-2.5 py-1.5">
+        <div className="flex items-center gap-3">
+          <label className="flex w-full items-center gap-2 rounded-md border border-[var(--cc-border)] bg-white px-2.5 py-1.5">
             <Search size={13} className="text-[var(--cc-eyebrow)]" />
             <input
               value={q}
               onChange={(e) => { setQ(e.target.value); setLimit(30); }}
               placeholder="搜尋字號、爭點、主文、系爭法令、原理原則"
-              className="w-full bg-transparent text-[12px] text-[var(--cc-ink-strong)] placeholder-[var(--cc-placeholder)] focus:outline-none"
+              className="w-full bg-transparent text-[13px] text-[var(--cc-ink-strong)] placeholder-[var(--cc-placeholder)] focus:outline-none"
             />
           </label>
+        </div>
+        <div className="mt-2 flex flex-wrap items-center gap-2">
           {!isPre ? (
             <Select label="類型" value={type} onChange={(v) => { setType(v); setLimit(30); }} options={[['全部', '全部'], ['解釋', `解釋（${typeCounts.get('解釋') ?? 0}）`], ['判決', `憲法法庭判決（${typeCounts.get('判決') ?? 0}）`], ['實體裁定', `實體裁定（${typeCounts.get('實體裁定') ?? 0}）`]]} />
           ) : null}
@@ -594,7 +633,7 @@ function IndexView() {
           ) : null}
           <Select label="年代" value={decade} onChange={(v) => { setDecade(v); setLimit(30); }} options={[['全部', '全部'], ...decades.map((d) => [d, `${d} 年代`])]} />
         </div>
-        <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-[var(--cc-ink-soft)]">
+        <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-[12px] text-[var(--cc-ink-soft)]">
           <span className="font-bold text-[var(--cc-ink-strong)]">符合 {filtered.length} 件</span>
           <button
             onClick={() => setSortDir((d) => (d === 'desc' ? 'asc' : 'desc'))}
@@ -612,13 +651,13 @@ function IndexView() {
       </div>
 
       {shown.map((d) => (
-        <CaseCard key={d.字號} d={d} />
+        <CaseCard key={d.字號} d={d} q={q} />
       ))}
       {filtered.length > limit ? (
         <div className="py-6 text-center">
           <button
             onClick={() => setLimit(limit + 50)}
-            className="rounded-lg border border-[var(--cc-border)] bg-white px-5 py-2 text-[12px] font-bold text-[var(--cc-accent)] hover:bg-[var(--cc-hover-bg)]"
+            className="rounded-lg border border-[var(--cc-border)] bg-white px-5 py-2 text-[13px] font-bold text-[var(--cc-accent)] hover:bg-[var(--cc-hover-bg)]"
           >
             顯示更多（尚有 {filtered.length - limit} 件）
           </button>
@@ -630,6 +669,7 @@ function IndexView() {
 
 function TimelineView() {
   const [hover, setHover] = useState(null);
+  const [era, setEra] = useState('行憲後');
   const byYear = useMemo(() => {
     const m = new Map();
     for (const d of docs) {
@@ -661,10 +701,15 @@ function TimelineView() {
 
   return (
     <div>
+      <div className="border-t border-[var(--cc-line)] pt-5">
+        <SegControl value={era} onChange={setEra} options={[['行憲後', '行憲後　釋字・憲判'], ['行憲前', '行憲前　統一解釋']]} />
+      </div>
+      {era === '行憲前' ? <Pre1947Timeline /> : (
+      <>
       <section className="border-t border-[var(--cc-line)] py-5">
-        <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">年度密度</p>
-        <h2 className="text-base font-bold text-[var(--cc-title-ink)]">每年作成件數（1949–{y1}）</h2>
-        <div className="mt-1 flex flex-wrap gap-4 text-[11px] text-[var(--cc-ink-soft)]">
+        <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">年度密度</p>
+        <h2 className="text-lg font-bold text-[var(--cc-title-ink)]">每年作成件數（1949–{y1}）</h2>
+        <div className="mt-1 flex flex-wrap gap-4 text-[12px] text-[var(--cc-ink-soft)]">
           {Object.keys(TYPE_TONE).map((k) => (
             <span key={k} className="inline-flex items-center gap-1.5">
               <span className="h-2.5 w-2.5 rounded-sm border" style={{ background: typeFill(k), borderColor: typeInk(k) }} />
@@ -703,13 +748,13 @@ function TimelineView() {
             })}
           </svg>
           {hover ? (
-            <div className="pointer-events-none absolute left-4 top-1 rounded-md border border-[var(--cc-border)] bg-white px-3 py-1.5 text-[11px] shadow-sm">
+            <div className="pointer-events-none absolute left-4 top-1 rounded-md border border-[var(--cc-border)] bg-white px-3 py-1.5 text-[12px] shadow-sm">
               <strong className="text-[var(--cc-ink-strong)]">{hover.y} 年</strong>　共 {hover.total} 件
               {hover.解釋 ? `　解釋 ${hover.解釋}` : ''}{hover.判決 ? `　判決 ${hover.判決}` : ''}{hover.實體裁定 ? `　裁定 ${hover.實體裁定}` : ''}
             </div>
           ) : null}
         </div>
-        <p className="mt-1 max-w-3xl text-[11px] leading-relaxed text-[var(--cc-ink-soft)]">
+        <p className="mt-1 max-w-3xl text-[12px] leading-relaxed text-[var(--cc-ink-soft)]">
           2022 年 1 月 4 日憲法訴訟法施行後，大法官解釋制度走入歷史，改由憲法法庭以判決與裁定行使職權；2024 年底起因大法官人數不足，作成件數明顯下降。
         </p>
       </section>
@@ -717,8 +762,8 @@ function TimelineView() {
       <TopicHeatmaps />
 
       <section className="border-t border-[var(--cc-line)] py-5">
-        <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">引用網絡</p>
-        <h2 className="text-base font-bold text-[var(--cc-title-ink)]">被後案引用最多的解釋（官方「相關法令」欄互引統計）</h2>
+        <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">引用網絡</p>
+        <h2 className="text-lg font-bold text-[var(--cc-title-ink)]">被後案引用最多的解釋（官方「相關法令」欄互引統計）</h2>
         <div className="mt-3 max-w-3xl divide-y divide-[var(--cc-line)]">
           {cited.map(([no, n]) => {
             const d = docByNo.get(no);
@@ -726,12 +771,12 @@ function TimelineView() {
             return (
               <div key={no} className="grid items-baseline gap-2 py-2 sm:grid-cols-[130px_56px_1fr]">
                 {d ? (
-                  <a href={d.官方頁} target="_blank" rel="noreferrer" className="text-[12.5px] font-bold text-[var(--cc-accent)] underline decoration-[var(--cc-link-underline)] underline-offset-2">{no}</a>
+                  <a href={d.官方頁} target="_blank" rel="noreferrer" className="text-[13.5px] font-bold text-[var(--cc-accent)] underline decoration-[var(--cc-link-underline)] underline-offset-2">{no}</a>
                 ) : (
-                  <span className="text-[12.5px] font-bold text-[var(--cc-ink-strong)]">{no}</span>
+                  <span className="text-[13.5px] font-bold text-[var(--cc-ink-strong)]">{no}</span>
                 )}
-                <span className="text-[12px] font-bold text-[var(--cc-ink-strong)]">{n} 次</span>
-                <span className="text-[11.5px] leading-relaxed text-[var(--cc-ink-soft)]">
+                <span className="text-[13px] font-bold text-[var(--cc-ink-strong)]">{n} 次</span>
+                <span className="text-[12.5px] leading-relaxed text-[var(--cc-ink-soft)]">
                   {d?.爭點?.slice(0, 56) ?? ''}
                   {why ? <span className="mt-0.5 block text-[var(--cc-ink-mid)]"><strong className="text-[var(--cc-accent)]">為何常被引用</strong>　{why}</span> : null}
                 </span>
@@ -740,7 +785,161 @@ function TimelineView() {
           })}
         </div>
       </section>
+      </>
+      )}
     </div>
+  );
+}
+
+// 行憲前（統一解釋）視覺化：有日期者上真實年度軸（依機關堆疊，色＝沿革頁 ERA_TONE），
+// 無日期者（幾乎全是大理院統字）不虛構日期，改以總量＋號次序列密度呈現；另附系列／時期分類（類型化）。
+function Pre1947Timeline() {
+  const [hover, setHover] = useState(null);
+  const 機關TONE = { 大理院: ERA_TONE.dali, 最高法院: ERA_TONE.zuigao, 司法院: ERA_TONE.sifayuan };
+  const 機關序 = ['大理院', '最高法院', '司法院'];
+  const { byYear, span, y0, y1, ymax, undated, seriesRows, eraRows, total } = useMemo(() => {
+    const pre = docs.filter((d) => d.系列);
+    const dated = pre.filter((d) => d.日期);
+    const undated = pre.filter((d) => !d.日期);
+    const m = new Map();
+    for (const d of dated) {
+      const y = Number(d.日期.slice(0, 4));
+      if (!Number.isFinite(y)) continue;
+      if (!m.has(y)) m.set(y, { 大理院: 0, 最高法院: 0, 司法院: 0 });
+      if (d.機關 in m.get(y)) m.get(y)[d.機關]++;
+    }
+    const ys = [...m.keys()].sort((a, b) => a - b);
+    const y0 = ys[0];
+    const y1 = ys[ys.length - 1];
+    const span = [];
+    for (let y = y0; y <= y1; y++) span.push(y);
+    const ymax = Math.max(1, ...[...m.values()].map((v) => v.大理院 + v.最高法院 + v.司法院));
+    // 系列（統字/院字/院解字/解字）＝行憲前的自然「類型」；時期＝北京政府/訓政/行憲。
+    const tally = (key) => {
+      const c = new Map();
+      for (const d of pre) { const k = d[key] ?? '未標'; c.set(k, (c.get(k) ?? 0) + 1); }
+      return [...c.entries()].sort((a, b) => b[1] - a[1]);
+    };
+    return { byYear: m, span, y0, y1, ymax, undated, seriesRows: tally('系列'), eraRows: tally('時期'), total: pre.length };
+  }, []);
+
+  const W = 6;
+  const H = 170;
+  const chartW = span.length * W;
+  // 無日期統字的號次序列密度（不含時間、純序列分佈）：分 40 桶。
+  const undatedByNo = useMemo(() => {
+    const nums = undated.map((d) => Number(d.號次)).filter((n) => Number.isFinite(n));
+    if (!nums.length) return { bins: [], bmax: 1, lo: 0, hi: 0, n: undated.length };
+    const lo = Math.min(...nums);
+    const hi = Math.max(...nums);
+    const BINS = 40;
+    const bins = new Array(BINS).fill(0);
+    for (const n of nums) bins[Math.min(BINS - 1, Math.floor(((n - lo) / (hi - lo || 1)) * BINS))]++;
+    return { bins, bmax: Math.max(1, ...bins), lo, hi, n: undated.length };
+  }, [undated]);
+
+  const barRow = (rows, palette) => {
+    const rmax = Math.max(1, ...rows.map(([, n]) => n));
+    return (
+      <div className="mt-2 space-y-1.5">
+        {rows.map(([label, n], i) => {
+          const tone = palette(label, i);
+          return (
+            <div key={label} className="grid grid-cols-[84px_1fr_52px] items-center gap-2 text-[12px]">
+              <span className="truncate font-bold text-[var(--cc-ink-strong)]">{label}</span>
+              <span className="h-3 rounded-sm" style={{ width: `${(n / rmax) * 100}%`, minWidth: 2, background: `var(--cat-${tone}-bg)`, borderRight: `2px solid var(--cat-${tone}-tx)` }} />
+              <span className="text-right text-[var(--cc-ink-soft)]">{n}</span>
+            </div>
+          );
+        })}
+      </div>
+    );
+  };
+  const 系列TONE = { 統字: ERA_TONE.dali, 解字: ERA_TONE.zuigao, 院字: ERA_TONE.sifayuan, 院解字: 3 };
+
+  return (
+    <>
+      <section className="border-t border-[var(--cc-line)] py-5">
+        <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">年度密度 · 有作成日期者</p>
+        <h2 className="text-lg font-bold text-[var(--cc-title-ink)]">每年作成件數（{y0}–{y1}）</h2>
+        <div className="mt-1 flex flex-wrap gap-4 text-[12px] text-[var(--cc-ink-soft)]">
+          {機關序.map((k) => (
+            <span key={k} className="inline-flex items-center gap-1.5">
+              <span className="h-2.5 w-2.5 rounded-sm border" style={{ background: `var(--cat-${機關TONE[k]}-bg)`, borderColor: `var(--cat-${機關TONE[k]}-tx)` }} />
+              {k}
+            </span>
+          ))}
+        </div>
+        <div className="relative mt-3 overflow-x-auto pb-2">
+          <svg width={chartW + 40} height={H + 40} role="img" aria-label="行憲前每年統一解釋件數長條圖">
+            {span.map((y, i) => {
+              const v = byYear.get(y) ?? { 大理院: 0, 最高法院: 0, 司法院: 0 };
+              const totalY = v.大理院 + v.最高法院 + v.司法院;
+              let acc = 0;
+              return (
+                <g key={y} transform={`translate(${i * W + 20}, 0)`}
+                  onMouseEnter={() => setHover({ y, ...v, total: totalY })}
+                  onMouseLeave={() => setHover(null)}>
+                  <rect x={0} y={0} width={W} height={H} fill="transparent" />
+                  {機關序.map((k) => {
+                    if (!v[k]) return null;
+                    const h = (v[k] / ymax) * (H - 10);
+                    acc += h;
+                    return <rect key={k} x={0.5} y={H - acc} width={W - 1} height={Math.max(h - 1, 1)} rx={1} fill={`var(--cat-${機關TONE[k]}-bg)`} stroke={`var(--cat-${機關TONE[k]}-tx)`} strokeWidth={0.6} opacity={hover && hover.y !== y ? 0.45 : 1} />;
+                  })}
+                  {y % 10 === 0 ? (
+                    <text x={W / 2} y={H + 16} textAnchor="middle" fontSize={10} fill="var(--cc-axis-text)">{y}</text>
+                  ) : null}
+                </g>
+              );
+            })}
+          </svg>
+          {hover ? (
+            <div className="pointer-events-none absolute left-4 top-1 rounded-md border border-[var(--cc-border)] bg-white px-3 py-1.5 text-[12px] shadow-sm">
+              <strong className="text-[var(--cc-ink-strong)]">{hover.y} 年</strong>　共 {hover.total} 件
+              {hover.大理院 ? `　大理院 ${hover.大理院}` : ''}{hover.最高法院 ? `　最高法院 ${hover.最高法院}` : ''}{hover.司法院 ? `　司法院 ${hover.司法院}` : ''}
+            </div>
+          ) : null}
+        </div>
+        <p className="mt-1 max-w-3xl text-[12px] leading-relaxed text-[var(--cc-ink-soft)]">
+          司法院（院字／院解字）與最高法院（解字）多有明確作成日期，故上年度軸；配色與「沿革」頁機關色帶一致。
+        </p>
+      </section>
+
+      <section className="border-t border-[var(--cc-line)] py-5">
+        <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">無作成日期 · 大理院統字</p>
+        <h2 className="text-lg font-bold text-[var(--cc-title-ink)]">
+          <span className="text-[var(--cc-highlight)]">{undatedByNo.n.toLocaleString()}</span> 件無作成日期，依號次序列看分佈
+        </h2>
+        <p className="mt-1 max-w-3xl text-[12px] leading-relaxed text-[var(--cc-ink-soft)]">
+          大理院統字絕大多數未載作成日期，號次即其大致時序但無法對應公曆日，故不虛構日期上軸；下圖為號次
+          {undatedByNo.lo}–{undatedByNo.hi} 分 40 桶的件數密度。
+        </p>
+        <div className="mt-3 flex items-end gap-0.5">
+          {undatedByNo.bins.map((b, i) => (
+            <span key={i} className="flex-1 rounded-t-sm" style={{ height: Math.max(2, (b / undatedByNo.bmax) * 90), background: `var(--cat-${ERA_TONE.dali}-bg)`, borderTop: `2px solid var(--cat-${ERA_TONE.dali}-tx)` }} title={`第 ${i + 1} 桶：${b} 件`} />
+          ))}
+        </div>
+      </section>
+
+      <section className="border-t border-[var(--cc-line)] py-5">
+        <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">類型化 · 依既有結構欄位</p>
+        <h2 className="text-lg font-bold text-[var(--cc-title-ink)]">系列與時期分佈（共 {total.toLocaleString()} 件）</h2>
+        <div className="mt-3 grid max-w-4xl gap-6 sm:grid-cols-2">
+          <div>
+            <p className="text-[12px] font-bold text-[var(--cc-title-ink)]">系列（＝行憲前的解釋類型）</p>
+            {barRow(seriesRows, (label) => 系列TONE[label] ?? 8)}
+          </div>
+          <div>
+            <p className="text-[12px] font-bold text-[var(--cc-title-ink)]">時期</p>
+            {barRow(eraRows, (_label, i) => [2, 5, 4, 8][i % 4])}
+          </div>
+        </div>
+        <p className="mt-2 max-w-3xl text-[12px] leading-relaxed text-[var(--cc-ink-soft)]">
+          行憲前「類型」欄一律為「解釋」，此處改以系列（統字／院字／院解字／解字）與時期做類型化辨識；語意主題分類需回研究資料庫貼標後另補。
+        </p>
+      </section>
+    </>
   );
 }
 
@@ -792,8 +991,8 @@ function TopicHeatmaps() {
   return (
     <>
       <section className="border-t border-[var(--cc-line)] py-5">
-        <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">主題×年代</p>
-        <h2 className="text-base font-bold text-[var(--cc-title-ink)]">哪個年代在吵哪些問題（每 5 年一格，色深＝件數）</h2>
+        <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">主題×年代</p>
+        <h2 className="text-lg font-bold text-[var(--cc-title-ink)]">哪個年代在吵哪些問題（每 5 年一格，色深＝件數）</h2>
         <div className="relative mt-3 overflow-x-auto pb-2">
           <svg width={LABEL_W + bins.length * CW + 12} height={H + 26} role="img" aria-label="主題與年代分布熱圖">
             {topics.map((t, r) => (
@@ -819,12 +1018,12 @@ function TopicHeatmaps() {
             }))}
           </svg>
           {cell?.kind === 'year' ? (
-            <div className="pointer-events-none absolute left-4 top-0 rounded-md border border-[var(--cc-border)] bg-white px-3 py-1.5 text-[11px] shadow-sm">
+            <div className="pointer-events-none absolute left-4 top-0 rounded-md border border-[var(--cc-border)] bg-white px-3 py-1.5 text-[12px] shadow-sm">
               <strong className="text-[var(--cc-ink-strong)]">{cell.t}</strong>　{cell.b}–{cell.b + 4} 年　<strong className="text-[var(--cc-accent)]">{cell.v} 件</strong>
             </div>
           ) : null}
         </div>
-        <div className="mt-1 flex items-center gap-2 text-[10.5px] text-[var(--cc-ink-soft)]">
+        <div className="mt-1 flex items-center gap-2 text-[11.5px] text-[var(--cc-ink-soft)]">
           少
           {[0.08, 0.25, 0.5, 0.75, 1].map((f) => (
             <span key={f} className="inline-block h-3 w-3 rounded-[3px]" style={{ background: heatFill(f * maxCell, maxCell) }} />
@@ -834,8 +1033,8 @@ function TopicHeatmaps() {
       </section>
 
       <section className="border-t border-[var(--cc-line)] py-5">
-        <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">主題×審查結論</p>
-        <h2 className="text-base font-bold text-[var(--cc-title-ink)]">哪些領域最常被宣告違憲（機標結論，待人工欄為尚未覆核件）</h2>
+        <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">主題×審查結論</p>
+        <h2 className="text-lg font-bold text-[var(--cc-title-ink)]">哪些領域最常被宣告違憲（機標結論，待人工欄為尚未覆核件）</h2>
         <div className="relative mt-3 overflow-x-auto pb-2">
           <svg width={LABEL_W + outcomes.length * 74 + 12} height={H + 30} role="img" aria-label="主題與審查結論矩陣">
             {outcomes.map((o, c) => (
@@ -864,12 +1063,12 @@ function TopicHeatmaps() {
             }))}
           </svg>
           {cell?.kind === 'outcome' ? (
-            <div className="pointer-events-none absolute left-4 top-0 rounded-md border border-[var(--cc-border)] bg-white px-3 py-1.5 text-[11px] shadow-sm">
+            <div className="pointer-events-none absolute left-4 top-0 rounded-md border border-[var(--cc-border)] bg-white px-3 py-1.5 text-[12px] shadow-sm">
               <strong className="text-[var(--cc-ink-strong)]">{cell.t}</strong>　{cell.o}　<strong className="text-[var(--cc-accent)]">{cell.v} 件</strong>
             </div>
           ) : null}
         </div>
-        <p className="mt-1 max-w-3xl text-[11px] leading-relaxed text-[var(--cc-ink-soft)]">
+        <p className="mt-1 max-w-3xl text-[12px] leading-relaxed text-[var(--cc-ink-soft)]">
           審查結論為文字規則機標（違憲即失效併入違憲欄；法令解釋／補充前解釋／變更前解釋併入非合憲性審查欄），僅供分布觀察；個案請以卡片上的官方連結查證原文。
         </p>
       </section>
@@ -889,13 +1088,13 @@ function JusticesView({ onOpen }) {
     <section className="border-t border-[var(--cc-line)] py-5">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">逐人統計</p>
-          <h2 className="text-base font-bold text-[var(--cc-title-ink)]">大法官意見書行為（{justices.length} 位，來源：官方意見書檔名與判決欄位）</h2>
+          <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">逐人統計</p>
+          <h2 className="text-lg font-bold text-[var(--cc-title-ink)]">大法官意見書行為（{justices.length} 位，來源：官方意見書檔名與判決欄位）</h2>
         </div>
         <Select label="排序" value={sortKey} onChange={setSortKey} options={[['提出意見書', '提出意見書數'], ['加入意見書', '加入意見書數'], ['主筆判決', '主筆判決數'], ['參與解釋', '參與解釋數'], ['參與判決', '參與裁判數']]} />
       </div>
       <div className="mt-3 overflow-x-auto rounded-lg border border-[var(--cc-table-border)]">
-        <table className="w-full min-w-[760px] border-collapse bg-white text-left text-[11.5px]">
+        <table className="w-full min-w-[760px] border-collapse bg-white text-left text-[12.5px]">
           <thead className="bg-[var(--cc-hover-bg)] text-[var(--cc-table-head-ink)]">
             <tr>
               <th className="px-3 py-2">大法官</th>
@@ -932,7 +1131,7 @@ function JusticesView({ onOpen }) {
           </tbody>
         </table>
       </div>
-      <p className="mt-2 max-w-3xl text-[11px] leading-relaxed text-[var(--cc-ink-soft)]">
+      <p className="mt-2 max-w-3xl text-[12px] leading-relaxed text-[var(--cc-ink-soft)]">
         統計基礎：{data.統計.總數} 件案件中具名的大法官意見書。參與解釋計自官方頁末尾的大法官署名列（813 件全覆蓋；
         迴避或未參與評議者不在署名列，故非任期推定）；參與裁判計自憲法法庭判決/裁定的官方合議庭名單。點姓名開個人頁。
       </p>
@@ -982,8 +1181,8 @@ function JusticeDetail({ name, onBack, onOpen }) {
   if (!j) {
     return (
       <div className="py-8">
-        <button onClick={onBack} className="text-[12px] font-bold text-[var(--cc-accent)] hover:underline">← 回大法官總覽</button>
-        <p className="mt-4 text-[13px] text-[var(--cc-ink-mid)]">名冊裡查無「{name}」。</p>
+        <button onClick={onBack} className="text-[13px] font-bold text-[var(--cc-accent)] hover:underline">← 回大法官總覽</button>
+        <p className="mt-4 text-[14px] text-[var(--cc-ink-mid)]">名冊裡查無「{name}」。</p>
       </div>
     );
   }
@@ -1015,8 +1214,8 @@ function JusticeDetail({ name, onBack, onOpen }) {
   return (
     <div>
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[var(--cc-line)] py-4">
-        <button onClick={onBack} className="text-[12px] font-bold text-[var(--cc-accent)] hover:underline">← 回大法官總覽</button>
-        <div className="flex flex-wrap items-center gap-3 text-[11px]">
+        <button onClick={onBack} className="text-[13px] font-bold text-[var(--cc-accent)] hover:underline">← 回大法官總覽</button>
+        <div className="flex flex-wrap items-center gap-3 text-[12px]">
           <span className="text-[var(--cc-eyebrow)]">打包這位大法官的全部資料：</span>
           <button onClick={exportCites} className="inline-flex items-center gap-1 font-bold text-[var(--cc-accent)] hover:text-[var(--cc-link-hover)]"><Download size={11} />引註清單</button>
           <button onClick={exportBib} className="inline-flex items-center gap-1 font-bold text-[var(--cc-accent)] hover:text-[var(--cc-link-hover)]"><Download size={11} />BibTeX</button>
@@ -1026,13 +1225,13 @@ function JusticeDetail({ name, onBack, onOpen }) {
 
       <section className="py-5">
         <h2 className="text-2xl font-bold text-[var(--cc-heading)]">{j.姓名}</h2>
-        <div className="mt-2 flex flex-wrap gap-x-6 gap-y-1 text-[12px] text-[var(--cc-ink-mid)]">
+        <div className="mt-2 flex flex-wrap gap-x-6 gap-y-1 text-[13px] text-[var(--cc-ink-mid)]">
           {/* 屆次推定的任期純由屆次標籤推出，兩欄重複，只留屆次一行；
               簡歷頁/人工核定者任期有獨立資訊（多段、辭職、卒於任內、現任起日）才另列 */}
           {j.屆次?.length ? (
             <span>
               <strong className="text-[var(--cc-accent)]">屆次</strong>　{j.屆次.join('、')}
-              {j.任期來源 === '屆次推定' ? <span className="text-[10.5px] text-[var(--cc-figure-note)]">（任期依屆次推定）</span> : null}
+              {j.任期來源 === '屆次推定' ? <span className="text-[11.5px] text-[var(--cc-figure-note)]">（任期依屆次推定）</span> : null}
             </span>
           ) : null}
           {tenureText && j.任期來源 !== '屆次推定' ? (
@@ -1051,8 +1250,8 @@ function JusticeDetail({ name, onBack, onOpen }) {
         <div className="mt-3 flex flex-wrap gap-x-8 gap-y-2">
           {[['提出意見書', j.提出意見書], ['加入意見書', j.加入意見書], ['主筆判決', j.主筆判決], ['參與解釋', j.參與解釋 ?? 0], ['參與裁判', j.參與判決]].map(([label, value]) => (
             <div key={label} className="flex items-baseline gap-2">
-              <span className="text-[11px] font-bold text-[var(--cc-icon)]">{label}</span>
-              <span className="font-display text-lg font-bold text-[var(--cc-ink)]">{value}</span>
+              <span className="text-[12px] font-bold text-[var(--cc-icon)]">{label}</span>
+              <span className="font-display text-xl font-bold text-[var(--cc-ink)]">{value}</span>
             </div>
           ))}
         </div>
@@ -1060,16 +1259,16 @@ function JusticeDetail({ name, onBack, onOpen }) {
 
       {involvedCases.length ? (
         <section className="border-t border-[var(--cc-line)] py-5">
-          <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">案件參與 {involvedCases.length} 件</p>
+          <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">案件參與 {involvedCases.length} 件</p>
           {opinions.length ? (
             <>
-              <h3 className="text-base font-bold text-[var(--cc-title-ink)]">
+              <h3 className="text-lg font-bold text-[var(--cc-title-ink)]">
                 意見書 {opinions.length} 份：{Object.entries(j.意見書類型 ?? {}).map(([k, v]) => `${k.replace('意見書', '')} ${v}`).join('・') || ''}
               </h3>
               <div className="mt-2 divide-y divide-[var(--cc-row-border)]">
                 {opinions.map(({ d, op, role }, i) => (
-                  <div key={i} className="flex flex-wrap items-center gap-x-3 gap-y-1 py-1.5 text-[12px]">
-                    <span className="w-[76px] text-[11px] text-[var(--cc-figure-note)]">{formatDate(d.日期)}</span>
+                  <div key={i} className="flex flex-wrap items-center gap-x-3 gap-y-1 py-1.5 text-[13px]">
+                    <span className="w-[104px] whitespace-nowrap text-[12px] text-[var(--cc-figure-note)]">{formatDate(d.日期)}</span>
                     <a href={d.官方頁} target="_blank" rel="noreferrer" className="w-[130px] font-bold text-[var(--cc-ink-strong)] underline decoration-[var(--cc-link-underline)] underline-offset-2 hover:text-[var(--cc-accent)]">{d.字號}</a>
                     <Badge tone={op.類型.includes('不同') ? 'red' : op.類型.includes('協同') ? 'blue' : 'slate'}>{op.類型}</Badge>
                     {role === '加入' ? <Badge tone="slate">加入</Badge> : null}
@@ -1077,11 +1276,11 @@ function JusticeDetail({ name, onBack, onOpen }) {
                     {d.主席 === name ? <Badge tone="plum">主席</Badge> : null}
                     {op.收於抄本 ? <Badge tone="gold">收於抄本</Badge> : null}
                     {op.加入註記?.some((s) => s.startsWith(name)) ? (
-                      <span className="text-[10.5px] text-[var(--cc-figure-note)]">（{op.加入註記.filter((s) => s.startsWith(name)).join('；')}）</span>
+                      <span className="text-[11.5px] text-[var(--cc-figure-note)]">（{op.加入註記.filter((s) => s.startsWith(name)).join('；')}）</span>
                     ) : null}
-                    <span className="max-w-[400px] truncate text-[11px] text-[var(--cc-ink-soft)]">{d.爭點?.slice(0, 40)}</span>
+                    <span className="max-w-[400px] truncate text-[12px] text-[var(--cc-ink-soft)]">{d.爭點?.slice(0, 40)}</span>
                     {op.下載網址 ?? (op.內嵌 ? d.官方頁 : null) ? (
-                      <a href={op.下載網址 ?? d.官方頁} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-[11px] text-[var(--cc-accent)] underline decoration-[var(--cc-link-underline)] underline-offset-2">{op.下載網址 ? 'PDF' : '官方頁'} <ExternalLink size={10} /></a>
+                      <a href={op.下載網址 ?? d.官方頁} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-[12px] text-[var(--cc-accent)] underline decoration-[var(--cc-link-underline)] underline-offset-2">{op.下載網址 ? 'PDF' : '官方頁'} <ExternalLink size={10} /></a>
                     ) : null}
                   </div>
                 ))}
@@ -1090,20 +1289,20 @@ function JusticeDetail({ name, onBack, onOpen }) {
           ) : null}
           {participationOnly.length ? (
             <div className="mt-4">
-              <p className="text-[11px] font-bold text-[var(--cc-ink-soft)]">
+              <p className="text-[12px] font-bold text-[var(--cc-ink-soft)]">
                 僅參與、無個人意見書（{participationOnly.length} 件；解釋為署名列、裁判為官方合議庭名單）
               </p>
               <div className="mt-1.5 flex flex-wrap gap-x-2.5 gap-y-1">
                 {participationOnly.map((d) => (
                   <a key={d.字號} href={d.官方頁} target="_blank" rel="noreferrer" title={`${formatDate(d.日期)}　${d.爭點?.slice(0, 60) ?? ''}`}
-                    className="text-[11px] text-[var(--cc-ink-mid)] underline decoration-[var(--cc-link-underline)] underline-offset-2 hover:text-[var(--cc-accent)]">
+                    className="text-[12px] text-[var(--cc-ink-mid)] underline decoration-[var(--cc-link-underline)] underline-offset-2 hover:text-[var(--cc-accent)]">
                     {d.字號.startsWith('釋字第') ? `釋${d.字號.slice(3, -1)}` : d.字號}
                     {d.主筆 === name ? '＊' : ''}{d.主席 === name ? '†' : ''}
                   </a>
                 ))}
               </div>
               {participationOnly.some((d) => d.主筆 === name || d.主席 === name) ? (
-                <p className="mt-1 text-[10.5px] text-[var(--cc-figure-note)]">＊＝主筆　†＝會議主席</p>
+                <p className="mt-1 text-[11.5px] text-[var(--cc-figure-note)]">＊＝主筆　†＝會議主席</p>
               ) : null}
             </div>
           ) : null}
@@ -1112,11 +1311,11 @@ function JusticeDetail({ name, onBack, onOpen }) {
 
       {partners.length ? (
         <section className="border-t border-[var(--cc-line)] py-5">
-          <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">共同具名對象</p>
+          <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">共同具名對象</p>
           <div className="mt-2 flex flex-wrap gap-2">
             {partners.map((p) => (
               <button key={p.對象} onClick={() => onOpen(p.對象)}
-                className="rounded-md border border-[var(--cc-border)] bg-white px-2.5 py-1 text-[11.5px] font-bold text-[var(--cc-accent)] hover:bg-[var(--cc-hover-bg)]">
+                className="rounded-md border border-[var(--cc-border)] bg-white px-2.5 py-1 text-[12.5px] font-bold text-[var(--cc-accent)] hover:bg-[var(--cc-hover-bg)]">
                 {p.對象} × {p.次數}
               </button>
             ))}
@@ -1124,7 +1323,7 @@ function JusticeDetail({ name, onBack, onOpen }) {
         </section>
       ) : null}
 
-      <p className="border-t border-[var(--cc-line)] py-4 text-[11px] leading-relaxed text-[var(--cc-ink-soft)]">
+      <p className="border-t border-[var(--cc-line)] py-4 text-[12px] leading-relaxed text-[var(--cc-ink-soft)]">
         意見書清單解析自官方附件檔名與內嵌正文；「收於抄本」表示該意見書僅收於全案合訂 PDF。參與名單皆為官方實據：
         解釋來自官方頁末尾的大法官署名列（813 件全覆蓋，迴避或未參與評議者不在列），裁判來自官方合議庭名單；
         「加入◯◯部分」等範圍限定照檔名原文附註。批次下載清單需回研究資料庫執行
@@ -1242,24 +1441,24 @@ function TenureView({ onOpen }) {
     <section className="border-t border-[var(--cc-line)] py-5">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">制度 77 年</p>
-          <h2 className="text-base font-bold text-[var(--cc-title-ink)]">歷任大法官任期時間軸（{rows.length} 人）</h2>
+          <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">制度 77 年</p>
+          <h2 className="text-lg font-bold text-[var(--cc-title-ink)]">歷任大法官任期時間軸（{rows.length} 人）</h2>
         </div>
         <div className="flex flex-wrap items-center gap-4">
           <Select label="著色" value={colorBy} onChange={setColorBy} options={[['出身', '按出身'], ['留學國', '按留學地'], ['提名總統', '按提名總統']]} />
           <button
             onClick={() => setAsc((v) => !v)}
-            className="inline-flex items-center gap-1 rounded-md border border-[var(--cc-border)] px-2 py-1 text-[11px] font-bold text-[var(--cc-ink-soft)] hover:text-[var(--cc-accent)]"
+            className="inline-flex items-center gap-1 rounded-md border border-[var(--cc-border)] px-2 py-1 text-[12px] font-bold text-[var(--cc-ink-soft)] hover:text-[var(--cc-accent)]"
           >
             <ArrowUpDown size={11} />{asc ? '最早在上' : '最新在上'}
           </button>
-          <label className="flex items-center gap-1.5 text-[11px] font-bold text-[var(--cc-ink-soft)]">
+          <label className="flex items-center gap-1.5 text-[12px] font-bold text-[var(--cc-ink-soft)]">
             <input type="checkbox" checked={onlyAuthors} onChange={(e) => setOnlyAuthors(e.target.checked)} />
             僅顯示有具名意見書者
           </label>
         </div>
       </div>
-      <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-[var(--cc-ink-soft)]">
+      <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-[12px] text-[var(--cc-ink-soft)]">
         {Object.entries(legend).map(([k, c]) => (
           <span key={k} className="inline-flex items-center gap-1.5">
             {k === '待確認' && colorBy !== '提名總統'
@@ -1279,7 +1478,7 @@ function TenureView({ onOpen }) {
       </div>
 
       {/* 圖已攤開全高，資訊列 sticky 貼在頁面導覽下緣，滾到圖底仍看得到 */}
-      <div className="sticky top-[49px] z-10 mt-2 rounded-md border border-[var(--cc-border)] bg-[var(--cc-bg)]/95 px-3 py-1.5 text-[11.5px] backdrop-blur">
+      <div className="sticky top-[49px] z-10 mt-2 rounded-md border border-[var(--cc-border)] bg-[var(--cc-bg)]/95 px-3 py-1.5 text-[12.5px] backdrop-blur">
         {hover ? (
           <div className="flex flex-wrap items-baseline gap-x-4 gap-y-0.5 text-[var(--cc-ink-strong)]">
             <strong>{hover.姓名}</strong>
@@ -1380,7 +1579,7 @@ function TenureView({ onOpen }) {
         </div>
       </div>
 
-      <p className="mt-2 max-w-4xl text-[11px] leading-relaxed text-[var(--cc-ink-soft)]">
+      <p className="mt-2 max-w-4xl text-[12px] leading-relaxed text-[var(--cc-ink-soft)]">
         任期資料三層來源：官方個人簡歷（48 人，精確到月日，含早逝、辭職與連任）、官方屆次區間（其餘多數）、
         逐人查核後的人工核定（現任八人與翁岳生、城仲模等特殊任期）。橫條一律淡底＋同色細邊框；虛線邊框＝現任（任期未封口）。
         出身與留學地由官方經歷、官職資料庫與維基百科條目逐人查核標註；「國內」「其他」（灰底實線框）＝查核後確認
@@ -1448,11 +1647,11 @@ function TopPairs({ list, mode, onPick }) {
   const max = list[0]?.v ?? 1;
   return (
     <div>
-      <h3 className="text-[13px] font-bold text-[var(--cc-title-ink)]">{label}</h3>
+      <h3 className="text-[14px] font-bold text-[var(--cc-title-ink)]">{label}</h3>
       <div className="mt-2 divide-y divide-[var(--cc-line)]">
         {list.map((e) => (
           <button key={`${e.a}-${e.b}`} onClick={() => onPick(e.a, e.b)}
-            className="grid w-full grid-cols-[1fr_44px_84px] items-center gap-2 py-1.5 text-left text-[12px] hover:bg-[var(--cc-hover-bg)]">
+            className="grid w-full grid-cols-[1fr_44px_84px] items-center gap-2 py-1.5 text-left text-[13px] hover:bg-[var(--cc-hover-bg)]">
             <span className="font-bold text-[var(--cc-ink-strong)]">{mode === '有向' ? `${e.b}→${e.a}` : `${e.a}・${e.b}`}</span>
             <span className="font-bold text-[var(--cc-accent)]">{e.v} 次</span>
             <span className="block h-1.5 rounded-full bg-[var(--cc-track)]">
@@ -1460,7 +1659,7 @@ function TopPairs({ list, mode, onPick }) {
             </span>
           </button>
         ))}
-        {!list.length ? <p className="py-2 text-[12px] text-[var(--cc-ink-soft)]">本期無資料。</p> : null}
+        {!list.length ? <p className="py-2 text-[13px] text-[var(--cc-ink-soft)]">本期無資料。</p> : null}
       </div>
     </div>
   );
@@ -1471,22 +1670,22 @@ function NameDetail({ name, partners, onName }) {
   const max = Math.max(1, ...partners.map((p) => p.合計));
   return (
     <div>
-      <h3 className="text-[13px] font-bold text-[var(--cc-title-ink)]">{name}　本期共同具名對象</h3>
+      <h3 className="text-[14px] font-bold text-[var(--cc-title-ink)]">{name}　本期共同具名對象</h3>
       <div className="mt-2 divide-y divide-[var(--cc-line)]">
         {partners.map((p) => (
           <button key={p.對象} onClick={() => onName(p.對象)}
-            className="grid w-full grid-cols-[68px_1fr] items-center gap-2 py-1.5 text-left text-[12px] hover:bg-[var(--cc-hover-bg)]">
+            className="grid w-full grid-cols-[68px_1fr] items-center gap-2 py-1.5 text-left text-[13px] hover:bg-[var(--cc-hover-bg)]">
             <span className="font-bold text-[var(--cc-accent)]">{p.對象}</span>
             <span className="flex items-center gap-2">
               <span className="flex h-2 flex-1 overflow-hidden rounded-full bg-[var(--cc-track)]">
                 <span className="h-2" style={{ width: `${(p.協同 / max) * 100}%`, background: 'var(--tone-blue-tx)' }} />
                 <span className="h-2" style={{ width: `${(p.不同 / max) * 100}%`, background: 'var(--tone-red-tx)' }} />
               </span>
-              <span className="shrink-0 text-[10.5px] text-[var(--cc-ink-soft)]">協{p.協同}・不{p.不同}</span>
+              <span className="shrink-0 text-[11.5px] text-[var(--cc-ink-soft)]">協{p.協同}・不{p.不同}</span>
             </span>
           </button>
         ))}
-        {!partners.length ? <p className="py-2 text-[12px] text-[var(--cc-ink-soft)]">本期無共同具名。</p> : null}
+        {!partners.length ? <p className="py-2 text-[13px] text-[var(--cc-ink-soft)]">本期無共同具名。</p> : null}
       </div>
     </div>
   );
@@ -1498,20 +1697,20 @@ function PairDetail({ pair, list, onClose }) {
   return (
     <div>
       <div className="flex items-center justify-between gap-2">
-        <h3 className="text-[13px] font-bold text-[var(--cc-title-ink)]">{pair.a}・{pair.b}　共同署名 {list.length} 份</h3>
-        <button onClick={onClose} className="shrink-0 text-[11px] font-bold text-[var(--cc-accent)] hover:underline">清除</button>
+        <h3 className="text-[14px] font-bold text-[var(--cc-title-ink)]">{pair.a}・{pair.b}　共同署名 {list.length} 份</h3>
+        <button onClick={onClose} className="shrink-0 text-[12px] font-bold text-[var(--cc-accent)] hover:underline">清除</button>
       </div>
       <div className="mt-2 max-h-[460px] space-y-1.5 overflow-y-auto pr-1">
         {list.map((d, i) => (
-          <div key={i} className="flex flex-wrap items-center gap-2 text-[12px]">
-            <span className="font-bold text-[var(--cc-ink-strong)]">{d.字號}</span>
+          <div key={i} className="flex flex-wrap items-center gap-2 text-[13px]">
+            <CaseRef 字號={d.字號} className="font-bold text-[var(--cc-ink-strong)]" />
             <Badge tone={toneOf(d.類型 ?? '')}>{(d.類型 ?? '意見書').replace('意見書', '') || '意見書'}</Badge>
             {d.下載網址 ? (
               <a href={d.下載網址} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-[var(--cc-blue-ink)] hover:text-[var(--cc-blue-ink-hover)]">PDF <ExternalLink size={11} /></a>
-            ) : <span className="text-[10.5px] text-[var(--cc-figure-note)]">（內嵌官方頁）</span>}
+            ) : <span className="text-[11.5px] text-[var(--cc-figure-note)]">（內嵌官方頁）</span>}
           </div>
         ))}
-        {!list.length ? <p className="py-2 text-[12px] text-[var(--cc-ink-soft)]">無可列意見書。</p> : null}
+        {!list.length ? <p className="py-2 text-[13px] text-[var(--cc-ink-soft)]">無可列意見書。</p> : null}
       </div>
     </div>
   );
@@ -1625,44 +1824,44 @@ function ResearchProblem() {
   const maxAvg = Math.max(1, ...stats.trend.map((r) => r.avg));
   return (
     <section className="border-t border-[var(--cc-line)] py-5">
-      <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">問題意識 · Research Problem</p>
-      <h2 className="text-base font-bold text-[var(--cc-title-ink)]">分殊化：審議專業化，還是任命政治化？</h2>
-      <p className="mt-2 max-w-3xl text-[12.5px] leading-relaxed text-[var(--cc-ink-mid)]">
+      <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">問題意識 · Research Problem</p>
+      <h2 className="text-lg font-bold text-[var(--cc-title-ink)]">分殊化：審議專業化，還是任命政治化？</h2>
+      <p className="mt-2 max-w-3xl text-[13.5px] leading-relaxed text-[var(--cc-ink-mid)]">
         台灣大法官長期被理解為「合議共識型」法院——判決以機關名義作成、不同意見稀少。資料推翻了這個圖像：每案分別意見數從 1990 年代前的不到一份，升到 2015–2021 年的每案 {peak ? peak.avg.toFixed(1) : '7'} 份。核心問題是這場「意見分殊化」代表什麼？兩種對立的說法：
       </p>
       <div className="mt-3 grid max-w-3xl gap-3 sm:grid-cols-2">
         <div className="rounded-lg border border-[var(--cc-line)] p-3">
-          <div className="flex items-center gap-2"><Badge tone="blue">專業審議說</Badge><span className="text-[11px] text-[var(--cc-ink-soft)]">legalist</span></div>
-          <p className="mt-1.5 text-[12px] leading-relaxed text-[var(--cc-ink-mid)]">會議以學者為主體，分別意見是釋義學分工與論理對話的產物；分殊化代表審議透明化。若成立，意見聯盟應沿學術背景／方法傳統組織。</p>
+          <div className="flex items-center gap-2"><Badge tone="blue">專業審議說</Badge><span className="text-[12px] text-[var(--cc-ink-soft)]">legalist</span></div>
+          <p className="mt-1.5 text-[13px] leading-relaxed text-[var(--cc-ink-mid)]">會議以學者為主體，分別意見是釋義學分工與論理對話的產物；分殊化代表審議透明化。若成立，意見聯盟應沿學術背景／方法傳統組織。</p>
         </div>
         <div className="rounded-lg border border-[var(--cc-line)] p-3">
-          <div className="flex items-center gap-2"><Badge tone="red">任命政治說</Badge><span className="text-[11px] text-[var(--cc-ink-soft)]">attitudinal</span></div>
-          <p className="mt-1.5 text-[12px] leading-relaxed text-[var(--cc-ink-mid)]">分殊化隨 2003 交錯任期改制、以及蔡英文提名近乎整屆而政治化。若成立，意見聯盟應沿提名總統組織。</p>
+          <div className="flex items-center gap-2"><Badge tone="red">任命政治說</Badge><span className="text-[12px] text-[var(--cc-ink-soft)]">attitudinal</span></div>
+          <p className="mt-1.5 text-[13px] leading-relaxed text-[var(--cc-ink-mid)]">分殊化隨 2003 交錯任期改制、以及蔡英文提名近乎整屆而政治化。若成立，意見聯盟應沿提名總統組織。</p>
         </div>
       </div>
 
       <div className="mt-5">
-        <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">證據一 · 分殊化趨勢</p>
-        <h3 className="text-[14px] font-bold text-[var(--cc-title-ink)]">每案分別意見數（行憲後 {stats.postN} 件）</h3>
+        <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">證據一 · 分殊化趨勢</p>
+        <h3 className="text-[15px] font-bold text-[var(--cc-title-ink)]">每案分別意見數（行憲後 {stats.postN} 件）</h3>
         <div className="mt-2 max-w-xl space-y-1">
           {stats.trend.map((r) => (
-            <div key={r.lab} className="grid grid-cols-[86px_1fr_112px] items-center gap-2 text-[12px]">
+            <div key={r.lab} className="grid grid-cols-[86px_1fr_112px] items-center gap-2 text-[13px]">
               <span className="text-[var(--cc-ink-mid)]">{r.lab}</span>
               <span className="block h-2 rounded-full bg-[var(--cc-track)]"><span className="block h-2 rounded-full" style={{ width: `${(r.avg / maxAvg) * 100}%`, background: 'var(--cc-highlight)' }} /></span>
               <span className="text-right text-[var(--cc-ink-soft)]">{r.avg.toFixed(2)} 份・{Math.round(r.disPct * 100)}% 不同</span>
             </div>
           ))}
         </div>
-        <p className="mt-1.5 max-w-2xl text-[11px] leading-relaxed text-[var(--cc-figure-note)]">
+        <p className="mt-1.5 max-w-2xl text-[12px] leading-relaxed text-[var(--cc-figure-note)]">
           資料完整度：晚近（釋字 701 號後）與憲法法庭意見書覆蓋 100%；早／中期為<strong className="text-[var(--cc-ink-strong)]">下限</strong>——8 件釋字（115/150/153/156/393/503/517/564）的意見書藏在「意見書、抄本等文件」欄未解析（約 13+ 份，含王澤鑑、蘇俊雄、劉鐵錚等），另約 103 件的意見書收於影像抄本／OCR，官方頁不提供機讀文字。故上升「趨勢」穩健，早期「水準」偏低估。
         </p>
       </div>
 
       <div className="mt-5">
-        <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">證據二 · 聯盟沿哪條線組織</p>
-        <h3 className="text-[14px] font-bold text-[var(--cc-title-ink)]">現任憲法法庭（{stats.n} 位具名法官）：同組 vs 跨組的平均共同具名</h3>
+        <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">證據二 · 聯盟沿哪條線組織</p>
+        <h3 className="text-[15px] font-bold text-[var(--cc-title-ink)]">現任憲法法庭（{stats.n} 位具名法官）：同組 vs 跨組的平均共同具名</h3>
         <div className="mt-2 max-w-xl overflow-x-auto">
-          <table className="w-full text-[12px]">
+          <table className="w-full text-[13px]">
             <thead>
               <tr className="text-left text-[var(--cc-table-head-ink)]">
                 <th className="py-1 pr-3 font-bold">分組維度</th><th className="py-1 pr-3 font-bold">同組</th>
@@ -1682,15 +1881,15 @@ function ResearchProblem() {
             </tbody>
           </table>
         </div>
-        <p className="mt-1.5 max-w-2xl text-[11px] leading-relaxed text-[var(--cc-ink-soft)]">
+        <p className="mt-1.5 max-w-2xl text-[12px] leading-relaxed text-[var(--cc-ink-soft)]">
           只有「提名總統」測得到顯著的同質性（同總統提名者共同具名較多）；出身、留學傳統測不到。初步偏向任命政治說——但共同具名只是代理，證據三用真投票覆核。到「意見書圖譜」勾「依提名總統上色」可肉眼對照分塊。
         </p>
       </div>
 
       <div className="mt-5">
-        <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">證據三 · 真實投票（立場表）</p>
-        <h3 className="text-[14px] font-bold text-[var(--cc-title-ink)]">解析 {LCT_RESULT.判決數} 件憲判立場表 → {LCT_RESULT.rollCalls} 個逐項表決（{LCT_RESULT.爭議} 爭議），大法官 1D 理想點</h3>
-        <p className="mt-1.5 max-w-2xl text-[12px] leading-relaxed text-[var(--cc-ink-mid)]">
+        <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">證據三 · 真實投票（立場表）</p>
+        <h3 className="text-[15px] font-bold text-[var(--cc-title-ink)]">解析 {LCT_RESULT.判決數} 件憲判立場表 → {LCT_RESULT.rollCalls} 個逐項表決（{LCT_RESULT.爭議} 爭議），大法官 1D 理想點</h3>
+        <p className="mt-1.5 max-w-2xl text-[13px] leading-relaxed text-[var(--cc-ink-mid)]">
           有了逐案「同意／不同意各主文項」的真投票，就能超越共同具名代理。<strong className="text-[var(--cc-ink-strong)]">憲法法庭 2022– 意見書與立場表 100% 覆蓋</strong>，是本頁證據基礎最扎實處。法院<strong className="text-[var(--cc-ink-strong)]">仍高共識</strong>（平均同意率 {Math.round(LCT_RESULT.平均同意率 * 100)}%）；1D 理想點沿提名總統分佈——{LCT_RESULT.提名總統均值.馬英九.n} 位馬英九提名的留任大法官聚於一極（右）。
         </p>
         {(() => {
@@ -1701,7 +1900,7 @@ function ResearchProblem() {
           return (
             <div className="mt-2 max-w-md space-y-0.5">
               {pts.map((p) => (
-                <div key={p.姓名} className="grid grid-cols-[58px_1fr_46px] items-center gap-2 text-[11.5px]">
+                <div key={p.姓名} className="grid grid-cols-[58px_1fr_46px] items-center gap-2 text-[12.5px]">
                   <span className="font-bold" style={{ color: ink(p) }}>{p.姓名}</span>
                   <span className="relative block h-3.5">
                     <span className="absolute inset-y-0 w-px bg-[var(--cc-line)]" style={{ left: `${pos(0)}%` }} />
@@ -1714,7 +1913,7 @@ function ResearchProblem() {
           );
         })()}
         <div className="mt-3 max-w-xl overflow-x-auto">
-          <table className="w-full text-[12px]">
+          <table className="w-full text-[13px]">
             <thead>
               <tr className="text-left text-[var(--cc-table-head-ink)]">
                 <th className="py-1 pr-3 font-bold">分組維度（真投票同意率）</th><th className="py-1 pr-3 font-bold">同組</th>
@@ -1733,15 +1932,15 @@ function ResearchProblem() {
             </tbody>
           </table>
         </div>
-        <p className="mt-1.5 max-w-2xl text-[11px] leading-relaxed text-[var(--cc-ink-soft)]">
+        <p className="mt-1.5 max-w-2xl text-[12px] leading-relaxed text-[var(--cc-ink-soft)]">
           真投票下任命效果反而更弱、borderline（提名總統 p≈0.05，比共同具名的 0.03 弱）；出身、德語圈仍測不到。且那 {LCT_RESULT.提名總統均值.馬英九.n} 位極端者正是仍在任的舊屆——「同提名總統」在這屆幾乎等於「同一批留任者」，任命效果與世代效果無法分離。
         </p>
       </div>
 
       <div className="mt-5 max-w-3xl rounded-lg border border-[var(--cc-border)] bg-[var(--cc-hover-bg)] p-3.5">
-        <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">方法閘門 · Model Gate</p>
-        <h3 className="text-[14px] font-bold text-[var(--cc-title-ink)]">現階段只能主張描述與類型學，不能主張因果或意識形態定位</h3>
-        <ul className="mt-2 space-y-1.5 text-[12px] leading-relaxed text-[var(--cc-ink-mid)]">
+        <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">方法閘門 · Model Gate</p>
+        <h3 className="text-[15px] font-bold text-[var(--cc-title-ink)]">現階段只能主張描述與類型學，不能主張因果或意識形態定位</h3>
+        <ul className="mt-2 space-y-1.5 text-[13px] leading-relaxed text-[var(--cc-ink-mid)]">
           <li>真投票（立場表）只有憲法法庭 2022– 這 {LCT_RESULT.判決數} 件；釋字時期仍只有共同具名代理、無逐案投票。1D 理想點為古典 MDS 的簡單估計，非 W-NOMINATE／IRT。</li>
           <li>「提名總統」與世代無法分離：極端的 {LCT_RESULT.提名總統均值.馬英九.n} 人是仍在任的舊屆留任者，「同總統」幾乎等於「同一批人」。任命效果與 holdover／同期效果分不開。</li>
           <li>只有一屆、樣本小（{stats.n} 人、{LCT_RESULT.爭議} 爭議案）；立場表尚有 {LCT_RESULT.重複旗標} 件同項矛盾旗標＋1 判決＋3 裁定待補。</li>
@@ -1750,8 +1949,8 @@ function ResearchProblem() {
       </div>
 
       <div className="mt-3 max-w-3xl">
-        <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">資料解鎖 · 下一步</p>
-        <p className="mt-1 text-[12px] leading-relaxed text-[var(--cc-ink-mid)]">
+        <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">資料解鎖 · 下一步</p>
+        <p className="mt-1 text-[13px] leading-relaxed text-[var(--cc-ink-mid)]">
           立場表已首度解析（證據三），投票矩陣到手。要把它推到定論還缺三步：把 parser 寫回<strong className="text-[var(--cc-ink-strong)]">資料層底層</strong>（fetch＋schema＋sync，此為暫用預算結果）；改用正式理想點估計（W-NOMINATE／Martin–Quinn 而非 1D MDS）並在控制世代、案類、時間下檢定任命效果；補齊剩餘 1 判決＋3 裁定與 {LCT_RESULT.重複旗標} 件矛盾旗標的人工覆核。跨屆資料累積後，「任命 vs 世代」的共線才可能鬆開。
         </p>
       </div>
@@ -1914,9 +2113,9 @@ function GraphView() {
 
   return (
     <section className="border-t border-[var(--cc-line)] py-5">
-      <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">共同具名矩陣</p>
-      <h2 className="text-base font-bold text-[var(--cc-title-ink)]">誰和誰一起署名意見書（分期・資料驅動分群・{modeLabel}）</h2>
-      <p className="mt-1 max-w-3xl text-[11px] leading-relaxed text-[var(--cc-ink-soft)]">
+      <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">共同具名矩陣</p>
+      <h2 className="text-lg font-bold text-[var(--cc-title-ink)]">誰和誰一起署名意見書（分期・資料驅動分群・{modeLabel}）</h2>
+      <p className="mt-1 max-w-3xl text-[12px] leading-relaxed text-[var(--cc-ink-soft)]">
         共同具名只在同時在任時才可能，故按制度斷點分四期各一張矩陣。行列順序由共同具名關係自動分群，聯盟沿對角線成塊。切換「關係」可分看協同聯盟、不同聯盟，或「主筆→加入」的有向影響；點格子看該對實際共同署名的意見書。勾「依提名總統上色」才會為姓名套色（用來檢驗聯盟是否吻合任命世代），預設關閉以免畫面過花。
       </p>
 
@@ -1924,13 +2123,13 @@ function GraphView() {
         <Select label="時期" value={eraKey} onChange={setEraKey} options={GRAPH_ERAS.map((e) => [e.key, e.label])} />
         <Select label="關係" value={mode} onChange={setMode} options={GRAPH_MODES} />
         <Select label="門檻" value={String(minEdge)} onChange={(v) => setMinEdge(Number(v))} options={[['1', '≥1 次'], ['2', '≥2 次'], ['3', '≥3 次']]} />
-        <label className="flex items-center gap-1.5 text-[11px] font-bold text-[var(--cc-ink-soft)]">
+        <label className="flex items-center gap-1.5 text-[12px] font-bold text-[var(--cc-ink-soft)]">
           <input type="checkbox" checked={colorByPres} onChange={(e) => setColorByPres(e.target.checked)} />
           依提名總統為姓名上色
         </label>
       </div>
 
-      <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-[10.5px] text-[var(--cc-ink-soft)]">
+      <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-[11.5px] text-[var(--cc-ink-soft)]">
         {GRAPH_ERAS.map((e) => (
           <button key={e.key} onClick={() => setEraKey(e.key)}
             className={`inline-flex items-center gap-1.5 ${e.key === eraKey ? 'font-bold text-[var(--cc-accent)]' : 'hover:text-[var(--cc-accent)]'}`}>
@@ -1946,7 +2145,7 @@ function GraphView() {
       <div className="mt-3 grid gap-5 lg:grid-cols-[minmax(0,600px)_1fr]">
         <div className="relative overflow-x-auto pb-2">
           {n < 2 ? (
-            <p className="py-8 text-[12px] text-[var(--cc-ink-soft)]">本期尚無足量具名意見書（門檻 ≥{minEdge} 次）。可調低門檻或切換時期。</p>
+            <p className="py-8 text-[13px] text-[var(--cc-ink-soft)]">本期尚無足量具名意見書（門檻 ≥{minEdge} 次）。可調低門檻或切換時期。</p>
           ) : (
             <svg width={LABEL_W + n * CW + 8} height={TOP + n * CW + 8} role="img" aria-label={`${eraLabel} 大法官共同具名矩陣`}>
               {members.map((name, r) => {
@@ -1998,13 +2197,13 @@ function GraphView() {
             </svg>
           )}
           {hoverText ? (
-            <div className="pointer-events-none absolute left-2 top-0 z-10 rounded-md border border-[var(--cc-border)] bg-white px-3 py-1.5 text-[11px] shadow-sm">{hoverText}</div>
+            <div className="pointer-events-none absolute left-2 top-0 z-10 rounded-md border border-[var(--cc-border)] bg-white px-3 py-1.5 text-[12px] shadow-sm">{hoverText}</div>
           ) : null}
         </div>
 
         <div>
           <div className="mb-3 space-y-1.5">
-            <div className="flex items-center gap-2 text-[10.5px] text-[var(--cc-ink-soft)]">
+            <div className="flex items-center gap-2 text-[11.5px] text-[var(--cc-ink-soft)]">
               少
               {[0.1, 0.3, 0.55, 0.8, 1].map((f) => (
                 <span key={f} className="inline-block h-3 w-3 rounded-[2px]" style={{ background: rampFill(f * (maxVal || 1), maxVal || 1, tone) }} />
@@ -2012,7 +2211,7 @@ function GraphView() {
               多{maxVal ? `（單格最高 ${maxVal}）` : ''}
             </div>
             {colorByPres && presLegend.length ? (
-              <div className="flex flex-wrap gap-x-3 gap-y-1 text-[10.5px] text-[var(--cc-ink-soft)]">
+              <div className="flex flex-wrap gap-x-3 gap-y-1 text-[11.5px] text-[var(--cc-ink-soft)]">
                 {presLegend.map((p) => (
                   <span key={p} className="inline-flex items-center gap-1.5">
                     <span className="h-2.5 w-2.5 rounded-sm border" style={{ background: inkToFill(PRES_COLOR[p]), borderColor: PRES_COLOR[p] }} />{p}
@@ -2032,7 +2231,7 @@ function GraphView() {
         </div>
       </div>
 
-      <p className="mt-4 max-w-3xl text-[10.5px] leading-relaxed text-[var(--cc-figure-note)]">
+      <p className="mt-4 max-w-3xl text-[11.5px] leading-relaxed text-[var(--cc-figure-note)]">
         資料註：合計每份意見書計一次共同具名；「部分協同部分不同」等混合類型同時計入協同與不同，故各對「協同＋不同」可能大於合計。「主筆→加入」為有向：列＝提出者、欄＝加入者，格值＝該加入者加入該提出者意見書的次數，矩陣不對稱即資訊本身。早期釋字意見書多整卷收於抄本、作者未逐一標，故早中期為下限。意見書資料仍在增補。
       </p>
     </section>
@@ -2154,9 +2353,9 @@ function HistoryView({ onOpenIndex }) {
   return (
     <div className="max-w-4xl">
       <section className="border-t border-[var(--cc-line)] py-5">
-        <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">制度沿革</p>
-        <h2 className="text-base font-bold text-[var(--cc-title-ink)]">中華民國司法解釋的四個階段</h2>
-        <p className="mt-2 max-w-3xl text-[12.5px] leading-relaxed text-[var(--cc-ink-mid)]">
+        <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">制度沿革</p>
+        <h2 className="text-lg font-bold text-[var(--cc-title-ink)]">中華民國司法解釋的四個階段</h2>
+        <p className="mt-2 max-w-3xl text-[13.5px] leading-relaxed text-[var(--cc-ink-mid)]">
           本庫收錄始於 1949 年第一屆大法官。在此之前，統一解釋法令之權歷經大理院（統字）、最高法院（解字）、
           司法院（院字／院解字）三個機關，行憲前已作成逾 6,000 號解釋，其中不少實質觸及約法與憲法問題。
           下方時間軸依實際年距等比排列四階段解釋機關；各階段說明與外部原始出處見其後。
@@ -2164,7 +2363,7 @@ function HistoryView({ onOpenIndex }) {
       </section>
 
       <section className="border-t border-[var(--cc-line)] py-5">
-        <div className="rounded-md border border-[var(--cc-border)] bg-[var(--cc-bg)] px-3 py-1.5 text-[11.5px]" style={{ minHeight: '2.4em' }}>
+        <div className="rounded-md border border-[var(--cc-border)] bg-[var(--cc-bg)] px-3 py-1.5 text-[12.5px]" style={{ minHeight: '2.4em' }}>
           {hoverSeg ? (
             <span className="flex flex-wrap items-baseline gap-x-3 gap-y-0.5 text-[var(--cc-ink-strong)]">
               <strong>{hoverSeg.機關}</strong>
@@ -2227,7 +2426,7 @@ function HistoryView({ onOpenIndex }) {
             })}
           </svg>
         </div>
-        <p className="mt-1 text-[11px] text-[var(--cc-ink-soft)]">
+        <p className="mt-1 text-[12px] text-[var(--cc-ink-soft)]">
           橫條長度＝該機關行使統一解釋權的實際期間（等比）；點任一階段跳至其說明。憲判件數取自本頁快照，隨資料更新自動變動。
         </p>
       </section>
@@ -2238,19 +2437,19 @@ function HistoryView({ onOpenIndex }) {
           <section key={s.key} id={`prov-card-${s.key}`} className="scroll-mt-16 border-t border-[var(--cc-line)] py-4">
             <button onClick={() => toggle(s.key)} className="flex w-full items-baseline justify-between gap-3 text-left">
               <span className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                <span className="text-base font-bold text-[var(--cc-title-ink)]">{s.機關}</span>
-                <span className="text-[11px] font-bold text-[var(--cc-eyebrow)]">{s.期間}</span>
-                <span className="text-[11px] text-[var(--cc-ink-soft)]">{s.號數}</span>
+                <span className="text-lg font-bold text-[var(--cc-title-ink)]">{s.機關}</span>
+                <span className="text-[12px] font-bold text-[var(--cc-eyebrow)]">{s.期間}</span>
+                <span className="text-[12px] text-[var(--cc-ink-soft)]">{s.號數}</span>
               </span>
               <ChevronDown size={16} className="shrink-0 text-[var(--cc-icon)] transition-transform" style={{ transform: open ? 'rotate(180deg)' : 'none' }} />
             </button>
             {open ? (
               <>
-                <p className="mt-2 max-w-3xl text-[13px] leading-[1.9] text-[var(--cc-ink-mid)]">{s.text}</p>
+                <p className="mt-2 max-w-3xl text-[14px] leading-[1.9] text-[var(--cc-ink-mid)]">{s.text}</p>
                 {onOpenIndex && STAGE_機關[s.key] ? (
                   <button
                     onClick={() => onOpenIndex(STAGE_機關[s.key])}
-                    className="mt-2 inline-flex items-center gap-1 text-[12px] font-bold text-[var(--cc-accent)] hover:text-[var(--cc-link-hover)]"
+                    className="mt-2 inline-flex items-center gap-1 text-[13px] font-bold text-[var(--cc-accent)] hover:text-[var(--cc-link-hover)]"
                   >
                     檢視這 {STAGE_機關[s.key] === '行憲後' ? data.統計.行憲後 : (data.統計.機關?.[STAGE_機關[s.key]] ?? 0)} 件案件 →
                   </button>
@@ -2263,8 +2462,8 @@ function HistoryView({ onOpenIndex }) {
 
       {PROV_ERAS.length ? (
         <section className="border-t border-[var(--cc-line)] py-4">
-          <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">憲政時期</p>
-          <h2 className="text-base font-bold text-[var(--cc-title-ink)]">同一段歷史的另一條軸：憲政基本法與解釋權歸屬</h2>
+          <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">憲政時期</p>
+          <h2 className="text-lg font-bold text-[var(--cc-title-ink)]">同一段歷史的另一條軸：憲政基本法與解釋權歸屬</h2>
           <div className="mt-3 space-y-2">
             {PROV_ERAS.map((e) => {
               const key = `era-${e.key}`;
@@ -2273,16 +2472,16 @@ function HistoryView({ onOpenIndex }) {
                 <div key={e.key} className="rounded-lg border border-[var(--cc-border)]">
                   <button onClick={() => toggle(key)} className="flex w-full items-baseline justify-between gap-3 px-3 py-2 text-left">
                     <span className="flex flex-wrap items-baseline gap-x-3">
-                      <span className="text-[13px] font-bold text-[var(--cc-ink-strong)]">{e.時期}</span>
-                      <span className="text-[11px] text-[var(--cc-ink-soft)]">{formatDateRange(e.起, e.迄, { openLabel: '迄今' })}</span>
+                      <span className="text-[14px] font-bold text-[var(--cc-ink-strong)]">{e.時期}</span>
+                      <span className="text-[12px] text-[var(--cc-ink-soft)]">{formatDateRange(e.起, e.迄, { openLabel: '迄今' })}</span>
                     </span>
                     <ChevronDown size={15} className="shrink-0 text-[var(--cc-icon)]" style={{ transform: open ? 'rotate(180deg)' : 'none' }} />
                   </button>
                   {open ? (
-                    <div className="space-y-1 px-3 pb-3 text-[12.5px] leading-relaxed text-[var(--cc-ink-mid)]">
+                    <div className="space-y-1 px-3 pb-3 text-[13.5px] leading-relaxed text-[var(--cc-ink-mid)]">
                       <p><span className="text-[var(--cc-ink-soft)]">基本法</span>：{e.基本法}</p>
                       <p><span className="text-[var(--cc-ink-soft)]">解釋權歸屬</span>：{e.解釋權歸屬}</p>
-                      {e.註 ? <p className="text-[11.5px] text-[var(--cc-ink-soft)]">{e.註}</p> : null}
+                      {e.註 ? <p className="text-[12.5px] text-[var(--cc-ink-soft)]">{e.註}</p> : null}
                     </div>
                   ) : null}
                 </div>
@@ -2293,9 +2492,9 @@ function HistoryView({ onOpenIndex }) {
       ) : null}
 
       <section className="border-t border-[var(--cc-line)] py-5">
-        <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">原始出處</p>
-        <h2 className="text-base font-bold text-[var(--cc-title-ink)]">各階段解釋的公開原文與研究文獻</h2>
-        <div className="mt-2 space-y-1.5 text-[12.5px] leading-relaxed">
+        <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">原始出處</p>
+        <h2 className="text-lg font-bold text-[var(--cc-title-ink)]">各階段解釋的公開原文與研究文獻</h2>
+        <div className="mt-2 space-y-1.5 text-[13.5px] leading-relaxed">
           {PROV_LINKS.map((l) => (
             <a key={l.href} href={l.href} target="_blank" rel="noreferrer"
               className="flex items-center gap-1 font-bold text-[var(--cc-accent)] hover:text-[var(--cc-link-hover)]">
@@ -2312,9 +2511,9 @@ function AboutView() {
   return (
     <div className="max-w-3xl">
       <section className="border-t border-[var(--cc-line)] py-5">
-        <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">資料來源</p>
-        <h2 className="text-base font-bold text-[var(--cc-title-ink)]">行憲後取自憲法法庭官網，行憲前取自維基文庫（公有領域）</h2>
-        <div className="mt-2 space-y-2 text-[12.5px] leading-relaxed text-[var(--cc-ink-mid)]">
+        <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">資料來源</p>
+        <h2 className="text-lg font-bold text-[var(--cc-title-ink)]">行憲後取自憲法法庭官網，行憲前取自維基文庫（公有領域）</h2>
+        <div className="mt-2 space-y-2 text-[13.5px] leading-relaxed text-[var(--cc-ink-mid)]">
           <p>
             <strong className="text-[var(--cc-accent)]">行憲後</strong>：司法院大法官解釋 {data.統計.機關?.大法官 ?? 0} 件（釋字第 1–813 號，1949–2021）、憲法法庭判決 {data.統計.判決} 件（2022 年憲法訴訟法施行起）、實體裁定 {data.統計.實體裁定} 件（含暫時處分），取自憲法法庭官網。程序性不受理裁定未收錄。
           </p>
@@ -2333,23 +2532,23 @@ function AboutView() {
         </div>
       </section>
       <section className="border-t border-[var(--cc-line)] py-5">
-        <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">批次下載</p>
-        <h2 className="text-base font-bold text-[var(--cc-title-ink)]">篩選後想把檔案抓回本機讀？</h2>
-        <p className="mt-2 text-[12.5px] leading-relaxed text-[var(--cc-ink-mid)]">
+        <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">批次下載</p>
+        <h2 className="text-lg font-bold text-[var(--cc-title-ink)]">篩選後想把檔案抓回本機讀？</h2>
+        <p className="mt-2 text-[13.5px] leading-relaxed text-[var(--cc-ink-mid)]">
           瀏覽器無法代替你向官方網站批次下載。作法：在「案件索引」匯出「批次下載清單」，回到研究資料庫在本機執行批次下載命令，官方 PDF 就會下載到本機資料夾。清單裡每一筆都是官方網址，來源可驗證。
         </p>
       </section>
       <section className="border-t border-[var(--cc-line)] py-5">
-        <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">更新</p>
-        <h2 className="text-base font-bold text-[var(--cc-title-ink)]">資料怎麼保持最新</h2>
-        <p className="mt-2 text-[12.5px] leading-relaxed text-[var(--cc-ink-mid)]">
+        <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">更新</p>
+        <h2 className="text-lg font-bold text-[var(--cc-title-ink)]">資料怎麼保持最新</h2>
+        <p className="mt-2 text-[13.5px] leading-relaxed text-[var(--cc-ink-mid)]">
           資料庫以官方清單頁差分更新：偵測新公布的判決與裁定、只抓新增案件、重建統計後同步到本頁。本頁資料產生於 {data.產生時間?.slice(0, 10)}。
         </p>
       </section>
       <section className="border-t border-[var(--cc-line)] py-5">
-        <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">相關外部連結</p>
-        <h2 className="text-base font-bold text-[var(--cc-title-ink)]">原始資料的官方出處</h2>
-        <div className="mt-2 space-y-1.5 text-[12.5px] leading-relaxed">
+        <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">相關外部連結</p>
+        <h2 className="text-lg font-bold text-[var(--cc-title-ink)]">原始資料的官方出處</h2>
+        <div className="mt-2 space-y-1.5 text-[13.5px] leading-relaxed">
           <a href="https://cons.judicial.gov.tw/" target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 font-bold text-[var(--cc-accent)] hover:text-[var(--cc-link-hover)]">
             憲法法庭全球資訊網（大法官解釋、憲法法庭判決與裁定官方查詢系統） <ExternalLink size={11} />
           </a>
@@ -2363,21 +2562,30 @@ function AboutView() {
 // data/materials/深度分析.json）。內容零寫死；顏色只走 --cc-* token 與校準過的 Badge tone。
 // 站位中立並陳多數/不同意見兩造，不裁決「5 人判決是否有效」。
 function Case1Analysis() {
+  const [tlMode, setTlMode] = useState('議題');
   const doc = docs.find((d) => d.字號 === '114年憲判字第1號');
   const da = doc?.深度分析;
   if (!da) {
     return (
       <section className="border-t border-[var(--cc-line)] py-5">
-        <p className="text-[12.5px] leading-relaxed text-[var(--cc-ink-mid)]">找不到「114 年憲判字第 1 號」的深度分析資料（資料層尚未同步）。</p>
+        <p className="text-[13.5px] leading-relaxed text-[var(--cc-ink-mid)]">找不到「114 年憲判字第 1 號」的深度分析資料（資料層尚未同步）。</p>
       </section>
     );
   }
   const 多數 = da.組成爭議?.多數立場;
   const 不同意見 = da.組成爭議?.不同意見立場;
-  const 軸groups = ['缺額與提名', '修法與釋憲'].map((ax) => ({
-    ax,
-    items: (da.時間軸 ?? []).filter((t) => t.軸 === ax).sort((a, b) => a.日期.localeCompare(b.日期)),
-  }));
+  // 時間軸雙維度：預設「依議題」（缺額與提名／修法與釋憲，左右分側），有 行為人 欄位時可切「依行為人」。
+  // 色位一律走 --cat-* 分類色；議題兩軸吃 cat-1(plum)/cat-2(blue)，行為人吃固定色位（標籤負責辨識）。
+  const events = (da.時間軸 ?? []).slice().sort((a, b) => a.日期.localeCompare(b.日期));
+  const hasActor = events.some((t) => t.行為人);
+  const mode = hasActor ? tlMode : '議題';
+  const 軸COLOR = { 缺額與提名: 1, 修法與釋憲: 2 };
+  const ACTOR_COLOR = { 立法院: 2, 行政院: 4, 總統: 1, 司法院: 5, 其他: 8 };
+  const toneOf = (t) => (mode === '議題' ? (軸COLOR[t.軸] ?? 8) : (ACTOR_COLOR[t.行為人] ?? 8));
+  const sideOf = (t) => (mode === '議題' ? (t.軸 === '缺額與提名' ? 'L' : 'R') : 'R');
+  const legend = mode === '議題'
+    ? [['缺額與提名', 軸COLOR.缺額與提名], ['修法與釋憲', 軸COLOR.修法與釋憲]]
+    : [...new Set(events.map((t) => t.行為人).filter(Boolean))].map((a) => [a, ACTOR_COLOR[a] ?? 8]);
   const srcLink = (href) => (
     <a href={href} target="_blank" rel="noreferrer" className="ml-1 inline-flex items-center align-baseline text-[var(--cc-accent)] hover:text-[var(--cc-link-hover)]" aria-label="來源">
       <ExternalLink size={10} />
@@ -2386,91 +2594,122 @@ function Case1Analysis() {
   return (
     <div>
       <section className="border-t border-[var(--cc-line)] py-5">
-        <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">深度解析 · Case Study</p>
-        <h2 className="text-base font-bold text-[var(--cc-title-ink)]">{doc.字號}：{da.案名}</h2>
-        <p className="mt-2 max-w-3xl text-[12.5px] leading-relaxed text-[var(--cc-ink-mid)]">{da.一句話}</p>
-        <p className="mt-2 max-w-3xl text-[12px] leading-relaxed text-[var(--cc-ink-soft)]">{da.背景}</p>
-        <p className="mt-3 max-w-3xl rounded-lg border border-[var(--cc-line)] p-2.5 text-[11px] leading-relaxed text-[var(--cc-figure-note)]">
+        <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">深度解析 · Case Study</p>
+        <h2 className="text-lg font-bold text-[var(--cc-title-ink)]"><CaseRef 字號={doc.字號} />：{da.案名}</h2>
+        <p className="mt-2 max-w-3xl text-[13.5px] leading-relaxed text-[var(--cc-ink-mid)]">{da.一句話}</p>
+        <p className="mt-2 max-w-3xl text-[13px] leading-relaxed text-[var(--cc-ink-soft)]">{da.背景}</p>
+        <p className="mt-3 max-w-3xl rounded-lg border border-[var(--cc-line)] p-2.5 text-[12px] leading-relaxed text-[var(--cc-figure-note)]">
           本頁並陳多數與不同意見兩造立場，不對「5 位大法官作成的判決是否有效」下判斷——這個元爭議之上並無更高階的中立仲裁機關。用語採「分立政府／在野聯盟過半」等中性表述。
         </p>
       </section>
 
       <section className="border-t border-[var(--cc-line)] py-5">
-        <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">事件時間軸</p>
-        <h3 className="text-[14px] font-bold text-[var(--cc-title-ink)]">兩條交纏的軸線：缺額凍結與門檻拉高如何同時發生</h3>
-        <div className="mt-3 grid max-w-4xl gap-5 sm:grid-cols-2">
-          {軸groups.map((g) => (
-            <div key={g.ax}>
-              <p className="text-[12px] font-bold text-[var(--cc-title-ink)]">{g.ax}</p>
-              <ol className="mt-2 space-y-2 border-l border-[var(--cc-line)] pl-3">
-                {g.items.map((t, i) => (
-                  <li key={i} className="text-[12px] leading-relaxed">
-                    <span className="font-bold text-[var(--cc-ink-strong)]">{formatDate(t.日期)}</span>
-                    <span className="text-[var(--cc-ink-mid)]"> — {t.事件}</span>
-                    {t.來源 ? srcLink(t.來源) : null}
-                  </li>
-                ))}
-              </ol>
-            </div>
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">事件時間軸</p>
+            <h3 className="text-[15px] font-bold text-[var(--cc-title-ink)]">
+              {mode === '議題' ? '兩條交纏的軸線：缺額凍結與門檻拉高如何同時發生' : '誰在推動：立法院、總統與司法院的動作序列'}
+            </h3>
+          </div>
+          {hasActor ? (
+            <SegControl value={tlMode} onChange={setTlMode} options={[['議題', '依議題'], ['行為人', '依行為人']]} />
+          ) : null}
+        </div>
+        <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-[12px] text-[var(--cc-ink-soft)]">
+          {legend.map(([label, n]) => (
+            <span key={label} className="inline-flex items-center gap-1.5">
+              <span className="h-2.5 w-2.5 rounded-full border" style={{ background: `var(--cat-${n}-bg)`, borderColor: `var(--cat-${n}-tx)` }} />
+              {label}
+            </span>
           ))}
+        </div>
+        {/* 中央軸時間軸：手機單欄（軸線靠左），sm 以上軸線置中、事件依側別分掛左右。 */}
+        <div className="relative mt-4 max-w-4xl">
+          <span className="absolute inset-y-0 left-[6px] w-px bg-[var(--cc-line)] sm:left-1/2 sm:-translate-x-1/2" aria-hidden />
+          <ol className="space-y-3">
+            {events.map((t, i) => {
+              const n = toneOf(t);
+              const side = sideOf(t);
+              return (
+                <li key={i} className="relative sm:grid sm:grid-cols-2 sm:gap-x-8">
+                  <span
+                    className="absolute left-[6px] top-2.5 z-10 h-3 w-3 -translate-x-1/2 rounded-full border-2 sm:left-1/2"
+                    style={{ background: `var(--cat-${n}-bg)`, borderColor: `var(--cat-${n}-tx)` }}
+                    aria-hidden
+                  />
+                  <div className={`pl-5 sm:pl-0 ${side === 'L' ? 'sm:col-start-1 sm:pr-9 sm:text-right' : 'sm:col-start-2 sm:pl-9'}`}>
+                    <div className="rounded-lg border border-[var(--cc-line)] p-2.5">
+                      <p className="text-[12.5px] font-bold text-[var(--cc-ink-strong)]">
+                        {formatDate(t.日期)}
+                        {t.行為人 ? <span className="ml-1.5 font-normal text-[var(--cc-ink-soft)]">· {t.行為人}</span> : null}
+                      </p>
+                      <p className="mt-0.5 text-[13px] leading-relaxed text-[var(--cc-ink-mid)]">
+                        {t.事件}{t.來源 ? srcLink(t.來源) : null}
+                      </p>
+                    </div>
+                  </div>
+                </li>
+              );
+            })}
+          </ol>
         </div>
       </section>
 
       <section className="border-t border-[var(--cc-line)] py-5">
-        <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">判決 · {formatDate('2025-12-19')}</p>
-        <h3 className="text-[14px] font-bold text-[var(--cc-title-ink)]">主文與論證</h3>
-        <p className="mt-2 max-w-3xl text-[12.5px] leading-relaxed text-[var(--cc-ink-mid)]">{da.判決主文}</p>
-        <ul className="mt-2 max-w-3xl list-disc space-y-1 pl-5 text-[12px] leading-relaxed text-[var(--cc-ink-mid)]">
+        <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">判決 · {formatDate('2025-12-19')}</p>
+        <h3 className="text-[15px] font-bold text-[var(--cc-title-ink)]">主文與論證</h3>
+        <p className="mt-2 max-w-3xl text-[13.5px] leading-relaxed text-[var(--cc-ink-mid)]">{da.判決主文}</p>
+        <ul className="mt-2 max-w-3xl list-disc space-y-1 pl-5 text-[13px] leading-relaxed text-[var(--cc-ink-mid)]">
           {(da.論證主軸 ?? []).map((p, i) => <li key={i}>{p}</li>)}
         </ul>
       </section>
 
       <section className="border-t border-[var(--cc-line)] py-5">
-        <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">核心爭議 · 5 vs 3</p>
-        <h3 className="text-[14px] font-bold text-[var(--cc-title-ink)]">憲法法庭是否合法組成？署名 5 人與拒審 3 人的對立</h3>
+        <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">核心爭議 · 5 vs 3</p>
+        <h3 className="text-[15px] font-bold text-[var(--cc-title-ink)]">憲法法庭是否合法組成？署名 5 人與拒審 3 人的對立</h3>
         <div className="mt-3 grid max-w-3xl gap-3 sm:grid-cols-2">
           <div className="rounded-lg border border-[var(--cc-line)] p-3">
             <div className="flex items-center gap-2"><Badge tone="blue">{多數?.標籤}</Badge></div>
-            <p className="mt-1.5 text-[11px] text-[var(--cc-ink-soft)]">{(多數?.大法官 ?? []).join('、')}{多數?.主筆 ? `（主筆 ${多數.主筆}）` : ''}</p>
-            <ul className="mt-1.5 list-disc space-y-1 pl-4 text-[12px] leading-relaxed text-[var(--cc-ink-mid)]">
+            <p className="mt-1.5 text-[12px] text-[var(--cc-ink-soft)]">{(多數?.大法官 ?? []).join('、')}{多數?.主筆 ? `（主筆 ${多數.主筆}）` : ''}</p>
+            <ul className="mt-1.5 list-disc space-y-1 pl-4 text-[13px] leading-relaxed text-[var(--cc-ink-mid)]">
               {(多數?.要點 ?? []).map((p, i) => <li key={i}>{p}</li>)}
             </ul>
-            {多數?.個別註記 ? <p className="mt-1.5 text-[11px] leading-relaxed text-[var(--cc-figure-note)]">{多數.個別註記}</p> : null}
+            {多數?.個別註記 ? <p className="mt-1.5 text-[12px] leading-relaxed text-[var(--cc-figure-note)]">{多數.個別註記}</p> : null}
           </div>
           <div className="rounded-lg border border-[var(--cc-line)] p-3">
             <div className="flex items-center gap-2"><Badge tone="red">{不同意見?.標籤}</Badge></div>
-            <p className="mt-1.5 text-[11px] text-[var(--cc-ink-soft)]">{(不同意見?.大法官 ?? []).join('、')}</p>
-            <ul className="mt-1.5 list-disc space-y-1 pl-4 text-[12px] leading-relaxed text-[var(--cc-ink-mid)]">
+            <p className="mt-1.5 text-[12px] text-[var(--cc-ink-soft)]">{(不同意見?.大法官 ?? []).join('、')}</p>
+            <ul className="mt-1.5 list-disc space-y-1 pl-4 text-[13px] leading-relaxed text-[var(--cc-ink-mid)]">
               {(不同意見?.要點 ?? []).map((p, i) => <li key={i}>{p}</li>)}
             </ul>
-            {不同意見?.文件 ? <p className="mt-1.5 text-[11px] leading-relaxed text-[var(--cc-figure-note)]">{不同意見.文件}</p> : null}
+            {不同意見?.文件 ? <p className="mt-1.5 text-[12px] leading-relaxed text-[var(--cc-figure-note)]">{不同意見.文件}</p> : null}
           </div>
         </div>
         <div className="mt-5">
-          <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">不同意見書要旨</p>
-          <h3 className="text-[14px] font-bold text-[var(--cc-title-ink)]">三位大法官《不同意法律意見書》十點要旨</h3>
-          <ol className="mt-2 max-w-3xl list-decimal space-y-1.5 pl-5 text-[12px] leading-relaxed text-[var(--cc-ink-mid)]">
+          <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">不同意見書要旨</p>
+          <h3 className="text-[15px] font-bold text-[var(--cc-title-ink)]">三位大法官《不同意法律意見書》十點要旨</h3>
+          <ol className="mt-2 max-w-3xl list-decimal space-y-1.5 pl-5 text-[13px] leading-relaxed text-[var(--cc-ink-mid)]">
             {(da.不同意見書要旨 ?? []).map((p, i) => <li key={i}>{p}</li>)}
           </ol>
         </div>
       </section>
 
       <section className="border-t border-[var(--cc-line)] py-5">
-        <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">開放問題 · Known Unknowns</p>
-        <h3 className="text-[14px] font-bold text-[var(--cc-title-ink)]">已知有爭議、尚無定論</h3>
+        <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">開放問題 · Known Unknowns</p>
+        <h3 className="text-[15px] font-bold text-[var(--cc-title-ink)]">已知有爭議、尚無定論</h3>
         <ul className="mt-2 max-w-3xl space-y-1.5">
           {(da.known_unknowns ?? []).map((p, i) => (
-            <li key={i} className="rounded-lg border border-[var(--cc-line)] p-2.5 text-[12px] leading-relaxed text-[var(--cc-ink-mid)]">{p}</li>
+            <li key={i} className="rounded-lg border border-[var(--cc-line)] p-2.5 text-[13px] leading-relaxed text-[var(--cc-ink-mid)]">{p}</li>
           ))}
         </ul>
       </section>
 
       <section className="border-t border-[var(--cc-line)] py-5">
-        <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">更深層 · Unknown Unknowns</p>
-        <h3 className="text-[14px] font-bold text-[var(--cc-title-ink)]">結構性、尚未被清楚框定的風險</h3>
+        <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">更深層 · Unknown Unknowns</p>
+        <h3 className="text-[15px] font-bold text-[var(--cc-title-ink)]">結構性、尚未被清楚框定的風險</h3>
         <ul className="mt-2 max-w-3xl space-y-1.5">
           {(da.unknown_unknowns ?? []).map((p, i) => (
-            <li key={i} className="rounded-lg border border-[var(--cc-line)] p-2.5 text-[12px] leading-relaxed text-[var(--cc-ink-mid)]">{p}</li>
+            <li key={i} className="rounded-lg border border-[var(--cc-line)] p-2.5 text-[13px] leading-relaxed text-[var(--cc-ink-mid)]">{p}</li>
           ))}
         </ul>
       </section>
@@ -2494,15 +2733,15 @@ export default function ConstitutionalCourt() {
     <div className="min-h-screen paper-texture bg-[var(--cc-bg)] font-sans text-[var(--cc-ink)]" style={{ ...CC_VARS, paddingBottom: 60 }}>
       <header className="border-b border-[var(--cc-line)] bg-white">
         <div className="mx-auto max-w-6xl px-4 py-7 sm:px-6">
-          <div className="mb-3 inline-flex items-center gap-2 font-accent text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow-header)]">
+          <div className="mb-3 inline-flex items-center gap-2 font-accent text-[12px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow-header)]">
             <Gavel size={13} />
             Constitutional Court Archive
           </div>
           <h1 className="max-w-3xl leading-tight text-[var(--cc-heading)]">
             <span className="font-sans text-2xl font-semibold sm:text-[2.15rem]">憲法法庭案例庫</span>
-            <span className="ml-3 align-baseline text-base text-[var(--cc-body-text)]">釋字・憲判・暫時處分</span>
+            <span className="ml-3 align-baseline text-lg text-[var(--cc-body-text)]">釋字・憲判・暫時處分</span>
           </h1>
-          <p className="mt-3 max-w-3xl text-sm leading-relaxed text-[var(--cc-body-text)]">
+          <p className="mt-3 max-w-3xl text-base leading-relaxed text-[var(--cc-body-text)]">
             把中華民國司法解釋沿革——行憲後 {data.統計.行憲後} 件（大法官釋字・憲法法庭裁判，取自憲法法庭官網）與
             行憲前 {data.統計.行憲前} 件（大理院／最高法院／司法院統一解釋，取自維基文庫）——做成可檢索的研究工作台：
             主題與年代篩選、意見書作者與立場、共同具名網絡、引用統計，以及可直接進論文的引註與 BibTeX 匯出。
@@ -2515,15 +2754,15 @@ export default function ConstitutionalCourt() {
               ['具名意見書', docs.reduce((s, d) => s + d.意見書.filter((o) => o.作者類別 === '大法官').length, 0)],
             ].map(([label, value]) => (
               <div key={label} className="flex items-baseline gap-2">
-                <span className="text-[11px] font-bold text-[var(--cc-icon)]">{label}</span>
-                <span className="font-display text-lg font-bold text-[var(--cc-ink)]">{value}</span>
+                <span className="text-[12px] font-bold text-[var(--cc-icon)]">{label}</span>
+                <span className="font-display text-xl font-bold text-[var(--cc-ink)]">{value}</span>
               </div>
             ))}
             {/* 行憲前另列一段、以分隔線區隔——非大法官解釋，不併入上面計數 */}
             <div className="flex items-baseline gap-2 border-l border-[var(--cc-line)] pl-8">
-              <span className="text-[11px] font-bold text-[var(--cc-eyebrow)]">行憲前統一解釋</span>
-              <span className="font-display text-lg font-bold text-[var(--cc-ink)]">{data.統計.行憲前}</span>
-              <span className="text-[11px] text-[var(--cc-ink-soft)]">
+              <span className="text-[12px] font-bold text-[var(--cc-eyebrow)]">行憲前統一解釋</span>
+              <span className="font-display text-xl font-bold text-[var(--cc-ink)]">{data.統計.行憲前}</span>
+              <span className="text-[12px] text-[var(--cc-ink-soft)]">
                 大理院 {data.統計.機關?.大理院}・最高法院 {data.統計.機關?.最高法院}・司法院 {data.統計.機關?.司法院}
               </span>
             </div>
@@ -2537,7 +2776,7 @@ export default function ConstitutionalCourt() {
             <button
               key={id}
               onClick={() => setActive(id)}
-              className="flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-2 text-[12px] font-bold transition hover:bg-[var(--cc-hover-bg)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--cc-highlight)]"
+              className="flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-2 text-[13px] font-bold transition hover:bg-[var(--cc-hover-bg)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--cc-highlight)]"
               style={{ background: active === id ? 'var(--cc-tab-active-bg)' : undefined, color: active === id ? 'var(--cc-tab-active-text)' : 'var(--cc-tab-inactive-text)' }}
             >
               <Icon size={14} />
