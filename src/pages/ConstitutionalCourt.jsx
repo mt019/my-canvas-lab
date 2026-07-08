@@ -913,17 +913,11 @@ function Pre1947Timeline() {
       <section className="border-t border-[var(--cc-line)] py-5">
         <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">無作成日期 · 大理院統字</p>
         <h2 className="text-base sm:text-lg font-bold text-[var(--cc-title-ink)]">
-          <span className="text-[var(--cc-highlight)]">{undatedByNo.n.toLocaleString()}</span> 件無作成日期，依號次序列看分佈
+          統字第 <span className="text-[var(--cc-highlight)]">{undatedStat.lo}</span>–<span className="text-[var(--cc-highlight)]">{undatedStat.hi}</span> 號完整收錄，{undatedStat.missing === 0 ? '號次連續無缺' : `範圍內缺 ${undatedStat.missing} 號`}
         </h2>
-        <p className="mt-1 max-w-3xl text-[12px] leading-relaxed text-[var(--cc-ink-soft)]">
-          大理院統字絕大多數未載作成日期，號次即其大致時序但無法對應公曆日，故不虛構日期上軸；下圖為號次
-          {undatedByNo.lo}–{undatedByNo.hi} 分 40 桶的件數密度。
+        <p className="mt-1 max-w-3xl text-[13px] leading-relaxed text-[var(--cc-ink-soft)]">
+          大理院統字共 <strong className="text-[var(--cc-ink-strong)]">{undatedStat.total.toLocaleString()}</strong> 件，號次第 {undatedStat.lo}–{undatedStat.hi} 號連續無斷；其中 <strong className="text-[var(--cc-ink-strong)]">{undatedStat.undated.toLocaleString()}</strong> 件未載作成日期，號次即其大致時序卻無法對應公曆日，故不上時間軸。這批解釋多為一句古文了結，主文長度中位約 <strong className="text-[var(--cc-ink-strong)]">{undatedStat.median}</strong> 字。號次是等差序列，任何依號次分桶的密度圖都必然接近均勻、不含資訊，故不作圖。
         </p>
-        <div className="mt-3 flex items-end gap-0.5">
-          {undatedByNo.bins.map((b, i) => (
-            <span key={i} className="flex-1 rounded-t-sm" style={{ height: Math.max(2, (b / undatedByNo.bmax) * 90), background: `var(--cat-${ERA_TONE.dali}-bg)`, borderTop: `2px solid var(--cat-${ERA_TONE.dali}-tx)` }} title={`第 ${i + 1} 桶：${b} 件`} />
-          ))}
-        </div>
       </section>
 
       <section className="border-t border-[var(--cc-line)] py-5">
@@ -2630,11 +2624,11 @@ function Case1Analysis() {
   const mode = hasActor ? tlMode : '議題';
   const 軸COLOR = { 缺額與提名: 1, 修法與釋憲: 2 };
   const ACTOR_COLOR = { 立法院: 2, 行政院: 4, 總統: 1, 司法院: 5, 其他: 8 };
-  const toneOf = (t) => (mode === '議題' ? (軸COLOR[t.軸] ?? 8) : (ACTOR_COLOR[t.行為人] ?? 8));
-  const sideOf = (t) => (mode === '議題' ? (t.軸 === '缺額與提名' ? 'L' : 'R') : 'R');
-  const legend = mode === '議題'
-    ? [['缺額與提名', 軸COLOR.缺額與提名], ['修法與釋憲', 軸COLOR.修法與釋憲]]
-    : [...new Set(events.map((t) => t.行為人).filter(Boolean))].map((a) => [a, ACTOR_COLOR[a] ?? 8]);
+  // 主事者（資料欄位名沿用「行為人」，顯示層改稱主事者）：泳道分欄用，固定欄序讓欄位穩定。
+  const actorsPresent = ['立法院', '行政院', '總統', '司法院', '其他'].filter((a) => events.some((t) => t.行為人 === a));
+  const toneOf = (t) => (軸COLOR[t.軸] ?? 8);
+  const sideOf = (t) => (t.軸 === '缺額與提名' ? 'L' : 'R');
+  const legend = [['缺額與提名', 軸COLOR.缺額與提名], ['修法與釋憲', 軸COLOR.修法與釋憲]];
   const srcLink = (href) => (
     <a href={href} target="_blank" rel="noreferrer" className="ml-1 inline-flex items-center align-baseline text-[var(--cc-accent)] hover:text-[var(--cc-link-hover)]" aria-label="來源">
       <ExternalLink size={10} />
@@ -2661,7 +2655,7 @@ function Case1Analysis() {
             </h3>
           </div>
           {hasActor ? (
-            <SegControl value={tlMode} onChange={setTlMode} options={[['議題', '依議題'], ['行為人', '依行為人']]} />
+            <SegControl value={tlMode} onChange={setTlMode} options={[['議題', '依議題'], ['行為人', '依主事者']]} />
           ) : null}
         </div>
         <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-[12px] text-[var(--cc-ink-soft)]">
