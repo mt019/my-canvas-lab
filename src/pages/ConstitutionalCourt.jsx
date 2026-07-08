@@ -268,6 +268,11 @@ function CaseCard({ d }) {
     setFull(m[d.字號] ?? { 主文: d.主文 });
     setLoadingFull(false);
   };
+  // 行憲前卡片預設就展開全文（懶載檔仍只抓一次、全卡共享快取）；預覽被截斷者才需抓。
+  useEffect(() => {
+    if (d.系列 && d.主文.endsWith('…')) showFull();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [d.字號]);
   return (
     <article className="border-t border-[var(--cc-line)] py-5">
       <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">

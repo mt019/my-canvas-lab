@@ -147,16 +147,38 @@ work.
 
 ### `ConstitutionalCourt` (landed 2026-07-06)
 
-- Imports `src/data/constitutionalCourt.json` (~1.8MB), a copied
-  snapshot owned by the sibling repo
-  `../constitutional-court-research-data` (GitHub mt019, private).
-  Update flow: in that repo run `npm run update` (incremental crawl of
-  cons.judicial.gov.tw) → `npm run sync` → here rebuild font subsets
-  if new glyphs appeared → `npm run build`.
+- Imports `src/data/constitutionalCourt.json` (~5.4MB since M5 Phase B;
+  行憲前 rows are lean catalog previews, not full text) plus a lazy
+  companion `constitutionalCourt-pre1947-fulltext.json` (~2.4MB,
+  dynamic-imported on demand — see M5 below). Both are copied snapshots
+  owned by the sibling repo `../constitutional-court-research-data`
+  (GitHub mt019). Update flow: in that repo run `npm run update`
+  (incremental crawl of cons.judicial.gov.tw) → `npm run sync` (copies
+  both files) → here rebuild font subsets if new glyphs appeared
+  (`node scripts/rebuild-font-subsets.mjs`) → `npm run build`.
 - Seven tabs: 案件索引 (filters + full-text cards + CSV/JSON/BibTeX/
   引註/manifest export), 案件時間軸, 大法官, 任期時間軸 (tenure
   gantt), 意見書圖譜 (SVG circular co-sign network, no chart lib),
   沿革 (`HistoryView`, see the 2026-07-07 沿革 entry below), 資料說明.
+- **2026-07-08 M5 Phase B — 行憲前司法解釋 (6,354 件)**: 大理院統字 /
+  最高法院解字 / 司法院院字·院解字 harvested from 維基文庫 into the
+  same `文件` collection, distinguished by a new `機關` dimension
+  (大理院/最高法院/司法院/大法官/憲法法庭). 索引 gained a prominent top
+  **segmented control** (`SegControl`): 行憲後 / 行憲前 / 全部, default
+  行憲後 (drives the `機關` state; sub-dropdown for the three pre-1948
+  institutions appears only under 行憲前). When viewing 行憲前 the
+  大法官-era filters (類型/主題/審查基準) are hidden. Header stat
+  「大法官解釋」 now reads `統計.機關.大法官` (813) — NOT `統計.解釋`
+  (which is 7167, era-spanning); 行憲前 is a separate labelled line.
+  Sort uses `sortKey` (行憲前 by 系列+號次 since 統字 mostly lack dates,
+  else by 日期) — do not sort 行憲前 by date. 行憲前 full text lives in
+  the lazy `-pre1947-fulltext.json`; `CaseCard` dynamic-imports it and
+  **auto-expands** for 行憲前 cards (one shared fetch, cached). 沿革
+  stage cards deep-link to `?機關=…`. TimelineView / TopicHeatmaps skip
+  `d.系列` rows. Fonts: full classical corpus expanded the Huiwen subset;
+  27 source-absent glyphs are in `font-coverage-exceptions.txt`. Data
+  design: research-data repo `docs/{司法解釋沿革設計,行憲前來源探勘,
+  data-contract}.md`.
 - 2026-07-06 update: opinion parsing in the data repo was overhauled
   (抄本 bundled-PDF filenames expanded into per-opinion records and
   deduped against standalone PDFs; compound types normalized; names
