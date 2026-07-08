@@ -1751,7 +1751,7 @@ const LCT_RESULT = {
 };
 
 // 意見書覆蓋（逐時期）：哪些時期、哪些號沒有大法官意見書。讀資料層稽核鍵 data.意見書覆蓋
-// （audit-opinion-coverage.mjs 產，含官方原始頁漏抓交叉核對）；點時期下鑽該期無意見書字號。
+// （audit-opinion-coverage.mjs 產，含官方原始頁漏抓交叉核對）；點時期展開該期無意見書字號。
 function OpinionCoverage() {
   const cov = data.意見書覆蓋;
   const 是行憲前 = (名) => 名.includes('行憲前');
