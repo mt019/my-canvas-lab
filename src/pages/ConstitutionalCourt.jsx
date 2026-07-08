@@ -1750,7 +1750,7 @@ const LCT_RESULT = {
 
 // 意見書覆蓋（逐時期）：哪些時期、哪些號沒有大法官意見書。讀資料層稽核鍵 data.意見書覆蓋
 // （audit-opinion-coverage.mjs 產，含官方原始頁漏抓交叉核對）；點時期展開該期無意見書字號。
-// 意見書熱條：一豎條＝一號，色深＝該號大法官意見書份數（沿用矩陣的 heatFill 熱標，0＝heat-zero）。
+// 意見書色帶：一直條＝一號，色深＝該號大法官意見書份數（沿用矩陣的 heatFill 熱度標，0＝heat-zero）。
 function HeatStrip({ id, rows, maxN, marks, ticks, label, sub, hov, setHov }) {
   const slices = useMemo(
     () => rows.map((d) => <span key={d.字號} className="block h-full flex-1" style={{ background: heatFill(d.c, maxN) }} />),
@@ -1791,7 +1791,7 @@ function HeatStrip({ id, rows, maxN, marks, ticks, label, sub, hov, setHov }) {
 }
 
 // 意見書覆蓋（逐號熱條）：重點在「哪些號有幾份意見書」，色深即分別意見多寡；空白＝無。
-// 現算自 docs（意見書 array 已濾待人工）；核對數字取資料層稽核鍵 data.意見書覆蓋。
+// 現算自 docs（意見書 array 已排除待人工）；核對數字取資料層稽核鍵 data.意見書覆蓋。
 function OpinionCoverage() {
   const cov = data.意見書覆蓋;
   const g = useMemo(() => {
@@ -1805,7 +1805,7 @@ function OpinionCoverage() {
     const marks = [[1991, '1991'], [2003, '2003'], [2015, '2015']]
       .map(([y, label]) => { const i = s.findIndex((d) => d.y && d.y >= y); return i > 0 ? { frac: i / s.length, label } : null; }).filter(Boolean);
     const ticksS = [1, 200, 400, 600, 800].map((n) => { const i = s.findIndex((d) => d.n >= n); return i < 0 ? null : { frac: (i + 0.5) / s.length, label: n === 1 ? '釋1' : String(n) }; }).filter(Boolean);
-    const ticksX = [1, 20, 40, 57].map((n) => { const i = x.findIndex((d) => d.n >= n); return i < 0 ? null : { frac: (i + 0.5) / Math.max(1, x.length), label: `憲判${n}` }; }).filter(Boolean);
+    const ticksX = [1, 20, 40].map((n) => { const i = x.findIndex((d) => d.n >= n); return i < 0 ? null : { frac: (i + 0.5) / Math.max(1, x.length), label: n === 1 ? '憲判1' : String(n) }; }).filter(Boolean);
     return { s, x, maxN, marks, ticksS, ticksX, cS: s.filter((d) => d.c > 0).length, cX: x.filter((d) => d.c > 0).length };
   }, []);
   const [hov, setHov] = useState(null);
@@ -1830,7 +1830,7 @@ function OpinionCoverage() {
         <span>{g.maxN}+ 份</span>
       </div>
       <p className="mt-1.5 max-w-2xl text-[12px] leading-relaxed text-[var(--cc-figure-note)]">
-        每一豎條為一號，色深＝該號大法官意見書份數，空白＝無（早期居多）。滑過看號次與份數。覆蓋隨年代上升，晚期與憲法法庭近全覆蓋。空白已對官方原始頁逐件交叉核對（{cov?.核對?.已核對0紀錄件 ?? 345} 件，疑漏抓 {cov?.核對?.疑漏抓 ?? 0}）＝非漏抓；核對限官方數位記錄，紙本未稽核為<strong className="text-[var(--cc-ink-strong)]">下限</strong>。
+        每一直條為一號，色深＝該號大法官意見書份數，空白＝無（早期居多）。滑過看號次與份數。覆蓋隨年代上升，晚期與憲法法庭近全覆蓋。空白已對官方原始頁逐件交叉核對（{cov?.核對?.已核對0紀錄件 ?? 345} 件，疑漏抓 {cov?.核對?.疑漏抓 ?? 0}）＝非漏抓；核對限官方數位記錄，紙本未稽核為<strong className="text-[var(--cc-ink-strong)]">下限</strong>。
       </p>
     </div>
   );
