@@ -124,6 +124,7 @@ const tabs = [
   { id: 'justices', label: '大法官', icon: Users },
   { id: 'tenure', label: '任期時間軸', icon: History },
   { id: 'graph', label: '意見書圖譜', icon: Network },
+  { id: 'research', label: '問題意識', icon: FileText },
   { id: 'history', label: '沿革', icon: Landmark },
   { id: 'about', label: '資料說明', icon: Info },
 ];
@@ -370,7 +371,7 @@ function CaseCard({ d }) {
 
       <div className="mt-3 flex flex-wrap items-center gap-4 text-[11px]">
         <a href={d.官方頁} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 font-bold text-[var(--cc-accent)] hover:text-[var(--cc-link-hover)]">
-          官方頁面（全文、理由書與下載） <ExternalLink size={11} />
+          {d.系列 ? '維基文庫原文（彙編校勘本）' : '官方頁面（全文、理由書與下載）'} <ExternalLink size={11} />
         </a>
         {d.立場表下載 ? (
           <a href={d.立場表下載} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 font-bold text-[var(--cc-blue-ink)] hover:text-[var(--cc-blue-ink-hover)]">
@@ -413,6 +414,35 @@ function readInitial機關() {
   if (typeof window === 'undefined') return '行憲後';
   const v = new URLSearchParams(window.location.search).get('機關');
   return v === '全部' || v === '行憲前' || 機關_序.includes(v) ? v : '行憲後';
+}
+
+// 排序主鍵：行憲前（有系列）按 系列＋號次 排在前段（號次即時序，統字多無日期，不靠日期）；
+// 行憲後按日期排在後段。全部檢視下自然呈行憲前→行憲後的時序。
+const SERIES_RANK = { 統字: 0, 解字: 1, 院字: 2, 院解字: 3 };
+function sortKey(d) {
+  if (d.系列) return `A${SERIES_RANK[d.系列] ?? 9}${String(d.號次 ?? 0).padStart(5, '0')}`;
+  return `B${d.日期 ?? ''}`;
+}
+
+// 頂部行憲前後大分段鈕（醒目切換，非埋在下拉裡）。
+function SegControl({ value, onChange, options }) {
+  return (
+    <div className="inline-flex rounded-lg border border-[var(--cc-border)] bg-white p-0.5">
+      {options.map(([v, label, sub]) => (
+        <button
+          key={v}
+          onClick={() => onChange(v)}
+          className="rounded-md px-3 py-1.5 text-[12.5px] font-bold transition"
+          style={{
+            background: value === v ? 'var(--cc-tab-active-bg)' : 'transparent',
+            color: value === v ? 'var(--cc-tab-active-text)' : 'var(--cc-tab-inactive-text)',
+          }}
+        >
+          {label}{sub != null ? <span className="ml-1 font-normal opacity-70">{sub}</span> : null}
+        </button>
+      ))}
+    </div>
+  );
 }
 
 function IndexView() {
@@ -502,16 +532,37 @@ function IndexView() {
 
   const sorted = useMemo(() => {
     const arr = [...filtered];
-    arr.sort((a, b) => (sortDir === 'desc' ? (b.日期 ?? '').localeCompare(a.日期 ?? '') : (a.日期 ?? '').localeCompare(b.日期 ?? '')));
+    arr.sort((a, b) => (sortDir === 'desc' ? sortKey(b).localeCompare(sortKey(a)) : sortKey(a).localeCompare(sortKey(b))));
     return arr;
   }, [filtered, sortDir]);
 
   const shown = sorted.slice(0, limit);
   const stamp = new Date().toISOString().slice(0, 10);
+  // 是否只看行憲前：決定隱藏大法官時代才有的篩選（類型/主題/審查基準對統一解釋無意義）。
+  const isPre = 機關 === '行憲前' || 機關_ERA.行憲前.includes(機關);
+  const seg = 機關 === '行憲後' ? '行憲後' : 機關 === '全部' ? '全部' : '行憲前';
 
   return (
     <div>
       <div className="sticky top-[49px] z-10 -mx-4 border-b border-[var(--cc-line)] bg-[var(--cc-bg)]/95 px-4 py-3 backdrop-blur sm:-mx-6 sm:px-6">
+        {/* 頂部大分段鈕：行憲前後明確切開（預設行憲後）。行憲前另給機關子篩選。 */}
+        <div className="mb-2.5 flex flex-wrap items-center gap-2">
+          <SegControl
+            value={seg}
+            onChange={(v) => { set機關(v); setType('全部'); setTopic('全部'); setSubtopic('全部'); setOutcome('全部'); setStandard('全部'); setDecade('全部'); setLimit(30); }}
+            options={[
+              ['行憲後', '行憲後　釋字・憲判', 機關Counts.行憲後],
+              ['行憲前', '行憲前　統一解釋', 機關Counts.行憲前],
+              ['全部', '全部', docs.length],
+            ]}
+          />
+          {seg === '行憲前' ? (
+            <Select label="機關" value={機關 === '行憲前' ? '行憲前' : 機關} onChange={(v) => { set機關(v); setLimit(30); }} options={[['行憲前', `全部機關（${機關Counts.行憲前}）`], ...機關_ERA.行憲前.map((k) => [k, `${k}（${機關Counts.m.get(k) ?? 0}）`])]} />
+          ) : null}
+          {seg === '行憲前' ? (
+            <span className="text-[11px] text-[var(--cc-ink-soft)]">大理院／最高法院／司法院的統一解釋，非大法官憲法解釋；主題與審查基準為大法官時代機標，此處不適用。</span>
+          ) : null}
+        </div>
         <div className="flex flex-wrap items-center gap-3">
           <label className="flex min-w-[200px] flex-1 items-center gap-2 rounded-md border border-[var(--cc-border)] bg-white px-2.5 py-1.5">
             <Search size={13} className="text-[var(--cc-eyebrow)]" />
@@ -522,14 +573,19 @@ function IndexView() {
               className="w-full bg-transparent text-[12px] text-[var(--cc-ink-strong)] placeholder-[var(--cc-placeholder)] focus:outline-none"
             />
           </label>
-          <Select label="機關" value={機關} onChange={(v) => { set機關(v); setTopic('全部'); setSubtopic('全部'); setLimit(30); }} options={[['行憲後', `行憲後（${機關Counts.行憲後}）`], ['全部', `全部（${docs.length}）`], ['行憲前', `行憲前（${機關Counts.行憲前}）`], ...機關_序.map((k) => [k, `${k}（${機關Counts.m.get(k) ?? 0}）`])]} />
-          <Select label="類型" value={type} onChange={(v) => { setType(v); setLimit(30); }} options={[['全部', '全部'], ['解釋', `解釋（${typeCounts.get('解釋') ?? 0}）`], ['判決', `憲法法庭判決（${typeCounts.get('判決') ?? 0}）`], ['實體裁定', `實體裁定（${typeCounts.get('實體裁定') ?? 0}）`]]} />
-          <Select label="主題" value={topic} onChange={(v) => { setTopic(v); setSubtopic('全部'); setLimit(30); }} options={[['全部', '全部'], ...topicOptions]} />
-          {subtopicOptions ? (
+          {!isPre ? (
+            <Select label="類型" value={type} onChange={(v) => { setType(v); setLimit(30); }} options={[['全部', '全部'], ['解釋', `解釋（${typeCounts.get('解釋') ?? 0}）`], ['判決', `憲法法庭判決（${typeCounts.get('判決') ?? 0}）`], ['實體裁定', `實體裁定（${typeCounts.get('實體裁定') ?? 0}）`]]} />
+          ) : null}
+          {!isPre ? (
+            <Select label="主題" value={topic} onChange={(v) => { setTopic(v); setSubtopic('全部'); setLimit(30); }} options={[['全部', '全部'], ...topicOptions]} />
+          ) : null}
+          {subtopicOptions && !isPre ? (
             <Select label="細分" value={subtopic} onChange={(v) => { setSubtopic(v); setLimit(30); }} options={[['全部', '全部'], ...subtopicOptions.map(([s, n]) => [s, `${s}（${n}）`])]} />
           ) : null}
           <Select label="結論" value={outcome} onChange={(v) => { setOutcome(v); setLimit(30); }} options={[['全部', '全部'], ['違憲（含定期失效）', `違憲（含定期失效）（${outcomeCounts['違憲（含定期失效）']}）`], ['合憲', `合憲（${outcomeCounts.合憲}）`], ['法令解釋', `法令解釋（${outcomeCounts.法令解釋}）`], ['補充前解釋', `補充前解釋（${outcomeCounts.補充前解釋}）`], ['變更前解釋', `變更前解釋（${outcomeCounts.變更前解釋}）`], ['其他/待人工', `待人工判讀（${outcomeCounts['其他/待人工']}）`]]} />
-          <Select label="審查基準" value={standard} onChange={(v) => { setStandard(v); setLimit(30); }} options={[['全部', '全部'], ['嚴格', `嚴格（${standardCounts.get('嚴格') ?? 0}）`], ['中度', `中度（${standardCounts.get('中度') ?? 0}）`], ['寬鬆', `寬鬆（${standardCounts.get('寬鬆') ?? 0}）`], ['多重（待人工）', `多重（待人工）（${standardCounts.get('多重（待人工）') ?? 0}）`], ['未明示', `未明示（${standardCounts.get('未明示') ?? 0}）`]]} />
+          {!isPre ? (
+            <Select label="審查基準" value={standard} onChange={(v) => { setStandard(v); setLimit(30); }} options={[['全部', '全部'], ['嚴格', `嚴格（${standardCounts.get('嚴格') ?? 0}）`], ['中度', `中度（${standardCounts.get('中度') ?? 0}）`], ['寬鬆', `寬鬆（${standardCounts.get('寬鬆') ?? 0}）`], ['多重（待人工）', `多重（待人工）（${standardCounts.get('多重（待人工）') ?? 0}）`], ['未明示', `未明示（${standardCounts.get('未明示') ?? 0}）`]]} />
+          ) : null}
           <Select label="年代" value={decade} onChange={(v) => { setDecade(v); setLimit(30); }} options={[['全部', '全部'], ...decades.map((d) => [d, `${d} 年代`])]} />
         </div>
         <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-[var(--cc-ink-soft)]">
@@ -1455,6 +1511,169 @@ function PairDetail({ pair, list, onClose }) {
   );
 }
 
+// 可重現的偽亂數（置換檢定用）：同一資料每次載入 p 值穩定，資料變則跟著變。
+function mulberry32(a) {
+  return function () {
+    a |= 0; a = (a + 0x6D2B79F5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+// 問題意識（仿財政頁 Research Problem＋Model Gate 紀律）：分殊化＝審議專業化 vs 任命政治化。
+// 全部統計現算自 docs/justices（運維導向，資料一增補即更新）；共同具名同質性附置換檢定。
+function ResearchProblem() {
+  const stats = useMemo(() => {
+    const post = docs.filter((x) => x.機關 === '大法官' || x.機關 === '憲法法庭');
+    const yr = (s) => (s ? Number(String(s).slice(0, 4)) : null);
+    const bins = [
+      ['1949–1990', (y) => y <= 1990], ['1991–2002', (y) => y >= 1991 && y <= 2002],
+      ['2003–2014', (y) => y >= 2003 && y <= 2014], ['2015–2021', (y) => y >= 2015 && y <= 2021],
+      ['2022–', (y) => y >= 2022],
+    ];
+    const trend = bins.map(([lab, t]) => {
+      let n = 0, dis = 0, sum = 0;
+      for (const x of post) {
+        const y = yr(x.日期); if (y == null || !t(y)) continue;
+        n++; const ops = x.意見書 ?? [];
+        if (ops.some((o) => (o.類型 ?? '').includes('不同'))) dis++;
+        sum += ops.length;
+      }
+      return { lab, n, disPct: n ? dis / n : 0, avg: n ? sum / n : 0 };
+    });
+    const pk = (a, b) => (a < b ? `${a}${SEP}${b}` : `${b}${SEP}${a}`);
+    const pair = new Map();
+    for (const x of post) {
+      const y = yr(x.日期); if (y == null || y < 2022) continue;
+      for (const o of x.意見書 ?? []) {
+        const s = [...new Set([...(o.提出 ?? []), ...(o.加入 ?? [])])];
+        for (let i = 0; i < s.length; i++) for (let j = i + 1; j < s.length; j++) pair.set(pk(s[i], s[j]), (pair.get(pk(s[i], s[j])) ?? 0) + 1);
+      }
+    }
+    const names = [...new Set([].concat(...[...pair.keys()].map((k) => k.split(SEP))))];
+    const jb = new Map(justices.map((j) => [j.姓名, j]));
+    const deu = (v) => (v == null ? null : (['德國', '德語圈', '奧地利', '瑞士'].includes(v) ? '德語圈' : '其他/國內'));
+    const groupers = [
+      ['提名總統', (nm) => jb.get(nm)?.提名總統 ?? null],
+      ['出身', (nm) => jb.get(nm)?.出身 ?? null],
+      ['德語圈留學', (nm) => deu(jb.get(nm)?.留學國)],
+    ];
+    const gap = (g) => {
+      let ws = 0, wsN = 0, wc = 0, wcN = 0;
+      for (let i = 0; i < names.length; i++) for (let j = i + 1; j < names.length; j++) {
+        const va = g(names[i]), vb = g(names[j]); if (va == null || vb == null) continue;
+        const w = pair.get(pk(names[i], names[j])) ?? 0;
+        if (va === vb) { ws += w; wsN++; } else { wc += w; wcN++; }
+      }
+      return { same: wsN ? ws / wsN : 0, diff: wcN ? wc / wcN : 0, gap: (wsN ? ws / wsN : 0) - (wcN ? wc / wcN : 0) };
+    };
+    const rng = mulberry32(20260708);
+    const permP = (g, obs, B = 2000) => {
+      const vals = names.map(g); let ge = 0;
+      for (let b = 0; b < B; b++) {
+        const p = vals.slice();
+        for (let k = p.length - 1; k > 0; k--) { const r = Math.floor(rng() * (k + 1)); [p[k], p[r]] = [p[r], p[k]]; }
+        const m = new Map(names.map((nm, i) => [nm, p[i]]));
+        let ws = 0, wsN = 0, wc = 0, wcN = 0;
+        for (let i = 0; i < names.length; i++) for (let j = i + 1; j < names.length; j++) {
+          const va = m.get(names[i]), vb = m.get(names[j]); if (va == null || vb == null) continue;
+          const w = pair.get(pk(names[i], names[j])) ?? 0;
+          if (va === vb) { ws += w; wsN++; } else { wc += w; wcN++; }
+        }
+        if (((wsN ? ws / wsN : 0) - (wcN ? wc / wcN : 0)) >= obs) ge++;
+      }
+      return (ge + 1) / (B + 1);
+    };
+    const assortRows = groupers.map(([lab, g]) => { const a = gap(g); return { lab, ...a, p: permP(g, a.gap) }; });
+    const presCount = {};
+    for (const nm of names) { const v = jb.get(nm)?.提名總統 ?? '—'; presCount[v] = (presCount[v] ?? 0) + 1; }
+    return { trend, assortRows, n: names.length, presCount, postN: trend.reduce((a, b) => a + b.n, 0) };
+  }, []);
+
+  const peak = stats.trend.find((r) => r.lab === '2015–2021');
+  const maxAvg = Math.max(1, ...stats.trend.map((r) => r.avg));
+  return (
+    <section className="border-t border-[var(--cc-line)] py-5">
+      <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">問題意識 · Research Problem</p>
+      <h2 className="text-base font-bold text-[var(--cc-title-ink)]">分殊化：審議專業化，還是任命政治化？</h2>
+      <p className="mt-2 max-w-3xl text-[12.5px] leading-relaxed text-[var(--cc-ink-mid)]">
+        台灣大法官長期被理解為「合議共識型」法院——判決以機關名義作成、不同意見稀少。資料推翻了這個圖像：每案分別意見數從 1990 年代前的不到一份，升到 2015–2021 年的每案 {peak ? peak.avg.toFixed(1) : '7'} 份。核心問題是這場「意見分殊化」代表什麼？兩種對立的說法：
+      </p>
+      <div className="mt-3 grid max-w-3xl gap-3 sm:grid-cols-2">
+        <div className="rounded-lg border border-[var(--cc-line)] p-3">
+          <div className="flex items-center gap-2"><Badge tone="blue">專業審議說</Badge><span className="text-[11px] text-[var(--cc-ink-soft)]">legalist</span></div>
+          <p className="mt-1.5 text-[12px] leading-relaxed text-[var(--cc-ink-mid)]">會議以學者為主體，分別意見是釋義學分工與論理對話的產物；分殊化代表審議透明化。若成立，意見聯盟應沿學術背景／方法傳統組織。</p>
+        </div>
+        <div className="rounded-lg border border-[var(--cc-line)] p-3">
+          <div className="flex items-center gap-2"><Badge tone="red">任命政治說</Badge><span className="text-[11px] text-[var(--cc-ink-soft)]">attitudinal</span></div>
+          <p className="mt-1.5 text-[12px] leading-relaxed text-[var(--cc-ink-mid)]">分殊化隨 2003 交錯任期改制、以及蔡英文提名近乎整屆而政治化。若成立，意見聯盟應沿提名總統組織。</p>
+        </div>
+      </div>
+
+      <div className="mt-5">
+        <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">證據一 · 分殊化趨勢</p>
+        <h3 className="text-[14px] font-bold text-[var(--cc-title-ink)]">每案分別意見數（行憲後 {stats.postN} 件）</h3>
+        <div className="mt-2 max-w-xl space-y-1">
+          {stats.trend.map((r) => (
+            <div key={r.lab} className="grid grid-cols-[86px_1fr_112px] items-center gap-2 text-[12px]">
+              <span className="text-[var(--cc-ink-mid)]">{r.lab}</span>
+              <span className="block h-2 rounded-full bg-[var(--cc-track)]"><span className="block h-2 rounded-full" style={{ width: `${(r.avg / maxAvg) * 100}%`, background: 'var(--cc-highlight)' }} /></span>
+              <span className="text-right text-[var(--cc-ink-soft)]">{r.avg.toFixed(2)} 份・{Math.round(r.disPct * 100)}% 不同</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="mt-5">
+        <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">證據二 · 聯盟沿哪條線組織</p>
+        <h3 className="text-[14px] font-bold text-[var(--cc-title-ink)]">現任憲法法庭（{stats.n} 位具名法官）：同組 vs 跨組的平均共同具名</h3>
+        <div className="mt-2 max-w-xl overflow-x-auto">
+          <table className="w-full text-[12px]">
+            <thead>
+              <tr className="text-left text-[var(--cc-table-head-ink)]">
+                <th className="py-1 pr-3 font-bold">分組維度</th><th className="py-1 pr-3 font-bold">同組</th>
+                <th className="py-1 pr-3 font-bold">跨組</th><th className="py-1 pr-3 font-bold">差</th><th className="py-1 font-bold">置換檢定 p</th>
+              </tr>
+            </thead>
+            <tbody>
+              {stats.assortRows.map((r) => (
+                <tr key={r.lab} className="border-t border-[var(--cc-row-border)]">
+                  <td className="py-1 pr-3 font-bold text-[var(--cc-ink-strong)]">{r.lab}</td>
+                  <td className="py-1 pr-3">{r.same.toFixed(2)}</td>
+                  <td className="py-1 pr-3">{r.diff.toFixed(2)}</td>
+                  <td className="py-1 pr-3">{r.gap >= 0 ? '+' : ''}{r.gap.toFixed(2)}</td>
+                  <td className="py-1">{r.p < 0.05 ? <strong className="text-[var(--cc-accent)]">{r.p.toFixed(3)} ✓</strong> : r.p.toFixed(3)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p className="mt-1.5 max-w-2xl text-[11px] leading-relaxed text-[var(--cc-ink-soft)]">
+          只有「提名總統」測得到顯著的同質性（同總統提名者共同具名較多）；出身、留學傳統測不到。初步偏向任命政治說——但見下方方法閘門。到「意見書圖譜」勾「依提名總統上色」可肉眼對照分塊。
+        </p>
+      </div>
+
+      <div className="mt-5 max-w-3xl rounded-lg border border-[var(--cc-border)] bg-[var(--cc-hover-bg)] p-3.5">
+        <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">方法閘門 · Model Gate</p>
+        <h3 className="text-[14px] font-bold text-[var(--cc-title-ink)]">現階段只能主張描述與類型學，不能主張因果或意識形態定位</h3>
+        <ul className="mt-2 space-y-1.5 text-[12px] leading-relaxed text-[var(--cc-ink-mid)]">
+          <li>共同具名是「正向同意」的痕跡、不是投票——沉默加入多數的法官在資料裡隱形。</li>
+          <li>「提名總統」高度共線：{stats.n} 位中 {stats.presCount['蔡英文'] ?? 0} 位由蔡英文提名，「同總統」幾乎等於「同一批新任」，任命效果與世代／同期效果分不開。</li>
+          <li>只有一屆、樣本小（{stats.n} 人）；早期釋字意見書解析為下限，趨勢左端偏保守。</li>
+        </ul>
+      </div>
+
+      <div className="mt-3 max-w-3xl">
+        <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">資料解鎖 · 下一步</p>
+        <p className="mt-1 text-[12px] leading-relaxed text-[var(--cc-ink-mid)]">
+          要把問題意識推到可檢定的強命題，關鍵是解析<strong className="text-[var(--cc-ink-strong)]">立場表 PDF</strong>（憲判逐案「同意／不同意各主文項」），重建投票矩陣後估計大法官理想點（W-NOMINATE／Martin–Quinn），並在控制世代、案類、時間下檢定任命效果。屆時本節從「描述＋置換檢定」升級為「理想點＋迴歸」。
+        </p>
+      </div>
+    </section>
+  );
+}
+
 function GraphView() {
   const [eraKey, setEraKey] = useState(GRAPH_ERAS[0].key);
   const [mode, setMode] = useState('合計');
@@ -1535,9 +1754,17 @@ function GraphView() {
   }, [eraData]);
   const maxDensity = Math.max(1, ...Object.values(density));
 
-  // members（合計-degree ≥ minEdge）＋ seriation 排序（用合計權重，跨模式穩定）
+  // 門檻＝只留「至少有一條共同具名 ≥ minEdge 次的關係」的大法官（對強聯盟設門檻，
+  // 而非個人總量——後者在密集屆別幾乎人人破 3、按了沒差）。seriation 用合計權重、跨模式穩定。
   const members = useMemo(() => {
-    const names = [...ed.deg.entries()].filter(([, v]) => v >= minEdge).map(([nm]) => nm);
+    const maxTie = new Map();
+    for (const [k, o] of ed.pairs) {
+      const [a, b] = k.split(SEP);
+      const h = o.合計 ?? 0;
+      if (h > (maxTie.get(a) ?? 0)) maxTie.set(a, h);
+      if (h > (maxTie.get(b) ?? 0)) maxTie.set(b, h);
+    }
+    const names = [...maxTie.entries()].filter(([, v]) => v >= minEdge).map(([nm]) => nm);
     const wOf = (i, j) => ed.pairs.get(pairKey(names[i], names[j]))?.合計 ?? 0;
     return seriateOrder(names.length, wOf).map((i) => names[i]);
   }, [ed, minEdge]);
@@ -1660,6 +1887,11 @@ function GraphView() {
               {members.map((rowName, r) => members.map((colName, c) => {
                 if (mode !== '有向' && r === c) {
                   return <rect key={`${r}-${c}`} x={LABEL_W + c * CW} y={TOP + r * CW} width={CW - 1.6} height={CW - 1.6} rx={2} fill="var(--cc-track)" opacity={0.55} />;
+                }
+                // 門檻：共同具名不足 minEdge 次的關係留白（跨模式一致地吃「合計」，切模式不會忽有忽無）
+                const heji = ed.pairs.get(pairKey(rowName, colName))?.合計 ?? 0;
+                if (heji < minEdge) {
+                  return <rect key={`${r}-${c}`} x={LABEL_W + c * CW} y={TOP + r * CW} width={CW - 1.6} height={CW - 1.6} rx={2} fill="var(--cc-heat-zero)" />;
                 }
                 const v = cellVal(rowName, colName);
                 const inRowCol = selName && (selName === rowName || selName === colName);
@@ -1996,10 +2228,13 @@ function AboutView() {
     <div className="max-w-3xl">
       <section className="border-t border-[var(--cc-line)] py-5">
         <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">資料來源</p>
-        <h2 className="text-base font-bold text-[var(--cc-title-ink)]">全部資料取自憲法法庭官方網站的公開頁面</h2>
+        <h2 className="text-base font-bold text-[var(--cc-title-ink)]">行憲後取自憲法法庭官網，行憲前取自維基文庫（公有領域）</h2>
         <div className="mt-2 space-y-2 text-[12.5px] leading-relaxed text-[var(--cc-ink-mid)]">
           <p>
-            收錄範圍：司法院大法官解釋全部 {data.統計.解釋} 件（釋字第 1–813 號，1949–2021）、憲法法庭判決 {data.統計.判決} 件（2022 年憲法訴訟法施行起）、實體裁定 {data.統計.實體裁定} 件（含暫時處分）。程序性不受理裁定未收錄。
+            <strong className="text-[var(--cc-accent)]">行憲後</strong>：司法院大法官解釋 {data.統計.機關?.大法官 ?? 0} 件（釋字第 1–813 號，1949–2021）、憲法法庭判決 {data.統計.判決} 件（2022 年憲法訴訟法施行起）、實體裁定 {data.統計.實體裁定} 件（含暫時處分），取自憲法法庭官網。程序性不受理裁定未收錄。
+          </p>
+          <p>
+            <strong className="text-[var(--cc-accent)]">行憲前</strong>：統一解釋 {data.統計.行憲前} 件——大理院統字 {data.統計.機關?.大理院}（1913–1927）、最高法院解字 {data.統計.機關?.最高法院}（1927–1928）、司法院院字／院解字 {data.統計.機關?.司法院}（1929–1948），取自維基文庫（轉錄自司法院法學資料檢索系統與《司法院解釋彙編》，公有領域）。此係統一解釋法令，非大法官憲法解釋，與釋字分計；統字多無逐號日期（源頭即缺），院字／院解字帶完整年月日與彙編冊頁。
           </p>
           <p>
             每件案件的爭點、主文、相關法令、意見書清單與立場表連結均解析自官方頁面；文件下載一律連回官方網站，本站不代管任何檔案副本。
@@ -2064,12 +2299,13 @@ export default function ConstitutionalCourt() {
             <span className="ml-3 align-baseline text-base text-[var(--cc-body-text)]">釋字・憲判・暫時處分</span>
           </h1>
           <p className="mt-3 max-w-3xl text-sm leading-relaxed text-[var(--cc-body-text)]">
-            把官方網站的 {data.統計.總數} 件解釋與裁判做成可檢索的研究工作台：主題與年代篩選、意見書作者與立場、
-            共同具名網絡、引用統計，以及可直接進論文的引註與 BibTeX 匯出。
+            把中華民國司法解釋沿革——行憲後 {data.統計.行憲後} 件（大法官釋字・憲法法庭裁判，取自憲法法庭官網）與
+            行憲前 {data.統計.行憲前} 件（大理院／最高法院／司法院統一解釋，取自維基文庫）——做成可檢索的研究工作台：
+            主題與年代篩選、意見書作者與立場、共同具名網絡、引用統計，以及可直接進論文的引註與 BibTeX 匯出。
           </p>
-          <div className="mt-4 flex flex-wrap gap-x-8 gap-y-2">
+          <div className="mt-4 flex flex-wrap items-baseline gap-x-8 gap-y-2">
             {[
-              ['大法官解釋', data.統計.解釋],
+              ['大法官解釋', data.統計.機關?.大法官 ?? 0],
               ['憲法法庭判決', data.統計.判決],
               ['實體裁定', data.統計.實體裁定],
               ['具名意見書', docs.reduce((s, d) => s + d.意見書.filter((o) => o.作者類別 === '大法官').length, 0)],
@@ -2079,6 +2315,14 @@ export default function ConstitutionalCourt() {
                 <span className="font-display text-lg font-bold text-[var(--cc-ink)]">{value}</span>
               </div>
             ))}
+            {/* 行憲前另列一段、以分隔線區隔——非大法官解釋，不併入上面計數 */}
+            <div className="flex items-baseline gap-2 border-l border-[var(--cc-line)] pl-8">
+              <span className="text-[11px] font-bold text-[var(--cc-eyebrow)]">行憲前統一解釋</span>
+              <span className="font-display text-lg font-bold text-[var(--cc-ink)]">{data.統計.行憲前}</span>
+              <span className="text-[11px] text-[var(--cc-ink-soft)]">
+                大理院 {data.統計.機關?.大理院}・最高法院 {data.統計.機關?.最高法院}・司法院 {data.統計.機關?.司法院}
+              </span>
+            </div>
           </div>
         </div>
       </header>
@@ -2109,6 +2353,7 @@ export default function ConstitutionalCourt() {
         ) : null}
         {active === 'tenure' ? <TenureView onOpen={openJustice} /> : null}
         {active === 'graph' ? <GraphView /> : null}
+        {active === 'research' ? <ResearchProblem /> : null}
         {active === 'history' ? <HistoryView onOpenIndex={(機關) => setParams(機關 && 機關 !== '行憲後' ? { 機關 } : {})} /> : null}
         {active === 'about' ? <AboutView /> : null}
       </main>
