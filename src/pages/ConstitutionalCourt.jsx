@@ -125,6 +125,7 @@ const tabs = [
   { id: 'tenure', label: '任期時間軸', icon: History },
   { id: 'graph', label: '意見書圖譜', icon: Network },
   { id: 'research', label: '問題意識', icon: FileText },
+  { id: 'case1', label: '114 憲判 1 號', icon: Gavel },
   { id: 'history', label: '沿革', icon: Landmark },
   { id: 'about', label: '資料說明', icon: Info },
 ];
@@ -1526,6 +1527,30 @@ function mulberry32(a) {
   };
 }
 
+// 立場表真投票分析（scratchpad 端到端解析 56 判決立場表；暫用預算結果，待寫回資料層底層）。
+// 平均同意率＝共投≥8 次的對其同意率平均；同質性附置換檢定；理想點＝古典 MDS on 1−同意率（符號任意）。
+const LCT_RESULT = {
+  判決數: 56, rollCalls: 182, 爭議: 90, 法官數: 19, 重複旗標: 14, 平均同意率: 0.832,
+  同質性: [
+    { 維度: '提名總統', 同組: 0.840, 跨組: 0.793, 差: 0.047, p: 0.053 },
+    { 維度: '出身', 同組: 0.833, 跨組: 0.818, 差: 0.015, p: 0.227 },
+    { 維度: '德語圈留學', 同組: 0.799, 跨組: 0.847, 差: -0.048, p: 0.968 },
+  ],
+  提名總統均值: { 蔡英文: { mean: -0.069, n: 14 }, 馬英九: { mean: 0.237, n: 4 }, 陳水扁: { mean: 0.013, n: 1 } },
+  理想點: [
+    { 姓名: '陳忠五', x: -0.234, 提名總統: '蔡英文' }, { 姓名: '朱富美', x: -0.221, 提名總統: '蔡英文' },
+    { 姓名: '尤伯祥', x: -0.214, 提名總統: '蔡英文' }, { 姓名: '蔡彩貞', x: -0.200, 提名總統: '蔡英文' },
+    { 姓名: '謝銘洋', x: -0.058, 提名總統: '蔡英文' }, { 姓名: '黃昭元', x: -0.048, 提名總統: '蔡英文' },
+    { 姓名: '楊惠欽', x: -0.045, 提名總統: '蔡英文' }, { 姓名: '蔡宗珍', x: -0.010, 提名總統: '蔡英文' },
+    { 姓名: '呂太郎', x: -0.008, 提名總統: '蔡英文' }, { 姓名: '張瓊文', x: -0.007, 提名總統: '蔡英文' },
+    { 姓名: '許志雄', x: 0.000, 提名總統: '蔡英文' }, { 姓名: '蔡烱燉', x: 0.012, 提名總統: '蔡英文' },
+    { 姓名: '許宗力', x: 0.013, 提名總統: '陳水扁' }, { 姓名: '詹森林', x: 0.016, 提名總統: '蔡英文' },
+    { 姓名: '黃瑞明', x: 0.054, 提名總統: '蔡英文' }, { 姓名: '林俊益', x: 0.210, 提名總統: '馬英九' },
+    { 姓名: '吳陳鐶', x: 0.244, 提名總統: '馬英九' }, { 姓名: '蔡明誠', x: 0.248, 提名總統: '馬英九' },
+    { 姓名: '黃虹霞', x: 0.248, 提名總統: '馬英九' },
+  ],
+};
+
 // 問題意識（仿財政頁 Research Problem＋Model Gate 紀律）：分殊化＝審議專業化 vs 任命政治化。
 // 全部統計現算自 docs/justices（運維導向，資料一增補即更新）；共同具名同質性附置換檢定。
 function ResearchProblem() {
@@ -1628,6 +1653,9 @@ function ResearchProblem() {
             </div>
           ))}
         </div>
+        <p className="mt-1.5 max-w-2xl text-[11px] leading-relaxed text-[var(--cc-figure-note)]">
+          資料完整度：晚近（釋字 701 號後）與憲法法庭意見書覆蓋 100%；早／中期為<strong className="text-[var(--cc-ink-strong)]">下限</strong>——8 件釋字（115/150/153/156/393/503/517/564）的意見書藏在「意見書、抄本等文件」欄未解析（約 13+ 份，含王澤鑑、蘇俊雄、劉鐵錚等），另約 103 件的意見書收於影像抄本／OCR，官方頁不提供機讀文字。故上升「趨勢」穩健，早期「水準」偏低估。
+        </p>
       </div>
 
       <div className="mt-5">
@@ -1655,7 +1683,58 @@ function ResearchProblem() {
           </table>
         </div>
         <p className="mt-1.5 max-w-2xl text-[11px] leading-relaxed text-[var(--cc-ink-soft)]">
-          只有「提名總統」測得到顯著的同質性（同總統提名者共同具名較多）；出身、留學傳統測不到。初步偏向任命政治說——但見下方方法閘門。到「意見書圖譜」勾「依提名總統上色」可肉眼對照分塊。
+          只有「提名總統」測得到顯著的同質性（同總統提名者共同具名較多）；出身、留學傳統測不到。初步偏向任命政治說——但共同具名只是代理，證據三用真投票覆核。到「意見書圖譜」勾「依提名總統上色」可肉眼對照分塊。
+        </p>
+      </div>
+
+      <div className="mt-5">
+        <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">證據三 · 真實投票（立場表）</p>
+        <h3 className="text-[14px] font-bold text-[var(--cc-title-ink)]">解析 {LCT_RESULT.判決數} 件憲判立場表 → {LCT_RESULT.rollCalls} 個逐項表決（{LCT_RESULT.爭議} 爭議），大法官 1D 理想點</h3>
+        <p className="mt-1.5 max-w-2xl text-[12px] leading-relaxed text-[var(--cc-ink-mid)]">
+          有了逐案「同意／不同意各主文項」的真投票，就能超越共同具名代理。<strong className="text-[var(--cc-ink-strong)]">憲法法庭 2022– 意見書與立場表 100% 覆蓋</strong>，是本頁證據基礎最扎實處。法院<strong className="text-[var(--cc-ink-strong)]">仍高共識</strong>（平均同意率 {Math.round(LCT_RESULT.平均同意率 * 100)}%）；1D 理想點沿提名總統分佈——{LCT_RESULT.提名總統均值.馬英九.n} 位馬英九提名的留任大法官聚於一極（右）。
+        </p>
+        {(() => {
+          const pts = LCT_RESULT.理想點; const xs = pts.map((p) => p.x);
+          const lo = Math.min(...xs), hi = Math.max(...xs); const pad = (hi - lo) * 0.08;
+          const pos = (x) => ((x - (lo - pad)) / ((hi + pad) - (lo - pad))) * 100;
+          const ink = (p) => PRES_COLOR[p.提名總統] ?? 'var(--cc-ink-mid)';
+          return (
+            <div className="mt-2 max-w-md space-y-0.5">
+              {pts.map((p) => (
+                <div key={p.姓名} className="grid grid-cols-[58px_1fr_46px] items-center gap-2 text-[11.5px]">
+                  <span className="font-bold" style={{ color: ink(p) }}>{p.姓名}</span>
+                  <span className="relative block h-3.5">
+                    <span className="absolute inset-y-0 w-px bg-[var(--cc-line)]" style={{ left: `${pos(0)}%` }} />
+                    <span className="absolute top-1/2 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full" style={{ left: `${pos(p.x)}%`, background: inkToFill(ink(p)), border: `1.5px solid ${ink(p)}` }} />
+                  </span>
+                  <span className="text-right text-[var(--cc-ink-soft)]">{p.x >= 0 ? '+' : ''}{p.x.toFixed(2)}</span>
+                </div>
+              ))}
+            </div>
+          );
+        })()}
+        <div className="mt-3 max-w-xl overflow-x-auto">
+          <table className="w-full text-[12px]">
+            <thead>
+              <tr className="text-left text-[var(--cc-table-head-ink)]">
+                <th className="py-1 pr-3 font-bold">分組維度（真投票同意率）</th><th className="py-1 pr-3 font-bold">同組</th>
+                <th className="py-1 pr-3 font-bold">跨組</th><th className="py-1 font-bold">置換檢定 p</th>
+              </tr>
+            </thead>
+            <tbody>
+              {LCT_RESULT.同質性.map((r) => (
+                <tr key={r.維度} className="border-t border-[var(--cc-row-border)]">
+                  <td className="py-1 pr-3 font-bold text-[var(--cc-ink-strong)]">{r.維度}</td>
+                  <td className="py-1 pr-3">{r.同組.toFixed(3)}</td>
+                  <td className="py-1 pr-3">{r.跨組.toFixed(3)}</td>
+                  <td className="py-1">{r.p < 0.05 ? <strong className="text-[var(--cc-accent)]">{r.p.toFixed(3)} ✓</strong> : `${r.p.toFixed(3)}${r.p < 0.1 ? '（近顯著）' : ''}`}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p className="mt-1.5 max-w-2xl text-[11px] leading-relaxed text-[var(--cc-ink-soft)]">
+          真投票下任命效果反而更弱、borderline（提名總統 p≈0.05，比共同具名的 0.03 弱）；出身、德語圈仍測不到。且那 {LCT_RESULT.提名總統均值.馬英九.n} 位極端者正是仍在任的舊屆——「同提名總統」在這屆幾乎等於「同一批留任者」，任命效果與世代效果無法分離。
         </p>
       </div>
 
@@ -1663,16 +1742,17 @@ function ResearchProblem() {
         <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">方法閘門 · Model Gate</p>
         <h3 className="text-[14px] font-bold text-[var(--cc-title-ink)]">現階段只能主張描述與類型學，不能主張因果或意識形態定位</h3>
         <ul className="mt-2 space-y-1.5 text-[12px] leading-relaxed text-[var(--cc-ink-mid)]">
-          <li>共同具名是「正向同意」的痕跡、不是投票——沉默加入多數的法官在資料裡隱形。</li>
-          <li>「提名總統」高度共線：{stats.n} 位中 {stats.presCount['蔡英文'] ?? 0} 位由蔡英文提名，「同總統」幾乎等於「同一批新任」，任命效果與世代／同期效果分不開。</li>
-          <li>只有一屆、樣本小（{stats.n} 人）；早期釋字意見書解析為下限，趨勢左端偏保守。</li>
+          <li>真投票（立場表）只有憲法法庭 2022– 這 {LCT_RESULT.判決數} 件；釋字時期仍只有共同具名代理、無逐案投票。1D 理想點為古典 MDS 的簡單估計，非 W-NOMINATE／IRT。</li>
+          <li>「提名總統」與世代無法分離：極端的 {LCT_RESULT.提名總統均值.馬英九.n} 人是仍在任的舊屆留任者，「同總統」幾乎等於「同一批人」。任命效果與 holdover／同期效果分不開。</li>
+          <li>只有一屆、樣本小（{stats.n} 人、{LCT_RESULT.爭議} 爭議案）；立場表尚有 {LCT_RESULT.重複旗標} 件同項矛盾旗標＋1 判決＋3 裁定待補。</li>
+          <li>資料完整度非全等：強命題（證據三）建立在憲判 2022– 這 100% 覆蓋段；證據一早／中期為下限（8 件釋字意見書藏於「意見書、抄本等文件」欄未解析、約 103 件收於影像抄本，見趨勢下方註）。分殊化「趨勢」穩健、早期「水準」偏低。</li>
         </ul>
       </div>
 
       <div className="mt-3 max-w-3xl">
         <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">資料解鎖 · 下一步</p>
         <p className="mt-1 text-[12px] leading-relaxed text-[var(--cc-ink-mid)]">
-          要把問題意識推到可檢定的強命題，關鍵是解析<strong className="text-[var(--cc-ink-strong)]">立場表 PDF</strong>（憲判逐案「同意／不同意各主文項」），重建投票矩陣後估計大法官理想點（W-NOMINATE／Martin–Quinn），並在控制世代、案類、時間下檢定任命效果。屆時本節從「描述＋置換檢定」升級為「理想點＋迴歸」。
+          立場表已首度解析（證據三），投票矩陣到手。要把它推到定論還缺三步：把 parser 寫回<strong className="text-[var(--cc-ink-strong)]">資料層底層</strong>（fetch＋schema＋sync，此為暫用預算結果）；改用正式理想點估計（W-NOMINATE／Martin–Quinn 而非 1D MDS）並在控制世代、案類、時間下檢定任命效果；補齊剩餘 1 判決＋3 裁定與 {LCT_RESULT.重複旗標} 件矛盾旗標的人工覆核。跨屆資料累積後，「任命 vs 世代」的共線才可能鬆開。
         </p>
       </div>
     </section>
@@ -2279,6 +2359,125 @@ function AboutView() {
   );
 }
 
+// 114 憲判 1 號深度解析：純渲染資料層 doc.深度分析（策展層，見 constitutional-court-research-data/
+// data/materials/深度分析.json）。內容零寫死；顏色只走 --cc-* token 與校準過的 Badge tone。
+// 站位中立並陳多數/不同意見兩造，不裁決「5 人判決是否有效」。
+function Case1Analysis() {
+  const doc = docs.find((d) => d.字號 === '114年憲判字第1號');
+  const da = doc?.深度分析;
+  if (!da) {
+    return (
+      <section className="border-t border-[var(--cc-line)] py-5">
+        <p className="text-[12.5px] leading-relaxed text-[var(--cc-ink-mid)]">找不到「114 年憲判字第 1 號」的深度分析資料（資料層尚未同步）。</p>
+      </section>
+    );
+  }
+  const 多數 = da.組成爭議?.多數立場;
+  const 不同意見 = da.組成爭議?.不同意見立場;
+  const 軸groups = ['缺額與提名', '修法與釋憲'].map((ax) => ({
+    ax,
+    items: (da.時間軸 ?? []).filter((t) => t.軸 === ax).sort((a, b) => a.日期.localeCompare(b.日期)),
+  }));
+  const srcLink = (href) => (
+    <a href={href} target="_blank" rel="noreferrer" className="ml-1 inline-flex items-center align-baseline text-[var(--cc-accent)] hover:text-[var(--cc-link-hover)]" aria-label="來源">
+      <ExternalLink size={10} />
+    </a>
+  );
+  return (
+    <div>
+      <section className="border-t border-[var(--cc-line)] py-5">
+        <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">深度解析 · Case Study</p>
+        <h2 className="text-base font-bold text-[var(--cc-title-ink)]">{doc.字號}：{da.案名}</h2>
+        <p className="mt-2 max-w-3xl text-[12.5px] leading-relaxed text-[var(--cc-ink-mid)]">{da.一句話}</p>
+        <p className="mt-2 max-w-3xl text-[12px] leading-relaxed text-[var(--cc-ink-soft)]">{da.背景}</p>
+        <p className="mt-3 max-w-3xl rounded-lg border border-[var(--cc-line)] p-2.5 text-[11px] leading-relaxed text-[var(--cc-figure-note)]">
+          本頁並陳多數與不同意見兩造立場，不對「5 位大法官作成的判決是否有效」下判斷——這個元爭議之上並無更高階的中立仲裁機關。用語採「分立政府／在野聯盟過半」等中性表述。
+        </p>
+      </section>
+
+      <section className="border-t border-[var(--cc-line)] py-5">
+        <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">事件時間軸</p>
+        <h3 className="text-[14px] font-bold text-[var(--cc-title-ink)]">兩條交纏的軸線：缺額凍結與門檻拉高如何同時發生</h3>
+        <div className="mt-3 grid max-w-4xl gap-5 sm:grid-cols-2">
+          {軸groups.map((g) => (
+            <div key={g.ax}>
+              <p className="text-[12px] font-bold text-[var(--cc-title-ink)]">{g.ax}</p>
+              <ol className="mt-2 space-y-2 border-l border-[var(--cc-line)] pl-3">
+                {g.items.map((t, i) => (
+                  <li key={i} className="text-[12px] leading-relaxed">
+                    <span className="font-bold text-[var(--cc-ink-strong)]">{formatDate(t.日期)}</span>
+                    <span className="text-[var(--cc-ink-mid)]"> — {t.事件}</span>
+                    {t.來源 ? srcLink(t.來源) : null}
+                  </li>
+                ))}
+              </ol>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="border-t border-[var(--cc-line)] py-5">
+        <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">判決 · {formatDate('2025-12-19')}</p>
+        <h3 className="text-[14px] font-bold text-[var(--cc-title-ink)]">主文與論證</h3>
+        <p className="mt-2 max-w-3xl text-[12.5px] leading-relaxed text-[var(--cc-ink-mid)]">{da.判決主文}</p>
+        <ul className="mt-2 max-w-3xl list-disc space-y-1 pl-5 text-[12px] leading-relaxed text-[var(--cc-ink-mid)]">
+          {(da.論證主軸 ?? []).map((p, i) => <li key={i}>{p}</li>)}
+        </ul>
+      </section>
+
+      <section className="border-t border-[var(--cc-line)] py-5">
+        <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">核心爭議 · 5 vs 3</p>
+        <h3 className="text-[14px] font-bold text-[var(--cc-title-ink)]">憲法法庭是否合法組成？署名 5 人與拒審 3 人的對立</h3>
+        <div className="mt-3 grid max-w-3xl gap-3 sm:grid-cols-2">
+          <div className="rounded-lg border border-[var(--cc-line)] p-3">
+            <div className="flex items-center gap-2"><Badge tone="blue">{多數?.標籤}</Badge></div>
+            <p className="mt-1.5 text-[11px] text-[var(--cc-ink-soft)]">{(多數?.大法官 ?? []).join('、')}{多數?.主筆 ? `（主筆 ${多數.主筆}）` : ''}</p>
+            <ul className="mt-1.5 list-disc space-y-1 pl-4 text-[12px] leading-relaxed text-[var(--cc-ink-mid)]">
+              {(多數?.要點 ?? []).map((p, i) => <li key={i}>{p}</li>)}
+            </ul>
+            {多數?.個別註記 ? <p className="mt-1.5 text-[11px] leading-relaxed text-[var(--cc-figure-note)]">{多數.個別註記}</p> : null}
+          </div>
+          <div className="rounded-lg border border-[var(--cc-line)] p-3">
+            <div className="flex items-center gap-2"><Badge tone="red">{不同意見?.標籤}</Badge></div>
+            <p className="mt-1.5 text-[11px] text-[var(--cc-ink-soft)]">{(不同意見?.大法官 ?? []).join('、')}</p>
+            <ul className="mt-1.5 list-disc space-y-1 pl-4 text-[12px] leading-relaxed text-[var(--cc-ink-mid)]">
+              {(不同意見?.要點 ?? []).map((p, i) => <li key={i}>{p}</li>)}
+            </ul>
+            {不同意見?.文件 ? <p className="mt-1.5 text-[11px] leading-relaxed text-[var(--cc-figure-note)]">{不同意見.文件}</p> : null}
+          </div>
+        </div>
+        <div className="mt-5">
+          <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">不同意見書要旨</p>
+          <h3 className="text-[14px] font-bold text-[var(--cc-title-ink)]">三位大法官《不同意法律意見書》十點要旨</h3>
+          <ol className="mt-2 max-w-3xl list-decimal space-y-1.5 pl-5 text-[12px] leading-relaxed text-[var(--cc-ink-mid)]">
+            {(da.不同意見書要旨 ?? []).map((p, i) => <li key={i}>{p}</li>)}
+          </ol>
+        </div>
+      </section>
+
+      <section className="border-t border-[var(--cc-line)] py-5">
+        <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">開放問題 · Known Unknowns</p>
+        <h3 className="text-[14px] font-bold text-[var(--cc-title-ink)]">已知有爭議、尚無定論</h3>
+        <ul className="mt-2 max-w-3xl space-y-1.5">
+          {(da.known_unknowns ?? []).map((p, i) => (
+            <li key={i} className="rounded-lg border border-[var(--cc-line)] p-2.5 text-[12px] leading-relaxed text-[var(--cc-ink-mid)]">{p}</li>
+          ))}
+        </ul>
+      </section>
+
+      <section className="border-t border-[var(--cc-line)] py-5">
+        <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">更深層 · Unknown Unknowns</p>
+        <h3 className="text-[14px] font-bold text-[var(--cc-title-ink)]">結構性、尚未被清楚框定的風險</h3>
+        <ul className="mt-2 max-w-3xl space-y-1.5">
+          {(da.unknown_unknowns ?? []).map((p, i) => (
+            <li key={i} className="rounded-lg border border-[var(--cc-line)] p-2.5 text-[12px] leading-relaxed text-[var(--cc-ink-mid)]">{p}</li>
+          ))}
+        </ul>
+      </section>
+    </div>
+  );
+}
+
 export default function ConstitutionalCourt() {
   // 分頁與大法官個人頁都掛在 URL（?tab=…&j=姓名）：可深連結、可分享、可返回
   const [params, setParams] = useSearchParams();
@@ -2359,6 +2558,7 @@ export default function ConstitutionalCourt() {
         {active === 'tenure' ? <TenureView onOpen={openJustice} /> : null}
         {active === 'graph' ? <GraphView /> : null}
         {active === 'research' ? <ResearchProblem /> : null}
+        {active === 'case1' ? <Case1Analysis /> : null}
         {active === 'history' ? <HistoryView onOpenIndex={(機關) => setParams(機關 && 機關 !== '行憲後' ? { 機關 } : {})} /> : null}
         {active === 'about' ? <AboutView /> : null}
       </main>
