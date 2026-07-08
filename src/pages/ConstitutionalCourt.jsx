@@ -1008,19 +1008,15 @@ const ABROAD_GROUP = (j) => {
 const TENURE_ABROAD_COLOR = { // token-exempt: 分類色改用 --cat-* token；#b3a8ad 為退場中性色
   德語圈: 'var(--cat-1-tx)', 英美: 'var(--cat-2-tx)', 日本: 'var(--cat-3-tx)', 其他: 'var(--cat-4-tx)', 國內: '#b3a8ad', 待確認: '#b3a8ad',
 };
-// 提名總統 8 色。2026-07-07 二次重配：原本嚴家淦／蔣經國兩色的色相分別落在
-// OKLCH H69.8°／H120.8°，正是這頁 TenureView 出身/留學國配色
-// 已經修過一次的同一個土黃土綠危險區間（見上方 ABROAD_GROUP 附近說明）——這組
-// 8 色是同一張圖表的另一種著色模式，卻沒跟著改到，直到使用者回頭問「色彩哲學
-// 沒套用到這頁」才發現。改用 dataviz validator（--pairs all）從 palettes.js
-// 真實色票裡窮舉找替代：嚴家淦→yanzhi.accent、蔣經國→dai-blue.pop，兩者色相
-// 都在安全區間，且與其餘 7 色的 CVD 最差對（蔡英文↔陳水扁，非本次新色）落在
-// 8–12 warn 帶，跟改色前同一標準（圖例與 hover tooltip 全程顯示文字名稱，非
-// 純色彩判讀，此為既有輔助編碼）。賴清德任期尚短、沿用既有中性灰，不特別配色。
-// token-exempt: dataviz categorical palette, validated 2026-07-07
-const PRES_COLOR = {
-  蔣中正: '#a73b6d', '李宗仁（代）': '#cd605a', 嚴家淦: '#a44a4a', 蔣經國: '#b3452e',
-  李登輝: '#029e72', 陳水扁: '#007d9a', 馬英九: '#3b5eb2', 蔡英文: '#b862a7', 賴清德: '#b3a8ad',
+// 提名總統著色。2026-07-08 改吃全站語意色 token 的分類色 --cat-1..8：原本這 8 色
+// 是另外硬配的一組，彩度普遍偏高（李登輝鮮綠 C0.13、馬英九鮮藍、
+// 蔣中正/蔣經國/蔡英文皆 C>0.14），跟站內莫蘭迪低彩度基調格格不入——這就是使用者看到
+// 的「按提名總統」那組刺眼配色。改用校準過的 --cat-* 分類色後，與出身/留學著色同一套
+// 和諧色系，且由 validate:colors 鎖住明度/彩度帶。8 位主要總統配 cat-1..8（其中 cat-8
+// 為 slate，給任內提名最少的李宗仁代總統），賴清德任期尚短、沿用淺灰退場不特別配色。
+const PRES_COLOR = { // token-exempt: 分類色改用 --cat-* token；#b3a8ad 為退場中性色
+  蔣中正: 'var(--cat-1-tx)', '李宗仁（代）': 'var(--cat-8-tx)', 嚴家淦: 'var(--cat-4-tx)', 蔣經國: 'var(--cat-6-tx)',
+  李登輝: 'var(--cat-3-tx)', 陳水扁: 'var(--cat-2-tx)', 馬英九: 'var(--cat-7-tx)', 蔡英文: 'var(--cat-5-tx)', 賴清德: '#b3a8ad',
 };
 // 各總統提名大法官人數（鍵與 presidents[].總統／PRES_COLOR 同一套字串，含「（代）」）
 const PRES_NOM_COUNT = justices.reduce((m, j) => {
