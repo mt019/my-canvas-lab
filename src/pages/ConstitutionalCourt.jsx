@@ -718,7 +718,7 @@ function TimelineView() {
           ))}
         </div>
         <div className="relative mt-3 overflow-x-auto pb-2">
-          <svg width={chartW + 40} height={H + 40} role="img" aria-label="每年案件數長條圖">
+          <svg viewBox={`0 0 ${chartW + 40} ${H + 40}`} preserveAspectRatio="xMinYMin meet" role="img" aria-label="每年案件數長條圖" style={{ width: '100%', height: 'auto', maxWidth: chartW + 40 }}>
             {span.map((y, i) => {
               const v = byYear.get(y) ?? { 解釋: 0, 判決: 0, 實體裁定: 0 };
               const total = v.解釋 + v.判決 + v.實體裁定;
@@ -875,7 +875,7 @@ function Pre1947Timeline() {
           ))}
         </div>
         <div className="relative mt-3 overflow-x-auto pb-2">
-          <svg width={chartW + 40} height={H + 40} role="img" aria-label="行憲前每年統一解釋件數長條圖">
+          <svg viewBox={`0 0 ${chartW + 40} ${H + 40}`} preserveAspectRatio="xMinYMin meet" role="img" aria-label="行憲前每年統一解釋件數長條圖" style={{ width: '100%', height: 'auto', maxWidth: chartW + 40 }}>
             {span.map((y, i) => {
               const v = byYear.get(y) ?? { 大理院: 0, 最高法院: 0, 司法院: 0 };
               const totalY = v.大理院 + v.最高法院 + v.司法院;
@@ -1750,43 +1750,87 @@ const LCT_RESULT = {
 
 // 意見書覆蓋（逐時期）：哪些時期、哪些號沒有大法官意見書。讀資料層稽核鍵 data.意見書覆蓋
 // （audit-opinion-coverage.mjs 產，含官方原始頁漏抓交叉核對）；點時期展開該期無意見書字號。
+// 意見書熱條：一豎條＝一號，色深＝該號大法官意見書份數（沿用矩陣的 heatFill 熱標，0＝heat-zero）。
+function HeatStrip({ id, rows, maxN, marks, ticks, label, sub, hov, setHov }) {
+  const slices = useMemo(
+    () => rows.map((d) => <span key={d.字號} className="block h-full flex-1" style={{ background: heatFill(d.c, maxN) }} />),
+    [rows, maxN],
+  );
+  const a = hov?.id === id ? hov : null;
+  return (
+    <div className="mt-2.5">
+      <div className="flex items-baseline justify-between">
+        <p className="text-[12px] font-bold text-[var(--cc-ink-strong)]">{label}</p>
+        <p className="text-[11px] text-[var(--cc-ink-soft)]">{sub}</p>
+      </div>
+      {marks?.length ? (
+        <div className="relative mt-1 h-3 max-w-2xl">
+          {marks.map((m) => <span key={m.label} className="absolute top-0 -translate-x-1/2 text-[9.5px] text-[var(--cc-ink-soft)]" style={{ left: `${m.frac * 100}%` }}>{m.label}</span>)}
+        </div>
+      ) : null}
+      <div
+        className="relative h-7 max-w-2xl cursor-crosshair overflow-hidden rounded-md border border-[var(--cc-line)]"
+        onMouseMove={(e) => { const r = e.currentTarget.getBoundingClientRect(); const i = Math.min(rows.length - 1, Math.max(0, Math.floor(((e.clientX - r.left) / r.width) * rows.length))); setHov({ id, left: e.clientX - r.left, ...rows[i] }); }}
+        onMouseLeave={() => setHov(null)}
+      >
+        <div className="flex h-full w-full">{slices}</div>
+        {marks?.map((m) => <span key={m.label} className="pointer-events-none absolute inset-y-0 w-px" style={{ left: `${m.frac * 100}%`, background: 'var(--cc-bg)', opacity: 0.65 }} />)}
+        {a ? (
+          <div className="pointer-events-none absolute -top-8 z-10 -translate-x-1/2 whitespace-nowrap rounded border border-[var(--cc-line)] bg-[var(--cc-bg)] px-1.5 py-0.5 text-[11px] font-bold text-[var(--cc-ink-strong)] shadow-sm" style={{ left: `${a.left}px` }}>
+            {a.字號}・{a.c ? `${a.c} 份意見書` : '無'}
+          </div>
+        ) : null}
+      </div>
+      {ticks?.length ? (
+        <div className="relative mt-0.5 h-3 max-w-2xl">
+          {ticks.map((t) => <span key={t.label} className="absolute top-0 -translate-x-1/2 text-[9.5px] text-[var(--cc-ink-soft)]" style={{ left: `${t.frac * 100}%` }}>{t.label}</span>)}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+// 意見書覆蓋（逐號熱條）：重點在「哪些號有幾份意見書」，色深即分別意見多寡；空白＝無。
+// 現算自 docs（意見書 array 已濾待人工）；核對數字取資料層稽核鍵 data.意見書覆蓋。
 function OpinionCoverage() {
   const cov = data.意見書覆蓋;
-  const 是行憲前 = (名) => 名.includes('行憲前');
-  const withGaps = (cov?.期 ?? []).filter((p) => p.無意見書 > 0 && !是行憲前(p.期名));
-  const [sel, setSel] = useState(withGaps[0]?.期名 ?? null);
-  if (!cov?.期?.length) return null;
-  const selP = cov.期.find((p) => p.期名 === sel);
+  const g = useMemo(() => {
+    const yr = (s) => (s ? Number(String(s).slice(0, 4)) : null);
+    const num = (z) => Number((String(z).match(/第(\d+)號/) ?? [])[1] ?? 0);
+    const mk = (機關, 類型) => docs.filter((x) => x.機關 === 機關 && (!類型 || x.類型 === 類型))
+      .map((x) => ({ 字號: x.字號, n: num(x.字號), c: (x.意見書 ?? []).length, y: yr(x.日期) }))
+      .sort((p, q) => p.n - q.n);
+    const s = mk('大法官'); const x = mk('憲法法庭', '判決');
+    const maxN = Math.max(1, ...s.map((d) => d.c), ...x.map((d) => d.c));
+    const marks = [[1991, '1991'], [2003, '2003'], [2015, '2015']]
+      .map(([y, label]) => { const i = s.findIndex((d) => d.y && d.y >= y); return i > 0 ? { frac: i / s.length, label } : null; }).filter(Boolean);
+    const ticksS = [1, 200, 400, 600, 800].map((n) => { const i = s.findIndex((d) => d.n >= n); return i < 0 ? null : { frac: (i + 0.5) / s.length, label: n === 1 ? '釋1' : String(n) }; }).filter(Boolean);
+    const ticksX = [1, 20, 40, 57].map((n) => { const i = x.findIndex((d) => d.n >= n); return i < 0 ? null : { frac: (i + 0.5) / Math.max(1, x.length), label: `憲判${n}` }; }).filter(Boolean);
+    return { s, x, maxN, marks, ticksS, ticksX, cS: s.filter((d) => d.c > 0).length, cX: x.filter((d) => d.c > 0).length };
+  }, []);
+  const [hov, setHov] = useState(null);
+  if (!g.s.length) return null;
   return (
     <div className="mt-4">
       <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">證據一補充 · 意見書覆蓋</p>
-      <h3 className="text-[15px] font-bold text-[var(--cc-title-ink)]">哪些時期、哪些號沒有大法官意見書</h3>
-      <div className="mt-2 max-w-xl space-y-0.5">
-        {cov.期.map((p) => {
-          const active = p.期名 === sel;
-          return (
-            <button
-              key={p.期名} type="button" onClick={() => setSel(active ? null : p.期名)}
-              className={`grid w-full grid-cols-[152px_1fr_104px] items-center gap-2 rounded px-1 py-0.5 text-left text-[13px] ${active ? 'bg-[var(--cc-track)]' : ''} ${是行憲前(p.期名) ? 'cursor-default' : 'hover:bg-[var(--cc-track)]'}`}
-              disabled={是行憲前(p.期名)}
-            >
-              <span className={active ? 'font-bold text-[var(--cc-ink-strong)]' : 'text-[var(--cc-ink-mid)]'}>{p.期名}</span>
-              <span className="block h-2 rounded-full bg-[var(--cc-track)]"><span className="block h-2 rounded-full" style={{ width: `${p.覆蓋率 * 100}%`, background: 'var(--cc-highlight)' }} /></span>
-              <span className="text-right text-[var(--cc-ink-soft)]">{p.有意見書}/{p.件數}・{Math.round(p.覆蓋率 * 100)}%</span>
-            </button>
-          );
-        })}
+      <h3 className="text-[15px] font-bold text-[var(--cc-title-ink)]">每號的意見書數（顏色越深＝分別意見越多）</h3>
+      <HeatStrip
+        id="shih" rows={g.s} maxN={g.maxN} marks={g.marks} ticks={g.ticksS} hov={hov} setHov={setHov}
+        label={`釋字 1–${g.s[g.s.length - 1].n} 號`} sub={`${g.cS}/${g.s.length} 有意見書`}
+      />
+      <HeatStrip
+        id="xian" rows={g.x} maxN={g.maxN} ticks={g.ticksX} hov={hov} setHov={setHov}
+        label="憲法法庭 2022–（憲判）" sub={`${g.cX}/${g.x.length} 有意見書`}
+      />
+      <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-[11px] text-[var(--cc-ink-soft)]">
+        <span>意見書數</span>
+        <span className="inline-block h-3 w-3 rounded-[3px] border border-[var(--cc-line)]" style={{ background: heatFill(0, g.maxN) }} />
+        <span>無</span>
+        {[1, 3, 5, g.maxN].map((v) => <span key={v} className="inline-block h-3 w-3 rounded-[3px]" style={{ background: heatFill(v, g.maxN) }} />)}
+        <span>{g.maxN}+ 份</span>
       </div>
-      {selP && selP.無意見書 > 0 && (
-        <div className="mt-2 max-w-xl rounded-lg border border-[var(--cc-line)] p-2.5">
-          <p className="text-[12px] font-bold text-[var(--cc-ink-strong)]">{selP.期名}：無意見書 {selP.無意見書} 號</p>
-          <p className="mt-1 max-h-28 overflow-y-auto text-[12px] leading-relaxed text-[var(--cc-ink-soft)]">
-            {selP.無意見書字號.slice(0, 200).join('、')}{selP.無意見書字號.length > 200 ? ` …共 ${selP.無意見書} 號` : ''}
-          </p>
-        </div>
-      )}
       <p className="mt-1.5 max-w-2xl text-[12px] leading-relaxed text-[var(--cc-figure-note)]">
-        覆蓋＝官方數位記錄有本案大法官意見書；點時期看該期無意見書號次。「無」已對官方原始頁逐件交叉核對（{cov.核對?.已核對0紀錄件} 件，疑漏抓 {cov.核對?.疑漏抓 ?? 0}）＝確認非漏抓，係當年即無個別意見書或官方未數位化。核對限官方數位記錄，紙本彙編未稽核，故為<strong className="text-[var(--cc-ink-strong)]">下限</strong>；行憲前統一解釋無個別意見書制度。
+        每一豎條為一號，色深＝該號大法官意見書份數，空白＝無（早期居多）。滑過看號次與份數。覆蓋隨年代上升，晚期與憲法法庭近全覆蓋。空白已對官方原始頁逐件交叉核對（{cov?.核對?.已核對0紀錄件 ?? 345} 件，疑漏抓 {cov?.核對?.疑漏抓 ?? 0}）＝非漏抓；核對限官方數位記錄，紙本未稽核為<strong className="text-[var(--cc-ink-strong)]">下限</strong>。
       </p>
     </div>
   );

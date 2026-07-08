@@ -65,12 +65,21 @@
   --font-accent: 'Erikas Farbband', 'Huiwen Mincho', 'Songti TC', 'Noto Serif CJK TC', serif;
 }
 
+/* 全站硬性：頁面永不水平捲動（游標拖不動）。用 clip 而非 hidden——不建立捲動容器，
+   sticky 分頁列不受影響；寬內容一律在自己的容器內縮放或捲動。 */
+html {
+  overflow-x: clip;
+}
+
 body {
   font-family: var(--font-body);
   font-synthesis: none;
   font-size: var(--text-body);
   color: var(--c-ink);
   background-color: var(--c-paper);
+  overflow-x: clip;
+  overscroll-behavior-x: none;
+  max-width: 100%;
   /* 紙面材質（PaletteLab 可選，程式生成、極低透明度） */
   background-image: var(--paper-texture, none);
   background-size: var(--paper-texture-size, auto);
