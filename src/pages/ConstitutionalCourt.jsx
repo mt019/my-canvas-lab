@@ -2658,44 +2658,90 @@ function Case1Analysis() {
             <SegControl value={tlMode} onChange={setTlMode} options={[['議題', '依議題'], ['行為人', '依主事者']]} />
           ) : null}
         </div>
-        <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-[12px] text-[var(--cc-ink-soft)]">
-          {legend.map(([label, n]) => (
-            <span key={label} className="inline-flex items-center gap-1.5">
-              <span className="h-2.5 w-2.5 rounded-full border" style={{ background: `var(--cat-${n}-bg)`, borderColor: `var(--cat-${n}-tx)` }} />
-              {label}
-            </span>
-          ))}
-        </div>
-        {/* 中央軸時間軸：手機單欄（軸線靠左），sm 以上軸線置中、事件依側別分掛左右。 */}
-        <div className="relative mt-4 max-w-4xl">
-          <span className="absolute inset-y-0 left-[6px] w-px bg-[var(--cc-line)] sm:left-1/2 sm:-translate-x-1/2" aria-hidden />
-          <ol className="space-y-3">
-            {events.map((t, i) => {
-              const n = toneOf(t);
-              const side = sideOf(t);
-              return (
-                <li key={i} className="relative sm:grid sm:grid-cols-2 sm:gap-x-8">
-                  <span
-                    className="absolute left-[6px] top-2.5 z-10 h-3 w-3 -translate-x-1/2 rounded-full border-2 sm:left-1/2"
-                    style={{ background: `var(--cat-${n}-bg)`, borderColor: `var(--cat-${n}-tx)` }}
-                    aria-hidden
-                  />
-                  <div className={`pl-5 sm:pl-0 ${side === 'L' ? 'sm:col-start-1 sm:pr-9 sm:text-right' : 'sm:col-start-2 sm:pl-9'}`}>
-                    <div className="rounded-lg border border-[var(--cc-line)] p-2.5">
-                      <p className="text-[12.5px] font-bold text-[var(--cc-ink-strong)]">
-                        {formatDate(t.日期)}
-                        {t.行為人 ? <span className="ml-1.5 font-normal text-[var(--cc-ink-soft)]">· {t.行為人}</span> : null}
-                      </p>
-                      <p className="mt-0.5 text-[13px] leading-relaxed text-[var(--cc-ink-mid)]">
-                        {t.事件}{t.來源 ? srcLink(t.來源) : null}
-                      </p>
-                    </div>
+        {mode === '議題' ? (
+          <>
+            <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-[12px] text-[var(--cc-ink-soft)]">
+              {legend.map(([label, n]) => (
+                <span key={label} className="inline-flex items-center gap-1.5">
+                  <span className="h-2.5 w-2.5 rounded-full border" style={{ background: `var(--cat-${n}-bg)`, borderColor: `var(--cat-${n}-tx)` }} />
+                  {label}
+                </span>
+              ))}
+            </div>
+            {/* 中央軸時間軸：手機單欄（軸線靠左），sm 以上軸線置中、事件依側別分掛左右。 */}
+            <div className="relative mt-4 max-w-4xl">
+              <span className="absolute inset-y-0 left-[6px] w-px bg-[var(--cc-line)] sm:left-1/2 sm:-translate-x-1/2" aria-hidden />
+              <ol className="space-y-3">
+                {events.map((t, i) => {
+                  const n = toneOf(t);
+                  const side = sideOf(t);
+                  return (
+                    <li key={i} className="relative sm:grid sm:grid-cols-2 sm:gap-x-8">
+                      <span
+                        className="absolute left-[6px] top-2.5 z-10 h-3 w-3 -translate-x-1/2 rounded-full border-2 sm:left-1/2"
+                        style={{ background: `var(--cat-${n}-bg)`, borderColor: `var(--cat-${n}-tx)` }}
+                        aria-hidden
+                      />
+                      <div className={`pl-5 sm:pl-0 ${side === 'L' ? 'sm:col-start-1 sm:pr-9 sm:text-right' : 'sm:col-start-2 sm:pl-9'}`}>
+                        <div className="rounded-lg border border-[var(--cc-line)] p-2.5">
+                          <p className="text-[12.5px] font-bold text-[var(--cc-ink-strong)]">
+                            {formatDate(t.日期)}
+                            {t.行為人 ? <span className="ml-1.5 font-normal text-[var(--cc-ink-soft)]">· {t.行為人}</span> : null}
+                          </p>
+                          <p className="mt-0.5 text-[13px] leading-relaxed text-[var(--cc-ink-mid)]">
+                            {t.事件}{t.來源 ? srcLink(t.來源) : null}
+                          </p>
+                        </div>
+                      </div>
+                    </li>
+                  );
+                })}
+              </ol>
+            </div>
+          </>
+        ) : (
+          <>
+            {/* 依主事者：每方一直欄（泳道），由上而下＝時間先後；同一時點只有發動方有卡片，各方動作在同一時間軸上錯落並讀。 */}
+            <p className="mt-2 max-w-3xl text-[12px] leading-relaxed text-[var(--cc-ink-soft)]">每一直欄是一個主事者，由上而下即時間先後；同一時點只有發動的一方有卡片，故各方動作在同一條時間軸上錯落並排。</p>
+            <div className="mt-3 hidden sm:block">
+              <div className="grid gap-x-3" style={{ gridTemplateColumns: `repeat(${actorsPresent.length}, minmax(0, 1fr))` }}>
+                {actorsPresent.map((a) => (
+                  <div key={a} className="flex items-center gap-1.5 border-b border-[var(--cc-line)] pb-1.5 text-[12px] font-bold" style={{ color: `var(--cat-${ACTOR_COLOR[a]}-tx)` }}>
+                    <span className="h-2.5 w-2.5 rounded-full" style={{ background: `var(--cat-${ACTOR_COLOR[a]}-bg)`, border: `1px solid var(--cat-${ACTOR_COLOR[a]}-tx)` }} />
+                    {a}
                   </div>
-                </li>
-              );
-            })}
-          </ol>
-        </div>
+                ))}
+              </div>
+              <div className="grid gap-x-3 gap-y-2 pt-2" style={{ gridTemplateColumns: `repeat(${actorsPresent.length}, minmax(0, 1fr))` }}>
+                {events.map((t, i) => {
+                  const n = ACTOR_COLOR[t.行為人] ?? 8;
+                  const col = actorsPresent.indexOf(t.行為人) + 1;
+                  return (
+                    <div key={i} style={{ gridColumn: col, gridRow: i + 1, background: `var(--cat-${n}-bg)`, borderLeft: `3px solid var(--cat-${n}-tx)` }} className="rounded-md border border-[var(--cc-line)] p-2">
+                      <p className="text-[12px] font-bold text-[var(--cc-ink-strong)]">{formatDate(t.日期)}</p>
+                      <p className="mt-0.5 text-[12.5px] leading-relaxed text-[var(--cc-ink-mid)]">{t.事件}{t.來源 ? srcLink(t.來源) : null}</p>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+            {/* 手機：欄位太窄，退回單欄時間序，左邊主事者色標＋標籤 */}
+            <ol className="mt-3 space-y-2.5 border-l border-[var(--cc-line)] pl-4 sm:hidden">
+              {events.map((t, i) => {
+                const n = ACTOR_COLOR[t.行為人] ?? 8;
+                return (
+                  <li key={i} className="relative">
+                    <span className="absolute -left-[21px] top-2.5 h-2.5 w-2.5 rounded-full border" style={{ background: `var(--cat-${n}-bg)`, borderColor: `var(--cat-${n}-tx)` }} aria-hidden />
+                    <div className="rounded-md border border-[var(--cc-line)] p-2" style={{ borderLeft: `3px solid var(--cat-${n}-tx)` }}>
+                      <p className="text-[12px] font-bold text-[var(--cc-ink-strong)]">{formatDate(t.日期)}<span className="ml-1.5 font-normal" style={{ color: `var(--cat-${n}-tx)` }}>· {t.行為人}</span></p>
+                      <p className="mt-0.5 text-[12.5px] leading-relaxed text-[var(--cc-ink-mid)]">{t.事件}{t.來源 ? srcLink(t.來源) : null}</p>
+                    </div>
+                  </li>
+                );
+              })}
+            </ol>
+          </>
+        )}
       </section>
 
       <section className="border-t border-[var(--cc-line)] py-5">
