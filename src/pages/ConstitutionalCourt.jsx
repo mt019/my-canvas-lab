@@ -1550,6 +1550,12 @@ function JusticeDetail({ name, onBack, onOpen }) {
               提名簡歷 <FileText size={11} />
             </a>
           ) : null}
+          {j.提名文件?.報告 ? (
+            <a href={pdfHref(j.提名文件.報告, pdfMode)} target="_blank" rel="noreferrer" title={`${j.提名文件.批次}列席立法院全院委員會口頭報告（${j.提名文件.連結形態}）`}
+              className="inline-flex items-center gap-1 font-bold text-[var(--cc-accent)] underline decoration-[var(--cc-link-underline)] underline-offset-2">
+              學思歷程報告 <FileText size={11} />
+            </a>
+          ) : null}
         </div>
         <div className="mt-3 flex flex-wrap gap-x-8 gap-y-2">
           {[['提出意見書', j.提出意見書], ['加入意見書', j.加入意見書], ['主筆判決', j.主筆判決], ['參與解釋', j.參與解釋 ?? 0], ['參與裁判', j.參與判決]].map(([label, value]) => (
