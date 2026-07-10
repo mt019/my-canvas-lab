@@ -612,5 +612,22 @@
     ],
     "workflowState": "parsed",
     "refreshCadence": "manual"
+  },
+  {
+    "id": "oecd-tax-incentives-lac-2026",
+    "institution": "OECD",
+    "title": {
+      "zh": "拉丁美洲與加勒比海投資租稅優惠：有效稅率分析",
+      "en": "Investment Tax Incentives in Latin America and the Caribbean: An Analysis Using Effective Tax Rates"
+    },
+    "url": "https://www.oecd.org/content/dam/oecd/en/publications/reports/2026/06/investment-tax-incentives-in-latin-america-and-the-caribbean_758399d6/45b5f9a1-en.pdf",
+    "dateChecked": "2026-07-11",
+    "authorityTier": "official-soft-law",
+    "materialType": ["research-paper"],
+    "epistemicLayer": ["implementation-reality", "observable-trend"],
+    "temporalStatus": "current-final",
+    "topicDomain": ["pillar-two", "tax-incentives"],
+    "workflowState": "parsed",
+    "refreshCadence": "manual"
   }
 ]

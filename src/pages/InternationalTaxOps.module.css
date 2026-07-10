@@ -4,21 +4,21 @@
   font-family: var(--font-body);
   --title-font: var(--font-display);
   --lead-font: var(--font-body);
-  --ink: #44373d;
-  --muted: #74666d;
-  --faint: #a99ba1;
-  --line: #e7dde1;
-  --soft-line: #f1e8eb;
+  --ink: #2d3336;
+  --muted: #687277;
+  --faint: #9aa4a9;
+  --line: #e1e6e8;
+  --soft-line: #edf1f2;
   --paper: #ffffff;
-  --wash: #fcfafb;
-  --side: #f7f2f4;
-  --hover: #f3eaed;
-  --active: #f0e3e8;
-  --teal: #85636f;
-  --blue: #706789;
-  --amber: #987853;
+  --wash: #fbfcfc;
+  --side: #f4f7f7;
+  --hover: #edf2f1;
+  --active: #e6eeeb;
+  --teal: #4c7971;
+  --blue: #61799d;
+  --amber: #8f744e;
   --red: #9d626d;
-  --plum: #746373;
+  --plum: #737b80;
 
   min-height: 100vh;
   display: grid;
@@ -577,49 +577,6 @@
 
 .frontier { margin-top: 12px; }
 
-.captureList {
-  border-top: 1px solid var(--soft-line);
-}
-
-.captureRow {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto 28px;
-  align-items: center;
-  gap: 14px;
-  border-bottom: 1px solid var(--soft-line);
-  padding: 11px 4px;
-}
-
-.captureRow > div:first-child {
-  min-width: 0;
-}
-
-.captureRow strong, .captureRow > div:first-child > span {
-  display: block;
-}
-
-.captureRow strong {
-  color: var(--ink);
-  font-family: var(--lead-font);
-  font-size: 14px;
-  font-weight: 700;
-}
-
-.captureRow > div:first-child > span {
-  overflow: hidden;
-  color: var(--muted);
-  font-family: var(--font-accent);
-  font-size: 10px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.captureRow a {
-  display: grid;
-  place-items: center;
-  color: var(--teal);
-}
-
 .watchGrid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -768,12 +725,6 @@
   background: #fff;
 }
 
-.relationCanvas :global(.react-flow__node.watchNode) {
-  border-color: #d8d1bd;
-  background: #fbfaf4;
-  width: 220px;
-}
-
 .relationCanvas :global(.react-flow__edge-path) {
   stroke: #9fb0ba;
   stroke-width: 1.5;
@@ -782,11 +733,6 @@
 .relationCanvas :global(.react-flow__edge.activeEdge) :global(.react-flow__edge-path) {
   stroke: var(--teal);
   stroke-width: 2.4;
-}
-
-.relationCanvas :global(.react-flow__edge.watchEdge) :global(.react-flow__edge-path) {
-  stroke: #b4a884;
-  stroke-dasharray: 5 5;
 }
 
 .relationCanvas :global(.react-flow__controls),
@@ -827,13 +773,6 @@
     grid-template-columns: 1fr;
   }
 
-  .captureRow {
-    grid-template-columns: 1fr 28px;
-  }
-
-  .captureRow .tagRow {
-    grid-column: 1 / -1;
-  }
 
   .relationCanvas {
     height: 460px;

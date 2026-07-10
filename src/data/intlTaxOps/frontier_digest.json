@@ -1,5 +1,23 @@
 [
   {
+    "id": "2026-07-11-oecd-tax-incentives-lac-processed",
+    "date": "2026-07-11",
+    "sourceId": "oecd-taxation-working-papers",
+    "headline": {
+      "zh": "OECD 工作論文把稅收優惠問題落到可比較的有效稅率與治理設計：Pillar Two 下，優惠的形式與行政結構同樣重要",
+      "en": "An OECD working paper turns tax incentives into a comparable EATR and governance problem: under Pillar Two, form and administrative structure both matter"
+    },
+    "analysis": {
+      "zh": "OECD Taxation Working Papers No. 76 以十個拉丁美洲與加勒比海經濟體的前瞻有效平均稅率比較公司所得稅優惠。相對於一般課稅，旅遊投資的有效稅率平均降低 47%、再生能源 55%、特別經濟區 85%；同類投資可能因重疊優惠而承受不同待遇。論文把問題從單一稅率拉到制度治理：優惠分散於稅法、投資法與特區法，且由多個機關管理，因而難以追蹤財政成本與實際效果。對 Pillar Two 而言，無實質要求的所得型優惠較可能遭補足稅抵銷；連結薪資、有形資產或短期暫時性差異的措施則可能不同，2026 Side-by-Side Package 的實質本位租稅優惠安全港正落在這個分界。這篇論文不處理 MAP 或仲裁，但提供了救濟確定性研究需要面對的國內實施場景：當優惠的法源、分類與主管機關意見分散時，納稅人如何預測其 GloBE 效果並取得一致處理？",
+      "en": "OECD Taxation Working Papers No. 76 compares corporate-income-tax incentives in ten Latin American and Caribbean economies with forward-looking effective average tax rates. Relative to standard treatment, incentives lower EATRs by an average of 47% for tourism, 55% for renewable energy, and 85% in special economic zones; overlapping incentives can produce different treatment for comparable projects. The paper therefore turns attention from a nominal rate to governance: provisions are dispersed across tax, investment, and special-zone law and administered by multiple bodies, making fiscal cost and actual effect difficult to observe. For Pillar Two, income-based incentives without substance requirements are more likely to be neutralised by top-up tax, whereas measures linked to payroll, tangible assets, or short-term timing differences may be treated differently; the 2026 Side-by-Side Package's Substance-Based Tax Incentive Safe Harbour sits at that boundary. The paper does not address MAP or arbitration, but it supplies the domestic implementation setting for remedial-certainty research: where legal bases, classifications, and administrative views are fragmented, how can a taxpayer predict the GloBE outcome and obtain consistent treatment?"
+    },
+    "sourceUrl": "https://www.oecd.org/content/dam/oecd/en/publications/reports/2026/06/investment-tax-incentives-in-latin-america-and-the-caribbean_758399d6/45b5f9a1-en.pdf",
+    "authorityTier": "official-soft-law",
+    "relatedTopicIds": ["pillar-two-simplification", "danon-lausanne-disputes"],
+    "verification": "verified-against-snapshot",
+    "evidencePaths": ["data/parsed/text/oecd-tax-incentives-lac-2026.txt", "docs/36_OECD_TAX_INCENTIVES_LAC_2026_NOTE.md"]
+  },
+  {
     "id": "2026-07-06-un-ws3-crp28-primary-texts",
     "date": "2026-07-06",
     "sourceId": "un-tax-convention-negotiations",

@@ -12,10 +12,8 @@ import {
   Database,
   Filter,
   GitBranch,
-  Globe2,
   Languages,
   Layers3,
-  Radar,
   RefreshCcw,
   Scale,
   ShieldCheck,
@@ -28,7 +26,6 @@ import schema from '../data/intlTaxOps/data_classification_schema.json';
 import watchlist from '../data/intlTaxOps/frontier_watchlist.json';
 import controversies from '../data/intlTaxOps/controversies.json';
 import digest from '../data/intlTaxOps/frontier_digest.json';
-import frontierCapture from '../data/intlTaxOps/frontier_capture.json';
 import styles from './InternationalTaxOps.module.css';
 
 const ui = {
@@ -38,13 +35,11 @@ const ui = {
     lang: 'English',
     sources: '來源',
     topics: '議題',
-    watch: '監測',
     queued: '待處理',
     verified: '可核實來源',
     lens: '分類視角',
     matrix: '議題矩陣',
     sourceRegistry: '來源登錄',
-    frontier: '前沿監測',
     relations: '關係圖譜',
     controversies: '案例與爭議',
     nextActions: '待補研究',
@@ -63,11 +58,6 @@ const ui = {
     citation: '引用',
     liveCase: '對照案例頁面',
     digest: '最新動態',
-    capture: '最新抓取',
-    captureIntro: '這裡只列出已實際連線檢查的公開來源；發現變動時，原頁文字會留存在研究資料倉，供後續核對。',
-    checkedAt: '最近檢查',
-    changed: '有新內容',
-    stored: '已留存',
     digestEmpty: '尚無研究過的動態。在資料倉庫執行 /frontier-research 之後，這裡會出現帶引註的動態研究。',
   },
   en: {
@@ -76,13 +66,11 @@ const ui = {
     lang: '中文',
     sources: 'Sources',
     topics: 'Topics',
-    watch: 'Watch',
     queued: 'Queued',
     verified: 'Verifiable sources',
     lens: 'Classification Lens',
     matrix: 'Topic Matrix',
     sourceRegistry: 'Source Registry',
-    frontier: 'Frontier Watch',
     relations: 'Relations',
     controversies: 'Cases & Controversies',
     nextActions: 'Research follow-up',
@@ -101,11 +89,6 @@ const ui = {
     citation: 'Citation',
     liveCase: 'See the applied case page',
     digest: 'Latest Digest',
-    capture: 'Latest Capture',
-    captureIntro: 'Only publicly accessible sources checked by the monitor appear here. When content changes, the source text is retained in the research data store for verification.',
-    checkedAt: 'Last checked',
-    changed: 'New content',
-    stored: 'Stored',
     digestEmpty: 'No researched updates yet. Run /frontier-research in the data repo to populate this feed with cited research notes.',
   },
 };
@@ -114,7 +97,6 @@ const MAIN_TABS = [
   { id: 'matrix', labelKey: 'matrix', Icon: Layers3 },
   { id: 'digest', labelKey: 'digest', Icon: Activity },
   { id: 'sources', labelKey: 'sourceRegistry', Icon: Database },
-  { id: 'frontier', labelKey: 'frontier', Icon: Radar },
   { id: 'relations', labelKey: 'relations', Icon: GitBranch },
   { id: 'controversies', labelKey: 'controversies', Icon: Scale },
 ];
@@ -176,6 +158,12 @@ function riskLabel(value, lang) {
 
 function topicTitleById(id, lang) {
   return topics.find((topic) => topic.id === id)?.title?.[lang] ?? id;
+}
+
+function sourceTitleById(id, lang) {
+  return watchlist.find((item) => item.id === id)?.label?.[lang]
+    ?? sources.find((item) => item.id === id)?.title?.[lang]
+    ?? id;
 }
 
 function verificationLabel(value, lang) {
@@ -256,17 +244,6 @@ export default function InternationalTaxOps() {
     ].join(' ').toLowerCase().includes(query));
   }, [query]);
 
-  const filteredCaptures = useMemo(() => {
-    const items = frontierCapture.sources ?? [];
-    if (!query) return items;
-    return items.filter((item) => [
-      item.label.zh,
-      item.label.en,
-      item.sourceUrl,
-      item.status,
-    ].join(' ').toLowerCase().includes(query));
-  }, [query]);
-
   const toggleTopic = (id) => {
     setExpandedTopics((prev) => {
       const next = new Set(prev);
@@ -275,12 +252,9 @@ export default function InternationalTaxOps() {
     });
   };
 
-  // Only source -> topic edges reflect a real relationship (topic.sourceIds
-  // in the data). Watch-list items have no recorded topic relevance yet, so
-  // they're laid out as an unconnected column rather than wired with
-  // fabricated edges that would just add visual noise without signal.
+  // Only source -> topic edges reflect a recorded research relationship.
   const { graphNodes: layoutNodes, graphEdges: layoutEdges } = useMemo(() => {
-    const NODE_WIDTH = { source: 210, topic: 245, watch: 220 };
+    const NODE_WIDTH = { source: 210, topic: 245 };
     const NODE_HEIGHT = 68;
 
     const sourceEdges = topics.flatMap((topic) => topic.sourceIds.map((sourceId) => ({
@@ -325,17 +299,8 @@ export default function InternationalTaxOps() {
       };
     });
 
-    const topicRankX = Math.max(...topics.map((topic) => dagreGraph.node(topic.id).x));
-    const watchNodes = watchlist.slice(0, 5).map((item, index) => ({
-      id: `watch-${item.id}`,
-      type: 'default',
-      position: { x: topicRankX + NODE_WIDTH.topic / 2 + 140, y: index * (NODE_HEIGHT + 24) },
-      data: { label: item.label[lang] },
-      className: 'watchNode',
-    }));
-
     return {
-      graphNodes: [...sourceNodes, ...topicNodes, ...watchNodes],
+      graphNodes: [...sourceNodes, ...topicNodes],
       graphEdges: sourceEdges,
     };
   }, [lang]);
@@ -416,7 +381,7 @@ export default function InternationalTaxOps() {
             </div>
           </div>
           <div className={styles.topActions}>
-            <span className={styles.headerMeta}>{sources.length} {t.sources} · {topics.length} {t.topics} · {frontierCapture.sources?.length ?? 0} {t.watch}</span>
+            <span className={styles.headerMeta}>{sources.length} {t.sources} · {topics.length} {t.topics} · {digest.length} {t.digest}</span>
             <Pill icon={RefreshCcw} text={lang === 'zh' ? '更新觀察中' : 'Watching updates'} />
           </div>
         </header>
@@ -512,7 +477,7 @@ export default function InternationalTaxOps() {
                       </div>
                     )}
                     <div className={styles.controversyCitation}>
-                      <span>{watchlist.find((w) => w.id === item.sourceId)?.label?.[lang] ?? item.sourceId}</span>
+                      <span>{sourceTitleById(item.sourceId, lang)}</span>
                       <a href={item.sourceUrl} target="_blank" rel="noreferrer">{t.open}<ArrowUpRight size={14} /></a>
                     </div>
                   </article>
@@ -547,42 +512,12 @@ export default function InternationalTaxOps() {
           </section>
         )}
 
-        {mainTab === 'frontier' && (
-          <section className={`${styles.panel} ${styles.frontier}`}>
-            <div className={styles.sectionHead}>
-              <div>
-                <h2>{t.capture}</h2>
-                <p>{t.captureIntro}</p>
-              </div>
-              <Globe2 size={18} />
-            </div>
-            <div className={styles.captureList}>
-              {filteredCaptures.map((item) => (
-                <article key={item.id} className={styles.captureRow}>
-                  <div>
-                    <strong>{item.label[lang]}</strong>
-                    <span>{item.sourceUrl}</span>
-                  </div>
-                  <div className={styles.tagRow}>
-                    <span>{cadenceLabel(item.cadence, lang)}</span>
-                    <span>{item.status}</span>
-                    {item.changed && <span>{t.changed}</span>}
-                    {item.snapshotAvailable && <span>{t.stored}</span>}
-                    <span>{t.checkedAt}: {new Intl.DateTimeFormat(lang === 'zh' ? 'zh-TW' : 'en-GB', { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(item.checkedAt))}</span>
-                  </div>
-                  <a href={item.sourceUrl} target="_blank" rel="noreferrer" aria-label={t.open}><ArrowUpRight size={17} /></a>
-                </article>
-              ))}
-            </div>
-          </section>
-        )}
-
         {mainTab === 'relations' && (
           <section className={`${styles.panel} ${styles.frontier}`}>
             <div className={styles.sectionHead}>
               <div>
                 <h2>{t.relations}</h2>
-                <p>{lang === 'zh' ? '拖曳節點、縮放畫面，查看議題與來源之間的連線；右側前沿監測項目尚未標記對應議題，暫列為獨立欄。' : 'Drag nodes and zoom the canvas to inspect how topics connect to their sources. Frontier-watch items on the right have no recorded topic link yet, so they are listed as an unconnected column.'}</p>
+                  <p>{lang === 'zh' ? '拖曳節點、縮放畫面，查看已研究來源與議題之間的連線。' : 'Drag nodes and zoom to inspect the connections between researched sources and topics.'}</p>
               </div>
               <GitBranch size={18} />
             </div>

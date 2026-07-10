@@ -31,16 +31,19 @@
     "sourceIds": [
       "oecd-globe-commentary-2026",
       "oecd-gmt-implementation-toolkit-2026",
-      "oecd-side-by-side-package-2026"
+      "oecd-side-by-side-package-2026",
+      "oecd-tax-incentives-lac-2026"
     ],
     "nextActions": {
       "zh": [
         "補上 Simplified ETR / 實質本位租稅優惠安全港的條文層級摘要",
+        "以 OECD Working Paper No. 76 的 EATR 與治理結果，比較所得型與支出型優惠在 GloBE 下的待遇；另區分經濟效果、GloBE 分類與救濟可預測性",
         "追蹤是否有第二個 Qualified SbS Regime 出現（目前僅美國），檢驗此制度是否只是美國專用安排",
         "核對 Qatar QDMTT 日期落差是否已在 OECD 下一輪 Central Record 更新中修正"
       ],
       "en": [
         "Add an article-level summary of the Simplified ETR and Substance-based Tax Incentive safe harbours",
+        "Use OECD Working Paper No. 76's EATR and governance findings to compare income- and expenditure-based incentives under GloBE, while separating economic effect, GloBE classification, and remedial predictability",
         "Watch for a second jurisdiction to obtain Qualified SbS Regime status (currently US-only) to test whether this is a US-specific arrangement in practice",
         "Check whether the Qatar QDMTT date discrepancy gets corrected in the next OECD Central Record update"
       ]
