@@ -393,6 +393,44 @@ function pdfHref(url, mode) {
   return `/api/pdf?url=${encodeURIComponent(url)}`;
 }
 
+// 未獲同意的被提名人批次（113/114，賴清德提名、立法院全數否決）：資料層 justice-nominees.json
+// 經快照 被提名人批次 帶入；掛在哪些案件卡片由資料的 相關案件 決定（現為 114年憲判字第1號——
+// 兩批否決造成的員額僵局即憲訴法修正案的脈絡），前端不寫死字號。
+const nomineeBatches = data.被提名人批次 ?? null;
+const NOMINEE_CASES = new Set(nomineeBatches?.相關案件 ?? []);
+
+function NomineeDossiers({ pdfMode }) {
+  if (!nomineeBatches?.批次?.length) return null;
+  return (
+    <div className="mt-3 rounded-lg bg-[var(--cc-opinion-bg)] px-3 py-2">
+      <p className="mb-1 text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">本案脈絡：未獲同意的大法官被提名人（總統府公布之自傳／簡歷）</p>
+      {nomineeBatches.批次.map((b) => (
+        <div key={b.批次} className="mt-1.5">
+          <p className="text-[12.5px] font-bold text-[var(--cc-ink-heavy)]">
+            {b.批次}
+            <span className="ml-2 font-normal text-[var(--cc-ink-soft)]">{b.提名總統}提名（{String(b.提名公布).slice(0, 10)}）・{b.結果}</span>
+          </p>
+          <div className="mt-1 divide-y divide-[var(--cc-row-border)]">
+            {b.名單.map((p) => (
+              <div key={p.姓名} className="flex flex-wrap items-center gap-x-3 gap-y-1 py-1 text-[13px]">
+                <span className="w-[64px] font-bold text-[var(--cc-ink)]">{p.姓名}</span>
+                <span className="w-[128px] text-[12px] text-[var(--cc-ink-soft)]">{p.提名職務}</span>
+                <a href={pdfHref(p.自傳, pdfMode)} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-[12px] font-bold text-[var(--cc-accent)] underline decoration-[var(--cc-link-underline)] underline-offset-2">
+                  自傳 <FileText size={10} />
+                </a>
+                <a href={pdfHref(p.簡歷, pdfMode)} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-[12px] font-bold text-[var(--cc-accent)] underline decoration-[var(--cc-link-underline)] underline-offset-2">
+                  簡歷 <FileText size={10} />
+                </a>
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+      <p className="mt-1.5 text-[11px] text-[var(--cc-ink-soft)]">總統府已陸續撤下落選批次檔案，撤下者連至網際網路檔案館存檔。</p>
+    </div>
+  );
+}
+
 // 搜尋命中高亮：把 text 中出現 kw 的片段包成 <mark>（淡琥珀底＋墨字）。kw 空白則原樣返回字串。
 function hl(text, kw) {
   const s = String(text ?? '');
@@ -578,6 +616,8 @@ function CaseCard({ d, q, reasoningDefault, pdfMode }) {
           ) : null}
         </div>
       ) : null}
+
+      {NOMINEE_CASES.has(d.字號) ? <NomineeDossiers pdfMode={pdfMode} /> : null}
 
       <div className="mt-3 flex flex-wrap items-center gap-4 text-[12px]">
         <a href={d.官方頁} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 font-bold text-[var(--cc-accent)] hover:text-[var(--cc-link-hover)]">
