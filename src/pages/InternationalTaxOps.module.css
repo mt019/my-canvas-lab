@@ -692,6 +692,135 @@
   text-decoration: underline;
 }
 
+.paperCard {
+  border: 1px solid var(--soft-line);
+  border-radius: 7px;
+  background: #fff;
+  overflow: hidden;
+}
+
+.paperHead {
+  padding: 14px;
+  display: grid;
+  gap: 8px;
+  border-bottom: 1px solid var(--soft-line);
+  background: var(--wash);
+}
+
+.paperHead h3 {
+  font-family: var(--lead-font);
+  font-size: 16px;
+  line-height: 1.4;
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.paperTagline {
+  color: #55616b;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.paperSection {
+  border-bottom: 1px solid var(--soft-line);
+}
+
+.paperSection:last-child {
+  border-bottom: 0;
+}
+
+.paperSectionHeader {
+  position: relative;
+  width: 100%;
+  text-align: left;
+  border: 0;
+  border-left: 4px solid transparent;
+  background: transparent;
+  padding: 12px 40px 12px 14px;
+  cursor: pointer;
+}
+
+.paperSectionHeader:hover {
+  background: #fbfcfd;
+}
+
+.paperSectionHeader .topicChevron {
+  top: 12px;
+}
+
+.paperSectionTitle {
+  font-family: var(--lead-font);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.4;
+}
+
+.paperSectionBody {
+  padding: 8px 14px 16px;
+  border-left: 4px solid var(--teal);
+  background: #f7fbfa;
+}
+
+.paperSectionBody > p {
+  color: #55616b;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.analysisTableWrap {
+  margin: 12px 0 0;
+}
+
+.analysisTableScroll {
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #fff;
+}
+
+.analysisTable {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 12.5px;
+}
+
+.analysisTable th {
+  text-align: left;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--muted);
+  background: var(--wash);
+  border-bottom: 1px solid var(--line);
+  padding: 8px 10px;
+  white-space: nowrap;
+}
+
+.analysisTable td {
+  padding: 7px 10px;
+  border-bottom: 1px solid var(--soft-line);
+  color: #3c464e;
+  line-height: 1.5;
+}
+
+.analysisTable tr:last-child td {
+  border-bottom: 0;
+}
+
+.analysisTable td:nth-child(2),
+.analysisTable td:nth-child(3) {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.analysisTableWrap figcaption {
+  color: var(--faint);
+  font-size: 11.5px;
+  line-height: 1.5;
+  margin-top: 8px;
+}
+
 .relationCanvas {
   height: 520px;
   border: 1px solid var(--soft-line);

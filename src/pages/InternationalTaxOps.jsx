@@ -7,6 +7,7 @@ import {
   Activity,
   ArrowLeft,
   ArrowUpRight,
+  BookOpen,
   CheckCircle2,
   ChevronDown,
   Database,
@@ -27,6 +28,7 @@ import schema from '../data/intlTaxOps/data_classification_schema.json';
 import watchlist from '../data/intlTaxOps/frontier_watchlist.json';
 import controversies from '../data/intlTaxOps/controversies.json';
 import digest from '../data/intlTaxOps/frontier_digest.json';
+import researchAnalyses from '../data/intlTaxOps/research_analyses.json';
 import styles from './InternationalTaxOps.module.css';
 
 const ui = {
@@ -60,6 +62,8 @@ const ui = {
     liveCase: '對照案例頁面',
     digest: '最新動態',
     digestEmpty: '尚無研究過的動態。在資料倉庫執行 /frontier-research 之後，這裡會出現帶引註的動態研究。',
+    research: '研究分析',
+    readAt: '研讀日',
   },
   en: {
     app: 'International Tax Research Desk',
@@ -91,11 +95,14 @@ const ui = {
     liveCase: 'See the applied case page',
     digest: 'Latest Digest',
     digestEmpty: 'No researched updates yet. Run /frontier-research in the data repo to populate this feed with cited research notes.',
+    research: 'Research Analysis',
+    readAt: 'Read',
   },
 };
 
 const MAIN_TABS = [
   { id: 'matrix', labelKey: 'matrix', Icon: Layers3 },
+  { id: 'research', labelKey: 'research', Icon: BookOpen },
   { id: 'digest', labelKey: 'digest', Icon: Activity },
   { id: 'sources', labelKey: 'sourceRegistry', Icon: Database },
   { id: 'relations', labelKey: 'relations', Icon: GitBranch },
@@ -189,6 +196,9 @@ export default function InternationalTaxOps() {
   // Canvas Lab (see feedback_accordion_default), rather than a single-select
   // model that forces a separate detail panel far from the card you clicked.
   const [expandedTopics, setExpandedTopics] = useState(() => new Set(topics.map((topic) => topic.id)));
+  const [expandedSections, setExpandedSections] = useState(() => new Set(
+    researchAnalyses.flatMap((paper) => paper.sections.map((section) => `${paper.id}:${section.id}`)),
+  ));
   const t = ui[lang];
 
   const layers = schema.axes.epistemicLayer;
@@ -249,6 +259,14 @@ export default function InternationalTaxOps() {
     setExpandedTopics((prev) => {
       const next = new Set(prev);
       if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  };
+
+  const toggleSection = (key) => {
+    setExpandedSections((prev) => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key); else next.add(key);
       return next;
     });
   };
@@ -450,6 +468,84 @@ export default function InternationalTaxOps() {
               </div>
             </section>
           </>
+        )}
+
+        {mainTab === 'research' && (
+          <section className={styles.panel}>
+            <div className={styles.sectionHead}>
+              <h2>{t.research}</h2>
+              <BookOpen size={18} />
+            </div>
+            <div className={styles.controversyList}>
+              {researchAnalyses.map((paper) => (
+                <article key={paper.id} className={styles.paperCard}>
+                  <header className={styles.paperHead}>
+                    <h3>{paper.citation.title}</h3>
+                    <p className={styles.paperTagline}>{paper.tagline[lang]}</p>
+                    <div className={styles.tagRow}>
+                      <span>{paper.researchLineLabel[lang]}</span>
+                      <span>{t.readAt}: {paper.readAt}</span>
+                    </div>
+                    {paper.relatedTopicIds?.length > 0 && (
+                      <div className={styles.controversyRelated}>
+                        <span>{t.relatedTopics}</span>
+                        {paper.relatedTopicIds.map((id) => <span key={id}>{topicTitleById(id, lang)}</span>)}
+                      </div>
+                    )}
+                    <div className={styles.controversyCitation}>
+                      <span>{paper.citation.authors} — {paper.citation.venue[lang]}</span>
+                      <a href={paper.citation.ssrnUrl} target="_blank" rel="noreferrer">SSRN<ArrowUpRight size={14} /></a>
+                    </div>
+                  </header>
+                  <div>
+                    {paper.sections.map((section) => {
+                      const key = `${paper.id}:${section.id}`;
+                      const isOpen = expandedSections.has(key);
+                      return (
+                        <div key={section.id} className={styles.paperSection}>
+                          <button
+                            type="button"
+                            className={styles.paperSectionHeader}
+                            onClick={() => toggleSection(key)}
+                            aria-expanded={isOpen}
+                          >
+                            <span className={styles.paperSectionTitle}>{section.heading[lang]}</span>
+                            <ChevronDown size={15} className={isOpen ? `${styles.topicChevron} ${styles.open}` : styles.topicChevron} />
+                          </button>
+                          {isOpen && (
+                            <div className={styles.paperSectionBody}>
+                              <p>{section.body[lang]}</p>
+                              {section.table && (
+                                <figure className={styles.analysisTableWrap}>
+                                  <div className={styles.analysisTableScroll}>
+                                    <table className={styles.analysisTable}>
+                                      <thead>
+                                        <tr>
+                                          {section.table.columns.map((col) => <th key={col.en}>{col[lang]}</th>)}
+                                        </tr>
+                                      </thead>
+                                      <tbody>
+                                        {section.table.rows.map((row) => (
+                                          <tr key={row.cells[0].en}>
+                                            {row.cells.map((cell, cellIndex) => <td key={cellIndex}>{cell[lang]}</td>)}
+                                          </tr>
+                                        ))}
+                                      </tbody>
+                                    </table>
+                                  </div>
+                                  <figcaption>{section.table.caption[lang]}</figcaption>
+                                </figure>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </article>
+              ))}
+            </div>
+          </section>
         )}
 
         {mainTab === 'digest' && (

@@ -98,8 +98,25 @@ repo, schema, raw, snapshot, workflowState, or sourceTier.
 Current tab-based implementation:
 
 - **Tab bar** (`.mainTabBar`, matches `GovernmentDebt`'s pattern):
-  議題矩陣 / 來源登錄 / 前沿監測 / 關係圖譜 / 案例與爭議. Only the
-  active tab renders.
+  議題矩陣 / 研究分析 / 最新動態 / 來源登錄 / 關係圖譜 / 案例與爭議.
+  Only the active tab renders. (前沿監測/Frontier Watch was removed
+  2026-07-11; its capture JSON left the sync map with it.)
+- **Research analysis tab** (2026-07-11): renders
+  `research_analyses.json` — an *array* of per-paper analysis objects
+  (citation, tagline, researchLine/topic links, bilingual `sections[]`
+  with optional `table`). The array shape is deliberate: adding the next
+  paper is a data-only append, and if the five-tab restructure from
+  `12_PHD_RESEARCH_LAYOUT.md` ever lands, this tab becomes 文獻缺口 with
+  zero data migration. First entry: Ash & Marian, 24 Fla. Tax Rev. 151
+  (2020) — NLP convergence study of 4,052 tax treaties; analysis written
+  against the full PDF archived in the data repo
+  (`data/raw/pdf/ash-marian-making-of-international-tax-law-2020.pdf`,
+  manually ingested: pdftotext + manifest + research_materials entries).
+  Sections are accordions, default expanded, Set-keyed
+  `paperId:sectionId`. Table = plain HTML in an `overflow-x` scroll div,
+  pale fill + ink keyline, no fake charts (the similarity series isn't
+  digitized; per `feedback_no_meaningless_viz` we show the paper's
+  Table 1 excerpt as a table and say so in the caption).
 - **Sidebar**: brand, search, back-to-canvas link, then 分類視角
   (classification-lens) filter as a vertical list — the *only* place
   that filter exists. Selecting an option also switches to the matrix

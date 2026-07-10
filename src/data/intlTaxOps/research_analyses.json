@@ -1,0 +1,102 @@
+[
+  {
+    "id": "ash-marian-2020-making-of-international-tax-law",
+    "materialId": "ash-marian-making-of-international-tax-law-2020",
+    "readAt": "2026-07-11",
+    "citation": {
+      "authors": "Elliott Ash & Omri Y. Marian",
+      "title": "The Making of International Tax Law: Empirical Evidence from Tax Treaties Text",
+      "venue": { "zh": "Florida Tax Review 第 24 卷第 1 期，頁 151–190（2020）", "en": "24 Florida Tax Review 151 (2020)" },
+      "year": 2020,
+      "ssrnUrl": "https://ssrn.com/abstract=3314310",
+      "localPdf": "data/raw/pdf/ash-marian-making-of-international-tax-law-2020.pdf",
+      "parsedText": "data/parsed/text/ash-marian-making-of-international-tax-law-2020.txt"
+    },
+    "tagline": {
+      "zh": "4,052 份雙邊稅約的 NLP 實證：協定法律語言自 1960 年代起收斂，OECD 範本是共識建構的制度來源",
+      "en": "NLP evidence from 4,052 bilateral tax treaties: treaty language has converged since the 1960s, and the OECD Model is the institutional source of that consensus"
+    },
+    "researchLineIds": ["un-vs-oecd-institutional-design"],
+    "researchLineLabel": {
+      "zh": "研究線 4：UN vs OECD 制度設計",
+      "en": "Research line 4: UN vs OECD institutional design"
+    },
+    "relatedTopicIds": ["un-tax-convention-governance", "danon-lausanne-disputes"],
+    "sections": [
+      {
+        "id": "problem",
+        "heading": { "zh": "問題意識與理論賭注", "en": "The question and its theoretical stakes" },
+        "body": {
+          "zh": "國際稅法學界長年爭論「國際稅法體制」是否存在：Avi-Yonah 一系主張，約三千份現行雙邊租稅協定的網絡實質構成習慣國際稅法；Rosenbloom、Roin 一系認為各國愛怎麼立法就怎麼立法，所謂體制只是修辭。這場爭論之前停留在互引個案與定性觀察的層次。Ash 與 Marian 的貢獻在於把問題改寫成可測量的形式：若跨國法律共識存在，協定的法律語言應隨時間收斂；若共識有制度來源，新範本發布後的新訂協定應向新範本的語言靠攏。這是第一個對雙邊租稅協定文本的大規模實證比較。作者同時預告了詮釋的分歧：比較法的功能學派會把語言收斂讀成規則市場競爭的效率結果，文化學派會說形式趨同不代表實質趨同，批判學派會讀成霸權工程——所以先把實證事實立起來，詮釋問題留到最後。",
+          "en": "International tax scholarship has long debated whether an 'international tax regime' exists. The Avi-Yonah line argues that the network of roughly 3,000 bilateral tax treaties in force amounts to customary international tax law; the Rosenbloom/Roin line holds that states adopt whatever tax rules they please and the 'regime' is rhetoric. Until this paper the debate ran on cross-cited anecdotes and qualitative observation. Ash and Marian's contribution is to restate the question in measurable form: if a transnational legal consensus exists, treaty language should converge over time; if that consensus has an institutional source, newly concluded treaties should move toward the language of newly published model treaties. This is the first large-scale empirical comparison of bilateral tax treaty text. The authors also flag the interpretive split in advance: functional comparatists would read linguistic convergence as the efficient outcome of a market for rules, cultural comparatists would reply that convergence in form says nothing about convergence in substance, and critical theorists would read it as a hegemonic project—so the empirical facts come first and interpretation is deferred to the end."
+        }
+      },
+      {
+        "id": "method",
+        "heading": { "zh": "資料與方法", "en": "Data and method" },
+        "body": {
+          "zh": "語料來自 IBFD 資料庫：4,052 份曾生效的英文本（含英譯）雙邊所得稅協定，最早 1942 年生效、最晚 2015 年，涵蓋 205 個締約方；另加 OECD、UN 與美國發布的 23 份範本，以及 1943 年墨西哥草案與 1946 年倫敦草案。按貿易額加權，語料覆蓋 89.3% 的世界貿易流量（2005 年 COMTRADE 檢核），雖然只覆蓋 19.6% 的潛在締約國對——不太貿易的國家本來就不需要稅約。文本處理循社會科學 NLP 的標準流程：依 IBFD 的 32 個條款類別切分協定，抽取單詞與至多四詞的詞組並依詞性過濾，得到 45,259 個文本特徵；每份協定表示為 tf-idf 加權的稀疏詞頻向量，逐對計算餘弦相似度，共 19,092,530 對。方法的自我設限有二：只比對英文本（作者辯稱多數協定實際以英文起草）；相似度量測的是法律語言的形式，量不到解釋與適用。",
+          "en": "The corpus comes from the IBFD database: 4,052 bilateral income tax treaties in English (including translations) that were at some point in effect, the earliest entering into force in 1942 and the latest in 2015, covering 205 party-countries; to these the authors add 23 model treaties published by the OECD, the UN, and the United States, plus the 1943 Mexico Draft and the 1946 London Draft. Weighted by trade value the corpus covers 89.3% of world trade flows (checked against 2005 COMTRADE data), even though it covers only 19.6% of potential country pairs—countries that barely trade rarely need a tax treaty. Text processing follows standard NLP practice in social science: treaties are split along the IBFD's 32 clause categories; words and phrases of up to four words are extracted and filtered by part of speech, yielding 45,259 text features; each treaty becomes a sparse tf-idf-weighted frequency vector, and cosine similarity is computed pair-wise across 19,092,530 treaty pairs. Two self-imposed limits: only English versions are compared (the authors answer that most treaties are in fact drafted in English), and similarity measures the form of legal language, not its interpretation or application."
+        }
+      },
+      {
+        "id": "finding-convergence",
+        "heading": { "zh": "發現一：收斂為真，但高度不均勻", "en": "Finding 1: convergence is real, but sharply uneven" },
+        "body": {
+          "zh": "現行有效協定的平均逐對相似度自 1970 年前後到 2010 年明顯上升（論文 Figure 4；圖面讀值約從 0.27 升到 0.5），收斂在統計上顯著（穩健標準誤 p<.001，按年聚類 p=.012），剔除涉及 OECD 會員的協定後趨勢仍在；2010 年之後新訂協定的相似度略有回落。收斂集中在特定實質條款，並非全面的文書標準化：32 類條款中，關係企業（移轉訂價）、常設機構、營業利潤、相互協議程序是 2015 年相似度最高的一批；一般定義、領域延伸、學生、終止與生效條款不收斂甚至發散；雙重課稅消除方法與稅捐徵收協助的相似度墊底。作者由此推論：趨同的是跨境營業所得課稅、移轉訂價與 MAP 這些核心實質領域，而「怎麼消除雙重課稅」這個協定的名義目的反而各行其是。高—高、高—低、低—低所得配對全部收斂，低所得國之間自 1970 年代末起同樣明顯。",
+          "en": "Mean pair-wise similarity among treaties in force rises markedly from around 1970 to around 2010 (Figure 4 of the paper; read off the chart, roughly 0.27 to 0.5), and the convergence is statistically significant (p<.001 with robust standard errors, p=.012 clustered by year); the trend survives excluding treaties involving OECD members, and similarity among newly concluded treaties declines somewhat after 2010. Convergence is concentrated in specific substantive clauses rather than reflecting across-the-board standardization of drafting: among the 32 clause categories, Associated Enterprises (transfer pricing), Permanent Establishment, Business Profits, and the Mutual Agreement Procedure show the highest 2015 similarity, while General Definitions, Territorial Extension, Students, Termination, and Entry into Force fail to converge or actively diverge, and the methods for relieving double taxation and Assistance in the Collection of Taxes sit at the bottom. The authors' inference: what converges are the core substantive areas—taxation of cross-border business income, intercompany pricing, MAP—while the treaties' nominal purpose, how to relieve double taxation, remains a matter of local variation. High-high, high-low, and low-low income pairs all converge, with low-low pairs clearly converging from the late 1970s."
+        },
+        "table": {
+          "caption": {
+            "zh": "條款類別逐對相似度（節錄自論文 Table 1，原表 32 類按 2015 年相似度排序，頁 174–175；判讀為本分析所加）",
+            "en": "Pair-wise similarity by clause category (excerpt from Table 1 of the paper, 32 categories ordered by 2015 similarity, pp. 174–175; the reading column is ours)"
+          },
+          "columns": [
+            { "zh": "條款類別", "en": "Clause category" },
+            { "zh": "1965", "en": "1965" },
+            { "zh": "2015", "en": "2015" },
+            { "zh": "判讀", "en": "Reading" }
+          ],
+          "rows": [
+            { "cells": [{ "zh": "關係企業（移轉訂價）", "en": "Associated Enterprises" }, { "zh": "0.794", "en": "0.794" }, { "zh": "0.859", "en": "0.859" }, { "zh": "起點即高", "en": "High from the start" }] },
+            { "cells": [{ "zh": "常設機構", "en": "Permanent Establishment" }, { "zh": "0.552", "en": "0.552" }, { "zh": "0.829", "en": "0.829" }, { "zh": "收斂", "en": "Converging" }] },
+            { "cells": [{ "zh": "營業利潤", "en": "Business Profits" }, { "zh": "0.562", "en": "0.562" }, { "zh": "0.765", "en": "0.765" }, { "zh": "收斂", "en": "Converging" }] },
+            { "cells": [{ "zh": "相互協議程序（MAP）", "en": "Mutual Agreement Procedure" }, { "zh": "0.261", "en": "0.261" }, { "zh": "0.744", "en": "0.744" }, { "zh": "大幅收斂", "en": "Strong convergence" }] },
+            { "cells": [{ "zh": "權利金", "en": "Income from Royalties" }, { "zh": "0.242", "en": "0.242" }, { "zh": "0.714", "en": "0.714" }, { "zh": "大幅收斂", "en": "Strong convergence" }] },
+            { "cells": [{ "zh": "不動產所得", "en": "Income from Immovable Property" }, { "zh": "0.189", "en": "0.189" }, { "zh": "0.695", "en": "0.695" }, { "zh": "收斂幅度最大", "en": "Largest convergence" }] },
+            { "cells": [{ "zh": "一般定義", "en": "General Definitions" }, { "zh": "0.518", "en": "0.518" }, { "zh": "0.515", "en": "0.515" }, { "zh": "停滯", "en": "Flat" }] },
+            { "cells": [{ "zh": "領域延伸", "en": "Territorial Extension" }, { "zh": "0.585", "en": "0.585" }, { "zh": "0.459", "en": "0.459" }, { "zh": "發散", "en": "Diverging" }] },
+            { "cells": [{ "zh": "學生", "en": "Students" }, { "zh": "0.450", "en": "0.450" }, { "zh": "0.381", "en": "0.381" }, { "zh": "發散", "en": "Diverging" }] },
+            { "cells": [{ "zh": "雙重課稅消除（免稅法）", "en": "Double Taxation (Exemption Method)" }, { "zh": "0.230", "en": "0.230" }, { "zh": "0.401", "en": "0.401" }, { "zh": "低但收斂", "en": "Low but converging" }] },
+            { "cells": [{ "zh": "稅捐徵收協助", "en": "Assistance in the Collection of Taxes" }, { "zh": "0.177", "en": "0.177" }, { "zh": "0.288", "en": "0.288" }, { "zh": "低度共識", "en": "Little consensus" }] },
+            { "cells": [{ "zh": "雙重課稅消除（扣抵法）", "en": "Double Taxation (Credit Method)" }, { "zh": "0.152", "en": "0.152" }, { "zh": "0.275", "en": "0.275" }, { "zh": "全表最低", "en": "Lowest in the table" }] }
+          ]
+        }
+      },
+      {
+        "id": "finding-institutions",
+        "heading": { "zh": "發現二：共識的制度來源——OECD 領跑、UN 慢滲、美國跟隨", "en": "Finding 2: the institutional source—OECD leads, the UN seeps in slowly, the US follows" },
+        "body": {
+          "zh": "誰在供給共識的語言？三組證據都指向 OECD。事件研究顯示，新 OECD 範本發布後，新訂協定對新範本（相對於舊範本）的相似度呈上升斜率（按協定年聚類 p=.03，按範本聚類 p=.06）；UN 與美國範本發布前後皆無顯著變化，美國範本甚至出現上升的「前趨勢」——是範本在追認既有協定實務（作者引 Marian & Brauner：美國範本有時是為了向 OECD 實務看齊而修訂）。Table 2 顯示每份新範本相對前一版的相似度變化全為負值：範本是開路者，其中 2016 年美國範本偏離最大（−0.1491）。逐月分析點名影響力範本（OECD 1977、1992、2005、2008、2010、2014 與美國 1996）與引發反彈的範本（OECD 2003、美國 2006）。兩個反直覺的限定：長期看，UN 範本與現行協定的相似度不輸 OECD，2011 年 UN 範本甚至略高，而 1943 年墨西哥草案自 1970 年代起比 1946 年倫敦草案更貼近協定文本——來源地課稅的語言在緩慢滲透，連已開發國家之間也如此；加入 OECD 這件事本身對協定貼近 OECD 範本沒有正效果，影響力來自範本文件，與會籍無關。",
+          "en": "Who supplies the language of consensus? Three sets of evidence point to the OECD. In the event study, after a new OECD Model is published, newly concluded treaties slope upward in similarity to the new model relative to the old one (p=.03 clustered by treaty year, p=.06 clustered by model); UN and US models show no significant trend on either side of publication, and US models even display a rising pre-trend—the model ratifying existing treaty practice (the authors cite Marian & Brauner: the US Model is sometimes revised to conform with existing OECD practices). Table 2 shows that every new model's similarity to the treaties concluded in the interim, relative to its predecessor, is negative: models break new ground rather than follow, with the 2016 US Model departing furthest (−0.1491). A monthly analysis names the influential models (OECD 1977, 1992, 2005, 2008, 2010, 2014, and US 1996) and those that provoked a backlash (OECD 2003, US 2006). Two counterintuitive qualifications: in the long run, UN Models are just as similar to treaties in force as OECD Models—current practice aligns with the 2011 UN Model slightly more—and since the 1970s the 1943 Mexico Draft tracks treaty text more closely than the 1946 London Draft, so the language of source-based taxation is slowly seeping in, even between developed countries; and joining the OECD has no positive effect of its own on a treaty's similarity to the OECD Model—the influence runs through the model document, not membership."
+        }
+      },
+      {
+        "id": "normative",
+        "heading": { "zh": "規範意涵與作者的自我節制", "en": "Normative implications and the authors' restraint" },
+        "body": {
+          "zh": "作者明確拒絕從語言收斂推出習慣國際稅法：趨同證明不了法之確信。他們把發現交回三個學派檢驗。功能學派可以說規則市場選出了最優範本——尤其考慮到每對締約國的談判情境（資本輸出入地位、談判實力、外交親疏）差異極大，理論上應預期高變異，實際收斂反而暗示各國受跨國法律考量引導。文化學派會回答：語言趨同不等於法的趨同，同一條文在不同法域會被解釋成不同的法；作者承認這一點，並把它轉成研究議程——找出形式已收斂、適用仍分歧的條款，正是國際協調最該投入的地方。批判學派則會讀成西方工業國把課稅標準加諸弱勢者的帝國工程。作者自己停在最弱而可辯護的結論：存在「形式上的」國際法律共識趨勢，OECD 是共識建構過程的制度來源，在協定事務上實質扮演準正式的國際稅務組織；形式收斂在實質上意味著什麼，留給後續研究。",
+          "en": "The authors explicitly decline to infer customary international tax law from linguistic convergence: convergence cannot establish opinio juris. Instead they hand the findings to three schools for inspection. Functionalists can say the market for rules selected the best model—especially since each treaty pair faces very different negotiating circumstances (capital-export position, bargaining power, diplomatic affinity), so high variance would be the theoretical expectation, and the observed convergence suggests states are guided by transnational legal considerations. Culturalists reply that converging language is not converging law: identical clauses are read into different law in different jurisdictions. The authors concede the point and turn it into a research agenda—identifying clauses where form has converged while application still diverges is exactly where international coordination is most needed. Critical theorists would read the whole pattern as an imperial project in which Western industrialized states impose their taxing standards on weaker actors. The authors themselves settle for the weakest defensible conclusion: a trend toward formal international legal consensus exists, the OECD is the institutional source of the consensus-building process—functioning in treaty matters as a quasi-formal international tax organization—and what the formal convergence means in substance is left for future work."
+        }
+      },
+      {
+        "id": "for-this-project",
+        "heading": { "zh": "對本研究的意義", "en": "What this paper does for this project" },
+        "body": {
+          "zh": "這篇論文對「UN vs OECD 制度設計」研究線有三重用處。第一，它提供基線事實：UN 範本的影響力型態是短期無感、長期滲透，滲透方向是來源地課稅。評估 UN 稅務合作框架公約談判（INC）是否真的改變規範生產與爭端解決架構時，必須先交代這個既有影響力分布；INC 工作流的草案文本本身就可以用同一方法對照 OECD 範本語言，把「發展導向的重述」與「架構性分歧」區分開來。第二，語料止於 2015 年，正好停在 BEPS 落地之前：MLI 以疊加方式修改協定而不重寫文本，Pillar Two 把規範生產搬進 GloBE 規則與註釋，國際稅法的「製造地點」已部分離開雙邊協定文本——這是論文方法照不到的區域，也是明確的文獻缺口。第三，文化學派那條批評正對 Danon 的問題意識：語言收斂之後，爭點移向分歧的解釋與適用——PPT 的主觀要件、GloBE 的一致適用、MAP 取得管道的限縮。「形式共識、適用分歧」正是洛桑研究線處理救濟確定性的出發點。方法的可移植性：按條款類別切分＋餘弦相似度的設計，可直接套用於 INC 草案、MLI 修正後的協定文本、以及本研究關注的仲裁與 MAP 條款；搬用時要連同限制一起搬——只測形式、英文本偏誤、相似度本身不含因果。",
+          "en": "For the 'UN vs OECD institutional design' research line this paper does three things. First, it supplies the baseline facts: the UN Model's influence pattern is negligible in the short term and seeping in the long term, and the direction of seepage is source-based taxation. Any assessment of whether the UN Framework Convention negotiations (INC) genuinely change the architecture of norm production and dispute settlement has to account for this pre-existing distribution of influence; the INC workstream drafts can themselves be run through the same method against OECD Model language, separating development-oriented restatement from architectural divergence. Second, the corpus ends in 2015, just before BEPS instruments took hold: the MLI modifies treaties by overlay without rewriting their text, and Pillar Two moved norm production into the GloBE rules and commentary, so the place where international tax law is made has partly left bilateral treaty text—a region the paper's method cannot see, and a well-defined gap in the literature. Third, the culturalist objection lands exactly on Danon's problem: once language has converged, the dispute shifts to divergent interpretation and application—the subjective element of the PPT, consistent application of GloBE, narrowing access to MAP. 'Formal consensus, divergent application' is the starting point of the Lausanne research line on certainty of remedies. On method portability: the clause-category-plus-cosine-similarity design transfers directly to INC drafts, MLI-modified treaty text, and the arbitration and MAP provisions this project cares about—provided the limits travel with it: form only, English-text bias, and similarity by itself carries no causation."
+        }
+      }
+    ]
+  }
+]
