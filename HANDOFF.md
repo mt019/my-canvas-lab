@@ -307,6 +307,13 @@ work.
   `app-json→sync` 會把其半成品推上前端。**Codex commit W2 後**，補跑一次乾淨 `app-json→sync` 即正規化快照
   （結果同 503，且格式回正——目前 overlay 為 minified）。資料 repo 的 `審查結論類型.json`／gate 旗標／held／
   人工佇列 doc 皆 uncommitted，與 Codex 的 W2 在同一工作樹（各自檔案不重疊，可 selective add 分別 commit）。
+- 2026-07-11 大法官提名文件＋被提名人（frontend；資料本體在資料 repo）：個人頁基本資料列新增
+  自傳／提名簡歷／學思歷程報告連結（快照 `大法官[].提名文件`——108/112 批 8 位現任＋湯德宗 100 年報告）；
+  114憲判1 卡片掛 `NomineeDossiers` 區塊（快照頂層 `被提名人批次`，113/114 落選 14 人，掛載案件由
+  資料 `相關案件` 欄驅動、JSX 不寫死字號）。`/api/pdf` 白名單擴總統府 File/Doc＋web.archive.org id_
+  回放（皆 attachment，預覽須代理改 inline）；`vercel.json` regions=hnd1＋edge 快取 7 天（PDF 預覽提速，
+  部署後生效）。來源版圖與未開工線索（立法院《同意權實錄》逐屆合訂本、自存文件撿漏、SPN 備援機制）：
+  資料 repo `docs/提名文件來源探勘.md`。
 - 2026-07-07 審查結論 typology (data-side + frontend + sync **DONE**):
   the data repo reworked `classifyOutcome` so early 釋字 that aren't
   constitutionality review get real categories. `審查結論.結論` now has,
