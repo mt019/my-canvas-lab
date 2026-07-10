@@ -1,0 +1,323 @@
+{
+  "generatedAt": "2026-07-10T20:29:31.122Z",
+  "sources": [
+    {
+      "id": "danon-personal-homepage",
+      "label": {
+        "zh": "Danon 個人主頁",
+        "en": "Danon personal homepage"
+      },
+      "sourceUrl": "https://danonlaw.ch/en/",
+      "fetchUrl": "https://danonlaw.ch/en/",
+      "fallbackNote": null,
+      "cadence": "weekly",
+      "checkedAt": "2026-07-10T20:29:31.122Z",
+      "status": "ok",
+      "changed": false,
+      "snapshotAvailable": true,
+      "newLinks": []
+    },
+    {
+      "id": "unil-tax-policy-center",
+      "label": {
+        "zh": "洛桑大學 Tax Policy Center",
+        "en": "University of Lausanne Tax Policy Center"
+      },
+      "sourceUrl": "https://www.unil.ch/taxpolicy/en/home.html",
+      "fetchUrl": "https://www.unil.ch/taxpolicy/en/home.html",
+      "fallbackNote": null,
+      "cadence": "weekly",
+      "checkedAt": "2026-07-10T20:29:31.122Z",
+      "status": "ok",
+      "changed": false,
+      "snapshotAvailable": true,
+      "newLinks": []
+    },
+    {
+      "id": "unil-danon-research",
+      "label": {
+        "zh": "Robert J. Danon 研究線",
+        "en": "Robert J. Danon research line"
+      },
+      "sourceUrl": "https://www.unil.ch/taxpolicy/en/home/menuinst/recherche.html",
+      "fetchUrl": "https://www.unil.ch/taxpolicy/en/home/menuinst/recherche.html",
+      "fallbackNote": null,
+      "cadence": "weekly",
+      "checkedAt": "2026-07-10T20:29:31.122Z",
+      "status": "ok",
+      "changed": false,
+      "snapshotAvailable": true,
+      "newLinks": []
+    },
+    {
+      "id": "unil-chand-pillar-two",
+      "label": {
+        "zh": "Vikram Chand / Pillar Two 與轉讓定價",
+        "en": "Vikram Chand / Pillar Two and transfer pricing"
+      },
+      "sourceUrl": "https://www.unil.ch/taxpolicy/en/home/menuinst/recherche.html",
+      "fetchUrl": "https://www.unil.ch/taxpolicy/en/home/menuinst/recherche.html",
+      "fallbackNote": null,
+      "cadence": "weekly",
+      "checkedAt": "2026-07-10T20:29:31.122Z",
+      "status": "ok",
+      "changed": false,
+      "snapshotAvailable": true,
+      "newLinks": []
+    },
+    {
+      "id": "map-pillar-two-days-2026",
+      "label": {
+        "zh": "2026 MAP and Pillar Two Days",
+        "en": "2026 MAP and Pillar Two Days"
+      },
+      "sourceUrl": "https://api.unil.ch/newsunil/v1/api-newsunil/resources/document/1770123969818.D1774959037213?2026-03-31T12%3A10%3A40.641=",
+      "fetchUrl": "https://api.unil.ch/newsunil/v1/api-newsunil/resources/document/1770123969818.D1774959037213?2026-03-31T12%3A10%3A40.641=",
+      "fallbackNote": null,
+      "cadence": "monthly",
+      "checkedAt": "2026-07-10T20:29:31.122Z",
+      "status": "ok",
+      "changed": false,
+      "snapshotAvailable": false,
+      "newLinks": []
+    },
+    {
+      "id": "oecd-pillar-two-admin-guidance",
+      "label": {
+        "zh": "OECD Pillar Two 行政指引與執行工具",
+        "en": "OECD Pillar Two administrative guidance and implementation toolkit"
+      },
+      "sourceUrl": "https://www.oecd.org/en/topics/sub-issues/global-minimum-tax/global-anti-base-erosion-model-rules-pillar-two.html",
+      "fetchUrl": "https://www.oecd.org/content/dam/oecd/en/topics/policy-sub-issues/global-minimum-tax/side-by-side-package.pdf",
+      "fallbackNote": "OECD topic page blocks automated requests; capture the current official Pillar Two package PDF instead.",
+      "cadence": "weekly",
+      "checkedAt": "2026-07-10T20:29:31.122Z",
+      "status": "ok",
+      "changed": true,
+      "snapshotAvailable": true,
+      "newLinks": []
+    },
+    {
+      "id": "un-tax-convention-negotiations",
+      "label": {
+        "zh": "UN 國際稅務合作框架公約談判",
+        "en": "UN Framework Convention on International Tax Cooperation negotiations"
+      },
+      "sourceUrl": "https://financing.desa.un.org/unfcitc",
+      "fetchUrl": "https://financing.desa.un.org/unfcitc",
+      "fallbackNote": null,
+      "cadence": "weekly",
+      "checkedAt": "2026-07-10T20:29:31.122Z",
+      "status": "ok",
+      "changed": true,
+      "snapshotAvailable": true,
+      "newLinks": []
+    },
+    {
+      "id": "south-centre-tax-cooperation",
+      "label": {
+        "zh": "South Centre 國際稅務合作專頁",
+        "en": "South Centre international tax cooperation"
+      },
+      "sourceUrl": "https://www.southcentre.int/tag/international-tax-cooperation/",
+      "fetchUrl": "https://www.southcentre.int/tag/international-tax-cooperation/",
+      "fallbackNote": null,
+      "cadence": "monthly",
+      "checkedAt": "2026-07-10T20:29:31.122Z",
+      "status": "ok",
+      "changed": false,
+      "snapshotAvailable": true,
+      "newLinks": []
+    },
+    {
+      "id": "ictd-un-tax-convention",
+      "label": {
+        "zh": "ICTD UN 稅務公約主題頁",
+        "en": "ICTD UN tax convention theme"
+      },
+      "sourceUrl": "https://www.ictd.ac/theme/un-tax-convention-en/",
+      "fetchUrl": "https://www.ictd.ac/theme/un-tax-convention-en/",
+      "fallbackNote": null,
+      "cadence": "monthly",
+      "checkedAt": "2026-07-10T20:29:31.122Z",
+      "status": "ok",
+      "changed": false,
+      "snapshotAvailable": true,
+      "newLinks": []
+    },
+    {
+      "id": "tjn-un-tax-convention",
+      "label": {
+        "zh": "Tax Justice Network UN 公約專頁",
+        "en": "Tax Justice Network UN tax convention"
+      },
+      "sourceUrl": "https://taxjustice.net/topics/un-tax-convention/",
+      "fetchUrl": "https://taxjustice.net/topics/un-tax-convention/",
+      "fallbackNote": null,
+      "cadence": "monthly",
+      "checkedAt": "2026-07-10T20:29:31.122Z",
+      "status": "ok",
+      "changed": false,
+      "snapshotAvailable": true,
+      "newLinks": []
+    },
+    {
+      "id": "international-tax-observatory-repository",
+      "label": {
+        "zh": "International Tax Observatory：Public Repository",
+        "en": "International Tax Observatory: Public Repository"
+      },
+      "sourceUrl": "https://taxobservatory.eu/public-repository/",
+      "fetchUrl": "https://taxobservatory.eu/public-repository/",
+      "fallbackNote": null,
+      "cadence": "weekly",
+      "checkedAt": "2026-07-10T20:29:31.122Z",
+      "status": "ok",
+      "changed": false,
+      "snapshotAvailable": true,
+      "newLinks": []
+    },
+    {
+      "id": "oecd-taxation-working-papers",
+      "label": {
+        "zh": "OECD Taxation Working Papers",
+        "en": "OECD Taxation Working Papers"
+      },
+      "sourceUrl": "https://www.oecd.org/en/publications/serials/oecd-taxation-working-papers_g172710f.html",
+      "fetchUrl": "https://www.oecd.org/content/dam/oecd/en/publications/reports/2026/06/quantifying-the-impact-of-a-personal-income-tax-reform-on-tax-revenues-growth-and-inequality-in-hungary_6bd29f57/f5c8c874-en.pdf",
+      "fallbackNote": "OECD series page blocks automated requests; capture the latest accessible official working-paper PDF and rotate this URL when the series updates.",
+      "cadence": "weekly",
+      "checkedAt": "2026-07-10T20:29:31.122Z",
+      "status": "ok",
+      "changed": true,
+      "snapshotAvailable": true,
+      "newLinks": []
+    },
+    {
+      "id": "kluver-international-tax-blog",
+      "label": {
+        "zh": "Kluwer International Tax Blog",
+        "en": "Kluwer International Tax Blog"
+      },
+      "sourceUrl": "https://legalblogs.wolterskluwer.com/international-tax-law-blog/",
+      "fetchUrl": "https://legalblogs.wolterskluwer.com/international-tax-law-blog/",
+      "fallbackNote": null,
+      "cadence": "weekly",
+      "checkedAt": "2026-07-10T20:29:31.122Z",
+      "status": "ok",
+      "changed": false,
+      "snapshotAvailable": true,
+      "newLinks": []
+    },
+    {
+      "id": "oecd-taxation",
+      "label": {
+        "zh": "OECD Taxation",
+        "en": "OECD Taxation"
+      },
+      "sourceUrl": "https://www.oecd.org/en/topics/taxation.html",
+      "fetchUrl": "https://www.oecd.org/content/dam/oecd/en/publications/reports/2026/07/tax-co-operation-for-development-2025_2fe452a9/d652a08b-en.pdf",
+      "fallbackNote": "OECD taxation topic page blocks automated requests; capture a current official tax publication PDF as the monitored artefact.",
+      "cadence": "weekly",
+      "checkedAt": "2026-07-10T20:29:31.122Z",
+      "status": "ok",
+      "changed": true,
+      "snapshotAvailable": true,
+      "newLinks": []
+    },
+    {
+      "id": "un-tax-committee",
+      "label": {
+        "zh": "UN Tax Committee",
+        "en": "UN Tax Committee"
+      },
+      "sourceUrl": "https://financing.desa.un.org/what-we-do/ECOSOC/tax-committee/tax-committee-home",
+      "fetchUrl": "https://financing.desa.un.org/what-we-do/ECOSOC/tax-committee/tax-committee-home",
+      "fallbackNote": null,
+      "cadence": "weekly",
+      "checkedAt": "2026-07-10T20:29:31.122Z",
+      "status": "ok",
+      "changed": false,
+      "snapshotAvailable": true,
+      "newLinks": []
+    },
+    {
+      "id": "eu-dg-taxud-consultations",
+      "label": {
+        "zh": "EU DG TAXUD：Public Consultations",
+        "en": "EU DG TAXUD: Public Consultations"
+      },
+      "sourceUrl": "https://taxation-customs.ec.europa.eu/about-us/public-consultations_en",
+      "fetchUrl": "https://taxation-customs.ec.europa.eu/about-us/public-consultations_en",
+      "fallbackNote": null,
+      "cadence": "weekly",
+      "checkedAt": "2026-07-10T20:29:31.122Z",
+      "status": "ok",
+      "changed": false,
+      "snapshotAvailable": true,
+      "newLinks": []
+    },
+    {
+      "id": "imf-revenue-portal",
+      "label": {
+        "zh": "IMF Revenue Portal",
+        "en": "IMF Revenue Portal"
+      },
+      "sourceUrl": "https://www.imf.org/en/topics/fiscal-policies/revenue-portal",
+      "cadence": "monthly",
+      "checkedAt": "2026-07-10T20:29:31.122Z",
+      "status": "error",
+      "changed": false,
+      "snapshotAvailable": false,
+      "newLinks": []
+    },
+    {
+      "id": "world-bank-datax",
+      "label": {
+        "zh": "World Bank DaTax",
+        "en": "World Bank DaTax"
+      },
+      "sourceUrl": "https://www.worldbank.org/en/programs/datax-lab/publications",
+      "fetchUrl": "https://www.worldbank.org/en/programs/datax-lab/publications",
+      "fallbackNote": null,
+      "cadence": "monthly",
+      "checkedAt": "2026-07-10T20:29:31.122Z",
+      "status": "ok",
+      "changed": false,
+      "snapshotAvailable": true,
+      "newLinks": []
+    },
+    {
+      "id": "oecd-public-consultations",
+      "label": {
+        "zh": "OECD Taxation：政策與公開文件",
+        "en": "OECD Taxation: Policy and Public Materials"
+      },
+      "sourceUrl": "https://www.oecd.org/en/topics/taxation.html",
+      "fetchUrl": "https://www.oecd.org/content/dam/oecd/en/topics/policy-sub-issues/global-minimum-tax/side-by-side-package.pdf",
+      "fallbackNote": "OECD policy page blocks automated requests; capture the current official Pillar Two package PDF while retaining the canonical policy URL.",
+      "cadence": "weekly",
+      "checkedAt": "2026-07-10T20:29:31.122Z",
+      "status": "ok",
+      "changed": true,
+      "snapshotAvailable": true,
+      "newLinks": []
+    },
+    {
+      "id": "ssrn-tax-law-economics",
+      "label": {
+        "zh": "SSRN：Tax Law 與 Law & Economics",
+        "en": "SSRN: Tax Law and Law & Economics"
+      },
+      "sourceUrl": "https://www.ssrn.com/",
+      "fetchUrl": "https://www.ssrn.com/",
+      "fallbackNote": null,
+      "cadence": "monthly",
+      "checkedAt": "2026-07-10T20:29:31.122Z",
+      "status": "ok",
+      "changed": false,
+      "snapshotAvailable": true,
+      "newLinks": []
+    }
+  ]
+}

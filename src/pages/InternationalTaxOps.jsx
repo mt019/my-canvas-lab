@@ -10,7 +10,6 @@ import {
   CheckCircle2,
   ChevronDown,
   Database,
-  FileSearch,
   Filter,
   GitBranch,
   Globe2,
@@ -29,7 +28,7 @@ import schema from '../data/intlTaxOps/data_classification_schema.json';
 import watchlist from '../data/intlTaxOps/frontier_watchlist.json';
 import controversies from '../data/intlTaxOps/controversies.json';
 import digest from '../data/intlTaxOps/frontier_digest.json';
-import researchRadar from '../data/intlTaxOps/research_radar.json';
+import frontierCapture from '../data/intlTaxOps/frontier_capture.json';
 import styles from './InternationalTaxOps.module.css';
 
 const ui = {
@@ -37,7 +36,6 @@ const ui = {
     app: '國際稅法研究桌',
     subtitle: '規範、實然、趨勢、未來發展、研究熱點與學者生態的雙語監測面板',
     lang: 'English',
-    snapshot: '研究快照',
     sources: '來源',
     topics: '議題',
     watch: '監測',
@@ -65,17 +63,17 @@ const ui = {
     citation: '引用',
     liveCase: '對照案例頁面',
     digest: '最新動態',
-    radarMap: '國際租稅研究雷達',
-    radarIntro: '固定巡覽少數能提供規則、資料與爭點的高價值公開來源；新發現先記為研究線索，再回到一手材料與資料驗證。',
-    dataAvailable: '有公開資料',
-    openAccess: '免費公開',
+    capture: '最新抓取',
+    captureIntro: '這裡只列出已實際連線檢查的公開來源；發現變動時，原頁文字會留存在研究資料倉，供後續核對。',
+    checkedAt: '最近檢查',
+    changed: '有新內容',
+    stored: '已留存',
     digestEmpty: '尚無研究過的動態。在資料倉庫執行 /frontier-research 之後，這裡會出現帶引註的動態研究。',
   },
   en: {
     app: 'International Tax Research Desk',
     subtitle: 'A bilingual research desk for rules, implementation, trends, future development, hotspots, and scholar ecosystems',
     lang: '中文',
-    snapshot: 'Research Snapshot',
     sources: 'Sources',
     topics: 'Topics',
     watch: 'Watch',
@@ -103,10 +101,11 @@ const ui = {
     citation: 'Citation',
     liveCase: 'See the applied case page',
     digest: 'Latest Digest',
-    radarMap: 'International Tax Research Radar',
-    radarIntro: 'A focused route through public sources for rules, data, and emerging questions. Record new material as a lead, then verify it with primary sources and data.',
-    dataAvailable: 'Public data',
-    openAccess: 'Open access',
+    capture: 'Latest Capture',
+    captureIntro: 'Only publicly accessible sources checked by the monitor appear here. When content changes, the source text is retained in the research data store for verification.',
+    checkedAt: 'Last checked',
+    changed: 'New content',
+    stored: 'Stored',
     digestEmpty: 'No researched updates yet. Run /frontier-research in the data repo to populate this feed with cited research notes.',
   },
 };
@@ -148,17 +147,6 @@ function watchTypeLabel(value, lang) {
     event: { zh: '活動', en: 'Event' },
     'official-stream': { zh: '官方動態', en: 'Official stream' },
     'secondary-signal': { zh: '輔助線索', en: 'Secondary clue' },
-  };
-  return labels[value]?.[lang] ?? value;
-}
-
-function radarCategoryLabel(value, lang) {
-  const labels = {
-    'research-data': { zh: '研究與資料', en: 'Research & data' },
-    'working-paper': { zh: '工作論文', en: 'Working papers' },
-    commentary: { zh: '專業評論', en: 'Expert commentary' },
-    'official-rules': { zh: '官方規則', en: 'Official rules' },
-    'policy-process': { zh: '政策形成', en: 'Policy process' },
   };
   return labels[value]?.[lang] ?? value;
 }
@@ -268,15 +256,14 @@ export default function InternationalTaxOps() {
     ].join(' ').toLowerCase().includes(query));
   }, [query]);
 
-  const filteredResearchRadar = useMemo(() => {
-    if (!query) return researchRadar;
-    return researchRadar.filter((item) => [
+  const filteredCaptures = useMemo(() => {
+    const items = frontierCapture.sources ?? [];
+    if (!query) return items;
+    return items.filter((item) => [
       item.label.zh,
       item.label.en,
-      item.category,
-      ...item.focus,
-      item.why.zh,
-      item.why.en,
+      item.sourceUrl,
+      item.status,
     ].join(' ').toLowerCase().includes(query));
   }, [query]);
 
@@ -287,10 +274,6 @@ export default function InternationalTaxOps() {
       return next;
     });
   };
-
-  const officialCount = sources.filter((s) => s.authorityTier.startsWith('official') || s.authorityTier === 'binding-law').length;
-  const queuedCount = sources.filter((s) => s.workflowState.includes('needed')).length;
-  const watchCount = watchlist.length;
 
   // Only source -> topic edges reflect a real relationship (topic.sourceIds
   // in the data). Watch-list items have no recorded topic relevance yet, so
@@ -433,18 +416,10 @@ export default function InternationalTaxOps() {
             </div>
           </div>
           <div className={styles.topActions}>
+            <span className={styles.headerMeta}>{sources.length} {t.sources} · {topics.length} {t.topics} · {frontierCapture.sources?.length ?? 0} {t.watch}</span>
             <Pill icon={RefreshCcw} text={lang === 'zh' ? '更新觀察中' : 'Watching updates'} />
-            <Pill icon={ShieldCheck} text={lang === 'zh' ? '來源已標註' : 'Sources labelled'} />
           </div>
         </header>
-
-        <section className={styles.snapshot} aria-label={t.snapshot}>
-          <Metric icon={Database} label={t.sources} value={sources.length} tone="blue" onClick={() => setMainTab('sources')} />
-          <Metric icon={Layers3} label={t.topics} value={topics.length} tone="green" onClick={() => setMainTab('matrix')} />
-          <Metric icon={Radar} label={t.watch} value={watchCount} tone="amber" onClick={() => setMainTab('frontier')} />
-          <Metric icon={FileSearch} label={t.queued} value={queuedCount} tone="red" onClick={() => setMainTab('sources')} />
-          <Metric icon={ShieldCheck} label={t.verified} value={officialCount} tone="slate" onClick={() => setMainTab('sources')} />
-        </section>
 
         <nav className={styles.mainTabBar}>
           {MAIN_TABS.map(({ id, labelKey, Icon }) => (
@@ -573,55 +548,33 @@ export default function InternationalTaxOps() {
         )}
 
         {mainTab === 'frontier' && (
-          <>
-            <section className={`${styles.panel} ${styles.frontier}`}>
-              <div className={styles.sectionHead}>
-                <div>
-                  <h2>{t.radarMap}</h2>
-                  <p>{t.radarIntro}</p>
-                </div>
-                <Globe2 size={18} />
+          <section className={`${styles.panel} ${styles.frontier}`}>
+            <div className={styles.sectionHead}>
+              <div>
+                <h2>{t.capture}</h2>
+                <p>{t.captureIntro}</p>
               </div>
-              <div className={styles.radarGrid}>
-                {filteredResearchRadar.map((item) => (
-                  <article key={item.id} className={styles.radarCard}>
-                    <div className={styles.radarMeta}>
-                      <span>{lang === 'zh' ? `第 ${item.tier} 級` : `Tier ${item.tier}`}</span>
-                      <span>{radarCategoryLabel(item.category, lang)}</span>
-                    </div>
-                    <h3>{item.label[lang]}</h3>
-                    <p>{item.why[lang]}</p>
-                    <div className={styles.tagRow}>
-                      <span>{cadenceLabel(item.cadence, lang)}</span>
-                      {item.hasData && <span>{t.dataAvailable}</span>}
-                      {item.access === 'open' && <span>{t.openAccess}</span>}
-                    </div>
-                    <div className={styles.radarFocus}>{item.focus.map((focus) => <span key={focus}>{focus}</span>)}</div>
-                    <a href={item.url} target="_blank" rel="noreferrer">{t.open}<ArrowUpRight size={14} /></a>
-                  </article>
-                ))}
-              </div>
-            </section>
-            <section className={`${styles.panel} ${styles.frontier}`}>
-              <div className={styles.sectionHead}>
-                <h2>{t.frontier}</h2>
-                <Sparkles size={18} />
-              </div>
-              <div className={styles.watchGrid}>
-                {filteredWatchlist.slice(0, 6).map((item) => (
-                  <article key={item.id} className={styles.watchCard}>
-                    <div className={styles.watchIcon}>{item.watchType === 'secondary-signal' ? <TriangleAlert size={18} /> : <Radar size={18} />}</div>
-                    <h3>{item.label[lang]}</h3>
-                    <p>{lang === 'zh' ? item.latestObservedZh ?? item.latestObserved : item.latestObserved}</p>
-                    <div className={styles.tagRow}>
-                      <span>{watchTypeLabel(item.watchType, lang)}</span>
-                      <span>{cadenceLabel(item.cadence, lang)}</span>
-                    </div>
-                  </article>
-                ))}
-              </div>
-            </section>
-          </>
+              <Globe2 size={18} />
+            </div>
+            <div className={styles.captureList}>
+              {filteredCaptures.map((item) => (
+                <article key={item.id} className={styles.captureRow}>
+                  <div>
+                    <strong>{item.label[lang]}</strong>
+                    <span>{item.sourceUrl}</span>
+                  </div>
+                  <div className={styles.tagRow}>
+                    <span>{cadenceLabel(item.cadence, lang)}</span>
+                    <span>{item.status}</span>
+                    {item.changed && <span>{t.changed}</span>}
+                    {item.snapshotAvailable && <span>{t.stored}</span>}
+                    <span>{t.checkedAt}: {new Intl.DateTimeFormat(lang === 'zh' ? 'zh-TW' : 'en-GB', { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(item.checkedAt))}</span>
+                  </div>
+                  <a href={item.sourceUrl} target="_blank" rel="noreferrer" aria-label={t.open}><ArrowUpRight size={17} /></a>
+                </article>
+              ))}
+            </div>
+          </section>
         )}
 
         {mainTab === 'relations' && (
@@ -686,16 +639,6 @@ export default function InternationalTaxOps() {
         )}
       </section>
     </main>
-  );
-}
-
-function Metric({ icon: Icon, label, value, tone, onClick }) {
-  return (
-    <button className={`${styles.metric} ${styles[tone] ?? ''}`} type="button" onClick={onClick}>
-      <Icon size={19} />
-      <span>{label}</span>
-      <strong>{value}</strong>
-    </button>
   );
 }
 
