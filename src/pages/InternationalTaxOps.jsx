@@ -29,6 +29,7 @@ import schema from '../data/intlTaxOps/data_classification_schema.json';
 import watchlist from '../data/intlTaxOps/frontier_watchlist.json';
 import controversies from '../data/intlTaxOps/controversies.json';
 import digest from '../data/intlTaxOps/frontier_digest.json';
+import researchRadar from '../data/intlTaxOps/research_radar.json';
 import styles from './InternationalTaxOps.module.css';
 
 const ui = {
@@ -64,6 +65,10 @@ const ui = {
     citation: '引用',
     liveCase: '對照案例頁面',
     digest: '最新動態',
+    radarMap: '國際租稅研究雷達',
+    radarIntro: '固定巡覽少數能提供規則、資料與爭點的高價值公開來源；新發現先記為研究線索，再回到一手材料與資料驗證。',
+    dataAvailable: '有公開資料',
+    openAccess: '免費公開',
     digestEmpty: '尚無研究過的動態。在資料倉庫執行 /frontier-research 之後，這裡會出現帶引註的動態研究。',
   },
   en: {
@@ -98,6 +103,10 @@ const ui = {
     citation: 'Citation',
     liveCase: 'See the applied case page',
     digest: 'Latest Digest',
+    radarMap: 'International Tax Research Radar',
+    radarIntro: 'A focused route through public sources for rules, data, and emerging questions. Record new material as a lead, then verify it with primary sources and data.',
+    dataAvailable: 'Public data',
+    openAccess: 'Open access',
     digestEmpty: 'No researched updates yet. Run /frontier-research in the data repo to populate this feed with cited research notes.',
   },
 };
@@ -139,6 +148,17 @@ function watchTypeLabel(value, lang) {
     event: { zh: '活動', en: 'Event' },
     'official-stream': { zh: '官方動態', en: 'Official stream' },
     'secondary-signal': { zh: '輔助線索', en: 'Secondary clue' },
+  };
+  return labels[value]?.[lang] ?? value;
+}
+
+function radarCategoryLabel(value, lang) {
+  const labels = {
+    'research-data': { zh: '研究與資料', en: 'Research & data' },
+    'working-paper': { zh: '工作論文', en: 'Working papers' },
+    commentary: { zh: '專業評論', en: 'Expert commentary' },
+    'official-rules': { zh: '官方規則', en: 'Official rules' },
+    'policy-process': { zh: '政策形成', en: 'Policy process' },
   };
   return labels[value]?.[lang] ?? value;
 }
@@ -245,6 +265,18 @@ export default function InternationalTaxOps() {
       item.latestObservedZh,
       item.watchType,
       ...item.signals,
+    ].join(' ').toLowerCase().includes(query));
+  }, [query]);
+
+  const filteredResearchRadar = useMemo(() => {
+    if (!query) return researchRadar;
+    return researchRadar.filter((item) => [
+      item.label.zh,
+      item.label.en,
+      item.category,
+      ...item.focus,
+      item.why.zh,
+      item.why.en,
     ].join(' ').toLowerCase().includes(query));
   }, [query]);
 
@@ -541,25 +573,55 @@ export default function InternationalTaxOps() {
         )}
 
         {mainTab === 'frontier' && (
-          <section className={`${styles.panel} ${styles.frontier}`}>
-            <div className={styles.sectionHead}>
-              <h2>{t.frontier}</h2>
-              <Sparkles size={18} />
-            </div>
-            <div className={styles.watchGrid}>
-              {filteredWatchlist.slice(0, 6).map((item) => (
-                <article key={item.id} className={styles.watchCard}>
-                  <div className={styles.watchIcon}>{item.watchType === 'secondary-signal' ? <TriangleAlert size={18} /> : <Radar size={18} />}</div>
-                  <h3>{item.label[lang]}</h3>
-                  <p>{lang === 'zh' ? item.latestObservedZh ?? item.latestObserved : item.latestObserved}</p>
-                  <div className={styles.tagRow}>
-                    <span>{watchTypeLabel(item.watchType, lang)}</span>
-                    <span>{cadenceLabel(item.cadence, lang)}</span>
-                  </div>
-                </article>
-              ))}
-            </div>
-          </section>
+          <>
+            <section className={`${styles.panel} ${styles.frontier}`}>
+              <div className={styles.sectionHead}>
+                <div>
+                  <h2>{t.radarMap}</h2>
+                  <p>{t.radarIntro}</p>
+                </div>
+                <Globe2 size={18} />
+              </div>
+              <div className={styles.radarGrid}>
+                {filteredResearchRadar.map((item) => (
+                  <article key={item.id} className={styles.radarCard}>
+                    <div className={styles.radarMeta}>
+                      <span>{lang === 'zh' ? `第 ${item.tier} 級` : `Tier ${item.tier}`}</span>
+                      <span>{radarCategoryLabel(item.category, lang)}</span>
+                    </div>
+                    <h3>{item.label[lang]}</h3>
+                    <p>{item.why[lang]}</p>
+                    <div className={styles.tagRow}>
+                      <span>{cadenceLabel(item.cadence, lang)}</span>
+                      {item.hasData && <span>{t.dataAvailable}</span>}
+                      {item.access === 'open' && <span>{t.openAccess}</span>}
+                    </div>
+                    <div className={styles.radarFocus}>{item.focus.map((focus) => <span key={focus}>{focus}</span>)}</div>
+                    <a href={item.url} target="_blank" rel="noreferrer">{t.open}<ArrowUpRight size={14} /></a>
+                  </article>
+                ))}
+              </div>
+            </section>
+            <section className={`${styles.panel} ${styles.frontier}`}>
+              <div className={styles.sectionHead}>
+                <h2>{t.frontier}</h2>
+                <Sparkles size={18} />
+              </div>
+              <div className={styles.watchGrid}>
+                {filteredWatchlist.slice(0, 6).map((item) => (
+                  <article key={item.id} className={styles.watchCard}>
+                    <div className={styles.watchIcon}>{item.watchType === 'secondary-signal' ? <TriangleAlert size={18} /> : <Radar size={18} />}</div>
+                    <h3>{item.label[lang]}</h3>
+                    <p>{lang === 'zh' ? item.latestObservedZh ?? item.latestObserved : item.latestObserved}</p>
+                    <div className={styles.tagRow}>
+                      <span>{watchTypeLabel(item.watchType, lang)}</span>
+                      <span>{cadenceLabel(item.cadence, lang)}</span>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </section>
+          </>
         )}
 
         {mainTab === 'relations' && (

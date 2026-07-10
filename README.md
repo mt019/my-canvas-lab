@@ -27,6 +27,22 @@
 - **圖示**：lucide-react
 - **部署**：Vercel
 
+## AEO 與 SEO
+
+全站以 `src/components/SeoHead.jsx` 統一產生路由層級的 title、description、canonical、Open Graph／Twitter metadata、breadcrumb 與 WebSite／WebPage JSON-LD。首頁列出的頁面會各自帶有可辨識的名稱與摘要；僅供個人決策或設計測試的頁面不進入索引。
+
+`public/robots.txt` 與 `public/sitemap.xml` 使用正式網域 `https://phenom.design`。若部署網域改變，需同時更新兩者，並在部署環境設定 `VITE_SITE_URL` 為新的完整 HTTPS 網址；它會作為 canonical 與結構化資料的來源。內容頁保持可讀的標題層級、來源連結與可驗證敘述；不要為取得 FAQ rich result 而加入畫面上沒有的問答或結構化資料。
+
+### 資料 repo 與 Canvas 的責任邊界
+
+| 工作 | 負責位置 |
+| --- | --- |
+| `title`、description、canonical、Open Graph、JSON-LD、語意 HTML、robots、sitemap、索引與 noindex 判斷 | Canvas 前端 repo |
+| 研究事實、原始來源、引註、資料更新日期、可公開的摘要與圖片素材 | 對應 data repo |
+| 將資料 repo 的公開快照轉成頁面搜尋摘要與結構化資料 | Canvas；不得把 private repo 路徑或內部處理狀態輸出到頁面或 metadata |
+
+因此，AEO／SEO 的技術實作與發佈設定屬於 Canvas；data repo 的責任是供應可驗證、可更新的內容。若研究頁需要更精確的搜尋摘要，可在資料快照加入公開的 `seo` 欄位（例如摘要、主題、更新日），再由 Canvas 的 metadata 層讀取；不要在 data repo 放 `robots.txt`、`sitemap.xml` 或部署網域設定。
+
 ## 設計系統
 
 色彩、字級、間距等 design token 定義在 `src/styles/tokens.css`（單一事實來源，可複製到其他專案）；共用元件（LangSwitch 雙語切換、FontSizeControl 字級控制、PageShell、Eyebrow）在 `src/components/`。完整規範與遷移現況見 `docs/DESIGN.md`。`npm run validate:tokens` 在 build 時擋住已遷移頁面的裸 hex 色值。

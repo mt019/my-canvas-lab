@@ -1,6 +1,7 @@
-import React, { Suspense, lazy, useEffect, useMemo } from 'react';
+import React, { Suspense, lazy, useMemo } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { ArrowRight, CalendarDays, Droplets, FileSearch, Gavel, Globe2, GraduationCap, Landmark, Languages, Mic, Music, Music2, Palette, Piano, Scale, ScrollText, Wind } from 'lucide-react';
+import SeoHead from './components/SeoHead';
 
 const pages = import.meta.glob('./pages/*.{jsx,tsx}');
 
@@ -182,12 +183,24 @@ export default function App() {
         <Routes>
           <Route path="/" element={<HomePage routes={routes} />} />
           {routes.map((route) => (
-            <Route key={route.path} path={route.path} element={<route.component />} />
+            <Route key={route.path} path={route.path} element={<PageRoute route={route} />} />
           ))}
         </Routes>
       </Suspense>
     </Router>
   );
+}
+
+function PageRoute({ route }) {
+  const page = route.meta ? {
+    ...route.meta,
+    title: `${route.meta.name}｜Phenom Canvas Lab`,
+    description: route.meta.desc,
+    type: route.meta.group === 'tool' ? 'SoftwareApplication' : 'WebPage',
+    indexable: !['PaletteLab', 'TaipeiFilmFestival'].includes(route.name),
+  } : undefined;
+  const Page = route.component;
+  return <><SeoHead page={page} /><Page /></>;
 }
 
 function RouteRow({ route }) {
@@ -223,10 +236,6 @@ const GROUP_META = {
 };
 
 function HomePage({ routes }) {
-  useEffect(() => {
-    document.title = 'Phenom Canvas Lab';
-  }, []);
-
   const known = routes.filter((r) => r.meta);
   const unknown = routes.filter((r) => !r.meta);
   return (
@@ -234,6 +243,7 @@ function HomePage({ routes }) {
       className="min-h-screen paper-texture bg-[var(--home-bg)] px-4 font-sans text-[var(--home-ink)] sm:px-6"
       style={{ ...HOME_VARS, paddingTop: 46, paddingBottom: 64 }}
     >
+      <SeoHead />
       <div className="mx-auto w-full max-w-5xl">
 
         <header className="mb-8 border-b border-[var(--home-line)] pb-7">
