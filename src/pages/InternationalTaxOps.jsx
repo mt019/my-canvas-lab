@@ -12,6 +12,7 @@ import {
   Database,
   Filter,
   GitBranch,
+  Globe2,
   Languages,
   Layers3,
   RefreshCcw,
