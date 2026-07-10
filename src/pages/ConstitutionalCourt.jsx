@@ -383,10 +383,13 @@ function usePref(key, fallback) {
   return [v, setV];
 }
 
-// PDF 連結：預覽模式把官方 download.aspx（強制 attachment 下載、無 CORS）改走同源代理 /api/pdf
-// （inline，新分頁瀏覽器原生預覽）；下載模式或非該類連結一律原樣直連官方。
+// PDF 連結：預覽模式把強制 attachment 下載、無 CORS 的官方 PDF 改走同源代理 /api/pdf
+// （inline，新分頁瀏覽器原生預覽）；下載模式或非白名單連結一律原樣直連。
+// 白名單三形態（與 api/_pdfProxy.mjs 對齊）：憲法法庭 download.aspx、總統府 File/Doc
+// （被提名人自傳/簡歷）、web.archive.org 對總統府已撤檔者的原始回放。
+const PDF_PROXYABLE = /(^https:\/\/cons\.judicial\.gov\.tw\/download\/download\.aspx)|(^https:\/\/www\.president\.gov\.tw\/File\/Doc\/)|(^https:\/\/web\.archive\.org\/web\/\d{14}id_\/https:\/\/www\.president\.gov\.tw\/File\/Doc\/)/i;
 function pdfHref(url, mode) {
-  if (mode !== 'preview' || !url || !/\/download\/download\.aspx/i.test(url)) return url;
+  if (mode !== 'preview' || !url || !PDF_PROXYABLE.test(url)) return url;
   return `/api/pdf?url=${encodeURIComponent(url)}`;
 }
 
@@ -1390,6 +1393,7 @@ function JusticesView({ onOpen }) {
 // 大法官個人頁（?tab=justices&j=姓名）：基本資料、意見書清單、參與判決、共同具名、打包匯出
 function JusticeDetail({ name, onBack, onOpen }) {
   const j = justices.find((x) => x.姓名 === name);
+  const [pdfMode] = usePref('pdfMode', 'preview'); // 與案件頁共用同一 localStorage 偏好
 
   const opinions = useMemo(() => {
     const ops = [];
@@ -1492,6 +1496,18 @@ function JusticeDetail({ name, onBack, onOpen }) {
           {j.簡歷頁 ? (
             <a href={j.簡歷頁} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 font-bold text-[var(--cc-accent)] underline decoration-[var(--cc-link-underline)] underline-offset-2">
               官方簡歷 <ExternalLink size={11} />
+            </a>
+          ) : null}
+          {j.提名文件?.自傳 ? (
+            <a href={pdfHref(j.提名文件.自傳, pdfMode)} target="_blank" rel="noreferrer" title={`${j.提名文件.批次}公布（${j.提名文件.連結形態}）`}
+              className="inline-flex items-center gap-1 font-bold text-[var(--cc-accent)] underline decoration-[var(--cc-link-underline)] underline-offset-2">
+              自傳 <FileText size={11} />
+            </a>
+          ) : null}
+          {j.提名文件?.簡歷 ? (
+            <a href={pdfHref(j.提名文件.簡歷, pdfMode)} target="_blank" rel="noreferrer" title={`${j.提名文件.批次}公布（${j.提名文件.連結形態}）`}
+              className="inline-flex items-center gap-1 font-bold text-[var(--cc-accent)] underline decoration-[var(--cc-link-underline)] underline-offset-2">
+              提名簡歷 <FileText size={11} />
             </a>
           ) : null}
         </div>

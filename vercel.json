@@ -1,4 +1,5 @@
 {
+  "regions": ["hnd1"],
   "rewrites": [
     { "source": "/api/opentix/search", "destination": "https://search.opentix.life/search" },
     { "source": "/api/opentix-csm/(.*)", "destination": "https://csm.api.opentix.life/$1" },
