@@ -10,18 +10,45 @@
       "en": "All three key 2026 documents are now fully parsed: the Consolidated Commentary (456 pp., approved 2026-05-11), the Global Minimum Tax Implementation Toolkit (97 pp., approved 2026-04-22, focused on Orbis data sourcing, CbC reporting, and GIR exchange mechanics), and the Side-by-Side Package (88 pp., approved 2026-01-05). The Side-by-Side Package's core mechanism lets an MNE group headquartered in a jurisdiction with a Qualified SbS Regime elect a deemed zero top-up tax across all worldwide operations — but as of January 2026 only the United States has that status, and its eligibility is itself contingent on Congress retaining CAMT and not materially cutting the corporate rate, making the safe harbour's own stability a live political question. The safe harbours aren't error-free either: the OECD Central Record lists Qatar's QDMTT as effective 2024-01-01, while Qatar's own domestic announcements, HMRC's reference list, and the Side-by-Side Package's own Notice 2 table all say 2025-01-01 — a documented date discrepancy inside a rule already marked 'qualified.'"
     },
     "priority": "high",
-    "materialType": ["model-or-commentary", "implementation-toolkit"],
-    "epistemicLayer": ["normative-rule", "implementation-reality", "observable-trend", "controversy"],
+    "materialType": [
+      "model-or-commentary",
+      "implementation-toolkit"
+    ],
+    "epistemicLayer": [
+      "normative-rule",
+      "implementation-reality",
+      "observable-trend",
+      "controversy"
+    ],
     "authorityTier": "official-soft-law",
     "temporalStatus": "current-final",
-    "topicDomain": ["pillar-two", "tax-incentives", "tax-certainty-and-disputes"],
+    "topicDomain": [
+      "pillar-two",
+      "tax-incentives",
+      "tax-certainty-and-disputes"
+    ],
     "workflowState": "verified",
-    "sourceIds": ["oecd-globe-commentary-2026", "oecd-gmt-implementation-toolkit-2026"],
+    "sourceIds": [
+      "oecd-globe-commentary-2026",
+      "oecd-gmt-implementation-toolkit-2026",
+      "oecd-side-by-side-package-2026"
+    ],
     "nextActions": {
-      "zh": ["待 sources.json 補入 oecd-side-by-side-package-2026 後，補上 Simplified ETR / 實質本位租稅優惠安全港的條文層級摘要", "追蹤是否有第二個 Qualified SbS Regime 出現（目前僅美國），檢驗此制度是否只是美國專用安排", "核對 Qatar QDMTT 日期落差是否已在 OECD 下一輪 Central Record 更新中修正"],
-      "en": ["Once oecd-side-by-side-package-2026 is registered in sources.json, add an article-level summary of the Simplified ETR and Substance-based Tax Incentive safe harbours", "Watch for a second jurisdiction to obtain Qualified SbS Regime status (currently US-only) to test whether this is a US-specific arrangement in practice", "Check whether the Qatar QDMTT date discrepancy gets corrected in the next OECD Central Record update"]
+      "zh": [
+        "補上 Simplified ETR / 實質本位租稅優惠安全港的條文層級摘要",
+        "追蹤是否有第二個 Qualified SbS Regime 出現（目前僅美國），檢驗此制度是否只是美國專用安排",
+        "核對 Qatar QDMTT 日期落差是否已在 OECD 下一輪 Central Record 更新中修正"
+      ],
+      "en": [
+        "Add an article-level summary of the Simplified ETR and Substance-based Tax Incentive safe harbours",
+        "Watch for a second jurisdiction to obtain Qualified SbS Regime status (currently US-only) to test whether this is a US-specific arrangement in practice",
+        "Check whether the Qatar QDMTT date discrepancy gets corrected in the next OECD Central Record update"
+      ]
     },
-    "riskFlags": ["version-sensitive", "implementation-divergence"]
+    "riskFlags": [
+      "version-sensitive",
+      "implementation-divergence"
+    ]
   },
   {
     "id": "un-tax-convention-governance",
@@ -34,42 +61,109 @@
       "en": "The UN track matters for legitimacy, developing-country participation, and the allocation of taxing rights. But as of this pass, every UN FSDO document (the framework-convention terms of reference, the Committee of Experts' agenda, the two 32nd-session subcommittee workplans on wealth taxation and dispute resolution, the ECOSOC special-meeting concept note) returned a CloudFront 403 on ingestion — none has been successfully parsed. The one concrete, checkable point currently available on this topic instead comes from academic commentary on a UN Model Tax Convention clause added in March 2025 intended to block investors from invoking ISDS in tax-related disputes: Danon and Martín Jiménez (2025-04-15) argue its 'whole of government' rationale doesn't hold up, that the clause is self-judging and may be rejected by tribunals as an ultra vires jurisdictional limit, and that it leaves compatibility with multilateral instruments like the Energy Charter Treaty unaddressed. In short, this topic currently rests on secondary academic commentary about UN action, not on the UN's own primary text. The negotiation timeline itself is now verifiable through mid-2026: the fourth INC session concluded in February 2026, the fifth is set for August 2026, and all three workstreams are expected to table first draft texts beforehand — a reworked formulation of the framework-convention commitments plus the first substantive text of the two optional early protocols (cross-border services income; prevention and resolution of tax disputes) (TJN post-fourth-session submission, 2026-04-03); both protocols are framed as optional, stand-alone treaties (UN DESA closing-remarks page, 2025-08-15). The dispute-protocol workstream shows a divergence from the OECD path: TJN argues against OECD-style mandatory binding MAP arbitration — arbitration should at a minimum be optional and non-mandatory — and proposes MAP as the exclusive venue for tax-related investment disputes. Second update 2026-07-06: the verification gap has substantially narrowed — with browser-realistic headers, the UN FSDO negotiation page and all three workstream primary papers were fetched and parsed (CRP.26 Framework Convention Template 2026-01-22, CRP.27 Services Options Paper 2026-01-21, CRP.28 Dispute Prevention and Resolution Concept Note 2026-01-23; local paths data/parsed/text/un-inc-ws*.txt). Primary text confirms: INC-5 3–13 Aug 2026 (NY), INC-6 30 Nov–11 Dec 2026 (Nairobi), final texts to the UNGA 82nd session in H2 2027 (CRP.28 §1); WS3 uses a two-step 'menu + core mechanisms' design where core mechanisms admit no opt-out or reservations yet nothing automatically supersedes other instruments (§12), arbitration is optional, last-resort, competent-authority-only, final-offer with no precedential value (§41), and the MAP provision starts from the UN Model's MAP article with an express requirement that access to MAP not be unduly restricted by domestic procedural requirements (§37) — connecting directly to Danon's MAP-access critique. CRP.26's Article 5 includes an obligation to renegotiate inconsistent existing treaties; Article 6 is the HNWI clause. The topic now rests on primary negotiation texts, no longer on secondary commentary alone; the ISDS-override clause remains a separate instrument (UN Model, March 2025) and stays analytically distinct."
     },
     "priority": "high",
-    "materialType": ["treaty-or-convention", "agenda-or-workplan"],
-    "epistemicLayer": ["future-development", "controversy", "actor-ecosystem", "normative-rule"],
+    "materialType": [
+      "treaty-or-convention",
+      "agenda-or-workplan"
+    ],
+    "epistemicLayer": [
+      "future-development",
+      "controversy",
+      "actor-ecosystem",
+      "normative-rule"
+    ],
     "authorityTier": "official-process",
     "temporalStatus": "current-draft",
-    "topicDomain": ["un-tax-cooperation", "developing-country-taxation", "investment-arbitration-and-tax"],
+    "topicDomain": [
+      "un-tax-cooperation",
+      "developing-country-taxation",
+      "investment-arbitration-and-tax"
+    ],
     "workflowState": "monitoring",
-    "sourceIds": ["un-unfcitc-terms-reference-2025", "un-tax-committee-home"],
+    "sourceIds": [
+      "un-unfcitc-terms-reference-2025",
+      "un-tax-committee-home"
+    ],
     "nextActions": {
-      "zh": ["INC-5（2026-08-03–13）前後追蹤三工作流零草案：CRP.28 §3 預告 WS3 議定書零草案將提交第五屆會議，發布即下載解析", "對 CRP.26/27/28 做逐段摘要，特別是 CRP.26 第 5 條（課稅權公平分配含重談既有稅約義務）與第 6 條（HNWI）、CRP.28 §37 的 MAP 取得保障", "區分框架公約與 ISDS override 條款的法律位階——兩者不是同一份文件"],
-      "en": ["Track the three workstreams' zero drafts around INC-5 (3–13 Aug 2026): CRP.28 §3 announces a WS3 protocol zero draft for the fifth session — download and parse on release", "Do a paragraph-level digest of CRP.26/27/28 — especially CRP.26 Articles 5 (fair allocation incl. renegotiation obligation) and 6 (HNWI), and CRP.28 §37's MAP-access safeguards", "Keep the framework convention and the ISDS-override clause analytically separate — they are not the same document"]
+      "zh": [
+        "INC-5（2026-08-03–13）前後追蹤三工作流零草案：CRP.28 §3 預告 WS3 議定書零草案將提交第五屆會議，發布即下載解析",
+        "對 CRP.26/27/28 做逐段摘要，特別是 CRP.26 第 5 條（課稅權公平分配含重談既有稅約義務）與第 6 條（HNWI）、CRP.28 §37 的 MAP 取得保障",
+        "區分框架公約與 ISDS override 條款的法律位階——兩者不是同一份文件"
+      ],
+      "en": [
+        "Track the three workstreams' zero drafts around INC-5 (3–13 Aug 2026): CRP.28 §3 announces a WS3 protocol zero draft for the fifth session — download and parse on release",
+        "Do a paragraph-level digest of CRP.26/27/28 — especially CRP.26 Articles 5 (fair allocation incl. renegotiation obligation) and 6 (HNWI), and CRP.28 §37's MAP-access safeguards",
+        "Keep the framework convention and the ISDS-override clause analytically separate — they are not the same document"
+      ]
     },
-    "riskFlags": ["draft-process", "politically-contested", "secondary-source"]
+    "riskFlags": [
+      "draft-process",
+      "politically-contested",
+      "secondary-source"
+    ]
   },
   {
     "id": "danon-lausanne-disputes",
     "title": {
-      "zh": "Danon/洛桑稅法圈：MAP 結構性缺陷、投資仲裁×稅法、GloBE 爭端架構提案",
-      "en": "Danon/Lausanne: MAP's structural flaws, tax-investment arbitration, and the GloBE dispute-resolution proposal"
+      "zh": "Danon/洛桑研究線：協調化稅法規則的救濟確定性",
+      "en": "Danon/Lausanne: remedial certainty for coordinated tax rules"
     },
     "summary": {
-      "zh": "Robert Danon（洛桑大學正教授、Tax Policy Center 主任、IFA 常設科學委員會前主席 2017–2025）的研究橫跨三條主線，且均有具體、可引用的一手材料。第一，MAP 結構性批判（2025-05-28 Kluwer 部落格）：他指出主管機關對 MAP 施加過度資訊要求違反比例原則、以國內反濫用規則為由拒絕 MAP 違反 VCLT 第 27 條、「MAP 規避」（以替代規則重新定性移轉定價調整）違背範本第 9、25 條的目的宗旨。第二，投資仲裁×稅法：他與 Wuschka、Ziegler 主編的 2026 年新書《Tax Matters in International Investment Arbitration》（Kluwer，18 章，Danon 撰寫第 3、4、11 章）主張稅收措施與投資條約義務間存在「互補性」，可透過調和解釋化解衝突，但 tax carve-out 條款在實踐中被仲裁庭不一致解讀。第三，GloBE 爭端解決架構（2022《World Tax Journal》、2023《International Tax Studies》，與 Gutmann、Maisto、Martín Jiménez 合著）：主張以範本第 25(3) 條＋互惠原則建構「互惠國內解決機制」，並提出新解釋性示範規則與 lex specialis 示範規則；2026-04-08 他在 OECD Tax Certainty Roundtable 評論 MEMAP 2026 時強調，程序最佳化不足以回應這個結構性提案。此外，受益所有人概念在瑞士聯邦最高法院與加拿大稅務法院 C&W Offshore Ltd（2026）判決中均採法律說而非經濟說，Danon 認為此區分對後 BEPS 條約下 PPT 分析的獨立性至關重要。",
-      "en": "Robert Danon (full professor at UNIL, director of its Tax Policy Center, former IFA Permanent Scientific Committee chair 2017–2025) works across three lines, each backed by specific, citable primary material. First, a structural critique of MAP (Kluwer blog, 2025-05-28): he argues that competent authorities imposing excessive information demands before granting MAP access violates proportionality; denying MAP because an adjustment stems from a domestic anti-abuse rule breaches VCLT Article 27; and 'MAP avoidance' — recharacterizing transfer pricing adjustments under alternative domestic rules — defeats the object and purpose of Model Articles 9 and 25. Second, tax-investment arbitration: his 2026 book with Wuschka and Ziegler, *Tax Matters in International Investment Arbitration* (Kluwer, 18 chapters, Danon authoring Chs. 3, 4, and 11), argues tax measures and investment-treaty obligations are complementary and can be harmonized by interpretation, but that tax carve-out clauses are read inconsistently by arbitral tribunals in practice. Third, a GloBE dispute-resolution architecture (World Tax Journal 2022, International Tax Studies 2023, with Gutmann, Maisto, and Martín Jiménez): grounding a 'reciprocal domestic resolution mechanism' in Model Article 25(3) plus a reciprocity principle, with a new interpretive model rule and a new lex specialis model rule; commenting on MEMAP 2026 at the OECD's 2026-04-08 Tax Certainty Roundtable, he argued procedural best practices alone don't answer this structural proposal. Separately, both the Swiss Federal Supreme Court and the Canadian Tax Court's 2026 C&W Offshore Ltd decision have read 'beneficial ownership' as a legal rather than economic concept — a distinction Danon argues is essential to keeping the PPT analysis analytically independent in post-BEPS treaties."
+      "zh": "這條研究線已收斂為一個 PhD 申請問題：當 GloBE 這類協調化稅法規則透過各國國內法實施，而爭端可能分流到國內救濟、MAP、OECD 範本第 25(3) 條主管機關諮商、稅約仲裁或投資仲裁時，國際稅法如何維持「救濟確定性」？Danon 與 Gutmann、Maisto、Martín Jiménez 的 2022/2023 GloBE 文章提供法學核心：2022 年文章以 Article 25(3)、互惠原則、國內互惠爭端解決條款與 MAAC 建立沒有 Pillar Two 多邊公約時的可行橋樑；2023 年文章進一步區分 conflicts of interpretation 與 conflicts of transposition，提出 interpretative model rule、lex specialis rule、domestic dispute-resolution rule 與 adjustment rule，以回應 legality objection。Danon/Wuschka 2021 投資協定文章則不是第二個取代性主軸，而是 boundary test：它區分 tax dispute proper 與 tax-related investment dispute，說明 MAP 作為國家對國家程序的限制，以及 FET、tax carve-outs、systemic integration 在稅收措施影響投資人時如何成為外部救濟邊界。MAP access 批判、UN/OECD 制度設計與 Manus-Meta 技術交易案例，均應服務此核心問題；Manus-Meta 只作壓力測試，不作論文本體。",
+      "en": "This line has been narrowed into a PhD-application research problem: how can international tax law secure remedial certainty when coordinated tax rules such as GloBE are implemented through domestic law, while disputes may be routed through domestic remedies, MAP, Article 25(3) competent-authority consultation, tax-treaty arbitration, or investment arbitration? Danon, Gutmann, Maisto, and Martín Jiménez's 2022/2023 GloBE articles supply the doctrinal core. The 2022 article builds a workable bridge through Article 25(3), reciprocity, reciprocal domestic dispute-resolution provisions, and the MAAC in the absence of a Pillar Two multilateral convention. The 2023 article adds the legal architecture: conflicts of interpretation, conflicts of transposition, an interpretative model rule, a lex specialis rule, a domestic dispute-resolution rule, and an adjustment rule designed to answer the legality objection. Danon/Wuschka 2021 should not displace that core; it functions as a boundary test. It distinguishes a tax dispute proper from a tax-related investment dispute, shows the limits of MAP as a state-to-state mechanism, and explains how FET, tax carve-outs, and systemic integration may become relevant when fiscal measures affect protected investors. MAP access, UN/OECD dispute design, and the Manus-Meta technology transaction should all serve this core problem; Manus-Meta remains a stress test, not the thesis object."
     },
     "priority": "high",
-    "materialType": ["event-or-network-signal", "research-paper", "model-or-commentary"],
-    "epistemicLayer": ["research-hotspot", "actor-ecosystem", "future-development", "controversy", "normative-rule"],
+    "materialType": [
+      "event-or-network-signal",
+      "research-paper",
+      "model-or-commentary"
+    ],
+    "epistemicLayer": [
+      "research-hotspot",
+      "actor-ecosystem",
+      "future-development",
+      "controversy",
+      "normative-rule"
+    ],
     "authorityTier": "academic-peer",
     "temporalStatus": "current-final",
-    "topicDomain": ["tax-certainty-and-disputes", "investment-arbitration-and-tax", "swiss-international-tax", "tax-treaties", "beneficial-ownership-and-abuse"],
+    "topicDomain": [
+      "tax-certainty-and-disputes",
+      "investment-arbitration-and-tax",
+      "swiss-international-tax",
+      "tax-treaties",
+      "beneficial-ownership-and-abuse"
+    ],
     "workflowState": "verified",
-    "sourceIds": ["unil-tax-policy-center", "danonlaw-home", "linkedin-danon-profile"],
+    "sourceIds": [
+      "unil-tax-policy-center",
+      "danonlaw-home",
+      "linkedin-danon-profile",
+      "danonlaw-about",
+      "unil-tax-policy-center-research",
+      "oecd-pillar-two-tax-certainty-consultation-2022",
+      "danon-gutmann-maisto-martin-jimenez-globe-dispute-resolution-2022",
+      "danon-gutmann-maisto-martin-jimenez-globe-tax-certainty-2023",
+      "danon-wuschka-international-investment-agreements-tax-system-2021",
+      "danon-ppt-post-beps-tax-treaty-law-2020",
+      "danon-treaty-abuse-post-beps-world-2017",
+      "danon-et-al-transparent-entities-oecd-model-mli-2017"
+    ],
     "nextActions": {
-      "zh": ["待 sources.json 補入 danonlaw-about 與 unil-tax-policy-center-research 後補齊 sourceIds", "取得 2022/2023 兩篇 GloBE 爭端解決提案的 SSRN 全文（abstract_id 4194671、4463461，均可免費下載），做逐段摘要", "追蹤 2026 新書第 3、4 章（Danon 自撰，管轄權/實體階段）出版後的書評與引用"],
-      "en": ["Add danonlaw-about and unil-tax-policy-center-research to sources.json, then complete sourceIds", "Pull the full text of both 2022/2023 GloBE dispute-resolution papers from SSRN (abstract_id 4194671, 4463461 — both free) for a paragraph-level summary", "Track reviews and citations of the 2026 book's Chapters 3-4 (Danon's own chapters on jurisdiction/merits) once they circulate"]
+      "zh": [
+        "把 docs/29 英文 contact proposal 壓成 1–2 頁寄信用版本，保留 remedial certainty、legality objection、tax dispute proper / tax-related investment dispute 三個核心術語",
+        "將 UN/OECD 制度比較接到 GloBE remedial certainty：CRP.28 optional arbitration、MAP access safeguards、competent-authority design 是否解決同一個問題",
+        "用 2017/2020 PPT 文章校正 Manus-Meta 的 treaty abuse 分析，避免把 PPT 寫成一般實質課稅規則"
+      ],
+      "en": [
+        "Compress docs/29 into a 1-2 page contact version while preserving the three core terms: remedial certainty, legality objection, and tax dispute proper / tax-related investment dispute",
+        "Connect the UN/OECD institutional comparison back to GloBE remedial certainty: CRP.28 optional arbitration, MAP access safeguards, and competent-authority design should be tested against the same problem",
+        "Use the 2017/2020 PPT articles to discipline the Manus-Meta treaty-abuse analysis and avoid turning PPT into a general substance-over-form rule"
+      ]
     },
-    "riskFlags": ["secondary-source", "login-gated"]
+    "riskFlags": [
+      "secondary-source",
+      "login-gated"
+    ]
   },
   {
     "id": "wealth-tax-hnwi",
@@ -82,17 +176,44 @@
       "en": "The EU Tax Observatory's Global Tax Evasion Report 2024 (91 pp.), coordinated by Annette Alstadsæter, Sarah Godar, Panayiotis Nicolaides, and Gabriel Zucman with a foreword by Joseph Stiglitz, covers five chapters: trends in offshore tax evasion, trends in corporate profit shifting, new forms of international tax competition, tax deficits of high-net-worth individuals, and policy options for collecting that deficit. The Observatory maintains a separate page indexing five specific estimation studies — Pellegrini et al. (2016), Vellutini et al. (2019), Alstadsæter (2018), ECORYS (2021), and the Tax Justice Network's *State of Tax Justice 2021* — covering the scale of offshore wealth globally, by country of ownership, and estimated tax revenue losses by country. UN negotiations and this data together push effective HNWI taxation into policy focus, but the methodology's own limits (the inherently secretive nature of offshore wealth makes precise estimation genuinely hard) and data availability are the topic's central constraint, not a footnote to it. The UN Framework Convention template (CRP.26, 2026-01-22) makes HNWI its Article 6: States Parties 'shall develop and implement measures to detect, deter and prevent tax avoidance and evasion by high-net-worth individuals' — this topic now has primary negotiation text to cite (data/parsed/text/un-inc-ws1-convention-template-2026-01-22.txt)."
     },
     "priority": "medium",
-    "materialType": ["dataset-or-statistics", "agenda-or-workplan", "research-paper"],
-    "epistemicLayer": ["data-evidence", "research-hotspot", "controversy", "future-development"],
+    "materialType": [
+      "dataset-or-statistics",
+      "agenda-or-workplan",
+      "research-paper"
+    ],
+    "epistemicLayer": [
+      "data-evidence",
+      "research-hotspot",
+      "controversy",
+      "future-development"
+    ],
     "authorityTier": "academic-peer",
     "temporalStatus": "current-final",
-    "topicDomain": ["hnwi-wealth-taxation", "tax-transparency", "data-and-measurement"],
+    "topicDomain": [
+      "hnwi-wealth-taxation",
+      "tax-transparency",
+      "data-and-measurement"
+    ],
     "workflowState": "verified",
-    "sourceIds": ["euto-global-tax-evasion-report-2024"],
+    "sourceIds": [
+      "euto-global-tax-evasion-report-2024",
+      "euto-offshore-wealth-data-page"
+    ],
     "nextActions": {
-      "zh": ["待 sources.json 補入 euto-offshore-wealth-data-page 後補上五份底層研究的個別方法論摘要", "整理離岸財富與高淨值個人課稅的可引用數據（報告第 1、4 章）", "補看 UN 文件中關於高淨值個人的承諾語句——目前因 UN 材料抓取失敗而無法核實"],
-      "en": ["Once euto-offshore-wealth-data-page is added to sources.json, summarize each of the five underlying studies' methodology individually", "Extract citable figures on offshore wealth and HNWI taxation from the report's Chapters 1 and 4", "Review UN commitment language on HNWIs once available — currently unverifiable due to the UN ingestion failures"]
+      "zh": [
+        "補上五份底層研究的個別方法論摘要",
+        "整理離岸財富與高淨值個人課稅的可引用數據（報告第 1、4 章）",
+        "補看 UN 文件中關於高淨值個人的承諾語句——目前因 UN 材料抓取失敗而無法核實"
+      ],
+      "en": [
+        "Summarize each of the five underlying offshore-wealth studies' methodology individually",
+        "Extract citable figures on offshore wealth and HNWI taxation from the report's Chapters 1 and 4",
+        "Review UN commitment language on HNWIs once available — currently unverifiable due to the UN ingestion failures"
+      ]
     },
-    "riskFlags": ["methodology-sensitive", "policy-contested"]
+    "riskFlags": [
+      "methodology-sensitive",
+      "policy-contested"
+    ]
   }
 ]

@@ -9,7 +9,7 @@
 | `1142/local-fiscal-enforcement-risk-research-data` | `src/data/fiscalEnforcementRisk.json`（地方財政執行風險頁） | 2026-07-02 同步；快照 2026-07-06 隨 `1157d6e` 入版控 | 低——雙方皆已 commit |
 | `1142/intl-tax-ops-lab` | `src/data/intlTaxOps/`（國際稅法研究頁） | 2026-07-02（多檔快照與來源 mtime 一致） | 低——已 commit（`d8dc6f6`／`43210fb`） |
 | `1142/2026_台北電影節` | `src/data/taipeiffPrograms.json`（台北電影節節目頁） | 2026-07-02（來源與快照大小一致） | 中——來源倉庫本身尚未 `git init`（2026-07-07 復查仍未 init），上游沒有版控保障 |
-| `1142/constitutional-court-research-data` | `src/data/constitutionalCourt.json`（憲法法庭案例庫頁） | 2026-07-07（前端已補上審查結論新類別支援後，`npm run sync` 原子更新快照；含法令解釋/補充前解釋/變更前解釋三新類，待人工降至 217） | 低——快照與來源已同步，前端 `OUTCOME_TONE`／篩選器／矩陣三處皆已支援新值（見 HANDOFF「審查結論 typology」條） |
+| `1142/constitutional-court-research-data` | `src/data/constitutionalCourt.json`（憲法法庭案例庫頁） | 2026-07-10：`結論類型` 6 軸 **503 件**（217 待人工＋286 行憲後違憲；follow-up ② 完成違憲範圍）。快照為 **surgical overlay**（只覆寫 `結論類型` 欄）＝非正規 build 產物 | **中——待正規化**：因並行 Codex 立場表 W2 未 commit，未跑完整 `app-json→sync`；Codex commit 後補跑一次乾淨 sync 即正規化（結果同 503）。人工佇列 23 件見資料 repo `docs/類型學-人工佇列.md` |
 | `1142/ntu-coursemap-research-data` | `src/data/germanLawCourseTimeline.json`（德國法課程時間軸頁） | 2026-07-06（來源 `data/teacher_timeline.json` 最後 commit 2026-07-06 14:42:10；快照 mtime 14:47:22，大小與來源一致，均為 102492 bytes） | 低——雙方皆已 commit，但無 `sync-to-canvas.mjs` 這類自動化腳本，靠 `scripts/generate_teacher_timeline.py` 產出後手動複製（見該倉庫 AGENTS.md），忘記重跑不會有任何自動提示 |
 
 ## 使用說明

@@ -14,6 +14,7 @@ import {
   Users,
   CalendarClock,
   ChevronDown,
+  ChevronRight,
   Landmark,
 } from 'lucide-react';
 import data from '../data/constitutionalCourt.json';
@@ -137,6 +138,63 @@ const OUTCOME_TONE = {
 
 const STANDARD_TONE = { 嚴格: 'red', 中度: 'gold', 寬鬆: 'green', '多重（待人工）': 'slate' };
 
+// ── 審查結論類型學（6 軸，draft-3）─────────────────────────────────────────
+// 來源：constitutional-court-research-data/data/materials/審查結論類型學.json（編碼本）＋
+// data/processed/審查結論類型.json（逐件貼標）。快照每件的 `結論類型` 欄只涵蓋「大法官釋字＋憲法法庭
+// 憲判」中粗軸判不出的『待人工』殘餘（196 件，均 agent 逐件雙盲覆核）；其餘已由粗軸分好的行憲後案件
+// 沒有細軸值。本頁對後者以粗軸換算 A 軸（resolveA 的 bridge 分支），換算件與 agent 覆核件明確以來源
+// 標記區分；C／E／完整 B／D 只有 agent 覆核件才有。
+const TYPO_AXES = [
+  { id: 'A', name: '處分模式', multi: false },
+  { id: 'B', name: '違憲處分技術', multi: true },
+  { id: 'C', name: '標的類型', multi: false },
+  { id: 'D', name: '對前解釋關係', multi: true },
+  { id: 'E', name: '救濟與後續', multi: true },
+  { id: 'F', name: '解釋權能', multi: true },
+];
+const TYPO_LABEL = {
+  'A-P1': '單純合憲', 'A-P2': '合憲性限縮', 'A-P3': '合憲附警告', 'A-P4': '違憲宣告', 'A-P5': '純解釋',
+  'A-P6': '權限歸屬宣告', 'A-P7': '程序／暫時處分', 'A-P8': '不受理／程序駁回', 'A-P9': '位階審查（準據法律）',
+  'B-B1': '即時失效', 'B-B2': '定期失效', 'B-B3': '未定失效時點', 'B-B4': '排除適用', 'B-B5': '連帶失效', 'B-B6': '部分違憲', 'B-B7': '漏未規定型違憲',
+  'C-T1': '法律', 'C-T2': '命令／函釋', 'C-T3': '判例／決議', 'C-T4': '憲法條文／機關權限', 'C-T5': '法律涵義', 'C-T6': '審判權／管轄', 'C-T7': '涵攝／事實定性', 'C-T8': '前解釋（作為客體）',
+  'D-D1': '補充前解釋', 'D-D2': '變更前解釋', 'D-D3': '維持／援用', 'D-D4': '訂正／澄清', 'D-D5': '區別／不予適用',
+  'E-E1': '課予修法義務', 'E-E2': '過渡／暫時規則', 'E-E3': '個案救濟', 'E-E4': '裁判憲法審查救濟', 'E-E5': '框架性立法指示', 'E-E6': '部分不受理',
+  'F-F1': '憲法解釋', 'F-F2': '統一解釋',
+};
+const typoLabel = (code) => TYPO_LABEL[code] ?? code;
+// A 軸呈現順序（合憲→違憲→位階→解釋→權限→程序）與 badge 色調。
+const A_ORDER = ['A-P1', 'A-P2', 'A-P3', 'A-P4', 'A-P9', 'A-P5', 'A-P6', 'A-P7', 'A-P8'];
+const A_TONE = {
+  'A-P1': 'green', 'A-P2': 'green', 'A-P3': 'gold', 'A-P4': 'red', 'A-P9': 'plum',
+  'A-P5': 'teal', 'A-P6': 'blue', 'A-P7': 'slate', 'A-P8': 'slate',
+};
+// 粗軸→A 軸換算：只給無 agent 細軸值的行憲後案件。精度受粗軸盲點所限——合憲無法細分
+// P2 限縮／P3 附警告，補充／變更本質是 D 軸現象、A 暫歸純解釋——故換算件只用於 A 軸母體分佈，
+// 不冒充逐件覆核。編碼本每個 A 值的「對應既有結論」即此對照的依據。
+const COARSE_TO_A = {
+  合憲: 'A-P1', 違憲: 'A-P4', 違憲即失效: 'A-P4', 違憲定期失效: 'A-P4',
+  法令解釋: 'A-P5', 補充前解釋: 'A-P5', 變更前解釋: 'A-P5',
+};
+// 回傳 { A, source: 'agent' | 'bridge' | null }：agent 有細軸就用細軸，否則粗軸換算。
+function resolveA(d) {
+  const A = d.結論類型?.A;
+  if (A) return { A, source: 'agent' };
+  const b = COARSE_TO_A[d.審查結論?.結論];
+  return b ? { A: b, source: 'bridge' } : { A: null, source: null };
+}
+// 一件的細軸值攤平成 [{axis,code}]（僅 agent 覆核件；供篩選與 chip 呈現）。
+function typoValues(d) {
+  const ty = d.結論類型;
+  if (!ty) return [];
+  const out = [];
+  for (const { id, multi } of TYPO_AXES) {
+    const v = ty[id];
+    if (multi) (v ?? []).forEach((c) => out.push({ axis: id, code: c }));
+    else if (v) out.push({ axis: id, code: v });
+  }
+  return out;
+}
+
 // 為什麼被高頻引用：只收錄有把握、教科書等級公認的論述定位，逐筆上網對照官方解釋與
 // 學說整理查證（2026-07-07）。已覆蓋前端顯示的前 15 名（cited.slice(0,15)）；名次更深者
 // 暫缺不猜。補述沿革見 HANDOFF.md「被引用最多的解釋」條目。
@@ -248,13 +306,13 @@ function toManifest(list) {
   );
 }
 
-function OpinionLine({ op, officialUrl }) {
+function OpinionLine({ op, officialUrl, pdfMode }) {
   const who =
     op.作者類別 === '大法官'
       ? `${(op.提出 ?? []).join('、')}${op.加入?.length ? `（${op.加入.join('、')}加入）` : ''}`
       : (op.文件名 ?? '').replace(/\.(pdf|doc|docx)$/i, '');
-  // 內嵌記錄（早期釋字，意見書全文嵌在官方頁正文）沒有 PDF，連官方頁
-  const href = op.下載網址 ?? (op.內嵌 ? officialUrl : undefined);
+  // 內嵌記錄（早期釋字，意見書全文嵌在官方頁正文）沒有 PDF，連官方頁；PDF 依模式走預覽代理。
+  const href = op.下載網址 ? pdfHref(op.下載網址, pdfMode) : (op.內嵌 ? officialUrl : undefined);
   return (
     <div className="flex flex-wrap items-center gap-2 py-1">
       <Badge tone={op.類型.includes('不同') ? 'red' : op.類型.includes('協同') ? 'blue' : 'slate'}>{op.類型}</Badge>
@@ -299,6 +357,39 @@ function loadPre1947() {
   return pre1947Promise;
 }
 
+// 理由書全文懶載：主 JSON 只放主文，展開卡片「理由書」才動態 import 全文檔（只抓一次、全卡共享快取）。
+let reasoningCache = null;
+let reasoningPromise = null;
+function loadReasoning() {
+  if (reasoningCache) return Promise.resolve(reasoningCache);
+  if (!reasoningPromise) {
+    reasoningPromise = import('../data/constitutionalCourt-reasoning-fulltext.json')
+      .then((m) => { reasoningCache = m.default; return reasoningCache; })
+      .catch(() => ({}));
+  }
+  return reasoningPromise;
+}
+
+// 全域偏好開關（localStorage 持久、跨 session）：比照 useFontScale 的 canvaslab: 前綴。
+// 理由書預設展開（ccReasoningDefault）與 PDF 預覽模式（pdfMode）共用此 hook。
+function usePref(key, fallback) {
+  const [v, setV] = useState(() => {
+    try { const s = localStorage.getItem('canvaslab:' + key); if (s !== null) return JSON.parse(s); } catch { /* ignore */ }
+    return fallback;
+  });
+  useEffect(() => {
+    try { localStorage.setItem('canvaslab:' + key, JSON.stringify(v)); } catch { /* ignore */ }
+  }, [key, v]);
+  return [v, setV];
+}
+
+// PDF 連結：預覽模式把官方 download.aspx（強制 attachment 下載、無 CORS）改走同源代理 /api/pdf
+// （inline，新分頁瀏覽器原生預覽）；下載模式或非該類連結一律原樣直連官方。
+function pdfHref(url, mode) {
+  if (mode !== 'preview' || !url || !/\/download\/download\.aspx/i.test(url)) return url;
+  return `/api/pdf?url=${encodeURIComponent(url)}`;
+}
+
 // 搜尋命中高亮：把 text 中出現 kw 的片段包成 <mark>（淡琥珀底＋墨字）。kw 空白則原樣返回字串。
 function hl(text, kw) {
   const s = String(text ?? '');
@@ -313,7 +404,7 @@ function hl(text, kw) {
   );
 }
 
-function CaseCard({ d, q }) {
+function CaseCard({ d, q, reasoningDefault, pdfMode }) {
   const [full, setFull] = useState(null);
   const [loadingFull, setLoadingFull] = useState(false);
   const showFull = async () => {
@@ -323,6 +414,20 @@ function CaseCard({ d, q }) {
     setFull(m[d.字號] ?? { 主文: d.主文 });
     setLoadingFull(false);
   };
+  // 理由書（行憲後）：初值取全域預設（僅新卡受全域切換影響）；開啟時懶載全文檔。
+  const hasReasoning = !d.系列; // 行憲前走「全文」機制，不另掛理由書
+  const [showReason, setShowReason] = useState(reasoningDefault && hasReasoning);
+  const [reason, setReason] = useState(null); // null=未載；{理由書,來源}｜{none:true}
+  const [loadingReason, setLoadingReason] = useState(false);
+  useEffect(() => {
+    // 注意：deps 不含 loadingReason——否則 setLoadingReason(true) 觸發 re-run，cleanup 會把進行中的
+    // promise alive 設 false，setReason 永不執行、卡在載入中。loadReasoning() 本身有快取，重入無害。
+    if (!showReason || reason || !hasReasoning) return;
+    let alive = true;
+    setLoadingReason(true);
+    loadReasoning().then((m) => { if (alive) { setReason(m[d.字號] ?? { none: true }); setLoadingReason(false); } });
+    return () => { alive = false; };
+  }, [showReason, reason, hasReasoning, d.字號]);
   // 行憲前卡片預設就展開全文（懶載檔仍只抓一次、全卡共享快取）；預覽被截斷者才需抓。
   useEffect(() => {
     if (d.系列 && d.主文.endsWith('…')) showFull();
@@ -342,7 +447,9 @@ function CaseCard({ d, q }) {
         <span className="text-[13px] text-[var(--cc-figure-note)]">{formatDate(d.日期)}</span>
         <span className="inline-flex h-2.5 w-2.5 rounded-sm" style={{ background: typeInk(d.類型) }} aria-hidden />
         <Badge tone="plum">{d.類型}{d.子類 ? `・${d.子類}` : ''}</Badge>
-        {d.審查結論?.結論 && d.審查結論.結論 !== '未分類' ? (
+        {d.結論類型?.A ? (
+          <Badge tone={A_TONE[d.結論類型.A] ?? 'slate'}>{typoLabel(d.結論類型.A)}</Badge>
+        ) : d.審查結論?.結論 && d.審查結論.結論 !== '未分類' ? (
           <Badge tone={OUTCOME_TONE[d.審查結論.結論] ?? 'slate'}>
             {d.審查結論.結論 === '其他/待人工' ? '結論待人工判讀' : d.審查結論.結論}
           </Badge>
@@ -359,6 +466,19 @@ function CaseCard({ d, q }) {
           <Badge key={t} tone="plum">{t}</Badge>
         ))}
       </div>
+
+      {d.結論類型 && typoValues(d).some((v) => v.axis !== 'A') ? (
+        <div className="mt-1.5 flex flex-wrap items-center gap-1.5" title={d.結論類型.依據 || undefined}>
+          {typoValues(d).filter((v) => v.axis !== 'A').map((v) => (
+            <span key={v.axis + v.code} className="inline-flex items-center gap-1 rounded border border-[var(--cc-border)] bg-[var(--cc-hover-bg)] px-1.5 py-0.5 text-[10.5px] text-[var(--cc-ink-mid)]">
+              <span className="font-bold text-[var(--cc-eyebrow)]">{v.axis}</span>{typoLabel(v.code)}
+            </span>
+          ))}
+          {d.結論類型.標註方式 ? (
+            <span className="text-[10px] text-[var(--cc-ink-soft)]">類型學・{d.結論類型.標註方式}{d.結論類型.信心 ? `／${d.結論類型.信心}` : ''}</span>
+          ) : null}
+        </div>
+      ) : null}
 
       {d.爭點 ? (
         <p className="mt-2 max-w-4xl text-[14px] font-bold leading-relaxed text-[var(--cc-ink-heavy)]">{hl(d.爭點, q)}</p>
@@ -424,8 +544,35 @@ function CaseCard({ d, q }) {
         <div className="mt-3 rounded-lg bg-[var(--cc-opinion-bg)] px-3 py-2">
           <p className="mb-1 text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">意見書 {d.意見書.length} 份</p>
           {d.意見書.map((op, i) => (
-            <OpinionLine key={i} op={op} officialUrl={d.官方頁} />
+            <OpinionLine key={i} op={op} officialUrl={d.官方頁} pdfMode={pdfMode} />
           ))}
+        </div>
+      ) : null}
+
+      {hasReasoning ? (
+        <div className="mt-3">
+          <button
+            onClick={() => setShowReason((v) => !v)}
+            className="inline-flex items-center gap-1 text-[13px] font-bold text-[var(--cc-accent)] hover:text-[var(--cc-link-hover)]"
+          >
+            <BookOpen size={12} />
+            {showReason ? '收合理由書' : (d.類型 === '判決' ? '展開理由' : '展開解釋理由書')}
+            <ChevronDown size={12} className={showReason ? 'rotate-180 transition-transform' : 'transition-transform'} />
+          </button>
+          {showReason ? (
+            loadingReason ? (
+              <p className="mt-2 text-[13px] text-[var(--cc-ink-soft)]">載入理由書中…</p>
+            ) : reason?.none ? (
+              <p className="mt-2 text-[13px] text-[var(--cc-ink-soft)]">此件無獨立理由書（早期釋字理由多併於解釋文）。</p>
+            ) : reason ? (
+              <div className="mt-2 rounded-lg bg-[var(--cc-opinion-bg)] px-3.5 py-2.5">
+                <p className="mb-1 text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">{d.類型 === '判決' ? '理由' : '解釋理由書'}</p>
+                {splitClauses(reason.理由書).map((para, i) => (
+                  <p key={i} className="mt-1.5 max-w-4xl whitespace-pre-line text-[13.5px] leading-relaxed text-[var(--cc-ink-mid)]">{hl(para, q)}</p>
+                ))}
+              </div>
+            ) : null
+          ) : null}
         </div>
       ) : null}
 
@@ -434,7 +581,7 @@ function CaseCard({ d, q }) {
           {d.系列 ? '維基文庫原文（彙編校勘本）' : '官方頁面（全文、理由書與下載）'} <ExternalLink size={11} />
         </a>
         {d.立場表下載 ? (
-          <a href={d.立場表下載} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 font-bold text-[var(--cc-blue-ink)] hover:text-[var(--cc-blue-ink-hover)]">
+          <a href={pdfHref(d.立場表下載, pdfMode)} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 font-bold text-[var(--cc-blue-ink)] hover:text-[var(--cc-blue-ink-hover)]">
             主文立場表 PDF <ExternalLink size={11} />
           </a>
         ) : null}
@@ -516,6 +663,10 @@ function IndexView() {
   const [q, setQ] = useState('');
   const [limit, setLimit] = useState(30);
   const [sortDir, setSortDir] = useState('desc');
+  const [reasoningDefault, setReasoningDefault] = usePref('ccReasoningDefault', false);
+  const [pdfMode, setPdfMode] = usePref('pdfMode', 'preview');
+  const [typo, setTypo] = useState({});           // 類型學 6 軸篩選：{ 軸id: 代碼 }
+  const [showTypo, setShowTypo] = useState(false); // 類型學篩選面板展開
 
   // 機關維度切分（預設行憲後）；其餘所有面向的件數都以選定機關為母體重算。
   const 機關Counts = useMemo(() => {
@@ -573,6 +724,20 @@ function IndexView() {
     return [...s].sort().map((p) => `${p}0`);
   }, [scoped]);
 
+  // 類型學 6 軸各值在目前機關母體中的件數（僅 agent 覆核件）。
+  const { typoCounts, typedN } = useMemo(() => {
+    const counts = {};
+    for (const { id } of TYPO_AXES) counts[id] = new Map();
+    let n = 0;
+    for (const d of scoped) {
+      if (!d.結論類型) continue;
+      n += 1;
+      for (const { axis, code } of typoValues(d)) counts[axis].set(code, (counts[axis].get(code) ?? 0) + 1);
+    }
+    return { typoCounts: counts, typedN: n };
+  }, [scoped]);
+  const activeTypoN = Object.values(typo).filter((v) => v && v !== '全部').length;
+
   const filtered = useMemo(() => {
     const kw = q.trim();
     return scoped.filter((d) => {
@@ -585,10 +750,14 @@ function IndexView() {
       }
       if (standard !== '全部' && (d.審查基準?.基準 ?? '') !== standard) return false;
       if (decade !== '全部' && d.日期?.slice(0, 3) !== decade.slice(0, 3)) return false;
+      for (const { id } of TYPO_AXES) {
+        const sel = typo[id];
+        if (sel && sel !== '全部' && !typoValues(d).some((v) => v.axis === id && v.code === sel)) return false;
+      }
       if (kw && !(d.字號.includes(kw) || d.爭點.includes(kw) || d.主文.includes(kw) || d.系爭法令?.some((x) => x.includes(kw)) || d.原理原則.some((x) => x.includes(kw)))) return false;
       return true;
     });
-  }, [scoped, type, topic, subtopic, outcome, standard, decade, q]);
+  }, [scoped, type, topic, subtopic, outcome, standard, decade, q, typo]);
 
   const sorted = useMemo(() => {
     const arr = [...filtered];
@@ -609,7 +778,7 @@ function IndexView() {
         <div className="mb-2.5 flex flex-wrap items-center gap-2">
           <SegControl
             value={seg}
-            onChange={(v) => { set機關(v); setType('全部'); setTopic('全部'); setSubtopic('全部'); setOutcome('全部'); setStandard('全部'); setDecade('全部'); setLimit(30); }}
+            onChange={(v) => { set機關(v); setType('全部'); setTopic('全部'); setSubtopic('全部'); setOutcome('全部'); setStandard('全部'); setDecade('全部'); setTypo({}); setLimit(30); }}
             options={[
               ['行憲後', '行憲後　釋字・憲判', 機關Counts.行憲後],
               ['行憲前', '行憲前　統一解釋', 機關Counts.行憲前],
@@ -650,6 +819,46 @@ function IndexView() {
           ) : null}
           <Select label="年代" value={decade} onChange={(v) => { setDecade(v); setLimit(30); }} options={[['全部', '全部'], ...decades.map((d) => [d, `${d} 年代`])]} />
         </div>
+        {!isPre ? (
+          <div className="mt-2">
+            <button
+              onClick={() => setShowTypo((s) => !s)}
+              className="inline-flex items-center gap-1 text-[12px] font-bold text-[var(--cc-accent)] hover:text-[var(--cc-link-hover)]"
+            >
+              {showTypo ? <ChevronDown size={13} /> : <ChevronRight size={13} />}
+              審查結論類型學（6 軸細分）
+              <span className="font-normal text-[var(--cc-ink-soft)]">
+                已類型化 {typedN} 件{activeTypoN ? `・篩選中 ${activeTypoN} 軸` : ''}
+              </span>
+            </button>
+            {showTypo ? (
+              <>
+                <div className="mt-2 flex flex-wrap items-center gap-2">
+                  {TYPO_AXES.map(({ id, name }) => {
+                    const entries = [...typoCounts[id].entries()].sort(
+                      (a, b) => (A_ORDER.indexOf(a[0]) - A_ORDER.indexOf(b[0])) || a[0].localeCompare(b[0]),
+                    );
+                    return (
+                      <Select
+                        key={id}
+                        label={`${id}·${name}`}
+                        value={typo[id] ?? '全部'}
+                        onChange={(v) => { setTypo((t) => ({ ...t, [id]: v })); setLimit(30); }}
+                        options={[['全部', '全部'], ...entries.map(([c, n]) => [c, `${typoLabel(c)}（${n}）`])]}
+                      />
+                    );
+                  })}
+                  {activeTypoN ? (
+                    <button onClick={() => { setTypo({}); setLimit(30); }} className="text-[12px] font-bold text-[var(--cc-accent)] hover:text-[var(--cc-link-hover)]">清除類型篩選</button>
+                  ) : null}
+                </div>
+                <p className="mt-1.5 max-w-3xl text-[11.5px] leading-relaxed text-[var(--cc-ink-soft)]">
+                  6 軸類型學目前僅涵蓋粗軸判不出的「待人工」殘餘 {typedN} 件（均逐件雙盲覆核）；已由粗軸分好的合憲／違憲等件尚未套細軸，故選任一軸值時只會列出已類型化件。軸別：A 處分模式・B 違憲處分技術・C 標的類型・D 對前解釋關係・E 救濟與後續・F 解釋權能。
+                </p>
+              </>
+            ) : null}
+          </div>
+        ) : null}
         <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-[12px] text-[var(--cc-ink-soft)]">
           <span className="font-bold text-[var(--cc-ink-strong)]">符合 {filtered.length} 件</span>
           <button
@@ -657,6 +866,20 @@ function IndexView() {
             className="inline-flex items-center gap-1 font-bold text-[var(--cc-accent)] hover:text-[var(--cc-link-hover)]"
           >
             <ArrowUpDown size={11} />{sortDir === 'desc' ? '新→舊' : '舊→新'}
+          </button>
+          <button
+            onClick={() => setReasoningDefault((v) => !v)}
+            className="inline-flex items-center gap-1 font-bold text-[var(--cc-accent)] hover:text-[var(--cc-link-hover)]"
+            title="切換行憲後案件卡片是否預設展開理由書（僅影響之後新出現的卡片）"
+          >
+            <BookOpen size={11} />理由書預設{reasoningDefault ? '展開' : '收合'}
+          </button>
+          <button
+            onClick={() => setPdfMode((m) => (m === 'preview' ? 'download' : 'preview'))}
+            className="inline-flex items-center gap-1 font-bold text-[var(--cc-accent)] hover:text-[var(--cc-link-hover)]"
+            title="官方 PDF 點擊行為：預覽＝新分頁同源代理內嵌開啟；下載＝直接連官方（強制下載）"
+          >
+            <FileText size={11} />官方 PDF：{pdfMode === 'preview' ? '新分頁預覽' : '直接下載'}
           </button>
           <span className="text-[var(--cc-eyebrow)]">匯出目前篩選集：</span>
           <button onClick={() => downloadFile(toCsv(filtered), `憲法案件_${stamp}.csv`, 'text/csv')} className="inline-flex items-center gap-1 font-bold text-[var(--cc-accent)] hover:text-[var(--cc-link-hover)]"><Download size={11} />CSV</button>
@@ -668,7 +891,7 @@ function IndexView() {
       </div>
 
       {shown.map((d) => (
-        <CaseCard key={d.字號} d={d} q={q} />
+        <CaseCard key={d.字號} d={d} q={q} reasoningDefault={reasoningDefault} pdfMode={pdfMode} />
       ))}
       {filtered.length > limit ? (
         <div className="py-6 text-center">
@@ -948,6 +1171,24 @@ function TopicHeatmaps() {
     return { oGrid: g, oMax: Math.max(...g.values()) };
   }, []);
 
+  // 主題×處分模式（A 軸）：agent 覆核件用細軸，其餘行憲後件由粗軸換算 A 軸（resolveA）。
+  const { aCols, aGrid, aMax, aAgentN, aBridgeN } = useMemo(() => {
+    const g = new Map();
+    const present = new Set();
+    let agentN = 0;
+    let bridgeN = 0;
+    for (const d of docs) {
+      const { A, source } = resolveA(d);
+      if (!A || !d.主題.length) continue; // 只計進得了矩陣的件（有主題＝行憲後機標件），與圖說數字一致
+      if (source === 'agent') agentN += 1; else bridgeN += 1;
+      present.add(A);
+      for (const t of d.主題) g.set(`${t}|${A}`, (g.get(`${t}|${A}`) ?? 0) + 1);
+    }
+    const aCols = A_ORDER.filter((a) => present.has(a));
+    return { aCols, aGrid: g, aMax: Math.max(1, ...g.values()), aAgentN: agentN, aBridgeN: bridgeN };
+  }, []);
+  const A_SHORT = { 'A-P1': '合憲', 'A-P2': '限縮', 'A-P3': '附警告', 'A-P4': '違憲', 'A-P9': '位階', 'A-P5': '純解釋', 'A-P6': '權限', 'A-P7': '程序', 'A-P8': '不受理' };
+
   const LABEL_W = 130;
   const CW = 17;
   const RH = 17;
@@ -1035,6 +1276,48 @@ function TopicHeatmaps() {
         </div>
         <p className="mt-1 max-w-3xl text-[12px] leading-relaxed text-[var(--cc-ink-soft)]">
           審查結論為文字規則機標（違憲即失效併入違憲欄；法令解釋／補充前解釋／變更前解釋併入非合憲性審查欄），僅供分布觀察；個案請以卡片上的官方連結查證原文。
+        </p>
+      </section>
+
+      <section className="border-t border-[var(--cc-line)] py-5">
+        <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">主題×處分模式（類型學 A 軸）</p>
+        <h2 className="text-base sm:text-lg font-bold text-[var(--cc-title-ink)]">把「待人工」拆開後的九種處分模式（色深＝件數）</h2>
+        <div className="relative mt-3 overflow-x-auto pb-2">
+          <svg width={LABEL_W + aCols.length * 58 + 12} height={H + 30} role="img" aria-label="主題與處分模式矩陣">
+            {aCols.map((a, c) => (
+              <text key={a} x={LABEL_W + c * 58 + 26} y={12} textAnchor="middle" fontSize={10} fontWeight={700} fill="var(--cc-table-head-ink)">{A_SHORT[a] ?? a}</text>
+            ))}
+            {topics.map((t, r) => (
+              <text key={t} x={LABEL_W - 8} y={r * RH + RH / 2 + 21.5} textAnchor="end" fontSize={10.5} fill="var(--cc-ink-mid)">{t}</text>
+            ))}
+            {topics.map((t, r) => aCols.map((a, c) => {
+              const v = aGrid.get(`${t}|${a}`) ?? 0;
+              const dark = Math.sqrt(v / aMax) > 0.55;
+              return (
+                <g key={`${t}${a}`}>
+                  <rect
+                    x={LABEL_W + c * 58} y={r * RH + 18}
+                    width={52} height={RH - 2} rx={3}
+                    fill={heatFill(v, aMax)}
+                    onMouseEnter={() => setCell({ t, a, v, kind: 'amode' })}
+                    onMouseLeave={() => setCell(null)}
+                  />
+                  {v ? (
+                    <text x={LABEL_W + c * 58 + 26} y={r * RH + 18 + RH / 2 + 3} textAnchor="middle" fontSize={9.5} fill={dark ? 'var(--cc-heat-text-light)' : 'var(--cc-heat-text-dark)'} pointerEvents="none">{v}</text>
+                  ) : null}
+                </g>
+              );
+            }))}
+          </svg>
+          {cell?.kind === 'amode' ? (
+            <div className="pointer-events-none absolute left-4 top-0 rounded-md border border-[var(--cc-border)] bg-white px-3 py-1.5 text-[12px] shadow-sm">
+              <strong className="text-[var(--cc-ink-strong)]">{cell.t}</strong>　{typoLabel(cell.a)}　<strong className="text-[var(--cc-accent)]">{cell.v} 件</strong>
+            </div>
+          ) : null}
+        </div>
+        <p className="mt-1 max-w-3xl text-[12px] leading-relaxed text-[var(--cc-ink-soft)]">
+          A 軸把粗軸的「待人工」欄拆成合憲附警告（P3）、純解釋（P5）、權限歸屬（P6）、不受理（P8）、位階審查（P9）等格。其中 {aAgentN} 件為 agent 逐件雙盲覆核，其餘 {aBridgeN} 件由粗軸換算（合憲→P1、違憲→P4、法令解釋→P5…）——換算無法細分限縮（P2）與附警告（P3），故 P2／P3 兩欄僅計已覆核件。
+          A 軸為單選「主處分」（編碼本設計）：一件「部分違憲、部分合憲」的複合主文只計入主處分欄，其混合結構記在多值的 B 軸（部分違憲 B-B6）與 E 軸（部分不受理 E-E6），見卡片 chip 與 6 軸篩選。複合結構多發生在違憲案，而多數違憲案尚未套細軸（僅粗軸換算為 A-P4），故此矩陣尚看不到其部分結構。僅供分布觀察，個案以官方原文為準。
         </p>
       </section>
     </>
@@ -1561,11 +1844,24 @@ function TenureView({ onOpen }) {
 // color-mix 在校準過的 --tone-*-bg（近白淡底）↔ --tone-*-tx（墨色）之間插值，不寫死任何 hex；
 // 量值靠色深、身分/狀態靠形狀與細框（見 docs/DESIGN.md 色彩哲學 2026-07-08 裁定）。
 const GRAPH_ERAS = [
-  { key: 'xianfa', label: '2022– 憲法法庭', short: '憲法法庭', test: (y) => y >= 2022 },
-  { key: 'late', label: '2015–2021 釋字晚期', short: '釋字晚期', test: (y) => y >= 2015 && y < 2022 },
-  { key: 'reform', label: '2003–2014 改制後', short: '改制後', test: (y) => y >= 2003 && y < 2015 },
-  { key: 'early', label: '2003 前 釋字早中', short: '早中期', test: (y) => y < 2003 },
+  { key: 'xianfa', label: '2022– 憲法法庭', short: '憲法法庭', test: (y) => y >= 2022, lo: 2022, hi: 9999 },
+  { key: 'late', label: '2015–2021 釋字晚期', short: '釋字晚期', test: (y) => y >= 2015 && y < 2022, lo: 2015, hi: 2021 },
+  { key: 'reform', label: '2003–2014 改制後', short: '改制後', test: (y) => y >= 2003 && y < 2015, lo: 2003, hi: 2014 },
+  { key: 'early', label: '2003 前 釋字早中', short: '早中期', test: (y) => y < 2003, lo: 0, hi: 2002 },
 ];
+// 分期上色用：把「跨期再任」的大法官依當期任期段回其當期提名總統（許宗力扁 2003–2011／英 2016–2024 是主案例，
+// 通則亦適用翁岳生、城仲模等再任者）。用 justices.json 的 各段提名總統＋任期段（段序對齊）判斷段落與各期重疊。
+function presInEra(j, lo, hi) {
+  const segs = j.任期 ?? [], multi = j.各段提名總統;
+  if (Array.isArray(multi) && segs.length === multi.length) {
+    for (let i = 0; i < segs.length; i++) {
+      const s = Number(String(segs[i].起).slice(0, 4)) || 0;
+      const e = segs[i].訖 ? (Number(String(segs[i].訖).slice(0, 4)) || 9999) : 9999;
+      if (s <= hi && e >= lo) return multi[i];
+    }
+  }
+  return j.提名總統 ?? null;
+}
 const GRAPH_MODES = [
   ['合計', '合計共同具名'],
   ['協同', '協同聯盟'],
@@ -1691,29 +1987,12 @@ function mulberry32(a) {
   };
 }
 
-// 立場表真投票分析（scratchpad 端到端解析 56 判決立場表；暫用預算結果，待寫回資料層底層）。
+// 立場表真投票分析（資料層 analyze-lct.mjs 母本）：57 判決立場表由 fetch-lct 回官網重抓、parse-lct 重解
+// （動態欄界＋名冊錨定），並以大法官意見書不同意作者獨立交叉校驗（見 data.立場表分析.交叉校驗）。
 // 平均同意率＝共投≥8 次的對其同意率平均；同質性附置換檢定；理想點＝古典 MDS on 1−同意率（符號任意）。
-const LCT_RESULT = {
-  判決數: 56, rollCalls: 182, 爭議: 90, 法官數: 19, 重複旗標: 14, 平均同意率: 0.832,
-  同質性: [
-    { 維度: '提名總統', 同組: 0.840, 跨組: 0.793, 差: 0.047, p: 0.053 },
-    { 維度: '出身', 同組: 0.833, 跨組: 0.818, 差: 0.015, p: 0.227 },
-    { 維度: '德語圈留學', 同組: 0.799, 跨組: 0.847, 差: -0.048, p: 0.968 },
-  ],
-  提名總統均值: { 蔡英文: { mean: -0.069, n: 14 }, 馬英九: { mean: 0.237, n: 4 }, 陳水扁: { mean: 0.013, n: 1 } },
-  理想點: [
-    { 姓名: '陳忠五', x: -0.234, 提名總統: '蔡英文' }, { 姓名: '朱富美', x: -0.221, 提名總統: '蔡英文' },
-    { 姓名: '尤伯祥', x: -0.214, 提名總統: '蔡英文' }, { 姓名: '蔡彩貞', x: -0.200, 提名總統: '蔡英文' },
-    { 姓名: '謝銘洋', x: -0.058, 提名總統: '蔡英文' }, { 姓名: '黃昭元', x: -0.048, 提名總統: '蔡英文' },
-    { 姓名: '楊惠欽', x: -0.045, 提名總統: '蔡英文' }, { 姓名: '蔡宗珍', x: -0.010, 提名總統: '蔡英文' },
-    { 姓名: '呂太郎', x: -0.008, 提名總統: '蔡英文' }, { 姓名: '張瓊文', x: -0.007, 提名總統: '蔡英文' },
-    { 姓名: '許志雄', x: 0.000, 提名總統: '蔡英文' }, { 姓名: '蔡烱燉', x: 0.012, 提名總統: '蔡英文' },
-    { 姓名: '許宗力', x: 0.013, 提名總統: '陳水扁' }, { 姓名: '詹森林', x: 0.016, 提名總統: '蔡英文' },
-    { 姓名: '黃瑞明', x: 0.054, 提名總統: '蔡英文' }, { 姓名: '林俊益', x: 0.210, 提名總統: '馬英九' },
-    { 姓名: '吳陳鐶', x: 0.244, 提名總統: '馬英九' }, { 姓名: '蔡明誠', x: 0.248, 提名總統: '馬英九' },
-    { 姓名: '黃虹霞', x: 0.248, 提名總統: '馬英九' },
-  ],
-};
+// 立場表計量結果讀資料層母本 data.立場表分析（analyze-lct.mjs 產、build-app-json 嵌入）。
+// 舊硬編快照已移除：parser 去噪＋許宗力歸蔡英文後由資料層現算，前端不再各自維護一份。
+const LCT_RESULT = data.立場表分析;
 
 // 意見書覆蓋（逐時期）：哪些時期、哪些號沒有大法官意見書。讀資料層稽核鍵 data.意見書覆蓋
 // （audit-opinion-coverage.mjs 產，含官方原始頁漏抓交叉核對）；點時期展開該期無意見書字號。
@@ -1798,6 +2077,100 @@ function OpinionCoverage() {
       </div>
       <p className="mt-1.5 max-w-2xl text-[12px] leading-relaxed text-[var(--cc-figure-note)]">
         每一直條為一號，色深＝該號大法官意見書份數，空白＝無（早期居多）。滑過看號次與份數。覆蓋隨年代上升，晚期與憲法法庭近全覆蓋。空白已對官方原始頁逐件交叉核對（{cov?.核對?.已核對0紀錄件 ?? 345} 件，疑漏抓 {cov?.核對?.疑漏抓 ?? 0}）＝非漏抓；核對限官方數位記錄，紙本未稽核為<strong className="text-[var(--cc-ink-strong)]">下限</strong>。
+      </p>
+    </div>
+  );
+}
+
+// 分歧指數時序（雙層，誠實標層級；依 no-meaningless-viz）：
+//  Tier B（骨幹，全行憲後）＝意見書代理：逐案分別意見加權（不同 1.0／部分 0.6／協同 0.3）÷ 參與大法官數，逐年平均。
+//  Tier A（疊加，2022–）＝立場表真投票：逐主文項次分裂度 F=(1−p同²−p不同²)×2，逐案平均、逐年平均。
+// 兩層同為 [0,1] 分歧指數、共用單一 y 軸（不做雙軸）。早期低點含意見書覆蓋下限，非純共識，圖下明註。
+function DivergenceTimeSeries() {
+  const g = useMemo(() => {
+    const yr = (s) => (s ? Number(String(s).slice(0, 4)) : null);
+    const wt = (t) => { t = t || ''; return t.includes('不同') ? (t.includes('部分') ? 0.6 : 1.0) : 0.3; };
+    const bAcc = {};
+    for (const d of docs) {
+      if (!(d.機關 === '大法官' || d.機關 === '憲法法庭')) continue;
+      const y = yr(d.日期); if (!y) continue;
+      const bench = (d.參與大法官?.length) || 15;
+      let w = 0; for (const o of d.意見書 ?? []) w += wt(o.類型);
+      (bAcc[y] = bAcc[y] || []).push(Math.min(1, w / bench));
+    }
+    const aAcc = {};
+    for (const rec of data.立場表投票 ?? []) {
+      const y = yr(rec.日期); if (!y) continue; const fs = [];
+      for (const it of rec.items ?? []) {
+        const ag = (it.同意 ?? []).length, di = (it.不同意 ?? []).length, tot = ag + di;
+        if (tot < 2) continue; const p = ag / tot; fs.push((1 - (p * p + (1 - p) * (1 - p))) * 2);
+      }
+      if (fs.length) (aAcc[y] = aAcc[y] || []).push(fs.reduce((s, v) => s + v, 0) / fs.length);
+    }
+    const mean = (arr) => arr.reduce((s, v) => s + v, 0) / arr.length;
+    const B = Object.keys(bAcc).map(Number).sort((x, y) => x - y).map((y) => ({ y, n: bAcc[y].length, v: mean(bAcc[y]) }));
+    const A = Object.keys(aAcc).map(Number).sort((x, y) => x - y).map((y) => ({ y, n: aAcc[y].length, v: mean(aAcc[y]) }));
+    return { B, A };
+  }, []);
+  const [hy, setHy] = useState(null);
+  if (!g.B.length) return null;
+  const PAD_L = 26, PAD_R = 10, PAD_T = 10, PAD_B = 18, W = 580, H = 140;
+  const y0 = g.B[0].y, y1 = g.B[g.B.length - 1].y;
+  const yMax = 0.35;
+  const xAt = (y) => PAD_L + ((y - y0) / (y1 - y0)) * (W - PAD_L - PAD_R);
+  const yAt = (v) => PAD_T + (1 - v / yMax) * H;
+  const lineB = g.B.map((d, i) => `${i ? 'L' : 'M'}${xAt(d.y).toFixed(1)} ${yAt(d.v).toFixed(1)}`).join(' ');
+  const areaB = `${lineB} L${xAt(y1).toFixed(1)} ${yAt(0).toFixed(1)} L${xAt(y0).toFixed(1)} ${yAt(0).toFixed(1)} Z`;
+  const eras = [[1991, '1991'], [2003, '交錯任期 2003'], [2015, '2015'], [2022, '憲法法庭 2022']];
+  const bAt = (y) => g.B.find((d) => d.y === y);
+  const aAt = (y) => g.A.find((d) => d.y === y);
+  const hb = hy != null ? bAt(hy) : null, ha = hy != null ? aAt(hy) : null;
+  return (
+    <div className="mt-4">
+      <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">證據一補充 · 分歧指數時序（雙層）</p>
+      <h3 className="text-[15px] font-bold text-[var(--cc-title-ink)]">逐年分歧指數：意見書代理（全史）＋立場表真投票（2022–）</h3>
+      <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-[11.5px] text-[var(--cc-ink-soft)]">
+        <span className="inline-flex items-center gap-1.5"><span className="inline-block h-0.5 w-4" style={{ background: 'var(--cc-ink-strong)' }} />意見書代理（Tier B，全行憲後 {g.B.length} 年）</span>
+        <span className="inline-flex items-center gap-1.5"><span className="inline-block h-2 w-2 rounded-full" style={{ background: 'var(--cc-accent)' }} />立場表真投票（Tier A，2022–，高保真）</span>
+      </div>
+      <div className="relative mt-2 overflow-x-auto">
+        <svg
+          viewBox={`0 0 ${W} ${PAD_T + H + PAD_B}`} preserveAspectRatio="xMinYMin meet" role="img"
+          aria-label="逐年分歧指數雙層時序圖" style={{ width: '100%', height: 'auto', maxWidth: W }}
+          onMouseMove={(e) => { const r = e.currentTarget.getBoundingClientRect(); const px = ((e.clientX - r.left) / r.width) * W; const yy = Math.round(y0 + ((px - PAD_L) / (W - PAD_L - PAD_R)) * (y1 - y0)); setHy(Math.max(y0, Math.min(y1, yy))); }}
+          onMouseLeave={() => setHy(null)}
+        >
+          {[0, 0.1, 0.2, 0.3].map((v) => (
+            <g key={v}>
+              <line x1={PAD_L} y1={yAt(v)} x2={W - PAD_R} y2={yAt(v)} stroke="var(--cc-line)" strokeWidth={1} />
+              <text x={PAD_L - 4} y={yAt(v) + 3} textAnchor="end" fontSize={8.5} fill="var(--cc-axis-text)">{v.toFixed(1)}</text>
+            </g>
+          ))}
+          {eras.map(([y, label]) => (
+            <g key={y}>
+              <line x1={xAt(y)} y1={PAD_T} x2={xAt(y)} y2={PAD_T + H} stroke="var(--cc-line)" strokeWidth={1} strokeDasharray="2 2" />
+              <text x={xAt(y)} y={PAD_T + H + 11} textAnchor="middle" fontSize={8} fill="var(--cc-ink-soft)">{label}</text>
+            </g>
+          ))}
+          <path d={areaB} fill="var(--cc-ink-strong)" opacity={0.06} />
+          <path d={lineB} fill="none" stroke="var(--cc-ink-strong)" strokeWidth={1.6} strokeLinejoin="round" />
+          {g.A.length ? (
+            <path d={g.A.map((d, i) => `${i ? 'L' : 'M'}${xAt(d.y).toFixed(1)} ${yAt(d.v).toFixed(1)}`).join(' ')} fill="none" stroke="var(--cc-accent)" strokeWidth={1.6} />
+          ) : null}
+          {g.A.map((d) => <circle key={d.y} cx={xAt(d.y)} cy={yAt(d.v)} r={2.8} fill="var(--cc-accent)" stroke="var(--cc-bg)" strokeWidth={1} />)}
+          {hy != null ? <line x1={xAt(hy)} y1={PAD_T} x2={xAt(hy)} y2={PAD_T + H} stroke="var(--cc-ink-soft)" strokeWidth={1} /> : null}
+          {hb ? <circle cx={xAt(hb.y)} cy={yAt(hb.v)} r={2.8} fill="var(--cc-ink-strong)" stroke="var(--cc-bg)" strokeWidth={1} /> : null}
+        </svg>
+        {hy != null && (hb || ha) ? (
+          <div className="pointer-events-none absolute top-0 rounded border border-[var(--cc-line)] bg-[var(--cc-bg)] px-1.5 py-1 text-[11px] shadow-sm" style={{ left: `${(xAt(hy) / W) * 100}%`, transform: 'translateX(-50%)' }}>
+            <div className="font-bold text-[var(--cc-ink-strong)]">{hy} 年</div>
+            {hb ? <div className="text-[var(--cc-ink-mid)]">代理 {hb.v.toFixed(2)}（{hb.n} 件）</div> : null}
+            {ha ? <div className="text-[var(--cc-accent)]">真投票 {ha.v.toFixed(2)}（{ha.n} 件）</div> : null}
+          </div>
+        ) : null}
+      </div>
+      <p className="mt-1.5 max-w-2xl text-[12px] leading-relaxed text-[var(--cc-figure-note)]">
+        分歧指數 0＝全體一致，愈高愈分裂。Tier B（骨幹）以分別意見加權為代理，涵蓋全行憲後、但<strong className="text-[var(--cc-ink-strong)]">早期水準偏低估</strong>——1990 前意見書罕寫或收於影像抄本（見上方覆蓋註），故早期近零含覆蓋下限、非純共識。Tier A（2022–）為立場表逐項真投票，高保真但只三年；同期真投票分歧高於意見書代理，因非每個反對都寫成意見書。兩層共用同一分歧軸、僅保真度與涵蓋不同。
       </p>
     </div>
   );
@@ -1909,6 +2282,7 @@ function ResearchProblem() {
           資料完整度：晚近（釋字 701 號後）與憲法法庭意見書覆蓋 100%；早／中期為<strong className="text-[var(--cc-ink-strong)]">下限</strong>——8 件釋字（115/150/153/156/393/503/517/564）的意見書藏在「意見書、抄本等文件」欄未解析（約 13+ 份，含王澤鑑、蘇俊雄、劉鐵錚等），另約 103 件的意見書收於影像抄本／OCR，官方頁不提供機讀文字。故上升「趨勢」穩健，早期「水準」偏低估。
         </p>
         <OpinionCoverage />
+        <DivergenceTimeSeries />
       </div>
 
       <div className="mt-5">
@@ -1944,7 +2318,7 @@ function ResearchProblem() {
         <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">證據三 · 真實投票（立場表）</p>
         <h3 className="text-[15px] font-bold text-[var(--cc-title-ink)]">解析 {LCT_RESULT.判決數} 件憲判立場表 → {LCT_RESULT.rollCalls} 個逐項表決（{LCT_RESULT.爭議} 爭議），大法官 1D 理想點</h3>
         <p className="mt-1.5 max-w-2xl text-[13px] leading-relaxed text-[var(--cc-ink-mid)]">
-          有了逐案「同意／不同意各主文項」的真投票，就能超越共同具名代理。<strong className="text-[var(--cc-ink-strong)]">憲法法庭 2022– 意見書與立場表 100% 覆蓋</strong>，是本頁證據基礎最扎實處。法院<strong className="text-[var(--cc-ink-strong)]">仍高共識</strong>（平均同意率 {Math.round(LCT_RESULT.平均同意率 * 100)}%）；1D 理想點沿提名總統分佈——{LCT_RESULT.提名總統均值.馬英九.n} 位馬英九提名的留任大法官聚於一極（右）。
+          有了逐案「同意／不同意各主文項」的真投票，就能超越共同具名代理。憲法法庭 2022– 立場表已<strong className="text-[var(--cc-ink-strong)]">回官網重抓、逐項重解</strong>（{LCT_RESULT.項次完整度?.完整}/{LCT_RESULT.項次完整度?.總數} 項達全體庭員），並經大法官意見書交叉校驗（不同意方 {LCT_RESULT.交叉校驗?.相符} 相符、僅 {LCT_RESULT.交叉校驗?.意見書疑漏} 疑漏），是本頁證據基礎最扎實處。法院多數決居多（平均同意率 {Math.round(LCT_RESULT.平均同意率 * 100)}%）；1D 理想點沿提名總統分佈，{LCT_RESULT.提名總統均值.馬英九.n} 位馬英九提名的留任大法官聚於一極（右）。
         </p>
         {(() => {
           const pts = LCT_RESULT.理想點; const xs = pts.map((p) => p.x);
@@ -1987,7 +2361,7 @@ function ResearchProblem() {
           </table>
         </div>
         <p className="mt-1.5 max-w-2xl text-[12px] leading-relaxed text-[var(--cc-ink-soft)]">
-          真投票下任命效果反而更弱、borderline（提名總統 p≈0.05，比共同具名的 0.03 弱）；出身、德語圈仍測不到。且那 {LCT_RESULT.提名總統均值.馬英九.n} 位極端者正是仍在任的舊屆——「同提名總統」在這屆幾乎等於「同一批留任者」，任命效果與世代效果無法分離。
+          真投票下只有「提名總統」測得到同質性（p＝{(LCT_RESULT.同質性.find((r) => r.維度 === '提名總統')?.p ?? 0).toFixed(3)}，強於共同具名代理的 0.03）；出身、德語圈測不到。但落在同一極的那 {LCT_RESULT.提名總統均值.馬英九.n} 位正是仍在任的舊屆留任者，這屆「同提名總統」幾乎等於「同一批留任者」，任命效果與世代效果仍分不開。
         </p>
       </div>
 
@@ -1997,15 +2371,15 @@ function ResearchProblem() {
         <ul className="mt-2 space-y-1.5 text-[13px] leading-relaxed text-[var(--cc-ink-mid)]">
           <li>真投票（立場表）只有憲法法庭 2022– 這 {LCT_RESULT.判決數} 件；釋字時期仍只有共同具名代理、無逐案投票。1D 理想點為古典 MDS 的簡單估計，非 W-NOMINATE／IRT。</li>
           <li>「提名總統」與世代無法分離：極端的 {LCT_RESULT.提名總統均值.馬英九.n} 人是仍在任的舊屆留任者，「同總統」幾乎等於「同一批人」。任命效果與 holdover／同期效果分不開。</li>
-          <li>只有一屆、樣本小（{stats.n} 人、{LCT_RESULT.爭議} 爭議案）；立場表尚有 {LCT_RESULT.重複旗標} 件同項矛盾旗標＋1 判決＋3 裁定待補。</li>
-          <li>資料完整度非全等：強命題（證據三）建立在憲判 2022– 這 100% 覆蓋段；證據一早／中期為下限（8 件釋字意見書藏於「意見書、抄本等文件」欄未解析、約 103 件收於影像抄本，見趨勢下方註）。分殊化「趨勢」穩健、早期「水準」偏低。</li>
+          <li>只有一屆、樣本小（{stats.n} 人、{LCT_RESULT.爭議} 爭議案）；57 判決立場表已全解析，逐項完整度 {LCT_RESULT.項次完整度?.完整}/{LCT_RESULT.項次完整度?.總數}（殘餘為多子部複雜版式與個別迴避，非系統性漏抓）；{LCT_RESULT.重複旗標} 件「同項既部分同意又部分不同意」為真實部分意見、非矛盾。</li>
+          <li>資料完整度非全等：強命題（證據三）建立在憲判 2022– 立場表（逐項真投票、意見書交叉校驗）；證據一早／中期為下限（8 件釋字意見書藏於「意見書、抄本等文件」欄未解析、約 103 件收於影像抄本，見趨勢下方註）。分殊化「趨勢」穩健、早期「水準」偏低。</li>
         </ul>
       </div>
 
       <div className="mt-3 max-w-3xl">
         <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">資料解鎖 · 下一步</p>
         <p className="mt-1 text-[13px] leading-relaxed text-[var(--cc-ink-mid)]">
-          立場表已首度解析（證據三），投票矩陣到手。要把它推到定論還缺三步：把 parser 寫回<strong className="text-[var(--cc-ink-strong)]">資料層底層</strong>（fetch＋schema＋sync，此為暫用預算結果）；改用正式理想點估計（W-NOMINATE／Martin–Quinn 而非 1D MDS）並在控制世代、案類、時間下檢定任命效果；補齊剩餘 1 判決＋3 裁定與 {LCT_RESULT.重複旗標} 件矛盾旗標的人工覆核。跨屆資料累積後，「任命 vs 世代」的共線才可能鬆開。
+          立場表已<strong className="text-[var(--cc-ink-strong)]">回官網重抓、重寫解析器</strong>（動態欄界＋名冊錨定；本頁計量現讀 analyze-lct.mjs 母本），並以意見書不同意作者交叉校驗（相符 {LCT_RESULT.交叉校驗?.相符}／疑漏 {LCT_RESULT.交叉校驗?.意見書疑漏}／立場表獨有 {LCT_RESULT.交叉校驗?.立場表獨有}）。要推到定論還缺兩步：改用正式理想點估計（W-NOMINATE／Martin–Quinn 而非 1D MDS）並在控制世代、案類、時間下檢定任命效果；人工覆核殘餘複雜版式項次。跨屆資料累積後，「任命 vs 世代」的共線才可能鬆開。
         </p>
       </div>
     </section>
@@ -2021,7 +2395,11 @@ function GraphView() {
   const [hover, setHover] = useState(null);
   const [colorByPres, setColorByPres] = useState(false); // 預設關：姓名走中性墨，畫面不花
 
-  const presByName = useMemo(() => new Map(justices.map((j) => [j.姓名, j.提名總統 ?? null])), []);
+  // 分期上色的提名總統：依當期任期段回各期提名總統（再任者如許宗力，扁期→陳水扁、英期→蔡英文）。
+  const presByName = useMemo(() => {
+    const era = GRAPH_ERAS.find((e) => e.key === eraKey) ?? GRAPH_ERAS[0];
+    return new Map(justices.map((j) => [j.姓名, presInEra(j, era.lo, era.hi)]));
+  }, [eraKey]);
 
   // 每段現算：pairStats / directed / byPair / degree（缺欄跳過不 throw）
   const eraData = useMemo(() => {
@@ -2562,6 +2940,7 @@ function HistoryView({ onOpenIndex }) {
 }
 
 function AboutView() {
+  const typedTotal = docs.filter((d) => d.結論類型).length;
   return (
     <div className="max-w-3xl">
       <section className="border-t border-[var(--cc-line)] py-5">
@@ -2578,10 +2957,33 @@ function AboutView() {
             每件案件的爭點、主文、相關法令、意見書清單與立場表連結均解析自官方頁面；文件下載一律連回官方網站，本站不代管任何檔案副本。
           </p>
           <p>
-            主題分類、稅法子主題與審查結論由規則初步標註（卡片上標示「結論待人工判讀」者即尚未人工覆核），意見書作者與共同具名關係解析自官方檔名；早期意見書僅收於抄本合訂檔者，已從抄本檔名拆出（卡片上仍連向抄本 PDF）。中期釋字（約第 100–400 號）的意見書常整卷收於抄本且檔名未列作者，該時期的意見書統計為下限而非全貌。
+            主題分類、稅法子主題與審查結論由規則初步標註；粗軸判不出的「待人工」件，其中大法官釋字＋憲法法庭憲判部分已由類型學逐件覆核（卡片改標處分模式，如「純解釋」「違憲宣告」，詳見下節），其餘仍標「結論待人工判讀」。意見書作者與共同具名關係解析自官方檔名；早期意見書僅收於抄本合訂檔者，已從抄本檔名拆出（卡片上仍連向抄本 PDF）。中期釋字（約第 100–400 號）的意見書常整卷收於抄本且檔名未列作者，該時期的意見書統計為下限而非全貌。
           </p>
           <p>
             「審查基準」欄依湯德宗三級架構（寬鬆／中度／嚴格）機標：本院自釋字第 578 號起才明確區分寬嚴審查基準，之前案件不標；機標只認理由書明示字樣，多數案件為「未明示」，同案命中多級者標「待人工」。參與大法官名單：釋字取自官方頁解釋文／理由書末尾的大法官署名列（813 件全覆蓋，署名列不含迴避或未參與評議者），憲法法庭判決與裁定取自官方合議庭名單欄。
+          </p>
+        </div>
+      </section>
+      <section className="border-t border-[var(--cc-line)] py-5">
+        <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">審查結論類型學</p>
+        <h2 className="text-base sm:text-lg font-bold text-[var(--cc-title-ink)]">六個軸，替粗軸看不見的處分模式補上解析度</h2>
+        <div className="mt-2 space-y-2 text-[13.5px] leading-relaxed text-[var(--cc-ink-mid)]">
+          <p>
+            粗軸「審查結論」只有六格（合憲／違憲／違憲定期失效／法令解釋／補充前解釋／變更前解釋），另有一批文字規則判不出的「待人工」殘餘。類型學在粗軸之外另立六個分析軸，替這批殘餘補上細分：
+          </p>
+          <ul className="ml-4 list-disc space-y-1">
+            <li><strong className="text-[var(--cc-ink-strong)]">A 處分模式</strong>（單選）：合憲性判斷的九種樣態——單純合憲、合憲性限縮、合憲附警告、違憲宣告、純解釋、權限歸屬宣告、程序／暫時處分、不受理、位階審查。</li>
+            <li><strong className="text-[var(--cc-ink-strong)]">B 違憲處分技術</strong>（多值）：即時失效、定期失效、未定失效時點、排除適用、連帶失效、部分違憲、漏未規定型違憲。</li>
+            <li><strong className="text-[var(--cc-ink-strong)]">C 標的類型</strong>（單選）：受審查／受解釋的對象是法律、命令函釋、判例決議、憲法條文、法律涵義⋯⋯</li>
+            <li><strong className="text-[var(--cc-ink-strong)]">D 對前解釋關係</strong>（多值）：補充、變更、維持、訂正、區別前解釋。</li>
+            <li><strong className="text-[var(--cc-ink-strong)]">E 救濟與後續</strong>（多值）：課予修法義務、過渡規則、個案救濟、裁判憲法審查救濟、框架性立法指示、部分不受理。</li>
+            <li><strong className="text-[var(--cc-ink-strong)]">F 解釋權能</strong>（多值）：憲法解釋或統一解釋。</li>
+          </ul>
+          <p>
+            範圍目前只涵蓋「大法官釋字＋憲法法庭憲判」中粗軸判不出的「待人工」殘餘 {typedTotal} 件，均經雙盲逐件覆核。這批殘餘拆開後，逾半其實是文字規則抓不到「與憲法」字樣的純解釋與統一解釋。已由粗軸分好的合憲／違憲等件尚未逐件套細軸。
+          </p>
+          <p>
+            「案件索引」的類型學 6 軸篩選只作用在這 {typedTotal} 件；「案件時間軸」的「主題×處分模式」矩陣則把已覆核件與粗軸換算件合併呈現 A 軸分佈（換算：合憲→P1、違憲→P4、法令解釋→P5⋯⋯，無法細分限縮 P2／附警告 P3），矩陣圖說已標明兩者比例。編碼本與逐件貼標見資料庫的 <span className="text-[var(--cc-ink-soft)]">materials/審查結論類型學.json</span>。
           </p>
         </div>
       </section>

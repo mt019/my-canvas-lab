@@ -22,7 +22,7 @@
       "tax-incentives",
       "tax-certainty-and-disputes"
     ],
-    "workflowState": "download-needed",
+    "workflowState": "parsed",
     "refreshCadence": "monthly"
   },
   {
@@ -50,6 +50,111 @@
     "refreshCadence": "quarterly"
   },
   {
+    "id": "oecd-beps-topic-page",
+    "institution": "OECD",
+    "title": {
+      "zh": "OECD BEPS 主題頁",
+      "en": "OECD Base Erosion and Profit Shifting (BEPS) topic page"
+    },
+    "url": "https://www.oecd.org/en/topics/base-erosion-and-profit-shifting-beps.html",
+    "dateChecked": "2026-07-09",
+    "authorityTier": "official-process",
+    "materialType": [
+      "agenda-or-workplan"
+    ],
+    "epistemicLayer": [
+      "future-development",
+      "actor-ecosystem"
+    ],
+    "temporalStatus": "current-final",
+    "topicDomain": [
+      "pillar-one",
+      "pillar-two",
+      "tax-treaties",
+      "transfer-pricing"
+    ],
+    "workflowState": "parsed",
+    "refreshCadence": "weekly"
+  },
+  {
+    "id": "oecd-pillar-two-tax-certainty-consultation-2022",
+    "institution": "OECD",
+    "title": {
+      "zh": "Pillar Two：GloBE 規則稅務確定性公開諮詢文件",
+      "en": "Public Consultation Document - Pillar Two: Tax Certainty for the GloBE Rules"
+    },
+    "url": "https://web-archive-storage.oecd.org/aemint-web-archive-prod/web-archive/2a/2a10597c2d4e94f9c7d84f85b4ec81cd9b752a08792b7bf57688fc658859dfd8.pdf",
+    "dateChecked": "2026-07-09",
+    "authorityTier": "official-process",
+    "materialType": [
+      "consultation-document"
+    ],
+    "epistemicLayer": [
+      "future-development",
+      "normative-rule",
+      "implementation-reality"
+    ],
+    "temporalStatus": "current-final",
+    "topicDomain": [
+      "pillar-two",
+      "tax-certainty-and-disputes"
+    ],
+    "workflowState": "parsed",
+    "refreshCadence": "manual"
+  },
+  {
+    "id": "danon-gutmann-maisto-martin-jimenez-globe-dispute-resolution-2022",
+    "institution": "IBFD / World Tax Journal",
+    "title": {
+      "zh": "OECD/G20 全球最低稅負與爭端解決：以 OECD 範本第 25(3) 條、互惠原則與 GloBE 示範規則為基礎的可行方案",
+      "en": "The OECD/G20 Global Minimum Tax and Dispute Resolution: A Workable Solution Based on Article 25(3) of the OECD Model, the Principle of Reciprocity and the GloBE Model Rules"
+    },
+    "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4194671",
+    "dateChecked": "2026-07-09",
+    "authorityTier": "academic-peer",
+    "materialType": [
+      "research-paper"
+    ],
+    "epistemicLayer": [
+      "research-hotspot",
+      "normative-rule",
+      "future-development"
+    ],
+    "temporalStatus": "current-final",
+    "topicDomain": [
+      "pillar-two",
+      "tax-certainty-and-disputes"
+    ],
+    "workflowState": "parsed",
+    "refreshCadence": "manual"
+  },
+  {
+    "id": "danon-gutmann-maisto-martin-jimenez-globe-tax-certainty-2023",
+    "institution": "IBFD / International Tax Studies",
+    "title": {
+      "zh": "GloBE 規則與稅務確定性：預防並解決 GloBE 爭端的架構提案",
+      "en": "The Global Anti-Base Erosion (GloBE) Rules and Tax Certainty: A Proposed Architecture to Prevent and Resolve GloBE Disputes"
+    },
+    "url": "https://research.ibfd.org/#/doc?url=/document/itaxs_2023_02_int_1",
+    "dateChecked": "2026-07-09",
+    "authorityTier": "academic-peer",
+    "materialType": [
+      "research-paper"
+    ],
+    "epistemicLayer": [
+      "research-hotspot",
+      "normative-rule",
+      "future-development"
+    ],
+    "temporalStatus": "current-final",
+    "topicDomain": [
+      "pillar-two",
+      "tax-certainty-and-disputes"
+    ],
+    "workflowState": "parsed",
+    "refreshCadence": "manual"
+  },
+  {
     "id": "un-unfcitc-terms-reference-2025",
     "institution": "United Nations",
     "title": {
@@ -57,7 +162,7 @@
       "en": "Terms of Reference for a UN Framework Convention on International Tax Cooperation"
     },
     "url": "https://financing.desa.un.org/document/terms-reference-united-nations-framework-convention-international-tax-cooperation",
-    "dateChecked": "2026-07-02",
+    "dateChecked": "2026-07-09",
     "authorityTier": "official-process",
     "materialType": [
       "agenda-or-workplan",
@@ -74,7 +179,7 @@
       "developing-country-taxation"
     ],
     "workflowState": "parsed",
-    "refreshCadence": "weekly"
+    "refreshCadence": "monthly"
   },
   {
     "id": "un-tax-committee-home",
@@ -206,6 +311,132 @@
     "refreshCadence": "quarterly"
   },
   {
+    "id": "oecd-side-by-side-package-2026",
+    "institution": "OECD",
+    "title": {
+      "zh": "2026 Pillar Two Side-by-Side 配套方案",
+      "en": "Global Anti-Base Erosion Model Rules (Pillar Two), Side-by-Side Package"
+    },
+    "url": "https://www.oecd.org/content/dam/oecd/en/topics/policy-sub-issues/global-minimum-tax/side-by-side-package.pdf",
+    "dateChecked": "2026-07-02",
+    "authorityTier": "official-soft-law",
+    "materialType": [
+      "implementation-toolkit"
+    ],
+    "epistemicLayer": [
+      "normative-rule",
+      "implementation-reality"
+    ],
+    "temporalStatus": "current-final",
+    "topicDomain": [
+      "pillar-two",
+      "tax-incentives",
+      "tax-certainty-and-disputes"
+    ],
+    "workflowState": "parsed",
+    "refreshCadence": "monthly"
+  },
+  {
+    "id": "unil-map-pillar-two-days-2026",
+    "institution": "University of Lausanne",
+    "title": {
+      "zh": "2026 MAP 與 Pillar Two 研討會議程",
+      "en": "The MAP and Pillar Two Days 2026 Programme"
+    },
+    "url": "https://api.unil.ch/newsunil/v1/api-newsunil/resources/document/1770123969818.D1774959037213?2026-03-31T12%3A10%3A40.641=",
+    "dateChecked": "2026-07-02",
+    "authorityTier": "academic-peer",
+    "materialType": [
+      "event-or-network-signal"
+    ],
+    "epistemicLayer": [
+      "actor-ecosystem",
+      "research-hotspot"
+    ],
+    "temporalStatus": "current-final",
+    "topicDomain": [
+      "pillar-two",
+      "tax-certainty-and-disputes",
+      "transfer-pricing"
+    ],
+    "workflowState": "parsed",
+    "refreshCadence": "manual"
+  },
+  {
+    "id": "euto-offshore-wealth-data-page",
+    "institution": "EU Tax Observatory",
+    "title": {
+      "zh": "個人稅逃漏規模資料頁",
+      "en": "The scale of tax evasion by individuals"
+    },
+    "url": "https://taxobservatory.eu/repository/scale-of-tax-evasion-individuals/",
+    "dateChecked": "2026-07-02",
+    "authorityTier": "academic-peer",
+    "materialType": [
+      "dataset-or-statistics"
+    ],
+    "epistemicLayer": [
+      "data-evidence"
+    ],
+    "temporalStatus": "current-final",
+    "topicDomain": [
+      "hnwi-wealth-taxation",
+      "data-and-measurement"
+    ],
+    "workflowState": "parsed",
+    "refreshCadence": "quarterly"
+  },
+  {
+    "id": "unil-tax-policy-center-research",
+    "institution": "University of Lausanne",
+    "title": {
+      "zh": "洛桑大學 Tax Policy Center 研究與出版頁",
+      "en": "Tax Policy Center Research and Publications"
+    },
+    "url": "https://www.unil.ch/taxpolicy/en/home/menuinst/recherche.html",
+    "dateChecked": "2026-07-02",
+    "authorityTier": "academic-peer",
+    "materialType": [
+      "event-or-network-signal"
+    ],
+    "epistemicLayer": [
+      "actor-ecosystem",
+      "research-hotspot"
+    ],
+    "temporalStatus": "current-final",
+    "topicDomain": [
+      "swiss-international-tax",
+      "tax-certainty-and-disputes"
+    ],
+    "workflowState": "monitoring",
+    "refreshCadence": "weekly"
+  },
+  {
+    "id": "danonlaw-about",
+    "institution": "DANON",
+    "title": {
+      "zh": "Danon 個人 About 頁",
+      "en": "Danon professional about page"
+    },
+    "url": "https://danonlaw.ch/en/about-us/",
+    "dateChecked": "2026-07-02",
+    "authorityTier": "professional-analysis",
+    "materialType": [
+      "event-or-network-signal"
+    ],
+    "epistemicLayer": [
+      "actor-ecosystem"
+    ],
+    "temporalStatus": "current-final",
+    "topicDomain": [
+      "tax-certainty-and-disputes",
+      "investment-arbitration-and-tax",
+      "swiss-international-tax"
+    ],
+    "workflowState": "parsed",
+    "refreshCadence": "weekly"
+  },
+  {
     "id": "un-inc-ws1-convention-template-2026-01-22",
     "institution": "UN FSDO / INC-Tax",
     "title": {
@@ -280,5 +511,106 @@
     ],
     "workflowState": "parsed",
     "refreshCadence": "monthly"
+  },
+  {
+    "id": "danon-wuschka-international-investment-agreements-tax-system-2021",
+    "institution": "IBFD / Bulletin for International Taxation",
+    "title": {
+      "zh": "國際投資協定與國際稅收體系：互補性與調和解釋的可能",
+      "en": "International Investment Agreements and the International Tax System: The Potential of Complementarity and Harmonious Interpretation"
+    },
+    "url": "https://research.ibfd.org/#/doc?url=/document/bit_2021_11_o2_19",
+    "dateChecked": "2026-07-09",
+    "authorityTier": "academic-peer",
+    "materialType": [
+      "research-paper"
+    ],
+    "epistemicLayer": [
+      "research-hotspot",
+      "normative-rule",
+      "controversy"
+    ],
+    "temporalStatus": "current-final",
+    "topicDomain": [
+      "investment-arbitration-and-tax",
+      "tax-certainty-and-disputes",
+      "tax-treaties"
+    ],
+    "workflowState": "parsed",
+    "refreshCadence": "manual"
+  },
+  {
+    "id": "danon-ppt-post-beps-tax-treaty-law-2020",
+    "institution": "IBFD / Bulletin for International Taxation",
+    "title": {
+      "zh": "後 BEPS 租稅協定法中的 PPT：它是 GAAR，但只是 GAAR",
+      "en": "The PPT in Post-BEPS Tax Treaty Law: It Is a GAAR but Just a GAAR!"
+    },
+    "url": "https://serval.unil.ch/resource/serval:BIB_BBFD1C26AF9B.P001/REF.pdf",
+    "dateChecked": "2026-07-09",
+    "authorityTier": "academic-peer",
+    "materialType": [
+      "research-paper"
+    ],
+    "epistemicLayer": [
+      "normative-rule",
+      "controversy"
+    ],
+    "temporalStatus": "current-final",
+    "topicDomain": [
+      "tax-treaties",
+      "beneficial-ownership-and-abuse"
+    ],
+    "workflowState": "parsed",
+    "refreshCadence": "manual"
+  },
+  {
+    "id": "danon-treaty-abuse-post-beps-world-2017",
+    "institution": "IBFD / Bulletin for International Taxation",
+    "title": {
+      "zh": "後 BEPS 世界中的租稅協定濫用：政策轉向與 PPT 對跨國企業集團的影響",
+      "en": "Treaty Abuse in the Post-BEPS World: Analysis of the Policy Shift and Impact of the Principal Purpose Test for MNE Groups"
+    },
+    "url": "https://serval.unil.ch/",
+    "dateChecked": "2026-07-09",
+    "authorityTier": "academic-peer",
+    "materialType": [
+      "research-paper"
+    ],
+    "epistemicLayer": [
+      "normative-rule",
+      "controversy"
+    ],
+    "temporalStatus": "current-final",
+    "topicDomain": [
+      "tax-treaties",
+      "beneficial-ownership-and-abuse"
+    ],
+    "workflowState": "parsed",
+    "refreshCadence": "manual"
+  },
+  {
+    "id": "danon-et-al-transparent-entities-oecd-model-mli-2017",
+    "institution": "British Tax Review / IBFD",
+    "title": {
+      "zh": "關於財政透明實體之 OECD 範本與註釋修訂、MLI 條款的若干反思",
+      "en": "Some Reflections on the Proposed Revisions to the OECD Model and Commentaries, and on the Multilateral Instrument, With Respect to Fiscally Transparent Entities"
+    },
+    "url": "https://serval.unil.ch/",
+    "dateChecked": "2026-07-09",
+    "authorityTier": "academic-peer",
+    "materialType": [
+      "research-paper"
+    ],
+    "epistemicLayer": [
+      "normative-rule",
+      "implementation-reality"
+    ],
+    "temporalStatus": "current-final",
+    "topicDomain": [
+      "tax-treaties"
+    ],
+    "workflowState": "parsed",
+    "refreshCadence": "manual"
   }
 ]

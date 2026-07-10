@@ -74,7 +74,28 @@ raw official + thesis-abstract coverage stabilizes.
 
 ### `InternationalTaxOps`
 
-Full tab-based research desk, not a stub:
+Full tab-based research desk, not a stub. **2026-07-09 reframing:**
+this page should become the public-facing UNIL/Danon PhD research
+agenda, not a source-management dashboard. Source registry, watchlist,
+and relation graph remain supporting views. The research record and
+actual judgments live in `../intl-tax-ops-lab`; Canvas renders the
+public-safe copies under `src/data/intlTaxOps/`.
+
+Research split:
+
+- `InternationalTaxOps` = PhD research agenda: core question, Danon fit,
+  Ziegler interface, institutional design disputes, literature gaps, and
+  next written outputs.
+- `ManusMetaAcquisition` = origin case / motivating example. It explains
+  where the question comes from and tests the Danon × Ziegler frame, but
+  it is not the whole proposal.
+
+Next UI direction: first screen should answer "What is the PhD question,
+why UNIL/Danon, and what is the next research output?" before showing
+sources. Avoid visible engineering language such as parser, pipeline,
+repo, schema, raw, snapshot, workflowState, or sourceTier.
+
+Current tab-based implementation:
 
 - **Tab bar** (`.mainTabBar`, matches `GovernmentDebt`'s pattern):
   議題矩陣 / 來源登錄 / 前沿監測 / 關係圖譜 / 案例與爭議. Only the
@@ -102,10 +123,9 @@ Full tab-based research desk, not a stub:
   judicial split, a concrete Qatar QDMTT date discrepancy, and a
   cross-reference to `ManusMetaAcquisition` as the one entry with a
   live, dated fact pattern). Ties directly into the user's UNIL/Danon
-  PhD application research
-  (`~/Documents/NTU/1141/2027-phd-application/20_PhD申請/applications/unil_danon/`)
-  — treat that folder as authoritative background before extending
-  Danon-related content, don't re-derive his positions from scratch.
+  PhD application research folder for UNIL/Danon — treat that folder as
+  authoritative background before extending Danon-related content,
+  don't re-derive his positions from scratch.
 
 Data layer: `src/data/intlTaxOps/*.json`, public-safe snapshots synced
 from `intl-tax-ops-lab/data/*.json`. **`data/raw/`/`data/parsed/`
@@ -114,6 +134,10 @@ see the `canvas-research-data-workflow` Codex skill. `topics.json` was
 rewritten with cited, specific claims (page counts, decision dates,
 named cases) replacing generic scaffold text — don't write a topic
 summary without a citation behind it.
+
+Durable research handoff for this page lives in
+`../intl-tax-ops-lab/docs/12_PHD_RESEARCH_LAYOUT.md`. Read it before
+changing the page structure.
 
 Styling: `InternationalTaxOps.module.css`, CSS Modules scoped via a
 `.workspace` wrapper (see `css-modules-porting` skill for why bare
@@ -133,6 +157,14 @@ sub-topic of the same research domain, just implemented as its own
 canvas-lab page. Component is now 695 lines, rendering logic only. Icon
 components can't survive JSON serialization — stored as string `iconId`
 and remapped to components in the JSX header.
+
+2026-07-09 research role: this page is the origin case for the PhD
+application narrative. It should gain a concise section explaining how
+the Manus-Meta fact pattern motivates the broader research agenda:
+mobile intangible value, offshore legal ownership, technology/security
+control, investment protection, and tax realization split across
+jurisdictions. Keep detailed research notes in `../intl-tax-ops-lab`;
+Canvas should only show the polished public version.
 
 ### `FiscalEnforcementRisk`
 
@@ -231,6 +263,33 @@ work.
   大法官 segment, and the frontend's `formatTenureRange` prefixes the
   non-大法官 role (verified rendering on 戴炎輝's page). 黃正銘's third-term
   end was also corrected in passing (1976 → 1972-07-04 呈請退職).
+- 2026-07-10 審查結論**類型學 6 軸**前端上線 (frontend-only, **DONE**):
+  快照每件的 `結論類型` 欄（6 軸 A–F，資料 repo `data/materials/審查結論類型學.json`
+  編碼本＋`data/processed/審查結論類型.json` 逐件貼標）之前完全沒被前端消費；此次接上。
+  範圍界線很重要：`結論類型` 目前**只涵蓋粗軸判不出的「待人工」殘餘 196 件**（全 agent
+  雙盲覆核，且全部 `審查結論.結論 === 其他/待人工`）；已由粗軸分好的 657 件行憲後案件**沒有**
+  細軸值。`ConstitutionalCourt.jsx` 改動：(1) 常數 `TYPO_AXES`/`TYPO_LABEL`/`A_ORDER`/
+  `A_TONE`＋`resolveA(d)`（agent 細軸優先，否則 `COARSE_TO_A` 把粗軸換算成 A 軸）＋
+  `typoValues(d)`（~L139）；(2) `CaseCard` 卡片：agent 覆核件的 A-badge **取代**原本無用的
+  「結論待人工判讀」badge，並在主題列下方加一排 B/C/D/E/F chip＋provenance（如「純解釋」＋
+  「C 審判權/管轄」「F 統一解釋」）；(3) `IndexView` 加**可摺疊的 6 軸篩選面板**（6 個 Select，
+  只在 `!isPre` 顯示，作用於 196 件，選任一軸值即只列已類型化件；header 顯示「已類型化 N 件」）；
+  (4) `TopicHeatmaps` 加「主題×處分模式（A 軸）」矩陣——用 `resolveA` 把粗軸 657 件橋接進 A 軸
+  分佈、agent 158 件覆蓋（有主題者才計；圖說標明 158 agent/562 bridge，並註記 A 為單選主處分、
+  複合「部分違憲部分合憲」結構在 B-B6/E-E6 多值軸、多數違憲案未套細軸故矩陣尚看不到部分結構）；
+  (5) `AboutView` 加類型學說明節。全在 canvas repo、零資料重跑、`resolveA` 純函式可逆。
+  build（fonts/tokens/colors/vite）全綠、Playwright 實機驗證（篩選 A=純解釋→119 件、釋字772
+  卡片 A-badge＋chip、兩矩陣渲染）。
+- 2026-07-10（同日續）**兩個 follow-up 完成**（見 TODO）：① draft-3 最後 21 件已 `app-json→sync`（196→217）。
+  ② 行憲後 309 件違憲* 雙盲貼標（每輪 opus×2 pass、gate `--agree`＝一致即採納，使用者核可；資料 repo
+  `typology-tag-gate.mjs` 加旗標）：五輪採納 **286 件**、23 件真分歧進人工佇列（資料 repo `docs/類型學-人工佇列.md`）。
+  來源 `審查結論類型.json` 217→**503**（500 agent 覆核：407 高／88 中／5 低），validate 全過。348 件非違憲件依
+  使用者裁示跳過。複合結構已現形（釋775：B-B1＋B-B3＋B-B5＋B-B6，卡片 chip 全列，Playwright 驗證）。
+  注意：**canvas 快照經完整 `app-json→sync` 正規化到 503**（含 `結論類型` 6 軸）。（先前一版曾用 overlay，已被完整 build 取代。）曾誤判有並行 Codex
+  在資料 repo 跑立場表計量分析 W2（`build-app-json.mjs`／`analyze-lct`／`立場表投票.json` 未 commit），跑完整
+  `app-json→sync` 會把其半成品推上前端。**Codex commit W2 後**，補跑一次乾淨 `app-json→sync` 即正規化快照
+  （結果同 503，且格式回正——目前 overlay 為 minified）。資料 repo 的 `審查結論類型.json`／gate 旗標／held／
+  人工佇列 doc 皆 uncommitted，與 Codex 的 W2 在同一工作樹（各自檔案不重疊，可 selective add 分別 commit）。
 - 2026-07-07 審查結論 typology (data-side + frontend + sync **DONE**):
   the data repo reworked `classifyOutcome` so early 釋字 that aren't
   constitutionality review get real categories. `審查結論.結論` now has,
@@ -624,7 +683,7 @@ rules on that evaluation, DESIGN.md's "no new fonts, don't touch
 
 ## Security (done, stable — do not revisit)
 
-Local machine paths (`/Users/iw/...`) were removed from both
+Local machine paths were removed from both
 `my-canvas-lab` and `intl-tax-ops-lab`, with git histories rewritten
 and force-pushed. `intl-tax-ops-lab`'s history was fully scrubbed with
 `git filter-repo --replace-text` since the leak dated to its first
