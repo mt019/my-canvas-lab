@@ -1,0 +1,575 @@
+[
+  {
+    "id": "map",
+    "category": "concept",
+    "term": {
+      "zh": "相互協議程序（MAP）",
+      "en": "Mutual Agreement Procedure (MAP)"
+    },
+    "definition": {
+      "zh": "雙邊稅約下由兩國主管機關協商解決課稅爭議的政府間程序（OECD／UN 範本第 25 條）。納稅人可申請啟動，但不是程序當事人；主管機關只負「盡力協商」義務，沒有必須達成合意的義務，也多無時限。",
+      "en": "The intergovernmental procedure under bilateral tax treaties (Article 25 of the OECD and UN Models) by which the two competent authorities negotiate taxation disputes. The taxpayer can request it but is not a party; the authorities owe only an obligation to endeavour to agree, with no duty to reach agreement and usually no deadline."
+    },
+    "whyItMatters": {
+      "zh": "MAP 的啟動、排除與結果落實是本研究「救濟確定性」的主戰場：Danon 批評各國以國內程序不當限縮 MAP 取得，UN 爭端議定書（CRP.28 §37）也把 MAP 取得保障明文入列。",
+      "en": "MAP initiation, exclusion, and implementation of outcomes are the main battleground of this project's remedial-certainty question: Danon criticizes undue domestic restrictions on MAP access, and the UN dispute protocol (CRP.28 §37) writes MAP-access safeguards into the text."
+    },
+    "sourceLabel": {
+      "zh": "OECD 範本稅約（2017 精簡版）",
+      "en": "OECD Model Tax Convention (2017 condensed)"
+    },
+    "sourceUrl": "https://doi.org/10.1787/mtc_cond-2017-en",
+    "relatedTopicIds": [
+      "danon-lausanne-disputes",
+      "un-tax-convention-governance"
+    ]
+  },
+  {
+    "id": "mandatory-binding-arbitration",
+    "category": "concept",
+    "term": {
+      "zh": "強制拘束仲裁（MAP 仲裁）",
+      "en": "Mandatory binding MAP arbitration"
+    },
+    "definition": {
+      "zh": "OECD 式設計：MAP 兩年（或三年）未決時，未解決事項應納稅人請求移交仲裁，裁決拘束雙方主管機關（OECD 範本第 25 條第 5 項；MLI 第六部分為自選模組）。仍是主管機關間程序的延伸，不是納稅人的獨立救濟。",
+      "en": "The OECD-style design: issues unresolved after two (or three) years of MAP go to arbitration at the taxpayer's request, and the decision binds both competent authorities (OECD Model Article 25(5); Part VI of the MLI as an opt-in module). It remains an extension of the competent-authority procedure, not an independent taxpayer remedy."
+    },
+    "whyItMatters": {
+      "zh": "UN 路線明確走反方向：CRP.28 把仲裁設計為自選、最後手段、無先例效力——兩種制度設計的對照是「UN vs OECD 制度設計」研究線的核心素材。",
+      "en": "The UN track goes the other way: CRP.28 designs arbitration as optional, last-resort, with no precedential value — the contrast between the two designs is core material for the UN-vs-OECD research line."
+    },
+    "sourceLabel": {
+      "zh": "OECD BEPS 主題頁",
+      "en": "OECD BEPS topic page"
+    },
+    "sourceUrl": "https://www.oecd.org/en/topics/base-erosion-and-profit-shifting-beps.html",
+    "relatedTopicIds": [
+      "un-tax-convention-governance",
+      "danon-lausanne-disputes"
+    ]
+  },
+  {
+    "id": "final-offer-arbitration",
+    "category": "concept",
+    "term": {
+      "zh": "最終報價仲裁（final-offer）",
+      "en": "Final-offer arbitration"
+    },
+    "definition": {
+      "zh": "仲裁庭只能在雙方各自提出的完整方案中擇一採納、不得自行折衷的仲裁制（又稱棒球仲裁）。UN 爭端議定書概念說明（CRP.28 §41）採此制，並明定裁決無先例價值、納稅人非程序當事人。",
+      "en": "An arbitration format in which the panel must pick one side's complete proposal and cannot craft a compromise (also called baseball arbitration). The UN dispute-protocol concept note (CRP.28 §41) adopts it, with no precedential value and no taxpayer party status."
+    },
+    "sourceLabel": {
+      "zh": "UN 工作流三概念說明（CRP.28）",
+      "en": "UN Workstream III concept note (CRP.28)"
+    },
+    "sourceUrl": "https://financing.desa.un.org/document/workstream-iii-dispute-prevention-and-resolution-co-leads-concept-note-23-jan-2026",
+    "relatedTopicIds": [
+      "un-tax-convention-governance"
+    ]
+  },
+  {
+    "id": "ppt",
+    "category": "concept",
+    "term": {
+      "zh": "主要目的測試（PPT）",
+      "en": "Principal Purpose Test (PPT)"
+    },
+    "definition": {
+      "zh": "BEPS 行動 6 引入的協定層級一般反濫用規則：若取得協定利益是某安排的主要目的之一，且授予利益不符相關條款的目的與宗旨，得否准該利益（MLI 第 7 條；OECD 範本第 29 條第 9 項）。Danon（2020）的定性：它是一條 GAAR，也僅是一條 GAAR——不應被擴張成一般實質課稅原則。",
+      "en": "The treaty-level general anti-abuse rule introduced by BEPS Action 6: benefits may be denied if obtaining them was one of the principal purposes of an arrangement, unless granting them accords with the object and purpose of the relevant provisions (MLI Article 7; OECD Model Article 29(9)). Danon's (2020) characterization: it is a GAAR, and just a GAAR — not to be inflated into a general substance-over-form doctrine."
+    },
+    "whyItMatters": {
+      "zh": "PPT 的主觀要件在各國法院的適用分歧，是「條文收斂、適用分歧」命題最鋒利的測試場。",
+      "en": "Divergent judicial application of the PPT's subjective element is the sharpest test case for the 'converging text, diverging application' thesis."
+    },
+    "sourceLabel": {
+      "zh": "Danon, The PPT in Post-BEPS Tax Treaty Law (2020)",
+      "en": "Danon, The PPT in Post-BEPS Tax Treaty Law (2020)"
+    },
+    "sourceUrl": "https://serval.unil.ch/resource/serval:BIB_BBFD1C26AF9B.P001/REF.pdf",
+    "relatedTopicIds": [
+      "danon-lausanne-disputes"
+    ]
+  },
+  {
+    "id": "beps",
+    "category": "concept",
+    "term": {
+      "zh": "稅基侵蝕與利潤移轉（BEPS）",
+      "en": "Base Erosion and Profit Shifting (BEPS)"
+    },
+    "definition": {
+      "zh": "跨國企業利用各國稅制落差與稅約網絡，把利潤移往低稅或無稅地、侵蝕來源國稅基的行為總稱。OECD／G20 於 2013–2015 年以十五項行動計畫回應，產出 PPT、國別報告、MLI 等工具；2021 年再延伸為雙支柱方案。",
+      "en": "The umbrella term for multinationals exploiting mismatches between national tax systems and the treaty network to shift profits into low- or no-tax jurisdictions, eroding source-country bases. The OECD/G20 responded with fifteen Action items (2013–2015) producing the PPT, country-by-country reporting, and the MLI, extended in 2021 into the Two-Pillar solution."
+    },
+    "sourceLabel": {
+      "zh": "OECD BEPS 主題頁",
+      "en": "OECD BEPS topic page"
+    },
+    "sourceUrl": "https://www.oecd.org/en/topics/base-erosion-and-profit-shifting-beps.html",
+    "relatedTopicIds": [
+      "pillar-two-simplification"
+    ]
+  },
+  {
+    "id": "globe-pillar-two",
+    "category": "concept",
+    "term": {
+      "zh": "全球最低稅（Pillar Two／GloBE）",
+      "en": "Global minimum tax (Pillar Two / GloBE)"
+    },
+    "definition": {
+      "zh": "對年合併營收 7.5 億歐元以上的跨國集團，按轄區計算有效稅率、低於 15% 就由母國或其他轄區課徵補足稅的規則體系（IIR 所得涵蓋原則＋UTPR 補充規則）。法律形式上不是條約：各國把 GloBE 立法範本轉譯進內國法，解釋權威集中在 OECD 持續更新的註釋。",
+      "en": "A rule system that computes a jurisdictional effective tax rate for MNE groups with consolidated revenue above EUR 750 million and levies a top-up tax where the rate falls below 15% (the Income Inclusion Rule plus the UTPR backstop). Legally it is not a treaty: states transpose the GloBE Model Rules into domestic law, while interpretive authority concentrates in the OECD's continuously updated Commentary."
+    },
+    "whyItMatters": {
+      "zh": "「法源在內國法、解釋在註釋」的結構，把國際稅法的規範生產搬離雙邊稅約文本——本研究救濟確定性問題的制度背景。",
+      "en": "The 'sources in domestic law, interpretation in the Commentary' structure moves norm production away from bilateral treaty text — the institutional backdrop of this project's remedial-certainty question."
+    },
+    "sourceLabel": {
+      "zh": "GloBE 整合註釋（2026）",
+      "en": "Consolidated GloBE Commentary (2026)"
+    },
+    "sourceUrl": "https://www.oecd.org/en/publications/tax-challenges-arising-from-the-digitalisation-of-the-economy-consolidated-commentary-to-the-global-anti-base-erosion-model-rules-2026_4377e89f-en.html",
+    "relatedTopicIds": [
+      "pillar-two-simplification",
+      "danon-lausanne-disputes"
+    ]
+  },
+  {
+    "id": "qdmtt",
+    "category": "concept",
+    "term": {
+      "zh": "合格國內最低補足稅（QDMTT）",
+      "en": "Qualified Domestic Minimum Top-up Tax (QDMTT)"
+    },
+    "definition": {
+      "zh": "轄區對境內低稅利潤自行課徵的國內補足稅；經認定「合格」者優先於其他國家的 IIR／UTPR 適用，讓稅收留在來源地。合格與否由同儕審查認定並登載於 OECD 中央紀錄。",
+      "en": "A domestic top-up tax a jurisdiction levies on its own low-taxed profits; once recognized as 'qualified' it takes priority over other countries' IIR/UTPR, keeping the revenue at home. Qualification is determined by peer review and recorded in the OECD Central Record."
+    },
+    "whyItMatters": {
+      "zh": "Qatar 的 QDMTT 生效日在 OECD 中央紀錄與其他官方文件間記載不一——「已認定合格」的規則仍有跨文件版本落差，是確定性缺口的具體例。",
+      "en": "Qatar's QDMTT effective date differs between the OECD Central Record and other official documents — a concrete example of certainty gaps inside rules already marked 'qualified.'"
+    },
+    "sourceLabel": {
+      "zh": "全球最低稅施行工具包（2026）",
+      "en": "Global Minimum Tax Implementation Toolkit (2026)"
+    },
+    "sourceUrl": "https://www.oecd.org/en/publications/the-global-minimum-tax-implementation-toolkit_0ee66d84-en.html",
+    "relatedTopicIds": [
+      "pillar-two-simplification"
+    ]
+  },
+  {
+    "id": "safe-harbour",
+    "category": "concept",
+    "term": {
+      "zh": "安全港（含 Side-by-Side 配套）",
+      "en": "Safe harbours (incl. the Side-by-Side package)"
+    },
+    "definition": {
+      "zh": "滿足特定條件即可免做全套 GloBE 計算的簡化機制。2026 年 1 月的 Side-by-Side Package 更進一步：母公司所在地有「合格 SbS 制度」的集團，可就全球營運選擇視同零補足稅——截至 2026 年初僅美國取得該資格，且繫於美國維持 CAMT 的政治前提。",
+      "en": "Simplification mechanisms that excuse full GloBE computation when conditions are met. The January 2026 Side-by-Side Package goes further: groups headquartered in a jurisdiction with a Qualified SbS Regime may elect deemed-zero top-up tax worldwide — as of early 2026 only the United States qualifies, contingent on Congress retaining CAMT."
+    },
+    "sourceLabel": {
+      "zh": "OECD Side-by-Side Package（2026）",
+      "en": "OECD Side-by-Side Package (2026)"
+    },
+    "sourceUrl": "https://www.oecd.org/content/dam/oecd/en/topics/policy-sub-issues/global-minimum-tax/side-by-side-package.pdf",
+    "relatedTopicIds": [
+      "pillar-two-simplification"
+    ]
+  },
+  {
+    "id": "pe",
+    "category": "concept",
+    "term": {
+      "zh": "常設機構（PE）",
+      "en": "Permanent Establishment (PE)"
+    },
+    "definition": {
+      "zh": "來源國對外國企業營業利潤課稅的門檻概念（範本第 5 條）：固定營業場所（分支機構、工廠等）或具締約權的代理人構成 PE，無 PE 則營業利潤原則上僅由居住國課稅。",
+      "en": "The threshold concept for source-country taxation of foreign business profits (Article 5 of the Models): a fixed place of business (branch, factory, etc.) or a dependent agent with contracting authority constitutes a PE; absent one, business profits are in principle taxable only in the residence state."
+    },
+    "whyItMatters": {
+      "zh": "Ash & Marian 的量測顯示 PE 條款是 1965–2015 收斂幅度最大的條款之一（0.552→0.829）——形式共識的核心區。",
+      "en": "Ash & Marian's measurements show PE clauses among the strongest convergers from 1965–2015 (0.552→0.829) — the heartland of formal consensus."
+    },
+    "sourceLabel": {
+      "zh": "OECD 範本稅約（2017 精簡版）",
+      "en": "OECD Model Tax Convention (2017 condensed)"
+    },
+    "sourceUrl": "https://doi.org/10.1787/mtc_cond-2017-en",
+    "relatedTopicIds": [
+      "un-tax-convention-governance"
+    ]
+  },
+  {
+    "id": "arms-length",
+    "category": "concept",
+    "term": {
+      "zh": "常規交易原則（arm's length）",
+      "en": "The arm's length principle"
+    },
+    "definition": {
+      "zh": "關係企業間交易須按獨立企業間會採用的條件定價（範本第 9 條），否則稅局得調整利潤。源自 1935 年國際聯盟範本，至今仍是移轉訂價的金標準，操作細節由 OECD 移轉訂價指引承載。",
+      "en": "Transactions between associated enterprises must be priced on the terms independent enterprises would adopt (Article 9 of the Models), failing which tax administrations may adjust profits. Introduced in the 1935 League of Nations model, it remains the gold standard of transfer pricing, operationalized through the OECD Transfer Pricing Guidelines."
+    },
+    "sourceLabel": {
+      "zh": "OECD 移轉訂價指引（2017）",
+      "en": "OECD Transfer Pricing Guidelines (2017)"
+    },
+    "sourceUrl": "https://doi.org/10.1787/tpg-2017-en",
+    "relatedTopicIds": [
+      "danon-lausanne-disputes"
+    ]
+  },
+  {
+    "id": "isds",
+    "category": "concept",
+    "term": {
+      "zh": "投資人—地主國爭端解決（ISDS）",
+      "en": "Investor-State Dispute Settlement (ISDS)"
+    },
+    "definition": {
+      "zh": "投資協定賦予外國投資人不經母國、直接對地主國提付國際仲裁的機制。稅務措施可否進 ISDS，取決於個別協定的租稅除外條款與公平公正待遇（FET）等標準的解釋——「純稅務爭議」與「涉稅投資爭議」的界線因此成為爭點。",
+      "en": "The mechanism in investment agreements allowing foreign investors to bring international arbitration directly against host states. Whether tax measures are arbitrable turns on each agreement's tax carve-outs and standards like fair and equitable treatment — making the line between a tax dispute proper and a tax-related investment dispute contested."
+    },
+    "whyItMatters": {
+      "zh": "UN 範本 2025 年新增條款試圖阻斷投資人就稅務爭議援引 ISDS，Danon 與 Martín Jiménez 批評其法律構造；投資法在本研究定位為救濟確定性的邊界測試。",
+      "en": "A 2025 UN Model clause tries to block investors from invoking ISDS in tax disputes, criticized by Danon and Martín Jiménez; investment law serves in this project as the boundary test for remedial certainty."
+    },
+    "sourceLabel": {
+      "zh": "Danon & Wuschka, International Investment Agreements and the International Tax System (2021)",
+      "en": "Danon & Wuschka, International Investment Agreements and the International Tax System (2021)"
+    },
+    "sourceUrl": "https://research.ibfd.org/#/doc?url=/document/bit_2021_11_o2_19",
+    "relatedTopicIds": [
+      "danon-lausanne-disputes",
+      "un-tax-convention-governance"
+    ]
+  },
+  {
+    "id": "remedial-certainty",
+    "category": "concept",
+    "term": {
+      "zh": "救濟確定性（remedial certainty）",
+      "en": "Remedial certainty"
+    },
+    "definition": {
+      "zh": "本研究的核心概念，承 Danon 等人對 GloBE 稅捐確定性的討論：在協調化規則之下，納稅人與國家能否預期「由誰、循哪條程序、在什麼時限內」取得具終局性的救濟。與規則實體內容的確定性（substantive certainty）相對——實體規則再一致，救濟層斷裂仍使結果不可預期。",
+      "en": "This project's core concept, building on Danon and co-authors' work on tax certainty under GloBE: whether, under coordinated rules, taxpayers and states can predict who provides a final remedy, through which procedure, and within what time. It contrasts with substantive certainty — however uniform the substantive rules, a fractured remedial layer keeps outcomes unpredictable."
+    },
+    "sourceLabel": {
+      "zh": "Danon, Gutmann, Maisto & Martín Jiménez, GloBE and Tax Certainty (2023)",
+      "en": "Danon, Gutmann, Maisto & Martín Jiménez, GloBE and Tax Certainty (2023)"
+    },
+    "sourceUrl": "https://research.ibfd.org/#/doc?url=/document/itaxs_2023_02_int_1",
+    "relatedTopicIds": [
+      "danon-lausanne-disputes"
+    ]
+  },
+  {
+    "id": "competent-authority",
+    "category": "concept",
+    "term": {
+      "zh": "主管機關（competent authority）",
+      "en": "Competent authority"
+    },
+    "definition": {
+      "zh": "稅約指定負責執行 MAP、資訊交換等協定程序的機關，通常是財政部或稅務總局的指定單位。MAP 與 UN 議定書草案中的仲裁都是「主管機關間」程序——納稅人啟動程序卻非當事人，是國際稅務救濟的結構性特徵。",
+      "en": "The authority a tax treaty designates to run MAP, exchange of information, and other treaty procedures — typically a designated unit of the finance ministry or revenue administration. Both MAP and the arbitration in the draft UN protocol are competent-authority-to-competent-authority procedures: the taxpayer triggers them without being a party, a structural feature of international tax remedies."
+    },
+    "sourceLabel": {
+      "zh": "OECD 範本稅約（2017 精簡版）",
+      "en": "OECD Model Tax Convention (2017 condensed)"
+    },
+    "sourceUrl": "https://doi.org/10.1787/mtc_cond-2017-en",
+    "relatedTopicIds": [
+      "danon-lausanne-disputes"
+    ]
+  },
+  {
+    "id": "oecd-if",
+    "category": "institution",
+    "term": {
+      "zh": "OECD 與 BEPS 包容性框架",
+      "en": "OECD & the Inclusive Framework on BEPS"
+    },
+    "definition": {
+      "zh": "OECD 是 38 個成員國的政策組織，其租稅政策與行政中心制定範本稅約、移轉訂價指引與 GloBE 規則；包容性框架是為執行 BEPS 與雙支柱而擴大的平台，140 多個轄區以「平等參與」名義加入。範本與指引形式上不具拘束力，實際上主導各國稅約與立法起草。",
+      "en": "The OECD is a 38-member policy organization whose Centre for Tax Policy and Administration produces the Model Tax Convention, the Transfer Pricing Guidelines, and the GloBE rules; the Inclusive Framework is the enlarged platform for BEPS and the Two-Pillar solution, with 140+ jurisdictions participating 'on an equal footing.' Its models and guidance are formally non-binding yet dominate treaty and legislative drafting."
+    },
+    "whyItMatters": {
+      "zh": "Ash & Marian 的實證把「OECD 是共識的制度來源」從印象變成可檢定的發現：新 OECD 範本發布後，新訂稅約顯著向其語言收斂。",
+      "en": "Ash & Marian's evidence turns 'the OECD is the institutional source of consensus' from impression into tested finding: newly concluded treaties converge significantly toward new OECD Model language after each release."
+    },
+    "sourceLabel": {
+      "zh": "OECD BEPS 主題頁",
+      "en": "OECD BEPS topic page"
+    },
+    "sourceUrl": "https://www.oecd.org/en/topics/base-erosion-and-profit-shifting-beps.html",
+    "relatedTopicIds": [
+      "un-tax-convention-governance",
+      "pillar-two-simplification"
+    ]
+  },
+  {
+    "id": "un-inc",
+    "category": "institution",
+    "term": {
+      "zh": "UN 政府間談判委員會（INC）與 FSDO",
+      "en": "UN Intergovernmental Negotiating Committee (INC) & FSDO"
+    },
+    "definition": {
+      "zh": "聯合國大會 2023 年決議設立的政府間談判委員會，負責起草《國際稅務合作框架公約》與兩項早期議定書（跨境服務所得課稅；稅務爭端之預防與解決），秘書處為 UN 經社部發展籌資辦公室（FSDO）。INC-5 於 2026 年 8 月、INC-6 於同年 11–12 月舉行，成果預定 2027 年下半年提交聯大。",
+      "en": "The intergovernmental committee created by a 2023 UN General Assembly resolution to draft the Framework Convention on International Tax Cooperation and two early protocols (taxation of cross-border services; prevention and resolution of tax disputes), with the UN DESA Financing for Sustainable Development Office (FSDO) as secretariat. INC-5 meets in August 2026 and INC-6 in November–December 2026, with texts due to the General Assembly in H2 2027."
+    },
+    "whyItMatters": {
+      "zh": "這是二戰後第一次由聯合國主導、可能與 OECD 平行的國際稅規範生產架構——研究線 4 的觀察對象本體。",
+      "en": "The first post-war UN-led architecture for producing international tax norms in parallel with the OECD — the direct object of research line 4."
+    },
+    "sourceLabel": {
+      "zh": "UN 框架公約職權範圍",
+      "en": "UN Framework Convention terms of reference"
+    },
+    "sourceUrl": "https://financing.desa.un.org/document/terms-reference-united-nations-framework-convention-international-tax-cooperation",
+    "relatedTopicIds": [
+      "un-tax-convention-governance"
+    ]
+  },
+  {
+    "id": "un-tax-committee",
+    "category": "institution",
+    "term": {
+      "zh": "UN 國際稅務合作專家委員會",
+      "en": "UN Committee of Experts on International Cooperation in Tax Matters"
+    },
+    "definition": {
+      "zh": "1967 年設立的專家機構（成員以個人身分出任），負責維護 UN 範本稅約與相關指引，傳統上代表來源地課稅與發展中國家視角。與 INC 不同：專家委員會產出範本與軟法，INC 談判的是有拘束力的公約。",
+      "en": "The expert body established in 1967 (members serve in personal capacity) that maintains the UN Model Tax Convention and related guidance, traditionally representing source-taxation and developing-country perspectives. Distinct from the INC: the Committee produces models and soft law, while the INC negotiates a binding convention."
+    },
+    "sourceLabel": {
+      "zh": "UN 稅務委員會首頁",
+      "en": "UN Tax Committee home"
+    },
+    "sourceUrl": "https://financing.desa.un.org/what-we-do/ECOSOC/tax-committee/tax-committee-home",
+    "relatedTopicIds": [
+      "un-tax-convention-governance"
+    ]
+  },
+  {
+    "id": "ibfd",
+    "category": "institution",
+    "term": {
+      "zh": "IBFD（國際財政文獻局）",
+      "en": "IBFD (International Bureau of Fiscal Documentation)"
+    },
+    "definition": {
+      "zh": "總部在阿姆斯特丹的國際稅法研究與出版機構，維護全球最完整的稅約資料庫與各國稅制百科，出版 Bulletin for International Taxation、World Tax Journal 等期刊。學術與實務界查證稅約文本的預設起點。",
+      "en": "The Amsterdam-based research and publishing institute for international tax law, maintaining the most comprehensive treaty database and country surveys, and publishing journals such as the Bulletin for International Taxation and the World Tax Journal. The default starting point for verifying treaty text in scholarship and practice."
+    },
+    "whyItMatters": {
+      "zh": "Ash & Marian 的 4,052 份稅約語料即取自 IBFD 資料庫，其 32 個條款分類直接決定了該研究的比較單位。",
+      "en": "Ash & Marian's 4,052-treaty corpus comes from the IBFD database, whose 32 clause categories directly define that study's unit of comparison."
+    },
+    "sourceLabel": {
+      "zh": "IBFD",
+      "en": "IBFD"
+    },
+    "sourceUrl": "https://www.ibfd.org",
+    "relatedTopicIds": []
+  },
+  {
+    "id": "euto",
+    "category": "institution",
+    "term": {
+      "zh": "EU Tax Observatory",
+      "en": "EU Tax Observatory"
+    },
+    "definition": {
+      "zh": "由 Gabriel Zucman 主持、歐盟資助、設於巴黎經濟學院的研究中心，專注離岸財富、利潤移轉與稅逃漏的量化估計，代表作《Global Tax Evasion Report 2024》。",
+      "en": "The EU-funded research centre at the Paris School of Economics directed by Gabriel Zucman, focused on quantitative estimates of offshore wealth, profit shifting, and tax evasion; flagship output: the Global Tax Evasion Report 2024."
+    },
+    "whyItMatters": {
+      "zh": "其估計為 HNWI 課稅議題提供資料面主張；本研究關注的是這些可量化主張與 UN 公約行為義務之間的落差。",
+      "en": "Its estimates supply the data-side claims for HNWI taxation; this project tracks the gap between those quantifiable claims and the conduct duties in the UN convention."
+    },
+    "sourceLabel": {
+      "zh": "Global Tax Evasion Report 2024",
+      "en": "Global Tax Evasion Report 2024"
+    },
+    "sourceUrl": "https://www.taxobservatory.eu/publication/global-tax-evasion-report-2024/",
+    "relatedTopicIds": [
+      "wealth-tax-hnwi"
+    ]
+  },
+  {
+    "id": "unil-tpc",
+    "category": "institution",
+    "term": {
+      "zh": "洛桑大學稅務政策中心",
+      "en": "UNIL Tax Policy Center (Lausanne)"
+    },
+    "definition": {
+      "zh": "洛桑大學的稅務政策研究中心，由 Robert Danon 主持，議程集中在稅捐確定性、MAP 與 Pillar Two 爭端預防（如 2026 年 MAP and Pillar Two Days 會議），並經營瑞士與國際稅務判例資料。",
+      "en": "The University of Lausanne's tax-policy research centre, directed by Robert Danon, with an agenda centred on tax certainty, MAP, and Pillar Two dispute prevention (e.g., the 2026 MAP and Pillar Two Days conference), alongside Swiss and international tax case-law collections."
+    },
+    "whyItMatters": {
+      "zh": "本研究申請的機構接口：救濟確定性的問題意識與該中心的議程直接對接。",
+      "en": "The institutional interface for this project's application: the remedial-certainty problem plugs directly into the centre's agenda."
+    },
+    "sourceLabel": {
+      "zh": "UNIL Tax Policy Center",
+      "en": "UNIL Tax Policy Center"
+    },
+    "sourceUrl": "https://www.unil.ch/taxpolicy/en/home.html",
+    "relatedTopicIds": [
+      "danon-lausanne-disputes"
+    ]
+  },
+  {
+    "id": "tjn",
+    "category": "institution",
+    "term": {
+      "zh": "Tax Justice Network（TJN）",
+      "en": "Tax Justice Network (TJN)"
+    },
+    "definition": {
+      "zh": "倡議型研究網絡，發布 State of Tax Justice 年度估計與金融保密指數。在 UN 公約談判中立場鮮明：反對移植 OECD 式強制拘束仲裁，主張仲裁至多自選，並提議 MAP 作為涉稅投資爭端的排他管道。",
+      "en": "An advocacy research network publishing the annual State of Tax Justice estimates and the Financial Secrecy Index. In the UN convention negotiations it takes a clear position: against transplanting OECD-style mandatory binding arbitration, for arbitration as at most optional, and for MAP as the exclusive venue for tax-related investment disputes."
+    },
+    "sourceLabel": {
+      "zh": "Tax Justice Network",
+      "en": "Tax Justice Network"
+    },
+    "sourceUrl": "https://taxjustice.net",
+    "relatedTopicIds": [
+      "un-tax-convention-governance"
+    ]
+  },
+  {
+    "id": "oecd-model",
+    "category": "instrument",
+    "term": {
+      "zh": "OECD 範本稅約與註釋",
+      "en": "OECD Model Tax Convention & Commentary"
+    },
+    "definition": {
+      "zh": "1963 年首版、其後定期更新的雙邊稅約範本，附逐條註釋；偏居住地課稅傳統（承 1946 倫敦草案）。形式上不具拘束力，實際上是絕大多數雙邊稅約談判的起點文本，註釋則被法院與稅局廣泛引為解釋依據。",
+      "en": "The bilateral treaty model first published in 1963 and updated regularly, with an article-by-article Commentary; residence-leaning in the tradition of the 1946 London Draft. Formally non-binding, it is in practice the starting text for most bilateral negotiations, and courts and administrations widely invoke its Commentary in interpretation."
+    },
+    "whyItMatters": {
+      "zh": "Ash & Marian 的事件研究顯示：每版新 OECD 範本發布後，新訂稅約顯著向其語言移動——範本是開路者不是跟隨者。",
+      "en": "Ash & Marian's event study shows newly concluded treaties moving significantly toward each new OECD Model's language after release — the model leads rather than follows."
+    },
+    "sourceLabel": {
+      "zh": "OECD 範本稅約（2017 精簡版）",
+      "en": "OECD Model Tax Convention (2017 condensed)"
+    },
+    "sourceUrl": "https://doi.org/10.1787/mtc_cond-2017-en",
+    "relatedTopicIds": [
+      "un-tax-convention-governance"
+    ]
+  },
+  {
+    "id": "un-model",
+    "category": "instrument",
+    "term": {
+      "zh": "UN 範本稅約",
+      "en": "UN Model Tax Convention"
+    },
+    "definition": {
+      "zh": "1980 年首版（承 1943 墨西哥草案傳統），較 OECD 範本保留更多來源地課稅權，代表發展中國家利益；2001、2011、2017、2021 年更新。2025 年 3 月新增意圖阻斷投資人就稅務爭議援引 ISDS 的條款，學界對其法律效力有尖銳批評。",
+      "en": "First published in 1980 in the tradition of the 1943 Mexico Draft, preserving more source-state taxing rights than the OECD Model on behalf of developing countries; updated in 2001, 2011, 2017, and 2021. A clause added in March 2025 seeks to block investors from invoking ISDS in tax disputes, drawing sharp academic criticism of its legal force."
+    },
+    "whyItMatters": {
+      "zh": "Ash & Marian 發現 UN 範本短期無感、長期滲透——現行稅約與 2011 UN 範本的相似度甚至略高於 OECD 範本，來源地課稅語言在緩慢擴散。",
+      "en": "Ash & Marian find the UN Model negligible in the short run yet seeping in over decades — treaties in force now resemble the 2011 UN Model slightly more than the OECD Model, as source-taxation language slowly spreads."
+    },
+    "sourceLabel": {
+      "zh": "UN 稅務委員會首頁",
+      "en": "UN Tax Committee home"
+    },
+    "sourceUrl": "https://financing.desa.un.org/what-we-do/ECOSOC/tax-committee/tax-committee-home",
+    "relatedTopicIds": [
+      "un-tax-convention-governance"
+    ]
+  },
+  {
+    "id": "framework-convention",
+    "category": "instrument",
+    "term": {
+      "zh": "UN 國際稅務合作框架公約（草擬中）",
+      "en": "UN Framework Convention on International Tax Cooperation (in drafting)"
+    },
+    "definition": {
+      "zh": "INC 起草中的多邊公約：CRP.26 提供公約模板（第 5 條課稅權公平分配含重談既有稅約義務、第 6 條 HNWI 偵防義務），配兩項可單獨簽署的自選議定書。關鍵結構：第 21 條第 4 項允許締約國承擔實體協調義務而不加入爭端議定書，公約本身的爭端條款（第 13、22 條）目前留白。",
+      "en": "The multilateral convention under INC drafting: CRP.26 supplies the template (Article 5 on fair allocation of taxing rights including renegotiation of inconsistent treaties; Article 6 on HNWI duties), flanked by two optional, separately signable protocols. The key structure: Article 21(4) lets Parties take on substantive coordination duties without joining the dispute protocol, while the Convention's own dispute clauses (Articles 13 and 22) remain undrafted."
+    },
+    "whyItMatters": {
+      "zh": "「協調先行、救濟未隨」的條約結構性證據——本研究核心假設的一手文本。",
+      "en": "Primary-text, treaty-structural evidence of coordination arriving ahead of remedy — the core premise of this project."
+    },
+    "sourceLabel": {
+      "zh": "UN 工作流一公約模板（CRP.26）",
+      "en": "UN Workstream I convention template (CRP.26)"
+    },
+    "sourceUrl": "https://financing.desa.un.org/document/workstream-i-framework-convention-co-leads-draft-framework-convention-template-22-jan-2026",
+    "relatedTopicIds": [
+      "un-tax-convention-governance"
+    ]
+  },
+  {
+    "id": "globe-rules-commentary",
+    "category": "instrument",
+    "term": {
+      "zh": "GloBE 立法範本與整合註釋",
+      "en": "GloBE Model Rules & Consolidated Commentary"
+    },
+    "definition": {
+      "zh": "Pillar Two 的規則文本形式：各國把立法範本轉譯進內國法，OECD 以持續更新的註釋與行政指引承載解釋（2026 年整合版 456 頁，收入 2022–2026 全部行政指引）。規則的「法源」在內國法、「解釋權威」在註釋——傳統條約解釋框架接不上的新結構。",
+      "en": "Pillar Two's textual form: states transpose the Model Rules into domestic legislation while the OECD carries interpretation in a continuously updated Commentary and administrative guidance (the 2026 consolidated edition runs 456 pages, absorbing all guidance from 2022–2026). Sources of law sit in domestic statutes, interpretive authority in the Commentary — a structure traditional treaty interpretation doctrine does not map onto."
+    },
+    "whyItMatters": {
+      "zh": "Danon 2023 年提出的 interpretative model rule 與合法性異議，都是對這個結構的回應；它也是「深度研讀」指出的 Ash & Marian 語料照不到的區域。",
+      "en": "Danon's 2023 interpretative-model-rule proposal and the legality objection both respond to this structure; it is also the region the close reading flags as invisible to Ash & Marian's corpus."
+    },
+    "sourceLabel": {
+      "zh": "GloBE 整合註釋（2026）",
+      "en": "Consolidated GloBE Commentary (2026)"
+    },
+    "sourceUrl": "https://www.oecd.org/en/publications/tax-challenges-arising-from-the-digitalisation-of-the-economy-consolidated-commentary-to-the-global-anti-base-erosion-model-rules-2026_4377e89f-en.html",
+    "relatedTopicIds": [
+      "pillar-two-simplification",
+      "danon-lausanne-disputes"
+    ]
+  },
+  {
+    "id": "mli",
+    "category": "instrument",
+    "term": {
+      "zh": "BEPS 多邊工具（MLI）",
+      "en": "The BEPS Multilateral Instrument (MLI)"
+    },
+    "definition": {
+      "zh": "2016 年開放簽署的多邊公約，以「疊加」方式一次把 BEPS 條約措施（PPT、MAP 改善、任擇仲裁等）套進數千份既有雙邊稅約，而不逐份重談、不重寫協定本文；各國以保留與通知選擇適用範圍。",
+      "en": "The multilateral convention opened for signature in 2016 that overlays BEPS treaty measures (the PPT, MAP improvements, optional arbitration) onto thousands of existing bilateral treaties at once — without renegotiating each or rewriting their text; states tailor coverage through reservations and notifications."
+    },
+    "whyItMatters": {
+      "zh": "MLI 之後，「現行有效的協定文本」不再等於任何單一文件——這正是純文本相似度方法（如 Ash & Marian）在 2016 年後失準的原因。",
+      "en": "After the MLI, the treaty text actually in force no longer equals any single document — precisely why pure text-similarity methods like Ash & Marian's lose traction post-2016."
+    },
+    "sourceLabel": {
+      "zh": "OECD BEPS 主題頁",
+      "en": "OECD BEPS topic page"
+    },
+    "sourceUrl": "https://www.oecd.org/en/topics/base-erosion-and-profit-shifting-beps.html",
+    "relatedTopicIds": [
+      "un-tax-convention-governance",
+      "danon-lausanne-disputes"
+    ]
+  }
+]

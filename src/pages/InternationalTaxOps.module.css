@@ -417,17 +417,37 @@
   text-decoration: none;
 }
 
-.closeReadingHead {
-  margin: 26px 0 10px;
-  padding-top: 16px;
-  border-top: 1px solid var(--line);
+.analysisCard .tagRow {
+  margin-top: 0;
+  margin-bottom: 9px;
 }
 
-.closeReadingHead h2 {
-  color: var(--ink);
-  font-family: var(--lead-font);
-  font-size: 15px;
-  font-weight: 700;
+.wikiFilters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.wikiFilters button {
+  border: 1px solid var(--line);
+  background: #fff;
+  color: var(--muted);
+  border-radius: 6px;
+  padding: 5px 11px;
+  font-size: 12px;
+  font-weight: 780;
+  cursor: pointer;
+}
+
+.wikiFilters button:hover {
+  background: var(--hover);
+}
+
+.wikiFilters button.active {
+  background: var(--active);
+  border-color: var(--active);
+  color: #335f57;
 }
 
 .sectionHead {

@@ -7,6 +7,7 @@ import {
   Activity,
   ArrowLeft,
   ArrowUpRight,
+  BookMarked,
   BookOpen,
   CheckCircle2,
   ChevronDown,
@@ -16,6 +17,7 @@ import {
   Globe2,
   Languages,
   Layers3,
+  Library,
   Scale,
   ShieldCheck,
   Sparkles,
@@ -29,6 +31,7 @@ import controversies from '../data/intlTaxOps/controversies.json';
 import digest from '../data/intlTaxOps/frontier_digest.json';
 import researchAnalyses from '../data/intlTaxOps/research_analyses.json';
 import thematicAnalyses from '../data/intlTaxOps/thematic_analyses.json';
+import glossary from '../data/intlTaxOps/glossary.json';
 import styles from './InternationalTaxOps.module.css';
 
 const ui = {
@@ -64,6 +67,13 @@ const ui = {
     research: '主題判讀',
     researchLead: '已完成的研究判讀，從問題、結論與研究意義展開。',
     closeReading: '深度研讀',
+    closeReadingLead: '單篇文獻的完整分析：問題、方法、發現、規範意涵與對研究題目的意義。',
+    wiki: '名詞與機構',
+    wikiLead: '本研究反覆出現的概念、機構與文書，每則附權威出處。',
+    conceptCat: '概念',
+    institutionCat: '機構',
+    instrumentCat: '文書',
+    whyMatters: '研究相關性',
     question: '研究問題',
     finding: '目前判讀',
     researchMeaning: '對研究題目的意義',
@@ -102,6 +112,13 @@ const ui = {
     research: 'Thematic Analysis',
     researchLead: 'Completed research readings developed through questions, findings, and implications.',
     closeReading: 'Close Reading',
+    closeReadingLead: 'Full single-work analyses: question, method, findings, normative stakes, and what they mean for this project.',
+    wiki: 'Glossary',
+    wikiLead: 'Recurring concepts, institutions, and instruments in this research, each with an authoritative source.',
+    conceptCat: 'Concepts',
+    institutionCat: 'Institutions',
+    instrumentCat: 'Instruments',
+    whyMatters: 'Why it matters here',
     question: 'Research question',
     finding: 'Current reading',
     researchMeaning: 'Implication for the project',
@@ -112,11 +129,19 @@ const ui = {
 
 const MAIN_TABS = [
   { id: 'research', labelKey: 'research', Icon: BookOpen },
+  { id: 'closeReading', labelKey: 'closeReading', Icon: BookMarked },
+  { id: 'wiki', labelKey: 'wiki', Icon: Library },
   { id: 'matrix', labelKey: 'matrix', Icon: Layers3 },
   { id: 'digest', labelKey: 'digest', Icon: Activity },
   { id: 'sources', labelKey: 'sourceRegistry', Icon: Database },
   { id: 'relations', labelKey: 'relations', Icon: GitBranch },
   { id: 'controversies', labelKey: 'controversies', Icon: Scale },
+];
+
+const WIKI_CATEGORIES = [
+  { id: 'concept', labelKey: 'conceptCat' },
+  { id: 'institution', labelKey: 'institutionCat' },
+  { id: 'instrument', labelKey: 'instrumentCat' },
 ];
 
 function labelFor(axis, id, lang) {
@@ -178,6 +203,7 @@ export default function InternationalTaxOps() {
   const [lang, setLang] = useState('zh');
   const [mainTab, setMainTab] = useState('research');
   const [layer, setLayer] = useState('all');
+  const [wikiCategory, setWikiCategory] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   // Accordion cards default fully expanded, consistent with the rest of
   // Canvas Lab (see feedback_accordion_default), rather than a single-select
@@ -229,6 +255,21 @@ export default function InternationalTaxOps() {
       ...(item.relatedTopicIds ?? []),
     ].join(' ').toLowerCase().includes(query));
   }, [query]);
+
+  const filteredGlossary = useMemo(() => {
+    return glossary.filter((entry) => {
+      if (wikiCategory !== 'all' && entry.category !== wikiCategory) return false;
+      if (!query) return true;
+      return [
+        entry.term.zh,
+        entry.term.en,
+        entry.definition.zh,
+        entry.definition.en,
+        entry.whyItMatters?.zh ?? '',
+        entry.whyItMatters?.en ?? '',
+      ].join(' ').toLowerCase().includes(query);
+    });
+  }, [wikiCategory, query]);
 
   const toggleTopic = (id) => {
     setExpandedTopics((prev) => {
@@ -476,8 +517,17 @@ export default function InternationalTaxOps() {
                 </article>
               ))}
             </div>
-            <div className={styles.closeReadingHead}>
-              <h2>{t.closeReading}</h2>
+          </section>
+        )}
+
+        {mainTab === 'closeReading' && (
+          <section className={styles.panel}>
+            <div className={styles.sectionHead}>
+              <div>
+                <h2>{t.closeReading}</h2>
+                <p>{t.closeReadingLead}</p>
+              </div>
+              <BookMarked size={18} />
             </div>
             <div className={styles.controversyList}>
               {researchAnalyses.map((paper) => (
@@ -545,6 +595,60 @@ export default function InternationalTaxOps() {
                       );
                     })}
                   </div>
+                </article>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {mainTab === 'wiki' && (
+          <section className={styles.panel}>
+            <div className={styles.sectionHead}>
+              <div>
+                <h2>{t.wiki}</h2>
+                <p>{t.wikiLead}</p>
+              </div>
+              <Library size={18} />
+            </div>
+            <div className={styles.wikiFilters}>
+              <button
+                type="button"
+                className={wikiCategory === 'all' ? styles.active : ''}
+                onClick={() => setWikiCategory('all')}
+              >
+                {t.all}
+              </button>
+              {WIKI_CATEGORIES.map(({ id, labelKey }) => (
+                <button
+                  key={id}
+                  type="button"
+                  className={wikiCategory === id ? styles.active : ''}
+                  onClick={() => setWikiCategory(id)}
+                >
+                  {t[labelKey]}
+                </button>
+              ))}
+            </div>
+            <div className={styles.analysisGrid}>
+              {filteredGlossary.map((entry) => (
+                <article key={entry.id} className={styles.analysisCard}>
+                  <div className={styles.tagRow}>
+                    <span>{t[`${entry.category}Cat`]}</span>
+                  </div>
+                  <h3>{entry.term[lang]}</h3>
+                  <div className={styles.analysisBlock}>
+                    <p>{entry.definition[lang]}</p>
+                  </div>
+                  {entry.whyItMatters && (
+                    <div className={styles.analysisBlock}>
+                      <span>{t.whyMatters}</span>
+                      <p>{entry.whyItMatters[lang]}</p>
+                    </div>
+                  )}
+                  <footer>
+                    <span>{entry.sourceLabel[lang]}</span>
+                    <a href={entry.sourceUrl} target="_blank" rel="noreferrer">{t.open}<ArrowUpRight size={14} /></a>
+                  </footer>
                 </article>
               ))}
             </div>

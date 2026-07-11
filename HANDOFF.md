@@ -115,26 +115,38 @@ repo, schema, raw, snapshot, workflowState, or sourceTier.
 Current tab-based implementation:
 
 - **Tab bar** (`.mainTabBar`, matches `GovernmentDebt`'s pattern):
-  主題判讀 (default) / 議題矩陣 / 最新動態 / 來源登錄 / 關係圖譜 /
-  案例與爭議. Only the active tab renders. (前沿監測/Frontier Watch was
-  removed 2026-07-11; its capture JSON left the sync map with it.)
-- **主題判讀 tab** (research, default; 2026-07-11, Codex + CC): two
-  layers on one tab. Top: `thematic_analyses.json` — six bilingual
-  thematic readings (question / current reading / implication /
-  evidence + authority link), two-column card grid. Bottom (深度研讀 /
-  Close Reading): `research_analyses.json` — an *array* of per-paper
+  主題判讀 (default) / 深度研讀 / 名詞與機構 / 議題矩陣 / 最新動態 /
+  來源登錄 / 關係圖譜 / 案例與爭議. Only the active tab renders.
+  (前沿監測/Frontier Watch was removed 2026-07-11; its capture JSON
+  left the sync map with it.)
+- **主題判讀 tab** (research, default; 2026-07-11, Codex + CC):
+  `thematic_analyses.json` — six bilingual thematic readings
+  (question / current reading / implication / evidence + authority
+  link), two-column card grid (`analysisGrid`/`analysisCard`).
+- **深度研讀 tab** (closeReading; split out as its own tab per user
+  2026-07-11): `research_analyses.json` — an *array* of per-paper
   analysis objects (citation, tagline, researchLine/topic links,
-  bilingual `sections[]` with optional `table`). Both arrays are
-  append-only by design; if the five-tab restructure from
-  `12_PHD_RESEARCH_LAYOUT.md` ever lands, this tab becomes 文獻缺口 with
-  zero data migration. First paper entry: Ash & Marian, 24 Fla. Tax
-  Rev. 151 (2020) — NLP convergence study of 4,052 tax treaties;
-  analysis written against the full PDF archived in the data repo and
+  bilingual `sections[]` with optional `table`). Append-only by design;
+  if the five-tab restructure from `12_PHD_RESEARCH_LAYOUT.md` ever
+  lands, 主題判讀＋深度研讀 together become 文獻缺口 with zero data
+  migration. First paper entry: Ash & Marian, 24 Fla. Tax Rev. 151
+  (2020) — NLP convergence study of 4,052 tax treaties; analysis
+  written against the full PDF archived in the data repo and
   number-checked against its parsed text. Sections are accordions,
   default expanded, Set-keyed `paperId:sectionId`. Table = plain HTML in
   an `overflow-x` scroll div, pale fill + ink keyline, no fake charts
   (per `feedback_no_meaningless_viz` we show the paper's Table 1
   excerpt as a table and say so in the caption).
+- **名詞與機構 tab** (wiki; user-requested 2026-07-11):
+  `glossary.json` — bilingual encyclopedia entries in three categories
+  (concept / institution / instrument), each with definition, optional
+  「研究相關性」paragraph, and an authoritative source link (URLs reuse
+  the registered source list or stable OECD DOIs — never invented).
+  Category filter chips (`wikiFilters`) + the global sidebar search
+  both apply. Cards reuse `analysisGrid`/`analysisCard`;
+  `.analysisCard .tagRow` overrides the global `margin-top: auto` so
+  the category chip stays at the top of cards without a
+  research-relevance block.
 - **Codex 2026-07-11 correction record**: Codex's foregrounding commit
   also stripped topic summaries, 待補研究 (nextActions), the 最新動態
   digest tab, and the 核實日 pill — all restored (they are
