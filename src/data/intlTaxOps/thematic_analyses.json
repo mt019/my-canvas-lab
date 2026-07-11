@@ -1,0 +1,152 @@
+[
+  {
+    "id": "coordination-without-remedy",
+    "title": {
+      "zh": "協調義務可以先行，救濟義務卻未必隨之而來",
+      "en": "Coordination duties can arrive before a corresponding remedial layer"
+    },
+    "question": {
+      "zh": "一套新的全球稅務合作框架，能否在不強制加入爭端機制的情況下，仍提供可預期的救濟？",
+      "en": "Can a new global tax-cooperation framework provide predictable remedies without requiring participation in its dispute mechanism?"
+    },
+    "finding": {
+      "zh": "目前的 UN 工作流答案偏向否定。CRP.26 第 21 條第 4 項讓國家承擔實體協調義務時，無須同時加入爭端解決議定書；框架公約本身的爭端條款仍留白。這形成了「協調先於救濟」的制度結構。",
+      "en": "The current UN workstream points toward no. CRP.26 Article 21(4) permits states to assume substantive coordination duties without joining the dispute-resolution protocol, while the Framework Convention's own dispute clauses remain open. The resulting structure puts coordination ahead of remedy."
+    },
+    "researchMeaning": {
+      "zh": "博士題目可從抽象的制度協調，收緊為一項法律問題：當各國以國內法執行共同規則時，誰能取得救濟、經由哪條路徑，以及何時能得到最終答案？",
+      "en": "The doctoral question can move from abstract coordination to a legal question: when states implement common rules through domestic law, who can obtain a remedy, through which route, and when can they obtain a final answer?"
+    },
+    "evidence": {
+      "zh": "UN 稅務合作框架公約工作文件 CRP.26、CRP.28（2026 年 1 月）",
+      "en": "UN Framework Convention workstream papers CRP.26 and CRP.28 (Jan. 2026)"
+    },
+    "sourceUrl": "https://financing.desa.un.org/document/workstream-iii-dispute-prevention-and-resolution-co-leads-concept-note-23-jan-2026",
+    "relatedTopicIds": ["un-tax-convention-governance", "danon-lausanne-disputes"]
+  },
+  {
+    "id": "optional-arbitration-and-map-access",
+    "title": {
+      "zh": "UN 路線把仲裁放在最後，MAP 取得保障反而成為關鍵",
+      "en": "The UN track places arbitration last and makes MAP access pivotal"
+    },
+    "question": {
+      "zh": "若仲裁是自選且僅由主管機關參與，納稅人的程序保障應由何處補足？",
+      "en": "If arbitration is optional and confined to competent authorities, where should taxpayer procedural protection come from?"
+    },
+    "finding": {
+      "zh": "CRP.28 將仲裁設計為自選、最後手段、無先例效力的主管機關程序，納稅人並非當事人；同一文件卻明確提出，國內程序要求不得不當地限縮 MAP 的取得。這不是單純的技術選擇，而是將救濟的重心從仲裁移回 MAP 入口。",
+      "en": "CRP.28 designs arbitration as an optional, last-resort competent-authority process with no precedential value and no taxpayer party status. The same paper expressly protects access to MAP from undue domestic procedural restriction. This shifts the remedial centre of gravity from arbitration back to entry into MAP."
+    },
+    "researchMeaning": {
+      "zh": "這與 Danon 對 MAP 取得限制的批評直接相連：比較重點不該只放在是否設仲裁，而應檢驗 MAP 的啟動、排除、並行國內程序與結果落實是否足以提供確定性。",
+      "en": "This connects directly with Danon's critique of restrictions on MAP access. Comparison should not stop at whether arbitration exists; it should test MAP initiation, exclusions, parallel domestic procedures, and implementation of outcomes."
+    },
+    "evidence": {
+      "zh": "CRP.28 第 37、41 段；Danon 關於 MAP access 的研究",
+      "en": "CRP.28 paras. 37 and 41; Danon's work on MAP access"
+    },
+    "sourceUrl": "https://financing.desa.un.org/document/workstream-iii-dispute-prevention-and-resolution-co-leads-concept-note-23-jan-2026",
+    "relatedTopicIds": ["un-tax-convention-governance", "danon-lausanne-disputes"]
+  },
+  {
+    "id": "pillar-two-domestic-friction",
+    "title": {
+      "zh": "Pillar Two 的難點已轉入國內分類與行政一致性",
+      "en": "Pillar Two's difficulty has moved into domestic classification and administrative consistency"
+    },
+    "question": {
+      "zh": "當稅收優惠散落在不同法律與機關之間，跨國集團如何預見其最低稅效果？",
+      "en": "When tax incentives are dispersed across laws and authorities, how can a multinational predict its minimum-tax outcome?"
+    },
+    "finding": {
+      "zh": "OECD 對拉丁美洲與加勒比海十國的比較顯示，旅遊、再生能源與特區優惠可大幅降低有效平均稅率；但優惠的法源與主管機關分散，重疊優惠會讓相似投資承受不同結果。Pillar Two 下，所得型、實質連結型與暫時性優惠的後果也不同。",
+      "en": "OECD comparison across ten Latin American and Caribbean economies shows that tourism, renewable-energy, and special-zone incentives can sharply lower effective average tax rates. Yet dispersed legal bases and authorities, plus overlapping incentives, can yield different outcomes for comparable investments. Under Pillar Two, income-based, substance-linked, and timing-based incentives also produce different consequences."
+    },
+    "researchMeaning": {
+      "zh": "救濟確定性不能只討論跨國規則的解釋；它也取決於國內機關能否對優惠性質作出一致、可說明、可預測的判斷。這裡正是國內法、主管機關協商與跨國協調相互交錯的場景。",
+      "en": "Remedial certainty cannot be studied only as interpretation of transnational rules. It also turns on whether domestic authorities can classify incentives consistently, transparently, and predictably—the point at which domestic law, competent-authority procedure, and international coordination intersect."
+    },
+    "evidence": {
+      "zh": "OECD Taxation Working Papers No. 76（2026）",
+      "en": "OECD Taxation Working Papers No. 76 (2026)"
+    },
+    "sourceUrl": "https://www.oecd.org/content/dam/oecd/en/publications/reports/2026/06/investment-tax-incentives-in-latin-america-and-the-caribbean_758399d6/45b5f9a1-en.pdf",
+    "relatedTopicIds": ["pillar-two-simplification", "danon-lausanne-disputes"]
+  },
+  {
+    "id": "formal-consensus-divergent-application",
+    "title": {
+      "zh": "條文收斂，不等於適用收斂",
+      "en": "Converging text does not guarantee converging application"
+    },
+    "question": {
+      "zh": "國際稅法的共同語言已經形成時，真正的分歧會轉移到哪裡？",
+      "en": "Once international tax law has acquired a common language, where do the real disagreements move?"
+    },
+    "finding": {
+      "zh": "Ash 與 Marian 對 4,052 份雙邊稅約的文本比較發現，常設機構、營業利潤、移轉訂價與 MAP 條款明顯收斂；但雙重課稅消除與徵收協助仍高度分歧。OECD 範本是這種形式共識的重要制度來源，研究卻不能由此推論各國解釋與執行已經一致。",
+      "en": "Ash and Marian's comparison of 4,052 bilateral tax treaties finds clear convergence in permanent-establishment, business-profits, transfer-pricing, and MAP clauses, while double-tax relief and collection assistance remain far more divergent. The OECD Model is an important institutional source of this formal consensus, but the evidence does not establish uniform interpretation or implementation."
+    },
+    "researchMeaning": {
+      "zh": "這為研究提供了清楚的切口：從條文形式的共同語言出發，追問 PPT、GloBE 與 MAP 在國內適用時何處產生分歧，以及現有程序是否能把分歧轉化為可獲得的救濟。",
+      "en": "This offers a clear entry point: begin with the common language of treaty text, then ask where PPT, GloBE, and MAP diverge in domestic application and whether existing procedures turn those differences into obtainable remedies."
+    },
+    "evidence": {
+      "zh": "Ash & Marian, The Making of International Tax Law（2020）",
+      "en": "Ash & Marian, The Making of International Tax Law (2020)"
+    },
+    "sourceUrl": "https://ssrn.com/abstract=3314310",
+    "relatedTopicIds": ["un-tax-convention-governance", "danon-lausanne-disputes"]
+  },
+  {
+    "id": "source-taxation-without-forum",
+    "title": {
+      "zh": "來源地課稅權的擴張，尚未帶來對應的爭端場域",
+      "en": "Expanded source taxation has not yet brought a matching forum for disputes"
+    },
+    "question": {
+      "zh": "重談既有稅約與擴大來源地課稅權後，違反協調義務的爭議由誰處理？",
+      "en": "After treaty renegotiation and expanded source taxation, who addresses disputes over a breach of coordination duties?"
+    },
+    "finding": {
+      "zh": "UN 框架公約模板第 5 條要求公平分配課稅權，並指向重談不一致的既有稅約；服務所得工作流也提出覆蓋既有條約的方案。然而三份工作文件均未把這些實質承諾接到自動適用的救濟程序。",
+      "en": "The UN Framework Convention template's Article 5 calls for fair allocation of taxing rights and renegotiation of inconsistent existing treaties; the services-income workstream also considers overriding existing treaty rules. Yet none of the three papers connects those substantive commitments to an automatically applicable remedial procedure."
+    },
+    "researchMeaning": {
+      "zh": "這使「規則生產」與「爭端解決」不能分開分析。論文可以比較 OECD、UN 與投資協定體系各自如何分配課稅權、賦予程序入口，並處理制度之間的重疊與缺口。",
+      "en": "This means rule production and dispute resolution cannot be analysed separately. A thesis can compare how OECD, UN, and investment-treaty regimes allocate taxing rights, provide procedural entry, and handle overlap and gaps between systems."
+    },
+    "evidence": {
+      "zh": "CRP.26 第 5、21 條；CRP.27 第 42–43 段；CRP.28 第 12 段",
+      "en": "CRP.26 Arts. 5 and 21; CRP.27 paras. 42–43; CRP.28 para. 12"
+    },
+    "sourceUrl": "https://financing.desa.un.org/document/workstream-iii-dispute-prevention-and-resolution-co-leads-concept-note-23-jan-2026",
+    "relatedTopicIds": ["un-tax-convention-governance", "danon-lausanne-disputes"]
+  },
+  {
+    "id": "wealth-data-and-legal-design",
+    "title": {
+      "zh": "高淨值個人課稅：資料估計與法律設計必須同時檢驗",
+      "en": "Taxing high-net-worth individuals requires testing data estimates and legal design together"
+    },
+    "question": {
+      "zh": "面對高度隱蔽的離岸財富，全球稅收合作應如何在可量化主張與可執行義務之間取得平衡？",
+      "en": "For highly concealed offshore wealth, how should global tax cooperation balance quantifiable claims with enforceable duties?"
+    },
+    "finding": {
+      "zh": "EU Tax Observatory 的資料將離岸財富、企業利潤移轉與高淨值個人稅收缺口置於同一問題圖景；同時也承認估計受資料隱蔽性限制。UN CRP.26 第 6 條進一步把高淨值個人避稅與逃稅的偵測、嚇阻與防止寫入合作義務，但目前仍是行為義務，而非可直接量化的分配規則。",
+      "en": "EU Tax Observatory material places offshore wealth, corporate profit shifting, and high-net-worth tax deficits in a common picture while acknowledging the limits created by concealment. UN CRP.26 Article 6 then writes detection, deterrence, and prevention of HNWI avoidance and evasion into cooperation duties, but these remain conduct duties rather than directly quantifiable allocation rules."
+    },
+    "researchMeaning": {
+      "zh": "這一主題提醒研究者區分三件事：估計的可信度、國家義務的強度，以及個人或國家在義務未落實時是否擁有可用的程序。",
+      "en": "This theme requires separating three questions: the credibility of an estimate, the strength of a state's duty, and the availability of procedure when that duty is not fulfilled."
+    },
+    "evidence": {
+      "zh": "EU Tax Observatory Global Tax Evasion Report 2024；UN CRP.26 第 6 條",
+      "en": "EU Tax Observatory Global Tax Evasion Report 2024; UN CRP.26 Article 6"
+    },
+    "sourceUrl": "https://taxobservatory.eu/publication/global-tax-evasion-report-2024/",
+    "relatedTopicIds": ["wealth-tax-hnwi", "un-tax-convention-governance"]
+  }
+]

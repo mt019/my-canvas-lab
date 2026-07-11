@@ -4,7 +4,6 @@ import { Background, Controls, ReactFlow, useNodesState, useEdgesState } from '@
 import dagre from '@dagrejs/dagre';
 import '@xyflow/react/dist/style.css';
 import {
-  Activity,
   ArrowLeft,
   ArrowUpRight,
   BookOpen,
@@ -16,7 +15,6 @@ import {
   Globe2,
   Languages,
   Layers3,
-  RefreshCcw,
   Scale,
   ShieldCheck,
   Sparkles,
@@ -25,16 +23,15 @@ import {
 import sources from '../data/intlTaxOps/sources.json';
 import topics from '../data/intlTaxOps/topics.json';
 import schema from '../data/intlTaxOps/data_classification_schema.json';
-import watchlist from '../data/intlTaxOps/frontier_watchlist.json';
 import controversies from '../data/intlTaxOps/controversies.json';
-import digest from '../data/intlTaxOps/frontier_digest.json';
 import researchAnalyses from '../data/intlTaxOps/research_analyses.json';
+import thematicAnalyses from '../data/intlTaxOps/thematic_analyses.json';
 import styles from './InternationalTaxOps.module.css';
 
 const ui = {
   zh: {
     app: '國際稅法研究桌',
-    subtitle: '規範、實然、趨勢、未來發展、研究熱點與學者生態的雙語監測面板',
+    subtitle: '從規範文本、制度設計與實務材料提出可追問的國際稅法問題',
     lang: 'English',
     sources: '來源',
     topics: '議題',
@@ -52,7 +49,6 @@ const ui = {
     checked: '核實日',
     authority: '權威層',
     temporal: '時間狀態',
-    workflow: '工作流',
     type: '材料類型',
     layer: '認識層',
     all: '全部',
@@ -60,14 +56,18 @@ const ui = {
     relatedTopics: '相關議題',
     citation: '引用',
     liveCase: '對照案例頁面',
-    digest: '最新動態',
-    digestEmpty: '尚無研究過的動態。在資料倉庫執行 /frontier-research 之後，這裡會出現帶引註的動態研究。',
-    research: '研究分析',
+    research: '主題判讀',
+    researchLead: '已完成的研究判讀，從問題、結論與研究意義展開。',
+    closeReading: '深度研讀',
+    question: '研究問題',
+    finding: '目前判讀',
+    researchMeaning: '對研究題目的意義',
+    evidence: '依據',
     readAt: '研讀日',
   },
   en: {
     app: 'International Tax Research Desk',
-    subtitle: 'A bilingual research desk for rules, implementation, trends, future development, hotspots, and scholar ecosystems',
+    subtitle: 'Research questions developed from legal texts, institutional design, and practice materials',
     lang: '中文',
     sources: 'Sources',
     topics: 'Topics',
@@ -85,7 +85,6 @@ const ui = {
     checked: 'Checked',
     authority: 'Authority',
     temporal: 'Temporal',
-    workflow: 'Workflow',
     type: 'Material type',
     layer: 'Epistemic layer',
     all: 'All',
@@ -93,17 +92,20 @@ const ui = {
     relatedTopics: 'Related topics',
     citation: 'Citation',
     liveCase: 'See the applied case page',
-    digest: 'Latest Digest',
-    digestEmpty: 'No researched updates yet. Run /frontier-research in the data repo to populate this feed with cited research notes.',
-    research: 'Research Analysis',
+    research: 'Thematic Analysis',
+    researchLead: 'Completed research readings developed through questions, findings, and implications.',
+    closeReading: 'Close Reading',
+    question: 'Research question',
+    finding: 'Current reading',
+    researchMeaning: 'Implication for the project',
+    evidence: 'Basis',
     readAt: 'Read',
   },
 };
 
 const MAIN_TABS = [
-  { id: 'matrix', labelKey: 'matrix', Icon: Layers3 },
   { id: 'research', labelKey: 'research', Icon: BookOpen },
-  { id: 'digest', labelKey: 'digest', Icon: Activity },
+  { id: 'matrix', labelKey: 'matrix', Icon: Layers3 },
   { id: 'sources', labelKey: 'sourceRegistry', Icon: Database },
   { id: 'relations', labelKey: 'relations', Icon: GitBranch },
   { id: 'controversies', labelKey: 'controversies', Icon: Scale },
@@ -116,18 +118,6 @@ function labelFor(axis, id, lang) {
   if (!hit) return id;
   if (typeof hit === 'string') return hit;
   return hit[lang] ?? hit.en ?? id;
-}
-
-function cadenceLabel(value, lang) {
-  const labels = {
-    hourly: { zh: '每小時', en: 'Hourly' },
-    daily: { zh: '每日', en: 'Daily' },
-    weekly: { zh: '每週', en: 'Weekly' },
-    monthly: { zh: '每月', en: 'Monthly' },
-    quarterly: { zh: '每季', en: 'Quarterly' },
-    manual: { zh: '人工確認', en: 'Manual review' },
-  };
-  return labels[value]?.[lang] ?? value;
 }
 
 function watchTypeLabel(value, lang) {
@@ -168,28 +158,13 @@ function topicTitleById(id, lang) {
   return topics.find((topic) => topic.id === id)?.title?.[lang] ?? id;
 }
 
-function sourceTitleById(id, lang) {
-  return watchlist.find((item) => item.id === id)?.label?.[lang]
-    ?? sources.find((item) => item.id === id)?.title?.[lang]
-    ?? id;
-}
-
-function verificationLabel(value, lang) {
-  const labels = {
-    'verified-against-snapshot': { zh: '已對照快照核實', en: 'Verified against snapshot' },
-    'verified-against-source': { zh: '已對照原始來源', en: 'Verified against source' },
-    pending: { zh: '待核實', en: 'Pending verification' },
-  };
-  return labels[value]?.[lang] ?? value;
-}
-
 export default function InternationalTaxOps() {
   useEffect(() => {
     document.title = '國際稅法研究桌 · Canvas Lab';
   }, []);
 
   const [lang, setLang] = useState('zh');
-  const [mainTab, setMainTab] = useState('matrix');
+  const [mainTab, setMainTab] = useState('research');
   const [layer, setLayer] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   // Accordion cards default fully expanded, consistent with the rest of
@@ -227,31 +202,6 @@ export default function InternationalTaxOps() {
       source.institution,
       source.authorityTier,
       ...source.topicDomain,
-    ].join(' ').toLowerCase().includes(query));
-  }, [query]);
-
-  const filteredDigest = useMemo(() => {
-    const sorted = [...digest].sort((a, b) => (a.date < b.date ? 1 : -1));
-    if (!query) return sorted;
-    return sorted.filter((item) => [
-      item.headline.zh,
-      item.headline.en,
-      item.analysis.zh,
-      item.analysis.en,
-      item.sourceId,
-      ...(item.relatedTopicIds ?? []),
-    ].join(' ').toLowerCase().includes(query));
-  }, [query]);
-
-  const filteredWatchlist = useMemo(() => {
-    if (!query) return watchlist;
-    return watchlist.filter((item) => [
-      item.label.zh,
-      item.label.en,
-      item.latestObserved,
-      item.latestObservedZh,
-      item.watchType,
-      ...item.signals,
     ].join(' ').toLowerCase().includes(query));
   }, [query]);
 
@@ -400,8 +350,8 @@ export default function InternationalTaxOps() {
             </div>
           </div>
           <div className={styles.topActions}>
-            <span className={styles.headerMeta}>{sources.length} {t.sources} · {topics.length} {t.topics} · {digest.length} {t.digest}</span>
-            <Pill icon={RefreshCcw} text={lang === 'zh' ? '更新觀察中' : 'Watching updates'} />
+            <span className={styles.headerMeta}>{thematicAnalyses.length} {t.research} · {topics.length} {t.topics}</span>
+            <Pill icon={BookOpen} text={lang === 'zh' ? '持續研讀' : 'In active study'} />
           </div>
         </header>
 
@@ -441,7 +391,6 @@ export default function InternationalTaxOps() {
                           <span>{labelFor('temporalStatus', topic.temporalStatus, lang)}</span>
                         </div>
                         <h3>{topic.title[lang]}</h3>
-                        <p>{topic.summary[lang]}</p>
                         <div className={styles.tagRow}>
                           {topic.epistemicLayer.slice(0, 3).map((id) => <span key={id}>{labelFor('epistemicLayer', id, lang)}</span>)}
                         </div>
@@ -451,11 +400,6 @@ export default function InternationalTaxOps() {
                         <div className={styles.topicDetail}>
                           <InfoLine label={t.authority} value={labelFor('authorityTier', topic.authorityTier, lang)} />
                           <InfoLine label={t.temporal} value={labelFor('temporalStatus', topic.temporalStatus, lang)} />
-                          <InfoLine label={t.workflow} value={labelFor('workflowState', topic.workflowState, lang)} />
-                          <h4>{t.nextActions}</h4>
-                          <ul className={styles.actionList}>
-                            {topic.nextActions[lang].map((item) => <li key={item}>{item}</li>)}
-                          </ul>
                           <h4>{t.risk}</h4>
                           <div className={`${styles.tagRow} ${styles.danger}`}>
                             {topic.riskFlags.map((flag) => <span key={flag}>{riskLabel(flag, lang)}</span>)}
@@ -473,8 +417,37 @@ export default function InternationalTaxOps() {
         {mainTab === 'research' && (
           <section className={styles.panel}>
             <div className={styles.sectionHead}>
-              <h2>{t.research}</h2>
+              <div>
+                <h2>{t.research}</h2>
+                <p>{t.researchLead}</p>
+              </div>
               <BookOpen size={18} />
+            </div>
+            <div className={styles.analysisGrid}>
+              {thematicAnalyses.map((analysis) => (
+                <article key={analysis.id} className={styles.analysisCard}>
+                  <h3>{analysis.title[lang]}</h3>
+                  <div className={styles.analysisBlock}>
+                    <span>{t.question}</span>
+                    <p>{analysis.question[lang]}</p>
+                  </div>
+                  <div className={styles.analysisBlock}>
+                    <span>{t.finding}</span>
+                    <p>{analysis.finding[lang]}</p>
+                  </div>
+                  <div className={`${styles.analysisBlock} ${styles.analysisMeaning}`}>
+                    <span>{t.researchMeaning}</span>
+                    <p>{analysis.researchMeaning[lang]}</p>
+                  </div>
+                  <footer>
+                    <span>{t.evidence}: {analysis.evidence[lang]}</span>
+                    <a href={analysis.sourceUrl} target="_blank" rel="noreferrer">{t.open}<ArrowUpRight size={14} /></a>
+                  </footer>
+                </article>
+              ))}
+            </div>
+            <div className={styles.closeReadingHead}>
+              <h2>{t.closeReading}</h2>
             </div>
             <div className={styles.controversyList}>
               {researchAnalyses.map((paper) => (
@@ -548,42 +521,6 @@ export default function InternationalTaxOps() {
           </section>
         )}
 
-        {mainTab === 'digest' && (
-          <section className={styles.panel}>
-            <div className={styles.sectionHead}>
-              <h2>{t.digest}</h2>
-              <Activity size={18} />
-            </div>
-            {filteredDigest.length === 0 ? (
-              <p className={styles.filterDesc}>{t.digestEmpty}</p>
-            ) : (
-              <div className={styles.controversyList}>
-                {filteredDigest.map((item) => (
-                  <article key={item.id} className={styles.controversyCard}>
-                    <h3>{item.headline[lang]}</h3>
-                    <p>{item.analysis[lang]}</p>
-                    <div className={styles.tagRow}>
-                      <span>{item.date}</span>
-                      <span>{labelFor('authorityTier', item.authorityTier, lang)}</span>
-                      <span>{verificationLabel(item.verification, lang)}</span>
-                    </div>
-                    {item.relatedTopicIds?.length > 0 && (
-                      <div className={styles.controversyRelated}>
-                        <span>{t.relatedTopics}</span>
-                        {item.relatedTopicIds.map((id) => <span key={id}>{topicTitleById(id, lang)}</span>)}
-                      </div>
-                    )}
-                    <div className={styles.controversyCitation}>
-                      <span>{sourceTitleById(item.sourceId, lang)}</span>
-                      <a href={item.sourceUrl} target="_blank" rel="noreferrer">{t.open}<ArrowUpRight size={14} /></a>
-                    </div>
-                  </article>
-                ))}
-              </div>
-            )}
-          </section>
-        )}
-
         {mainTab === 'sources' && (
           <section className={styles.panel}>
             <div className={styles.sectionHead}>
@@ -598,8 +535,6 @@ export default function InternationalTaxOps() {
                     <span>{source.institution}</span>
                   </div>
                   <Pill icon={ShieldCheck} text={labelFor('authorityTier', source.authorityTier, lang)} />
-                  <Pill icon={RefreshCcw} text={`${t.cadence}: ${cadenceLabel(source.refreshCadence, lang)}`} />
-                  <Pill icon={CheckCircle2} text={`${t.checked}: ${source.dateChecked}`} />
                   <a href={source.url} target="_blank" rel="noreferrer" aria-label={t.open}>
                     <ArrowUpRight size={17} />
                   </a>
