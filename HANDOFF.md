@@ -272,6 +272,24 @@ work.
   CSS，浮窗本身亦可點）；不在冊姓名退回純文字。方向與 Feature C（大法官頁→案件浮層）相反，
   兩向合一即 case↔justice 全打通（研究站超連結感）。Playwright E1–E7 全過、H1–H7 全過、
   console 無錯、build 全綠。
+- 2026-07-11（同批續，一輪使用者密集回饋）**前端多項修＋兩則資料 repo 修**（DONE）：
+  前端（`ConstitutionalCourt.jsx`）：(1) 浮層頂欄改一體式右上角圓角關閉鈕（移除尖角橫條、
+  移除孤零日期；底欄另備關閉）；(2) **分頁切換 `window.scrollTo(0,0)`**（effect deps＝
+  `[active, justiceName]`，不含 focusDoc）——修「索引捲到底點大法官、新頁也停在底」的捲動聯動；
+  (3) 理由書全域「預設展開/收合」鈕改用 effect 同步 `showReason`，即時驅動**所有已載卡片**
+  （原只影響新卡）；(4) **無限捲動**取代「顯示更多」：`INDEX_PAGE=40` 初始／重置、
+  底部 sentinel＋IntersectionObserver（rootMargin 800px 預取，deps 含 limit 連續補到底）；
+  (5) 理由書展開區塊 `onDoubleClick` 收合；(6) 逐人統計頁尾統計基礎母數 7228→行憲後 874
+  （行憲前無大法官具名意見書、不計入）；(7) `NomineeDossiers` 從通用 `CaseCard` 移到
+  `Case1Analysis`（114憲判1 專屬分頁）——被提名人簡歷不該出現在每次案件預覽；(8) 卡片加
+  **審判長**（僅憲判 60 件、弱化樣式、`JusticeRef` 可點）——研究判斷：審判長／主席＝主持評議
+  之院長、程序性、資訊量低，故只憲判掛、釋字主席 813 件全為院長不掛（主筆才是實質作者）；
+  (9) 逐人統計表頭語意換行（提出／意見書 兩行、非 4+3+1 醜拆）＋姓名／意見書類型 nowrap＋
+  縮長條欄。**資料 repo**（`../constitutional-court-research-data`，投影層 build-app-json，
+  原樣層不動）：(a) 官方文字勘誤層 `data/materials/官方文字勘誤.json`——釋字562 解釋文民國年碼
+  是官方自訂字型 PUA 字元 U+E8C7（肉眼空白），依理由書＋官方連結還原「臺（77）內地字」；
+  (b) `stripBenchRoster` 剔憲判理由書尾端合議庭署名列（60 件，已結構化在 參與/審判長 欄）。
+  已 app-json→validate→sync→canvas build。全部 Playwright 實機驗證（本輪 5+5+14 檢）、console 無錯。
 - Imports `src/data/constitutionalCourt.json` (~5.4MB since M5 Phase B;
   行憲前 rows are lean catalog previews, not full text) plus a lazy
   companion `constitutionalCourt-pre1947-fulltext.json` (~2.4MB,

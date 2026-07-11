@@ -584,6 +584,9 @@ function CaseCard({ d, q, reasoningDefault, pdfMode }) {
     loadReasoning().then((m) => { if (alive) { setReason(m[d.字號] ?? { none: true }); setLoadingReason(false); } });
     return () => { alive = false; };
   }, [showReason, reason, hasReasoning, d.字號]);
+  // 全域「理由書預設展開/收合」切換要驅動所有已掛載卡片（原本只影響之後新出現的卡）：
+  // reasoningDefault 一變就同步 showReason。之後仍可逐卡自行開合，直到下次全域切換。
+  useEffect(() => { if (hasReasoning) setShowReason(reasoningDefault); }, [reasoningDefault, hasReasoning]);
   // 行憲前卡片預設就展開全文（懶載檔仍只抓一次、全卡共享快取）；預覽被截斷者才需抓。
   useEffect(() => {
     if (d.系列 && d.主文.endsWith('…')) showFull();
@@ -688,6 +691,14 @@ function CaseCard({ d, q, reasoningDefault, pdfMode }) {
               <strong className="text-[var(--cc-accent)]">主筆</strong>　<JusticeRef name={d.主筆} />
             </span>
           ) : null}
+          {/* 審判長（憲判）＝主持評議者，依法為司法院院長，程序性、資訊量低，故僅以弱化樣式呈現、
+              且只在憲判顯示（釋字的「主席」同為院長、813 件全有，掛上去只是雜訊，不顯示）；
+              主筆才是實質作者。名字仍可點連個人頁。 */}
+          {d.審判長 ? (
+            <span className="mr-4">
+              <strong className="text-[var(--cc-eyebrow)]">審判長</strong>　<JusticeRef name={d.審判長} />
+            </span>
+          ) : null}
           {d.參與大法官?.length ? (
             <span>
               <strong className="text-[var(--cc-accent)]">參與大法官</strong>{'　'}
@@ -724,7 +735,7 @@ function CaseCard({ d, q, reasoningDefault, pdfMode }) {
             ) : reason?.none ? (
               <p className="mt-2 text-[13px] text-[var(--cc-ink-soft)]">此件無獨立理由書（早期釋字理由多併於解釋文）。</p>
             ) : reason ? (
-              <div className="mt-2 rounded-lg bg-[var(--cc-opinion-bg)] px-3.5 py-2.5">
+              <div className="mt-2 rounded-lg bg-[var(--cc-opinion-bg)] px-3.5 py-2.5" onDoubleClick={() => setShowReason(false)} title="雙擊此區即可收合理由書">
                 <p className="mb-1 text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">{d.類型 === '判決' ? '理由' : '解釋理由書'}</p>
                 {splitClauses(reason.理由書).map((para, i) => (
                   <p key={i} className="mt-1.5 max-w-4xl whitespace-pre-line text-[13.5px] leading-relaxed text-[var(--cc-ink-mid)]">{hl(para, q)}</p>
@@ -734,8 +745,6 @@ function CaseCard({ d, q, reasoningDefault, pdfMode }) {
           ) : null}
         </div>
       ) : null}
-
-      {NOMINEE_CASES.has(d.字號) ? <NomineeDossiers pdfMode={pdfMode} /> : null}
 
       <div className="mt-3 flex flex-wrap items-center gap-4 text-[12px]">
         <a href={d.官方頁} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 font-bold text-[var(--cc-accent)] hover:text-[var(--cc-link-hover)]">
@@ -772,15 +781,15 @@ function DocSpotlight({ 字號, onClose, onPick, onViewIndex }) {
       style={CC_VARS}
     >
       <div
-        className="relative w-full max-w-4xl rounded-xl border border-[var(--cc-line)] bg-[var(--cc-bg)] px-5 pb-5 shadow-2xl sm:px-6"
+        className="relative w-full max-w-4xl rounded-xl border border-[var(--cc-line)] bg-[var(--cc-bg)] px-5 pb-5 pt-2 shadow-2xl sm:px-6"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="sticky top-0 -mx-5 flex items-center justify-between gap-3 border-b border-[var(--cc-line)] bg-[var(--cc-bg)]/95 px-5 py-3 backdrop-blur sm:-mx-6 sm:px-6">
-          <span className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">案件預覽</span>
-          <button onClick={onClose} aria-label="關閉" className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-[12px] font-bold text-[var(--cc-accent)] hover:bg-[var(--cc-hover-bg)]">
-            <X size={14} />關閉
-          </button>
-        </div>
+        {/* 不另設頂欄橫條（尖角與圓角浮窗不搭、且與卡片割裂）：關閉鈕做成浮窗右上角的一體式圖示，
+            捲動時隨浮窗內容一起走；底欄另備關閉，ESC／點背板亦可關。 */}
+        <button onClick={onClose} aria-label="關閉"
+          className="absolute right-2.5 top-2.5 z-10 inline-flex items-center gap-1 rounded-lg bg-[var(--cc-bg)]/85 px-2 py-1 text-[12px] font-bold text-[var(--cc-accent)] backdrop-blur hover:bg-[var(--cc-hover-bg)]">
+          <X size={14} />關閉
+        </button>
 
         {d ? (
           <CaseCard d={d} q="" reasoningDefault={false} pdfMode={pdfMode} />
@@ -805,6 +814,9 @@ function DocSpotlight({ 字號, onClose, onPick, onViewIndex }) {
               官方頁 <ExternalLink size={11} />
             </a>
           ) : null}
+          <button onClick={onClose} aria-label="關閉" className="ml-auto inline-flex items-center gap-1 font-bold text-[var(--cc-accent)] hover:text-[var(--cc-link-hover)]">
+            <X size={12} />關閉
+          </button>
         </div>
       </div>
     </div>
@@ -873,6 +885,8 @@ function SegControl({ value, onChange, options }) {
   );
 }
 
+const INDEX_PAGE = 40; // 索引初始/重置顯示件數（比舊 30 多，配合下拉自動加載）
+
 function IndexView({ initialQ = '', onOpenDoc }) {
   const [機關, set機關] = useState(readInitial機關);
   const [type, setType] = useState('全部');
@@ -884,8 +898,9 @@ function IndexView({ initialQ = '', onOpenDoc }) {
   const [q, setQ] = useState(initialQ);
   // 「在索引中檢視」由 URL ?q= 帶入字號預搜；此頁已掛載時亦同步（初次掛載為 no-op）。
   useEffect(() => { setQ(initialQ); }, [initialQ]);
-  const [limit, setLimit] = useState(30);
+  const [limit, setLimit] = useState(INDEX_PAGE);
   const [toolbarSentinel, toolbarHidden] = useHideOnScrollDown();
+  const loadMoreRef = useRef(null);
   const [sortDir, setSortDir] = useState('desc');
   const [reasoningDefault, setReasoningDefault] = usePref('ccReasoningDefault', false);
   const [pdfMode, setPdfMode] = usePref('pdfMode', 'preview');
@@ -990,6 +1005,19 @@ function IndexView({ initialQ = '', onOpenDoc }) {
   }, [filtered, sortDir]);
 
   const shown = sorted.slice(0, limit);
+  // 下拉自動加載（取代「顯示更多」按鈕）：底部 sentinel 進入視窗前 800px 就預取下一批。
+  // deps 含 limit——每次加載後重建 observer，若 sentinel 仍在預取區間會再次觸發、連續補到看得完為止；
+  // 全部顯示（shown 覆蓋 sorted）時直接不掛 observer，避免無限迴圈。
+  useEffect(() => {
+    if (shown.length >= sorted.length) return;
+    const el = loadMoreRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) setLimit((l) => Math.min(l + INDEX_PAGE, sorted.length));
+    }, { rootMargin: '800px 0px' });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [limit, sorted.length, shown.length]);
   const stamp = new Date().toISOString().slice(0, 10);
   // 是否只看行憲前：決定隱藏大法官時代才有的篩選（類型/主題/審查基準對統一解釋無意義）。
   const isPre = 機關 === '行憲前' || 機關_ERA.行憲前.includes(機關);
@@ -1003,7 +1031,7 @@ function IndexView({ initialQ = '', onOpenDoc }) {
         <div className="mb-2.5 flex flex-wrap items-center gap-2">
           <SegControl
             value={seg}
-            onChange={(v) => { set機關(v); setType('全部'); setTopic('全部'); setSubtopic('全部'); setOutcome('全部'); setStandard('全部'); setDecade('全部'); setTypo({}); setLimit(30); }}
+            onChange={(v) => { set機關(v); setType('全部'); setTopic('全部'); setSubtopic('全部'); setOutcome('全部'); setStandard('全部'); setDecade('全部'); setTypo({}); setLimit(INDEX_PAGE); }}
             options={[
               ['行憲後', '行憲後　釋字・憲判', 機關Counts.行憲後],
               ['行憲前', '行憲前　統一解釋', 機關Counts.行憲前],
@@ -1011,7 +1039,7 @@ function IndexView({ initialQ = '', onOpenDoc }) {
             ]}
           />
           {seg === '行憲前' ? (
-            <Select label="機關" value={機關 === '行憲前' ? '行憲前' : 機關} onChange={(v) => { set機關(v); setLimit(30); }} options={[['行憲前', `全部機關（${機關Counts.行憲前}）`], ...機關_ERA.行憲前.map((k) => [k, `${k}（${機關Counts.m.get(k) ?? 0}）`])]} />
+            <Select label="機關" value={機關 === '行憲前' ? '行憲前' : 機關} onChange={(v) => { set機關(v); setLimit(INDEX_PAGE); }} options={[['行憲前', `全部機關（${機關Counts.行憲前}）`], ...機關_ERA.行憲前.map((k) => [k, `${k}（${機關Counts.m.get(k) ?? 0}）`])]} />
           ) : null}
           {seg === '行憲前' ? (
             <span className="text-[12px] text-[var(--cc-ink-soft)]">大理院／最高法院／司法院的統一解釋，非大法官憲法解釋；主題與審查基準為大法官時代機標，此處不適用。</span>
@@ -1022,7 +1050,7 @@ function IndexView({ initialQ = '', onOpenDoc }) {
             <Search size={13} className="text-[var(--cc-eyebrow)]" />
             <input
               value={q}
-              onChange={(e) => { setQ(e.target.value); setLimit(30); }}
+              onChange={(e) => { setQ(e.target.value); setLimit(INDEX_PAGE); }}
               placeholder="搜尋字號、爭點、主文、系爭法令、原理原則"
               className="w-full bg-transparent text-[13px] text-[var(--cc-ink-strong)] placeholder-[var(--cc-placeholder)] focus:outline-none"
             />
@@ -1030,19 +1058,19 @@ function IndexView({ initialQ = '', onOpenDoc }) {
         </div>
         <div className="mt-2 flex flex-wrap items-center gap-2">
           {!isPre ? (
-            <Select label="類型" value={type} onChange={(v) => { setType(v); setLimit(30); }} options={[['全部', '全部'], ['解釋', `解釋（${typeCounts.get('解釋') ?? 0}）`], ['判決', `憲法法庭判決（${typeCounts.get('判決') ?? 0}）`], ['實體裁定', `實體裁定（${typeCounts.get('實體裁定') ?? 0}）`]]} />
+            <Select label="類型" value={type} onChange={(v) => { setType(v); setLimit(INDEX_PAGE); }} options={[['全部', '全部'], ['解釋', `解釋（${typeCounts.get('解釋') ?? 0}）`], ['判決', `憲法法庭判決（${typeCounts.get('判決') ?? 0}）`], ['實體裁定', `實體裁定（${typeCounts.get('實體裁定') ?? 0}）`]]} />
           ) : null}
           {!isPre ? (
-            <Select label="主題" value={topic} onChange={(v) => { setTopic(v); setSubtopic('全部'); setLimit(30); }} options={[['全部', '全部'], ...topicOptions]} />
+            <Select label="主題" value={topic} onChange={(v) => { setTopic(v); setSubtopic('全部'); setLimit(INDEX_PAGE); }} options={[['全部', '全部'], ...topicOptions]} />
           ) : null}
           {subtopicOptions && !isPre ? (
-            <Select label="細分" value={subtopic} onChange={(v) => { setSubtopic(v); setLimit(30); }} options={[['全部', '全部'], ...subtopicOptions.map(([s, n]) => [s, `${s}（${n}）`])]} />
+            <Select label="細分" value={subtopic} onChange={(v) => { setSubtopic(v); setLimit(INDEX_PAGE); }} options={[['全部', '全部'], ...subtopicOptions.map(([s, n]) => [s, `${s}（${n}）`])]} />
           ) : null}
-          <Select label="結論" value={outcome} onChange={(v) => { setOutcome(v); setLimit(30); }} options={[['全部', '全部'], ['違憲（含定期失效）', `違憲（含定期失效）（${outcomeCounts['違憲（含定期失效）']}）`], ['合憲', `合憲（${outcomeCounts.合憲}）`], ['法令解釋', `法令解釋（${outcomeCounts.法令解釋}）`], ['補充前解釋', `補充前解釋（${outcomeCounts.補充前解釋}）`], ['變更前解釋', `變更前解釋（${outcomeCounts.變更前解釋}）`], ['其他/待人工', `待人工判讀（${outcomeCounts['其他/待人工']}）`]]} />
+          <Select label="結論" value={outcome} onChange={(v) => { setOutcome(v); setLimit(INDEX_PAGE); }} options={[['全部', '全部'], ['違憲（含定期失效）', `違憲（含定期失效）（${outcomeCounts['違憲（含定期失效）']}）`], ['合憲', `合憲（${outcomeCounts.合憲}）`], ['法令解釋', `法令解釋（${outcomeCounts.法令解釋}）`], ['補充前解釋', `補充前解釋（${outcomeCounts.補充前解釋}）`], ['變更前解釋', `變更前解釋（${outcomeCounts.變更前解釋}）`], ['其他/待人工', `待人工判讀（${outcomeCounts['其他/待人工']}）`]]} />
           {!isPre ? (
-            <Select label="審查基準" value={standard} onChange={(v) => { setStandard(v); setLimit(30); }} options={[['全部', '全部'], ['嚴格', `嚴格（${standardCounts.get('嚴格') ?? 0}）`], ['中度', `中度（${standardCounts.get('中度') ?? 0}）`], ['寬鬆', `寬鬆（${standardCounts.get('寬鬆') ?? 0}）`], ['多重（待人工）', `多重（待人工）（${standardCounts.get('多重（待人工）') ?? 0}）`], ['未明示', `未明示（${standardCounts.get('未明示') ?? 0}）`]]} />
+            <Select label="審查基準" value={standard} onChange={(v) => { setStandard(v); setLimit(INDEX_PAGE); }} options={[['全部', '全部'], ['嚴格', `嚴格（${standardCounts.get('嚴格') ?? 0}）`], ['中度', `中度（${standardCounts.get('中度') ?? 0}）`], ['寬鬆', `寬鬆（${standardCounts.get('寬鬆') ?? 0}）`], ['多重（待人工）', `多重（待人工）（${standardCounts.get('多重（待人工）') ?? 0}）`], ['未明示', `未明示（${standardCounts.get('未明示') ?? 0}）`]]} />
           ) : null}
-          <Select label="年代" value={decade} onChange={(v) => { setDecade(v); setLimit(30); }} options={[['全部', '全部'], ...decades.map((d) => [d, `${d} 年代`])]} />
+          <Select label="年代" value={decade} onChange={(v) => { setDecade(v); setLimit(INDEX_PAGE); }} options={[['全部', '全部'], ...decades.map((d) => [d, `${d} 年代`])]} />
         </div>
         {!isPre ? (
           <div className="mt-2">
@@ -1068,13 +1096,13 @@ function IndexView({ initialQ = '', onOpenDoc }) {
                         key={id}
                         label={`${id}·${name}`}
                         value={typo[id] ?? '全部'}
-                        onChange={(v) => { setTypo((t) => ({ ...t, [id]: v })); setLimit(30); }}
+                        onChange={(v) => { setTypo((t) => ({ ...t, [id]: v })); setLimit(INDEX_PAGE); }}
                         options={[['全部', '全部'], ...entries.map(([c, n]) => [c, `${typoLabel(c)}（${n}）`])]}
                       />
                     );
                   })}
                   {activeTypoN ? (
-                    <button onClick={() => { setTypo({}); setLimit(30); }} className="text-[12px] font-bold text-[var(--cc-accent)] hover:text-[var(--cc-link-hover)]">清除類型篩選</button>
+                    <button onClick={() => { setTypo({}); setLimit(INDEX_PAGE); }} className="text-[12px] font-bold text-[var(--cc-accent)] hover:text-[var(--cc-link-hover)]">清除類型篩選</button>
                   ) : null}
                 </div>
                 <p className="mt-1.5 max-w-3xl text-[11.5px] leading-relaxed text-[var(--cc-ink-soft)]">
@@ -1122,15 +1150,13 @@ function IndexView({ initialQ = '', onOpenDoc }) {
       {shown.map((d) => (
         <CaseCard key={d.字號} d={d} q={q} reasoningDefault={reasoningDefault} pdfMode={pdfMode} />
       ))}
-      {filtered.length > limit ? (
-        <div className="py-6 text-center">
-          <button
-            onClick={() => setLimit(limit + 50)}
-            className="rounded-lg border border-[var(--cc-border)] bg-white px-5 py-2 text-[13px] font-bold text-[var(--cc-accent)] hover:bg-[var(--cc-hover-bg)]"
-          >
-            顯示更多（尚有 {filtered.length - limit} 件）
-          </button>
+      {/* 下拉自動加載：sentinel 進視窗前就補下一批，無需手動點。 */}
+      {sorted.length > limit ? (
+        <div ref={loadMoreRef} className="py-6 text-center text-[12px] text-[var(--cc-ink-soft)]">
+          載入更多…（尚有 {sorted.length - limit} 件）
         </div>
+      ) : sorted.length ? (
+        <p className="py-6 text-center text-[12px] text-[var(--cc-ink-soft)]">已顯示全部 {sorted.length} 件</p>
       ) : null}
     </div>
   );
@@ -1572,35 +1598,37 @@ function JusticesView({ onOpen }) {
       </div>
       <div className="mt-3 overflow-x-auto rounded-lg border border-[var(--cc-table-border)]">
         <table className="w-full min-w-[760px] border-collapse bg-white text-left text-[12.5px]">
-          <thead className="bg-[var(--cc-hover-bg)] text-[var(--cc-table-head-ink)]">
+          {/* 表頭語意換行：動詞一行、受詞一行（提出／意見書…），避免瀏覽器把窄欄硬拆成
+              4字+3字+1字的醜換行；姓名與意見書類型不換行（4字名、長類型串靠整表橫捲）。 */}
+          <thead className="bg-[var(--cc-hover-bg)] text-[var(--cc-table-head-ink)] align-bottom">
             <tr>
-              <th className="px-3 py-2">大法官</th>
-              <th className="px-3 py-2">提出意見書</th>
-              <th className="px-3 py-2 w-[180px]"></th>
-              <th className="px-3 py-2">加入意見書</th>
-              <th className="px-3 py-2">主筆判決</th>
-              <th className="px-3 py-2">參與解釋</th>
-              <th className="px-3 py-2">參與裁判</th>
-              <th className="px-3 py-2">意見書類型</th>
+              <th className="px-3 py-2 whitespace-nowrap">大法官</th>
+              <th className="px-2 py-2 whitespace-nowrap"><span className="block leading-tight">提出</span><span className="block leading-tight">意見書</span></th>
+              <th className="px-1 py-2 w-[84px]"></th>
+              <th className="px-2 py-2 whitespace-nowrap"><span className="block leading-tight">加入</span><span className="block leading-tight">意見書</span></th>
+              <th className="px-2 py-2 whitespace-nowrap"><span className="block leading-tight">主筆</span><span className="block leading-tight">判決</span></th>
+              <th className="px-2 py-2 whitespace-nowrap"><span className="block leading-tight">參與</span><span className="block leading-tight">解釋</span></th>
+              <th className="px-2 py-2 whitespace-nowrap"><span className="block leading-tight">參與</span><span className="block leading-tight">裁判</span></th>
+              <th className="px-3 py-2 whitespace-nowrap">意見書類型</th>
             </tr>
           </thead>
           <tbody>
             {list.map((j) => (
               <tr key={j.姓名} className="border-t border-[var(--cc-row-border)]">
-                <td className="px-3 py-2">
+                <td className="px-3 py-2 whitespace-nowrap">
                   <button onClick={() => onOpen?.(j.姓名)} className="font-bold text-[var(--cc-ink-heavy)] underline decoration-[var(--cc-link-underline)] underline-offset-2 hover:text-[var(--cc-accent)]">{j.姓名}</button>
                 </td>
-                <td className="px-3 py-2 font-bold text-[var(--cc-accent)]">{j.提出意見書}</td>
-                <td className="px-3 py-2">
+                <td className="px-2 py-2 font-bold text-[var(--cc-accent)]">{j.提出意見書}</td>
+                <td className="px-1 py-2">
                   <div className="h-1.5 rounded-full bg-[var(--cc-track)]">
                     <div className="h-1.5 rounded-full" style={{ width: `${(j.提出意見書 / max) * 100}%`, background: 'var(--cc-highlight)' }} />
                   </div>
                 </td>
-                <td className="px-3 py-2 text-[var(--cc-ink-mid)]">{j.加入意見書}</td>
-                <td className="px-3 py-2 text-[var(--cc-ink-mid)]">{j.主筆判決 || '—'}</td>
-                <td className="px-3 py-2 text-[var(--cc-ink-mid)]">{j.參與解釋 || '—'}</td>
-                <td className="px-3 py-2 text-[var(--cc-ink-mid)]">{j.參與判決 || '—'}</td>
-                <td className="px-3 py-2 text-[var(--cc-ink-soft)]">
+                <td className="px-2 py-2 text-[var(--cc-ink-mid)]">{j.加入意見書}</td>
+                <td className="px-2 py-2 text-[var(--cc-ink-mid)]">{j.主筆判決 || '—'}</td>
+                <td className="px-2 py-2 text-[var(--cc-ink-mid)]">{j.參與解釋 || '—'}</td>
+                <td className="px-2 py-2 text-[var(--cc-ink-mid)]">{j.參與判決 || '—'}</td>
+                <td className="px-3 py-2 whitespace-nowrap text-[var(--cc-ink-soft)]">
                   {Object.entries(j.意見書類型 ?? {}).map(([k, v]) => `${k.replace('意見書', '')} ${v}`).join('・') || '—'}
                 </td>
               </tr>
@@ -1609,7 +1637,7 @@ function JusticesView({ onOpen }) {
         </table>
       </div>
       <p className="mt-2 max-w-3xl text-[12px] leading-relaxed text-[var(--cc-ink-soft)]">
-        統計基礎：{data.統計.總數} 件案件中具名的大法官意見書。參與解釋計自官方頁末尾的大法官署名列（813 件全覆蓋；
+        統計基礎：行憲後 {data.統計.行憲後} 件（大法官釋字 {data.統計.機關?.大法官 ?? 813}・憲法法庭裁判 {(data.統計.判決 ?? 0) + (data.統計.實體裁定 ?? 0)}）中具名的大法官意見書；行憲前統一解釋無大法官具名意見書、不計入。參與解釋計自官方頁末尾的大法官署名列（813 件全覆蓋；
         迴避或未參與評議者不在署名列，故非任期推定）；參與裁判計自憲法法庭判決/裁定的官方合議庭名單。點姓名開個人頁。
       </p>
     </section>
@@ -3267,6 +3295,7 @@ function AboutView() {
 // 站位中立並陳多數/不同意見兩造，不裁決「5 人判決是否有效」。
 function Case1Analysis() {
   const [tlMode, setTlMode] = useState('議題');
+  const [pdfMode] = usePref('pdfMode', 'preview');
   const doc = docs.find((d) => d.字號 === '114年憲判字第1號');
   const da = doc?.深度分析;
   if (!da) {
@@ -3463,6 +3492,10 @@ function Case1Analysis() {
           ))}
         </ul>
       </section>
+
+      {/* 被提名大法官資料（113/114 落選 14 人的自傳/簡歷）——屬本案（缺額與提名）脈絡，
+          放在此專屬分頁，不再掛在通用案件預覽卡片上。 */}
+      <NomineeDossiers pdfMode={pdfMode} />
     </div>
   );
 }
@@ -3483,6 +3516,11 @@ export default function ConstitutionalCourt() {
   useEffect(() => {
     document.title = justiceName ? `${justiceName}｜憲法法庭案例庫` : '憲法法庭案例庫';
   }, [justiceName]);
+
+  // 切換分頁／大法官個人頁時捲回頂端：SPA 不會自動重置 window 捲動位置，否則案件索引捲到
+  // 很下面點大法官，換到的個人頁會沿用同一捲動量、看起來也停在下面（兩頁捲動「聯動」）。
+  // 只依 active／justiceName——開關案件浮層（focusDoc）不重置，讓關浮層後回到索引原位。
+  useEffect(() => { window.scrollTo(0, 0); }, [active, justiceName]);
 
   return (
     <div className="min-h-screen paper-texture bg-[var(--cc-bg)] font-sans text-[var(--cc-ink)]" style={{ ...CC_VARS, paddingBottom: 60, overflowX: 'clip' }}>
