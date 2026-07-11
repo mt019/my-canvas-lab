@@ -232,11 +232,28 @@ work.
   開浮層（滿足「看到其他大法官有無意見書」）；浮層內 CaseCard 仍提供官方頁連結，資訊不失。
   (3) 浮層底欄 `在索引中檢視` → `?q=字號`（`IndexView` 新增 `initialQ` prop，`useEffect`
   同步預搜）。**篩選列滾動自動收合**：新 `useHideOnScrollDown` hook（rAF 節流），套在
-  `IndexView` 那條 `sticky top-[49px]` 工具列上（往下捲 `-translate-y-full` 藏、往上捲或
-  近頂顯示）；**只套索引頁這條**，未動 `TenureView`/`GraphView` 的 sticky 列。新 import
-  `Shuffle`/`X`。注意字型陷阱：U+86CB（egg 字，曾用於「easter-egg」的中譯詞）不在子集，
+  `IndexView` 那條 `sticky top-[49px]` 工具列上（往下捲 `-translate-y-full` 藏、往上捲顯示）；
+  **只套索引頁這條**，未動 `TenureView`/`GraphView` 的 sticky 列。**關鍵修正（使用者回退
+  一版）**：初版用固定 `scrollY>150` 門檻決定收合，但本頁 header 高（工具列自然位 ~313px），
+  於是 scrollY 150–313 時工具列**還在正常流內**，transform 上移會留下它原本佔的版面高度＝一大塊
+  空白（nav 與首張卡片間）。正解＝**只在列真正「卡住」(sticky pin) 後才收**：列前放一個 0 高
+  sentinel（`useRef`），`sentinel.getBoundingClientRect().top ≤ 49` 才代表已 pin、其流內空間已捲
+  離、此時上移只露出底下滾動的卡片、不留白。hook 回傳 `[sentinelRef, hidden]`（Playwright
+  G1–G5 驗證：未卡住不收、卡住往下捲收、收合時首卡貼齊 nav 無空白、往上捲還原）。新 import
+  `Shuffle`/`X`/`useRef`。注意字型陷阱：U+86CB（egg 字，曾用於「easter-egg」的中譯詞）不在子集，
   `validate:fonts` 連註解都掃，故程式碼註解一律避開該字（已改用「隨機挑件」措辭）——本檔亦同，
   只以 codepoint 指涉。Playwright 實機 17 檢全過、console 無錯、`npm run build` 全綠。
+  浮層頂欄設計定案（使用者退回一版）：**不放 provenance 圖示**（Shuffle 交叉圖示配日期被讀成
+  無意義符號）、不放孤零零的日期（卡片本身已顯示日期），只留「案件預覽」eyebrow ＋ 關閉鈕。
+  面板寬度 `w-full max-w-4xl`（自適應視窗、非寫死 px；實測 896→608 隨視窗縮）。
+- 2026-07-11（同批續）**案件↔大法官雙向聯動**（frontend-only，**DONE**）。新 `JusticeRef`
+  元件（L~150，仿 `CaseRef`）：`CaseCard` 主筆／參與大法官、`OpinionLine` 意見書作者
+  （提出／加入）姓名，凡在冊（`justiceByName`）者變活連結——點擊 `setParams({tab:'justices',
+  j:名})` 進個人頁（在浮層內點會一併關浮層，因換掉整組 param 含 `doc`）；hover 掀迷你浮窗
+  （屆次／任期・提名總統・意見書數＋「開啟大法官主頁 →」，Tailwind 具名群組 `group/j` 純
+  CSS，浮窗本身亦可點）；不在冊姓名退回純文字。方向與 Feature C（大法官頁→案件浮層）相反，
+  兩向合一即 case↔justice 全打通（研究站超連結感）。Playwright E1–E7 全過、H1–H7 全過、
+  console 無錯、build 全綠。
 - Imports `src/data/constitutionalCourt.json` (~5.4MB since M5 Phase B;
   行憲前 rows are lean catalog previews, not full text) plus a lazy
   companion `constitutionalCourt-pre1947-fulltext.json` (~2.4MB,

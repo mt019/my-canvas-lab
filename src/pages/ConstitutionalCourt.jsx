@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import {
   ArrowUpDown,
@@ -80,6 +80,8 @@ const presidents = data.總統任期 ?? [];
 
 // 字號 → 案件文件的全域查找表，供 <CaseRef> 由任一處字號回連官方頁並取一句話爭點預覽。
 const docByNo = new Map(docs.map((d) => [d.字號, d]));
+// 姓名 → 大法官名冊，供 <JusticeRef> 判斷某名字是否在冊、hover 迷你預覽、點擊連個人頁。
+const justiceByName = new Map(justices.map((j) => [j.姓名, j]));
 
 // ── 隨機挑件（純前端 view 選取，非資料處理）────────────────────────────────
 // 有日期者才進池：避免抽到無日期的行憲前統字流水號。日期為 ISO YYYY-MM-DD。
@@ -111,8 +113,12 @@ function pickOnThisDay() {
   return best?.字號 ?? null;
 }
 
-// 篩選列滾動自動收合：往下捲藏、往上捲或近頂顯示。回傳 hidden 布林。
-function useHideOnScrollDown(threshold = 150) {
+// 篩選列滾動自動收合：往下捲藏、往上捲顯示。**只在黏著列真正「卡住」（sticky 貼齊頂端、
+// 其原始流內空間已捲離視窗）時才收合**——否則列還在正常流內，用 transform 上移會留下它原本
+// 佔的版面高度（＝那塊大空白）。用列前的 0 高 sentinel 判斷是否卡住：sentinel.top ≤ 貼齊
+// 偏移即代表列已 pin，此時上移只會露出底下滾動的卡片、不留空白。回傳 [sentinelRef, hidden]。
+function useHideOnScrollDown(stickyOffset = 49) {
+  const sentinelRef = useRef(null);
   const [hidden, setHidden] = useState(false);
   useEffect(() => {
     let last = window.scrollY;
@@ -122,17 +128,19 @@ function useHideOnScrollDown(threshold = 150) {
       ticking = true;
       requestAnimationFrame(() => {
         const y = window.scrollY;
-        if (y < threshold) setHidden(false);
-        else if (y > last + 4) setHidden(true);
-        else if (y < last - 4) setHidden(false);
+        const s = sentinelRef.current;
+        const stuck = s ? s.getBoundingClientRect().top <= stickyOffset + 1 : y > 400;
+        if (!stuck) setHidden(false);            // 還沒卡住＝仍在正常流，絕不收（避免留白）
+        else if (y > last + 4) setHidden(true);  // 卡住後往下捲才收
+        else if (y < last - 4) setHidden(false); // 往上捲即還原
         last = y;
         ticking = false;
       });
     };
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
-  }, [threshold]);
-  return hidden;
+  }, [stickyOffset]);
+  return [sentinelRef, hidden];
 }
 
 // 只要顯示字號的地方都用它：連回官方頁，hover（title）顯示一句話爭點預覽。查無 doc／官方頁時退化為純文字。
@@ -149,6 +157,44 @@ function CaseRef({ 字號, className = '' }) {
     >
       {字號}
     </a>
+  );
+}
+
+// 大法官姓名 → 個人頁的活連結（案件↔大法官雙向聯動）。在冊者：可點連 ?tab=justices&j=名，
+// hover 掀迷你浮窗（屆次/任期・提名總統・意見書數），浮窗本身亦可點進主頁；不在冊者退回純文字。
+function JusticeRef({ name, className = '' }) {
+  const [, setParams] = useSearchParams();
+  const j = justiceByName.get(name);
+  if (!j) return <span className={className}>{name}</span>;
+  const go = () => setParams({ tab: 'justices', j: name });
+  const tenure = j.屆次?.length
+    ? j.屆次.join('、')
+    : (j.任期?.length ? j.任期.map(formatTenureRange).join('；') : '');
+  const ops = (j.提出意見書 ?? 0) + (j.加入意見書 ?? 0);
+  return (
+    <span className="relative inline-block group/j">
+      <button
+        onClick={go}
+        className={`underline decoration-[var(--cc-link-underline)] underline-offset-2 hover:text-[var(--cc-accent)] ${className}`}
+      >
+        {name}
+      </button>
+      <span className="pointer-events-none absolute left-0 top-full z-30 mt-1 hidden w-max max-w-[260px] group-hover/j:block">
+        <button
+          onClick={go}
+          className="pointer-events-auto block rounded-lg border border-[var(--cc-border)] bg-white px-3 py-2 text-left shadow-lg"
+        >
+          <span className="block text-[13px] font-bold text-[var(--cc-ink-strong)]">{name}</span>
+          {tenure ? <span className="mt-0.5 block text-[11.5px] text-[var(--cc-ink-mid)]">{tenure}</span> : null}
+          <span className="mt-0.5 block text-[11.5px] text-[var(--cc-ink-soft)]">
+            {j.提名總統 ? `${j.提名總統}提名` : ''}
+            {j.提名總統 && ops ? '・' : ''}
+            {ops ? `意見書 ${ops}` : ''}
+          </span>
+          <span className="mt-1 block text-[11px] font-bold text-[var(--cc-accent)]">開啟大法官主頁 →</span>
+        </button>
+      </span>
+    </span>
   );
 }
 
@@ -373,7 +419,20 @@ function OpinionLine({ op, officialUrl, pdfMode }) {
     <div className="flex flex-wrap items-center gap-2 py-1">
       <Badge tone={op.類型.includes('不同') ? 'red' : op.類型.includes('協同') ? 'blue' : 'slate'}>{op.類型}</Badge>
       {op.作者類別 !== '大法官' ? <Badge tone="slate">{op.作者類別}</Badge> : null}
-      <span className="text-[13px] font-bold text-[var(--cc-ink-strong)]">{who}</span>
+      {op.作者類別 === '大法官' ? (
+        <span className="text-[13px] font-bold text-[var(--cc-ink-strong)]">
+          {(op.提出 ?? []).map((nm, i) => (
+            <React.Fragment key={nm}>{i > 0 ? '、' : ''}<JusticeRef name={nm} /></React.Fragment>
+          ))}
+          {op.加入?.length ? (
+            <>（{op.加入.map((nm, i) => (
+              <React.Fragment key={nm}>{i > 0 ? '、' : ''}<JusticeRef name={nm} /></React.Fragment>
+            ))}加入）</>
+          ) : null}
+        </span>
+      ) : (
+        <span className="text-[13px] font-bold text-[var(--cc-ink-strong)]">{who}</span>
+      )}
       {op.加入註記?.length ? (
         <span className="text-[11.5px] text-[var(--cc-figure-note)]">（{op.加入註記.join('；')}）</span>
       ) : null}
@@ -626,12 +685,15 @@ function CaseCard({ d, q, reasoningDefault, pdfMode }) {
         <div className="mt-2 text-[12px] text-[var(--cc-ink-soft)]">
           {d.主筆 ? (
             <span className="mr-4">
-              <strong className="text-[var(--cc-accent)]">主筆</strong>　{d.主筆}
+              <strong className="text-[var(--cc-accent)]">主筆</strong>　<JusticeRef name={d.主筆} />
             </span>
           ) : null}
           {d.參與大法官?.length ? (
             <span>
-              <strong className="text-[var(--cc-accent)]">參與大法官</strong>　{d.參與大法官.join('、')}
+              <strong className="text-[var(--cc-accent)]">參與大法官</strong>{'　'}
+              {d.參與大法官.map((nm, i) => (
+                <React.Fragment key={nm}>{i > 0 ? '、' : ''}<JusticeRef name={nm} /></React.Fragment>
+              ))}
             </span>
           ) : null}
         </div>
@@ -700,11 +762,6 @@ function DocSpotlight({ 字號, onClose, onPick, onViewIndex }) {
   }, [onClose]);
 
   const d = docByNo.get(字號);
-  // 這則是不是「與今天同月日」挑出的——只用來決定頂欄小圖示，不寫任何標語。
-  const now = new Date();
-  const mmdd = `${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
-  const isOnThisDay = d?.日期?.slice(5) === mmdd;
-  const OriginIcon = isOnThisDay ? CalendarClock : Shuffle;
 
   return (
     <div
@@ -715,14 +772,11 @@ function DocSpotlight({ 字號, onClose, onPick, onViewIndex }) {
       style={CC_VARS}
     >
       <div
-        className="relative w-full max-w-3xl rounded-xl border border-[var(--cc-line)] bg-[var(--cc-bg)] px-5 pb-5 shadow-2xl sm:px-6"
+        className="relative w-full max-w-4xl rounded-xl border border-[var(--cc-line)] bg-[var(--cc-bg)] px-5 pb-5 shadow-2xl sm:px-6"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="sticky top-0 -mx-5 flex items-center justify-between gap-3 border-b border-[var(--cc-line)] bg-[var(--cc-bg)]/95 px-5 py-3 backdrop-blur sm:-mx-6 sm:px-6">
-          <span className="inline-flex items-center gap-1.5 text-[12px] font-bold text-[var(--cc-eyebrow)]">
-            <OriginIcon size={14} className="text-[var(--cc-icon)]" />
-            {d?.日期 ? formatDate(d.日期) : d ? '（無日期）' : ''}
-          </span>
+          <span className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">案件預覽</span>
           <button onClick={onClose} aria-label="關閉" className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-[12px] font-bold text-[var(--cc-accent)] hover:bg-[var(--cc-hover-bg)]">
             <X size={14} />關閉
           </button>
@@ -831,7 +885,7 @@ function IndexView({ initialQ = '', onOpenDoc }) {
   // 「在索引中檢視」由 URL ?q= 帶入字號預搜；此頁已掛載時亦同步（初次掛載為 no-op）。
   useEffect(() => { setQ(initialQ); }, [initialQ]);
   const [limit, setLimit] = useState(30);
-  const toolbarHidden = useHideOnScrollDown();
+  const [toolbarSentinel, toolbarHidden] = useHideOnScrollDown();
   const [sortDir, setSortDir] = useState('desc');
   const [reasoningDefault, setReasoningDefault] = usePref('ccReasoningDefault', false);
   const [pdfMode, setPdfMode] = usePref('pdfMode', 'preview');
@@ -943,6 +997,7 @@ function IndexView({ initialQ = '', onOpenDoc }) {
 
   return (
     <div>
+      <div ref={toolbarSentinel} aria-hidden className="h-0" />
       <div className={`sticky top-[49px] z-10 -mx-4 border-b border-[var(--cc-line)] bg-[var(--cc-bg)]/95 px-4 py-3 backdrop-blur transition-transform duration-200 ease-out sm:-mx-6 sm:px-6 ${toolbarHidden ? '-translate-y-full' : 'translate-y-0'}`}>
         {/* 頂部大分段鈕：行憲前後明確切開（預設行憲後）。行憲前另給機關子篩選。 */}
         <div className="mb-2.5 flex flex-wrap items-center gap-2">
