@@ -13,21 +13,23 @@
     },
     "sourceUrl": "https://www.oecd.org/content/dam/oecd/en/publications/reports/2026/06/investment-tax-incentives-in-latin-america-and-the-caribbean_758399d6/45b5f9a1-en.pdf",
     "authorityTier": "official-soft-law",
-    "relatedTopicIds": ["pillar-two-simplification", "danon-lausanne-disputes"],
-    "verification": "verified-against-snapshot",
-    "evidencePaths": ["data/parsed/text/oecd-tax-incentives-lac-2026.txt", "docs/36_OECD_TAX_INCENTIVES_LAC_2026_NOTE.md"]
+    "relatedTopicIds": [
+      "pillar-two-simplification",
+      "danon-lausanne-disputes"
+    ],
+    "verification": "verified-against-snapshot"
   },
   {
     "id": "2026-07-06-un-ws3-crp28-primary-texts",
     "date": "2026-07-06",
     "sourceId": "un-tax-convention-negotiations",
     "headline": {
-      "zh": "UN 一手文本解封：三份工作流文件全文入庫，爭端議定書仲裁定為自選最後手段、MAP 取得保障入列",
-      "en": "UN primary texts unlocked: all three workstream papers parsed — the dispute protocol frames arbitration as an optional last resort and puts MAP-access safeguards on the table"
+      "zh": "UN 三份工作流一手文件研讀完成：爭端議定書仲裁定為自選最後手段、MAP 取得保障入列",
+      "en": "All three UN workstream primary papers read in full — the dispute protocol frames arbitration as an optional last resort and puts MAP-access safeguards on the table"
     },
     "analysis": {
-      "zh": "換用瀏覽器特徵 headers 後，UN FSDO 談判主頁與三份工作流一手文件首次抓取解析成功（CRP.26 框架公約模板、CRP.27 服務課稅選項文件、CRP.28 爭端預防與解決概念說明，均為 2026 年 1 月下旬發布）。CRP.28 的設計要點：議定書採「完整選單＋核心機制」兩階段——核心機制對所有締約方適用且不得保留或退出，但無論核心或自選，對其他文書均無自動優先效力（§12）；仲裁定位為自選、最後手段、僅限主管機關間（納稅人非當事人）、panel 三人、原則上書面審、採 final-offer 擇一且無先例價值（§41）；MAP 條款以 UN 範本第 25 條為起點，明列「取得 MAP 不得受國內程序要求不當限縮」（§37）——與 Danon 對 MAP 取得限縮的批評直接相接；另提出無稅約情形的自選善意諮商機制（§18–19）與移轉訂價資訊近用任務小組（§49–50）。零草案預定提交 2026 年 8 月第五屆會議（§3）。CRP.26 模板第 5 條要求公平分配課稅權並「重新談判與本條不一致之既有稅約」、第 6 條為 HNWI 偵防義務條款。時程一手證實：INC-5 2026-08-03–13 紐約、INC-6 2026-11-30–12-11 奈洛比，公約與兩議定書 2027 下半年提交聯大第 82 屆會議。",
-      "en": "With browser-realistic headers, the UN FSDO negotiation page and all three workstream primary papers were fetched and parsed for the first time (CRP.26 Framework Convention Template, CRP.27 Services Taxation Options Paper, CRP.28 Dispute Prevention and Resolution Concept Note, all late Jan 2026). CRP.28's design: a two-step 'comprehensive menu + core mechanisms' approach — core mechanisms apply to all Parties with no opt-out or reservations, yet nothing in the protocol automatically supersedes other instruments (§12); arbitration is framed as optional, last-resort, strictly between competent authorities (taxpayers are not parties), three-member panels, written-record proceedings, final-offer selection with no precedential value (§41); the MAP provision starts from the UN Model's MAP article and expressly requires that 'access to MAP is not unduly restricted by domestic procedural requirements' (§37) — connecting directly to Danon's MAP-access critique; a narrowly scoped good-faith consultation mechanism for no-treaty situations (§18–19) and a transfer-pricing information-access task force (§49–50) are also proposed. A zero draft of the protocol is due at the fifth session in August 2026 (§3). CRP.26's template Article 5 requires fair allocation of taxing rights including 'renegotiation of existing tax agreements' inconsistent with it; Article 6 obliges measures against HNWI avoidance and evasion. Timeline confirmed from primary text: INC-5 3–13 Aug 2026 (NY), INC-6 30 Nov–11 Dec 2026 (Nairobi), final texts to the UNGA 82nd session in H2 2027."
+      "zh": "UN 稅務合作框架公約談判的三份工作流一手文件已完成研讀（CRP.26 框架公約模板、CRP.27 服務課稅選項文件、CRP.28 爭端預防與解決概念說明，均為 2026 年 1 月下旬發布）。CRP.28 的設計要點：議定書採「完整選單＋核心機制」兩階段——核心機制對所有締約方適用且不得保留或退出，但無論核心或自選，對其他文書均無自動優先效力（§12）；仲裁定位為自選、最後手段、僅限主管機關間（納稅人非當事人）、panel 三人、原則上書面審、採 final-offer 擇一且無先例價值（§41）；MAP 條款以 UN 範本第 25 條為起點，明列「取得 MAP 不得受國內程序要求不當限縮」（§37）——與 Danon 對 MAP 取得限縮的批評直接相接；另提出無稅約情形的自選善意諮商機制（§18–19）與移轉訂價資訊近用任務小組（§49–50）。零草案預定提交 2026 年 8 月第五屆會議（§3）。CRP.26 模板第 5 條要求公平分配課稅權並「重新談判與本條不一致之既有稅約」、第 6 條為 HNWI 偵防義務條款。時程一手證實：INC-5 2026-08-03–13 紐約、INC-6 2026-11-30–12-11 奈洛比，公約與兩議定書 2027 下半年提交聯大第 82 屆會議。",
+      "en": "All three workstream primary papers of the UN Framework Convention negotiations have been read in full (CRP.26 Framework Convention Template, CRP.27 Services Taxation Options Paper, CRP.28 Dispute Prevention and Resolution Concept Note, all late Jan 2026). CRP.28's design: a two-step 'comprehensive menu + core mechanisms' approach — core mechanisms apply to all Parties with no opt-out or reservations, yet nothing in the protocol automatically supersedes other instruments (§12); arbitration is framed as optional, last-resort, strictly between competent authorities (taxpayers are not parties), three-member panels, written-record proceedings, final-offer selection with no precedential value (§41); the MAP provision starts from the UN Model's MAP article and expressly requires that 'access to MAP is not unduly restricted by domestic procedural requirements' (§37) — connecting directly to Danon's MAP-access critique; a narrowly scoped good-faith consultation mechanism for no-treaty situations (§18–19) and a transfer-pricing information-access task force (§49–50) are also proposed. A zero draft of the protocol is due at the fifth session in August 2026 (§3). CRP.26's template Article 5 requires fair allocation of taxing rights including 'renegotiation of existing tax agreements' inconsistent with it; Article 6 obliges measures against HNWI avoidance and evasion. Timeline confirmed from primary text: INC-5 3–13 Aug 2026 (NY), INC-6 30 Nov–11 Dec 2026 (Nairobi), final texts to the UNGA 82nd session in H2 2027."
     },
     "sourceUrl": "https://financing.desa.un.org/document/workstream-iii-dispute-prevention-and-resolution-co-leads-concept-note-23-jan-2026",
     "authorityTier": "official-process",
@@ -36,13 +38,7 @@
       "danon-lausanne-disputes",
       "wealth-tax-hnwi"
     ],
-    "verification": "verified-against-source",
-    "evidencePaths": [
-      "data/parsed/text/un-inc-ws3-concept-note-2026-01-23.txt",
-      "data/parsed/text/un-inc-ws1-convention-template-2026-01-22.txt",
-      "data/parsed/text/un-inc-ws2-services-options-2026-01-21.txt",
-      "data/snapshots/frontier/pages/un-tax-convention-negotiations/2026-07-06.txt"
-    ]
+    "verification": "verified-against-source"
   },
   {
     "id": "2026-07-06-un-inc5-dispute-protocol-drafts",
@@ -62,10 +58,6 @@
       "un-tax-convention-governance",
       "danon-lausanne-disputes"
     ],
-    "verification": "verified-against-source",
-    "evidencePaths": [
-      "data/snapshots/frontier/evidence/2026-07-06-un-inc5-dispute-protocol-drafts/01-taxjustice-net.txt",
-      "data/snapshots/frontier/evidence/2026-07-06-un-inc5-dispute-protocol-drafts/02-un-desa-closing-remarks.txt"
-    ]
+    "verification": "verified-against-source"
   }
 ]

@@ -8,6 +8,23 @@ date-stacking once already; merged back down on 2026-07-04. Don't
 repeat that.) Check git history if you need the session-by-session
 blow-by-blow.
 
+## Canvas-wide hard rule: no engineering language (2026-07-11 使用者裁定)
+
+Nothing engineering- or operations-flavoured may appear on the canvas —
+neither in rendered text nor in unrendered JSON fields that ship in the
+public bundle. Banned vocabulary includes (zh and en): 抓取/爬蟲/擷取/
+解析(of files)/快照/入庫/佇列/管線/腳本/本地路徑, parser, pipeline,
+snapshot, capture, scraper, ingest, queue, scheduler, repo, schema,
+workflowState, HTTP status codes, headers, internal doc/file paths
+(docs/NN_*.md, data/parsed/...). Data-repo files may keep all of that —
+they are operational records; the sync layer must strip it. For
+intlTaxOps this is enforced structurally: `sync-to-canvas.mjs` writes a
+public *projection* (OPS_KEYS strip + watchlist reduced to id/label),
+so fix wording in the data repo and re-sync, never hand-edit the canvas
+copy. When writing digest/topic prose, narrate what a *reader* learns
+(「三份文件已完成研讀」), never how the material was obtained
+(「換 headers 後抓取解析成功」).
+
 ## Pages
 
 ### `ECFAResearch`
@@ -98,25 +115,32 @@ repo, schema, raw, snapshot, workflowState, or sourceTier.
 Current tab-based implementation:
 
 - **Tab bar** (`.mainTabBar`, matches `GovernmentDebt`'s pattern):
-  議題矩陣 / 研究分析 / 最新動態 / 來源登錄 / 關係圖譜 / 案例與爭議.
-  Only the active tab renders. (前沿監測/Frontier Watch was removed
-  2026-07-11; its capture JSON left the sync map with it.)
-- **Research analysis tab** (2026-07-11): renders
-  `research_analyses.json` — an *array* of per-paper analysis objects
-  (citation, tagline, researchLine/topic links, bilingual `sections[]`
-  with optional `table`). The array shape is deliberate: adding the next
-  paper is a data-only append, and if the five-tab restructure from
+  主題判讀 (default) / 議題矩陣 / 最新動態 / 來源登錄 / 關係圖譜 /
+  案例與爭議. Only the active tab renders. (前沿監測/Frontier Watch was
+  removed 2026-07-11; its capture JSON left the sync map with it.)
+- **主題判讀 tab** (research, default; 2026-07-11, Codex + CC): two
+  layers on one tab. Top: `thematic_analyses.json` — six bilingual
+  thematic readings (question / current reading / implication /
+  evidence + authority link), two-column card grid. Bottom (深度研讀 /
+  Close Reading): `research_analyses.json` — an *array* of per-paper
+  analysis objects (citation, tagline, researchLine/topic links,
+  bilingual `sections[]` with optional `table`). Both arrays are
+  append-only by design; if the five-tab restructure from
   `12_PHD_RESEARCH_LAYOUT.md` ever lands, this tab becomes 文獻缺口 with
-  zero data migration. First entry: Ash & Marian, 24 Fla. Tax Rev. 151
-  (2020) — NLP convergence study of 4,052 tax treaties; analysis written
-  against the full PDF archived in the data repo
-  (`data/raw/pdf/ash-marian-making-of-international-tax-law-2020.pdf`,
-  manually ingested: pdftotext + manifest + research_materials entries).
-  Sections are accordions, default expanded, Set-keyed
-  `paperId:sectionId`. Table = plain HTML in an `overflow-x` scroll div,
-  pale fill + ink keyline, no fake charts (the similarity series isn't
-  digitized; per `feedback_no_meaningless_viz` we show the paper's
-  Table 1 excerpt as a table and say so in the caption).
+  zero data migration. First paper entry: Ash & Marian, 24 Fla. Tax
+  Rev. 151 (2020) — NLP convergence study of 4,052 tax treaties;
+  analysis written against the full PDF archived in the data repo and
+  number-checked against its parsed text. Sections are accordions,
+  default expanded, Set-keyed `paperId:sectionId`. Table = plain HTML in
+  an `overflow-x` scroll div, pale fill + ink keyline, no fake charts
+  (per `feedback_no_meaningless_viz` we show the paper's Table 1
+  excerpt as a table and say so in the caption).
+- **Codex 2026-07-11 correction record**: Codex's foregrounding commit
+  also stripped topic summaries, 待補研究 (nextActions), the 最新動態
+  digest tab, and the 核實日 pill — all restored (they are
+  reader-facing research content, not engineering). Kept from the same
+  commit: research-first tab order + default, subtitle rewrite,
+  workflowState removal, 更新頻率 (cadence) pill removal.
 - **Sidebar**: brand, search, back-to-canvas link, then 分類視角
   (classification-lens) filter as a vertical list — the *only* place
   that filter exists. Selecting an option also switches to the matrix

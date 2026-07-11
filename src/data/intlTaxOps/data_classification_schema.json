@@ -187,50 +187,23 @@
       "developing-country-taxation",
       "swiss-international-tax",
       "data-and-measurement"
-    ],
-    "workflowState": [
-      {
-        "id": "seeded",
-        "zh": "已列入",
-        "en": "Seeded"
-      },
-      {
-        "id": "download-needed",
-        "zh": "待下載",
-        "en": "Download needed"
-      },
-      {
-        "id": "parsed",
-        "zh": "已解析",
-        "en": "Parsed"
-      },
-      {
-        "id": "claim-extraction-needed",
-        "zh": "待抽取命題",
-        "en": "Claim extraction needed"
-      },
-      {
-        "id": "verified",
-        "zh": "已核實",
-        "en": "Verified"
-      },
-      {
-        "id": "monitoring",
-        "zh": "監測中",
-        "en": "Monitoring"
-      }
     ]
   },
   "recommendedRecordShape": {
     "id": "string",
     "title": "bilingual or source title",
     "url": "string",
-    "materialType": ["string"],
-    "epistemicLayer": ["string"],
+    "materialType": [
+      "string"
+    ],
+    "epistemicLayer": [
+      "string"
+    ],
     "authorityTier": "string",
     "temporalStatus": "string",
-    "topicDomain": ["string"],
-    "workflowState": "string",
+    "topicDomain": [
+      "string"
+    ],
     "sourceDate": "YYYY-MM-DD or null",
     "dateChecked": "YYYY-MM-DD",
     "nextCheckDate": "YYYY-MM-DD",

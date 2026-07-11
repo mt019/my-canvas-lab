@@ -612,7 +612,7 @@
 
 .sourceRow {
   display: grid;
-  grid-template-columns: minmax(280px, 1fr) minmax(150px, auto) minmax(120px, auto) minmax(130px, auto) 34px;
+  grid-template-columns: minmax(280px, 1fr) minmax(150px, auto) minmax(130px, auto) 34px;
   align-items: center;
   gap: 10px;
   min-height: 56px;

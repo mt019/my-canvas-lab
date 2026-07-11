@@ -22,7 +22,10 @@
       "en": "UN Framework Convention workstream papers CRP.26 and CRP.28 (Jan. 2026)"
     },
     "sourceUrl": "https://financing.desa.un.org/document/workstream-iii-dispute-prevention-and-resolution-co-leads-concept-note-23-jan-2026",
-    "relatedTopicIds": ["un-tax-convention-governance", "danon-lausanne-disputes"]
+    "relatedTopicIds": [
+      "un-tax-convention-governance",
+      "danon-lausanne-disputes"
+    ]
   },
   {
     "id": "optional-arbitration-and-map-access",
@@ -35,7 +38,7 @@
       "en": "If arbitration is optional and confined to competent authorities, where should taxpayer procedural protection come from?"
     },
     "finding": {
-      "zh": "CRP.28 將仲裁設計為自選、最後手段、無先例效力的主管機關程序，納稅人並非當事人；同一文件卻明確提出，國內程序要求不得不當地限縮 MAP 的取得。這不是單純的技術選擇，而是將救濟的重心從仲裁移回 MAP 入口。",
+      "zh": "CRP.28 將仲裁設計為自選、最後手段、無先例效力的主管機關程序，納稅人並非當事人；同一文件卻明確提出，國內程序要求不得不當地限縮 MAP 的取得。這項設計把救濟的重心從仲裁移回 MAP 入口。",
       "en": "CRP.28 designs arbitration as an optional, last-resort competent-authority process with no precedential value and no taxpayer party status. The same paper expressly protects access to MAP from undue domestic procedural restriction. This shifts the remedial centre of gravity from arbitration back to entry into MAP."
     },
     "researchMeaning": {
@@ -47,7 +50,10 @@
       "en": "CRP.28 paras. 37 and 41; Danon's work on MAP access"
     },
     "sourceUrl": "https://financing.desa.un.org/document/workstream-iii-dispute-prevention-and-resolution-co-leads-concept-note-23-jan-2026",
-    "relatedTopicIds": ["un-tax-convention-governance", "danon-lausanne-disputes"]
+    "relatedTopicIds": [
+      "un-tax-convention-governance",
+      "danon-lausanne-disputes"
+    ]
   },
   {
     "id": "pillar-two-domestic-friction",
@@ -72,7 +78,10 @@
       "en": "OECD Taxation Working Papers No. 76 (2026)"
     },
     "sourceUrl": "https://www.oecd.org/content/dam/oecd/en/publications/reports/2026/06/investment-tax-incentives-in-latin-america-and-the-caribbean_758399d6/45b5f9a1-en.pdf",
-    "relatedTopicIds": ["pillar-two-simplification", "danon-lausanne-disputes"]
+    "relatedTopicIds": [
+      "pillar-two-simplification",
+      "danon-lausanne-disputes"
+    ]
   },
   {
     "id": "formal-consensus-divergent-application",
@@ -97,7 +106,10 @@
       "en": "Ash & Marian, The Making of International Tax Law (2020)"
     },
     "sourceUrl": "https://ssrn.com/abstract=3314310",
-    "relatedTopicIds": ["un-tax-convention-governance", "danon-lausanne-disputes"]
+    "relatedTopicIds": [
+      "un-tax-convention-governance",
+      "danon-lausanne-disputes"
+    ]
   },
   {
     "id": "source-taxation-without-forum",
@@ -122,7 +134,10 @@
       "en": "CRP.26 Arts. 5 and 21; CRP.27 paras. 42–43; CRP.28 para. 12"
     },
     "sourceUrl": "https://financing.desa.un.org/document/workstream-iii-dispute-prevention-and-resolution-co-leads-concept-note-23-jan-2026",
-    "relatedTopicIds": ["un-tax-convention-governance", "danon-lausanne-disputes"]
+    "relatedTopicIds": [
+      "un-tax-convention-governance",
+      "danon-lausanne-disputes"
+    ]
   },
   {
     "id": "wealth-data-and-legal-design",
@@ -147,6 +162,9 @@
       "en": "EU Tax Observatory Global Tax Evasion Report 2024; UN CRP.26 Article 6"
     },
     "sourceUrl": "https://taxobservatory.eu/publication/global-tax-evasion-report-2024/",
-    "relatedTopicIds": ["wealth-tax-hnwi", "un-tax-convention-governance"]
+    "relatedTopicIds": [
+      "wealth-tax-hnwi",
+      "un-tax-convention-governance"
+    ]
   }
 ]

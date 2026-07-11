@@ -21,9 +21,7 @@
       "pillar-two",
       "tax-incentives",
       "tax-certainty-and-disputes"
-    ],
-    "workflowState": "parsed",
-    "refreshCadence": "monthly"
+    ]
   },
   {
     "id": "oecd-gmt-implementation-toolkit-2026",
@@ -45,9 +43,7 @@
     "temporalStatus": "current-final",
     "topicDomain": [
       "pillar-two"
-    ],
-    "workflowState": "parsed",
-    "refreshCadence": "quarterly"
+    ]
   },
   {
     "id": "oecd-beps-topic-page",
@@ -72,9 +68,7 @@
       "pillar-two",
       "tax-treaties",
       "transfer-pricing"
-    ],
-    "workflowState": "parsed",
-    "refreshCadence": "weekly"
+    ]
   },
   {
     "id": "oecd-pillar-two-tax-certainty-consultation-2022",
@@ -98,9 +92,7 @@
     "topicDomain": [
       "pillar-two",
       "tax-certainty-and-disputes"
-    ],
-    "workflowState": "parsed",
-    "refreshCadence": "manual"
+    ]
   },
   {
     "id": "danon-gutmann-maisto-martin-jimenez-globe-dispute-resolution-2022",
@@ -124,9 +116,7 @@
     "topicDomain": [
       "pillar-two",
       "tax-certainty-and-disputes"
-    ],
-    "workflowState": "parsed",
-    "refreshCadence": "manual"
+    ]
   },
   {
     "id": "danon-gutmann-maisto-martin-jimenez-globe-tax-certainty-2023",
@@ -150,9 +140,7 @@
     "topicDomain": [
       "pillar-two",
       "tax-certainty-and-disputes"
-    ],
-    "workflowState": "parsed",
-    "refreshCadence": "manual"
+    ]
   },
   {
     "id": "un-unfcitc-terms-reference-2025",
@@ -177,9 +165,7 @@
     "topicDomain": [
       "un-tax-cooperation",
       "developing-country-taxation"
-    ],
-    "workflowState": "parsed",
-    "refreshCadence": "monthly"
+    ]
   },
   {
     "id": "un-tax-committee-home",
@@ -201,9 +187,7 @@
     "temporalStatus": "scheduled",
     "topicDomain": [
       "un-tax-cooperation"
-    ],
-    "workflowState": "monitoring",
-    "refreshCadence": "weekly"
+    ]
   },
   {
     "id": "unil-tax-policy-center",
@@ -227,9 +211,7 @@
       "swiss-international-tax",
       "tax-certainty-and-disputes",
       "transfer-pricing"
-    ],
-    "workflowState": "monitoring",
-    "refreshCadence": "weekly"
+    ]
   },
   {
     "id": "linkedin-danon-profile",
@@ -252,9 +234,7 @@
     "topicDomain": [
       "tax-certainty-and-disputes",
       "investment-arbitration-and-tax"
-    ],
-    "workflowState": "monitoring",
-    "refreshCadence": "manual"
+    ]
   },
   {
     "id": "danonlaw-home",
@@ -278,9 +258,7 @@
       "tax-certainty-and-disputes",
       "investment-arbitration-and-tax",
       "swiss-international-tax"
-    ],
-    "workflowState": "parsed",
-    "refreshCadence": "weekly"
+    ]
   },
   {
     "id": "euto-global-tax-evasion-report-2024",
@@ -306,9 +284,7 @@
       "hnwi-wealth-taxation",
       "tax-transparency",
       "data-and-measurement"
-    ],
-    "workflowState": "parsed",
-    "refreshCadence": "quarterly"
+    ]
   },
   {
     "id": "oecd-side-by-side-package-2026",
@@ -332,9 +308,7 @@
       "pillar-two",
       "tax-incentives",
       "tax-certainty-and-disputes"
-    ],
-    "workflowState": "parsed",
-    "refreshCadence": "monthly"
+    ]
   },
   {
     "id": "unil-map-pillar-two-days-2026",
@@ -358,9 +332,7 @@
       "pillar-two",
       "tax-certainty-and-disputes",
       "transfer-pricing"
-    ],
-    "workflowState": "parsed",
-    "refreshCadence": "manual"
+    ]
   },
   {
     "id": "euto-offshore-wealth-data-page",
@@ -382,9 +354,7 @@
     "topicDomain": [
       "hnwi-wealth-taxation",
       "data-and-measurement"
-    ],
-    "workflowState": "parsed",
-    "refreshCadence": "quarterly"
+    ]
   },
   {
     "id": "unil-tax-policy-center-research",
@@ -407,9 +377,7 @@
     "topicDomain": [
       "swiss-international-tax",
       "tax-certainty-and-disputes"
-    ],
-    "workflowState": "monitoring",
-    "refreshCadence": "weekly"
+    ]
   },
   {
     "id": "danonlaw-about",
@@ -432,9 +400,7 @@
       "tax-certainty-and-disputes",
       "investment-arbitration-and-tax",
       "swiss-international-tax"
-    ],
-    "workflowState": "parsed",
-    "refreshCadence": "weekly"
+    ]
   },
   {
     "id": "un-inc-ws1-convention-template-2026-01-22",
@@ -457,9 +423,7 @@
     "topicDomain": [
       "un-tax-cooperation",
       "tax-treaties"
-    ],
-    "workflowState": "parsed",
-    "refreshCadence": "monthly"
+    ]
   },
   {
     "id": "un-inc-ws2-services-options-2026-01-21",
@@ -482,9 +446,7 @@
     "topicDomain": [
       "un-tax-cooperation",
       "digital-services-taxation"
-    ],
-    "workflowState": "parsed",
-    "refreshCadence": "monthly"
+    ]
   },
   {
     "id": "un-inc-ws3-concept-note-2026-01-23",
@@ -508,9 +470,7 @@
     "topicDomain": [
       "un-tax-cooperation",
       "tax-certainty-and-disputes"
-    ],
-    "workflowState": "parsed",
-    "refreshCadence": "monthly"
+    ]
   },
   {
     "id": "danon-wuschka-international-investment-agreements-tax-system-2021",
@@ -535,9 +495,7 @@
       "investment-arbitration-and-tax",
       "tax-certainty-and-disputes",
       "tax-treaties"
-    ],
-    "workflowState": "parsed",
-    "refreshCadence": "manual"
+    ]
   },
   {
     "id": "danon-ppt-post-beps-tax-treaty-law-2020",
@@ -560,9 +518,7 @@
     "topicDomain": [
       "tax-treaties",
       "beneficial-ownership-and-abuse"
-    ],
-    "workflowState": "parsed",
-    "refreshCadence": "manual"
+    ]
   },
   {
     "id": "danon-treaty-abuse-post-beps-world-2017",
@@ -585,9 +541,7 @@
     "topicDomain": [
       "tax-treaties",
       "beneficial-ownership-and-abuse"
-    ],
-    "workflowState": "parsed",
-    "refreshCadence": "manual"
+    ]
   },
   {
     "id": "danon-et-al-transparent-entities-oecd-model-mli-2017",
@@ -609,9 +563,7 @@
     "temporalStatus": "current-final",
     "topicDomain": [
       "tax-treaties"
-    ],
-    "workflowState": "parsed",
-    "refreshCadence": "manual"
+    ]
   },
   {
     "id": "oecd-tax-incentives-lac-2026",
@@ -623,11 +575,17 @@
     "url": "https://www.oecd.org/content/dam/oecd/en/publications/reports/2026/06/investment-tax-incentives-in-latin-america-and-the-caribbean_758399d6/45b5f9a1-en.pdf",
     "dateChecked": "2026-07-11",
     "authorityTier": "official-soft-law",
-    "materialType": ["research-paper"],
-    "epistemicLayer": ["implementation-reality", "observable-trend"],
+    "materialType": [
+      "research-paper"
+    ],
+    "epistemicLayer": [
+      "implementation-reality",
+      "observable-trend"
+    ],
     "temporalStatus": "current-final",
-    "topicDomain": ["pillar-two", "tax-incentives"],
-    "workflowState": "parsed",
-    "refreshCadence": "manual"
+    "topicDomain": [
+      "pillar-two",
+      "tax-incentives"
+    ]
   }
 ]

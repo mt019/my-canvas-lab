@@ -4,236 +4,83 @@
     "label": {
       "zh": "Danon 個人主頁",
       "en": "Danon personal homepage"
-    },
-    "sourceUrl": "https://danonlaw.ch/en/",
-    "watchType": "scholar",
-    "cadence": "weekly",
-    "signals": [
-      "tax treaty disputes",
-      "investment arbitration",
-      "expert opinions",
-      "tax reforms",
-      "news and conferences"
-    ],
-    "latestObserved": "Danon personal homepage presents his independent expert work in international and Swiss tax law, with emphasis on expert opinions, arbitration, cross-border tax disputes, and tax reforms.",
-    "latestObservedZh": "Danon 個人主頁呈現其國際與瑞士稅法專家工作，重點包括專家意見、仲裁、跨境稅務爭端與稅制改革。",
-    "status": "monitor"
+    }
   },
   {
     "id": "linkedin-danon-profile",
     "label": {
       "zh": "Robert J. Danon LinkedIn 個人頁",
       "en": "Robert J. Danon LinkedIn profile"
-    },
-    "sourceUrl": "https://ch.linkedin.com/in/prof-dr-robert-j-danon-39379742",
-    "watchType": "secondary-signal",
-    "cadence": "manual",
-    "signals": [
-      "new posts",
-      "conference announcements",
-      "book launches",
-      "tax dispute events",
-      "Pillar Two commentary"
-    ],
-    "latestObserved": "Search-visible LinkedIn profile identifies Danon as a tenured full professor and Tax Policy Center head; LinkedIn pages may require sign-in and must remain secondary evidence.",
-    "latestObservedZh": "公開搜尋可見摘要顯示 Danon 為洛桑大學教授並主持 Tax Policy Center；LinkedIn 可能受登入限制，只作輔助線索。",
-    "status": "secondary",
-    "skipAutoMonitor": true
+    }
   },
   {
     "id": "linkedin-tax-policy-center-lausanne",
     "label": {
       "zh": "Tax Policy Center LinkedIn",
       "en": "Tax Policy Center LinkedIn"
-    },
-    "sourceUrl": "https://ch.linkedin.com/company/tax-policy-center-lausanne",
-    "watchType": "secondary-signal",
-    "cadence": "manual",
-    "signals": [
-      "conference posts",
-      "program announcements",
-      "new publications",
-      "network participants"
-    ],
-    "latestObserved": "Public search-visible company page describes the center as research and education in international tax law, Swiss tax law, transfer pricing, and EU tax law.",
-    "latestObservedZh": "公開搜尋可見摘要將中心定位為國際稅法、瑞士稅法、轉讓定價與歐盟稅法的研究與教育平台。",
-    "status": "secondary",
-    "skipAutoMonitor": true
+    }
   },
   {
     "id": "unil-tax-policy-center",
     "label": {
       "zh": "洛桑大學 Tax Policy Center",
       "en": "University of Lausanne Tax Policy Center"
-    },
-    "sourceUrl": "https://www.unil.ch/taxpolicy/en/home.html",
-    "watchType": "institution",
-    "cadence": "weekly",
-    "signals": [
-      "events",
-      "publications",
-      "doctoral or assistant openings",
-      "Pillar Two",
-      "MAP and tax certainty",
-      "Swiss international tax"
-    ],
-    "latestObserved": "Official center page lists Research, Tax & Investment Law, Executive Education, MLaw International Tax, Events, and Past News sections.",
-    "latestObservedZh": "官方中心頁列出研究、Tax & Investment Law、進修課程、國際稅法碩士、活動與過往消息等入口。",
-    "status": "monitor"
+    }
   },
   {
     "id": "unil-danon-research",
     "label": {
       "zh": "Robert J. Danon 研究線",
       "en": "Robert J. Danon research line"
-    },
-    "sourceUrl": "https://www.unil.ch/taxpolicy/en/home/menuinst/recherche.html",
-    "watchType": "scholar",
-    "cadence": "weekly",
-    "signals": [
-      "tax treaty interpretation",
-      "abuse prevention",
-      "dispute resolution",
-      "investment arbitration and tax",
-      "GloBE dispute prevention"
-    ],
-    "latestObserved": "UNIL research page lists Danon-related works including Abuse Prevention in Tax Treaty Law, IFA on Tax Treaty Interpretation, and 2024 GloBE dispute prevention materials.",
-    "latestObservedZh": "UNIL 研究頁列出 Danon 相關著作，主題包括租稅協定濫用防止、協定解釋與 GloBE 爭端預防。",
-    "status": "monitor"
+    }
   },
   {
     "id": "unil-chand-pillar-two",
     "label": {
       "zh": "Vikram Chand / Pillar Two 與轉讓定價",
       "en": "Vikram Chand / Pillar Two and transfer pricing"
-    },
-    "sourceUrl": "https://www.unil.ch/taxpolicy/en/home/menuinst/recherche.html",
-    "watchType": "scholar",
-    "cadence": "weekly",
-    "signals": [
-      "Pillar Two",
-      "permanent establishments",
-      "transfer pricing",
-      "tax incentives",
-      "QRTCs",
-      "mobility and digitalization"
-    ],
-    "latestObserved": "UNIL research page lists in-preparation and in-press Chand works on permanent establishments under the Pillars, mobility, financial transactions, and Pillar II tax incentives.",
-    "latestObservedZh": "UNIL 研究頁列出 Chand 進行中或即將出版的研究，涵蓋 Pillars 下常設機構、跨境流動、金融交易與 Pillar II 稅收優惠。",
-    "status": "monitor"
+    }
   },
   {
     "id": "map-pillar-two-days-2026",
     "label": {
       "zh": "2026 MAP and Pillar Two Days",
       "en": "2026 MAP and Pillar Two Days"
-    },
-    "sourceUrl": "https://api.unil.ch/newsunil/v1/api-newsunil/resources/document/1770123969818.D1774959037213?2026-03-31T12%3A10%3A40.641=",
-    "watchType": "event",
-    "cadence": "monthly",
-    "signals": [
-      "2026 OECD Manual on Effective Mutual Agreement Procedures",
-      "tax certainty agenda",
-      "future revision of OECD Transfer Pricing Guidelines",
-      "Side-by-Side Package",
-      "substance-based tax incentive safe harbour",
-      "Pillar Two dispute prevention"
-    ],
-    "latestObserved": "UNIL/ICC program for 27-28 May 2026 identifies MAP, BAPA, tax treaty disputes, global mobility, transfer pricing disputes, OECD TP Guidelines revision, Side-by-Side Package, and Pillar Two dispute prevention as frontier signals.",
-    "latestObservedZh": "UNIL/ICC 2026 年 5 月活動把 MAP、BAPA、租稅協定爭端、全球流動、轉讓定價爭端、OECD TP Guidelines 修訂、Side-by-Side Package 與 Pillar Two 爭端預防列為前沿議題。",
-    "status": "monitor"
+    }
   },
   {
     "id": "oecd-pillar-two-admin-guidance",
     "label": {
       "zh": "OECD Pillar Two 行政指引與執行工具",
       "en": "OECD Pillar Two administrative guidance and implementation toolkit"
-    },
-    "sourceUrl": "https://www.oecd.org/en/topics/sub-issues/global-minimum-tax/global-anti-base-erosion-model-rules-pillar-two.html",
-    "watchType": "official-stream",
-    "cadence": "weekly",
-    "signals": [
-      "Consolidated Commentary updates",
-      "Administrative Guidance",
-      "GloBE Information Return",
-      "implementation toolkit",
-      "safe harbours"
-    ],
-    "latestObserved": "OECD 2026 materials include consolidated commentary, implementation toolkit, and side-by-side package.",
-    "latestObservedZh": "OECD 2026 年材料包含 GloBE 合併註釋、全球最低稅負執行工具包與 Side-by-Side Package。",
-    "status": "monitor"
+    }
   },
   {
     "id": "un-tax-convention-negotiations",
     "label": {
       "zh": "UN 國際稅務合作框架公約談判",
       "en": "UN Framework Convention on International Tax Cooperation negotiations"
-    },
-    "sourceUrl": "https://financing.desa.un.org/unfcitc",
-    "watchType": "official-stream",
-    "cadence": "weekly",
-    "signals": [
-      "framework convention",
-      "early protocols",
-      "cross-border services",
-      "tax disputes",
-      "high-net-worth individuals",
-      "illicit financial flows"
-    ],
-    "latestObserved": "Page now fetchable with browser headers (2026-07-06). Latest documents: CRP.26 FC template, CRP.27 services options paper, CRP.28 dispute-resolution concept note (all late Jan 2026); INC-5 on 3-13 Aug 2026, zero draft of the dispute protocol due there.",
-    "latestObservedZh": "頁面已可抓取（2026-07-06 換瀏覽器 headers）。最新文件：CRP.26 公約模板、CRP.27 服務課稅選項、CRP.28 爭端解決概念說明（均 2026 年 1 月下旬）；INC-5 於 2026-08-03–13 舉行，爭端議定書零草案屆時提交。",
-    "status": "monitor"
+    }
   },
   {
     "id": "south-centre-tax-cooperation",
     "label": {
       "zh": "South Centre 國際稅務合作專頁",
       "en": "South Centre international tax cooperation"
-    },
-    "sourceUrl": "https://www.southcentre.int/tag/international-tax-cooperation/",
-    "watchType": "institution",
-    "cadence": "monthly",
-    "signals": [
-      "UN tax convention",
-      "developing-country positions",
-      "source taxation",
-      "tax cooperation governance"
-    ],
-    "latestObserved": "Added 2026-07-06 as a Global South counterweight to the Danon/OECD-adjacent sources on this desk; intergovernmental think tank of developing countries, active written inputs to the INC process.",
-    "latestObservedZh": "2026-07-06 新增：作為本桌 Danon／OECD 系來源的南方對照視角；發展中國家政府間智庫，持續向 INC 程序提交書面意見。"
+    }
   },
   {
     "id": "ictd-un-tax-convention",
     "label": {
       "zh": "ICTD UN 稅務公約主題頁",
       "en": "ICTD UN tax convention theme"
-    },
-    "sourceUrl": "https://www.ictd.ac/theme/un-tax-convention-en/",
-    "watchType": "institution",
-    "cadence": "monthly",
-    "signals": [
-      "UN tax convention analysis",
-      "developing-country taxation research",
-      "session explainers"
-    ],
-    "latestObserved": "Added 2026-07-06; research institute (not advocacy) focused on taxation and development, publishes session-by-session analysis of the INC negotiations.",
-    "latestObservedZh": "2026-07-06 新增：專研稅收與發展的研究機構（非倡議組織），逐場分析 INC 談判。"
+    }
   },
   {
     "id": "tjn-un-tax-convention",
     "label": {
       "zh": "Tax Justice Network UN 公約專頁",
       "en": "Tax Justice Network UN tax convention"
-    },
-    "sourceUrl": "https://taxjustice.net/topics/un-tax-convention/",
-    "watchType": "secondary-signal",
-    "cadence": "monthly",
-    "signals": [
-      "advocacy positions",
-      "stakeholder submissions",
-      "anti-arbitration stance"
-    ],
-    "latestObserved": "Added 2026-07-06; advocacy organization with a declared position (anti-mandatory-arbitration) — treat as stance-bearing signal per the desk's source-stance rule, already cited (attributed) in the 2026-07-06 digest.",
-    "latestObservedZh": "2026-07-06 新增：有明確立場（反強制仲裁）的倡議組織——依本桌立場來源規則視為帶立場訊號，digest 已具名引用。"
+    }
   }
 ]

@@ -11,17 +11,23 @@
     },
     "controversyType": "academic-critique-of-state-practice",
     "authorityTier": "academic-peer",
-    "epistemicLayer": ["controversy", "normative-rule"],
-    "topicDomain": ["tax-certainty-and-disputes"],
+    "epistemicLayer": [
+      "controversy",
+      "normative-rule"
+    ],
+    "topicDomain": [
+      "tax-certainty-and-disputes"
+    ],
     "temporalStatus": "current-final",
-    "relatedTopicIds": ["danon-lausanne-disputes"],
+    "relatedTopicIds": [
+      "danon-lausanne-disputes"
+    ],
     "citation": {
       "author": "Robert Danon",
       "title": "The effectiveness of the Mutual Agreement Procedure and the global tax controversy landscape: some critical observations on current pressure areas and suggestions to improve the framework",
       "venue": "Kluwer International Tax Blog",
       "date": "2025-05-28",
-      "url": "https://legalblogs.wolterskluwer.com/international-tax-law-blog/the-effectiveness-of-the-mutual-agreement-procedure-and-the-global-tax-controversy-landscape-some-critical-observations-on-current-pressure-areas-and-suggestions-to-improve-the-framework/",
-      "accessNote": "Free full text"
+      "url": "https://legalblogs.wolterskluwer.com/international-tax-law-blog/the-effectiveness-of-the-mutual-agreement-procedure-and-the-global-tax-controversy-landscape-some-critical-observations-on-current-pressure-areas-and-suggestions-to-improve-the-framework/"
     }
   },
   {
@@ -36,17 +42,27 @@
     },
     "controversyType": "treaty-drafting-dispute",
     "authorityTier": "academic-peer",
-    "epistemicLayer": ["controversy", "normative-rule", "future-development"],
-    "topicDomain": ["un-tax-cooperation", "investment-arbitration-and-tax", "tax-certainty-and-disputes"],
+    "epistemicLayer": [
+      "controversy",
+      "normative-rule",
+      "future-development"
+    ],
+    "topicDomain": [
+      "un-tax-cooperation",
+      "investment-arbitration-and-tax",
+      "tax-certainty-and-disputes"
+    ],
     "temporalStatus": "current-draft",
-    "relatedTopicIds": ["un-tax-convention-governance", "danon-lausanne-disputes"],
+    "relatedTopicIds": [
+      "un-tax-convention-governance",
+      "danon-lausanne-disputes"
+    ],
     "citation": {
       "author": "Robert Danon, Adolfo Martín Jiménez",
       "title": "The Override of International Investment Agreements by Double Taxation Conventions in the Latest UN Model Tax Convention: Critical comments",
       "venue": "Kluwer International Tax Blog",
       "date": "2025-04-15",
-      "url": "https://legalblogs.wolterskluwer.com/international-tax-law-blog/the-override-of-international-investment-agreements-by-double-taxation-conventions-in-the-latest-un-model-tax-convention-critical-comments/",
-      "accessNote": "Free full text"
+      "url": "https://legalblogs.wolterskluwer.com/international-tax-law-blog/the-override-of-international-investment-agreements-by-double-taxation-conventions-in-the-latest-un-model-tax-convention-critical-comments/"
     }
   },
   {
@@ -61,17 +77,26 @@
     },
     "controversyType": "academic-proposal-vs-administrative-response",
     "authorityTier": "academic-peer",
-    "epistemicLayer": ["controversy", "future-development", "normative-rule"],
-    "topicDomain": ["pillar-two", "tax-certainty-and-disputes"],
+    "epistemicLayer": [
+      "controversy",
+      "future-development",
+      "normative-rule"
+    ],
+    "topicDomain": [
+      "pillar-two",
+      "tax-certainty-and-disputes"
+    ],
     "temporalStatus": "current-draft",
-    "relatedTopicIds": ["pillar-two-simplification", "danon-lausanne-disputes"],
+    "relatedTopicIds": [
+      "pillar-two-simplification",
+      "danon-lausanne-disputes"
+    ],
     "citation": {
       "author": "Robert Danon, Daniel Gutmann, Guglielmo Maisto, Adolfo Martín Jiménez",
       "title": "The OECD/G20 Global Minimum Tax and Dispute Resolution: A Workable Solution Based on Article 25(3) of the OECD Model, the Principle of Reciprocity and the GloBE Model Rules",
       "venue": "World Tax Journal, Vol. 14, No. 3 (2022), pp. 489-515; follow-up in International Tax Studies, Vol. 6, No. 2 (2023)",
       "date": "2022",
-      "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4194671",
-    "accessNote": "2022 and 2023 IBFD full texts supplied by user and parsed locally; see docs/31_DANON_GLOBE_SECTION_DIGEST.md for section-level digest."
+      "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4194671"
     }
   },
   {
@@ -86,17 +111,24 @@
     },
     "controversyType": "judicial-interpretation-split",
     "authorityTier": "academic-peer",
-    "epistemicLayer": ["controversy", "observable-trend"],
-    "topicDomain": ["tax-treaties", "beneficial-ownership-and-abuse"],
+    "epistemicLayer": [
+      "controversy",
+      "observable-trend"
+    ],
+    "topicDomain": [
+      "tax-treaties",
+      "beneficial-ownership-and-abuse"
+    ],
     "temporalStatus": "current-final",
-    "relatedTopicIds": ["danon-lausanne-disputes"],
+    "relatedTopicIds": [
+      "danon-lausanne-disputes"
+    ],
     "citation": {
       "author": "Robert Danon",
       "title": "A few thoughts on the recent application of the beneficial ownership limitation in tax treaty disputes",
       "venue": "Kluwer International Tax Blog",
       "date": "2026-03-27",
-      "url": "https://legalblogs.wolterskluwer.com/international-tax-law-blog/a-few-thoughts-on-the-recent-application-of-the-beneficial-ownership-limitation-in-tax-treaty-disputes/",
-      "accessNote": "Free full text"
+      "url": "https://legalblogs.wolterskluwer.com/international-tax-law-blog/a-few-thoughts-on-the-recent-application-of-the-beneficial-ownership-limitation-in-tax-treaty-disputes/"
     }
   },
   {
@@ -111,17 +143,23 @@
     },
     "controversyType": "administrative-guidance-inconsistency",
     "authorityTier": "professional-analysis",
-    "epistemicLayer": ["controversy", "implementation-reality"],
-    "topicDomain": ["pillar-two"],
+    "epistemicLayer": [
+      "controversy",
+      "implementation-reality"
+    ],
+    "topicDomain": [
+      "pillar-two"
+    ],
     "temporalStatus": "current-final",
-    "relatedTopicIds": ["pillar-two-simplification"],
+    "relatedTopicIds": [
+      "pillar-two-simplification"
+    ],
     "citation": {
       "author": "oecdpillars.com (tracking UK HMRC guidance update)",
       "title": "Pillar Two Developments Tracker 2026 — UK anomaly note on Qatar's QDMTT qualification date",
       "venue": "oecdpillars.com",
       "date": "2026-06-01",
-      "url": "https://oecdpillars.com/pillar-two-developments-tracker-2026/",
-      "accessNote": "Free full text; secondary tracking source, cross-check against OECD Central Record before citing formally"
+      "url": "https://oecdpillars.com/pillar-two-developments-tracker-2026/"
     }
   },
   {
@@ -136,18 +174,25 @@
     },
     "controversyType": "cross-reference",
     "authorityTier": "professional-analysis",
-    "epistemicLayer": ["controversy", "research-hotspot"],
-    "topicDomain": ["investment-arbitration-and-tax", "tax-treaties"],
+    "epistemicLayer": [
+      "controversy",
+      "research-hotspot"
+    ],
+    "topicDomain": [
+      "investment-arbitration-and-tax",
+      "tax-treaties"
+    ],
     "temporalStatus": "current-final",
-    "relatedTopicIds": ["danon-lausanne-disputes"],
+    "relatedTopicIds": [
+      "danon-lausanne-disputes"
+    ],
     "internalLink": "/manusmetaacquisition",
     "citation": {
       "author": "Canvas Lab",
       "title": "Manus–Meta 跨境收購 / Manus-Meta Cross-Border Acquisition",
       "venue": "my-canvas-lab",
       "date": "2026",
-      "url": "/manusmetaacquisition",
-      "accessNote": "Internal page, not an external source"
+      "url": "/manusmetaacquisition"
     }
   }
 ]
