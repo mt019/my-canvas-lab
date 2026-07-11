@@ -1,6 +1,6 @@
 import React, { Suspense, lazy, useMemo } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import { ArrowRight, CalendarDays, Droplets, FileSearch, Gavel, Globe2, GraduationCap, Landmark, Languages, Mic, Music, Music2, Palette, Piano, Scale, ScrollText, Wind } from 'lucide-react';
+import { ArrowRight, BookMarked, CalendarDays, Droplets, FileSearch, Gavel, Globe2, GraduationCap, Landmark, Languages, Mic, Music, Music2, Palette, Piano, Scale, ScrollText, Wind } from 'lucide-react';
 import SeoHead from './components/SeoHead';
 
 const pages = import.meta.glob('./pages/*.{jsx,tsx}');
@@ -92,6 +92,14 @@ const PAGE_META = { // token-exempt: per-page identity chip colors (data, not st
     Icon: Gavel,
     accent: '#e8dae0',
     accentText: '#8f6071',
+    group: 'research',
+  },
+  IiasPublications: {
+    name: '中研院法研所出版品',
+    desc: '中研院法律學研究所期刊、專書、叢書全集清單，797 篇章直達原文',
+    Icon: BookMarked,
+    accent: '#eae4d6',
+    accentText: '#8a6d3b',
     group: 'research',
   },
   GermanLawCourseTimeline: {

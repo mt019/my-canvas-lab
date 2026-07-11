@@ -27,6 +27,20 @@ copy. When writing digest/topic prose, narrate what a *reader* learns
 
 ## Pages
 
+### `IiasPublications`（中研院法研所出版品，2026-07-11）
+
+Backed by sibling `../iias-publications-data` repo（GitHub mt019/iias-publications-data，
+private；data 遷自 SCU 憲法課倉庫）。Pipeline：`npm run app-json`（manifest → 純 metadata
+投影 296KB，NFC 正規化，核數哨兵對 manifest 宣告數自校）→ `npm run sync`（JSON →
+`src/data/iiasPublications.json`＋87 張封面 webp → `public/covers/iias/`）。規模：87 種出版品
+／797 篇章（425 PDF＋318 線上閱覽＋54 純目次）。前端四 tab（總覽含年×分類堆疊條、完整清單
+預設全展開、期刊架 42 期、篇章檢索 797 列），CSS Modules＋全域 tokens（分類色固定佔
+`--cat-1..4`，淡底＋ink 細框）。PDF 走 `/api/pdf` 代理（`api/_pdfProxy.mjs` 白名單第 4 條：
+`publication.iias.sinica.edu.tw` 任何 `.pdf` 路徑）；線上閱覽直連官網。字型：本頁進場時補過
+子集（rebuild-font-subsets）＋7 個源字型缺字進 `font-coverage-exceptions.txt`。未做（列於資料
+repo README）：PDF 全文檢索（pdf_text 46MB 在資料倉）；官網「先期出版」欄目前為空，日後上線
+需重抓。
+
 ### `ECFAResearch`
 
 Backed by the sibling `../ecfa-research-data` repo; canvas-lab consumes
