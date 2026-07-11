@@ -16,6 +16,8 @@ import {
   ChevronDown,
   ChevronRight,
   Landmark,
+  Shuffle,
+  X,
 } from 'lucide-react';
 import data from '../data/constitutionalCourt.json';
 import { formatDate, formatDateRange } from '../utils/date';
@@ -78,6 +80,60 @@ const presidents = data.總統任期 ?? [];
 
 // 字號 → 案件文件的全域查找表，供 <CaseRef> 由任一處字號回連官方頁並取一句話爭點預覽。
 const docByNo = new Map(docs.map((d) => [d.字號, d]));
+
+// ── 隨機挑件（純前端 view 選取，非資料處理）────────────────────────────────
+// 有日期者才進池：避免抽到無日期的行憲前統字流水號。日期為 ISO YYYY-MM-DD。
+const datedDocs = docs.filter((d) => d.日期 && /^\d{4}-\d{2}-\d{2}$/.test(d.日期));
+function pickRandomDoc(exclude) {
+  const pool = exclude ? datedDocs.filter((d) => d.字號 !== exclude) : datedDocs;
+  const src = pool.length ? pool : datedDocs;
+  return src[Math.floor(Math.random() * src.length)]?.字號 ?? null;
+}
+// 與今天同月日者隨機取一；無則取日曆日環形距離最近者（跨年首尾相接）。
+function pickOnThisDay() {
+  const now = new Date();
+  const mmdd = `${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+  const same = datedDocs.filter((d) => d.日期.slice(5) === mmdd);
+  if (same.length) return same[Math.floor(Math.random() * same.length)].字號;
+  const dayOf = (s) => {
+    const [, m, day] = s.split('-').map(Number);
+    return (m - 1) * 31 + day; // 粗略序位即可，只用來比環形遠近
+  };
+  const target = dayOf(`0000-${mmdd}`);
+  const RING = 12 * 31;
+  const dist = (v) => { const d = Math.abs(v - target); return Math.min(d, RING - d); };
+  let best = null;
+  let bestD = Infinity;
+  for (const d of datedDocs) {
+    const dd = dist(dayOf(d.日期));
+    if (dd < bestD) { bestD = dd; best = d; }
+  }
+  return best?.字號 ?? null;
+}
+
+// 篩選列滾動自動收合：往下捲藏、往上捲或近頂顯示。回傳 hidden 布林。
+function useHideOnScrollDown(threshold = 150) {
+  const [hidden, setHidden] = useState(false);
+  useEffect(() => {
+    let last = window.scrollY;
+    let ticking = false;
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        const y = window.scrollY;
+        if (y < threshold) setHidden(false);
+        else if (y > last + 4) setHidden(true);
+        else if (y < last - 4) setHidden(false);
+        last = y;
+        ticking = false;
+      });
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [threshold]);
+  return hidden;
+}
 
 // 只要顯示字號的地方都用它：連回官方頁，hover（title）顯示一句話爭點預覽。查無 doc／官方頁時退化為純文字。
 function CaseRef({ 字號, className = '' }) {
@@ -633,6 +689,74 @@ function CaseCard({ d, q, reasoningDefault, pdfMode }) {
   );
 }
 
+// 案件浮層（?doc=字號）：隨機挑件與意見書預覽共用。主體重用 CaseCard，故列出該案全部意見書。
+function DocSpotlight({ 字號, onClose, onPick, onViewIndex }) {
+  const [pdfMode] = usePref('pdfMode', 'preview');
+  useEffect(() => {
+    const onKey = (e) => { if (e.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', onKey);
+    document.body.style.overflow = 'hidden'; // 浮層開啟時鎖背景捲動
+    return () => { window.removeEventListener('keydown', onKey); document.body.style.overflow = ''; };
+  }, [onClose]);
+
+  const d = docByNo.get(字號);
+  // 這則是不是「與今天同月日」挑出的——只用來決定頂欄小圖示，不寫任何標語。
+  const now = new Date();
+  const mmdd = `${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+  const isOnThisDay = d?.日期?.slice(5) === mmdd;
+  const OriginIcon = isOnThisDay ? CalendarClock : Shuffle;
+
+  return (
+    <div
+      className="fixed inset-0 z-40 flex items-start justify-center overflow-y-auto bg-black/40 px-4 py-[6vh] backdrop-blur-sm"
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      style={CC_VARS}
+    >
+      <div
+        className="relative w-full max-w-3xl rounded-xl border border-[var(--cc-line)] bg-[var(--cc-bg)] px-5 pb-5 shadow-2xl sm:px-6"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="sticky top-0 -mx-5 flex items-center justify-between gap-3 border-b border-[var(--cc-line)] bg-[var(--cc-bg)]/95 px-5 py-3 backdrop-blur sm:-mx-6 sm:px-6">
+          <span className="inline-flex items-center gap-1.5 text-[12px] font-bold text-[var(--cc-eyebrow)]">
+            <OriginIcon size={14} className="text-[var(--cc-icon)]" />
+            {d?.日期 ? formatDate(d.日期) : d ? '（無日期）' : ''}
+          </span>
+          <button onClick={onClose} aria-label="關閉" className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-[12px] font-bold text-[var(--cc-accent)] hover:bg-[var(--cc-hover-bg)]">
+            <X size={14} />關閉
+          </button>
+        </div>
+
+        {d ? (
+          <CaseCard d={d} q="" reasoningDefault={false} pdfMode={pdfMode} />
+        ) : (
+          <p className="py-8 text-[14px] text-[var(--cc-ink-mid)]">查無「{字號}」這一件。</p>
+        )}
+
+        <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-[var(--cc-line)] pt-3 text-[12px]">
+          <button onClick={() => onPick(pickRandomDoc(字號))} className="inline-flex items-center gap-1 font-bold text-[var(--cc-accent)] hover:text-[var(--cc-link-hover)]">
+            <Shuffle size={12} />再抽一則
+          </button>
+          <button onClick={() => onPick(pickOnThisDay())} title="與今天同日期的解釋／判決" aria-label="與今天同日期的解釋／判決" className="inline-flex items-center gap-1 font-bold text-[var(--cc-accent)] hover:text-[var(--cc-link-hover)]">
+            <CalendarClock size={13} />
+          </button>
+          {d ? (
+            <button onClick={() => onViewIndex(字號)} className="inline-flex items-center gap-1 font-bold text-[var(--cc-accent)] hover:text-[var(--cc-link-hover)]">
+              <Search size={12} />在索引中檢視
+            </button>
+          ) : null}
+          {d ? (
+            <a href={d.官方頁} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 font-bold text-[var(--cc-accent)] hover:text-[var(--cc-link-hover)]">
+              官方頁 <ExternalLink size={11} />
+            </a>
+          ) : null}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function Select({ label, value, onChange, options }) {
   return (
     <label className="flex items-center gap-1.5 text-[12px] font-bold text-[var(--cc-ink-soft)]">
@@ -695,7 +819,7 @@ function SegControl({ value, onChange, options }) {
   );
 }
 
-function IndexView() {
+function IndexView({ initialQ = '', onOpenDoc }) {
   const [機關, set機關] = useState(readInitial機關);
   const [type, setType] = useState('全部');
   const [topic, setTopic] = useState('全部');
@@ -703,8 +827,11 @@ function IndexView() {
   const [outcome, setOutcome] = useState('全部');
   const [standard, setStandard] = useState('全部');
   const [decade, setDecade] = useState('全部');
-  const [q, setQ] = useState('');
+  const [q, setQ] = useState(initialQ);
+  // 「在索引中檢視」由 URL ?q= 帶入字號預搜；此頁已掛載時亦同步（初次掛載為 no-op）。
+  useEffect(() => { setQ(initialQ); }, [initialQ]);
   const [limit, setLimit] = useState(30);
+  const toolbarHidden = useHideOnScrollDown();
   const [sortDir, setSortDir] = useState('desc');
   const [reasoningDefault, setReasoningDefault] = usePref('ccReasoningDefault', false);
   const [pdfMode, setPdfMode] = usePref('pdfMode', 'preview');
@@ -816,7 +943,7 @@ function IndexView() {
 
   return (
     <div>
-      <div className="sticky top-[49px] z-10 -mx-4 border-b border-[var(--cc-line)] bg-[var(--cc-bg)]/95 px-4 py-3 backdrop-blur sm:-mx-6 sm:px-6">
+      <div className={`sticky top-[49px] z-10 -mx-4 border-b border-[var(--cc-line)] bg-[var(--cc-bg)]/95 px-4 py-3 backdrop-blur transition-transform duration-200 ease-out sm:-mx-6 sm:px-6 ${toolbarHidden ? '-translate-y-full' : 'translate-y-0'}`}>
         {/* 頂部大分段鈕：行憲前後明確切開（預設行憲後）。行憲前另給機關子篩選。 */}
         <div className="mb-2.5 flex flex-wrap items-center gap-2">
           <SegControl
@@ -930,6 +1057,10 @@ function IndexView() {
           <button onClick={() => downloadFile(toBibtex(filtered), `憲法案件_${stamp}.bib`, 'text/plain')} className="inline-flex items-center gap-1 font-bold text-[var(--cc-accent)] hover:text-[var(--cc-link-hover)]"><Download size={11} />BibTeX</button>
           <button onClick={() => downloadFile(filtered.map(citeString).join('\n'), `引註清單_${stamp}.txt`, 'text/plain')} className="inline-flex items-center gap-1 font-bold text-[var(--cc-accent)] hover:text-[var(--cc-link-hover)]"><Download size={11} />引註清單</button>
           <button onClick={() => downloadFile(toManifest(filtered), `下載清單_${stamp}.json`, 'application/json')} className="inline-flex items-center gap-1 font-bold text-[var(--cc-blue-ink)] hover:text-[var(--cc-blue-ink-hover)]"><Download size={11} />批次下載清單</button>
+          <span className="ml-auto inline-flex items-center gap-3">
+            <button onClick={() => onOpenDoc(pickRandomDoc())} className="inline-flex items-center gap-1 font-bold text-[var(--cc-accent)] hover:text-[var(--cc-link-hover)]"><Shuffle size={11} />隨機一則</button>
+            <button onClick={() => onOpenDoc(pickOnThisDay())} title="與今天同日期的解釋／判決" aria-label="與今天同日期的解釋／判決" className="inline-flex items-center text-[var(--cc-accent)] hover:text-[var(--cc-link-hover)]"><CalendarClock size={13} /></button>
+          </span>
         </div>
       </div>
 
@@ -1431,7 +1562,7 @@ function JusticesView({ onOpen }) {
 }
 
 // 大法官個人頁（?tab=justices&j=姓名）：基本資料、意見書清單、參與判決、共同具名、打包匯出
-function JusticeDetail({ name, onBack, onOpen }) {
+function JusticeDetail({ name, onBack, onOpen, onOpenDoc }) {
   const j = justices.find((x) => x.姓名 === name);
   const [pdfMode] = usePref('pdfMode', 'preview'); // 與案件頁共用同一 localStorage 偏好
 
@@ -1579,7 +1710,7 @@ function JusticeDetail({ name, onBack, onOpen }) {
                 {opinions.map(({ d, op, role }, i) => (
                   <div key={i} className="flex flex-wrap items-center gap-x-3 gap-y-1 py-1.5 text-[13px]">
                     <span className="w-[104px] whitespace-nowrap text-[12px] text-[var(--cc-figure-note)]">{formatDate(d.日期)}</span>
-                    <a href={d.官方頁} target="_blank" rel="noreferrer" className="w-[130px] font-bold text-[var(--cc-ink-strong)] underline decoration-[var(--cc-link-underline)] underline-offset-2 hover:text-[var(--cc-accent)]">{d.字號}</a>
+                    <button onClick={() => onOpenDoc(d.字號)} title="開啟案件預覽（含全部大法官意見書）" className="w-[130px] text-left font-bold text-[var(--cc-ink-strong)] underline decoration-[var(--cc-link-underline)] underline-offset-2 hover:text-[var(--cc-accent)]">{d.字號}</button>
                     <Badge tone={op.類型.includes('不同') ? 'red' : op.類型.includes('協同') ? 'blue' : 'slate'}>{op.類型}</Badge>
                     {role === '加入' ? <Badge tone="slate">加入</Badge> : null}
                     {d.主筆 === name ? <Badge tone="plum">主筆</Badge> : null}
@@ -1604,11 +1735,11 @@ function JusticeDetail({ name, onBack, onOpen }) {
               </p>
               <div className="mt-1.5 flex flex-wrap gap-x-2.5 gap-y-1">
                 {participationOnly.map((d) => (
-                  <a key={d.字號} href={d.官方頁} target="_blank" rel="noreferrer" title={`${formatDate(d.日期)}　${d.爭點?.slice(0, 60) ?? ''}`}
+                  <button key={d.字號} onClick={() => onOpenDoc(d.字號)} title={`${formatDate(d.日期)}　${d.爭點?.slice(0, 60) ?? ''}`}
                     className="text-[12px] text-[var(--cc-ink-mid)] underline decoration-[var(--cc-link-underline)] underline-offset-2 hover:text-[var(--cc-accent)]">
                     {d.字號.startsWith('釋字第') ? `釋${d.字號.slice(3, -1)}` : d.字號}
                     {d.主筆 === name ? '＊' : ''}{d.主席 === name ? '†' : ''}
-                  </a>
+                  </button>
                 ))}
               </div>
               {participationOnly.some((d) => d.主筆 === name || d.主席 === name) ? (
@@ -3286,8 +3417,13 @@ export default function ConstitutionalCourt() {
   const [params, setParams] = useSearchParams();
   const active = params.get('tab') ?? 'index';
   const justiceName = params.get('j');
+  const focusDoc = params.get('doc');
   const setActive = (id) => setParams(id === 'index' ? {} : { tab: id });
   const openJustice = (name) => setParams({ tab: 'justices', j: name });
+  // ?doc=字號 案件浮層：保留現有分頁狀態疊在其上，關閉即移除 doc 參數。
+  const openDoc = (字號) => { if (!字號) return; const next = Object.fromEntries(params); next.doc = 字號; setParams(next); };
+  const closeDoc = () => { const next = Object.fromEntries(params); delete next.doc; setParams(next); };
+  const viewInIndex = (字號) => setParams({ q: 字號 }); // 跳索引分頁、以字號預搜、關浮層
 
   useEffect(() => {
     document.title = justiceName ? `${justiceName}｜憲法法庭案例庫` : '憲法法庭案例庫';
@@ -3351,11 +3487,11 @@ export default function ConstitutionalCourt() {
       </nav>
 
       <main className="mx-auto max-w-6xl px-4 sm:px-6">
-        {active === 'index' ? <IndexView /> : null}
+        {active === 'index' ? <IndexView initialQ={params.get('q') ?? ''} onOpenDoc={openDoc} /> : null}
         {active === 'timeline' ? <TimelineView /> : null}
         {active === 'justices' ? (
           justiceName
-            ? <JusticeDetail name={justiceName} onBack={() => setParams({ tab: 'justices' })} onOpen={openJustice} />
+            ? <JusticeDetail name={justiceName} onBack={() => setParams({ tab: 'justices' })} onOpen={openJustice} onOpenDoc={openDoc} />
             : <JusticesView onOpen={openJustice} />
         ) : null}
         {active === 'tenure' ? <TenureView onOpen={openJustice} /> : null}
@@ -3365,6 +3501,15 @@ export default function ConstitutionalCourt() {
         {active === 'history' ? <HistoryView onOpenIndex={(機關) => setParams(機關 && 機關 !== '行憲後' ? { 機關 } : {})} /> : null}
         {active === 'about' ? <AboutView /> : null}
       </main>
+
+      {focusDoc ? (
+        <DocSpotlight
+          字號={focusDoc}
+          onClose={closeDoc}
+          onPick={openDoc}
+          onViewIndex={viewInIndex}
+        />
+      ) : null}
     </div>
   );
 }

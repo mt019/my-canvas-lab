@@ -220,6 +220,23 @@ work.
 
 ### `ConstitutionalCourt` (landed 2026-07-06)
 
+- 2026-07-11 三個 UX／驚喜互動功能（frontend-only，**DONE**，零資料 repo 改動——只
+  重新輸出既有已同步欄位）。統一機制：新增 `?doc=字號` 深連結浮層 `DocSpotlight`
+  （`fixed inset-0 z-40`，主體直接重用 `CaseCard`，故列出該案**全部**大法官意見書；
+  ESC／背板／關閉鈕清 `doc` 參數；`overflow:hidden` 鎖背景捲動）。三處消費它：
+  (1) **隨機挑件**——索引工具列尾端加 `隨機一則`（`pickRandomDoc`）＋ `CalendarClock`
+  icon-only 同日鈕（`pickOnThisDay`，與今天同月日者隨機取一、無則環形最近；helper 在
+  L84 附近，池＝有 ISO 日期者 `datedDocs`，跨行憲前後）。**克制原則：不用 emoji、
+  不寫「歷史上的今天」字樣**——同日只用小 `CalendarClock` 圖示。(2) **意見書預覽**——
+  `JusticeDetail` 意見書列與 participationOnly chips 的字號從外連官網改成 `onOpenDoc`
+  開浮層（滿足「看到其他大法官有無意見書」）；浮層內 CaseCard 仍提供官方頁連結，資訊不失。
+  (3) 浮層底欄 `在索引中檢視` → `?q=字號`（`IndexView` 新增 `initialQ` prop，`useEffect`
+  同步預搜）。**篩選列滾動自動收合**：新 `useHideOnScrollDown` hook（rAF 節流），套在
+  `IndexView` 那條 `sticky top-[49px]` 工具列上（往下捲 `-translate-y-full` 藏、往上捲或
+  近頂顯示）；**只套索引頁這條**，未動 `TenureView`/`GraphView` 的 sticky 列。新 import
+  `Shuffle`/`X`。注意字型陷阱：U+86CB（egg 字，曾用於「easter-egg」的中譯詞）不在子集，
+  `validate:fonts` 連註解都掃，故程式碼註解一律避開該字（已改用「隨機挑件」措辭）——本檔亦同，
+  只以 codepoint 指涉。Playwright 實機 17 檢全過、console 無錯、`npm run build` 全綠。
 - Imports `src/data/constitutionalCourt.json` (~5.4MB since M5 Phase B;
   行憲前 rows are lean catalog previews, not full text) plus a lazy
   companion `constitutionalCourt-pre1947-fulltext.json` (~2.4MB,
@@ -331,6 +348,13 @@ work.
   `app-json→sync` 會把其半成品推上前端。**Codex commit W2 後**，補跑一次乾淨 `app-json→sync` 即正規化快照
   （結果同 503，且格式回正——目前 overlay 為 minified）。資料 repo 的 `審查結論類型.json`／gate 旗標／held／
   人工佇列 doc 皆 uncommitted，與 Codex 的 W2 在同一工作樹（各自檔案不重疊，可 selective add 分別 commit）。
+- 2026-07-11 類型學分類器**信度／效度／穩健度評估**（完整版：資料 repo `engineering/LOG.md` 同日條目；
+  摘要：資料 repo `docs/類型學-運維.md`）。要點：503 件雙 pass 全一致、真分歧 4% 隔離人工佇列，但兩
+  pass 同為 opus——一致率是模型自我再現性、非人類編碼員 kappa，方法論須揭露；校準 92%＋主文逐字引文錨，
+  但輸入不含理由書 → D/E 軸系統性偏漏、多值軸交集偏保守；`--agree` 收入 18% 中/低信心件，下游分析可用
+  高信心子集（410 件）做穩健性檢查。補強首選＝人工抽驗 30–50 件算 human-agent kappa。同日開跑
+  **348 件非違憲行憲後件補標**（07-10 曾裁示跳過，07-11 CHECKPOINT 改列為下一步，以新裁示為準；
+  清單＝資料 repo `data/materials/貼標-剩餘清單.json`，排除人工佇列 23 件，~6 輪 opus×2＋gate `--agree`）。
 - 2026-07-11 大法官提名文件＋被提名人（frontend；資料本體在資料 repo）：個人頁基本資料列新增
   自傳／提名簡歷／學思歷程報告連結（快照 `大法官[].提名文件`——108/112 批 8 位現任＋湯德宗 100 年報告）；
   114憲判1 卡片掛 `NomineeDossiers` 區塊（快照頂層 `被提名人批次`，113/114 落選 14 人，掛載案件由
