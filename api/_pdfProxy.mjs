@@ -21,9 +21,21 @@ export function resolveTarget(url, id) {
   return ALLOW.some((r) => u.host === r.host && r.path.test(u.pathname)) ? u : null;
 }
 
-// 伺服器端抓 PDF，回 { ok, status, buf }。
-export async function fetchPdf(u) {
-  const upstream = await fetch(u.href, { headers: { 'User-Agent': 'Mozilla/5.0 (canvas-lab pdf proxy)' } });
-  if (!upstream.ok) return { ok: false, status: 502 };
-  return { ok: true, status: 200, buf: Buffer.from(await upstream.arrayBuffer()) };
+// 伺服器端開上游連線，回 fetch Response；呼叫端自行檢查 ok 並串流 body。
+// 不整份 buffer：上游（憲法法庭）TTFB 常達 2-3 秒、檔案數 MB，buffer 會讓瀏覽器
+// 空等全檔下載完才收到第一個 byte；串流讓 PDF 檢視器邊收邊渲染首頁。
+export async function fetchUpstream(u) {
+  return fetch(u.href, { headers: { 'User-Agent': 'Mozilla/5.0 (canvas-lab pdf proxy)' } });
+}
+
+// 共用：把上游 Response 以 inline PDF 串流進 node res（Vercel function 與 vite dev middleware 同用）。
+export async function streamPdf(upstream, res, cacheControl) {
+  const { Readable } = await import('node:stream');
+  const { pipeline } = await import('node:stream/promises');
+  res.setHeader('Content-Type', 'application/pdf');
+  res.setHeader('Content-Disposition', 'inline');
+  if (cacheControl) res.setHeader('Cache-Control', cacheControl);
+  const len = upstream.headers.get('content-length');
+  if (len) res.setHeader('Content-Length', len);
+  await pipeline(Readable.fromWeb(upstream.body), res);
 }
