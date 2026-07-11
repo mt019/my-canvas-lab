@@ -138,15 +138,21 @@ Current tab-based implementation:
   (per `feedback_no_meaningless_viz` we show the paper's Table 1
   excerpt as a table and say so in the caption).
 - **名詞與機構 tab** (wiki; user-requested 2026-07-11):
-  `glossary.json` — bilingual encyclopedia entries in three categories
-  (concept / institution / instrument), each with definition, optional
-  「研究相關性」paragraph, and an authoritative source link (URLs reuse
-  the registered source list or stable OECD DOIs — never invented).
-  Category filter chips (`wikiFilters`) + the global sidebar search
-  both apply. Cards reuse `analysisGrid`/`analysisCard`;
-  `.analysisCard .tagRow` overrides the global `margin-top: auto` so
-  the category chip stays at the top of cards without a
-  research-relevance block.
+  `glossary.json` — bilingual encyclopedia entries in four categories
+  (concept / institution / instrument / provision 條文), each carrying a
+  `subcategory {id, zh, en}` under which the page groups cards with
+  teal-keyline headings (`wikiGroupHead`); group order = array order.
+  Each entry: definition, optional 「研究相關性」paragraph, and an
+  authoritative source link (URLs reuse the registered source list or
+  stable OECD DOIs — never invented). Category filter chips
+  (`wikiFilters`) + the global sidebar search both apply. Cards reuse
+  `analysisGrid`/`analysisCard`; `.analysisCard .tagRow` overrides the
+  global `margin-top: auto` so the category chip stays at the top.
+  **The master checklist lives in the data repo:
+  `../intl-tax-ops-lab/docs/13_GLOSSARY_PLAN.md`** (~90 planned entries,
+  writing rules, per-entry status; 32 done as of 2026-07-11). Extend the
+  wiki by editing `data/glossary.json` there in plan order and
+  re-syncing — never hand-edit the canvas copy.
 - **Codex 2026-07-11 correction record**: Codex's foregrounding commit
   also stripped topic summaries, 待補研究 (nextActions), the 最新動態
   digest tab, and the 核實日 pill — all restored (they are

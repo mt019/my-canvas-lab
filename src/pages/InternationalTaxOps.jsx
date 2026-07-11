@@ -73,6 +73,7 @@ const ui = {
     conceptCat: '概念',
     institutionCat: '機構',
     instrumentCat: '文書',
+    provisionCat: '條文',
     whyMatters: '研究相關性',
     question: '研究問題',
     finding: '目前判讀',
@@ -118,6 +119,7 @@ const ui = {
     conceptCat: 'Concepts',
     institutionCat: 'Institutions',
     instrumentCat: 'Instruments',
+    provisionCat: 'Provisions',
     whyMatters: 'Why it matters here',
     question: 'Research question',
     finding: 'Current reading',
@@ -142,6 +144,7 @@ const WIKI_CATEGORIES = [
   { id: 'concept', labelKey: 'conceptCat' },
   { id: 'institution', labelKey: 'institutionCat' },
   { id: 'instrument', labelKey: 'instrumentCat' },
+  { id: 'provision', labelKey: 'provisionCat' },
 ];
 
 function labelFor(axis, id, lang) {
@@ -256,8 +259,8 @@ export default function InternationalTaxOps() {
     ].join(' ').toLowerCase().includes(query));
   }, [query]);
 
-  const filteredGlossary = useMemo(() => {
-    return glossary.filter((entry) => {
+  const glossaryGroups = useMemo(() => {
+    const filtered = glossary.filter((entry) => {
       if (wikiCategory !== 'all' && entry.category !== wikiCategory) return false;
       if (!query) return true;
       return [
@@ -269,6 +272,20 @@ export default function InternationalTaxOps() {
         entry.whyItMatters?.en ?? '',
       ].join(' ').toLowerCase().includes(query);
     });
+    // Group under subcategory headings, preserving the array's order
+    // (which mirrors docs/13_GLOSSARY_PLAN.md in the data repo).
+    const groups = [];
+    const byId = new Map();
+    for (const entry of filtered) {
+      const key = entry.subcategory.id;
+      if (!byId.has(key)) {
+        const group = { id: key, label: entry.subcategory, entries: [] };
+        byId.set(key, group);
+        groups.push(group);
+      }
+      byId.get(key).entries.push(entry);
+    }
+    return groups;
   }, [wikiCategory, query]);
 
   const toggleTopic = (id) => {
@@ -629,29 +646,34 @@ export default function InternationalTaxOps() {
                 </button>
               ))}
             </div>
-            <div className={styles.analysisGrid}>
-              {filteredGlossary.map((entry) => (
-                <article key={entry.id} className={styles.analysisCard}>
-                  <div className={styles.tagRow}>
-                    <span>{t[`${entry.category}Cat`]}</span>
-                  </div>
-                  <h3>{entry.term[lang]}</h3>
-                  <div className={styles.analysisBlock}>
-                    <p>{entry.definition[lang]}</p>
-                  </div>
-                  {entry.whyItMatters && (
-                    <div className={styles.analysisBlock}>
-                      <span>{t.whyMatters}</span>
-                      <p>{entry.whyItMatters[lang]}</p>
-                    </div>
-                  )}
-                  <footer>
-                    <span>{entry.sourceLabel[lang]}</span>
-                    <a href={entry.sourceUrl} target="_blank" rel="noreferrer">{t.open}<ArrowUpRight size={14} /></a>
-                  </footer>
-                </article>
-              ))}
-            </div>
+            {glossaryGroups.map((group) => (
+              <div key={group.id}>
+                <h3 className={styles.wikiGroupHead}>{group.label[lang]}</h3>
+                <div className={styles.analysisGrid}>
+                  {group.entries.map((entry) => (
+                    <article key={entry.id} className={styles.analysisCard}>
+                      <div className={styles.tagRow}>
+                        <span>{t[`${entry.category}Cat`]}</span>
+                      </div>
+                      <h3>{entry.term[lang]}</h3>
+                      <div className={styles.analysisBlock}>
+                        <p>{entry.definition[lang]}</p>
+                      </div>
+                      {entry.whyItMatters && (
+                        <div className={styles.analysisBlock}>
+                          <span>{t.whyMatters}</span>
+                          <p>{entry.whyItMatters[lang]}</p>
+                        </div>
+                      )}
+                      <footer>
+                        <span>{entry.sourceLabel[lang]}</span>
+                        <a href={entry.sourceUrl} target="_blank" rel="noreferrer">{t.open}<ArrowUpRight size={14} /></a>
+                      </footer>
+                    </article>
+                  ))}
+                </div>
+              </div>
+            ))}
           </section>
         )}
 

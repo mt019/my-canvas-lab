@@ -1,18 +1,18 @@
 [
   {
-    "id": "map",
+    "id": "pe",
     "category": "concept",
     "term": {
-      "zh": "相互協議程序（MAP）",
-      "en": "Mutual Agreement Procedure (MAP)"
+      "zh": "常設機構（PE）",
+      "en": "Permanent Establishment (PE)"
     },
     "definition": {
-      "zh": "雙邊稅約下由兩國主管機關協商解決課稅爭議的政府間程序（OECD／UN 範本第 25 條）。納稅人可申請啟動，但不是程序當事人；主管機關只負「盡力協商」義務，沒有必須達成合意的義務，也多無時限。",
-      "en": "The intergovernmental procedure under bilateral tax treaties (Article 25 of the OECD and UN Models) by which the two competent authorities negotiate taxation disputes. The taxpayer can request it but is not a party; the authorities owe only an obligation to endeavour to agree, with no duty to reach agreement and usually no deadline."
+      "zh": "來源國對外國企業營業利潤課稅的門檻概念（範本第 5 條）：固定營業場所（分支機構、工廠等）或具締約權的代理人構成 PE，無 PE 則營業利潤原則上僅由居住國課稅。",
+      "en": "The threshold concept for source-country taxation of foreign business profits (Article 5 of the Models): a fixed place of business (branch, factory, etc.) or a dependent agent with contracting authority constitutes a PE; absent one, business profits are in principle taxable only in the residence state."
     },
     "whyItMatters": {
-      "zh": "MAP 的啟動、排除與結果落實是本研究「救濟確定性」的主戰場：Danon 批評各國以國內程序不當限縮 MAP 取得，UN 爭端議定書（CRP.28 §37）也把 MAP 取得保障明文入列。",
-      "en": "MAP initiation, exclusion, and implementation of outcomes are the main battleground of this project's remedial-certainty question: Danon criticizes undue domestic restrictions on MAP access, and the UN dispute protocol (CRP.28 §37) writes MAP-access safeguards into the text."
+      "zh": "Ash & Marian 的量測顯示 PE 條款是 1965–2015 收斂幅度最大的條款之一（0.552→0.829）——形式共識的核心區。",
+      "en": "Ash & Marian's measurements show PE clauses among the strongest convergers from 1965–2015 (0.552→0.829) — the heartland of formal consensus."
     },
     "sourceLabel": {
       "zh": "OECD 範本稅約（2017 精簡版）",
@@ -20,54 +20,38 @@
     },
     "sourceUrl": "https://doi.org/10.1787/mtc_cond-2017-en",
     "relatedTopicIds": [
-      "danon-lausanne-disputes",
       "un-tax-convention-governance"
-    ]
+    ],
+    "subcategory": {
+      "id": "allocation",
+      "zh": "課稅權分配",
+      "en": "Allocation of taxing rights"
+    }
   },
   {
-    "id": "mandatory-binding-arbitration",
+    "id": "arms-length",
     "category": "concept",
     "term": {
-      "zh": "強制拘束仲裁（MAP 仲裁）",
-      "en": "Mandatory binding MAP arbitration"
+      "zh": "常規交易原則（arm's length）",
+      "en": "The arm's length principle"
     },
     "definition": {
-      "zh": "OECD 式設計：MAP 兩年（或三年）未決時，未解決事項應納稅人請求移交仲裁，裁決拘束雙方主管機關（OECD 範本第 25 條第 5 項；MLI 第六部分為自選模組）。仍是主管機關間程序的延伸，不是納稅人的獨立救濟。",
-      "en": "The OECD-style design: issues unresolved after two (or three) years of MAP go to arbitration at the taxpayer's request, and the decision binds both competent authorities (OECD Model Article 25(5); Part VI of the MLI as an opt-in module). It remains an extension of the competent-authority procedure, not an independent taxpayer remedy."
-    },
-    "whyItMatters": {
-      "zh": "UN 路線明確走反方向：CRP.28 把仲裁設計為自選、最後手段、無先例效力——兩種制度設計的對照是「UN vs OECD 制度設計」研究線的核心素材。",
-      "en": "The UN track goes the other way: CRP.28 designs arbitration as optional, last-resort, with no precedential value — the contrast between the two designs is core material for the UN-vs-OECD research line."
+      "zh": "關係企業間交易須按獨立企業間會採用的條件定價（範本第 9 條），否則稅局得調整利潤。源自 1935 年國際聯盟範本，至今仍是移轉訂價的金標準，操作細節由 OECD 移轉訂價指引承載。",
+      "en": "Transactions between associated enterprises must be priced on the terms independent enterprises would adopt (Article 9 of the Models), failing which tax administrations may adjust profits. Introduced in the 1935 League of Nations model, it remains the gold standard of transfer pricing, operationalized through the OECD Transfer Pricing Guidelines."
     },
     "sourceLabel": {
-      "zh": "OECD BEPS 主題頁",
-      "en": "OECD BEPS topic page"
+      "zh": "OECD 移轉訂價指引（2017）",
+      "en": "OECD Transfer Pricing Guidelines (2017)"
     },
-    "sourceUrl": "https://www.oecd.org/en/topics/base-erosion-and-profit-shifting-beps.html",
+    "sourceUrl": "https://doi.org/10.1787/tpg-2017-en",
     "relatedTopicIds": [
-      "un-tax-convention-governance",
       "danon-lausanne-disputes"
-    ]
-  },
-  {
-    "id": "final-offer-arbitration",
-    "category": "concept",
-    "term": {
-      "zh": "最終報價仲裁（final-offer）",
-      "en": "Final-offer arbitration"
-    },
-    "definition": {
-      "zh": "仲裁庭只能在雙方各自提出的完整方案中擇一採納、不得自行折衷的仲裁制（又稱棒球仲裁）。UN 爭端議定書概念說明（CRP.28 §41）採此制，並明定裁決無先例價值、納稅人非程序當事人。",
-      "en": "An arbitration format in which the panel must pick one side's complete proposal and cannot craft a compromise (also called baseball arbitration). The UN dispute-protocol concept note (CRP.28 §41) adopts it, with no precedential value and no taxpayer party status."
-    },
-    "sourceLabel": {
-      "zh": "UN 工作流三概念說明（CRP.28）",
-      "en": "UN Workstream III concept note (CRP.28)"
-    },
-    "sourceUrl": "https://financing.desa.un.org/document/workstream-iii-dispute-prevention-and-resolution-co-leads-concept-note-23-jan-2026",
-    "relatedTopicIds": [
-      "un-tax-convention-governance"
-    ]
+    ],
+    "subcategory": {
+      "id": "allocation",
+      "zh": "課稅權分配",
+      "en": "Allocation of taxing rights"
+    }
   },
   {
     "id": "ppt",
@@ -91,7 +75,12 @@
     "sourceUrl": "https://serval.unil.ch/resource/serval:BIB_BBFD1C26AF9B.P001/REF.pdf",
     "relatedTopicIds": [
       "danon-lausanne-disputes"
-    ]
+    ],
+    "subcategory": {
+      "id": "anti-avoidance",
+      "zh": "反避稅",
+      "en": "Anti-avoidance"
+    }
   },
   {
     "id": "beps",
@@ -111,7 +100,12 @@
     "sourceUrl": "https://www.oecd.org/en/topics/base-erosion-and-profit-shifting-beps.html",
     "relatedTopicIds": [
       "pillar-two-simplification"
-    ]
+    ],
+    "subcategory": {
+      "id": "anti-avoidance",
+      "zh": "反避稅",
+      "en": "Anti-avoidance"
+    }
   },
   {
     "id": "globe-pillar-two",
@@ -136,7 +130,12 @@
     "relatedTopicIds": [
       "pillar-two-simplification",
       "danon-lausanne-disputes"
-    ]
+    ],
+    "subcategory": {
+      "id": "minimum-tax",
+      "zh": "全球最低稅",
+      "en": "Global minimum tax"
+    }
   },
   {
     "id": "qdmtt",
@@ -160,7 +159,12 @@
     "sourceUrl": "https://www.oecd.org/en/publications/the-global-minimum-tax-implementation-toolkit_0ee66d84-en.html",
     "relatedTopicIds": [
       "pillar-two-simplification"
-    ]
+    ],
+    "subcategory": {
+      "id": "minimum-tax",
+      "zh": "全球最低稅",
+      "en": "Global minimum tax"
+    }
   },
   {
     "id": "safe-harbour",
@@ -180,22 +184,27 @@
     "sourceUrl": "https://www.oecd.org/content/dam/oecd/en/topics/policy-sub-issues/global-minimum-tax/side-by-side-package.pdf",
     "relatedTopicIds": [
       "pillar-two-simplification"
-    ]
+    ],
+    "subcategory": {
+      "id": "minimum-tax",
+      "zh": "全球最低稅",
+      "en": "Global minimum tax"
+    }
   },
   {
-    "id": "pe",
+    "id": "map",
     "category": "concept",
     "term": {
-      "zh": "常設機構（PE）",
-      "en": "Permanent Establishment (PE)"
+      "zh": "相互協議程序（MAP）",
+      "en": "Mutual Agreement Procedure (MAP)"
     },
     "definition": {
-      "zh": "來源國對外國企業營業利潤課稅的門檻概念（範本第 5 條）：固定營業場所（分支機構、工廠等）或具締約權的代理人構成 PE，無 PE 則營業利潤原則上僅由居住國課稅。",
-      "en": "The threshold concept for source-country taxation of foreign business profits (Article 5 of the Models): a fixed place of business (branch, factory, etc.) or a dependent agent with contracting authority constitutes a PE; absent one, business profits are in principle taxable only in the residence state."
+      "zh": "雙邊稅約下由兩國主管機關協商解決課稅爭議的政府間程序（OECD／UN 範本第 25 條）。納稅人可申請啟動，但不是程序當事人；主管機關只負「盡力協商」義務，沒有必須達成合意的義務，也多無時限。",
+      "en": "The intergovernmental procedure under bilateral tax treaties (Article 25 of the OECD and UN Models) by which the two competent authorities negotiate taxation disputes. The taxpayer can request it but is not a party; the authorities owe only an obligation to endeavour to agree, with no duty to reach agreement and usually no deadline."
     },
     "whyItMatters": {
-      "zh": "Ash & Marian 的量測顯示 PE 條款是 1965–2015 收斂幅度最大的條款之一（0.552→0.829）——形式共識的核心區。",
-      "en": "Ash & Marian's measurements show PE clauses among the strongest convergers from 1965–2015 (0.552→0.829) — the heartland of formal consensus."
+      "zh": "MAP 的啟動、排除與結果落實是本研究「救濟確定性」的主戰場：Danon 批評各國以國內程序不當限縮 MAP 取得，UN 爭端議定書（CRP.28 §37）也把 MAP 取得保障明文入列。",
+      "en": "MAP initiation, exclusion, and implementation of outcomes are the main battleground of this project's remedial-certainty question: Danon criticizes undue domestic restrictions on MAP access, and the UN dispute protocol (CRP.28 §37) writes MAP-access safeguards into the text."
     },
     "sourceLabel": {
       "zh": "OECD 範本稅約（2017 精簡版）",
@@ -203,28 +212,119 @@
     },
     "sourceUrl": "https://doi.org/10.1787/mtc_cond-2017-en",
     "relatedTopicIds": [
+      "danon-lausanne-disputes",
       "un-tax-convention-governance"
-    ]
+    ],
+    "subcategory": {
+      "id": "disputes",
+      "zh": "爭端解決與救濟",
+      "en": "Disputes & remedies"
+    }
   },
   {
-    "id": "arms-length",
+    "id": "mandatory-binding-arbitration",
     "category": "concept",
     "term": {
-      "zh": "常規交易原則（arm's length）",
-      "en": "The arm's length principle"
+      "zh": "強制拘束仲裁（MAP 仲裁）",
+      "en": "Mandatory binding MAP arbitration"
     },
     "definition": {
-      "zh": "關係企業間交易須按獨立企業間會採用的條件定價（範本第 9 條），否則稅局得調整利潤。源自 1935 年國際聯盟範本，至今仍是移轉訂價的金標準，操作細節由 OECD 移轉訂價指引承載。",
-      "en": "Transactions between associated enterprises must be priced on the terms independent enterprises would adopt (Article 9 of the Models), failing which tax administrations may adjust profits. Introduced in the 1935 League of Nations model, it remains the gold standard of transfer pricing, operationalized through the OECD Transfer Pricing Guidelines."
+      "zh": "OECD 式設計：MAP 兩年（或三年）未決時，未解決事項應納稅人請求移交仲裁，裁決拘束雙方主管機關（OECD 範本第 25 條第 5 項；MLI 第六部分為自選模組）。仍是主管機關間程序的延伸，不是納稅人的獨立救濟。",
+      "en": "The OECD-style design: issues unresolved after two (or three) years of MAP go to arbitration at the taxpayer's request, and the decision binds both competent authorities (OECD Model Article 25(5); Part VI of the MLI as an opt-in module). It remains an extension of the competent-authority procedure, not an independent taxpayer remedy."
+    },
+    "whyItMatters": {
+      "zh": "UN 路線明確走反方向：CRP.28 把仲裁設計為自選、最後手段、無先例效力——兩種制度設計的對照是「UN vs OECD 制度設計」研究線的核心素材。",
+      "en": "The UN track goes the other way: CRP.28 designs arbitration as optional, last-resort, with no precedential value — the contrast between the two designs is core material for the UN-vs-OECD research line."
     },
     "sourceLabel": {
-      "zh": "OECD 移轉訂價指引（2017）",
-      "en": "OECD Transfer Pricing Guidelines (2017)"
+      "zh": "OECD BEPS 主題頁",
+      "en": "OECD BEPS topic page"
     },
-    "sourceUrl": "https://doi.org/10.1787/tpg-2017-en",
+    "sourceUrl": "https://www.oecd.org/en/topics/base-erosion-and-profit-shifting-beps.html",
+    "relatedTopicIds": [
+      "un-tax-convention-governance",
+      "danon-lausanne-disputes"
+    ],
+    "subcategory": {
+      "id": "disputes",
+      "zh": "爭端解決與救濟",
+      "en": "Disputes & remedies"
+    }
+  },
+  {
+    "id": "final-offer-arbitration",
+    "category": "concept",
+    "term": {
+      "zh": "最終報價仲裁（final-offer）",
+      "en": "Final-offer arbitration"
+    },
+    "definition": {
+      "zh": "仲裁庭只能在雙方各自提出的完整方案中擇一採納、不得自行折衷的仲裁制（又稱棒球仲裁）。UN 爭端議定書概念說明（CRP.28 §41）採此制，並明定裁決無先例價值、納稅人非程序當事人。",
+      "en": "An arbitration format in which the panel must pick one side's complete proposal and cannot craft a compromise (also called baseball arbitration). The UN dispute-protocol concept note (CRP.28 §41) adopts it, with no precedential value and no taxpayer party status."
+    },
+    "sourceLabel": {
+      "zh": "UN 工作流三概念說明（CRP.28）",
+      "en": "UN Workstream III concept note (CRP.28)"
+    },
+    "sourceUrl": "https://financing.desa.un.org/document/workstream-iii-dispute-prevention-and-resolution-co-leads-concept-note-23-jan-2026",
+    "relatedTopicIds": [
+      "un-tax-convention-governance"
+    ],
+    "subcategory": {
+      "id": "disputes",
+      "zh": "爭端解決與救濟",
+      "en": "Disputes & remedies"
+    }
+  },
+  {
+    "id": "remedial-certainty",
+    "category": "concept",
+    "term": {
+      "zh": "救濟確定性（remedial certainty）",
+      "en": "Remedial certainty"
+    },
+    "definition": {
+      "zh": "本研究的核心概念，承 Danon 等人對 GloBE 稅捐確定性的討論：在協調化規則之下，納稅人與國家能否預期「由誰、循哪條程序、在什麼時限內」取得具終局性的救濟。與規則實體內容的確定性（substantive certainty）相對——實體規則再一致，救濟層斷裂仍使結果不可預期。",
+      "en": "This project's core concept, building on Danon and co-authors' work on tax certainty under GloBE: whether, under coordinated rules, taxpayers and states can predict who provides a final remedy, through which procedure, and within what time. It contrasts with substantive certainty — however uniform the substantive rules, a fractured remedial layer keeps outcomes unpredictable."
+    },
+    "sourceLabel": {
+      "zh": "Danon, Gutmann, Maisto & Martín Jiménez, GloBE and Tax Certainty (2023)",
+      "en": "Danon, Gutmann, Maisto & Martín Jiménez, GloBE and Tax Certainty (2023)"
+    },
+    "sourceUrl": "https://research.ibfd.org/#/doc?url=/document/itaxs_2023_02_int_1",
     "relatedTopicIds": [
       "danon-lausanne-disputes"
-    ]
+    ],
+    "subcategory": {
+      "id": "disputes",
+      "zh": "爭端解決與救濟",
+      "en": "Disputes & remedies"
+    }
+  },
+  {
+    "id": "competent-authority",
+    "category": "concept",
+    "term": {
+      "zh": "主管機關（competent authority）",
+      "en": "Competent authority"
+    },
+    "definition": {
+      "zh": "稅約指定負責執行 MAP、資訊交換等協定程序的機關，通常是財政部或稅務總局的指定單位。MAP 與 UN 議定書草案中的仲裁都是「主管機關間」程序——納稅人啟動程序卻非當事人，是國際稅務救濟的結構性特徵。",
+      "en": "The authority a tax treaty designates to run MAP, exchange of information, and other treaty procedures — typically a designated unit of the finance ministry or revenue administration. Both MAP and the arbitration in the draft UN protocol are competent-authority-to-competent-authority procedures: the taxpayer triggers them without being a party, a structural feature of international tax remedies."
+    },
+    "sourceLabel": {
+      "zh": "OECD 範本稅約（2017 精簡版）",
+      "en": "OECD Model Tax Convention (2017 condensed)"
+    },
+    "sourceUrl": "https://doi.org/10.1787/mtc_cond-2017-en",
+    "relatedTopicIds": [
+      "danon-lausanne-disputes"
+    ],
+    "subcategory": {
+      "id": "disputes",
+      "zh": "爭端解決與救濟",
+      "en": "Disputes & remedies"
+    }
   },
   {
     "id": "isds",
@@ -249,47 +349,12 @@
     "relatedTopicIds": [
       "danon-lausanne-disputes",
       "un-tax-convention-governance"
-    ]
-  },
-  {
-    "id": "remedial-certainty",
-    "category": "concept",
-    "term": {
-      "zh": "救濟確定性（remedial certainty）",
-      "en": "Remedial certainty"
-    },
-    "definition": {
-      "zh": "本研究的核心概念，承 Danon 等人對 GloBE 稅捐確定性的討論：在協調化規則之下，納稅人與國家能否預期「由誰、循哪條程序、在什麼時限內」取得具終局性的救濟。與規則實體內容的確定性（substantive certainty）相對——實體規則再一致，救濟層斷裂仍使結果不可預期。",
-      "en": "This project's core concept, building on Danon and co-authors' work on tax certainty under GloBE: whether, under coordinated rules, taxpayers and states can predict who provides a final remedy, through which procedure, and within what time. It contrasts with substantive certainty — however uniform the substantive rules, a fractured remedial layer keeps outcomes unpredictable."
-    },
-    "sourceLabel": {
-      "zh": "Danon, Gutmann, Maisto & Martín Jiménez, GloBE and Tax Certainty (2023)",
-      "en": "Danon, Gutmann, Maisto & Martín Jiménez, GloBE and Tax Certainty (2023)"
-    },
-    "sourceUrl": "https://research.ibfd.org/#/doc?url=/document/itaxs_2023_02_int_1",
-    "relatedTopicIds": [
-      "danon-lausanne-disputes"
-    ]
-  },
-  {
-    "id": "competent-authority",
-    "category": "concept",
-    "term": {
-      "zh": "主管機關（competent authority）",
-      "en": "Competent authority"
-    },
-    "definition": {
-      "zh": "稅約指定負責執行 MAP、資訊交換等協定程序的機關，通常是財政部或稅務總局的指定單位。MAP 與 UN 議定書草案中的仲裁都是「主管機關間」程序——納稅人啟動程序卻非當事人，是國際稅務救濟的結構性特徵。",
-      "en": "The authority a tax treaty designates to run MAP, exchange of information, and other treaty procedures — typically a designated unit of the finance ministry or revenue administration. Both MAP and the arbitration in the draft UN protocol are competent-authority-to-competent-authority procedures: the taxpayer triggers them without being a party, a structural feature of international tax remedies."
-    },
-    "sourceLabel": {
-      "zh": "OECD 範本稅約（2017 精簡版）",
-      "en": "OECD Model Tax Convention (2017 condensed)"
-    },
-    "sourceUrl": "https://doi.org/10.1787/mtc_cond-2017-en",
-    "relatedTopicIds": [
-      "danon-lausanne-disputes"
-    ]
+    ],
+    "subcategory": {
+      "id": "tax-investment",
+      "zh": "稅務×投資法",
+      "en": "Tax & investment law"
+    }
   },
   {
     "id": "oecd-if",
@@ -314,7 +379,12 @@
     "relatedTopicIds": [
       "un-tax-convention-governance",
       "pillar-two-simplification"
-    ]
+    ],
+    "subcategory": {
+      "id": "norm-producers",
+      "zh": "規範生產組織",
+      "en": "Norm-producing bodies"
+    }
   },
   {
     "id": "un-inc",
@@ -338,7 +408,12 @@
     "sourceUrl": "https://financing.desa.un.org/document/terms-reference-united-nations-framework-convention-international-tax-cooperation",
     "relatedTopicIds": [
       "un-tax-convention-governance"
-    ]
+    ],
+    "subcategory": {
+      "id": "norm-producers",
+      "zh": "規範生產組織",
+      "en": "Norm-producing bodies"
+    }
   },
   {
     "id": "un-tax-committee",
@@ -358,7 +433,12 @@
     "sourceUrl": "https://financing.desa.un.org/what-we-do/ECOSOC/tax-committee/tax-committee-home",
     "relatedTopicIds": [
       "un-tax-convention-governance"
-    ]
+    ],
+    "subcategory": {
+      "id": "norm-producers",
+      "zh": "規範生產組織",
+      "en": "Norm-producing bodies"
+    }
   },
   {
     "id": "ibfd",
@@ -380,7 +460,12 @@
       "en": "IBFD"
     },
     "sourceUrl": "https://www.ibfd.org",
-    "relatedTopicIds": []
+    "relatedTopicIds": [],
+    "subcategory": {
+      "id": "research-advocacy",
+      "zh": "研究與倡議",
+      "en": "Research & advocacy"
+    }
   },
   {
     "id": "euto",
@@ -404,7 +489,12 @@
     "sourceUrl": "https://www.taxobservatory.eu/publication/global-tax-evasion-report-2024/",
     "relatedTopicIds": [
       "wealth-tax-hnwi"
-    ]
+    ],
+    "subcategory": {
+      "id": "research-advocacy",
+      "zh": "研究與倡議",
+      "en": "Research & advocacy"
+    }
   },
   {
     "id": "unil-tpc",
@@ -428,7 +518,12 @@
     "sourceUrl": "https://www.unil.ch/taxpolicy/en/home.html",
     "relatedTopicIds": [
       "danon-lausanne-disputes"
-    ]
+    ],
+    "subcategory": {
+      "id": "research-advocacy",
+      "zh": "研究與倡議",
+      "en": "Research & advocacy"
+    }
   },
   {
     "id": "tjn",
@@ -448,7 +543,12 @@
     "sourceUrl": "https://taxjustice.net",
     "relatedTopicIds": [
       "un-tax-convention-governance"
-    ]
+    ],
+    "subcategory": {
+      "id": "research-advocacy",
+      "zh": "研究與倡議",
+      "en": "Research & advocacy"
+    }
   },
   {
     "id": "oecd-model",
@@ -472,7 +572,12 @@
     "sourceUrl": "https://doi.org/10.1787/mtc_cond-2017-en",
     "relatedTopicIds": [
       "un-tax-convention-governance"
-    ]
+    ],
+    "subcategory": {
+      "id": "models-guidance",
+      "zh": "範本與指引",
+      "en": "Models & guidance"
+    }
   },
   {
     "id": "un-model",
@@ -496,31 +601,12 @@
     "sourceUrl": "https://financing.desa.un.org/what-we-do/ECOSOC/tax-committee/tax-committee-home",
     "relatedTopicIds": [
       "un-tax-convention-governance"
-    ]
-  },
-  {
-    "id": "framework-convention",
-    "category": "instrument",
-    "term": {
-      "zh": "UN 國際稅務合作框架公約（草擬中）",
-      "en": "UN Framework Convention on International Tax Cooperation (in drafting)"
-    },
-    "definition": {
-      "zh": "INC 起草中的多邊公約：CRP.26 提供公約模板（第 5 條課稅權公平分配含重談既有稅約義務、第 6 條 HNWI 偵防義務），配兩項可單獨簽署的自選議定書。關鍵結構：第 21 條第 4 項允許締約國承擔實體協調義務而不加入爭端議定書，公約本身的爭端條款（第 13、22 條）目前留白。",
-      "en": "The multilateral convention under INC drafting: CRP.26 supplies the template (Article 5 on fair allocation of taxing rights including renegotiation of inconsistent treaties; Article 6 on HNWI duties), flanked by two optional, separately signable protocols. The key structure: Article 21(4) lets Parties take on substantive coordination duties without joining the dispute protocol, while the Convention's own dispute clauses (Articles 13 and 22) remain undrafted."
-    },
-    "whyItMatters": {
-      "zh": "「協調先行、救濟未隨」的條約結構性證據——本研究核心假設的一手文本。",
-      "en": "Primary-text, treaty-structural evidence of coordination arriving ahead of remedy — the core premise of this project."
-    },
-    "sourceLabel": {
-      "zh": "UN 工作流一公約模板（CRP.26）",
-      "en": "UN Workstream I convention template (CRP.26)"
-    },
-    "sourceUrl": "https://financing.desa.un.org/document/workstream-i-framework-convention-co-leads-draft-framework-convention-template-22-jan-2026",
-    "relatedTopicIds": [
-      "un-tax-convention-governance"
-    ]
+    ],
+    "subcategory": {
+      "id": "models-guidance",
+      "zh": "範本與指引",
+      "en": "Models & guidance"
+    }
   },
   {
     "id": "globe-rules-commentary",
@@ -545,7 +631,41 @@
     "relatedTopicIds": [
       "pillar-two-simplification",
       "danon-lausanne-disputes"
-    ]
+    ],
+    "subcategory": {
+      "id": "models-guidance",
+      "zh": "範本與指引",
+      "en": "Models & guidance"
+    }
+  },
+  {
+    "id": "framework-convention",
+    "category": "instrument",
+    "term": {
+      "zh": "UN 國際稅務合作框架公約（草擬中）",
+      "en": "UN Framework Convention on International Tax Cooperation (in drafting)"
+    },
+    "definition": {
+      "zh": "INC 起草中的多邊公約：CRP.26 提供公約模板（第 5 條課稅權公平分配含重談既有稅約義務、第 6 條 HNWI 偵防義務），配兩項可單獨簽署的自選議定書。關鍵結構：第 21 條第 4 項允許締約國承擔實體協調義務而不加入爭端議定書，公約本身的爭端條款（第 13、22 條）目前留白。",
+      "en": "The multilateral convention under INC drafting: CRP.26 supplies the template (Article 5 on fair allocation of taxing rights including renegotiation of inconsistent treaties; Article 6 on HNWI duties), flanked by two optional, separately signable protocols. The key structure: Article 21(4) lets Parties take on substantive coordination duties without joining the dispute protocol, while the Convention's own dispute clauses (Articles 13 and 22) remain undrafted."
+    },
+    "whyItMatters": {
+      "zh": "「協調先行、救濟未隨」的條約結構性證據——本研究核心假設的一手文本。",
+      "en": "Primary-text, treaty-structural evidence of coordination arriving ahead of remedy — the core premise of this project."
+    },
+    "sourceLabel": {
+      "zh": "UN 工作流一公約模板（CRP.26）",
+      "en": "UN Workstream I convention template (CRP.26)"
+    },
+    "sourceUrl": "https://financing.desa.un.org/document/workstream-i-framework-convention-co-leads-draft-framework-convention-template-22-jan-2026",
+    "relatedTopicIds": [
+      "un-tax-convention-governance"
+    ],
+    "subcategory": {
+      "id": "multilateral",
+      "zh": "多邊條約",
+      "en": "Multilateral treaties"
+    }
   },
   {
     "id": "mli",
@@ -561,6 +681,213 @@
     "whyItMatters": {
       "zh": "MLI 之後，「現行有效的協定文本」不再等於任何單一文件——這正是純文本相似度方法（如 Ash & Marian）在 2016 年後失準的原因。",
       "en": "After the MLI, the treaty text actually in force no longer equals any single document — precisely why pure text-similarity methods like Ash & Marian's lose traction post-2016."
+    },
+    "sourceLabel": {
+      "zh": "OECD BEPS 主題頁",
+      "en": "OECD BEPS topic page"
+    },
+    "sourceUrl": "https://www.oecd.org/en/topics/base-erosion-and-profit-shifting-beps.html",
+    "relatedTopicIds": [
+      "un-tax-convention-governance",
+      "danon-lausanne-disputes"
+    ],
+    "subcategory": {
+      "id": "multilateral",
+      "zh": "多邊條約",
+      "en": "Multilateral treaties"
+    }
+  },
+  {
+    "id": "oecd-model-art9",
+    "category": "provision",
+    "subcategory": {
+      "id": "model-articles",
+      "zh": "範本核心條文",
+      "en": "Model treaty articles"
+    },
+    "term": {
+      "zh": "範本第 9 條：關係企業",
+      "en": "Model Article 9: Associated Enterprises"
+    },
+    "definition": {
+      "zh": "第 1 項授權稅局把關係企業間因非常規條件而短報的利潤調整回來，是常規交易原則的條約錨點；第 2 項要求他方國家作對應調整，以消除同一筆利潤被兩地各課一次的經濟性雙重課稅。對應調整談不攏時案件進 MAP——移轉訂價爭議因此成為 MAP 案量的最大宗。",
+      "en": "Paragraph 1 authorizes adjusting profits understated between associated enterprises through non-arm's-length conditions — the treaty anchor of the arm's length principle; paragraph 2 requires the other state to make a corresponding adjustment, relieving the economic double taxation of the same profit. When corresponding adjustments fail, cases go to MAP — which is why transfer pricing dominates the MAP docket."
+    },
+    "whyItMatters": {
+      "zh": "Ash & Marian 的量測中，關係企業條款 1965 年就已高度一致（0.794→0.859）：常規交易語言是全球共識最早成形的區塊。",
+      "en": "In Ash & Marian's measurements the Associated Enterprises clause was already highly uniform in 1965 (0.794→0.859): arm's-length language is where global consensus formed earliest."
+    },
+    "sourceLabel": {
+      "zh": "OECD 範本稅約（2017 精簡版）",
+      "en": "OECD Model Tax Convention (2017 condensed)"
+    },
+    "sourceUrl": "https://doi.org/10.1787/mtc_cond-2017-en",
+    "relatedTopicIds": [
+      "danon-lausanne-disputes"
+    ]
+  },
+  {
+    "id": "oecd-model-art25",
+    "category": "provision",
+    "subcategory": {
+      "id": "model-articles",
+      "zh": "範本核心條文",
+      "en": "Model treaty articles"
+    },
+    "term": {
+      "zh": "範本第 25 條：相互協議程序",
+      "en": "Model Article 25: Mutual Agreement Procedure"
+    },
+    "definition": {
+      "zh": "第 1–2 項：納稅人認為課稅不符協定時可向主管機關申請，主管機關「應盡力」（shall endeavour）以協議解決——義務止於盡力，沒有必須達成合意的義務；第 3 項處理解釋疑義與協定未規定情形的協商；第 5 項（2008 年納入）：兩年未決的爭點應納稅人請求交付仲裁，裁決拘束雙方。UN 範本就第 25 條提供含仲裁與不含仲裁兩個版本。",
+      "en": "Paragraphs 1–2: a taxpayer facing taxation not in accordance with the treaty may apply to the competent authority, which \"shall endeavour\" to resolve the case by agreement — an obligation of effort, not of result; paragraph 3 covers interpretive questions and cases the treaty does not address; paragraph 5 (added 2008) sends issues unresolved after two years to arbitration binding on both authorities at the taxpayer's request. The UN Model offers Article 25 in two versions, with and without arbitration."
+    },
+    "whyItMatters": {
+      "zh": "「盡力而非必須」加上多數協定沒有時限，是救濟確定性批評的條文根源；CRP.28 §37 的 MAP 取得保障與 §41 的自選仲裁，都是對這條結構的回應。",
+      "en": "Effort-not-result plus the absence of deadlines in most treaties is the textual root of the remedial-certainty critique; CRP.28 §37 on MAP access and §41 on optional arbitration both respond to this structure."
+    },
+    "sourceLabel": {
+      "zh": "OECD 範本稅約（2017 精簡版）",
+      "en": "OECD Model Tax Convention (2017 condensed)"
+    },
+    "sourceUrl": "https://doi.org/10.1787/mtc_cond-2017-en",
+    "relatedTopicIds": [
+      "danon-lausanne-disputes",
+      "un-tax-convention-governance"
+    ]
+  },
+  {
+    "id": "oecd-model-art29-9",
+    "category": "provision",
+    "subcategory": {
+      "id": "model-articles",
+      "zh": "範本核心條文",
+      "en": "Model treaty articles"
+    },
+    "term": {
+      "zh": "範本第 29 條第 9 項：PPT 條文",
+      "en": "Model Article 29(9): the PPT provision"
+    },
+    "definition": {
+      "zh": "2017 年版納入的一般反濫用條文：在考量所有相關事實與情況後，若「可合理認定」取得協定利益是某安排或交易的主要目的之一，即不給予該利益——除非納稅人「證明」給予利益符合相關條款的目的與宗旨。舉證結構不對稱：稅局只需「合理認定」，納稅人要負「證明」責任；「主要目的之一」的門檻也遠低於「唯一或支配性目的」。",
+      "en": "The general anti-abuse provision added in the 2017 Model: a benefit is denied if, considering all relevant facts and circumstances, it is \"reasonable to conclude\" that obtaining it was one of the principal purposes of an arrangement — unless the taxpayer \"establishes\" that granting it would accord with the object and purpose of the relevant provisions. The burden structure is asymmetric: the administration needs only a reasonable conclusion while the taxpayer must establish the exception, and \"one of the principal purposes\" sits far below a sole-or-dominant-purpose threshold."
+    },
+    "whyItMatters": {
+      "zh": "Danon（2020）的 GAAR 定性正是針對這個條文結構；各國法院對「合理認定」與例外舉證的操作差異，是形式共識下適用分歧的第一線觀測點。",
+      "en": "Danon's (2020) GAAR characterization targets precisely this structure; how national courts handle \"reasonable to conclude\" and the exception's burden is the front line for observing divergent application under formal consensus."
+    },
+    "sourceLabel": {
+      "zh": "Danon, The PPT in Post-BEPS Tax Treaty Law (2020)",
+      "en": "Danon, The PPT in Post-BEPS Tax Treaty Law (2020)"
+    },
+    "sourceUrl": "https://serval.unil.ch/resource/serval:BIB_BBFD1C26AF9B.P001/REF.pdf",
+    "relatedTopicIds": [
+      "danon-lausanne-disputes"
+    ]
+  },
+  {
+    "id": "crp26-art21-4",
+    "category": "provision",
+    "subcategory": {
+      "id": "un-convention-drafts",
+      "zh": "UN 框架公約草案",
+      "en": "UN draft convention provisions"
+    },
+    "term": {
+      "zh": "CRP.26 第 21 條第 4 項：協調與救濟脫鉤",
+      "en": "CRP.26 Article 21(4): coordination decoupled from remedy"
+    },
+    "definition": {
+      "zh": "UN 框架公約模板的議定書條款：成為公約締約國即承擔公約本體的實體協調義務；是否加入任一議定書（包括爭端預防與解決議定書）則需另行個別同意。加上公約本體的爭端條款（第 13、22 條）目前留白，形成「承擔協調義務不必接受任何救濟機制」的條約結構。",
+      "en": "The protocol clause of the UN Framework Convention template: becoming a Party entails the Convention's substantive coordination duties, while joining any protocol — including the dispute prevention and resolution protocol — requires separate consent. With the Convention's own dispute clauses (Articles 13 and 22) still undrafted, the structure lets states take on coordination duties without accepting any remedial mechanism."
+    },
+    "whyItMatters": {
+      "zh": "本研究「協調先行、救濟未隨」核心假設最直接的一手條文證據。",
+      "en": "The most direct primary-text evidence for this project's core premise that coordination arrives ahead of remedy."
+    },
+    "sourceLabel": {
+      "zh": "UN 工作流一公約模板（CRP.26）",
+      "en": "UN Workstream I convention template (CRP.26)"
+    },
+    "sourceUrl": "https://financing.desa.un.org/document/workstream-i-framework-convention-co-leads-draft-framework-convention-template-22-jan-2026",
+    "relatedTopicIds": [
+      "un-tax-convention-governance"
+    ]
+  },
+  {
+    "id": "crp28-para37",
+    "category": "provision",
+    "subcategory": {
+      "id": "un-convention-drafts",
+      "zh": "UN 框架公約草案",
+      "en": "UN draft convention provisions"
+    },
+    "term": {
+      "zh": "CRP.28 §37：MAP 取得保障",
+      "en": "CRP.28 §37: safeguarding access to MAP"
+    },
+    "definition": {
+      "zh": "爭端議定書概念說明的 MAP 段落：條款以 UN 範本第 25 條為起點，並明列「取得 MAP 不得受國內程序要求不當限縮」。針對的是實務中常見的限縮手法——前置的國內申訴要求、過度的資訊門檻、以反避稅調整為由拒開 MAP。",
+      "en": "The MAP passage of the dispute-protocol concept note: the provision starts from UN Model Article 25 and expressly requires that access to MAP not be unduly restricted by domestic procedural requirements. It targets familiar restriction techniques — mandatory prior domestic petitions, excessive information thresholds, and refusals where the adjustment stems from anti-abuse rules."
+    },
+    "whyItMatters": {
+      "zh": "Danon 對 MAP 取得限縮的批評在這裡被轉譯成談判桌上的條文語言——學術批評進入規範生產的可追蹤實例。",
+      "en": "Danon's critique of MAP-access restrictions is translated here into negotiating text — a traceable instance of scholarship entering norm production."
+    },
+    "sourceLabel": {
+      "zh": "UN 工作流三概念說明（CRP.28）",
+      "en": "UN Workstream III concept note (CRP.28)"
+    },
+    "sourceUrl": "https://financing.desa.un.org/document/workstream-iii-dispute-prevention-and-resolution-co-leads-concept-note-23-jan-2026",
+    "relatedTopicIds": [
+      "un-tax-convention-governance",
+      "danon-lausanne-disputes"
+    ]
+  },
+  {
+    "id": "crp28-para41",
+    "category": "provision",
+    "subcategory": {
+      "id": "un-convention-drafts",
+      "zh": "UN 框架公約草案",
+      "en": "UN draft convention provisions"
+    },
+    "term": {
+      "zh": "CRP.28 §41：自選 final-offer 仲裁設計",
+      "en": "CRP.28 §41: the optional final-offer arbitration design"
+    },
+    "definition": {
+      "zh": "爭端議定書的仲裁條款設計：自選（不隨議定書自動適用）、最後手段、僅限主管機關之間、納稅人非程序當事人、三人小組、原則上書面審、final-offer 擇一裁決、無先例效力。與 OECD 範本第 25 條第 5 項的強制拘束仲裁逐項相反，是 UN 路線「較弱救濟層」定調的核心條文。",
+      "en": "The dispute protocol's arbitration design: optional (not automatic with the protocol), last-resort, strictly between competent authorities, no taxpayer party status, three-member panels, written proceedings as the default, final-offer decisions, no precedential value. Point for point the inverse of OECD Model Article 25(5) mandatory binding arbitration — the core provision setting the UN track's thinner remedial layer."
+    },
+    "sourceLabel": {
+      "zh": "UN 工作流三概念說明（CRP.28）",
+      "en": "UN Workstream III concept note (CRP.28)"
+    },
+    "sourceUrl": "https://financing.desa.un.org/document/workstream-iii-dispute-prevention-and-resolution-co-leads-concept-note-23-jan-2026",
+    "relatedTopicIds": [
+      "un-tax-convention-governance"
+    ]
+  },
+  {
+    "id": "mli-art7",
+    "category": "provision",
+    "subcategory": {
+      "id": "mli-provisions",
+      "zh": "MLI 條文",
+      "en": "MLI provisions"
+    },
+    "term": {
+      "zh": "MLI 第 7 條：防止協定濫用",
+      "en": "MLI Article 7: Prevention of Treaty Abuse"
+    },
+    "definition": {
+      "zh": "BEPS 最低標準的條約載體：締約方就其指定的「涵蓋協定」至少必須採 PPT，可另加簡化版 LOB。透過 MLI 的配對機制（雙方都指定同一協定且保留相容），PPT 一次寫進數千份既有稅約——不重談、不改協定本文，適用文本卻已改變。",
+      "en": "The treaty vehicle of the BEPS minimum standard: for their designated covered agreements, parties must adopt at least the PPT, optionally adding a simplified LOB. Through the MLI's matching mechanism (both sides list the same treaty with compatible reservations), the PPT entered thousands of existing treaties at once — no renegotiation, no rewriting of the treaty text, yet the applicable text has changed."
+    },
+    "whyItMatters": {
+      "zh": "「不改本文而改協定」的具體運作：MLI 之後，任何純文本比較（含 Ash & Marian 的方法）都量不到實際適用的協定內容。",
+      "en": "How treaties change without their text changing: after the MLI, any pure text comparison — including Ash & Marian's method — no longer measures the treaty content actually in force."
     },
     "sourceLabel": {
       "zh": "OECD BEPS 主題頁",
