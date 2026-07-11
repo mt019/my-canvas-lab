@@ -23,6 +23,12 @@ const catVars = (name) => {
 const pdfHref = (url) => `/api/pdf?url=${encodeURIComponent(url)}`;
 const coverSrc = (pub) => `/covers/iias/${pub.cover}`;
 
+// 卡片允許選取文字：拖曳選字放開時不當成點擊
+const guarded = (fn) => () => {
+  if (window.getSelection?.()?.toString()) return;
+  fn();
+};
+
 const MAIN_TABS = [
   { id: 'overview', label: '總覽', Icon: LayoutGrid },
   { id: 'catalog', label: '完整清單', Icon: Library },
@@ -216,7 +222,7 @@ function YearChart({ pubs }) {
 function PubCard({ pub, open, onToggle }) {
   return (
     <article className={styles.pubCard}>
-      <button type="button" className={styles.pubHead} onClick={onToggle} aria-expanded={open}>
+      <button type="button" className={styles.pubHead} onClick={guarded(onToggle)} aria-expanded={open}>
         <img className={styles.pubCover} src={coverSrc(pub)} alt="" loading="lazy" />
         <div className={styles.pubMain}>
           <div className={styles.pubTitleRow}>
@@ -450,7 +456,7 @@ export default function IiasPublications() {
                     type="button"
                     key={p.id}
                     className={styles.recentCard}
-                    onClick={() => { setTab('catalog'); setCat('all'); setQ(p.title); }}
+                    onClick={guarded(() => { setTab('catalog'); setCat('all'); setQ(p.title); })}
                   >
                     <img src={coverSrc(p)} alt="" loading="lazy" />
                     <span>
@@ -495,7 +501,7 @@ export default function IiasPublications() {
                   type="button"
                   key={p.id}
                   className={p.id === issueId ? `${styles.shelfItem} ${styles.selected}` : styles.shelfItem}
-                  onClick={() => setIssueId(p.id === issueId ? null : p.id)}
+                  onClick={guarded(() => setIssueId(p.id === issueId ? null : p.id))}
                 >
                   <img src={coverSrc(p)} alt={p.title} loading="lazy" />
                   <span className={styles.sTitle}>{p.title}</span>

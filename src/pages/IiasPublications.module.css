@@ -11,6 +11,12 @@
 
 .workspace * { box-sizing: border-box; }
 .workspace button, .workspace a { font: inherit; }
+
+/* 可點卡片仍允許選取文字（瀏覽器對 button 預設禁選）；點擊行為由 JS 的「有選取不觸發」守門 */
+.pubHead, .shelfItem, .recentCard {
+  -webkit-user-select: text;
+  user-select: text;
+}
 .workspace h1, .workspace h2, .workspace h3, .workspace p { margin: 0; }
 
 /* ── 側欄 ─────────────────────────────────────────── */
@@ -498,6 +504,7 @@
   font-size: var(--text-sm);
   line-height: 1.75;
   max-width: 78ch;
+  white-space: pre-line;
 }
 
 .pubMeta {
