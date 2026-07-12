@@ -2586,7 +2586,7 @@ function ResearchProblem() {
           </table>
         </div>
         <p className="mt-1.5 max-w-2xl text-[12px] leading-relaxed text-[var(--cc-ink-soft)]">
-          只有「提名總統」測得到顯著的同質性（同總統提名者共同具名較多）；出身、留學傳統測不到。初步偏向任命政治說——但共同具名只是代理，證據三用真投票覆核。到「意見書圖譜」勾「依提名總統上色」可肉眼對照分塊。
+          只有「提名總統」測得到顯著的同質性（同總統提名者共同具名較多）；出身、留學傳統測不到。但共同具名只是「誰跟誰一起連署意見書」的代理，不等於投票立場一致——這條提名總統線是不是真的投票聯盟，要由證據三的真投票來檢驗。到「意見書圖譜」勾「依提名總統上色」可肉眼對照分塊。
         </p>
       </div>
 
@@ -2594,7 +2594,7 @@ function ResearchProblem() {
         <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">證據三 · 真實投票（立場表）</p>
         <h3 className="text-[15px] font-bold text-[var(--cc-title-ink)]">解析 {LCT_RESULT.判決數} 件憲判立場表 → {LCT_RESULT.rollCalls} 個逐項表決（{LCT_RESULT.爭議} 爭議），大法官 1D 理想點</h3>
         <p className="mt-1.5 max-w-2xl text-[13px] leading-relaxed text-[var(--cc-ink-mid)]">
-          有了逐案「同意／不同意各主文項」的真投票，就能超越共同具名代理。憲法法庭 2022– 立場表已<strong className="text-[var(--cc-ink-strong)]">回官網重抓、逐項重解</strong>（{LCT_RESULT.項次完整度?.完整}/{LCT_RESULT.項次完整度?.總數} 項達全體庭員），並經大法官意見書交叉校驗（不同意方 {LCT_RESULT.交叉校驗?.相符} 相符、僅 {LCT_RESULT.交叉校驗?.意見書疑漏} 疑漏），是本頁證據基礎最扎實處。法院多數決居多（平均同意率 {Math.round(LCT_RESULT.平均同意率 * 100)}%）；1D 理想點沿提名總統分佈，{LCT_RESULT.提名總統均值.馬英九.n} 位馬英九提名的留任大法官聚於一極（右）。
+          有了逐案「同意／不同意各主文項」的真投票，就能超越共同具名代理。憲法法庭 2022– 立場表已<strong className="text-[var(--cc-ink-strong)]">回官網重抓、逐項重解</strong>（{LCT_RESULT.項次完整度?.完整}/{LCT_RESULT.項次完整度?.總數} 項達全體庭員），並經大法官意見書交叉校驗（不同意方 {LCT_RESULT.交叉校驗?.相符} 相符、僅 {LCT_RESULT.交叉校驗?.意見書疑漏} 疑漏），是本頁證據基礎最扎實處。法院高度多數決（平均同意率 {Math.round(LCT_RESULT.平均同意率 * 100)}%）；下方 1D 理想點<strong className="text-[var(--cc-ink-strong)]">並不沿提名總統整齊分塊</strong>，同一總統提名者散落軸上。
         </p>
         {(() => {
           const pts = LCT_RESULT.理想點; const xs = pts.map((p) => p.x);
@@ -2637,8 +2637,82 @@ function ResearchProblem() {
           </table>
         </div>
         <p className="mt-1.5 max-w-2xl text-[12px] leading-relaxed text-[var(--cc-ink-soft)]">
-          真投票下只有「提名總統」測得到同質性（p＝{(LCT_RESULT.同質性.find((r) => r.維度 === '提名總統')?.p ?? 0).toFixed(3)}，強於共同具名代理的 0.03）；出身、德語圈測不到。但落在同一極的那 {LCT_RESULT.提名總統均值.馬英九.n} 位正是仍在任的舊屆留任者，這屆「同提名總統」幾乎等於「同一批留任者」，任命效果與世代效果仍分不開。
+          真投票下四個分組維度<strong className="text-[var(--cc-ink-strong)]">全部測不到顯著同質性</strong>（提名總統 p＝{(LCT_RESULT.同質性.find((r) => r.維度 === '提名總統')?.p ?? 0).toFixed(3)}，出身、德語圈更高）——證據二那條「共同具名沿提名總統」的分塊，在真實投票裡並不重現。共同具名反映的是意見書協作網絡，不是投票聯盟；這屆法院高共識、聯盟逐案重組。下圖顯示：那個看似顯著的效果，只在把一致決也算進去的最粗糙口徑下才成立。
         </p>
+        {(() => {
+          const R = LCT_RESULT;
+          const dP = (arr) => (arr || []).find((r) => r.維度 === '提名總統') || {};
+          const hd = (d) => (R.同質性 || []).find((r) => r.維度 === d) || {};
+          const rows = [
+            { label: '全 roll（粗糙口徑）', p: dP(R.同質性_全roll).p },
+            { label: '主分析（僅爭議 roll）', p: dP(R.同質性).p },
+            { label: '共同視窗（馬蔡同任期）', p: (R.共同視窗?.維度 || []).find((r) => r.維度 === '提名總統')?.p },
+            { label: '案件層級 FE（逐案固定）', p: R.案件層級?.提名總統?.p },
+            { label: 'MRQAP（控批次＋資歷）', p: R.MRQAP?.p?.同提名人 },
+            ...(R.分向票敏感性 ? [
+              { label: `分向票·保守（${R.分向票敏感性.編碼涵蓋}）`, p: R.分向票敏感性.保守?.提名總統?.p },
+              { label: '分向票·激進（上界）', p: R.分向票敏感性.激進?.提名總統?.p },
+            ] : []),
+          ].filter((r) => typeof r.p === 'number');
+          const W = 340, PL = 138, PR = 300, PMAX = 0.6, rowH = 20, top = 20;
+          const xP = (p) => PL + (Math.min(p, PMAX) / PMAX) * (PR - PL);
+          const H = top + rows.length * rowH + 14;
+          const ax = xP(0.05);
+          const eff = [
+            { label: '提名總統', v: hd('提名總統').差, p: hd('提名總統').p },
+            { label: '任命批次', v: hd('任命批次').差, p: hd('任命批次').p },
+            { label: '出身', v: hd('出身').差, p: hd('出身').p },
+            { label: '德語圈留學', v: hd('德語圈留學').差, p: hd('德語圈留學').p },
+            { label: 'MRQAP 同提名人', v: R.MRQAP?.係數?.同提名人, p: R.MRQAP?.p?.同提名人 },
+          ].filter((e) => typeof e.v === 'number');
+          const eLo = -0.10, eHi = 0.15, xE = (v) => PL + ((Math.max(eLo, Math.min(eHi, v)) - eLo) / (eHi - eLo)) * (PR - PL);
+          const eH = top + eff.length * rowH + 14, x0 = xE(0);
+          return (
+            <div className="mt-3 max-w-lg space-y-3">
+              <div>
+                <p className="text-[11px] font-bold text-[var(--cc-ink-strong)]">方法梯度：提名總統效果隨口徑收緊而消失</p>
+                <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label="提名總統效果的置換檢定 p 值隨方法口徑變化" style={{ width: '100%', height: 'auto', maxWidth: W }}>
+                  <line x1={ax} y1={top - 6} x2={ax} y2={top + rows.length * rowH} stroke="var(--cc-accent)" strokeWidth={1} strokeDasharray="3 2" />
+                  <text x={ax} y={top - 9} textAnchor="middle" fontSize={8} fill="var(--cc-accent)">p=.05</text>
+                  {[0, 0.3, 0.6].map((t) => (
+                    <text key={t} x={xP(t)} y={H - 2} textAnchor="middle" fontSize={7.5} fill="var(--cc-axis-text)">{t === 0 ? '0' : t.toFixed(1)}</text>
+                  ))}
+                  {rows.map((r, i) => {
+                    const y = top + i * rowH + rowH / 2, sig = r.p < 0.05, c = sig ? 'var(--cc-accent)' : 'var(--cc-ink-strong)';
+                    return (
+                      <g key={r.label}>
+                        <text x={PL - 6} y={y + 3} textAnchor="end" fontSize={8.5} fill="var(--cc-ink-mid)">{r.label}</text>
+                        <line x1={PL} y1={y} x2={PR} y2={y} stroke="var(--cc-line)" strokeWidth={1} />
+                        <circle cx={xP(r.p)} cy={y} r={3.2} fill={sig ? c : inkToFill('var(--cat-7-tx)')} stroke={c} strokeWidth={1.4} />
+                        <text x={Math.min(xP(r.p) + 7, PR)} y={y + 3} fontSize={8} fontWeight={sig ? 700 : 400} fill={c}>{r.p.toFixed(3)}</text>
+                      </g>
+                    );
+                  })}
+                </svg>
+                <p className="mt-1 text-[11px] leading-relaxed text-[var(--cc-figure-note)]">列由上到下＝方法愈嚴。只有把一致決也算進分母的最粗糙口徑落在門檻左側（p&lt;0.05，顯著）；一旦只看爭議案、或控制共同在任視窗／逐案固定／同批次與資歷，效果全部退回不顯著。分向票敏感性兩列（若已載入）顯示：把主分析剔除的分向票編回去也不改變結論。</p>
+              </div>
+              <div>
+                <p className="text-[11px] font-bold text-[var(--cc-ink-strong)]">效果量：沒有一條分組線測得到（真投票同質性差／MRQAP 係數）</p>
+                <svg viewBox={`0 0 ${W} ${eH}`} role="img" aria-label="各分組維度的效果量與顯著性" style={{ width: '100%', height: 'auto', maxWidth: W }}>
+                  <line x1={x0} y1={top - 6} x2={x0} y2={top + eff.length * rowH} stroke="var(--cc-line)" strokeWidth={1} />
+                  <text x={x0} y={top - 9} textAnchor="middle" fontSize={8} fill="var(--cc-ink-soft)">0</text>
+                  {eff.map((e, i) => {
+                    const y = top + i * rowH + rowH / 2, sig = e.p < 0.05, c = sig ? 'var(--cc-accent)' : 'var(--cc-ink-mid)';
+                    return (
+                      <g key={e.label}>
+                        <text x={PL - 6} y={y + 3} textAnchor="end" fontSize={8.5} fill="var(--cc-ink-mid)">{e.label}</text>
+                        <line x1={x0} y1={y} x2={xE(e.v)} y2={y} stroke="var(--cc-line)" strokeWidth={1} />
+                        <circle cx={xE(e.v)} cy={y} r={3.2} fill={inkToFill('var(--cat-7-tx)')} stroke={c} strokeWidth={1.4} />
+                        <text x={PR + 2} y={y + 3} textAnchor="end" fontSize={7.5} fill="var(--cc-ink-soft)">{`差 ${e.v >= 0 ? '+' : ''}${e.v.toFixed(3)}・p ${e.p.toFixed(2)}`}</text>
+                      </g>
+                    );
+                  })}
+                </svg>
+                <p className="mt-1 text-[11px] leading-relaxed text-[var(--cc-figure-note)]">同組−跨組同意率差（MRQAP 為同提名人係數）皆接近 0、置換 p 皆不顯著。共同具名沿提名總統分塊，真投票裡不重現。</p>
+              </div>
+            </div>
+          );
+        })()}
       </div>
 
       <div className="mt-5 max-w-3xl rounded-lg border border-[var(--cc-border)] bg-[var(--cc-hover-bg)] p-3.5">
@@ -2646,8 +2720,8 @@ function ResearchProblem() {
         <h3 className="text-[15px] font-bold text-[var(--cc-title-ink)]">現階段只能主張描述與類型學，不能主張因果或意識形態定位</h3>
         <ul className="mt-2 space-y-1.5 text-[13px] leading-relaxed text-[var(--cc-ink-mid)]">
           <li>真投票（立場表）只有憲法法庭 2022– 這 {LCT_RESULT.判決數} 件；釋字時期仍只有共同具名代理、無逐案投票。1D 理想點為古典 MDS 的簡單估計，非 W-NOMINATE／IRT。</li>
-          <li>「提名總統」與世代無法分離：極端的 {LCT_RESULT.提名總統均值.馬英九.n} 人是仍在任的舊屆留任者，「同總統」幾乎等於「同一批人」。任命效果與 holdover／同期效果分不開。</li>
-          <li>只有一屆、樣本小（{stats.n} 人、{LCT_RESULT.爭議} 爭議案）；57 判決立場表已全解析，逐項完整度 {LCT_RESULT.項次完整度?.完整}/{LCT_RESULT.項次完整度?.總數}（殘餘為多子部複雜版式與個別迴避，非系統性漏抓）；{LCT_RESULT.重複旗標} 件「同項既部分同意又部分不同意」為真實部分意見、非矛盾。</li>
+          <li>真投票在正確方法下<strong className="text-[var(--cc-ink-strong)]">測不到任命效果</strong>：全 roll 粗糙口徑的「顯著」是一致決案件入分母製造的假象，改用僅爭議 roll、共同視窗、案件層級、MRQAP 後全部落回不顯著（見上方方法梯度圖）。且只有一屆、留任者與提名總統高度共線，任命 vs 世代原則上仍不可分——「測不到」不等於「不存在」。</li>
+          <li>只有一屆、樣本小（{stats.n} 人、{LCT_RESULT.爭議} 爭議案）；{LCT_RESULT.判決數} 件立場表已全解析，逐項完整度 {LCT_RESULT.項次完整度?.完整}/{LCT_RESULT.項次完整度?.總數}（殘餘為多子部複雜版式與個別迴避，非系統性漏抓）；另有 {LCT_RESULT.剔除票?.分向} 筆「同項既部分同意又部分不同意」的分向票為真實部分意見，主分析保守剔除、敏感性另編回主方向覆核（結論不變）。</li>
           <li>資料完整度非全等：強命題（證據三）建立在憲判 2022– 立場表（逐項真投票、意見書交叉校驗）；證據一早／中期為下限（8 件釋字意見書藏於「意見書、抄本等文件」欄未解析、約 103 件收於影像抄本，見趨勢下方註）。分殊化「趨勢」穩健、早期「水準」偏低。</li>
         </ul>
       </div>
@@ -2655,7 +2729,7 @@ function ResearchProblem() {
       <div className="mt-3 max-w-3xl">
         <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">資料解鎖 · 下一步</p>
         <p className="mt-1 text-[13px] leading-relaxed text-[var(--cc-ink-mid)]">
-          立場表已<strong className="text-[var(--cc-ink-strong)]">回官網重抓、重寫解析器</strong>（動態欄界＋名冊錨定；本頁計量現讀 analyze-lct.mjs 母本），並以意見書不同意作者交叉校驗（相符 {LCT_RESULT.交叉校驗?.相符}／疑漏 {LCT_RESULT.交叉校驗?.意見書疑漏}／立場表獨有 {LCT_RESULT.交叉校驗?.立場表獨有}）。要推到定論還缺兩步：改用正式理想點估計（W-NOMINATE／Martin–Quinn 而非 1D MDS）並在控制世代、案類、時間下檢定任命效果；人工覆核殘餘複雜版式項次。跨屆資料累積後，「任命 vs 世代」的共線才可能鬆開。
+          立場表已<strong className="text-[var(--cc-ink-strong)]">回官網重抓、重寫解析器</strong>（動態欄界＋名冊錨定；本頁計量現讀 analyze-lct.mjs 母本），並以意見書不同意作者交叉校驗（相符 {LCT_RESULT.交叉校驗?.相符}／疑漏 {LCT_RESULT.交叉校驗?.意見書疑漏}／立場表獨有 {LCT_RESULT.交叉校驗?.立場表獨有}）。要從「測不到」推進到「不存在」還缺兩步：改用正式理想點估計（W-NOMINATE／Martin–Quinn 而非 1D MDS）並在控制世代、案類、時間下檢定任命效果；人工覆核殘餘複雜版式項次。跨屆資料累積後，「任命 vs 世代」的共線才可能鬆開，屆時才分得出這個 null 是真的沒有效果、還是一屆樣本的檢定力不足。
         </p>
       </div>
     </section>
