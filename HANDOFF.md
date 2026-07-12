@@ -433,6 +433,17 @@ work.
   回放（皆 attachment，預覽須代理改 inline）；`vercel.json` regions=hnd1＋edge 快取 7 天（PDF 預覽提速，
   部署後生效）。來源版圖與未開工線索（立法院《同意權實錄》逐屆合訂本、自存文件撿漏、SPN 備援機制）：
   資料 repo `docs/提名文件來源探勘.md`。
+- 2026-07-13 提名總統逐批查證上前端＋PDF 預覽漏接修復（frontend；資料本體與查證層在資料 repo）。
+  **提名總統**：資料層把原「依就任日推定」升為逐批查證核定（查證層 `data/materials/justices-提名批次.json`、
+  `提名總統標註` 全站零推定），前端只替換 `大法官` 節點（不動在途問題意識/立場表節點，不跑全量 sync）。
+  個人頁基本資料列的「提名」改讀 `各段提名總統`：多段任期者列出各段不同提名人（許宗力＝陳水扁、蔡英文），
+  單段列 scalar；拿掉永不觸發的「（推定）」字尾；title 帶 `提名批次`。TenureView 方法說明改「逐批查證核定」
+  措辭（原「依各段任期起始日反查總統任期推定」已不準）。時間軸「按提名總統」著色仍讀 scalar `提名總統`
+  （生涯首任），與個人頁多段顯示各司其職、皆正確。**PDF 預覽修復**：`pdfHref(url,pdfMode)` 是全站 PDF 走
+  `/api/pdf` 代理預覽（vs 直連下載）的唯一入口，但兩處漏接原樣直連＝無視預覽開關強制下載——大法官個人頁
+  意見書清單（`op.下載網址` 直用）與意見書圖譜 `PairDetail`（`d.下載網址` 直用），已補走 `pdfHref`；
+  `PairDetail` 原無 `pdfMode`，比照其他葉組件直接 `usePref('pdfMode','preview')` 讀同一偏好。1534 個意見書
+  PDF 全在代理白名單（`cons.judicial.gov.tw/download`）。預設 preview（新分頁預覽），符合使用者要求。
 - 2026-07-07 審查結論 typology (data-side + frontend + sync **DONE**):
   the data repo reworked `classifyOutcome` so early 釋字 that aren't
   constitutionality review get real categories. `審查結論.結論` now has,

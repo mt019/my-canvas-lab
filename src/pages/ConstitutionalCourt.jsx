@@ -1753,7 +1753,14 @@ function JusticeDetail({ name, onBack, onOpen, onOpenDoc }) {
           {tenureText && j.任期來源 !== '屆次推定' ? (
             <span><strong className="text-[var(--cc-accent)]">任期</strong>　{tenureText}{j.任期來源 === '人工核定' ? '（人工核定）' : ''}</span>
           ) : null}
-          {j.提名總統 ? <span><strong className="text-[var(--cc-accent)]">提名</strong>　{j.提名總統}{j.提名總統標註 === '依就任日推定' ? '（推定）' : ''}</span> : null}
+          {/* 多段任期＝兩次以上受不同總統提名（如許宗力 2003 陳水扁／2016 蔡英文再任），列出各段提名人；
+              單段列 scalar。提名總統經 justices-提名批次.json 逐批核定，個別批次見 title。 */}
+          {j.提名總統 ? (
+            <span title={j.提名批次 ?? undefined}>
+              <strong className="text-[var(--cc-accent)]">提名</strong>
+              {j.各段提名總統?.length > 1 ? [...new Set(j.各段提名總統)].join('、') : j.提名總統}
+            </span>
+          ) : null}
           {j.出身 && j.出身 !== '待確認' ? <span><strong className="text-[var(--cc-accent)]">出身</strong>　{j.出身}</span> : null}
           {j.留學國 ? <span><strong className="text-[var(--cc-accent)]">留學</strong>　{j.留學國}</span> : null}
           {j.性別 === '女' ? <span><strong className="text-[var(--cc-accent)]">性別</strong>　女</span> : null}
@@ -1814,7 +1821,7 @@ function JusticeDetail({ name, onBack, onOpen, onOpenDoc }) {
                     ) : null}
                     <span className="max-w-[400px] truncate text-[12px] text-[var(--cc-ink-soft)]">{d.爭點?.slice(0, 40)}</span>
                     {op.下載網址 ?? (op.內嵌 ? d.官方頁 : null) ? (
-                      <a href={op.下載網址 ?? d.官方頁} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-[12px] text-[var(--cc-accent)] underline decoration-[var(--cc-link-underline)] underline-offset-2">{op.下載網址 ? 'PDF' : '官方頁'} <ExternalLink size={10} /></a>
+                      <a href={op.下載網址 ? pdfHref(op.下載網址, pdfMode) : d.官方頁} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-[12px] text-[var(--cc-accent)] underline decoration-[var(--cc-link-underline)] underline-offset-2">{op.下載網址 ? 'PDF' : '官方頁'} <ExternalLink size={10} /></a>
                     ) : null}
                   </div>
                 ))}
@@ -2118,7 +2125,8 @@ function TenureView({ onOpen }) {
         逐人查核後的人工核定（現任八人與翁岳生、城仲模等特殊任期）。橫條一律淡底＋同色細邊框；虛線邊框＝現任（任期未封口）。
         出身與留學地由官方經歷、官職資料庫與維基百科條目逐人查核標註；「國內」「其他」（灰底實線框）＝查核後確認
         （無外國學位／非學者法官律師檢察官四類的行政文官），「待確認」（無色底虛線框）＝尚查不到可靠線索。
-        提名總統依各段任期起始日反查總統任期推定（人工核定者除外）；性別由維基條目語彙機標（女 14 人），
+        提名總統逐批查證核定：每位大法官的提名事件對到政大官職資料庫（『任命者:總統』欄）、總統府與司法院官方名冊，
+        再任者逐段歸批（如許宗力 2003 陳水扁提名、2016 蔡英文再任）；性別由維基條目語彙機標（女 14 人），
         無條目的 20 人（多為第一、二屆與部分現任）尚待人工補注，圖上暫不標。
       </p>
     </section>
@@ -2240,6 +2248,7 @@ function NameDetail({ name, partners, onName }) {
 
 // 右欄：點格子 → 該對實際共同署名的意見書（含類型 Badge 與 PDF）
 function PairDetail({ pair, list, onClose }) {
+  const [pdfMode] = usePref('pdfMode', 'preview'); // 與案件/大法官頁共用同一 localStorage 偏好
   const toneOf = (t) => (t.includes('不同') ? 'red' : t.includes('協同') ? 'blue' : 'slate');
   return (
     <div>
@@ -2253,7 +2262,7 @@ function PairDetail({ pair, list, onClose }) {
             <CaseRef 字號={d.字號} className="font-bold text-[var(--cc-ink-strong)]" />
             <Badge tone={toneOf(d.類型 ?? '')}>{(d.類型 ?? '意見書').replace('意見書', '') || '意見書'}</Badge>
             {d.下載網址 ? (
-              <a href={d.下載網址} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-[var(--cc-blue-ink)] hover:text-[var(--cc-blue-ink-hover)]">PDF <ExternalLink size={11} /></a>
+              <a href={pdfHref(d.下載網址, pdfMode)} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-[var(--cc-blue-ink)] hover:text-[var(--cc-blue-ink-hover)]">PDF <ExternalLink size={11} /></a>
             ) : <span className="text-[11.5px] text-[var(--cc-figure-note)]">（內嵌官方頁）</span>}
           </div>
         ))}
@@ -2322,30 +2331,67 @@ function HeatStrip({ id, rows, maxN, marks, ticks, label, sub, hov, setHov }) {
   );
 }
 
-// 意見書覆蓋（逐號熱條）：重點在「哪些號有幾份意見書」，色深即分別意見多寡；空白＝無。
-// 現算自 docs（意見書 array 已排除待人工）；核對數字取資料層稽核鍵 data.意見書覆蓋。
-function OpinionCoverage() {
-  const cov = data.意見書覆蓋;
+// 問題意識分頁圖表統一規格（字級貼近內文、淡底 ink 細框；dataviz：thin marks、text 用 ink token、≥8px 標記）。
+const RVIZ = { lbl: 10, tick: 9, r: 4 };
+const VIZ_PALE = inkToFill('var(--cat-7-tx)');
+
+// 通用啞鈴圖（同組 vs 跨組）：證據二共同具名與證據三真投票同質性共用一套視覺語言。
+// rows=[{維度,同組,跨組,p}]；domain=[lo,hi] 決定 x 軸範圍（真投票率用寬帶避免放大微小差）；dp=小數位。
+function Dumbbell({ rows, domain, dp = 2 }) {
+  const W = 560, PL = 120, PR = 440, top = 16, rowH = 30;
+  const H = top + rows.length * rowH + 20;
+  const [lo, hi] = domain;
+  const xAt = (v) => PL + ((Math.max(lo, Math.min(hi, v)) - lo) / (hi - lo)) * (PR - PL);
+  return (
+    <div className="mt-2 max-w-2xl overflow-x-auto">
+      <div className="mb-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-[var(--cc-ink-soft)]">
+        <span className="inline-flex items-center gap-1"><span className="inline-block h-2.5 w-2.5 rounded-full" style={{ background: VIZ_PALE, border: '1.5px solid var(--cc-ink-strong)' }} />同組</span>
+        <span className="inline-flex items-center gap-1"><span className="inline-block h-2.5 w-2.5 rounded-full" style={{ background: 'var(--cc-bg)', border: '1.5px solid var(--cc-ink-soft)' }} />跨組</span>
+        <span>連線＝同組−跨組差；p&lt;.05 標記為顯著（✓），p&lt;.1 標 ⁺</span>
+      </div>
+      <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label="同組與跨組平均比較（啞鈴圖）" style={{ width: '100%', height: 'auto', maxWidth: W }}>
+        {[lo, (lo + hi) / 2, hi].map((t) => (
+          <g key={t}>
+            <line x1={xAt(t)} y1={top - 4} x2={xAt(t)} y2={top + rows.length * rowH} stroke="var(--cc-line)" strokeWidth={1} strokeDasharray={t === lo || t === hi ? undefined : '2 2'} opacity={0.6} />
+            <text x={xAt(t)} y={H - 4} textAnchor="middle" fontSize={RVIZ.tick} fill="var(--cc-axis-text)">{t.toFixed(dp)}</text>
+          </g>
+        ))}
+        {rows.map((r, i) => {
+          const y = top + i * rowH + rowH / 2;
+          const sig = r.p < 0.05, c = sig ? 'var(--cc-accent)' : 'var(--cc-ink-strong)';
+          return (
+            <g key={r.維度}>
+              <text x={PL - 8} y={y + 3} textAnchor="end" fontSize={RVIZ.lbl} fill="var(--cc-ink-mid)">{r.維度}</text>
+              <line x1={xAt(r.同組)} y1={y} x2={xAt(r.跨組)} y2={y} stroke="var(--cc-line)" strokeWidth={2} />
+              <circle cx={xAt(r.跨組)} cy={y} r={RVIZ.r} fill="var(--cc-bg)" stroke="var(--cc-ink-soft)" strokeWidth={1.5} />
+              <circle cx={xAt(r.同組)} cy={y} r={RVIZ.r} fill={VIZ_PALE} stroke={c} strokeWidth={1.6} />
+              <text x={PR + 8} y={y + 3} textAnchor="start" fontSize={RVIZ.tick} fontWeight={sig ? 700 : 400} fill={sig ? 'var(--cc-accent)' : 'var(--cc-ink-soft)'}>{`p ${r.p.toFixed(3)}${sig ? ' ✓' : (r.p < 0.1 ? ' ⁺' : '')}`}</text>
+            </g>
+          );
+        })}
+      </svg>
+    </div>
+  );
+}
+
+// 意見書覆蓋（逐號熱條）：色深＝該號分別意見份數，空白＝無。資料讀 data.問題意識.圖表.覆蓋
+// （母本熱帶，analyze-research.mjs 產）；marks/ticks 由 rows 現推（純陣列運算，不碰 data.文件）。
+function OpinionCoverage({ 覆蓋, eyebrow, 標題, 圖說 }) {
   const g = useMemo(() => {
-    const yr = (s) => (s ? Number(String(s).slice(0, 4)) : null);
-    const num = (z) => Number((String(z).match(/第(\d+)號/) ?? [])[1] ?? 0);
-    const mk = (機關, 類型) => docs.filter((x) => x.機關 === 機關 && (!類型 || x.類型 === 類型))
-      .map((x) => ({ 字號: x.字號, n: num(x.字號), c: (x.意見書 ?? []).length, y: yr(x.日期) }))
-      .sort((p, q) => p.n - q.n);
-    const s = mk('大法官'); const x = mk('憲法法庭', '判決');
+    const s = 覆蓋.釋字, x = 覆蓋.憲判;
     const maxN = Math.max(1, ...s.map((d) => d.c), ...x.map((d) => d.c));
     const marks = [[1991, '1991'], [2003, '2003'], [2015, '2015']]
-      .map(([y, label]) => { const i = s.findIndex((d) => d.y && d.y >= y); return i > 0 ? { frac: i / s.length, label } : null; }).filter(Boolean);
+      .map(([y, label]) => { const i = s.findIndex((d) => d.年 && d.年 >= y); return i > 0 ? { frac: i / s.length, label } : null; }).filter(Boolean);
     const ticksS = [1, 200, 400, 600, 800].map((n) => { const i = s.findIndex((d) => d.n >= n); return i < 0 ? null : { frac: (i + 0.5) / s.length, label: n === 1 ? '釋1' : String(n) }; }).filter(Boolean);
     const ticksX = [1, 20, 40].map((n) => { const i = x.findIndex((d) => d.n >= n); return i < 0 ? null : { frac: (i + 0.5) / Math.max(1, x.length), label: n === 1 ? '憲判1' : String(n) }; }).filter(Boolean);
     return { s, x, maxN, marks, ticksS, ticksX, cS: s.filter((d) => d.c > 0).length, cX: x.filter((d) => d.c > 0).length };
-  }, []);
+  }, [覆蓋]);
   const [hov, setHov] = useState(null);
   if (!g.s.length) return null;
   return (
     <div className="mt-4">
-      <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">證據一補充 · 意見書覆蓋</p>
-      <h3 className="text-[15px] font-bold text-[var(--cc-title-ink)]">每號的意見書數（顏色越深＝分別意見越多）</h3>
+      <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">{eyebrow}</p>
+      <h3 className="text-[15px] font-bold text-[var(--cc-title-ink)]">{標題}</h3>
       <HeatStrip
         id="shih" rows={g.s} maxN={g.maxN} marks={g.marks} ticks={g.ticksS} hov={hov} setHov={setHov}
         label={`釋字 1–${g.s[g.s.length - 1].n} 號`} sub={`${g.cS}/${g.s.length} 有意見書`}
@@ -2361,387 +2407,283 @@ function OpinionCoverage() {
         {[1, 3, 5, g.maxN].map((v) => <span key={v} className="inline-block h-3 w-3 rounded-[3px]" style={{ background: heatFill(v, g.maxN) }} />)}
         <span>{g.maxN}+ 份</span>
       </div>
-      <p className="mt-1.5 max-w-2xl text-[12px] leading-relaxed text-[var(--cc-figure-note)]">
-        每一直條為一號，色深＝該號大法官意見書份數，空白＝無（早期居多）。滑過看號次與份數。覆蓋隨年代上升，晚期與憲法法庭近全覆蓋。空白已對官方原始頁逐件交叉核對（{cov?.核對?.已核對0紀錄件 ?? 345} 件，疑漏抓 {cov?.核對?.疑漏抓 ?? 0}）＝非漏抓；核對限官方數位記錄，紙本未稽核為<strong className="text-[var(--cc-ink-strong)]">下限</strong>。
-      </p>
+      <p className="mt-1.5 max-w-2xl text-[12px] leading-relaxed text-[var(--cc-figure-note)]">{renderInline(圖說)}</p>
     </div>
   );
 }
 
-// 分歧指數時序（雙層，誠實標層級；依 no-meaningless-viz）：
-//  Tier B（骨幹，全行憲後）＝意見書代理：逐案分別意見加權（不同 1.0／部分 0.6／協同 0.3）÷ 參與大法官數，逐年平均。
-//  Tier A（疊加，2022–）＝立場表真投票：逐主文項次分裂度 F=(1−p同²−p不同²)×2，逐案平均、逐年平均。
-// 兩層同為 [0,1] 分歧指數、共用單一 y 軸（不做雙軸）。早期低點含意見書覆蓋下限，非純共識，圖下明註。
-function DivergenceTimeSeries() {
-  const g = useMemo(() => {
-    const yr = (s) => (s ? Number(String(s).slice(0, 4)) : null);
-    const wt = (t) => { t = t || ''; return t.includes('不同') ? (t.includes('部分') ? 0.6 : 1.0) : 0.3; };
-    const bAcc = {};
-    for (const d of docs) {
-      if (!(d.機關 === '大法官' || d.機關 === '憲法法庭')) continue;
-      const y = yr(d.日期); if (!y) continue;
-      const bench = (d.參與大法官?.length) || 15;
-      let w = 0; for (const o of d.意見書 ?? []) w += wt(o.類型);
-      (bAcc[y] = bAcc[y] || []).push(Math.min(1, w / bench));
-    }
-    const aAcc = {};
-    for (const rec of data.立場表投票 ?? []) {
-      const y = yr(rec.日期); if (!y) continue; const fs = [];
-      for (const it of rec.items ?? []) {
-        const ag = (it.同意 ?? []).length, di = (it.不同意 ?? []).length, tot = ag + di;
-        if (tot < 2) continue; const p = ag / tot; fs.push((1 - (p * p + (1 - p) * (1 - p))) * 2);
-      }
-      if (fs.length) (aAcc[y] = aAcc[y] || []).push(fs.reduce((s, v) => s + v, 0) / fs.length);
-    }
-    const mean = (arr) => arr.reduce((s, v) => s + v, 0) / arr.length;
-    const B = Object.keys(bAcc).map(Number).sort((x, y) => x - y).map((y) => ({ y, n: bAcc[y].length, v: mean(bAcc[y]) }));
-    const A = Object.keys(aAcc).map(Number).sort((x, y) => x - y).map((y) => ({ y, n: aAcc[y].length, v: mean(aAcc[y]) }));
-    return { B, A };
-  }, []);
+// 逐年意見書分歧指數（單一指標：意見書代理，全行憲後）：逐案分別意見加權（不同 1.0／部分 0.6／協同 0.3）
+// ÷ 參與大法官數，逐年平均。[0,1] 分歧指數；早期低點含意見書覆蓋下限（非純共識，圖下明註）。
+// 2022– 逐項真投票是不同的構念（投票分裂而非意見書書寫），另置於證據三，不在此疊圖。
+function DivergenceTimeSeries({ 分歧時序, eyebrow, 標題, 圖說 }) {
+  const B = useMemo(() => (分歧時序.代理 ?? []).map((d) => ({ y: d.年, n: d.n, v: d.值 })), [分歧時序]);
   const [hy, setHy] = useState(null);
-  if (!g.B.length) return null;
+  if (!B.length) return null;
   const PAD_L = 26, PAD_R = 10, PAD_T = 10, PAD_B = 18, W = 580, H = 140;
-  const y0 = g.B[0].y, y1 = g.B[g.B.length - 1].y;
-  const yMax = 0.35;
+  const y0 = B[0].y, y1 = B[B.length - 1].y;
+  const yMax = Math.max(0.3, Math.ceil(Math.max(...B.map((d) => d.v)) * 10) / 10);
+  const yTicks = []; for (let t = 0; t <= yMax + 1e-9; t += 0.1) yTicks.push(+t.toFixed(1));
   const xAt = (y) => PAD_L + ((y - y0) / (y1 - y0)) * (W - PAD_L - PAD_R);
   const yAt = (v) => PAD_T + (1 - v / yMax) * H;
-  const lineB = g.B.map((d, i) => `${i ? 'L' : 'M'}${xAt(d.y).toFixed(1)} ${yAt(d.v).toFixed(1)}`).join(' ');
-  const areaB = `${lineB} L${xAt(y1).toFixed(1)} ${yAt(0).toFixed(1)} L${xAt(y0).toFixed(1)} ${yAt(0).toFixed(1)} Z`;
+  const line = B.map((d, i) => `${i ? 'L' : 'M'}${xAt(d.y).toFixed(1)} ${yAt(d.v).toFixed(1)}`).join(' ');
+  const area = `${line} L${xAt(y1).toFixed(1)} ${yAt(0).toFixed(1)} L${xAt(y0).toFixed(1)} ${yAt(0).toFixed(1)} Z`;
   const eras = [[1991, '1991'], [2003, '交錯任期 2003'], [2015, '2015'], [2022, '憲法法庭 2022']];
-  const bAt = (y) => g.B.find((d) => d.y === y);
-  const aAt = (y) => g.A.find((d) => d.y === y);
-  const hb = hy != null ? bAt(hy) : null, ha = hy != null ? aAt(hy) : null;
+  const hb = hy != null ? B.find((d) => d.y === hy) : null;
   return (
     <div className="mt-4">
-      <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">證據一補充 · 分歧指數時序（雙層）</p>
-      <h3 className="text-[15px] font-bold text-[var(--cc-title-ink)]">逐年分歧指數：意見書代理（全史）＋立場表真投票（2022–）</h3>
-      <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-[11.5px] text-[var(--cc-ink-soft)]">
-        <span className="inline-flex items-center gap-1.5"><span className="inline-block h-0.5 w-4" style={{ background: 'var(--cc-ink-strong)' }} />意見書代理（Tier B，全行憲後 {g.B.length} 年）</span>
-        <span className="inline-flex items-center gap-1.5"><span className="inline-block h-2 w-2 rounded-full" style={{ background: 'var(--cc-accent)' }} />立場表真投票（Tier A，2022–，高保真）</span>
-      </div>
+      <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">{eyebrow}</p>
+      <h3 className="text-[15px] font-bold text-[var(--cc-title-ink)]">{標題}</h3>
       <div className="relative mt-2 overflow-x-auto">
         <svg
           viewBox={`0 0 ${W} ${PAD_T + H + PAD_B}`} preserveAspectRatio="xMinYMin meet" role="img"
-          aria-label="逐年分歧指數雙層時序圖" style={{ width: '100%', height: 'auto', maxWidth: W }}
+          aria-label="逐年意見書分歧指數時序圖" style={{ width: '100%', height: 'auto', maxWidth: W }}
           onMouseMove={(e) => { const r = e.currentTarget.getBoundingClientRect(); const px = ((e.clientX - r.left) / r.width) * W; const yy = Math.round(y0 + ((px - PAD_L) / (W - PAD_L - PAD_R)) * (y1 - y0)); setHy(Math.max(y0, Math.min(y1, yy))); }}
           onMouseLeave={() => setHy(null)}
         >
-          {[0, 0.1, 0.2, 0.3].map((v) => (
+          {yTicks.map((v) => (
             <g key={v}>
               <line x1={PAD_L} y1={yAt(v)} x2={W - PAD_R} y2={yAt(v)} stroke="var(--cc-line)" strokeWidth={1} />
-              <text x={PAD_L - 4} y={yAt(v) + 3} textAnchor="end" fontSize={8.5} fill="var(--cc-axis-text)">{v.toFixed(1)}</text>
+              <text x={PAD_L - 4} y={yAt(v) + 3} textAnchor="end" fontSize={RVIZ.tick} fill="var(--cc-axis-text)">{v.toFixed(1)}</text>
             </g>
           ))}
           {eras.map(([y, label]) => (
             <g key={y}>
               <line x1={xAt(y)} y1={PAD_T} x2={xAt(y)} y2={PAD_T + H} stroke="var(--cc-line)" strokeWidth={1} strokeDasharray="2 2" />
-              <text x={xAt(y)} y={PAD_T + H + 11} textAnchor="middle" fontSize={8} fill="var(--cc-ink-soft)">{label}</text>
+              <text x={xAt(y)} y={PAD_T + H + 11} textAnchor="middle" fontSize={8.5} fill="var(--cc-ink-soft)">{label}</text>
             </g>
           ))}
-          <path d={areaB} fill="var(--cc-ink-strong)" opacity={0.06} />
-          <path d={lineB} fill="none" stroke="var(--cc-ink-strong)" strokeWidth={1.6} strokeLinejoin="round" />
-          {g.A.length ? (
-            <path d={g.A.map((d, i) => `${i ? 'L' : 'M'}${xAt(d.y).toFixed(1)} ${yAt(d.v).toFixed(1)}`).join(' ')} fill="none" stroke="var(--cc-accent)" strokeWidth={1.6} />
-          ) : null}
-          {g.A.map((d) => <circle key={d.y} cx={xAt(d.y)} cy={yAt(d.v)} r={2.8} fill="var(--cc-accent)" stroke="var(--cc-bg)" strokeWidth={1} />)}
+          <path d={area} fill="var(--cc-ink-strong)" opacity={0.06} />
+          <path d={line} fill="none" stroke="var(--cc-ink-strong)" strokeWidth={1.6} strokeLinejoin="round" />
           {hy != null ? <line x1={xAt(hy)} y1={PAD_T} x2={xAt(hy)} y2={PAD_T + H} stroke="var(--cc-ink-soft)" strokeWidth={1} /> : null}
           {hb ? <circle cx={xAt(hb.y)} cy={yAt(hb.v)} r={2.8} fill="var(--cc-ink-strong)" stroke="var(--cc-bg)" strokeWidth={1} /> : null}
         </svg>
-        {hy != null && (hb || ha) ? (
+        {hb ? (
           <div className="pointer-events-none absolute top-0 rounded border border-[var(--cc-line)] bg-[var(--cc-bg)] px-1.5 py-1 text-[11px] shadow-sm" style={{ left: `${(xAt(hy) / W) * 100}%`, transform: 'translateX(-50%)' }}>
             <div className="font-bold text-[var(--cc-ink-strong)]">{hy} 年</div>
-            {hb ? <div className="text-[var(--cc-ink-mid)]">代理 {hb.v.toFixed(2)}（{hb.n} 件）</div> : null}
-            {ha ? <div className="text-[var(--cc-accent)]">真投票 {ha.v.toFixed(2)}（{ha.n} 件）</div> : null}
+            <div className="text-[var(--cc-ink-mid)]">分歧 {hb.v.toFixed(2)}（{hb.n} 件）</div>
           </div>
         ) : null}
       </div>
-      <p className="mt-1.5 max-w-2xl text-[12px] leading-relaxed text-[var(--cc-figure-note)]">
-        分歧指數 0＝全體一致，愈高愈分裂。Tier B（骨幹）以分別意見加權為代理，涵蓋全行憲後、但<strong className="text-[var(--cc-ink-strong)]">早期水準偏低估</strong>——1990 前意見書罕寫或收於影像抄本（見上方覆蓋註），故早期近零含覆蓋下限、非純共識。Tier A（2022–）為立場表逐項真投票，高保真但只三年；同期真投票分歧高於意見書代理，因非每個反對都寫成意見書。兩層共用同一分歧軸、僅保真度與涵蓋不同。
-      </p>
+      <p className="mt-1.5 max-w-2xl text-[12px] leading-relaxed text-[var(--cc-figure-note)]">{renderInline(圖說)}</p>
     </div>
   );
 }
 
-// 問題意識（仿財政頁 Research Problem＋Model Gate 紀律）：分殊化＝審議專業化 vs 任命政治化。
-// 全部統計現算自 docs/justices（運維導向，資料一增補即更新）；共同具名同質性附置換檢定。
-function ResearchProblem() {
-  const stats = useMemo(() => {
-    const post = docs.filter((x) => x.機關 === '大法官' || x.機關 === '憲法法庭');
-    const yr = (s) => (s ? Number(String(s).slice(0, 4)) : null);
-    const bins = [
-      ['1949–1990', (y) => y <= 1990], ['1991–2002', (y) => y >= 1991 && y <= 2002],
-      ['2003–2014', (y) => y >= 2003 && y <= 2014], ['2015–2021', (y) => y >= 2015 && y <= 2021],
-      ['2022–', (y) => y >= 2022],
-    ];
-    const trend = bins.map(([lab, t]) => {
-      let n = 0, dis = 0, sum = 0;
-      for (const x of post) {
-        const y = yr(x.日期); if (y == null || !t(y)) continue;
-        n++; const ops = x.意見書 ?? [];
-        if (ops.some((o) => (o.類型 ?? '').includes('不同'))) dis++;
-        sum += ops.length;
-      }
-      return { lab, n, disPct: n ? dis / n : 0, avg: n ? sum / n : 0 };
-    });
-    const pk = (a, b) => (a < b ? `${a}${SEP}${b}` : `${b}${SEP}${a}`);
-    const pair = new Map();
-    for (const x of post) {
-      const y = yr(x.日期); if (y == null || y < 2022) continue;
-      for (const o of x.意見書 ?? []) {
-        const s = [...new Set([...(o.提出 ?? []), ...(o.加入 ?? [])])];
-        for (let i = 0; i < s.length; i++) for (let j = i + 1; j < s.length; j++) pair.set(pk(s[i], s[j]), (pair.get(pk(s[i], s[j])) ?? 0) + 1);
-      }
-    }
-    const names = [...new Set([].concat(...[...pair.keys()].map((k) => k.split(SEP))))];
-    const jb = new Map(justices.map((j) => [j.姓名, j]));
-    const deu = (v) => (v == null ? null : (['德國', '德語圈', '奧地利', '瑞士'].includes(v) ? '德語圈' : '其他/國內'));
-    const groupers = [
-      ['提名總統', (nm) => jb.get(nm)?.提名總統 ?? null],
-      ['出身', (nm) => jb.get(nm)?.出身 ?? null],
-      ['德語圈留學', (nm) => deu(jb.get(nm)?.留學國)],
-    ];
-    const gap = (g) => {
-      let ws = 0, wsN = 0, wc = 0, wcN = 0;
-      for (let i = 0; i < names.length; i++) for (let j = i + 1; j < names.length; j++) {
-        const va = g(names[i]), vb = g(names[j]); if (va == null || vb == null) continue;
-        const w = pair.get(pk(names[i], names[j])) ?? 0;
-        if (va === vb) { ws += w; wsN++; } else { wc += w; wcN++; }
-      }
-      return { same: wsN ? ws / wsN : 0, diff: wcN ? wc / wcN : 0, gap: (wsN ? ws / wsN : 0) - (wcN ? wc / wcN : 0) };
-    };
-    const rng = mulberry32(20260708);
-    const permP = (g, obs, B = 2000) => {
-      const vals = names.map(g); let ge = 0;
-      for (let b = 0; b < B; b++) {
-        const p = vals.slice();
-        for (let k = p.length - 1; k > 0; k--) { const r = Math.floor(rng() * (k + 1)); [p[k], p[r]] = [p[r], p[k]]; }
-        const m = new Map(names.map((nm, i) => [nm, p[i]]));
-        let ws = 0, wsN = 0, wc = 0, wcN = 0;
-        for (let i = 0; i < names.length; i++) for (let j = i + 1; j < names.length; j++) {
-          const va = m.get(names[i]), vb = m.get(names[j]); if (va == null || vb == null) continue;
-          const w = pair.get(pk(names[i], names[j])) ?? 0;
-          if (va === vb) { ws += w; wsN++; } else { wc += w; wcN++; }
-        }
-        if (((wsN ? ws / wsN : 0) - (wcN ? wc / wcN : 0)) >= obs) ge++;
-      }
-      return (ge + 1) / (B + 1);
-    };
-    const assortRows = groupers.map(([lab, g]) => { const a = gap(g); return { lab, ...a, p: permP(g, a.gap) }; });
-    const presCount = {};
-    for (const nm of names) { const v = jb.get(nm)?.提名總統 ?? '—'; presCount[v] = (presCount[v] ?? 0) + 1; }
-    return { trend, assortRows, n: names.length, presCount, postN: trend.reduce((a, b) => a + b.n, 0) };
-  }, []);
+// 問題意識分頁：純渲染 data.問題意識 發現母本（analyze-research.mjs 產：計量圖表資料＋佔位符已解析敘事）。
+// 前端不再從 docs/justices 即時算統計；證據三三張圖仍讀已是母本的 data.立場表分析（LCT_RESULT）。
 
-  const peak = stats.trend.find((r) => r.lab === '2015–2021');
-  const maxAvg = Math.max(1, ...stats.trend.map((r) => r.avg));
+// 證據三 1D 理想點：同一提名總統者散落軸上、不整齊分塊。色＝PRES_COLOR（entity-based）、淡底 ink 圈。
+function IdealPointChart() {
+  const pts = LCT_RESULT.理想點; const xs = pts.map((p) => p.x);
+  const lo = Math.min(...xs), hi = Math.max(...xs); const pad = (hi - lo) * 0.08;
+  const pos = (x) => ((x - (lo - pad)) / ((hi + pad) - (lo - pad))) * 100;
+  const ink = (p) => PRES_COLOR[p.提名總統] ?? 'var(--cc-ink-mid)';
   return (
-    <section className="border-t border-[var(--cc-line)] py-5">
-      <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">問題意識 · Research Problem</p>
-      <h2 className="text-base sm:text-lg font-bold text-[var(--cc-title-ink)]">分殊化：審議專業化，還是任命政治化？</h2>
-      <p className="mt-2 max-w-3xl text-[13.5px] leading-relaxed text-[var(--cc-ink-mid)]">
-        台灣大法官長期被理解為「合議共識型」法院——判決以機關名義作成、不同意見稀少。資料推翻了這個圖像：每案分別意見數從 1990 年代前的不到一份，升到 2015–2021 年的每案 {peak ? peak.avg.toFixed(1) : '7'} 份。核心問題是這場「意見分殊化」代表什麼？兩種對立的說法：
-      </p>
-      <div className="mt-3 grid max-w-3xl gap-3 sm:grid-cols-2">
-        <div className="rounded-lg border border-[var(--cc-line)] p-3">
-          <div className="flex items-center gap-2"><Badge tone="blue">專業審議說</Badge><span className="text-[12px] text-[var(--cc-ink-soft)]">legalist</span></div>
-          <p className="mt-1.5 text-[13px] leading-relaxed text-[var(--cc-ink-mid)]">會議以學者為主體，分別意見是釋義學分工與論理對話的產物；分殊化代表審議透明化。若成立，意見聯盟應沿學術背景／方法傳統組織。</p>
+    <div className="mt-2 max-w-md space-y-0.5">
+      {pts.map((p) => (
+        <div key={p.姓名} className="grid grid-cols-[58px_1fr_46px] items-center gap-2 text-[12.5px]">
+          <span className="font-bold" style={{ color: ink(p) }}>{p.姓名}</span>
+          <span className="relative block h-3.5">
+            <span className="absolute inset-y-0 w-px bg-[var(--cc-line)]" style={{ left: `${pos(0)}%` }} />
+            <span className="absolute top-1/2 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full" style={{ left: `${pos(p.x)}%`, background: inkToFill(ink(p)), border: `1.5px solid ${ink(p)}` }} />
+          </span>
+          <span className="text-right text-[var(--cc-ink-soft)]">{p.x >= 0 ? '+' : ''}{p.x.toFixed(2)}</span>
         </div>
-        <div className="rounded-lg border border-[var(--cc-line)] p-3">
-          <div className="flex items-center gap-2"><Badge tone="red">任命政治說</Badge><span className="text-[12px] text-[var(--cc-ink-soft)]">attitudinal</span></div>
-          <p className="mt-1.5 text-[13px] leading-relaxed text-[var(--cc-ink-mid)]">分殊化隨 2003 交錯任期改制、以及蔡英文提名近乎整屆而政治化。若成立，意見聯盟應沿提名總統組織。</p>
-        </div>
-      </div>
+      ))}
+    </div>
+  );
+}
 
-      <div className="mt-5">
-        <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">證據一 · 分殊化趨勢</p>
-        <h3 className="text-[15px] font-bold text-[var(--cc-title-ink)]">每案分別意見數（行憲後 {stats.postN} 件）</h3>
-        <div className="mt-2 max-w-xl space-y-1">
-          {stats.trend.map((r) => (
-            <div key={r.lab} className="grid grid-cols-[86px_1fr_112px] items-center gap-2 text-[13px]">
-              <span className="text-[var(--cc-ink-mid)]">{r.lab}</span>
-              <span className="block h-2 rounded-full bg-[var(--cc-track)]"><span className="block h-2 rounded-full" style={{ width: `${(r.avg / maxAvg) * 100}%`, background: 'var(--cc-highlight)' }} /></span>
-              <span className="text-right text-[var(--cc-ink-soft)]">{r.avg.toFixed(2)} 份・{Math.round(r.disPct * 100)}% 不同</span>
-            </div>
-          ))}
-        </div>
-        <p className="mt-1.5 max-w-2xl text-[12px] leading-relaxed text-[var(--cc-figure-note)]">
-          資料完整度：晚近（釋字 701 號後）與憲法法庭意見書覆蓋 100%；早／中期為<strong className="text-[var(--cc-ink-strong)]">下限</strong>——8 件釋字（115/150/153/156/393/503/517/564）的意見書藏在「意見書、抄本等文件」欄未解析（約 13+ 份，含王澤鑑、蘇俊雄、劉鐵錚等），另約 103 件的意見書收於影像抄本／OCR，官方頁不提供機讀文字。故上升「趨勢」穩健，早期「水準」偏低估。
-        </p>
-        <OpinionCoverage />
-        <DivergenceTimeSeries />
-      </div>
-
-      <div className="mt-5">
-        <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">證據二 · 聯盟沿哪條線組織</p>
-        <h3 className="text-[15px] font-bold text-[var(--cc-title-ink)]">現任憲法法庭（{stats.n} 位具名法官）：同組 vs 跨組的平均共同具名</h3>
-        <div className="mt-2 max-w-xl overflow-x-auto">
-          <table className="w-full text-[13px]">
-            <thead>
-              <tr className="text-left text-[var(--cc-table-head-ink)]">
-                <th className="py-1 pr-3 font-bold">分組維度</th><th className="py-1 pr-3 font-bold">同組</th>
-                <th className="py-1 pr-3 font-bold">跨組</th><th className="py-1 pr-3 font-bold">差</th><th className="py-1 font-bold">置換檢定 p</th>
-              </tr>
-            </thead>
-            <tbody>
-              {stats.assortRows.map((r) => (
-                <tr key={r.lab} className="border-t border-[var(--cc-row-border)]">
-                  <td className="py-1 pr-3 font-bold text-[var(--cc-ink-strong)]">{r.lab}</td>
-                  <td className="py-1 pr-3">{r.same.toFixed(2)}</td>
-                  <td className="py-1 pr-3">{r.diff.toFixed(2)}</td>
-                  <td className="py-1 pr-3">{r.gap >= 0 ? '+' : ''}{r.gap.toFixed(2)}</td>
-                  <td className="py-1">{r.p < 0.05 ? <strong className="text-[var(--cc-accent)]">{r.p.toFixed(3)} ✓</strong> : r.p.toFixed(3)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        <p className="mt-1.5 max-w-2xl text-[12px] leading-relaxed text-[var(--cc-ink-soft)]">
-          只有「提名總統」測得到顯著的同質性（同總統提名者共同具名較多）；出身、留學傳統測不到。但共同具名只是「誰跟誰一起連署意見書」的代理，不等於投票立場一致——這條提名總統線是不是真的投票聯盟，要由證據三的真投票來檢驗。到「意見書圖譜」勾「依提名總統上色」可肉眼對照分塊。
-        </p>
-      </div>
-
-      <div className="mt-5">
-        <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">證據三 · 真實投票（立場表）</p>
-        <h3 className="text-[15px] font-bold text-[var(--cc-title-ink)]">解析 {LCT_RESULT.判決數} 件憲判立場表 → {LCT_RESULT.rollCalls} 個逐項表決（{LCT_RESULT.爭議} 爭議），大法官 1D 理想點</h3>
-        <p className="mt-1.5 max-w-2xl text-[13px] leading-relaxed text-[var(--cc-ink-mid)]">
-          有了逐案「同意／不同意各主文項」的真投票，就能超越共同具名代理。憲法法庭 2022– 立場表已<strong className="text-[var(--cc-ink-strong)]">回官網重抓、逐項重解</strong>（{LCT_RESULT.項次完整度?.完整}/{LCT_RESULT.項次完整度?.總數} 項達全體庭員），並經大法官意見書交叉校驗（不同意方 {LCT_RESULT.交叉校驗?.相符} 相符、僅 {LCT_RESULT.交叉校驗?.意見書疑漏} 疑漏），是本頁證據基礎最扎實處。法院高度多數決（平均同意率 {Math.round(LCT_RESULT.平均同意率 * 100)}%）；下方 1D 理想點<strong className="text-[var(--cc-ink-strong)]">並不沿提名總統整齊分塊</strong>，同一總統提名者散落軸上。
-        </p>
-        {(() => {
-          const pts = LCT_RESULT.理想點; const xs = pts.map((p) => p.x);
-          const lo = Math.min(...xs), hi = Math.max(...xs); const pad = (hi - lo) * 0.08;
-          const pos = (x) => ((x - (lo - pad)) / ((hi + pad) - (lo - pad))) * 100;
-          const ink = (p) => PRES_COLOR[p.提名總統] ?? 'var(--cc-ink-mid)';
+// 證據三 方法梯度：提名總統效果的置換 p 隨口徑收緊而消失（唯有全 roll 粗糙口徑落在門檻左側）。
+function MethodGradientChart() {
+  const R = LCT_RESULT;
+  const dP = (arr) => (arr || []).find((r) => r.維度 === '提名總統') || {};
+  const rows = [
+    { label: '全 roll（粗糙口徑）', p: dP(R.同質性_全roll).p },
+    { label: '主分析（僅爭議 roll）', p: dP(R.同質性).p },
+    { label: '共同視窗（馬蔡同任期）', p: (R.共同視窗?.維度 || []).find((r) => r.維度 === '提名總統')?.p },
+    { label: '案件層級 FE（逐案固定）', p: R.案件層級?.提名總統?.p },
+    { label: 'MRQAP（控批次＋資歷）', p: R.MRQAP?.p?.同提名人 },
+    ...(R.分向票敏感性 ? [
+      { label: `分向票·保守（${R.分向票敏感性.編碼涵蓋}）`, p: R.分向票敏感性.保守?.提名總統?.p },
+      { label: '分向票·激進（上界）', p: R.分向票敏感性.激進?.提名總統?.p },
+    ] : []),
+  ].filter((r) => typeof r.p === 'number');
+  const W = 560, PL = 180, PR = 470, PMAX = 0.6, rowH = 26, top = 22;
+  const xP = (p) => PL + (Math.min(p, PMAX) / PMAX) * (PR - PL);
+  const H = top + rows.length * rowH + 16;
+  const ax = xP(0.05);
+  return (
+    <div className="mt-3 max-w-2xl overflow-x-auto">
+      <p className="text-[11px] font-bold text-[var(--cc-ink-strong)]">方法梯度：提名總統效果隨口徑收緊而消失</p>
+      <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label="提名總統效果的置換檢定 p 值隨方法口徑變化" style={{ width: '100%', height: 'auto', maxWidth: W }}>
+        <line x1={ax} y1={top - 6} x2={ax} y2={top + rows.length * rowH} stroke="var(--cc-accent)" strokeWidth={1} strokeDasharray="3 2" />
+        <text x={ax} y={top - 9} textAnchor="middle" fontSize={RVIZ.tick} fill="var(--cc-accent)">p=.05</text>
+        {[0, 0.3, 0.6].map((t) => (
+          <text key={t} x={xP(t)} y={H - 2} textAnchor="middle" fontSize={RVIZ.tick} fill="var(--cc-axis-text)">{t === 0 ? '0' : t.toFixed(1)}</text>
+        ))}
+        {rows.map((r, i) => {
+          const y = top + i * rowH + rowH / 2, sig = r.p < 0.05, c = sig ? 'var(--cc-accent)' : 'var(--cc-ink-strong)';
           return (
-            <div className="mt-2 max-w-md space-y-0.5">
-              {pts.map((p) => (
-                <div key={p.姓名} className="grid grid-cols-[58px_1fr_46px] items-center gap-2 text-[12.5px]">
-                  <span className="font-bold" style={{ color: ink(p) }}>{p.姓名}</span>
-                  <span className="relative block h-3.5">
-                    <span className="absolute inset-y-0 w-px bg-[var(--cc-line)]" style={{ left: `${pos(0)}%` }} />
-                    <span className="absolute top-1/2 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full" style={{ left: `${pos(p.x)}%`, background: inkToFill(ink(p)), border: `1.5px solid ${ink(p)}` }} />
-                  </span>
-                  <span className="text-right text-[var(--cc-ink-soft)]">{p.x >= 0 ? '+' : ''}{p.x.toFixed(2)}</span>
+            <g key={r.label}>
+              <text x={PL - 6} y={y + 3} textAnchor="end" fontSize={RVIZ.lbl} fill="var(--cc-ink-mid)">{r.label}</text>
+              <line x1={PL} y1={y} x2={PR} y2={y} stroke="var(--cc-line)" strokeWidth={1} />
+              <circle cx={xP(r.p)} cy={y} r={RVIZ.r} fill={sig ? c : VIZ_PALE} stroke={c} strokeWidth={1.5} />
+              <text x={Math.min(xP(r.p) + 8, PR)} y={y + 3} fontSize={RVIZ.tick} fontWeight={sig ? 700 : 400} fill={c}>{r.p.toFixed(3)}</text>
+            </g>
+          );
+        })}
+      </svg>
+    </div>
+  );
+}
+
+// 文獻引註：[[cite:鍵|顯示]] → hover 顯示全引註卡；有公開 url 則外連（否則標「需館藏／付費取得」）。文獻 map 讀自母本。
+function Cite({ rkey, disp }) {
+  const ref = data.問題意識?.文獻?.[rkey];
+  const full = ref?.全文 ?? disp;
+  const link = ref?.url;
+  const label = <span className="underline decoration-dotted decoration-[var(--cc-link-underline)] underline-offset-2">{disp}</span>;
+  return (
+    <span className="group relative">
+      {link
+        ? <a href={link} target="_blank" rel="noopener noreferrer" className="hover:text-[var(--cc-link-hover)]">{label}</a>
+        : <span className="cursor-help">{label}</span>}
+      <span className="pointer-events-none absolute bottom-full left-1/2 z-30 mb-1 hidden w-[17rem] max-w-[80vw] -translate-x-1/2 rounded-md border border-[var(--cc-line)] bg-[var(--cc-bg)] px-2.5 py-1.5 text-[11.5px] font-normal leading-snug text-[var(--cc-ink-mid)] shadow-md group-hover:block">
+        {full}
+        {link
+          ? <span className="mt-0.5 block text-[var(--cc-eyebrow)]">↗ 開啟公開來源</span>
+          : <span className="mt-0.5 block text-[var(--cc-ink-soft)]">· 需館藏／付費取得</span>}
+      </span>
+    </span>
+  );
+}
+
+// 敘事行內渲染：**粗體**、`code`、[[cite:鍵|顯示]]。（renderInline 為類型學報告專用、不含 cite，故另立此函式。）
+function renderNarrative(text) {
+  const nodes = [];
+  const re = /\*\*([^*]+)\*\*|`([^`]+)`|\[\[cite:([^\]|]+)\|([^\]]+)\]\]/g;
+  let last = 0, key = 0, m;
+  while ((m = re.exec(text)) !== null) {
+    if (m.index > last) nodes.push(text.slice(last, m.index));
+    if (m[1] !== undefined) nodes.push(<strong key={key++} className="font-bold text-[var(--cc-ink-strong)]">{m[1]}</strong>);
+    else if (m[2] !== undefined) nodes.push(<code key={key++} className="rounded bg-[var(--cc-hover-bg)] px-1 text-[0.92em]">{m[2]}</code>);
+    else nodes.push(<Cite key={key++} rkey={m[3]} disp={m[4]} />);
+    last = m.index + m[0].length;
+  }
+  if (last < text.length) nodes.push(text.slice(last));
+  return nodes;
+}
+
+const rpP = (t, i) => <p key={i} className="mt-2 max-w-3xl text-[13.5px] leading-relaxed text-[var(--cc-ink)]">{renderNarrative(t)}</p>;
+const rpEyebrow = (t) => <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">{t}</p>;
+
+// 敘事 beat 派工：依 beat.類型 選版面，文字一律取自母本成品字串（renderInline 轉 **粗體**）。
+function BeatBlock({ beat: b, 圖 }) {
+  switch (b.類型) {
+    case '導言':
+      return (
+        <div>
+          {rpEyebrow(b.eyebrow)}
+          <h2 className="text-base sm:text-lg font-bold text-[var(--cc-title-ink)]">{b.標題}</h2>
+          {(b.段落 ?? []).map(rpP)}
+          <div className="mt-3 grid max-w-3xl gap-3 sm:grid-cols-2">
+            {(b.卡片 ?? []).map((c, i) => (
+              <div key={i} className="rounded-lg border border-[var(--cc-line)] p-3">
+                <div className="flex items-center gap-2"><Badge tone={c.tone}>{c.label}</Badge><span className="text-[12px] text-[var(--cc-ink-soft)]">{c.sub}</span></div>
+                <p className="mt-1.5 text-[13px] leading-relaxed text-[var(--cc-ink)]">{renderNarrative(c.text)}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    case '證據': {
+      if (b.序 === '一') {
+        const maxAvg = Math.max(1, ...圖.趨勢.map((r) => r.平均分別意見));
+        const 覆蓋附 = (b.附圖 ?? []).find((f) => f.圖 === '覆蓋');
+        const 時序附 = (b.附圖 ?? []).find((f) => f.圖 === '分歧時序');
+        return (
+          <div className="mt-5">
+            {rpEyebrow(b.eyebrow)}
+            <h3 className="text-[15px] font-bold text-[var(--cc-title-ink)]">{b.標題}</h3>
+            <div className="mt-2 max-w-xl space-y-1">
+              {圖.趨勢.map((r) => (
+                <div key={r.期} className="grid grid-cols-[86px_1fr_112px] items-center gap-2 text-[13px]">
+                  <span className="text-[var(--cc-ink-mid)]">{r.期}</span>
+                  <span className="block h-2 rounded-full bg-[var(--cc-track)]"><span className="block h-2 rounded-full" style={{ width: `${(r.平均分別意見 / maxAvg) * 100}%`, background: 'var(--cc-highlight)' }} /></span>
+                  <span className="text-right text-[var(--cc-ink-soft)]">{r.平均分別意見.toFixed(2)} 份・{Math.round(r.不同意比例 * 100)}% 不同</span>
                 </div>
               ))}
             </div>
-          );
-        })()}
-        <div className="mt-3 max-w-xl overflow-x-auto">
-          <table className="w-full text-[13px]">
-            <thead>
-              <tr className="text-left text-[var(--cc-table-head-ink)]">
-                <th className="py-1 pr-3 font-bold">分組維度（真投票同意率）</th><th className="py-1 pr-3 font-bold">同組</th>
-                <th className="py-1 pr-3 font-bold">跨組</th><th className="py-1 font-bold">置換檢定 p</th>
-              </tr>
-            </thead>
-            <tbody>
-              {LCT_RESULT.同質性.map((r) => (
-                <tr key={r.維度} className="border-t border-[var(--cc-row-border)]">
-                  <td className="py-1 pr-3 font-bold text-[var(--cc-ink-strong)]">{r.維度}</td>
-                  <td className="py-1 pr-3">{r.同組.toFixed(3)}</td>
-                  <td className="py-1 pr-3">{r.跨組.toFixed(3)}</td>
-                  <td className="py-1">{r.p < 0.05 ? <strong className="text-[var(--cc-accent)]">{r.p.toFixed(3)} ✓</strong> : `${r.p.toFixed(3)}${r.p < 0.1 ? '（近顯著）' : ''}`}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+            <p className="mt-1.5 max-w-2xl text-[12px] leading-relaxed text-[var(--cc-figure-note)]">{renderInline(b.圖說)}</p>
+            {覆蓋附 ? <OpinionCoverage 覆蓋={圖.覆蓋} eyebrow={覆蓋附.eyebrow} 標題={覆蓋附.標題} 圖說={覆蓋附.圖說} /> : null}
+            {時序附 ? <DivergenceTimeSeries 分歧時序={圖.分歧時序} eyebrow={時序附.eyebrow} 標題={時序附.標題} 圖說={時序附.圖說} /> : null}
+          </div>
+        );
+      }
+      if (b.序 === '二') {
+        const rows = 圖.共同具名.map((r) => ({ 維度: r.維度, 同組: r.同組, 跨組: r.跨組, p: r.p }));
+        const max = Math.max(...圖.共同具名.flatMap((r) => [r.同組, r.跨組])) * 1.06;
+        return (
+          <div className="mt-5">
+            {rpEyebrow(b.eyebrow)}
+            <h3 className="text-[15px] font-bold text-[var(--cc-title-ink)]">{b.標題}</h3>
+            <Dumbbell rows={rows} domain={[0, max]} dp={2} />
+            <p className="mt-1.5 max-w-2xl text-[12.5px] leading-relaxed text-[var(--cc-ink-mid)]">{renderNarrative(b.圖說)}</p>
+          </div>
+        );
+      }
+      const homoRows = LCT_RESULT.同質性.map((r) => ({ 維度: r.維度, 同組: r.同組, 跨組: r.跨組, p: r.p }));
+      return (
+        <div className="mt-5">
+          {rpEyebrow(b.eyebrow)}
+          <h3 className="text-[15px] font-bold text-[var(--cc-title-ink)]">{b.標題}</h3>
+          {(b.段落 ?? []).map((t, i) => <p key={i} className="mt-1.5 max-w-2xl text-[13.5px] leading-relaxed text-[var(--cc-ink)]">{renderNarrative(t)}</p>)}
+          <IdealPointChart />
+          <p className="mt-3 text-[11px] font-bold text-[var(--cc-ink-strong)]">真投票同質性：同組 vs 跨組同意率（四維度全測不到）</p>
+          <Dumbbell rows={homoRows} domain={[0.5, 0.8]} dp={3} />
+          <p className="mt-1.5 max-w-2xl text-[12.5px] leading-relaxed text-[var(--cc-ink-mid)]">{renderNarrative(b.表圖說)}</p>
+          {b.梯度圖 ? <MethodGradientChart /> : null}
+          {b.梯度圖說 ? <p className="mt-1 max-w-2xl text-[11.5px] leading-relaxed text-[var(--cc-figure-note)]">{renderNarrative(b.梯度圖說)}</p> : null}
         </div>
-        <p className="mt-1.5 max-w-2xl text-[12px] leading-relaxed text-[var(--cc-ink-soft)]">
-          真投票下四個分組維度<strong className="text-[var(--cc-ink-strong)]">全部測不到顯著同質性</strong>（提名總統 p＝{(LCT_RESULT.同質性.find((r) => r.維度 === '提名總統')?.p ?? 0).toFixed(3)}，出身、德語圈更高）——證據二那條「共同具名沿提名總統」的分塊，在真實投票裡並不重現。共同具名反映的是意見書協作網絡，不是投票聯盟；這屆法院高共識、聯盟逐案重組。下圖顯示：那個看似顯著的效果，只在把一致決也算進去的最粗糙口徑下才成立。
-        </p>
-        {(() => {
-          const R = LCT_RESULT;
-          const dP = (arr) => (arr || []).find((r) => r.維度 === '提名總統') || {};
-          const hd = (d) => (R.同質性 || []).find((r) => r.維度 === d) || {};
-          const rows = [
-            { label: '全 roll（粗糙口徑）', p: dP(R.同質性_全roll).p },
-            { label: '主分析（僅爭議 roll）', p: dP(R.同質性).p },
-            { label: '共同視窗（馬蔡同任期）', p: (R.共同視窗?.維度 || []).find((r) => r.維度 === '提名總統')?.p },
-            { label: '案件層級 FE（逐案固定）', p: R.案件層級?.提名總統?.p },
-            { label: 'MRQAP（控批次＋資歷）', p: R.MRQAP?.p?.同提名人 },
-            ...(R.分向票敏感性 ? [
-              { label: `分向票·保守（${R.分向票敏感性.編碼涵蓋}）`, p: R.分向票敏感性.保守?.提名總統?.p },
-              { label: '分向票·激進（上界）', p: R.分向票敏感性.激進?.提名總統?.p },
-            ] : []),
-          ].filter((r) => typeof r.p === 'number');
-          const W = 340, PL = 138, PR = 300, PMAX = 0.6, rowH = 20, top = 20;
-          const xP = (p) => PL + (Math.min(p, PMAX) / PMAX) * (PR - PL);
-          const H = top + rows.length * rowH + 14;
-          const ax = xP(0.05);
-          const eff = [
-            { label: '提名總統', v: hd('提名總統').差, p: hd('提名總統').p },
-            { label: '任命批次', v: hd('任命批次').差, p: hd('任命批次').p },
-            { label: '出身', v: hd('出身').差, p: hd('出身').p },
-            { label: '德語圈留學', v: hd('德語圈留學').差, p: hd('德語圈留學').p },
-            { label: 'MRQAP 同提名人', v: R.MRQAP?.係數?.同提名人, p: R.MRQAP?.p?.同提名人 },
-          ].filter((e) => typeof e.v === 'number');
-          const eLo = -0.10, eHi = 0.15, xE = (v) => PL + ((Math.max(eLo, Math.min(eHi, v)) - eLo) / (eHi - eLo)) * (PR - PL);
-          const eH = top + eff.length * rowH + 14, x0 = xE(0);
-          return (
-            <div className="mt-3 max-w-lg space-y-3">
-              <div>
-                <p className="text-[11px] font-bold text-[var(--cc-ink-strong)]">方法梯度：提名總統效果隨口徑收緊而消失</p>
-                <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label="提名總統效果的置換檢定 p 值隨方法口徑變化" style={{ width: '100%', height: 'auto', maxWidth: W }}>
-                  <line x1={ax} y1={top - 6} x2={ax} y2={top + rows.length * rowH} stroke="var(--cc-accent)" strokeWidth={1} strokeDasharray="3 2" />
-                  <text x={ax} y={top - 9} textAnchor="middle" fontSize={8} fill="var(--cc-accent)">p=.05</text>
-                  {[0, 0.3, 0.6].map((t) => (
-                    <text key={t} x={xP(t)} y={H - 2} textAnchor="middle" fontSize={7.5} fill="var(--cc-axis-text)">{t === 0 ? '0' : t.toFixed(1)}</text>
-                  ))}
-                  {rows.map((r, i) => {
-                    const y = top + i * rowH + rowH / 2, sig = r.p < 0.05, c = sig ? 'var(--cc-accent)' : 'var(--cc-ink-strong)';
-                    return (
-                      <g key={r.label}>
-                        <text x={PL - 6} y={y + 3} textAnchor="end" fontSize={8.5} fill="var(--cc-ink-mid)">{r.label}</text>
-                        <line x1={PL} y1={y} x2={PR} y2={y} stroke="var(--cc-line)" strokeWidth={1} />
-                        <circle cx={xP(r.p)} cy={y} r={3.2} fill={sig ? c : inkToFill('var(--cat-7-tx)')} stroke={c} strokeWidth={1.4} />
-                        <text x={Math.min(xP(r.p) + 7, PR)} y={y + 3} fontSize={8} fontWeight={sig ? 700 : 400} fill={c}>{r.p.toFixed(3)}</text>
-                      </g>
-                    );
-                  })}
-                </svg>
-                <p className="mt-1 text-[11px] leading-relaxed text-[var(--cc-figure-note)]">列由上到下＝方法愈嚴。只有把一致決也算進分母的最粗糙口徑落在門檻左側（p&lt;0.05，顯著）；一旦只看爭議案、或控制共同在任視窗／逐案固定／同批次與資歷，效果全部退回不顯著。分向票敏感性兩列（若已載入）顯示：把主分析剔除的分向票編回去也不改變結論。</p>
-              </div>
-              <div>
-                <p className="text-[11px] font-bold text-[var(--cc-ink-strong)]">效果量：沒有一條分組線測得到（真投票同質性差／MRQAP 係數）</p>
-                <svg viewBox={`0 0 ${W} ${eH}`} role="img" aria-label="各分組維度的效果量與顯著性" style={{ width: '100%', height: 'auto', maxWidth: W }}>
-                  <line x1={x0} y1={top - 6} x2={x0} y2={top + eff.length * rowH} stroke="var(--cc-line)" strokeWidth={1} />
-                  <text x={x0} y={top - 9} textAnchor="middle" fontSize={8} fill="var(--cc-ink-soft)">0</text>
-                  {eff.map((e, i) => {
-                    const y = top + i * rowH + rowH / 2, sig = e.p < 0.05, c = sig ? 'var(--cc-accent)' : 'var(--cc-ink-mid)';
-                    return (
-                      <g key={e.label}>
-                        <text x={PL - 6} y={y + 3} textAnchor="end" fontSize={8.5} fill="var(--cc-ink-mid)">{e.label}</text>
-                        <line x1={x0} y1={y} x2={xE(e.v)} y2={y} stroke="var(--cc-line)" strokeWidth={1} />
-                        <circle cx={xE(e.v)} cy={y} r={3.2} fill={inkToFill('var(--cat-7-tx)')} stroke={c} strokeWidth={1.4} />
-                        <text x={PR + 2} y={y + 3} textAnchor="end" fontSize={7.5} fill="var(--cc-ink-soft)">{`差 ${e.v >= 0 ? '+' : ''}${e.v.toFixed(3)}・p ${e.p.toFixed(2)}`}</text>
-                      </g>
-                    );
-                  })}
-                </svg>
-                <p className="mt-1 text-[11px] leading-relaxed text-[var(--cc-figure-note)]">同組−跨組同意率差（MRQAP 為同提名人係數）皆接近 0、置換 p 皆不顯著。共同具名沿提名總統分塊，真投票裡不重現。</p>
-              </div>
-            </div>
-          );
-        })()}
-      </div>
+      );
+    }
+    case '方法教訓':
+      return (
+        <div className="mt-5 max-w-3xl">
+          {rpEyebrow(b.eyebrow)}
+          <h3 className="text-[15px] font-bold text-[var(--cc-title-ink)]">{b.標題}</h3>
+          {(b.段落 ?? []).map((t, i) => <p key={i} className="mt-2 text-[13.5px] leading-relaxed text-[var(--cc-ink)]">{renderNarrative(t)}</p>)}
+        </div>
+      );
+    case 'ModelGate':
+      return (
+        <div className="mt-5 max-w-3xl rounded-lg border border-[var(--cc-border)] bg-[var(--cc-hover-bg)] p-3.5">
+          {rpEyebrow(b.eyebrow)}
+          <h3 className="text-[15px] font-bold text-[var(--cc-title-ink)]">{b.標題}</h3>
+          <ul className="mt-2 space-y-1.5 text-[13.5px] leading-relaxed text-[var(--cc-ink)]">
+            {(b.清單 ?? []).map((t, i) => <li key={i}>{renderNarrative(t)}</li>)}
+          </ul>
+        </div>
+      );
+    case '資料解鎖':
+      return (
+        <div className="mt-3 max-w-3xl">
+          {rpEyebrow(b.eyebrow)}
+          {(b.段落 ?? []).map((t, i) => <p key={i} className="mt-1 text-[13.5px] leading-relaxed text-[var(--cc-ink)]">{renderNarrative(t)}</p>)}
+        </div>
+      );
+    default:
+      return null;
+  }
+}
 
-      <div className="mt-5 max-w-3xl rounded-lg border border-[var(--cc-border)] bg-[var(--cc-hover-bg)] p-3.5">
-        <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">方法閘門 · Model Gate</p>
-        <h3 className="text-[15px] font-bold text-[var(--cc-title-ink)]">現階段只能主張描述與類型學，不能主張因果或意識形態定位</h3>
-        <ul className="mt-2 space-y-1.5 text-[13px] leading-relaxed text-[var(--cc-ink-mid)]">
-          <li>真投票（立場表）只有憲法法庭 2022– 這 {LCT_RESULT.判決數} 件；釋字時期仍只有共同具名代理、無逐案投票。1D 理想點為古典 MDS 的簡單估計，非 W-NOMINATE／IRT。</li>
-          <li>真投票在正確方法下<strong className="text-[var(--cc-ink-strong)]">測不到任命效果</strong>：全 roll 粗糙口徑的「顯著」是一致決案件入分母製造的假象，改用僅爭議 roll、共同視窗、案件層級、MRQAP 後全部落回不顯著（見上方方法梯度圖）。且只有一屆、留任者與提名總統高度共線，任命 vs 世代原則上仍不可分——「測不到」不等於「不存在」。</li>
-          <li>只有一屆、樣本小（{stats.n} 人、{LCT_RESULT.爭議} 爭議案）；{LCT_RESULT.判決數} 件立場表已全解析，逐項完整度 {LCT_RESULT.項次完整度?.完整}/{LCT_RESULT.項次完整度?.總數}（殘餘為多子部複雜版式與個別迴避，非系統性漏抓）；另有 {LCT_RESULT.剔除票?.分向} 筆「同項既部分同意又部分不同意」的分向票為真實部分意見，主分析保守剔除、敏感性另編回主方向覆核（結論不變）。</li>
-          <li>資料完整度非全等：強命題（證據三）建立在憲判 2022– 立場表（逐項真投票、意見書交叉校驗）；證據一早／中期為下限（8 件釋字意見書藏於「意見書、抄本等文件」欄未解析、約 103 件收於影像抄本，見趨勢下方註）。分殊化「趨勢」穩健、早期「水準」偏低。</li>
-        </ul>
-      </div>
-
-      <div className="mt-3 max-w-3xl">
-        <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">資料解鎖 · 下一步</p>
-        <p className="mt-1 text-[13px] leading-relaxed text-[var(--cc-ink-mid)]">
-          立場表已<strong className="text-[var(--cc-ink-strong)]">回官網重抓、重寫解析器</strong>（動態欄界＋名冊錨定；本頁計量現讀 analyze-lct.mjs 母本），並以意見書不同意作者交叉校驗（相符 {LCT_RESULT.交叉校驗?.相符}／疑漏 {LCT_RESULT.交叉校驗?.意見書疑漏}／立場表獨有 {LCT_RESULT.交叉校驗?.立場表獨有}）。要從「測不到」推進到「不存在」還缺兩步：改用正式理想點估計（W-NOMINATE／Martin–Quinn 而非 1D MDS）並在控制世代、案類、時間下檢定任命效果；人工覆核殘餘複雜版式項次。跨屆資料累積後，「任命 vs 世代」的共線才可能鬆開，屆時才分得出這個 null 是真的沒有效果、還是一屆樣本的檢定力不足。
-        </p>
-      </div>
+function ResearchProblem() {
+  const RP = data.問題意識;
+  if (!RP?.敘事?.length) return null;
+  return (
+    <section className="border-t border-[var(--cc-line)] py-5">
+      {RP.敘事.map((b, i) => <BeatBlock key={i} beat={b} 圖={RP.圖表} />)}
     </section>
   );
 }
