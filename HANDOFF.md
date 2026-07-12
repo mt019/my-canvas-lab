@@ -304,6 +304,10 @@ work.
   是官方自訂字型 PUA 字元 U+E8C7（肉眼空白），依理由書＋官方連結還原「臺（77）內地字」；
   (b) `stripBenchRoster` 剔憲判理由書尾端合議庭署名列（60 件，已結構化在 參與/審判長 欄）。
   已 app-json→validate→sync→canvas build。全部 Playwright 實機驗證（本輪 5+5+14 檢）、console 無錯。
+- 2026-07-11 NFKC 標點污染修復（資料 repo）：意見書 1533 篇＋釋字 813 件欄位的全形標點曾被管線
+  NFKC 打成半形，已改 NFC 全量復原（詳資料 repo LOG 同日條）；資料層正規化政策＝落地一律 NFC
+  （`lib.mjs normalizeText()`），validate 加半形標點棘輪哨兵（主欄位 ≤2.5%／意見書 ≤1.0%）。
+  本 repo 隨動：快照三檔重 sync、字型子集 rebuild＋exceptions 補小形標點 ﹐﹔﹖ 三字位、build 綠。
 - Imports `src/data/constitutionalCourt.json` (~5.4MB since M5 Phase B;
   行憲前 rows are lean catalog previews, not full text) plus a lazy
   companion `constitutionalCourt-pre1947-fulltext.json` (~2.4MB,
