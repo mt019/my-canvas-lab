@@ -112,6 +112,11 @@ export default function HoverCite({ source, lang = 'zh', children }) {
         onFocus={show}
         onBlur={hide}
         onClick={() => { setPinned((p) => !p); setOpen(true); }}
+        // display:inline, not the button default of inline-block. An inline-block
+        // is an atomic box: the line-breaker will happily break after it, and the
+        // CJK rule that forbids a line starting with 。 stops applying — which is
+        // how a lone full stop ends up on its own line after a citation.
+        style={{ display: 'inline' }}
         className="ml-0.5 align-super text-token-xs text-accent transition-colors duration-fast hover:text-ink"
       >
         *

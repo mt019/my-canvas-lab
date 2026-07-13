@@ -75,12 +75,22 @@ html {
   overflow-x: clip;
 }
 
+/* 中文排版的三條全域規則（2026-07-13）。
+   1. line-break: strict — 行首不得出現句號、逗號、右引號、右括號等收尾標點。
+      預設值在多數情況下已經這樣做，但只要標點前面是個 inline-block（例如引註標記
+      這種 <button>），瀏覽器會把它當成不可分割的行內物件、允許在其後斷行，孤零零
+      的「。」就掉到下一行去。標記本身改成純行內元素，這條規則才真的生效。
+   2. text-wrap: pretty — 避免末行只剩一兩個字的孤字。
+   3. overflow-wrap: break-word — 長網址不撐破版面（中文本來就能任意處斷行）。*/
 body {
   font-family: var(--font-body);
   font-synthesis: none;
   font-size: var(--text-body);
   color: var(--c-ink);
   background-color: var(--c-paper);
+  line-break: strict;
+  text-wrap: pretty;
+  overflow-wrap: break-word;
   overflow-x: clip;
   overscroll-behavior-x: none;
   max-width: 100%;
