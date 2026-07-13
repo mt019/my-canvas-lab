@@ -57,11 +57,26 @@ The 0.05 threshold has no theoretical standing either. <Cite id="fisher1925Stati
 
 ## Where the weld cracks
 
-A p value is not the probability that the null is true. It is the probability of data like these *given* that the null is true. The condition runs the other way, and the two numbers can be nowhere near each other. To say how likely a significant finding is to be real, you need something the p value knows nothing about: how many hypotheses in your field were true to begin with.
+A p value is not the probability that the null is true. It is the probability of data like these *given* that the null is true. Those two sentences look almost identical, and the condition runs in opposite directions.
+
+Change the setting and it becomes obvious. Suppose a disease affects ten people in every thousand. The test is decent: of the people who have it, eight in ten test positive; of the people who do not, 5% test positive anyway. You test positive. What are the chances you have the disease?
+
+Skip the formula and count people. Out of a thousand:
+
+- Ten actually have it. Eight of them test positive; two are missed.
+- Nine hundred and ninety do not. About fifty of them test positive anyway.
+
+Fifty-eight people got a positive result, and only eight of them are ill. **A positive test means about an 8 in 58 chance of being ill — roughly 14%.** Not 80%, and certainly not 95%.
+
+What changed? "Eight in ten sick people test positive" reads from the disease towards the test. "How many people who test positive are sick" reads from the test back towards the disease. Reverse the direction and the answer drops from 80% to 14%. The thing that went missing in between is the **base rate**: how rare the disease was to begin with. The test itself knows nothing about that.
+
+The p value is that test. $p < 0.05$ tells you how rare data like this would be if the null were true — reading from the null towards the data. The question you actually care about runs the other way: given data like this, how likely is the null to be false? Answering it needs the one thing the p value has no access to — **how many hypotheses in this field were true in the first place**. That is the research version of a base rate.
+
+Turn the dials yourself. Prior odds of 1:10 mean that of every eleven hypotheses someone tests in this field, about one is true, which is roughly what exploratory work and screening experiments look like:
 
 <PPV />
 
-In a field where most hypotheses are wrong — exploratory work, high-throughput screens, anything that casts a wide net — and power is low, most of what comes back "significant" is false. Every single test was performed correctly. <Cite id="ioannidis2005WhyMostPublished">This is the arithmetic behind Ioannidis's 2005 claim that most published research findings are false</Cite>.
+Lower the power and the picture gets worse: **in a field where most hypotheses are wrong and power is low, most of what comes back "significant" is false.** Every single test was performed correctly and nobody cheated. <Cite id="ioannidis2005WhyMostPublished">This is the arithmetic behind Ioannidis's 2005 claim that most published research findings are false</Cite> — he accused nobody of fraud; he applied the head-counting above to the scientific literature as a whole.
 
 A small p does not mean a large effect, either. The 1988 aspirin trial is the standing example: <Cite id="steeringCommittee1988PhysiciansHealthStudy">22,071 physicians, 104 heart attacks on aspirin against 189 on placebo, $p < 0.00001$</Cite>. About as small as a p value gets. And <Cite id="rosenthal1990SoftPsychology">the effect size, expressed as a correlation, is roughly 0.03</Cite> — two numbers from the same table, one of which looks like proof and one of which you can barely see.
 

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-07-13T06:25:25.796Z",
+  "generatedAt": "2026-07-13T06:28:47.904Z",
   "source": "statistics-lab-data, built by engineering/scripts/build-app-json.mjs",
   "meta": {
     "slug": "null-hypothesis",
@@ -32,7 +32,7 @@
       "Neyman-Pearson",
       "複製危機"
     ],
-    "readingMinutes": 4
+    "readingMinutes": 5
   },
   "figures": {
     "lady-tasting-tea": {
