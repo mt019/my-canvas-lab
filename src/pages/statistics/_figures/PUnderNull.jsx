@@ -129,8 +129,8 @@ export default function PUnderNull({ n = 30, runs = 2000, seed = 20260713, delta
           data={bins.map((count, i) => ({ key: i, value: count }))}
           x={x}
           y={y}
-          cat={2}
-          highlightCat={2}
+          cat={8}
+          highlightCat={8}
           highlight={(d) => (d.key + 1) / BINS <= alpha}
         />
         <RuleLine at={alpha} scale={pAxis} orient="vertical" label={`p = ${alpha}`} />

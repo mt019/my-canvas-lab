@@ -13,10 +13,11 @@ import TableOfContents from './TableOfContents';
  * column takes the whole width and the headings collapse into a summary at the top
  * — a sidebar squeezed onto a phone is worse than no sidebar.
  *
- * The reading column is bare paper. No card, no tint, no panel behind the words:
- * a filled block under body text is the surest way to make a page look like a
- * product landing page. Color belongs to the shell — the rail carries a restrained
- * wash of the site's own tone, which is what tells you which site you are on.
+ * Neither the reading column nor the rail is a colored panel. A tinted block of
+ * any hue sits against the paper's own warmth and fights it; the only colors that
+ * survive next to body text are the ones already in the ink. So the rail is text
+ * on paper with a hairline beside it, and the single accent in the whole shell is
+ * the mark on wherever the reader currently is.
  */
 export default function ArticleLayout({ title, eyebrow, summary, nav, tocLabel, children }) {
   const bodyRef = useRef(null);
@@ -24,15 +25,14 @@ export default function ArticleLayout({ title, eyebrow, summary, nav, tocLabel, 
   return (
     <div className="mx-auto grid max-w-[86rem] gap-10 px-4 sm:px-6 lg:grid-cols-[15rem_minmax(0,44rem)_14rem] lg:gap-12">
       <aside className="hidden lg:block">
-        <div
-          className="sticky top-10 max-h-[calc(100vh-5rem)] overflow-y-auto rounded-token-md border border-line-soft px-4 py-5"
-          style={{ background: 'var(--lab-rail, var(--c-surface))' }}
-        >
+        <div className="sticky top-10 max-h-[calc(100vh-5rem)] overflow-y-auto border-r border-line-soft pr-5">
           {nav}
         </div>
       </aside>
 
-      <article>
+      {/* No fill behind the words — only a faint paper grain, so long-form text
+          reads as printed on something rather than glowing off a flat white. */}
+      <article className="reading-grain">
         <header className="mb-8">
           {eyebrow ? (
             <p className="mb-2 font-accent text-token-xs uppercase tracking-[0.18em] text-ink-faint">

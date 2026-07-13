@@ -73,9 +73,9 @@ export default function LadyTastingTea({ cups = 8, truth = [1, 3, 5, 8], lang = 
               aria-pressed={on}
               className="h-12 w-12 rounded-full border text-token-sm transition-colors duration-fast"
               style={{
-                borderColor: on ? 'var(--cat-2-tx)' : reveal ? 'var(--status-success-tx)' : 'var(--c-line)',
-                background: on ? 'var(--cat-2-bg)' : reveal ? 'var(--status-success-bg)' : 'var(--c-paper)',
-                color: on ? 'var(--cat-2-tx)' : reveal ? 'var(--status-success-tx)' : 'var(--c-ink-faint)',
+                borderColor: on ? 'var(--c-accent)' : reveal ? 'var(--c-ink-muted)' : 'var(--c-line)',
+                background: on ? 'var(--c-accent-soft)' : 'var(--c-paper)',
+                color: on ? 'var(--c-accent)' : reveal ? 'var(--c-ink)' : 'var(--c-ink-faint)',
               }}
             >
               {i}
@@ -117,8 +117,8 @@ export default function LadyTastingTea({ cups = 8, truth = [1, 3, 5, 8], lang = 
           data={dist.counts.map((count, k) => ({ key: k, value: count }))}
           x={x}
           y={y}
-          cat={2}
-          highlightCat={2}
+          cat={8}
+          highlightCat={8}
           highlight={(d) => submitted && d.key === correct}
         />
       </ChartFrame>
