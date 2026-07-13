@@ -61,7 +61,7 @@ export default function NullHypothesis() {
   useEffect(() => { document.title = `${title}｜Canvas Lab`; }, [title]);
 
   return (
-    <main className="min-h-screen bg-paper paper-texture py-10 text-ink" style={{ zoom: scale }}>
+    <main className="reading-grain min-h-screen bg-paper py-10 text-ink" style={{ zoom: scale }}>
       <div className="mx-auto mb-6 flex max-w-[86rem] items-center justify-between gap-4 px-4 sm:px-6">
         <Link to="/" className="text-token-sm text-ink-faint transition-colors duration-fast hover:text-accent">
           ← Canvas Lab

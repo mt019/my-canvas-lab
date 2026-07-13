@@ -30,9 +30,11 @@ export default function ArticleLayout({ title, eyebrow, summary, meta, nav, tocL
         </div>
       </aside>
 
-      {/* No fill behind the words — only a faint paper grain, so long-form text
-          reads as printed on something rather than glowing off a flat white. */}
-      <article className="reading-grain">
+      {/* Nothing behind the words: no fill, and no texture of its own either. The
+          paper grain belongs to the whole page (see the page component) — painted
+          onto this column alone it draws a visible rectangle, which is a panel by
+          another name. */}
+      <article>
         <header className="mb-8">
           {eyebrow ? (
             <p className="mb-2 font-accent text-token-xs uppercase tracking-[0.18em] text-ink-faint">
