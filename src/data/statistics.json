@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-07-13T08:10:27.999Z",
+  "generatedAt": "2026-07-13T17:20:32.240Z",
   "source": "statistics-lab-data, built by engineering/scripts/build-app-json.mjs",
   "site": {
     "intro": "統計課本教你怎麼算，很少告訴你這些東西當初是為了什麼問題被發明出來，又是在哪裡開始被誤用。這個站一次處理一個看起來理所當然、來歷卻可疑的概念：它為什麼長成這樣，是誰為了什麼發明它，以及它壞掉的時候會壞在哪裡。文章裡的模擬都可以親手轉動，因為有些事情得自己按下去重跑一萬次才會相信。",
@@ -73,6 +73,39 @@
           "replication crisis"
         ],
         "readingMinutes": 7
+      }
+    },
+    {
+      "slug": "justice-partial-pooling",
+      "route": "/statistics/justice-partial-pooling",
+      "topic": "inference",
+      "title": "大法官的差異有多大？",
+      "subtitle": "用貝氏階層模型處理小樣本比例與部分匯聚",
+      "summary": "甲在 4 件參與案件中提出 3 件個別意見書，乙在 100 件中提出 40 件。75% 與 40% 可以描述已觀察的案件，卻不足以支持排名。本文用二項模型、後驗分布與部分匯聚，說明小樣本比例應如何估計與報告。",
+      "publishedAt": "2026-07-13",
+      "updatedAt": "2026-07-13",
+      "readingMinutes": 5,
+      "tags": [
+        "貝氏統計",
+        "階層模型",
+        "部分匯聚",
+        "小樣本",
+        "司法院資料",
+        "不確定性"
+      ],
+      "en": {
+        "title": "How Large Are the Differences Between Justices?",
+        "subtitle": "Small-sample proportions and partial pooling in a Bayesian hierarchical model",
+        "summary": "Justice A files a separate opinion in 3 of 4 participating cases; justice B does so in 40 of 100. The two proportions describe the observed cases, but they do not justify a ranking. This article uses a binomial model, posterior distributions, and partial pooling to show how small-sample proportions can be estimated and reported.",
+        "tags": [
+          "Bayesian statistics",
+          "hierarchical models",
+          "partial pooling",
+          "small samples",
+          "Constitutional Court data",
+          "uncertainty"
+        ],
+        "readingMinutes": 4
       }
     }
   ],

@@ -1,0 +1,133 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-07-13T17:20:32.240Z",
+  "source": "statistics-lab-data, built by engineering/scripts/build-app-json.mjs",
+  "meta": {
+    "slug": "justice-partial-pooling",
+    "topic": "inference",
+    "title": "大法官的差異有多大？",
+    "subtitle": "用貝氏階層模型處理小樣本比例與部分匯聚",
+    "summary": "甲在 4 件參與案件中提出 3 件個別意見書，乙在 100 件中提出 40 件。75% 與 40% 可以描述已觀察的案件，卻不足以支持排名。本文用二項模型、後驗分布與部分匯聚，說明小樣本比例應如何估計與報告。",
+    "publishedAt": "2026-07-13",
+    "en": {
+      "title": "How Large Are the Differences Between Justices?",
+      "subtitle": "Small-sample proportions and partial pooling in a Bayesian hierarchical model",
+      "summary": "Justice A files a separate opinion in 3 of 4 participating cases; justice B does so in 40 of 100. The two proportions describe the observed cases, but they do not justify a ranking. This article uses a binomial model, posterior distributions, and partial pooling to show how small-sample proportions can be estimated and reported.",
+      "tags": [
+        "Bayesian statistics",
+        "hierarchical models",
+        "partial pooling",
+        "small samples",
+        "Constitutional Court data",
+        "uncertainty"
+      ],
+      "readingMinutes": 4
+    },
+    "tags": [
+      "貝氏統計",
+      "階層模型",
+      "部分匯聚",
+      "小樣本",
+      "司法院資料",
+      "不確定性"
+    ],
+    "readingMinutes": 5,
+    "updatedAt": "2026-07-13"
+  },
+  "figures": {},
+  "sources": {
+    "gelmanEtAl2013BayesianDataAnalysis": {
+      "author": "Andrew Gelman, John B. Carlin, Hal S. Stern, David B. Dunson, Aki Vehtari, and Donald B. Rubin",
+      "title": "Bayesian Data Analysis",
+      "year": 2013,
+      "container": "3rd ed., CRC Press",
+      "locator": "Ch. 2, §2.1, pp.29-37（binomial likelihood, beta prior, posterior distribution）；Ch. 5, pp.101-104（hierarchical models, exchangeability, and the rat-tumor example）。",
+      "quote": "Many statistical applications involve multiple parameters that can be regarded as related or connected in some way by the structure of the problem.",
+      "url": "https://sites.stat.columbia.edu/gelman/book/BDA3.pdf",
+      "en": {
+        "locator": "Ch. 2 §2.1, pp.29-37 (the binomial likelihood, beta prior, and posterior distribution); Ch. 5, pp.101-104 (hierarchical models, exchangeability, and the rat-tumor example).",
+        "quote": "Many statistical applications involve multiple parameters that can be regarded as related or connected in some way by the structure of the problem."
+      }
+    },
+    "gelmanHillVehtari2020RegressionStories": {
+      "author": "Andrew Gelman, Jennifer Hill, and Aki Vehtari",
+      "title": "Regression and Other Stories",
+      "year": 2020,
+      "container": "Cambridge University Press",
+      "locator": "Ch. 4, §4.2, pp.50-52（estimates, standard errors, and intervals）；§4.4, pp.59-60（statistical significance, Type S and Type M errors）。",
+      "quote": "The confidence interval represents a range of values of a parameter or quantity of interest that are roughly consistent with the data, given the assumed sampling distribution.",
+      "url": "https://sites.stat.columbia.edu/gelman/regression/",
+      "en": {
+        "locator": "Ch. 4 §4.2, pp.50-52 (estimates, standard errors, and intervals); §4.4, pp.59-60 (statistical significance, Type S and Type M errors).",
+        "quote": "The confidence interval represents a range of values of a parameter or quantity of interest that are roughly consistent with the data, given the assumed sampling distribution."
+      }
+    },
+    "gelmanHillYajima2009MultipleComparisons": {
+      "author": "Andrew Gelman, Jennifer Hill, and Masanao Yajima",
+      "title": "Why We (Usually) Don't Have to Worry About Multiple Comparisons",
+      "year": 2009,
+      "container": "Journal of Research on Educational Effectiveness, 5(2), pp.189-211",
+      "locator": "Abstract and discussion of multilevel modeling（partial pooling shifts estimates toward each other; conventional multiple-comparison procedures instead widen intervals or adjust p values）。",
+      "quote": "Multilevel models perform partial pooling (shifting estimates toward each other).",
+      "url": "https://arxiv.org/abs/0907.2478",
+      "en": {
+        "locator": "Abstract and discussion of multilevel modeling (partial pooling shifts estimates toward each other; conventional multiple-comparison procedures instead widen intervals or adjust p values).",
+        "quote": "Multilevel models perform partial pooling (shifting estimates toward each other)."
+      }
+    }
+  },
+  "quiz": [
+    {
+      "id": "q1-raw-rate",
+      "prompt": "甲在 4 件參與案件中有 3 件提出意見書，乙在 100 件中有 40 件提出。只看 75% 與 40%，最直接漏掉了什麼？",
+      "options": [
+        "甲的比例一定算錯了",
+        "兩個比例背後的案件數不同，因此估計的不確定性不同",
+        "乙一定比甲更常提出意見書",
+        "百分比不能用於司法資料"
+      ],
+      "correctIndex": 1,
+      "explain": "比例本身沒有錯，但 3/4 和 40/100 提供的資訊量差很多。任何比較都要同時報告案件數與不確定性。"
+    },
+    {
+      "id": "q2-partial-pooling",
+      "prompt": "部分匯聚會怎麼處理只有少量案件的個別比例？",
+      "options": [
+        "直接刪除小樣本大法官",
+        "把所有人的比例改成全體平均",
+        "讓小樣本估計同時參考自己的資料與整體分布；案件數增加後，自己的資料會占更大權重",
+        "把每個比例都做顯著性檢定，只保留 p < 0.05 的人"
+      ],
+      "correctIndex": 2,
+      "explain": "部分匯聚不是抹平差異。它讓資料量少的估計保留較大的不確定性，並以群體資料提供有限的資訊；資料量多時，個別資料自然占較大權重。"
+    },
+    {
+      "id": "q3-estimand",
+      "prompt": "如果研究要比較大法官的立場，以下哪一項最不能直接拿來當作立場指標？",
+      "options": [
+        "事先定義、逐項編碼且經複核的表決方向",
+        "每案是否提出意見書，並清楚說明量的是發表意見書的傾向",
+        "意見書篇數，卻直接把它解讀成意識形態位置",
+        "依案件類型分層後的表決紀錄"
+      ],
+      "correctIndex": 2,
+      "explain": "意見書篇數可以描述發表行為，不能自行變成立場。統計模型只能處理已定義的結果變項，不能修補構念和指標之間的落差。"
+    }
+  ],
+  "misreadings": [],
+  "timeline": [],
+  "terms": {
+    "confidence-interval": {
+      "slug": "confidence-interval",
+      "term": "信賴區間",
+      "oneLine": "一套會生出區間的規則。95% 是這套規則的長期命中率，不是眼前這一個區間的機率。",
+      "example": "Neyman 1937 自己問：對已經算出來的那一個區間，能不能說真值落在裡面的機率是 95%？他的答案是不能。",
+      "route": "/statistics/glossary/confidence-interval",
+      "en": {
+        "term": "Confidence interval",
+        "oneLine": "A rule for producing intervals. The 95% is the rule's long-run hit rate, not the probability for the one interval in front of you.",
+        "example": "Neyman asked it himself in 1937: of an interval already computed, may we say the true value lies inside it with probability 95%? His answer was no."
+      }
+    }
+  }
+}

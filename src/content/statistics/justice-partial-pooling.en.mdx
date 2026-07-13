@@ -1,0 +1,69 @@
+Suppose justice A files a separate opinion in 3 of 4 participating cases, while justice B does so in 40 of 100. The observed proportions are 75% and 40%. They describe the cases in hand, but they do not justify a ranking. A few additional cases would change A's proportion sharply. B's would move much less.
+
+Court data often have this shape. A shorter term, more recusals, or a sparse category of cases can leave one justice with a small denominator. A table sorted by proportions will often place the least-observed justices at either end.
+
+## What counts as one observation?
+
+The outcome must be a data rule before it becomes a model. For a question about separate opinions, one justice in one case can be one observation: did that justice file at least one separate opinion in that case? The denominator is the number of eligible cases in which the justice participated.
+
+A question about departures from the majority requires itemized votes and rules for multiple dispositive issues, split votes, and nonparticipation. Separate opinions and voting direction are different outcomes. Their numerators should remain separate in the data.
+
+The case universe also needs a written rule: whether procedural decisions enter the data, how joint opinions are counted, how missing records are handled, and where the comparison period ends. Each choice changes the denominator and, with it, the estimate.
+
+## What a proportion can tell us
+
+Let $n_j$ be the number of eligible cases for justice $j$, and let $y_j$ be the number that meet the stated outcome rule. The raw proportion is
+
+$$
+\hat{p}_j = \frac{y_j}{n_j}.
+$$
+
+Both $3/4$ and $40/100$ belong in a results table. They report the share of observed cases. Any claim about a tendency beyond those cases has to keep the denominator in view.
+
+A standard error or a <Term id="confidence-interval">confidence interval</Term> makes the range of an estimate visible. <Cite id="gelmanHillVehtari2020RegressionStories">Gelman, Hill, and Vehtari describe an interval under an assumed sampling distribution as a range of parameter values roughly consistent with the data.</Cite> An interval based on four cases will usually be wider than one based on one hundred. That difference speaks more directly to the evidence than the ordering of 75% and 40%.
+
+## A binomial model and a posterior distribution
+
+For the outcome "files a separate opinion in an eligible case," let $\theta_j$ be justice $j$'s unknown proportion under the study's data definition:
+
+$$
+y_j \sim \mathrm{Binomial}(n_j, \theta_j).
+$$
+
+The binomial model connects a justice's case count to an unknown proportion. Case type, institutional change, and differences among justices are outside this line. Whether they belong in the model depends on the research question and the available data.
+
+A simple prior is
+
+$$
+\theta_j \sim \mathrm{Beta}(a,b).
+$$
+
+After observing $y_j$ cases that meet the rule and $n_j-y_j$ that do not, the posterior distribution is
+
+$$
+\theta_j \mid y_j \sim \mathrm{Beta}(a+y_j, b+n_j-y_j).
+$$
+
+The posterior retains uncertainty in the estimated proportion. A's data may favor higher values, while four cases still leave a wide range. <Cite id="gelmanEtAl2013BayesianDataAnalysis">Bayesian Data Analysis sets out the beta prior and posterior for a binomial model, then turns to related parameters in its chapter on hierarchical models.</Cite>
+
+## Estimating people with few cases
+
+When each justice is estimated separately, A's result rests almost entirely on four cases. A hierarchical model places comparable individual proportions in a common distribution and uses all of the data to estimate both an overall level and the amount of individual variation. A justice with few cases is informed by that justice's own record and by the group distribution. With more cases, the justice's own record carries more weight.
+
+This is partial pooling. It does not turn every estimate into the same number, and it retains the small groups. <Cite id="gelmanHillYajima2009MultipleComparisons">Gelman, Hill, and Yajima describe partial pooling in multilevel models as estimates moving toward one another while drawing on the information in the other groups.</Cite>
+
+The common distribution is itself a research assumption. Different terms, case types, or institutional periods can create systematic differences. The model can include those conditions, or the comparison can be narrowed. <Cite id="gelmanEtAl2013BayesianDataAnalysis">BDA makes the same point in its discussion of hierarchical models: systematic differences among groups need a place in the model.</Cite>
+
+## What belongs in the results table
+
+A comparison table should report each justice's case count, raw proportion, posterior interval, and case universe. A comparison of A and B can report
+
+$$
+\Pr(\theta_{A} > \theta_{B} \mid \text{data}).
+$$
+
+This is the posterior probability that A's unknown proportion exceeds B's under the stated model, prior, and case universe. It makes no finding about personality, political position, or a nominating president.
+
+Cases are not randomly assigned to justices. Overlapping terms, recusals, case type, institutional change, and the completeness of the record can affect both the number of cases and the outcome. Partial pooling addresses estimation with a small denominator. It does not remove those differences or turn an observational record into a randomized experiment.
+
+An extreme proportion based on a few cases calls for a look back at the cases and the data rule. It may change as additional cases arrive; it may also reflect a difference in case mix or term. Readers can judge the comparison only when the case counts, raw proportions, model assumptions, and posterior ranges appear together.

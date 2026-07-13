@@ -75,6 +75,16 @@ const PAGE_META = { // token-exempt: per-page identity chip colors (data, not st
     listed: false,
     type: 'Article',
   },
+  JusticePartialPooling: {
+    name: '大法官的差異有多大？',
+    desc: '用貝氏階層模型處理小樣本比例、部分匯聚與司法院資料的可比較性',
+    Icon: Sigma,
+    accent: '#dfe3ea',
+    accentText: '#6c7690',
+    group: 'learn',
+    listed: false,
+    type: 'Article',
+  },
   AutoTuner: {
     name: '自動調音器',
     desc: '吉他、烏克麗麗、吉他麗麗全支援，含 Open G、DADGAD 等特殊定弦',

@@ -1,11 +1,11 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-07-13T08:10:28.038Z",
+  "generatedAt": "2026-07-13T17:20:32.318Z",
   "source": "statistics-lab-data, built by engineering/scripts/build-app-json.mjs",
   "meta": {
     "slug": "about",
     "title": "本站說明",
-    "summary": "這個站怎麼寫、例子怎麼查、模擬為什麼每次跑出同樣的數字。",
+    "summary": "統計概念的來歷、例子與可重現的圖表。",
     "updatedAt": "2026-07-13",
     "en": {
       "title": "About this site",

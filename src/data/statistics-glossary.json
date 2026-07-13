@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-07-13T08:10:27.999Z",
+  "generatedAt": "2026-07-13T17:20:32.240Z",
   "source": "statistics-lab-data, built by engineering/scripts/build-app-json.mjs",
   "terms": {
     "confidence-interval": {
@@ -91,6 +91,14 @@
         }
       },
       "usedIn": [
+        {
+          "slug": "justice-partial-pooling",
+          "route": "/statistics/justice-partial-pooling",
+          "title": "大法官的差異有多大？",
+          "en": {
+            "title": "How Large Are the Differences Between Justices?"
+          }
+        },
         {
           "slug": "null-hypothesis",
           "route": "/statistics/null-hypothesis",
