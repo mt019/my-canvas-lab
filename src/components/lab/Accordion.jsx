@@ -22,11 +22,17 @@ export function useExpandedSet(ids) {
     });
   }, []);
 
+  // Open without toggling — for "jump to this card and make sure it is showing"
+  // (ConstitutionalCourt's history timeline scrolls to a card and opens it).
+  const open = useCallback((id) => {
+    setOpenIds((prev) => (prev.has(id) ? prev : new Set(prev).add(id)));
+  }, []);
+
   const expandAll = useCallback(() => setOpenIds(new Set(ids)), [ids]);
   const collapseAll = useCallback(() => setOpenIds(new Set()), []);
   const isOpen = useCallback((id) => openIds.has(id), [openIds]);
 
-  return { openIds, toggle, expandAll, collapseAll, isOpen };
+  return { openIds, toggle, open, expandAll, collapseAll, isOpen };
 }
 
 export function AccordionItem({ id, title, meta, isOpen, onToggle, children }) {

@@ -34,8 +34,12 @@ export default defineConfig({
     // JSX, which the React plugin then compiles. Math in prose is written as
     // $…$ / $$…$$ and compiled to KaTeX HTML at build time, so no Unicode math
     // character ever enters the source (see scripts/validate-math-notation.mjs).
+    // mdExtensions: [] — MDX must claim .mdx only. By default it also compiles
+    // .md, which would turn `import report from './x.md?raw'` (a plain string
+    // the page renders itself) into a component, and the page breaks.
     { enforce: 'pre', ...mdx({
       providerImportSource: '@mdx-js/react',
+      mdExtensions: [],
       remarkPlugins: [remarkMath],
       rehypePlugins: [rehypeKatex],
     }) },
