@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-07-13T06:39:15.091Z",
+  "generatedAt": "2026-07-13T06:42:25.618Z",
   "source": "statistics-lab-data, built by engineering/scripts/build-app-json.mjs",
   "topics": [
     {
@@ -23,7 +23,7 @@
       "summary": "「虛無」這個譯名，把 null 讀成了「什麼都沒發生」。Fisher 的 null 講的是可推翻性：實驗設下它，就是為了讓資料有東西可以反駁。這篇追一條線——品茶實驗如何生出第一個 p 值，Neyman 與 Pearson 如何把它改成一套決策規則，課本又如何把兩套邏輯焊成一個誰都沒設計過的東西，以及焊接處會裂在哪裡。",
       "publishedAt": "2026-07-13",
       "updatedAt": "2026-07-13",
-      "readingMinutes": 6,
+      "readingMinutes": 7,
       "tags": [
         "虛無假設",
         "p 值",

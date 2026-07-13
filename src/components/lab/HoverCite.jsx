@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { ExternalLink } from 'lucide-react';
 
 /*
@@ -98,39 +99,52 @@ export default function HoverCite({ source, lang = 'zh', children }) {
   const linkLabel = en ? 'Read it' : '原文';
 
   return (
-    <span
-      className="relative inline"
-      onMouseEnter={show}
-      onMouseLeave={hide}
-    >
-      <span className="cursor-help border-b border-dotted border-ink-faint">{children}</span>
-      <button
+    <>
+      {/* A <span>, not a <button>. Chromium treats a form control as an atomic
+          inline box even at display:inline — the text inside it is not part of the
+          surrounding text run, so the CJK rule that forbids a line starting with 。
+          cannot reach across it, and the full stop after a citation lands alone on
+          the next line. A span keeps the text in one run; role and key handling
+          give back what the button element was providing.
+          Also: no asterisk. A marker is one more character, and Chinese breaks
+          between any two characters, so the marker gets orphaned as well. The
+          dotted underline says the same thing and cannot be. */}
+      <span
         ref={markerRef}
-        type="button"
+        role="button"
+        tabIndex={0}
         aria-expanded={open}
         aria-describedby={open ? id : undefined}
+        onMouseEnter={show}
+        onMouseLeave={hide}
         onFocus={show}
         onBlur={hide}
         onClick={() => { setPinned((p) => !p); setOpen(true); }}
-        // display:inline, not the button default of inline-block. An inline-block
-        // is an atomic box: the line-breaker will happily break after it, and the
-        // CJK rule that forbids a line starting with 。 stops applying — which is
-        // how a lone full stop ends up on its own line after a citation.
-        style={{ display: 'inline' }}
-        className="ml-0.5 align-super text-token-xs text-accent transition-colors duration-fast hover:text-ink"
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            setPinned((p) => !p);
+            setOpen(true);
+          }
+        }}
+        className="cursor-help border-b border-dotted border-ink-faint transition-colors duration-fast hover:border-accent hover:text-accent"
       >
-        *
-      </button>
-      {open && pos ? (
-        <span
-          ref={cardRef}
-          role="tooltip"
-          id={id}
-          onMouseEnter={show}
-          onMouseLeave={hide}
-          style={{ position: 'fixed', left: pos.left, top: pos.top, width: CARD_W, maxHeight: '45vh', overflowY: 'auto' }}
-          className="z-30 block rounded-token-md border border-line bg-surface-raised px-3.5 py-3 text-left text-token-xs leading-relaxed shadow-token-md"
-        >
+        {children}
+      </span>
+      {open && pos
+        ? createPortal(
+          // The card is rendered at the end of <body>, not inside the paragraph.
+          // Anything mounted inside the sentence — even out of flow — risks nudging
+          // the line boxes around it, and the text visibly jumped on hover.
+          <div
+            ref={cardRef}
+            role="tooltip"
+            id={id}
+            onMouseEnter={show}
+            onMouseLeave={hide}
+            style={{ position: 'fixed', left: pos.left, top: pos.top, width: CARD_W, maxHeight: '45vh', overflowY: 'auto' }}
+            className="z-30 rounded-token-md border border-line bg-surface-raised px-3.5 py-3 text-left text-token-xs leading-relaxed shadow-token-md"
+          >
           <span className="block text-ink">
             {author}{en ? ` (${year}). ` : `（${year}）。`}{title}
           </span>
@@ -149,8 +163,10 @@ export default function HoverCite({ source, lang = 'zh', children }) {
               {linkLabel} <ExternalLink size={11} />
             </a>
           ) : null}
-        </span>
-      ) : null}
-    </span>
+          </div>,
+          document.body,
+        )
+        : null}
+    </>
   );
 }
