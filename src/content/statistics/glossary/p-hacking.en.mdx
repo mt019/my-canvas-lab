@@ -1,0 +1,15 @@
+## What it says
+
+p-hacking is adjusting the analysis while watching the result: collect twenty more subjects and look again, drop the covariate that misbehaves, switch to another outcome measure, change the rule for excluding outliers. Each step has a defensible reason. Together they amount to using the data to choose the analysis, and then presenting the analysis as if it had been fixed in advance.
+
+Malice is not required. Most p-hacking happens in the sincere course of cleaning up a dataset.
+
+## One worked example
+
+<Cite id="simmonsNelsonSimonsohn2011FalsePositive">Simmons, Nelson and Simonsohn simply did it on purpose in 2011</Cite>: subjects listened either to the Beatles' "When I'm Sixty-Four" or to a control song, then reported their date of birth. The finding was that the song made them a year and a half younger (20.1 years against 21.5, $F(1,17) = 4.92$, $p = .040$).
+
+Music does not reverse ageing. The point was to show that a little undeclared flexibility — in how many subjects to run, which covariates to include, which measures to report — can make anything significant. They calculated that this flexibility can drive the false-positive rate from 5% to about 60%. They also noted that their own result collapses to $p = .33$ once a single covariate is removed. That is the demonstration, not a caveat.
+
+## What stops it
+
+Preregistration: commit to the hypothesis, the sample size and the analysis before seeing the data. Exploratory analysis is still welcome — but it has to be labelled exploratory, and its p values cannot be presented as if they still bought a 5% error rate.

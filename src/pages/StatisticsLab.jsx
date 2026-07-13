@@ -17,6 +17,8 @@ const COPY = {
     topicsLabel: '主題',
     empty: '這個主題還沒有文章。',
     minutes: (m) => ` · 約 ${m} 分鐘`,
+    glossary: '術語表',
+    glossaryBlurb: (n) => `${n} 個術語，每個一句話定義、一個真實發生過的例子，以及它最常在哪裡被讀反。`,
   },
   en: {
     title: 'Statistics Lab',
@@ -25,11 +27,13 @@ const COPY = {
     topicsLabel: 'Topics',
     empty: 'Nothing here yet.',
     minutes: (m) => ` · ${m} min read`,
+    glossary: 'Glossary',
+    glossaryBlurb: (n) => `${n} terms, each with a one-line definition, an example that actually happened, and the way it is usually misread.`,
   },
 };
 
 export default function StatisticsLab() {
-  const { topics = [], articles = [] } = data;
+  const { topics = [], articles = [], glossary = [] } = data;
   const [topic, setTopic] = useTabParam('topic', 'all');
   const { lang, setLang } = useLang();
   const en = lang === 'en';
@@ -90,6 +94,24 @@ export default function StatisticsLab() {
         ))}
         {shown.length === 0 ? <p className="py-8 text-token-sm text-ink-faint">{c.empty}</p> : null}
       </div>
+
+      {glossary.length > 0 ? (
+        <Link
+          to="/statistics/glossary"
+          className="group mt-8 block border-t border-line-soft pt-5 transition-colors duration-fast hover:text-accent"
+        >
+          <div className="flex items-baseline justify-between gap-4">
+            <h2 className="font-display text-token-lg text-ink transition-colors duration-fast group-hover:text-accent">
+              {c.glossary}
+            </h2>
+            <ArrowRight
+              size={16}
+              className="shrink-0 text-ink-faint transition-transform duration-fast group-hover:translate-x-0.5 group-hover:text-accent"
+            />
+          </div>
+          <p className="mt-2 text-token-sm leading-relaxed text-ink-faint">{c.glossaryBlurb(glossary.length)}</p>
+        </Link>
+      ) : null}
     </PageShell>
   );
 }

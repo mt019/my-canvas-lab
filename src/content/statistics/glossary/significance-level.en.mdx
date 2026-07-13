@@ -1,0 +1,15 @@
+## What it says
+
+The significance level is a threshold fixed **in advance**: the share of true nulls I am willing to reject over the long run. It is a budget for one kind of error, not a scale of evidence.
+
+"In advance" is load-bearing. The rate only holds if the threshold was chosen before the data were seen. Picking it afterwards, once p is known, is the same as having no threshold.
+
+## Where it comes from
+
+<Cite id="fisher1925StatisticalMethods">Fisher wrote in 1925 that P = 0.05 is about 1.96 standard deviations, and that it is convenient to take this point as a limit in judging whether a deviation is significant</Cite>. Convenient. That is the whole theoretical standing of 0.05 — and in 1925 it had a practical reason too: it was easy to look up in a table.
+
+<Cite id="neymanPearson1933">Neyman and Pearson gave the threshold a job inside a decision framework</Cite>: fix a ceiling on <Term id="type-i-and-type-ii-error">Type I error</Term>, then maximise <Term id="statistical-power">power</Term> under that constraint. The threshold has a function there, at the price of no longer reading p as strength of evidence.
+
+## The usual misreading
+
+Reading p = 0.049 as "it works" and p = 0.051 as "it does not" turns an administrative line into a natural one. <Cite id="wassersteinLazar2016">The American Statistical Association's 2016 statement puts it flatly: scientific conclusions and policy decisions should not be based only on whether a p value passes a specific threshold</Cite>.

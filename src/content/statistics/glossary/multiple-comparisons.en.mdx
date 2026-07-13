@@ -1,0 +1,17 @@
+## What it says
+
+One test at $\alpha = .05$ raises a false alarm 5% of the time when the null is true. Run 20 independent tests and the chance of at least one false alarm is
+
+$$1 - (1 - 0.05)^{20} \approx 0.64$$
+
+Run enough tests and noise alone will hand you a "significant" one. Correcting for multiple comparisons means paying for that: either hold down the familywise error rate (Bonferroni: divide the threshold by the number of tests) or control the false discovery rate — <Cite id="benjaminiHochberg1995FDR">Benjamini and Hochberg's 1995 proposal, which governs the share of errors among the findings you declare</Cite>.
+
+## One worked example
+
+In 2009 Bennett and colleagues put an Atlantic salmon in an fMRI scanner and asked it to judge the emotion of people in photographs. <Cite id="bennett2010DeadSalmon">The fish was about 18 inches long, weighed 3.8 lbs, and was dead</Cite>. At an uncorrected threshold ($t(131) > 3.15$, $p < 0.001$), 16 of 8,064 voxels came out significant — clustered, handsomely, inside the salmon's brain cavity. Under false-discovery-rate or familywise correction, nothing survived, not even with the threshold relaxed to $p = 0.25$.
+
+The poster won an Ig Nobel in 2012. Its target was never the fish; it was the pile of fMRI papers then being published without correction.
+
+## How it differs from p-hacking
+
+<Term id="p-hacking">p-hacking</Term> is **selective reporting**: many analyses run, the flattering one shown. Multiple comparisons is a matter of **volume**: everything reported honestly, but so many tests that the threshold no longer delivers the error rate it promises. They often occur together — and the first makes the second uncorrectable, because nobody knows how many tests were really run.

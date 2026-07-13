@@ -1,0 +1,20 @@
+## What it says
+
+Positive predictive value asks the question a reader actually has: **of everything announced as significant, how much is real?**
+
+It is not the p value, and it is not $1 - \alpha$. It depends on three quantities: how many hypotheses in the field were true to begin with, how much <Term id="statistical-power">power</Term> the studies have, and where the <Term id="significance-level">threshold</Term> sits.
+
+## One worked example
+
+Suppose one hypothesis in ten is true, power is 0.5, and the threshold is 0.05. Run 1,000 studies:
+
+- 100 true hypotheses yield $100 \times 0.5 = 50$ significant results.
+- 900 false ones yield $900 \times 0.05 = 45$ significant results.
+
+That is 95 significant findings, of which 50 are real. **A positive predictive value of 53% — coin-toss territory.** Every single test was performed correctly. Nobody cheated. Nearly half the conclusions are false.
+
+Drop power to 0.2 — hardly a stretch, given <Cite id="cohen1962PowerReview">the power levels Cohen found in 1962</Cite> — and the true positives fall to 20, taking the positive predictive value down to 31%.
+
+## Why it matters
+
+<Cite id="ioannidis2005WhyMostPublished">This is how Ioannidis arrived, in 2005, at "why most published research findings are false"</Cite>. He accused nobody of fraud: he took the head-counting arithmetic above and applied it to the scientific literature. There are only three handles to pull — raise power, test hypotheses more likely to be true, or tighten the threshold (and miss more).

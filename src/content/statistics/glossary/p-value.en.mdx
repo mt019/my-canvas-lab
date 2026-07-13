@@ -1,0 +1,19 @@
+## What it says
+
+The p value answers one narrow question: **supposing the null were true**, how probable is a result at least as extreme as the one I got? It is a conditional probability, and the condition sits on the null side.
+
+It does not tell you the probability that the null is true. The two run in opposite directions, and thoroughly so: from "if she is guessing, a perfect score has probability 1.4%" you cannot get to "there is a 1.4% chance she is guessing."
+
+## One worked example
+
+There are 70 ways to choose four cups out of eight. Guessing, exactly one of them is the perfect pick, so
+
+$$p = \frac{1}{70} \approx 0.014$$
+
+That 0.014 is the p value. To compute it you first have to lay out everything guessing could have done — which is the <Term id="sampling-distribution">sampling distribution</Term>.
+
+## The usual misreadings
+
+<Cite id="greenland2016">Greenland and colleagues catalogued twenty-five of them in 2016</Cite>. The three most stubborn: p is the probability the null is true (it is not); p = 0.05 means there is a 5% chance the finding is a fluke (it does not); a large p means the null holds (it does not — it means you did not overturn it).
+
+Nor does the size of p tell you the size of the effect. <Cite id="steeringCommittee1988PhysiciansHealthStudy">The aspirin trial on 22,071 physicians reported $p < 0.00001$</Cite>, <Cite id="rosenthal1990SoftPsychology">and an effect size of roughly r = 0.03</Cite>. With a large enough sample, any tiny difference will push p down.

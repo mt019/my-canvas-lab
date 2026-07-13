@@ -1,0 +1,13 @@
+## What it says
+
+A confidence interval is the output of a **rule**: apply it to each dataset and it hands you an interval; in the long run 95% of those intervals cover the true value. The 95% is the rule's record, not the probability for the interval in front of you.
+
+## Where it comes from
+
+<Cite id="neyman1937ConfidenceIntervals">Neyman blocked the tempting misreading himself, in the 1937 paper that introduced the idea</Cite>. He sets out the long-run hit rate, then asks: the sample is drawn, the interval is computed, it runs from 1 to 2 — may we now say the true value lies between 1 and 2 with probability 95%? His answer: obviously not. The parameter is an unknown constant, and no probability statement about its value may be made.
+
+That restriction is not a technicality. It follows from where frequentist logic keeps its probabilities: in the procedure, never in the unknown truth. If you want a statement of the form "the true value lies in here with probability 0.95," you need a different framework — a Bayesian credible interval.
+
+## Why it still beats a bare p value
+
+Even with that restriction, an interval is more honest than a lone p value: it shows the <Term id="effect-size">effect size</Term> and its precision in one object. A "non-significant" result may be an interval hugging zero (there really is nothing there) or one running from strongly negative to strongly positive (you know nothing). A p value writes both as the same word: not significant.

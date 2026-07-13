@@ -1,0 +1,13 @@
+## What it says
+
+A sampling distribution is what a statistic looks like when the same mechanism is sampled over and over. Neither the <Term id="p-value">p value</Term> nor the <Term id="confidence-interval">confidence interval</Term> comes out of your data directly: both are read by holding your data up against this distribution of what would happen if the null were true.
+
+## One worked example
+
+<Cite id="fisher1935DesignOfExperiments">Eight cups, choose four</Cite>: $\binom{8}{4} = 70$ ways. The null — she is guessing — says all 70 are equally likely. Sort them by how many she gets right: 1 way to get all four, 16 ways to get three, 36 to get two, 16 to get one, 1 to get none. That table is the sampling distribution.
+
+Find where the real result falls in the table and the p value drops out. No normal curve, no approximation: the distribution was built by listing every possibility and counting.
+
+## Why it is usually invisible
+
+The $t$, $F$ and chi-square distributions in the textbook are sampling distributions — shapes derived under particular assumptions (normality, independence, equal variances). Computing a p value from them means borrowing those assumptions. When they fail, nothing throws an error; you simply get a wrong number. That is the case for the <Term id="permutation-test">permutation test</Term>: it rebuilds the distribution out of the data instead of trusting a shape.

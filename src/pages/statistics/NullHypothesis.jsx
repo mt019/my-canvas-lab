@@ -4,6 +4,7 @@ import FontSizeControl, { useFontScale } from '../../components/FontSizeControl'
 import LangSwitch, { useLang } from '../../components/LangSwitch';
 import Prose from '../../components/lab/Prose';
 import HoverCite from '../../components/lab/HoverCite';
+import TermLink from '../../components/lab/TermLink';
 import ArticleLayout, { ArticleNav } from '../../components/lab/ArticleLayout';
 import ArticleMeta from '../../components/lab/ArticleMeta';
 import ArticleZh from '../../content/statistics/null-hypothesis.zh.mdx';
@@ -30,7 +31,7 @@ import Timeline from './_figures/Timeline';
  * sentence by sentence reads like a translation.
  */
 export default function NullHypothesis() {
-  const { meta, figures, sources, misreadings, timeline } = data;
+  const { meta, figures, sources, misreadings, timeline, terms } = data;
   const [scale, setScale] = useFontScale();
   const { lang, setLang } = useLang();
   const en = lang === 'en';
@@ -52,7 +53,11 @@ export default function NullHypothesis() {
     // <Cite id="fisher1935…">…</Cite> — the id is checked against sources.json in
     // the data repo, so a citation with no source cannot reach the page.
     Cite: ({ id, children }) => <HoverCite source={sources?.[id]} lang={lang}>{children}</HoverCite>,
-  }), [params, sources, misreadings, timeline, lang]);
+    // <Term id="p-value">p 值</Term> — same contract, against the glossary: the
+    // card carries the definition, the card's link carries the reader to the
+    // term's own page.
+    Term: ({ id, children }) => <TermLink term={terms?.[id]} lang={lang}>{children}</TermLink>,
+  }), [params, sources, terms, misreadings, timeline, lang]);
 
   const title = en ? meta.en?.title ?? meta.title : meta.title;
   const summary = en ? meta.en?.summary ?? meta.summary : meta.summary;

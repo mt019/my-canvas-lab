@@ -1,6 +1,6 @@
 {
-  "schemaVersion": 1,
-  "generatedAt": "2026-07-13T06:47:45.599Z",
+  "schemaVersion": 2,
+  "generatedAt": "2026-07-13T07:10:42.140Z",
   "source": "statistics-lab-data, built by engineering/scripts/build-app-json.mjs",
   "topics": [
     {
@@ -44,7 +44,163 @@
           "Neyman-Pearson",
           "replication crisis"
         ],
-        "readingMinutes": 6
+        "readingMinutes": 7
+      }
+    }
+  ],
+  "glossary": [
+    {
+      "slug": "confidence-interval",
+      "route": "/statistics/glossary/confidence-interval",
+      "topic": "inference",
+      "term": "信賴區間",
+      "oneLine": "一套會生出區間的規則。95% 是這套規則的長期命中率，不是眼前這一個區間的機率。",
+      "en": {
+        "term": "Confidence interval",
+        "oneLine": "A rule for producing intervals. The 95% is the rule's long-run hit rate, not the probability for the one interval in front of you."
+      }
+    },
+    {
+      "slug": "effect-size",
+      "route": "/statistics/glossary/effect-size",
+      "topic": "inference",
+      "term": "效果量",
+      "oneLine": "效果有多大，用一把不隨樣本數伸縮的尺量出來。",
+      "en": {
+        "term": "Effect size",
+        "oneLine": "How large the effect is, on a scale that does not stretch with the sample."
+      }
+    },
+    {
+      "slug": "multiple-comparisons",
+      "route": "/statistics/glossary/multiple-comparisons",
+      "topic": "inference",
+      "term": "多重比較",
+      "oneLine": "檢定做得夠多，光靠雜訊也會冒出「顯著」。不校正，門檻就名存實亡。",
+      "en": {
+        "term": "Multiple comparisons",
+        "oneLine": "Run enough tests and noise alone will hand you a \"significant\" one. Without correction the threshold means nothing."
+      }
+    },
+    {
+      "slug": "null-hypothesis",
+      "route": "/statistics/glossary/null-hypothesis",
+      "topic": "inference",
+      "term": "虛無假設",
+      "oneLine": "被設計來承受攻擊的那個假設：設下它，是為了讓資料有機會推翻它。",
+      "en": {
+        "term": "Null hypothesis",
+        "oneLine": "The hypothesis set up to be attacked: it exists so the data have something to argue against."
+      }
+    },
+    {
+      "slug": "null-ritual",
+      "route": "/statistics/glossary/null-ritual",
+      "topic": "inference",
+      "term": "null ritual",
+      "oneLine": "把 Fisher 的證據邏輯和 Neyman-Pearson 的決策邏輯焊成一套固定動作，兩邊的代價都不付。",
+      "en": {
+        "term": "Null ritual",
+        "oneLine": "Fisher's evidential logic and Neyman-Pearson's decision logic welded into a fixed routine that pays neither one's price."
+      }
+    },
+    {
+      "slug": "p-hacking",
+      "route": "/statistics/glossary/p-hacking",
+      "topic": "inference",
+      "term": "p-hacking",
+      "oneLine": "一邊看結果一邊調分析：多收幾個樣本、換個共變量、換個結果變數，直到 p 掉到門檻底下。",
+      "en": {
+        "term": "p-hacking",
+        "oneLine": "Adjusting the analysis while watching the result — a few more subjects, another covariate, another outcome — until p drops below the line."
+      }
+    },
+    {
+      "slug": "p-value",
+      "route": "/statistics/glossary/p-value",
+      "topic": "inference",
+      "term": "p 值",
+      "oneLine": "假設虛無為真，得到「像這樣或更極端」的結果的機率。",
+      "en": {
+        "term": "p value",
+        "oneLine": "The probability of a result at least as extreme as the one you got, if the null were true."
+      }
+    },
+    {
+      "slug": "permutation-test",
+      "route": "/statistics/glossary/permutation-test",
+      "topic": "inference",
+      "term": "置換檢定",
+      "oneLine": "把標籤重新洗牌，看看純屬巧合能做到多好，再看真實資料排在哪裡。",
+      "en": {
+        "term": "Permutation test",
+        "oneLine": "Shuffle the labels, see how well coincidence can do, then see where the real data land."
+      }
+    },
+    {
+      "slug": "positive-predictive-value",
+      "route": "/statistics/glossary/positive-predictive-value",
+      "topic": "inference",
+      "term": "陽性預測值",
+      "oneLine": "在所有「顯著」的結果裡，真的有效果的佔幾成。它取決於這個領域有多少假說本來就是對的。",
+      "en": {
+        "term": "Positive predictive value",
+        "oneLine": "Of everything that comes out \"significant,\" how much is real. It depends on how many hypotheses in the field were true to begin with."
+      }
+    },
+    {
+      "slug": "replication-crisis",
+      "route": "/statistics/glossary/replication-crisis",
+      "topic": "inference",
+      "term": "複製危機",
+      "oneLine": "大量已發表的顯著結果，換一組人重做就做不出來。",
+      "en": {
+        "term": "Replication crisis",
+        "oneLine": "A large share of published significant findings do not come back when someone else runs the study again."
+      }
+    },
+    {
+      "slug": "sampling-distribution",
+      "route": "/statistics/glossary/sampling-distribution",
+      "topic": "inference",
+      "term": "抽樣分佈",
+      "oneLine": "同一個統計量在反覆抽樣下會長成的樣子。p 值與信賴區間都是從它身上量出來的。",
+      "en": {
+        "term": "Sampling distribution",
+        "oneLine": "The shape a statistic takes under repeated sampling. Both p values and confidence intervals are read off it."
+      }
+    },
+    {
+      "slug": "significance-level",
+      "route": "/statistics/glossary/significance-level",
+      "topic": "inference",
+      "term": "顯著水準",
+      "oneLine": "事前選定的門檻：長期而言，你願意讓多少比例的真虛無被錯判為顯著。",
+      "en": {
+        "term": "Significance level",
+        "oneLine": "A threshold fixed in advance: the share of true nulls you are willing to reject in the long run."
+      }
+    },
+    {
+      "slug": "statistical-power",
+      "route": "/statistics/glossary/statistical-power",
+      "topic": "inference",
+      "term": "檢定力",
+      "oneLine": "效果真的存在時，這個研究抓得到它的機率。",
+      "en": {
+        "term": "Statistical power",
+        "oneLine": "The probability that a study will catch an effect that is really there."
+      }
+    },
+    {
+      "slug": "type-i-and-type-ii-error",
+      "route": "/statistics/glossary/type-i-and-type-ii-error",
+      "topic": "inference",
+      "term": "第一類與第二類錯誤",
+      "oneLine": "兩種錯法：虛無為真卻拒絕它（誤報），虛無為假卻沒拒絕（漏抓）。",
+      "en": {
+        "term": "Type I and Type II error",
+        "oneLine": "Two ways to be wrong: rejecting a true null (a false alarm), or failing to reject a false one (a miss)."
       }
     }
   ]

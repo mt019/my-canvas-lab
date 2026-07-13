@@ -863,8 +863,18 @@ prose:
   the scale/axis layer. `Bars` and `AreaWash` take a categorical slot (1–8), not
   a color, and bake in pale fill + same-hue ink keyline — there is no `fill`
   prop to route around it.
-- `Badge`, `HoverCite`, `Math` (import it as `Tex`; the name `Math` shadows the
-  global), `Prose` (the MDX typography mapping).
+- `HoverCard` — the floating card behind both prose annotations: open on hover or
+  focus, click to pin, positioned from the marker's real screen box and clamped to
+  the viewport, portalled to `<body>`. The marker is a `<span>` with `role=button`,
+  never a real `<button>`: Chromium treats a form control as an atomic inline box
+  even at `display:inline`, which drops the text out of the surrounding run and
+  strands the CJK full stop after a citation on the next line. Don't "fix" that
+  back to a button.
+- `HoverCite` (citation, dotted underline) and `TermLink` (glossary term, dashed
+  underline) — both are thin cards over `HoverCard`. A citation hands the reader a
+  source; a term hands them a definition, an example, and a link to its own page.
+- `Badge`, `Math` (import it as `Tex`; the name `Math` shadows the global),
+  `Prose` (the MDX typography mapping).
 
 **Known gaps (found by migrating GovernmentDebt and reading ECFA's
 ThesisTimeline, both real users):** no primitive for point labels / annotation

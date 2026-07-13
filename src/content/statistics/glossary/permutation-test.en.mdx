@@ -1,0 +1,11 @@
+## What it says
+
+A permutation test does one thing: it reshuffles the labels. If the group labels carry no information — which is what the null hypothesis asserts — then scrambling them and recomputing the statistic should give you something much like the real result. Shuffle a few thousand times and you have the whole <Term id="sampling-distribution">distribution</Term> of what coincidence can manage, and you can see where the real data rank in it.
+
+## One worked example
+
+<Cite id="fisher1935DesignOfExperiments">The eight cups are the smallest permutation test there is</Cite>: assign the four "milk-first" labels across eight cups in every possible way and you get 70 arrangements. Here you can list all 70 and count — no shuffling, no simulation. That is exhaustive enumeration. Add a few cups and enumeration becomes impossible, which is when random shuffling steps in to approximate the same distribution.
+
+## What it buys and what it costs
+
+It buys you freedom from the normal distribution: the reference distribution grows out of the structure of your own data. What it does not do is remove assumptions — it relocates them. A permutation test requires that, under the null, the observations be exchangeable. For time series, clustered data and repeated measures that requirement often fails, and shuffling anyway yields a wrong answer with an air of rigour.

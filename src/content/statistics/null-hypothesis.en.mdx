@@ -1,7 +1,7 @@
 {/* English body. Title and summary live in meta.json. Math is LaTeX only.
     Figures and <Cite> are injected by the frontend; import nothing here. */}
 
-In every statistics course you are told that the null hypothesis is the one you set out to reject. That is right, and it is what I dutifully memorised.
+In every statistics course you are told that the <Term id="null-hypothesis">null hypothesis</Term> is the one you set out to reject. That is right, and it is what I dutifully memorised.
 
 What nobody told me is why the thing is called *null*.
 
@@ -31,13 +31,13 @@ Try it yourself:
 
 <LadyTastingTea />
 
-That $1/70$ is the earliest p value there is. It was counted, not estimated: list every outcome available to a guesser, count the ones at least as good as hers, divide by seventy. That is what the null is for — it hands you a world small enough to count all the way through. Without it, all you know is that she got four right, and not whether four is impressive.
+That $1/70$ is the earliest <Term id="p-value">p value</Term> there is. It was counted, not estimated: list every outcome available to a guesser, count the ones at least as good as hers, divide by seventy. Listing every rearrangement and counting is what later came to be called a <Term id="permutation-test">permutation test</Term>. That is what the null is for — it hands you a world small enough to count all the way through. Without it, all you know is that she got four right, and not whether four is impressive.
 
 As for how many she actually got: Fisher never says. <Cite id="richardson2021LadyTastingTea">The story that she identified all eight correctly is a recollection passed along decades later</Cite>; Fisher's daughter, in her biography of him, writes only that she got enough right to make her case. If that means six of eight, then $p = 0.243$ — nowhere near significant by anyone's standard. The most famous experiment in the subject has no recorded result.
 
 ## What a p value actually looks like
 
-The tea experiment is small enough to count out by hand. Real studies rarely are, so they lean on sampling distributions instead. The question does not change: if the null were true, how often would data this extreme show up?
+The tea experiment is small enough to count out by hand. Real studies rarely are, so they lean on <Term id="sampling-distribution">sampling distributions</Term> instead. The question does not change: if the null were true, how often would data this extreme show up?
 
 Follow that sentence one step further and you get a result most people never quite absorb. When the null is true, p values are uniform. The probability of $p < 0.05$ is exactly 0.05; the probability of $p < 0.01$ is exactly 0.01. In a world where nothing is happening, one study in twenty comes out significant.
 
@@ -47,13 +47,13 @@ Set the effect to zero and run it two thousand times:
 
 The delta on that slider is **the real gap between the two group means, measured in standard deviations**. The unit matters: "the two classes differ by two points" means nothing until you know how spread out the scores are. If the standard deviation is ten points, then two points is 0.2 of one, and the two distributions almost completely overlap. Delta = 0 means the groups really are identical, and every difference you see is sampling noise.
 
-Push the slider right and the distribution starts piling up against the left wall. How fast it piles up is what power means: the chance of catching an effect that is really there. Same picture, same machinery — the null simply is not true any more.
+Push the slider right and the distribution starts piling up against the left wall. How fast it piles up is what <Term id="statistical-power">power</Term> means: the chance of catching an effect that is really there. Same picture, same machinery — the null simply is not true any more.
 
 ## Neyman and Pearson turn it into a decision
 
 In 1933 Neyman and Pearson published something that looks similar and rests on entirely different foundations. Their question was: if you must choose between two hypotheses, what rule makes you wrong least often in the long run? <Cite id="neymanPearson1933">They called the test a rule of behaviour, and meant it literally</Cite>.
 
-Picture a factory stamping metal plates for surgical instruments. <Cite id="gigerenzer2004MindlessStatistics">Gigerenzer uses exactly this scene to explain their logic</Cite>: the machine may drift out of tolerance, and inspecting costs money. A false alarm shuts down a working line for an afternoon. A miss puts a defective plate inside somebody. The two errors cost different amounts, so the manager fixes a very small error rate for the first, tolerates a larger one for the second, and from those two numbers works out how many plates to pull off the line each day. Nobody in this story is asking how strong the evidence is. They are asking how much the rule will cost them over a year.
+Picture a factory stamping metal plates for surgical instruments. <Cite id="gigerenzer2004MindlessStatistics">Gigerenzer uses exactly this scene to explain their logic</Cite>: the machine may drift out of tolerance, and inspecting costs money. A false alarm shuts down a working line for an afternoon. A miss puts a defective plate inside somebody. The two errors cost different amounts, so the manager fixes a very small rate for the first (a <Term id="type-i-and-type-ii-error">Type I error</Term>), tolerates a larger one for the second, and from those two numbers works out how many plates to pull off the line each day. Nobody in this story is asking how strong the evidence is. They are asking how much the rule will cost them over a year.
 
 Out of that come $H_0$ paired with $H_1$, an $\alpha$ fixed before you look, and, as the price of both, the second kind of error and the power to avoid it. Saying $\alpha = 0.05$ is a statement about the rule: of all the occasions the null holds, you will call it wrong on 5% of them. It says nothing about how confident you should be right now.
 
@@ -67,7 +67,7 @@ One dataset, three readings:
 
 <TwoLogics />
 
-That third panel is the sentence almost every paper writes. It claims two things that exclude each other. "The smaller the p, the stronger the evidence" is Fisher's, and the price of it is giving up the long-run guarantee. "Significant at the 0.05 level, so we reject the null" is Neyman and Pearson's, and the price of that is fixing the threshold beforehand and never reading p as evidence. The sentence pays neither price and claims both authorities. <Cite id="gigerenzerKraussVitouch2004NullRitual">Gigerenzer calls it the null ritual</Cite>: a procedure with no author, which nobody will defend, performed daily by an entire discipline.
+That third panel is the sentence almost every paper writes. It claims two things that exclude each other. "The smaller the p, the stronger the evidence" is Fisher's, and the price of it is giving up the long-run guarantee. "Significant at the 0.05 <Term id="significance-level">level</Term>, so we reject the null" is Neyman and Pearson's, and the price of that is fixing the threshold beforehand and never reading p as evidence. The sentence pays neither price and claims both authorities. Gigerenzer calls it the <Term id="null-ritual">null ritual</Term>: <Cite id="gigerenzerKraussVitouch2004NullRitual">a procedure with no author, which nobody will defend, performed daily by an entire discipline</Cite>.
 
 The 0.05 threshold has no theoretical standing either. <Cite id="fisher1925StatisticalMethods">Fisher said one in twenty was a convenient line to draw</Cite>. Convenient, and easy to tabulate in 1925.
 
@@ -82,7 +82,7 @@ Skip the formula and count people. Out of a thousand:
 - Ten actually have it. Eight of them test positive; two are missed.
 - Nine hundred and ninety do not. About fifty of them test positive anyway.
 
-Fifty-eight people got a positive result, and only eight of them are ill. **A positive test means about an 8 in 58 chance of being ill — roughly 14%.** Not 80%, and certainly not 95%.
+Fifty-eight people got a positive result, and only eight of them are ill. **A positive test means about an 8 in 58 chance of being ill — roughly 14%.** Not 80%, and certainly not 95%. (That quantity has a name: <Term id="positive-predictive-value">positive predictive value</Term>.)
 
 What changed? "Eight in ten sick people test positive" reads from the disease towards the test. "How many people who test positive are sick" reads from the test back towards the disease. Reverse the direction and the answer drops from 80% to 14%. The thing that went missing in between is the **base rate**: how rare the disease was to begin with. The test itself knows nothing about that.
 
@@ -102,15 +102,15 @@ Freeze the effect at something too small to care about and turn up the sample si
 
 A p value measures how unlike the null the data are. Collect enough data and even a trivial difference looks nothing like the null. Sometimes $p < 0.001$ is just telling you the sample was big.
 
-And then there is the oldest trick that isn't a trick. Twenty outcome measures, no real effect in any of them, each tested at 0.05. The chance that at least one comes out significant is $1 - 0.95^{20} \approx 0.64$.
+And then there is the oldest trick that isn't a trick — the problem of <Term id="multiple-comparisons">multiple comparisons</Term>. Twenty outcome measures, no real effect in any of them, each tested at 0.05. The chance that at least one comes out significant is $1 - 0.95^{20} \approx 0.64$.
 
 <PHacking />
 
 Simmons, Nelson and Simonsohn demonstrated this in public in 2011. They played subjects either the Beatles' "When I'm Sixty-Four" or a control track, then asked their date of birth, and <Cite id="simmonsNelsonSimonsohn2011FalsePositive">reported that the song made people a year and a half younger (20.1 against 21.5 years, $F(1,17) = 4.92$, $p = .040$)</Cite>. Music does not reverse ageing. That was the point: with a little undisclosed latitude over when to stop collecting data, which covariates to include and which measures to report, anything at all can be made significant — their simulations put the false-positive rate of such a study above 60%. (The authors have since noted that this particular effect is not robust: drop one covariate and $p$ climbs to .33. Which is, again, the point.)
 
-Nobody faked anything. Every test is textbook-correct. What breaks is looking at the data first and choosing what to report afterwards: the 5% guarantee is gone, and nothing in the write-up will show that it left.
+Nobody faked anything. Every test is textbook-correct. What breaks is looking at the data first and choosing what to report afterwards — the practice now known as <Term id="p-hacking">p-hacking</Term>: the 5% guarantee is gone, and nothing in the write-up will show that it left.
 
-The bill arrived a decade later. <Cite id="openScienceCollaboration2015Reproducibility">In 2015, 270 researchers repeated 100 psychology experiments: 97% of the originals had been significant, and 36% of the replications were</Cite>.
+The bill arrived a decade later. <Cite id="openScienceCollaboration2015Reproducibility">In 2015, 270 researchers repeated 100 psychology experiments: 97% of the originals had been significant, and 36% of the replications were</Cite>. This is what came to be called the <Term id="replication-crisis">replication crisis</Term>.
 
 ## The standard misreadings
 
@@ -124,7 +124,7 @@ In 2016 the American Statistical Association did something it had never done bef
 
 It offers no replacement, because the tool was never the problem. The p value answers a well-defined question. Fisher's use of it holds together, and so does Neyman and Pearson's. What breaks is the weld between them, which lets people believe that finishing a test is the same as finishing an inference.
 
-The practical advice is unglamorous. Report effect sizes and intervals, so the reader can see how big, not just whether — in the aspirin trial the number worth arguing about is 0.03, not the string of zeros. Preregister the analysis, so the 5% actually means 5%. Publish the null results, or the literature will consist entirely of the 5% that cleared the bar. And when the null really does hold, say so with an equivalence test — "the difference is too small to matter" — instead of hiding behind "no significant difference".
+The practical advice is unglamorous. Report <Term id="effect-size">effect sizes</Term> and <Term id="confidence-interval">confidence intervals</Term>, so the reader can see how big, not just whether — in the aspirin trial the number worth arguing about is 0.03, not the string of zeros. Preregister the analysis, so the 5% actually means 5%. Publish the null results, or the literature will consist entirely of the 5% that cleared the bar. And when the null really does hold, say so with an equivalence test — "the difference is too small to matter" — instead of hiding behind "no significant difference".
 
 Back to the word. Null was always about being nullifiable. It names the hypothesis the experiment sets up for the data to knock down: the starting point of an inference, not its conclusion. The moment "we failed to reject the null" gets announced as "we proved there is no effect", the word has been turned inside out.
 

@@ -16,10 +16,18 @@ const pages = import.meta.glob('./pages/**/*.{jsx,tsx}');
 
 const kebab = (name) => name.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();
 
+/* The file-path rule cannot express a parameter, and one page needs one: the
+   glossary has a page per term and the term is in the URL. Rather than teach the
+   glob a syntax for it, the two or three pages like this name their own path. */
+const PARAM_ROUTES = {
+  GlossaryTerm: '/statistics/glossary/:slug',
+};
+
 function routeFor(path) {
   const rel = path.replace('./pages/', '').replace(/\.(jsx|tsx)$/, '');
   const parts = rel.split('/');
   const name = parts.pop();
+  if (PARAM_ROUTES[name]) return PARAM_ROUTES[name];
   return parts.length === 0
     ? `/${name.toLowerCase()}`
     : `/${parts.map(kebab).join('/')}/${kebab(name)}`;
@@ -36,6 +44,26 @@ const PAGE_META = { // token-exempt: per-page identity chip colors (data, not st
   },
   // Articles carry meta for SEO (canonical, title, Article schema) but stay off
   // the index: the hub lists them, the front page lists the hub.
+  Glossary: {
+    name: '統計術語表',
+    desc: '每個術語一句話定義、一個真實發生過的例子，以及它會在哪裡騙到你',
+    Icon: Sigma,
+    accent: '#dfe3ea',
+    accentText: '#6c7690',
+    group: 'learn',
+    listed: false,
+    type: 'WebPage',
+  },
+  GlossaryTerm: {
+    name: '統計術語',
+    desc: '單一術語的完整說明：定義、來歷、具體例子、常見誤讀',
+    Icon: Sigma,
+    accent: '#dfe3ea',
+    accentText: '#6c7690',
+    group: 'learn',
+    listed: false,
+    type: 'DefinedTerm',
+  },
   NullHypothesis: {
     name: '為什麼叫虛無假設',
     desc: 'null 的語源、Fisher 與 Neyman-Pearson 的兩套邏輯，以及教科書把它們縫在一起之後',

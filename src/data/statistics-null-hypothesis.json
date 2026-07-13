@@ -1,6 +1,6 @@
 {
-  "schemaVersion": 1,
-  "generatedAt": "2026-07-13T06:47:45.599Z",
+  "schemaVersion": 2,
+  "generatedAt": "2026-07-13T07:10:42.140Z",
   "source": "statistics-lab-data, built by engineering/scripts/build-app-json.mjs",
   "meta": {
     "slug": "null-hypothesis",
@@ -21,7 +21,7 @@
         "Neyman-Pearson",
         "replication crisis"
       ],
-      "readingMinutes": 6
+      "readingMinutes": 7
     },
     "updatedAt": "2026-07-13",
     "tags": [
@@ -145,19 +145,6 @@
     }
   },
   "sources": {
-    "fisher1935DesignOfExperiments": {
-      "author": "Ronald A. Fisher",
-      "title": "The Design of Experiments",
-      "year": 1935,
-      "container": "Edinburgh: Oliver and Boyd (1st ed.)",
-      "locator": "Ch. II, §5 'The Statement of Experiment', p.13（茶品實驗設定：8 杯，4 杯先加奶）；§8 'The Null Hypothesis'，p.18（1935 初版；部分刷次標為 p.19）。",
-      "quote": "In relation to any experiment we may speak of this hypothesis as the null hypothesis, and it should be noted that the null hypothesis is never proved or established, but is possibly disproved, in the course of experimentation. Every experiment may be said to exist only in order to give the facts a chance of disproving the null hypothesis.",
-      "url": "https://archive.org/stream/in.ernet.dli.2015.502684/2015.502684.The-Design_djvu.txt",
-      "en": {
-        "locator": "Ch. II §5 'The Statement of Experiment', p.13 (the tea-tasting setup); §8 'The Null Hypothesis', p.18 (1935 first edition; some reprints give p.19).",
-        "quote": "In relation to any experiment we may speak of this hypothesis as the null hypothesis, and it should be noted that the null hypothesis is never proved or established, but is possibly disproved, in the course of experimentation. Every experiment may be said to exist only in order to give the facts a chance of disproving the null hypothesis."
-      }
-    },
     "fisher1925StatisticalMethods": {
       "author": "Ronald A. Fisher",
       "title": "Statistical Methods for Research Workers",
@@ -171,82 +158,17 @@
         "quote": "The value for which P=0.05, or 1 in 20, is 1.96 or nearly 2; it is convenient to take this point as a limit in judging whether a deviation ought to be considered significant or not."
       }
     },
-    "neymanPearson1933": {
-      "author": "Jerzy Neyman and Egon S. Pearson",
-      "title": "On the Problem of the Most Efficient Tests of Statistical Hypotheses",
-      "year": 1933,
-      "container": "Philosophical Transactions of the Royal Society of London, Series A, vol. 231, pp.289–337",
-      "locator": "p.291（「rule of behaviour」段落，決策式邏輯的原始表述）；pp.296–297（H0 記號、「errors of the first kind」與第二類錯誤用語首次系統性提出之處）。「power」一詞本身在這篇論文中尚未以此固定術語出現。",
-      "quote": "If we reject H0, we may reject it when it is true; if we accept H0, we may be accepting it when it is false, that is to say, when really some alternative H_t is true. These two sources of error can rarely be eliminated completely... In trying to choose a proper critical region, we notice at once that it is very easy to control errors of the first kind referred to above.",
-      "url": "https://www.joelvelasco.net/teaching/249/Neyman%20Pearson%201933.pdf",
+    "fisher1935DesignOfExperiments": {
+      "author": "Ronald A. Fisher",
+      "title": "The Design of Experiments",
+      "year": 1935,
+      "container": "Edinburgh: Oliver and Boyd (1st ed.)",
+      "locator": "Ch. II, §5 'The Statement of Experiment', p.13（茶品實驗設定：8 杯，4 杯先加奶）；§8 'The Null Hypothesis'，p.18（1935 初版；部分刷次標為 p.19）。",
+      "quote": "In relation to any experiment we may speak of this hypothesis as the null hypothesis, and it should be noted that the null hypothesis is never proved or established, but is possibly disproved, in the course of experimentation. Every experiment may be said to exist only in order to give the facts a chance of disproving the null hypothesis.",
+      "url": "https://archive.org/stream/in.ernet.dli.2015.502684/2015.502684.The-Design_djvu.txt",
       "en": {
-        "locator": "p.291 (the 'rule of behaviour' passage, the original statement of the decision-theoretic logic); pp.296-297 (the notation H0, and the first systematic statement of what became Type I and Type II error). The word 'power' itself is not yet used as a fixed term in this paper.",
-        "quote": "If we reject H0, we may reject it when it is true; if we accept H0, we may be accepting it when it is false, that is to say, when really some alternative H_t is true. These two sources of error can rarely be eliminated completely... In trying to choose a proper critical region, we notice at once that it is very easy to control errors of the first kind referred to above."
-      }
-    },
-    "gigerenzerKraussVitouch2004NullRitual": {
-      "author": "Gerd Gigerenzer, Stefan Krauss, and Oliver Vitouch",
-      "title": "The Null Ritual: What You Always Wanted to Know About Significance Testing but Were Afraid to Ask",
-      "year": 2004,
-      "container": "In D. Kaplan (Ed.), The Sage Handbook of Quantitative Methodology for the Social Sciences, pp.391–408. Thousand Oaks, CA: Sage",
-      "locator": "p.392（「虛無儀式」三步驟定義；六題是非題示範 p 值的六種常見誤讀，全部為 False）",
-      "quote": "The essence of the ritual is the following: (1) Set up a statistical null hypothesis of \"no mean difference\" or \"zero correlation.\" Don't specify the predictions of your research hypothesis or of any alternative substantive hypotheses. (2) Use 5% as a convention for rejecting the null. If significant, accept your research hypothesis. (3) Always perform this procedure.",
-      "url": "https://library.mpib-berlin.mpg.de/ft/gg/GG_Null_2004.pdf",
-      "en": {
-        "locator": "p.392 (the three-step definition of the 'null ritual'; six true/false items demonstrating six common misreadings of the p-value, all in fact false).",
-        "quote": "The essence of the ritual is the following: (1) Set up a statistical null hypothesis of \"no mean difference\" or \"zero correlation.\" Don't specify the predictions of your research hypothesis or of any alternative substantive hypotheses. (2) Use 5% as a convention for rejecting the null. If significant, accept your research hypothesis. (3) Always perform this procedure."
-      }
-    },
-    "gigerenzerKraussVitouch2004NullEtymology": {
-      "author": "Gerd Gigerenzer, Stefan Krauss, and Oliver Vitouch",
-      "title": "The Null Ritual: What You Always Wanted to Know About Significance Testing but Were Afraid to Ask",
-      "year": 2004,
-      "container": "In D. Kaplan (Ed.), The Sage Handbook of Quantitative Methodology for the Social Sciences, pp.391–408. Thousand Oaks, CA: Sage",
-      "locator": "p.392（Gigerenzer 等對 Fisher 命名「null」原意的詮釋性重述，非辭典級語源條目）。",
-      "quote": "Some suggest that it was authorized by the eminent statistician Sir Ronald A. Fisher, owing to the emphasis on null hypothesis testing (not to be confused with the null ritual) in his 1935 book. However, Fisher would have rejected all three ingredients of this procedure. First, null does not refer to a zero mean difference or correlation but to the hypothesis to be \"nullified,\" which could postulate a correlation of .3, for instance.",
-      "url": "https://library.mpib-berlin.mpg.de/ft/gg/GG_Null_2004.pdf",
-      "en": {
-        "locator": "p.392 (Gigerenzer et al.'s interpretive account of Fisher's original intent behind the term \"null\"; not a dictionary-grade etymology entry).",
-        "quote": "Some suggest that it was authorized by the eminent statistician Sir Ronald A. Fisher, owing to the emphasis on null hypothesis testing (not to be confused with the null ritual) in his 1935 book. However, Fisher would have rejected all three ingredients of this procedure. First, null does not refer to a zero mean difference or correlation but to the hypothesis to be \"nullified,\" which could postulate a correlation of .3, for instance."
-      }
-    },
-    "wassersteinLazar2016": {
-      "author": "Ronald L. Wasserstein and Nicole A. Lazar",
-      "title": "The ASA Statement on p-Values: Context, Process, and Purpose",
-      "year": 2016,
-      "container": "The American Statistician, vol. 70, no. 2, pp.129–133",
-      "locator": "六條原則列表，正文 p.131（\"Principle 1\" 起）",
-      "quote": "P-values do not measure the probability that the studied hypothesis is true, or the probability that the data were produced by random chance alone.",
-      "url": "https://www.amstat.org/asa/files/pdfs/p-valuestatement.pdf",
-      "en": {
-        "locator": "The six principles, listed starting p.131 (from \"Principle 1\").",
-        "quote": "P-values do not measure the probability that the studied hypothesis is true, or the probability that the data were produced by random chance alone."
-      }
-    },
-    "greenland2016": {
-      "author": "Sander Greenland, Stephen J. Senn, Kenneth J. Rothman, John B. Carlin, Charles Poole, Steven N. Goodman, and Douglas G. Altman",
-      "title": "Statistical Tests, P Values, Confidence Intervals, and Power: A Guide to Misinterpretations",
-      "year": 2016,
-      "container": "European Journal of Epidemiology, vol. 31, no. 4, pp.337–350",
-      "locator": "§2「常見誤讀清單」，列舉 25 條——正文標題即為 \"Twenty-five misinterpretations\" 對應段落",
-      "quote": "Misinterpretation and abuse of statistical tests, confidence intervals, and statistical power have been decried for decades, yet remain rampant.",
-      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4877414/",
-      "en": {
-        "locator": "§2, the list of 25 common misinterpretations, corresponding to the section headed \"Twenty-five misinterpretations.\"",
-        "quote": "Misinterpretation and abuse of statistical tests, confidence intervals, and statistical power have been decried for decades, yet remain rampant."
-      }
-    },
-    "richardson2021LadyTastingTea": {
-      "author": "John T. E. Richardson",
-      "title": "A Closer Look at the Lady Tasting Tea",
-      "year": 2021,
-      "container": "Significance, vol. 18, no. 5, pp.34–37",
-      "locator": "全文——重新檢視 Fisher《The Design of Experiments》對茶品實驗的原始記載，比對 Joan Fisher Box（1978，Fisher 之女所寫傳記）與 David Salsburg（1968，轉引 Hugh Fairfield-Smith 數十年後的回憶）兩種不同的事後轉述。",
-      "quote": "Fisher 本人在《The Design of Experiments》中只描述了實驗設計本身（8 杯，4 杯先加奶），從未記載這位女士（Muriel Bristol）實際的作答結果。「全部答對」的說法源自 Salsburg 1968 年轉述 Hugh Fairfield-Smith 數十年後的回憶；Fisher 的女兒 Joan Fisher Box 在傳記中給出的版本保守得多——她「答對的杯數足以證明她的說法」，未必是滿分。Richardson 認為 Box 的版本較為可信，若真如此，答對數更可能是 6/8（p=0.243），在傳統顯著水準（0.05）下並不顯著。",
-      "url": "https://doi.org/10.1111/1740-9713.01572",
-      "en": {
-        "locator": "Full article — re-examines Fisher's original account of the tea-tasting experiment in The Design of Experiments against two later retellings: Joan Fisher Box's 1978 biography of her father, and David Salsburg's 1968 account relaying Hugh Fairfield-Smith's decades-later recollection.",
-        "quote": "Fisher's own account in The Design of Experiments describes only the design (eight cups, four milk-first) and never records how the lady (Muriel Bristol) actually performed. The claim that she got all eight right traces to Salsburg's 1968 retelling of Hugh Fairfield-Smith's decades-later recollection; Fisher's daughter Joan Fisher Box, in her biography, gives a more modest account — that the lady 'divined correctly more than enough of those cups... to prove her case,' not necessarily a perfect score. Richardson argues Box's version is the more credible one; on that reading the actual tally may have been six of eight correct (p = 0.243), not significant at the conventional 0.05 level."
+        "locator": "Ch. II §5 'The Statement of Experiment', p.13 (the tea-tasting setup); §8 'The Null Hypothesis', p.18 (1935 first edition; some reprints give p.19).",
+        "quote": "In relation to any experiment we may speak of this hypothesis as the null hypothesis, and it should be noted that the null hypothesis is never proved or established, but is possibly disproved, in the course of experimentation. Every experiment may be said to exist only in order to give the facts a chance of disproving the null hypothesis."
       }
     },
     "gigerenzer2004MindlessStatistics": {
@@ -262,17 +184,69 @@
         "quote": "A typical application of Neyman–Pearson testing is in quality control. Imagine a manufacturer of metal plates that are used in medical instruments... She considers false alarms, that is, accepting H2 while H1 is true, to be the less serious error, and misses of malfunctioning... to be more serious... She now calculates the required sample size n of plates that must be sampled every day to test the quality of the production... When she accepts H2, she acts as if there were a malfunction and stops production, but this does not mean that she believes that H2 is true."
       }
     },
-    "simmonsNelsonSimonsohn2011FalsePositive": {
-      "author": "Joseph P. Simmons, Leif D. Nelson, and Uri Simonsohn",
-      "title": "False-Positive Psychology: Undisclosed Flexibility in Data Collection and Analysis Allows Presenting Anything as Significant",
-      "year": 2011,
-      "container": "Psychological Science, vol. 22, no. 11, pp.1359–1366",
-      "locator": "Study 2：20 名賓州大學大學生分兩組聆聽披頭四〈When I'm Sixty-Four〉或對照曲〈Kalimba〉，再回報出生年月與父親年齡；聽披頭四組經統計校正後平均年齡 20.1 歲，對照組 21.5 歲，F(1,17)=4.92，p=.040。文中另以模擬顯示：容許研究者在資料蒐集與分析上有彈性，可把單一比較的名目 5% 偽陽性率推高到 60.7%。",
-      "quote": "根據回報的出生日期，聽過〈When I'm Sixty-Four〉的受試者比聽對照曲的受試者年輕了近一歲半（校正後平均 20.1 歲 vs. 21.5 歲），F(1, 17) = 4.92，p = .040。",
-      "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1850704",
+    "gigerenzerKraussVitouch2004NullEtymology": {
+      "author": "Gerd Gigerenzer, Stefan Krauss, and Oliver Vitouch",
+      "title": "The Null Ritual: What You Always Wanted to Know About Significance Testing but Were Afraid to Ask",
+      "year": 2004,
+      "container": "In D. Kaplan (Ed.), The Sage Handbook of Quantitative Methodology for the Social Sciences, pp.391–408. Thousand Oaks, CA: Sage",
+      "locator": "p.392（Gigerenzer 等對 Fisher 命名「null」原意的詮釋性重述，非辭典級語源條目）。",
+      "quote": "Some suggest that it was authorized by the eminent statistician Sir Ronald A. Fisher, owing to the emphasis on null hypothesis testing (not to be confused with the null ritual) in his 1935 book. However, Fisher would have rejected all three ingredients of this procedure. First, null does not refer to a zero mean difference or correlation but to the hypothesis to be \"nullified,\" which could postulate a correlation of .3, for instance.",
+      "url": "https://library.mpib-berlin.mpg.de/ft/gg/GG_Null_2004.pdf",
       "en": {
-        "locator": "Study 2: 20 University of Pennsylvania undergraduates listened to either the Beatles' \"When I'm Sixty-Four\" or a control song (\"Kalimba\"), then reported their birth date and father's age; adjusted mean age was 20.1 in the Beatles condition versus 21.5 in the control condition, F(1,17) = 4.92, p = .040. The paper's simulations separately show that allowing flexibility in data collection and analysis can push a single comparison's nominal 5% false-positive rate up to 60.7%.",
-        "quote": "According to their reported birth date, people were nearly a year-and-a-half younger after listening to \"When I'm Sixty-Four\" (adjusted M = 20.1 years) rather than to \"Kalimba\" (adjusted M = 21.5 years), F(1, 17) = 4.92, p = .040."
+        "locator": "p.392 (Gigerenzer et al.'s interpretive account of Fisher's original intent behind the term \"null\"; not a dictionary-grade etymology entry).",
+        "quote": "Some suggest that it was authorized by the eminent statistician Sir Ronald A. Fisher, owing to the emphasis on null hypothesis testing (not to be confused with the null ritual) in his 1935 book. However, Fisher would have rejected all three ingredients of this procedure. First, null does not refer to a zero mean difference or correlation but to the hypothesis to be \"nullified,\" which could postulate a correlation of .3, for instance."
+      }
+    },
+    "gigerenzerKraussVitouch2004NullRitual": {
+      "author": "Gerd Gigerenzer, Stefan Krauss, and Oliver Vitouch",
+      "title": "The Null Ritual: What You Always Wanted to Know About Significance Testing but Were Afraid to Ask",
+      "year": 2004,
+      "container": "In D. Kaplan (Ed.), The Sage Handbook of Quantitative Methodology for the Social Sciences, pp.391–408. Thousand Oaks, CA: Sage",
+      "locator": "p.392（「虛無儀式」三步驟定義；六題是非題示範 p 值的六種常見誤讀，全部為 False）",
+      "quote": "The essence of the ritual is the following: (1) Set up a statistical null hypothesis of \"no mean difference\" or \"zero correlation.\" Don't specify the predictions of your research hypothesis or of any alternative substantive hypotheses. (2) Use 5% as a convention for rejecting the null. If significant, accept your research hypothesis. (3) Always perform this procedure.",
+      "url": "https://library.mpib-berlin.mpg.de/ft/gg/GG_Null_2004.pdf",
+      "en": {
+        "locator": "p.392 (the three-step definition of the 'null ritual'; six true/false items demonstrating six common misreadings of the p-value, all in fact false).",
+        "quote": "The essence of the ritual is the following: (1) Set up a statistical null hypothesis of \"no mean difference\" or \"zero correlation.\" Don't specify the predictions of your research hypothesis or of any alternative substantive hypotheses. (2) Use 5% as a convention for rejecting the null. If significant, accept your research hypothesis. (3) Always perform this procedure."
+      }
+    },
+    "greenland2016": {
+      "author": "Sander Greenland, Stephen J. Senn, Kenneth J. Rothman, John B. Carlin, Charles Poole, Steven N. Goodman, and Douglas G. Altman",
+      "title": "Statistical Tests, P Values, Confidence Intervals, and Power: A Guide to Misinterpretations",
+      "year": 2016,
+      "container": "European Journal of Epidemiology, vol. 31, no. 4, pp.337–350",
+      "locator": "§2「常見誤讀清單」，列舉 25 條——正文標題即為 \"Twenty-five misinterpretations\" 對應段落",
+      "quote": "Misinterpretation and abuse of statistical tests, confidence intervals, and statistical power have been decried for decades, yet remain rampant.",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4877414/",
+      "en": {
+        "locator": "§2, the list of 25 common misinterpretations, corresponding to the section headed \"Twenty-five misinterpretations.\"",
+        "quote": "Misinterpretation and abuse of statistical tests, confidence intervals, and statistical power have been decried for decades, yet remain rampant."
+      }
+    },
+    "ioannidis2005WhyMostPublished": {
+      "author": "John P. A. Ioannidis",
+      "title": "Why Most Published Research Findings Are False",
+      "year": 2005,
+      "container": "PLoS Medicine, vol. 2, no. 8, e124",
+      "locator": "全文——以陽性預測值（PPV）模型說明：在事前機率低、樣本小、分析彈性大的研究領域，多數「達統計顯著」的發表結果其實是偽陽性。",
+      "quote": "There is increasing concern that most current published research findings are false. It can be proven that most claimed research findings are false.",
+      "url": "https://doi.org/10.1371/journal.pmed.0020124",
+      "en": {
+        "locator": "Full article — uses a positive predictive value (PPV) model to argue that in fields with low prior probability, small samples, and flexible analysis practices, most published statistically significant findings are in fact false positives.",
+        "quote": "There is increasing concern that most current published research findings are false. It can be proven that most claimed research findings are false."
+      }
+    },
+    "neymanPearson1933": {
+      "author": "Jerzy Neyman and Egon S. Pearson",
+      "title": "On the Problem of the Most Efficient Tests of Statistical Hypotheses",
+      "year": 1933,
+      "container": "Philosophical Transactions of the Royal Society of London, Series A, vol. 231, pp.289–337",
+      "locator": "p.291（「rule of behaviour」段落，決策式邏輯的原始表述）；pp.296–297（H0 記號、「errors of the first kind」與第二類錯誤用語首次系統性提出之處）。「power」一詞本身在這篇論文中尚未以此固定術語出現。",
+      "quote": "If we reject H0, we may reject it when it is true; if we accept H0, we may be accepting it when it is false, that is to say, when really some alternative H_t is true. These two sources of error can rarely be eliminated completely... In trying to choose a proper critical region, we notice at once that it is very easy to control errors of the first kind referred to above.",
+      "url": "https://www.joelvelasco.net/teaching/249/Neyman%20Pearson%201933.pdf",
+      "en": {
+        "locator": "p.291 (the 'rule of behaviour' passage, the original statement of the decision-theoretic logic); pp.296-297 (the notation H0, and the first systematic statement of what became Type I and Type II error). The word 'power' itself is not yet used as a fixed term in this paper.",
+        "quote": "If we reject H0, we may reject it when it is true; if we accept H0, we may be accepting it when it is false, that is to say, when really some alternative H_t is true. These two sources of error can rarely be eliminated completely... In trying to choose a proper critical region, we notice at once that it is very easy to control errors of the first kind referred to above."
       }
     },
     "openScienceCollaboration2015Reproducibility": {
@@ -288,15 +262,17 @@
         "quote": "Although statistically significant results were reported in 97% of original studies, only 36% of replications yielded statistically significant results."
       }
     },
-    "steeringCommittee1988PhysiciansHealthStudy": {
-      "author": "Steering Committee of the Physicians' Health Study Research Group",
-      "title": "Preliminary Report: Findings from the Aspirin Component of the Ongoing Physicians' Health Study",
-      "year": 1988,
-      "container": "New England Journal of Medicine, vol. 318, no. 4, pp.262–264",
-      "locator": "22,071 名男性醫師隨機分派服用阿斯匹靈（11,037 人）或安慰劑（11,034 人）；追蹤期間阿斯匹靈組 104 人、安慰劑組 189 人發生心肌梗塞，相對風險約 0.56（降低 44%），因效果極端顯著而提前終止試驗。",
-      "url": "https://doi.org/10.1056/NEJM198801283180431",
+    "richardson2021LadyTastingTea": {
+      "author": "John T. E. Richardson",
+      "title": "A Closer Look at the Lady Tasting Tea",
+      "year": 2021,
+      "container": "Significance, vol. 18, no. 5, pp.34–37",
+      "locator": "全文——重新檢視 Fisher《The Design of Experiments》對茶品實驗的原始記載，比對 Joan Fisher Box（1978，Fisher 之女所寫傳記）與 David Salsburg（1968，轉引 Hugh Fairfield-Smith 數十年後的回憶）兩種不同的事後轉述。",
+      "quote": "Fisher 本人在《The Design of Experiments》中只描述了實驗設計本身（8 杯，4 杯先加奶），從未記載這位女士（Muriel Bristol）實際的作答結果。「全部答對」的說法源自 Salsburg 1968 年轉述 Hugh Fairfield-Smith 數十年後的回憶；Fisher 的女兒 Joan Fisher Box 在傳記中給出的版本保守得多——她「答對的杯數足以證明她的說法」，未必是滿分。Richardson 認為 Box 的版本較為可信，若真如此，答對數更可能是 6/8（p=0.243），在傳統顯著水準（0.05）下並不顯著。",
+      "url": "https://doi.org/10.1111/1740-9713.01572",
       "en": {
-        "locator": "22,071 male physicians randomized to aspirin (n=11,037) or placebo (n=11,034); 104 myocardial infarctions occurred in the aspirin group versus 189 in the placebo group, relative risk approximately 0.56 (a 44% reduction) — the effect was extreme enough that the trial's aspirin component was stopped early."
+        "locator": "Full article — re-examines Fisher's original account of the tea-tasting experiment in The Design of Experiments against two later retellings: Joan Fisher Box's 1978 biography of her father, and David Salsburg's 1968 account relaying Hugh Fairfield-Smith's decades-later recollection.",
+        "quote": "Fisher's own account in The Design of Experiments describes only the design (eight cups, four milk-first) and never records how the lady (Muriel Bristol) actually performed. The claim that she got all eight right traces to Salsburg's 1968 retelling of Hugh Fairfield-Smith's decades-later recollection; Fisher's daughter Joan Fisher Box, in her biography, gives a more modest account — that the lady 'divined correctly more than enough of those cups... to prove her case,' not necessarily a perfect score. Richardson argues Box's version is the more credible one; on that reading the actual tally may have been six of eight correct (p = 0.243), not significant at the conventional 0.05 level."
       }
     },
     "rosenthal1990SoftPsychology": {
@@ -310,17 +286,41 @@
         "locator": "Reinterprets the aspirin/myocardial-infarction trial's effect size using the Binomial Effect Size Display (BESD): a correlation of r approximately .03 is small in magnitude, but translated into \"heart attacks prevented per N people,\" the practical effect is not negligible."
       }
     },
-    "ioannidis2005WhyMostPublished": {
-      "author": "John P. A. Ioannidis",
-      "title": "Why Most Published Research Findings Are False",
-      "year": 2005,
-      "container": "PLoS Medicine, vol. 2, no. 8, e124",
-      "locator": "全文——以陽性預測值（PPV）模型說明：在事前機率低、樣本小、分析彈性大的研究領域，多數「達統計顯著」的發表結果其實是偽陽性。",
-      "quote": "There is increasing concern that most current published research findings are false. It can be proven that most claimed research findings are false.",
-      "url": "https://doi.org/10.1371/journal.pmed.0020124",
+    "simmonsNelsonSimonsohn2011FalsePositive": {
+      "author": "Joseph P. Simmons, Leif D. Nelson, and Uri Simonsohn",
+      "title": "False-Positive Psychology: Undisclosed Flexibility in Data Collection and Analysis Allows Presenting Anything as Significant",
+      "year": 2011,
+      "container": "Psychological Science, vol. 22, no. 11, pp.1359–1366",
+      "locator": "Study 2：20 名賓州大學大學生分兩組聆聽披頭四〈When I'm Sixty-Four〉或對照曲〈Kalimba〉，再回報出生年月與父親年齡；聽披頭四組經統計校正後平均年齡 20.1 歲，對照組 21.5 歲，F(1,17)=4.92，p=.040。文中另以模擬顯示：容許研究者在資料蒐集與分析上有彈性，可把單一比較的名目 5% 偽陽性率推高到 60.7%。",
+      "quote": "根據回報的出生日期，聽過〈When I'm Sixty-Four〉的受試者比聽對照曲的受試者年輕了近一歲半（校正後平均 20.1 歲 vs. 21.5 歲），F(1, 17) = 4.92，p = .040。",
+      "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1850704",
       "en": {
-        "locator": "Full article — uses a positive predictive value (PPV) model to argue that in fields with low prior probability, small samples, and flexible analysis practices, most published statistically significant findings are in fact false positives.",
-        "quote": "There is increasing concern that most current published research findings are false. It can be proven that most claimed research findings are false."
+        "locator": "Study 2: 20 University of Pennsylvania undergraduates listened to either the Beatles' \"When I'm Sixty-Four\" or a control song (\"Kalimba\"), then reported their birth date and father's age; adjusted mean age was 20.1 in the Beatles condition versus 21.5 in the control condition, F(1,17) = 4.92, p = .040. The paper's simulations separately show that allowing flexibility in data collection and analysis can push a single comparison's nominal 5% false-positive rate up to 60.7%.",
+        "quote": "According to their reported birth date, people were nearly a year-and-a-half younger after listening to \"When I'm Sixty-Four\" (adjusted M = 20.1 years) rather than to \"Kalimba\" (adjusted M = 21.5 years), F(1, 17) = 4.92, p = .040."
+      }
+    },
+    "steeringCommittee1988PhysiciansHealthStudy": {
+      "author": "Steering Committee of the Physicians' Health Study Research Group",
+      "title": "Preliminary Report: Findings from the Aspirin Component of the Ongoing Physicians' Health Study",
+      "year": 1988,
+      "container": "New England Journal of Medicine, vol. 318, no. 4, pp.262–264",
+      "locator": "22,071 名男性醫師隨機分派服用阿斯匹靈（11,037 人）或安慰劑（11,034 人）；追蹤期間阿斯匹靈組 104 人、安慰劑組 189 人發生心肌梗塞，相對風險約 0.56（降低 44%），因效果極端顯著而提前終止試驗。",
+      "url": "https://doi.org/10.1056/NEJM198801283180431",
+      "en": {
+        "locator": "22,071 male physicians randomized to aspirin (n=11,037) or placebo (n=11,034); 104 myocardial infarctions occurred in the aspirin group versus 189 in the placebo group, relative risk approximately 0.56 (a 44% reduction) — the effect was extreme enough that the trial's aspirin component was stopped early."
+      }
+    },
+    "wassersteinLazar2016": {
+      "author": "Ronald L. Wasserstein and Nicole A. Lazar",
+      "title": "The ASA Statement on p-Values: Context, Process, and Purpose",
+      "year": 2016,
+      "container": "The American Statistician, vol. 70, no. 2, pp.129–133",
+      "locator": "六條原則列表，正文 p.131（\"Principle 1\" 起）",
+      "quote": "P-values do not measure the probability that the studied hypothesis is true, or the probability that the data were produced by random chance alone.",
+      "url": "https://www.amstat.org/asa/files/pdfs/p-valuestatement.pdf",
+      "en": {
+        "locator": "The six principles, listed starting p.131 (from \"Principle 1\").",
+        "quote": "P-values do not measure the probability that the studied hypothesis is true, or the probability that the data were produced by random chance alone."
       }
     }
   },
@@ -533,5 +533,175 @@
         "body": "Six principles. The bluntest: scientific conclusions should not rest on whether a p value clears a threshold. The same year, Greenland and colleagues list twenty-five misreadings."
       }
     }
-  ]
+  ],
+  "terms": {
+    "confidence-interval": {
+      "slug": "confidence-interval",
+      "term": "信賴區間",
+      "oneLine": "一套會生出區間的規則。95% 是這套規則的長期命中率，不是眼前這一個區間的機率。",
+      "example": "Neyman 1937 自己問：對已經算出來的那一個區間，能不能說真值落在裡面的機率是 95%？他的答案是不能。",
+      "route": "/statistics/glossary/confidence-interval",
+      "en": {
+        "term": "Confidence interval",
+        "oneLine": "A rule for producing intervals. The 95% is the rule's long-run hit rate, not the probability for the one interval in front of you.",
+        "example": "Neyman asked it himself in 1937: of an interval already computed, may we say the true value lies inside it with probability 95%? His answer was no."
+      }
+    },
+    "effect-size": {
+      "slug": "effect-size",
+      "term": "效果量",
+      "oneLine": "效果有多大，用一把不隨樣本數伸縮的尺量出來。",
+      "example": "1988 年的阿斯匹靈試驗 p 小於 0.00001，效果量換算成相關係數只有 0.03 左右。同一批數字，一個像鐵證，一個小到幾乎看不見。",
+      "route": "/statistics/glossary/effect-size",
+      "en": {
+        "term": "Effect size",
+        "oneLine": "How large the effect is, on a scale that does not stretch with the sample.",
+        "example": "The 1988 aspirin trial had p below 0.00001 and an effect size of about r = 0.03. Same numbers: one looks like proof, the other is nearly invisible."
+      }
+    },
+    "multiple-comparisons": {
+      "slug": "multiple-comparisons",
+      "term": "多重比較",
+      "oneLine": "檢定做得夠多，光靠雜訊也會冒出「顯著」。不校正，門檻就名存實亡。",
+      "example": "一條死掉的大西洋鮭進了 fMRI 機器，8,064 個 voxel 裡有 16 個「顯著」。做完校正，一個都不剩。",
+      "route": "/statistics/glossary/multiple-comparisons",
+      "en": {
+        "term": "Multiple comparisons",
+        "oneLine": "Run enough tests and noise alone will hand you a \"significant\" one. Without correction the threshold means nothing.",
+        "example": "A dead Atlantic salmon went into an fMRI scanner: 16 of 8,064 voxels came out \"significant.\" After correction, none did."
+      }
+    },
+    "null-hypothesis": {
+      "slug": "null-hypothesis",
+      "term": "虛無假設",
+      "oneLine": "被設計來承受攻擊的那個假設：設下它，是為了讓資料有機會推翻它。",
+      "example": "品茶實驗的虛無假設是「她只是在猜」。Fisher 端出八杯茶，就是為了給這個假設一次被推翻的機會。",
+      "route": "/statistics/glossary/null-hypothesis",
+      "en": {
+        "term": "Null hypothesis",
+        "oneLine": "The hypothesis set up to be attacked: it exists so the data have something to argue against.",
+        "example": "In the tea experiment the null is \"she is guessing.\" Fisher poured eight cups precisely to give that hypothesis a chance of being overturned."
+      }
+    },
+    "null-ritual": {
+      "slug": "null-ritual",
+      "term": "null ritual",
+      "oneLine": "把 Fisher 的證據邏輯和 Neyman-Pearson 的決策邏輯焊成一套固定動作，兩邊的代價都不付。",
+      "example": "Gigerenzer 說這套儀式沒有作者：沒有哪位統計學家願意替它辯護，整個學科卻天天執行。",
+      "route": "/statistics/glossary/null-ritual",
+      "en": {
+        "term": "Null ritual",
+        "oneLine": "Fisher's evidential logic and Neyman-Pearson's decision logic welded into a fixed routine that pays neither one's price.",
+        "example": "Gigerenzer says the ritual has no author: no statistician will defend it, and the field performs it every day."
+      }
+    },
+    "p-hacking": {
+      "slug": "p-hacking",
+      "term": "p-hacking",
+      "oneLine": "一邊看結果一邊調分析：多收幾個樣本、換個共變量、換個結果變數，直到 p 掉到門檻底下。",
+      "example": "Simmons 等人 2011 年「證明」聽披頭四的〈When I'm Sixty-Four〉會讓人年輕一歲半（p = .040）。拿掉一個共變量，p 就跳回 .33。",
+      "route": "/statistics/glossary/p-hacking",
+      "en": {
+        "term": "p-hacking",
+        "oneLine": "Adjusting the analysis while watching the result — a few more subjects, another covariate, another outcome — until p drops below the line.",
+        "example": "Simmons and colleagues \"showed\" in 2011 that hearing \"When I'm Sixty-Four\" made people a year and a half younger (p = .040). Drop one covariate and p goes back to .33."
+      }
+    },
+    "p-value": {
+      "slug": "p-value",
+      "term": "p 值",
+      "oneLine": "假設虛無為真，得到「像這樣或更極端」的結果的機率。",
+      "example": "八杯茶全挑對，純靠猜的機率是 70 分之 1，約 0.014。這個 0.014 就是 p。",
+      "route": "/statistics/glossary/p-value",
+      "en": {
+        "term": "p value",
+        "oneLine": "The probability of a result at least as extreme as the one you got, if the null were true.",
+        "example": "Picking all four milk-first cups by luck alone has probability 1 in 70, about 0.014. That 0.014 is the p value."
+      }
+    },
+    "permutation-test": {
+      "slug": "permutation-test",
+      "term": "置換檢定",
+      "oneLine": "把標籤重新洗牌，看看純屬巧合能做到多好，再看真實資料排在哪裡。",
+      "example": "八杯茶就是最小的置換檢定：四杯先倒奶的挑法共 70 種，全對只有 1 種。",
+      "route": "/statistics/glossary/permutation-test",
+      "en": {
+        "term": "Permutation test",
+        "oneLine": "Shuffle the labels, see how well coincidence can do, then see where the real data land.",
+        "example": "Eight cups is the smallest permutation test there is: 70 ways to choose four, exactly one of them all correct."
+      }
+    },
+    "positive-predictive-value": {
+      "slug": "positive-predictive-value",
+      "term": "陽性預測值",
+      "oneLine": "在所有「顯著」的結果裡，真的有效果的佔幾成。它取決於這個領域有多少假說本來就是對的。",
+      "example": "Ioannidis 2005 的算術就是這一條：假說多半是錯的領域，加上偏低的檢定力，「顯著」結果會有一大半是假的。",
+      "route": "/statistics/glossary/positive-predictive-value",
+      "en": {
+        "term": "Positive predictive value",
+        "oneLine": "Of everything that comes out \"significant,\" how much is real. It depends on how many hypotheses in the field were true to begin with.",
+        "example": "This is the arithmetic behind Ioannidis 2005: in a field where most hypotheses are false and power is low, most significant findings are false too."
+      }
+    },
+    "replication-crisis": {
+      "slug": "replication-crisis",
+      "term": "複製危機",
+      "oneLine": "大量已發表的顯著結果，換一組人重做就做不出來。",
+      "example": "2015 年，270 位研究者重做 100 個心理學實驗：原研究有 97% 顯著，重做之後只剩 36%。",
+      "route": "/statistics/glossary/replication-crisis",
+      "en": {
+        "term": "Replication crisis",
+        "oneLine": "A large share of published significant findings do not come back when someone else runs the study again.",
+        "example": "In 2015, 270 researchers redid 100 psychology experiments: 97% of the originals were significant, 36% of the replications were."
+      }
+    },
+    "sampling-distribution": {
+      "slug": "sampling-distribution",
+      "term": "抽樣分佈",
+      "oneLine": "同一個統計量在反覆抽樣下會長成的樣子。p 值與信賴區間都是從它身上量出來的。",
+      "example": "品茶實驗的 70 種挑法就是一個抽樣分佈：全部列出來，再數有幾種跟實際結果一樣極端。",
+      "route": "/statistics/glossary/sampling-distribution",
+      "en": {
+        "term": "Sampling distribution",
+        "oneLine": "The shape a statistic takes under repeated sampling. Both p values and confidence intervals are read off it.",
+        "example": "The 70 ways of picking four cups out of eight are a sampling distribution: list them all, then count how many are as extreme as what actually happened."
+      }
+    },
+    "significance-level": {
+      "slug": "significance-level",
+      "term": "顯著水準",
+      "oneLine": "事前選定的門檻：長期而言，你願意讓多少比例的真虛無被錯判為顯著。",
+      "example": "Fisher 說二十分之一是個方便的界線，如此而已。方便，而且當年好查表。",
+      "route": "/statistics/glossary/significance-level",
+      "en": {
+        "term": "Significance level",
+        "oneLine": "A threshold fixed in advance: the share of true nulls you are willing to reject in the long run.",
+        "example": "Fisher called one in twenty a convenient limit. Convenient, and easy to look up in a table."
+      }
+    },
+    "statistical-power": {
+      "slug": "statistical-power",
+      "term": "檢定力",
+      "oneLine": "效果真的存在時，這個研究抓得到它的機率。",
+      "example": "Cohen 在 1962 年算過：那年頭的心理學研究要抓一個中等大小的效果，平均只有 .48 的機會，比丟銅板還差一點。",
+      "route": "/statistics/glossary/statistical-power",
+      "en": {
+        "term": "Statistical power",
+        "oneLine": "The probability that a study will catch an effect that is really there.",
+        "example": "Cohen worked it out in 1962: to catch a medium effect, the psychology studies of the day averaged a .48 chance. Slightly worse than a coin toss."
+      }
+    },
+    "type-i-and-type-ii-error": {
+      "slug": "type-i-and-type-ii-error",
+      "term": "第一類與第二類錯誤",
+      "oneLine": "兩種錯法：虛無為真卻拒絕它（誤報），虛無為假卻沒拒絕（漏抓）。",
+      "example": "醫材工廠的品管：誤報一次，白停一次機；漏抓一次，瑕疵品進了手術室。代價不同，門檻就不該一樣。",
+      "route": "/statistics/glossary/type-i-and-type-ii-error",
+      "en": {
+        "term": "Type I and Type II error",
+        "oneLine": "Two ways to be wrong: rejecting a true null (a false alarm), or failing to reject a false one (a miss).",
+        "example": "Quality control on a surgical-steel line: a false alarm costs an idle machine, a miss puts a flawed plate in an operating theatre. Different costs, different thresholds."
+      }
+    }
+  }
 }
