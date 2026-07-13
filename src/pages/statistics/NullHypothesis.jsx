@@ -5,6 +5,7 @@ import LangSwitch, { useLang } from '../../components/LangSwitch';
 import Prose from '../../components/lab/Prose';
 import HoverCite from '../../components/lab/HoverCite';
 import ArticleLayout, { ArticleNav } from '../../components/lab/ArticleLayout';
+import ArticleMeta from '../../components/lab/ArticleMeta';
 import ArticleZh from '../../content/statistics/null-hypothesis.zh.mdx';
 import ArticleEn from '../../content/statistics/null-hypothesis.en.mdx';
 import data from '../../data/statistics-null-hypothesis.json';
@@ -75,7 +76,17 @@ export default function NullHypothesis() {
         title={title}
         eyebrow={en ? 'Statistics Lab' : '統計學實驗室'}
         summary={summary}
+        meta={
+          <ArticleMeta
+            publishedAt={meta.publishedAt}
+            updatedAt={meta.updatedAt}
+            readingMinutes={en ? meta.en?.readingMinutes : meta.readingMinutes}
+            tags={(en ? meta.en?.tags : meta.tags) ?? []}
+            lang={lang}
+          />
+        }
         tocLabel={en ? 'On this page' : '本頁目次'}
+        tocKey={lang}
         nav={
           <ArticleNav
             topics={hub.topics}

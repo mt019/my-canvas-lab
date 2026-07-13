@@ -19,7 +19,7 @@ import TableOfContents from './TableOfContents';
  * on paper with a hairline beside it, and the single accent in the whole shell is
  * the mark on wherever the reader currently is.
  */
-export default function ArticleLayout({ title, eyebrow, summary, nav, tocLabel, children }) {
+export default function ArticleLayout({ title, eyebrow, summary, meta, nav, tocLabel, tocKey, children }) {
   const bodyRef = useRef(null);
 
   return (
@@ -43,12 +43,13 @@ export default function ArticleLayout({ title, eyebrow, summary, nav, tocLabel, 
           {summary ? (
             <p className="mt-4 text-token-sm leading-relaxed text-ink-muted">{summary}</p>
           ) : null}
+          {meta}
         </header>
 
         <details className="mb-8 rounded-token-md border border-line-soft px-4 py-3 lg:hidden">
           <summary className="cursor-pointer text-token-sm text-ink-muted">{tocLabel ?? '本頁目次'}</summary>
           <div className="mt-3">
-            <TableOfContents containerRef={bodyRef} label={tocLabel} />
+            <TableOfContents containerRef={bodyRef} label={tocLabel} refreshKey={tocKey} />
           </div>
         </details>
 
@@ -57,7 +58,7 @@ export default function ArticleLayout({ title, eyebrow, summary, nav, tocLabel, 
 
       <aside className="hidden lg:block">
         <div className="sticky top-10 max-h-[calc(100vh-5rem)] overflow-y-auto pb-10">
-          <TableOfContents containerRef={bodyRef} label={tocLabel} />
+          <TableOfContents containerRef={bodyRef} label={tocLabel} refreshKey={tocKey} />
         </div>
       </aside>
     </div>

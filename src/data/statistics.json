@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-07-13T05:45:54.656Z",
+  "generatedAt": "2026-07-13T06:25:25.796Z",
   "source": "statistics-lab-data, built by engineering/scripts/build-app-json.mjs",
   "topics": [
     {
@@ -22,11 +22,29 @@
       "subtitle": "從一位喝茶的女士到一份聯署聲明：p 值爭議的觀念史",
       "summary": "「虛無」這個譯名，把 null 讀成了「什麼都沒發生」。Fisher 的 null 講的是可推翻性：實驗設下它，就是為了讓資料有東西可以反駁。這篇追一條線——品茶實驗如何生出第一個 p 值，Neyman 與 Pearson 如何把它改成一套決策規則，課本又如何把兩套邏輯焊成一個誰都沒設計過的東西，以及焊接處會裂在哪裡。",
       "publishedAt": "2026-07-13",
-      "readingMinutes": 14,
+      "updatedAt": "2026-07-13",
+      "readingMinutes": 4,
+      "tags": [
+        "虛無假設",
+        "p 值",
+        "觀念史",
+        "Fisher",
+        "Neyman-Pearson",
+        "複製危機"
+      ],
       "en": {
         "title": "Why It Is Called the Null Hypothesis",
         "subtitle": "From a lady tasting tea to a signed statement: a short history of the p value quarrel",
-        "summary": "Null was never about nothingness. Fisher's null is the hypothesis that can be nullified — set up so the data have something to argue against. This piece follows one line: how a tea party produced the first p value, how Neyman and Pearson turned it into a decision rule, how textbooks welded the two together into something neither man designed, and where that weld cracks."
+        "summary": "Null was never about nothingness. Fisher's null is the hypothesis that can be nullified — set up so the data have something to argue against. This piece follows one line: how a tea party produced the first p value, how Neyman and Pearson turned it into a decision rule, how textbooks welded the two together into something neither man designed, and where that weld cracks.",
+        "tags": [
+          "null hypothesis",
+          "p value",
+          "history of ideas",
+          "Fisher",
+          "Neyman-Pearson",
+          "replication crisis"
+        ],
+        "readingMinutes": 5
       }
     }
   ]

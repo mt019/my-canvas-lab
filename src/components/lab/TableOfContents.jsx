@@ -8,10 +8,13 @@ import { useEffect, useState } from 'react';
  *
  * Headings get their ids from rehype-slug at build time (see vite.config.ts).
  */
-export default function TableOfContents({ containerRef, label = '本頁目次' }) {
+export default function TableOfContents({ containerRef, label = '本頁目次', refreshKey }) {
   const [items, setItems] = useState([]);
   const [active, setActive] = useState(null);
 
+  // refreshKey re-reads the headings when the article underneath changes — the
+  // language switch swaps the whole body, and a table of contents built once at
+  // mount would keep listing the previous language's headings.
   useEffect(() => {
     const root = containerRef.current;
     if (!root) return undefined;
@@ -31,7 +34,7 @@ export default function TableOfContents({ containerRef, label = '本頁目次' }
     );
     headings.forEach((h) => spy.observe(h));
     return () => spy.disconnect();
-  }, [containerRef]);
+  }, [containerRef, refreshKey]);
 
   if (items.length === 0) return null;
 
