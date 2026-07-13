@@ -3,23 +3,47 @@ import ChartFrame from '../../../components/lab/chart/ChartFrame';
 import { AxisX, AxisY, Grid } from '../../../components/lab/chart/Axis';
 import { Bars, RuleLine } from '../../../components/lab/chart/marks';
 import { bandScale, linearScale, niceTicks } from '../../../components/lab/chart/scale';
-import Tex from '../../../components/lab/Math';
 import { mulberry32, normalSample } from '../_lib/rng';
 import { tTest } from '../_lib/stats';
 
 /*
- * Run the same study a few thousand times and keep only the p values.
- *
- * With no effect at all, they come out flat: every value of p is as likely as
- * every other, and 5% of them land under 0.05 by construction. Push the effect
- * up and the distribution piles against the left wall — which is all "power"
- * means. One figure, both halves of the idea, because they are the same picture
- * seen at two settings of the same knob.
+ * Run the same study a few thousand times and keep only the p values. With no
+ * effect at all they come out flat, and 5% land under 0.05 by construction. Turn
+ * the effect up and they pile against the left wall, which is all that "power"
+ * means — one picture, two settings of one knob.
  */
 const BINS = 20;
 const ALPHAS = [0.1, 0.05, 0.01];
 
-export default function PUnderNull({ n = 30, runs = 2000, seed = 20260713, delta: delta0 = 0 }) {
+const COPY = {
+  zh: {
+    effect: '真實效果 delta',
+    threshold: '門檻 alpha',
+    hits: (runs, pct) => `${runs} 次研究裡，有 ${pct}% 落在門檻以內`,
+    nullTail: (a) => `。效果是零，這些全是偽陽性，比率就是你設的 ${a}。`,
+    powerTail: '。效果不是零，這個比率就是檢定力。',
+    title: '虛無為真時 p 值的分佈',
+    captionNull: '沒有效果時，p 值均勻分佈在 0 到 1 之間。p 小並不稀奇，它本來就有 5% 的機會小於 0.05。把門檻拉到 0.01，偽陽性降到 1%，那是設定出來的，不是發現。',
+    captionPower: '效果一旦不是零，p 值就往左邊堆。堆得多快，取決於效果大小與樣本數。',
+    y: '研究數',
+    x: 'p 值',
+  },
+  en: {
+    effect: 'True effect delta',
+    threshold: 'Threshold alpha',
+    hits: (runs, pct) => `${pct}% of ${runs} studies came out below the threshold`,
+    nullTail: (a) => `. The effect is zero, so every one of them is a false positive — at exactly the rate you set, ${a}.`,
+    powerTail: '. The effect is not zero, and that rate is the power of the test.',
+    title: 'The distribution of p when the null is true',
+    captionNull: 'With no effect, p is uniform on 0 to 1. A small p is not remarkable: it had a 5% chance of landing under 0.05 anyway. Move the threshold to 0.01 and false positives drop to 1%, which is a setting, not a finding.',
+    captionPower: 'Once the effect is nonzero, p piles up on the left. How fast depends on the size of the effect and the size of the sample.',
+    y: 'studies',
+    x: 'p value',
+  },
+};
+
+export default function PUnderNull({ n = 30, runs = 2000, seed = 20260713, delta: delta0 = 0, lang = 'zh' }) {
+  const c = COPY[lang] ?? COPY.zh;
   const [delta, setDelta] = useState(delta0);
   const [alpha, setAlpha] = useState(0.05);
 
@@ -38,7 +62,7 @@ export default function PUnderNull({ n = 30, runs = 2000, seed = 20260713, delta
   }, [n, runs, seed, delta, alpha]);
 
   const x = bandScale({ domain: bins.map((_, i) => i), range: [46, 540], padding: 0.12 });
-  // The bars are binned, but the alpha line sits at a real p value, not a bin edge.
+  // The bars are binned; the threshold line sits at a real p value, not a bin edge.
   const pAxis = linearScale({ domain: [0, 1], range: [46, 540] });
   const yMax = Math.max(...bins);
   const y = linearScale({ domain: [0, yMax], range: [206, 12] });
@@ -48,9 +72,7 @@ export default function PUnderNull({ n = 30, runs = 2000, seed = 20260713, delta
     <div className="my-8 rounded-token-md border border-line-soft p-5">
       <div className="flex flex-wrap items-center gap-x-6 gap-y-3 text-token-sm text-ink-muted">
         <label className="flex items-center gap-2">
-          <span className="whitespace-nowrap">
-            真實效果 <Tex tex="\delta" />
-          </span>
+          <span className="whitespace-nowrap">{c.effect}</span>
           <input
             type="range"
             min="0"
@@ -64,9 +86,7 @@ export default function PUnderNull({ n = 30, runs = 2000, seed = 20260713, delta
         </label>
 
         <span className="flex items-center gap-1">
-          <span className="whitespace-nowrap">
-            門檻 <Tex tex="\alpha" />
-          </span>
+          <span className="whitespace-nowrap">{c.threshold}</span>
           {ALPHAS.map((a) => (
             <button
               key={a}
@@ -85,37 +105,32 @@ export default function PUnderNull({ n = 30, runs = 2000, seed = 20260713, delta
       </div>
 
       <p className="mt-3 text-token-sm text-ink">
-        {runs} 次研究裡，有 <span className="tabular-nums">{(hitRate * 100).toFixed(1)}%</span> 落在門檻以內
-        {isNull
-          ? `——效果是零，這些全是偽陽性，比率就是你設的 ${alpha}。`
-          : '——效果不是零，這個比率就是檢定力。'}
+        {c.hits(runs, (hitRate * 100).toFixed(1))}
+        {isNull ? c.nullTail(alpha) : c.powerTail}
       </p>
 
       <ChartFrame
         width={560}
         height={240}
         margin={{ top: 12, right: 14, bottom: 32, left: 46 }}
-        title="虛無為真時 p 值的分佈"
-        caption={
-          isNull
-            ? '沒有任何效果時，p 值均勻分佈在 0 到 1 之間：p 小並不稀奇，它本來就有 5% 的機會小於 0.05。把門檻拉到 0.01，偽陽性就降到 1% —— 那是設定出來的，不是發現。'
-            : '效果一旦不是零，p 值就往左邊堆。堆得多快，取決於效果大小與樣本數。'
-        }
+        title={c.title}
+        caption={isNull ? c.captionNull : c.captionPower}
       >
         <Grid scale={y} ticks={niceTicks([0, yMax], 4)} />
-        <AxisY scale={y} ticks={niceTicks([0, yMax], 4)} label="研究數" />
+        <AxisY scale={y} ticks={niceTicks([0, yMax], 4)} label={c.y} />
         <AxisX
           scale={x}
           ticks={bins.map((_, i) => i).filter((i) => i % 4 === 0)}
           center
           format={(i) => (i / BINS).toFixed(2)}
-          label="p 值"
+          label={c.x}
         />
         <Bars
-          data={bins.map((c, i) => ({ key: i, value: c }))}
+          data={bins.map((count, i) => ({ key: i, value: count }))}
           x={x}
           y={y}
-          cat={2}
+          cat={8}
+          highlightCat={6}
           highlight={(d) => (d.key + 1) / BINS <= alpha}
         />
         <RuleLine at={alpha} scale={pAxis} orient="vertical" label={`p = ${alpha}`} />

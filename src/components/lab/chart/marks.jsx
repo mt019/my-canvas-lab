@@ -13,12 +13,17 @@ const slot = (n) => {
   return { tx: `var(--cat-${i}-tx)`, bg: `var(--cat-${i}-bg)` };
 };
 
-export function Bars({ data, x, y, y0, cat = 1, highlight = () => false, onHover }) {
+/*
+ * Restraint is the default: bars carry one quiet tone, and a second tone appears
+ * only on the bars the reader is being asked to look at. A chart where every bar
+ * has its own color is a chart with nothing to say.
+ */
+export function Bars({ data, x, y, y0, cat = 8, highlightCat = 6, highlight = () => false, onHover }) {
   const { inner } = useFrame();
   const base = y0 ?? inner.y0;
   const w = x.bandwidth ? x.bandwidth() : 8;
   const tone = slot(cat);
-  const hot = slot(6);
+  const hot = slot(highlightCat);
 
   return (
     <g>

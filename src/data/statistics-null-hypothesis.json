@@ -1,15 +1,20 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-07-13T04:19:48.706Z",
+  "generatedAt": "2026-07-13T05:45:54.656Z",
   "source": "statistics-lab-data, built by engineering/scripts/build-app-json.mjs",
   "meta": {
     "slug": "null-hypothesis",
     "topic": "inference",
     "title": "為什麼叫虛無假設",
     "subtitle": "從一位喝茶的女士到一份聯署聲明：p 值爭議的觀念史",
-    "summary": "虛無假設是被設計來讓資料推翻的那個假設，「虛無」這個譯名把它讀成了「什麼都沒發生」。這篇追一條觀念史的線：Fisher 一個下午的品茶實驗如何生出「虛無假設從不被證明，只可能被否證」這句話；Neyman 與 Pearson 如何把它改造成一套關於長期錯誤率的決策規則；教科書如何把兩套邏輯焊成一個誰都沒設計過的混血程序；以及這個程序如何在二十一世紀招來一份美國統計學會的聲明與一份二十五條的誤讀清單。",
+    "summary": "「虛無」這個譯名，把 null 讀成了「什麼都沒發生」。Fisher 的 null 講的是可推翻性：實驗設下它，就是為了讓資料有東西可以反駁。這篇追一條線——品茶實驗如何生出第一個 p 值，Neyman 與 Pearson 如何把它改成一套決策規則，課本又如何把兩套邏輯焊成一個誰都沒設計過的東西，以及焊接處會裂在哪裡。",
     "publishedAt": "2026-07-13",
-    "readingMinutes": 14
+    "readingMinutes": 14,
+    "en": {
+      "title": "Why It Is Called the Null Hypothesis",
+      "subtitle": "From a lady tasting tea to a signed statement: a short history of the p value quarrel",
+      "summary": "Null was never about nothingness. Fisher's null is the hypothesis that can be nullified — set up so the data have something to argue against. This piece follows one line: how a tea party produced the first p value, how Neyman and Pearson turned it into a decision rule, how textbooks welded the two together into something neither man designed, and where that weld cracks."
+    }
   },
   "figures": {
     "lady-tasting-tea": {
@@ -261,84 +266,146 @@
       "claim": "p = 0.03 代表虛無假設為真的機率只有 3%",
       "why": "p 值算的是「虛無為真的前提下，看到這種資料的機率」。這句話把條件反過來讀成「看到這種資料的前提下，虛無為真的機率」。兩者可以差很遠，差多遠取決於這個領域裡本來有多少假說是真的——而 p 值對此一無所知。",
       "instead": "要回答「這個結果有多大機會是真的」，必須額外引入事前勝算與檢定力（見本文的 2x2 表）。",
-      "source": "greenland2016"
+      "source": "greenland2016",
+      "en": {
+        "claim": "p = 0.03 means there is only a 3% chance the null is true",
+        "why": "A p value is the probability of data like these given that the null holds. This reads the condition backwards. How far apart the two numbers are depends on how many hypotheses in the field were true to begin with, and the p value knows nothing about that.",
+        "instead": "To ask how likely a finding is to be real, you have to bring in prior odds and power (see the 2x2 table above)."
+      }
     },
     {
       "id": "prob-h1-true",
       "claim": "p 越小，對立假設為真的機率越大",
       "why": "同一個條件方向的錯誤。p 值的計算從頭到尾只用到虛無假設，對立假設沒有進入這個算式。",
       "instead": "把對立假設的可信度納入計算，需要的是貝氏因子或事後機率，那是另一套工具。",
-      "source": "greenland2016"
+      "source": "greenland2016",
+      "en": {
+        "claim": "The smaller the p, the more likely the alternative is true",
+        "why": "Same reversal. The alternative hypothesis never enters the calculation of a p value; only the null does.",
+        "instead": "Weighing the credibility of the alternative needs a Bayes factor or a posterior, which is a different tool."
+      }
     },
     {
       "id": "non-significant-means-no-effect",
       "claim": "p > 0.05，所以沒有效果",
       "why": "沒有拒絕虛無假設，只代表這批資料沒有提供足夠的理由去推翻它。樣本太小、變異太大、測量太粗，都會讓真實存在的效果過不了門檻。虛無假設從不被證明。",
       "instead": "報告效果量與信賴區間；若真要正面宣稱「差距小到不重要」，用等價檢定，並事先講清楚多小算不重要。",
-      "source": "greenland2016"
+      "source": "greenland2016",
+      "en": {
+        "claim": "p > 0.05, so there is no effect",
+        "why": "Failing to reject means the data gave you no good reason to reject. A small sample, a noisy measure, or high variance will hide a real effect. The null is never proved.",
+        "instead": "Report the effect size and interval. If you want to claim the difference is negligible, run an equivalence test and say in advance what negligible means."
+      }
     },
     {
       "id": "p-measures-effect-size",
       "claim": "p 值越小，效果越大、越重要",
       "why": "p 值同時受效果大小與樣本數影響。樣本夠大時，任何微不足道的差距都能得到極小的 p 值。",
       "instead": "效果大小要看效果量本身（差值、比值、標準化效果量），不看 p。",
-      "source": "greenland2016"
+      "source": "greenland2016",
+      "en": {
+        "claim": "A smaller p means a bigger, more important effect",
+        "why": "The p value moves with both effect size and sample size. With a large enough sample, a trivial difference produces a tiny p.",
+        "instead": "Size lives in the effect size — a difference, a ratio, a standardized effect — not in p."
+      }
     },
     {
       "id": "significance-threshold-is-scientific",
       "claim": "0.05 是科學上的門檻",
       "why": "0.05 是 Fisher 順手取的一個方便界線，沒有理論地位。它之所以流傳，一部分原因是當年查表方便。",
       "instead": "門檻的高低該由這個決策的代價決定：偽陽性有多貴、偽陰性有多貴。",
-      "source": "fisher1925StatisticalMethods"
+      "source": "fisher1925StatisticalMethods",
+      "en": {
+        "claim": "0.05 is a scientific threshold",
+        "why": "Fisher picked one in twenty as a convenient line, partly because it made the tables usable. There is no theory behind it.",
+        "instead": "Let the cost of the decision set the threshold: how expensive is a false positive, how expensive is a false negative."
+      }
     },
     {
       "id": "replication-guaranteed",
       "claim": "p = 0.01 代表重做這個研究有 99% 的機會再次顯著",
       "why": "重複研究的成功率取決於真實效果與檢定力，跟這一次的 p 值不是同一回事。單次 p 值對複製機率的資訊量很低。",
       "instead": "要談複製，先談檢定力與效果量的估計精度。",
-      "source": "greenland2016"
+      "source": "greenland2016",
+      "en": {
+        "claim": "p = 0.01 means a replication has a 99% chance of coming out significant again",
+        "why": "Replication success depends on the true effect and the power of the study, not on this one p value, which carries very little information about it.",
+        "instead": "Talk about power and the precision of the effect estimate instead."
+      }
     }
   ],
   "timeline": [
     {
       "year": "1925",
       "title": "Fisher 出版《研究工作者的統計方法》",
-      "body": "顯著性檢定的操作手冊。二十分之一被說成一個方便的界線，日後成為 0.05。"
+      "body": "顯著性檢定的操作手冊。二十分之一被說成一個方便的界線，日後成為 0.05。",
+      "en": {
+        "title": "Fisher publishes Statistical Methods for Research Workers",
+        "body": "The working manual of significance testing. One in twenty is called a convenient line to draw; it becomes 0.05."
+      }
     },
     {
       "year": "1933",
       "title": "Neyman 與 Pearson 提出最有效檢定",
-      "body": "H0 與 H1 的配對、第一類與第二類錯誤、臨界域。統計檢定被改寫成一套關於長期行為的決策規則。"
+      "body": "H0 與 H1 的配對、第一類與第二類錯誤、臨界域。統計檢定被改寫成一套關於長期行為的決策規則。",
+      "en": {
+        "title": "Neyman and Pearson give the most efficient test",
+        "body": "H0 paired with H1, errors of the first and second kind, a critical region. Testing is rewritten as a rule about long-run behaviour."
+      }
     },
     {
       "year": "1935",
       "title": "Fisher 出版《實驗設計》",
-      "body": "女士品茶登場。虛無假設被明確界定為那個可能被否證、卻永遠不會被證明的假設。"
+      "body": "女士品茶登場。虛無假設被明確界定為那個可能被否證、卻永遠不會被證明的假設。",
+      "en": {
+        "title": "Fisher publishes The Design of Experiments",
+        "body": "The lady tasting tea. The null hypothesis is defined as the one that may be disproved and is never proved."
+      }
     },
     {
       "year": "1935-1955",
       "title": "Fisher 與 Neyman 的長期爭執",
-      "body": "兩人在期刊與講台上互相攻擊。爭的是統計推論到底在做什麼：衡量證據，還是規範行為。"
+      "body": "兩人在期刊與講台上互相攻擊。爭的是統計推論到底在做什麼：衡量證據，還是規範行為。",
+      "en": {
+        "title": "Fisher against Neyman, for twenty years",
+        "body": "They attack each other in journals and from lecterns. The quarrel is about what inference is for: weighing evidence, or governing behaviour."
+      }
     },
     {
       "year": "1940s-",
       "title": "教科書把兩套邏輯縫起來",
-      "body": "心理學與社會科學的方法教科書開始教一套混合程序：報告 p 值，同時宣稱長期錯誤率的保證。兩位當事人都不會承認這是自己的東西。"
+      "body": "心理學與社會科學的方法教科書開始教一套混合程序：報告 p 值，同時宣稱長期錯誤率的保證。兩位當事人都不會承認這是自己的東西。",
+      "en": {
+        "title": "Textbooks weld the two logics together",
+        "body": "Methods texts in psychology and the social sciences teach a hybrid: report the p value, and claim the long-run error guarantee. Neither man would have signed it."
+      }
     },
     {
       "year": "2004",
       "title": "Gigerenzer 稱之為 null ritual",
-      "body": "這套程序被指認為一種儀式：機械執行、沒有作者、也沒有人願意為它的邏輯辯護。"
+      "body": "這套程序被指認為一種儀式：機械執行、沒有作者、也沒有人願意為它的邏輯辯護。",
+      "en": {
+        "title": "Gigerenzer names it the null ritual",
+        "body": "A procedure performed mechanically, with no author, and no one willing to defend its logic."
+      }
     },
     {
       "year": "2011-",
       "title": "複製危機",
-      "body": "大規模重做實驗的計畫顯示，大量已發表的顯著結果重做不出來。p-hacking、發表偏誤、低檢定力被指認為結構性原因。"
+      "body": "大規模重做實驗的計畫顯示，大量已發表的顯著結果重做不出來。p-hacking、發表偏誤、低檢定力被指認為結構性原因。",
+      "en": {
+        "title": "The replication crisis",
+        "body": "Large replication projects fail to reproduce a great many published significant results. p-hacking, publication bias and low power are identified as structural causes."
+      }
     },
     {
       "year": "2016",
       "title": "美國統計學會發表 p 值聲明",
-      "body": "六條原則。最直白的一條：科學結論不該只建立在 p 值是否越過某個門檻上。同年 Greenland 等人列出二十五條常見誤讀。"
+      "body": "六條原則。最直白的一條：科學結論不該只建立在 p 值是否越過某個門檻上。同年 Greenland 等人列出二十五條常見誤讀。",
+      "en": {
+        "title": "The ASA issues a statement on p values",
+        "body": "Six principles. The bluntest: scientific conclusions should not rest on whether a p value clears a threshold. The same year, Greenland and colleagues list twenty-five misreadings."
+      }
     }
   ]
 }

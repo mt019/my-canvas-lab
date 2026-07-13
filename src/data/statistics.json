@@ -1,12 +1,16 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-07-13T04:19:48.706Z",
+  "generatedAt": "2026-07-13T05:45:54.656Z",
   "source": "statistics-lab-data, built by engineering/scripts/build-app-json.mjs",
   "topics": [
     {
       "id": "inference",
       "label": "統計推論",
-      "blurb": "假設檢定、估計、信賴區間——被用得最多、也被誤解得最深的一塊。"
+      "blurb": "假設檢定、估計、信賴區間——被用得最多、也被誤解得最深的一塊。",
+      "en": {
+        "label": "Inference",
+        "blurb": "Hypothesis tests, estimates, intervals — the most used and the most misread part of the subject."
+      }
     }
   ],
   "articles": [
@@ -16,9 +20,14 @@
       "topic": "inference",
       "title": "為什麼叫虛無假設",
       "subtitle": "從一位喝茶的女士到一份聯署聲明：p 值爭議的觀念史",
-      "summary": "虛無假設是被設計來讓資料推翻的那個假設，「虛無」這個譯名把它讀成了「什麼都沒發生」。這篇追一條觀念史的線：Fisher 一個下午的品茶實驗如何生出「虛無假設從不被證明，只可能被否證」這句話；Neyman 與 Pearson 如何把它改造成一套關於長期錯誤率的決策規則；教科書如何把兩套邏輯焊成一個誰都沒設計過的混血程序；以及這個程序如何在二十一世紀招來一份美國統計學會的聲明與一份二十五條的誤讀清單。",
+      "summary": "「虛無」這個譯名，把 null 讀成了「什麼都沒發生」。Fisher 的 null 講的是可推翻性：實驗設下它，就是為了讓資料有東西可以反駁。這篇追一條線——品茶實驗如何生出第一個 p 值，Neyman 與 Pearson 如何把它改成一套決策規則，課本又如何把兩套邏輯焊成一個誰都沒設計過的東西，以及焊接處會裂在哪裡。",
       "publishedAt": "2026-07-13",
-      "readingMinutes": 14
+      "readingMinutes": 14,
+      "en": {
+        "title": "Why It Is Called the Null Hypothesis",
+        "subtitle": "From a lady tasting tea to a signed statement: a short history of the p value quarrel",
+        "summary": "Null was never about nothingness. Fisher's null is the hypothesis that can be nullified — set up so the data have something to argue against. This piece follows one line: how a tea party produced the first p value, how Neyman and Pearson turned it into a decision rule, how textbooks welded the two together into something neither man designed, and where that weld cracks."
+      }
     }
   ]
 }

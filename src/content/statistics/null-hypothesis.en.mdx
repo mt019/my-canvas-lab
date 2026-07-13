@@ -1,0 +1,94 @@
+{/* English body. Title and summary live in meta.json. Math is LaTeX only.
+    Figures and <Cite> are injected by the frontend; import nothing here. */}
+
+Ask a room of students what the null hypothesis is, and most will tell you it is the hypothesis that nothing is going on. No effect, no difference, nothing there. That is certainly how I first learned it, and the Chinese translation of the term commits to that reading so completely that it becomes hard to see any other.
+
+Fisher meant something narrower. His null is the hypothesis that can be nullified — the one the experiment gives a chance to fail. <Cite id="fisher1935DesignOfExperiments">The null hypothesis, he wrote, is never proved or established, but is possibly disproved in the course of experimentation</Cite>. You set it up so that the data have something to argue against.
+
+This sounds like a quibble about wording. It stopped sounding like one to me when I realised that the significance testing in today's textbooks is two incompatible logics welded together, and that the weld runs straight through this word.
+
+## A lady, and eight cups of tea
+
+It starts at a tea party. A lady claims she can taste whether the milk went into the cup before the tea or after. Fisher does not argue with her about the physiology of taste. He designs an experiment: <Cite id="fisher1935DesignOfExperiments">eight cups, four poured milk-first and four tea-first, presented in random order, and she must pick out the four that had milk first</Cite>.
+
+What makes the design work is that one thing can be worked out in advance: what happens if she cannot taste the difference at all. Four cups out of eight can be chosen in seventy ways, all equally likely to a guesser. Exactly one of those seventy is completely correct. So a woman with no ability whatsoever gets all four right with probability $1/70$, about 0.014.
+
+Try it yourself:
+
+<LadyTastingTea />
+
+That $1/70$ is the earliest p value there is. Nobody estimated it — it was counted. Lay out every outcome the null allows, count the ones at least as extreme as what you saw, divide. The null's job in all of this is to supply a reference world small enough to enumerate. Without it, "she got four right" is a fact with no scale attached.
+
+## What a p value actually looks like
+
+The tea experiment is small enough to count out by hand. Real studies rarely are, so they lean on sampling distributions instead. The question does not change: if the null were true, how often would data this extreme show up?
+
+Follow that sentence one step further and you get a result most people never quite absorb. When the null is true, p values are uniform. The probability of $p < 0.05$ is exactly 0.05; the probability of $p < 0.01$ is exactly 0.01. In a world where nothing is happening, one study in twenty comes out significant.
+
+Set the effect to zero and run it two thousand times:
+
+<PUnderNull />
+
+Push the slider right and the distribution starts piling up against the left wall. How fast it piles up is what "power" means. Same picture, same machinery, one knob.
+
+## Neyman and Pearson turn it into a decision
+
+In 1933 Neyman and Pearson published something that looks similar and is built on entirely different foundations. Their question was: if you must choose between two hypotheses, what rule makes you wrong least often in the long run? <Cite id="neymanPearson1933">They called the test a rule of behaviour, and meant it literally</Cite>.
+
+Out of that come $H_0$ paired with $H_1$, an $\alpha$ fixed before you look, and, as the price of both, the second kind of error and the power to avoid it. This framework does not answer "how strong is the evidence in these data". It answers "how often will this rule mislead you". Saying $\alpha = 0.05$ is a statement about the rule: of all the occasions the null holds, you will call it wrong on 5% of them. It says nothing about how confident you should be right now.
+
+The terms are on the contract. Fix the threshold in advance. Report a decision, reject or do not reject. Do not read the exact p value as a measure of evidence, because in this logic it is not one.
+
+Fisher hated this, and the two camps fought about it for twenty years. Textbooks resolved the fight by taking both.
+
+## The weld
+
+One dataset, three readings:
+
+<TwoLogics />
+
+That third panel is the sentence almost every paper writes. It claims two things that exclude each other. "The smaller the p, the stronger the evidence" is Fisher's, and the price of it is giving up the long-run guarantee. "Significant at the 0.05 level, so we reject the null" is Neyman and Pearson's, and the price of that is fixing the threshold beforehand and never reading p as evidence. The sentence pays neither price and claims both authorities. <Cite id="gigerenzerKraussVitouch2004NullRitual">Gigerenzer calls it the null ritual</Cite>: a procedure with no author, which nobody will defend, performed daily by an entire discipline.
+
+The 0.05 threshold has no theoretical standing either. <Cite id="fisher1925StatisticalMethods">Fisher said one in twenty was a convenient line to draw</Cite>. Convenient, and easy to tabulate in 1925.
+
+## Where the weld cracks
+
+A p value is not the probability that the null is true. It is the probability of data like these *given* that the null is true. The condition runs the other way, and the two numbers can be nowhere near each other. To say how likely a significant finding is to be real, you need something the p value knows nothing about: how many hypotheses in your field were true to begin with.
+
+<PPV />
+
+In a field where most hypotheses are wrong — exploratory work, high-throughput screens, anything that casts a wide net — and power is low, most of what comes back "significant" is false. Every single test was performed correctly.
+
+A small p does not mean a large effect, either. Freeze the effect at something too small to care about and turn up the sample size:
+
+<SampleSizeAndEffect />
+
+A p value measures how unlike the null the data are. Collect enough data and even a trivial difference looks nothing like the null. Sometimes $p < 0.001$ is just telling you the sample was big.
+
+And then there is the oldest trick that isn't a trick. Twenty outcome measures, no real effect in any of them, each tested at 0.05. The chance that at least one comes out significant is $1 - 0.95^{20} \approx 0.64$.
+
+<PHacking />
+
+Nobody faked anything. Every test is textbook-correct. What breaks is looking at the data first and choosing what to report afterwards: the 5% guarantee is gone, and nothing in the write-up will show that it left.
+
+Put those three together and you have the statistical half of the replication crisis.
+
+## The standard misreadings
+
+<Cite id="greenland2016">Greenland and colleagues listed twenty-five of them in 2016</Cite>. Here are the ones you meet most often.
+
+<Misreadings />
+
+## So what do we do
+
+In 2016 the American Statistical Association did something it had never done before: issued a formal statement about a statistical method. <Cite id="wassersteinLazar2016">The p value statement</Cite> gives six principles, the bluntest of which is that scientific conclusions and policy decisions should not be based only on whether a p value passes a threshold.
+
+It offers no replacement, because the tool was never the problem. The p value answers a well-defined question. Fisher's use of it holds together, and so does Neyman and Pearson's. What breaks is the weld between them, which lets people believe that finishing a test is the same as finishing an inference.
+
+The practical advice is unglamorous. Report effect sizes and intervals, so the reader can see how big, not just whether. Preregister the analysis, so the 5% actually means 5%. Publish the null results, or the literature will consist entirely of the 5% that cleared the bar. And when the null really does hold, say so with an equivalence test — "the difference is too small to matter" — instead of hiding behind "no significant difference".
+
+Back to the word. Null was always about being nullifiable. It names the hypothesis the experiment sets up for the data to knock down: the starting point of an inference, not its conclusion. The moment "we failed to reject the null" gets announced as "we proved there is no effect", the word has been turned inside out.
+
+## Timeline
+
+<Timeline />

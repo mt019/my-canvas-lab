@@ -1,9 +1,11 @@
 import { useMemo } from 'react';
 import PageShell from '../../components/PageShell';
 import FontSizeControl, { useFontScale } from '../../components/FontSizeControl';
+import LangSwitch, { useLang } from '../../components/LangSwitch';
 import Prose from '../../components/lab/Prose';
 import HoverCite from '../../components/lab/HoverCite';
-import Article from '../../content/statistics/null-hypothesis.mdx';
+import ArticleZh from '../../content/statistics/null-hypothesis.zh.mdx';
+import ArticleEn from '../../content/statistics/null-hypothesis.en.mdx';
 import data from '../../data/statistics-null-hypothesis.json';
 import LadyTastingTea from './_figures/LadyTastingTea';
 import PUnderNull from './_figures/PUnderNull';
@@ -16,13 +18,18 @@ import Timeline from './_figures/Timeline';
 
 /*
  * The article shell. It owns three things the .mdx does not: which figures exist,
- * what parameters they run with, and where the citations come from. The prose
- * file stays plain markdown — <LadyTastingTea /> with no import and no props —
- * so writing the next article means writing prose, not wiring components.
+ * what parameters they run with, and where the citations come from. Prose stays
+ * plain markdown — <LadyTastingTea /> with no import and no props — so writing
+ * the next article means writing prose.
+ *
+ * Two languages, two .mdx files. A dictionary keyed by sentence is the right
+ * shape for UI labels and the wrong shape for an essay: an essay translated
+ * sentence by sentence reads like a translation.
  */
 export default function NullHypothesis() {
   const { meta, figures, sources, misreadings, timeline } = data;
   const [scale, setScale] = useFontScale();
+  const { lang, setLang } = useLang();
 
   const params = useMemo(
     () => Object.fromEntries(Object.entries(figures ?? {}).map(([id, f]) => [id, f.params ?? {}])),
@@ -30,29 +37,39 @@ export default function NullHypothesis() {
   );
 
   const components = useMemo(() => ({
-    LadyTastingTea: () => <LadyTastingTea {...params['lady-tasting-tea']} />,
-    PUnderNull: () => <PUnderNull {...params['p-under-null']} />,
-    TwoLogics: () => <TwoLogics {...params['two-logics']} />,
-    PHacking: () => <PHacking {...params['p-hacking']} />,
-    SampleSizeAndEffect: () => <SampleSizeAndEffect {...params['n-and-effect']} />,
-    PPV: () => <PositivePredictiveValue {...params['ppv-2x2']} />,
-    Misreadings: () => <Misreadings items={misreadings ?? []} />,
-    Timeline: () => <Timeline items={timeline ?? []} />,
-    // <Cite id="fisher1935">…</Cite> — the id is checked against sources.json in
+    LadyTastingTea: () => <LadyTastingTea {...params['lady-tasting-tea']} lang={lang} />,
+    PUnderNull: () => <PUnderNull {...params['p-under-null']} lang={lang} />,
+    TwoLogics: () => <TwoLogics {...params['two-logics']} lang={lang} />,
+    PHacking: () => <PHacking {...params['p-hacking']} lang={lang} />,
+    SampleSizeAndEffect: () => <SampleSizeAndEffect {...params['n-and-effect']} lang={lang} />,
+    PPV: () => <PositivePredictiveValue {...params['ppv-2x2']} lang={lang} />,
+    Misreadings: () => <Misreadings items={misreadings ?? []} lang={lang} />,
+    Timeline: () => <Timeline items={timeline ?? []} lang={lang} />,
+    // <Cite id="fisher1935…">…</Cite> — the id is checked against sources.json in
     // the data repo, so a citation with no source cannot reach the page.
     Cite: ({ id, children }) => <HoverCite source={sources?.[id]}>{children}</HoverCite>,
-  }), [params, sources, misreadings, timeline]);
+  }), [params, sources, misreadings, timeline, lang]);
+
+  const en = lang === 'en';
+  const title = en ? meta.en?.title ?? meta.title : meta.title;
+  const summary = en ? meta.en?.summary ?? meta.summary : meta.summary;
+  const Article = en ? ArticleEn : ArticleZh;
 
   return (
     <PageShell
-      title={meta.title}
-      eyebrow="統計學實驗室"
+      title={title}
+      eyebrow={en ? 'Statistics Lab' : '統計學實驗室'}
       width="prose"
       backHref="/statisticslab"
       fontScale={scale}
-      controls={<FontSizeControl scale={scale} onChange={setScale} />}
+      controls={
+        <>
+          <LangSwitch lang={lang} onChange={setLang} />
+          <FontSizeControl scale={scale} onChange={setScale} />
+        </>
+      }
     >
-      <p className="mb-10 text-token-sm leading-relaxed text-ink-muted">{meta.summary}</p>
+      <p className="mb-10 text-token-sm leading-relaxed text-ink-muted">{summary}</p>
       <Prose components={components}>
         <Article />
       </Prose>

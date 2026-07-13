@@ -3,16 +3,39 @@ import ChartFrame from '../../../components/lab/chart/ChartFrame';
 import { AxisX, AxisY, Grid } from '../../../components/lab/chart/Axis';
 import { Bars } from '../../../components/lab/chart/marks';
 import { bandScale, linearScale, niceTicks } from '../../../components/lab/chart/scale';
-import Tex from '../../../components/lab/Math';
 import { teaNullDistribution } from '../_lib/stats';
 
 /*
- * Fisher's tea tasting, as an experiment the reader runs on themselves: pick the
- * four cups you claim had the milk poured first, and read your result against the
- * exact null distribution — all 70 ways of choosing 4 cups from 8, counted, not
- * simulated. This is where the p value comes from, before any of the theory.
+ * Fisher's tea tasting, run on the reader: pick the four cups you say had milk
+ * first, then read your score against the exact null distribution — all 70 ways
+ * of choosing 4 from 8, counted rather than simulated. The p value starts here,
+ * before any of the theory.
  */
-export default function LadyTastingTea({ cups = 8, truth = [1, 3, 5, 8] }) {
+const COPY = {
+  zh: {
+    prompt: (half, picked) => `挑出你認為先倒牛奶的 ${half} 杯（已挑 ${picked}）`,
+    reveal: '揭曉',
+    result: (correct, p) => `猜對 ${correct} 杯，單尾 p = ${p.toFixed(4)}`,
+    perfect: '（七十分之一）',
+    title: '猜對杯數在虛無假設下的精確分佈',
+    caption: (total) => `純憑猜測時，${total} 種挑法機會均等。全中的挑法只有一種，所以全中的機率是 1/${total}。這個數字是數出來的，不是抽樣估的。`,
+    y: '挑法數',
+    x: (k) => `猜對 ${k}`,
+  },
+  en: {
+    prompt: (half, picked) => `Pick the ${half} cups you say had milk first (${picked} chosen)`,
+    reveal: 'Reveal',
+    result: (correct, p) => `${correct} correct, one-sided p = ${p.toFixed(4)}`,
+    perfect: ' (one in seventy)',
+    title: 'Exact null distribution of the number of correct cups',
+    caption: (total) => `A guesser is equally likely to pick any of the ${total} selections, and exactly one of them is fully correct. So guessing all four right happens with probability 1/${total}. That number was counted, not estimated.`,
+    y: 'ways to choose',
+    x: (k) => `${k} right`,
+  },
+};
+
+export default function LadyTastingTea({ cups = 8, truth = [1, 3, 5, 8], lang = 'zh' }) {
+  const c = COPY[lang] ?? COPY.zh;
   const [picked, setPicked] = useState([]);
   const [submitted, setSubmitted] = useState(false);
   const half = cups / 2;
@@ -48,9 +71,9 @@ export default function LadyTastingTea({ cups = 8, truth = [1, 3, 5, 8] }) {
               aria-pressed={on}
               className="h-12 w-12 rounded-full border text-token-sm transition-colors duration-fast"
               style={{
-                borderColor: on ? 'var(--cat-1-tx)' : 'var(--c-line)',
-                background: on ? 'var(--cat-1-bg)' : reveal ? 'var(--cat-3-bg)' : 'var(--c-paper)',
-                color: on ? 'var(--cat-1-tx)' : reveal ? 'var(--cat-3-tx)' : 'var(--c-ink-faint)',
+                borderColor: on ? 'var(--cat-2-tx)' : reveal ? 'var(--status-success-tx)' : 'var(--c-line)',
+                background: on ? 'var(--cat-2-bg)' : reveal ? 'var(--status-success-bg)' : 'var(--c-paper)',
+                color: on ? 'var(--cat-2-tx)' : reveal ? 'var(--status-success-tx)' : 'var(--c-ink-faint)',
               }}
             >
               {i}
@@ -60,21 +83,19 @@ export default function LadyTastingTea({ cups = 8, truth = [1, 3, 5, 8] }) {
       </div>
 
       <div className="mt-3 flex flex-wrap items-center gap-3 text-token-sm text-ink-muted">
-        <span>
-          挑出你認為先倒牛奶的 {half} 杯（已挑 {picked.length}）
-        </span>
+        <span>{c.prompt(half, picked.length)}</span>
         <button
           type="button"
           disabled={picked.length !== half}
           onClick={() => setSubmitted(true)}
           className="rounded-token-sm border border-line px-3 py-1 text-token-sm text-ink transition-colors duration-fast hover:border-accent hover:text-accent disabled:opacity-40"
         >
-          揭曉
+          {c.reveal}
         </button>
         {submitted ? (
           <span className="text-ink">
-            猜對 {correct} 杯，單尾 <Tex tex="p" /> = {p.toFixed(4)}
-            {correct === half ? '（1/70）' : null}
+            {c.result(correct, p)}
+            {correct === half ? c.perfect : null}
           </span>
         ) : null}
       </div>
@@ -84,22 +105,18 @@ export default function LadyTastingTea({ cups = 8, truth = [1, 3, 5, 8] }) {
         height={230}
         margin={{ top: 12, right: 20, bottom: 30, left: 44 }}
         minWidth={420}
-        title="猜對杯數在虛無假設下的精確分佈"
-        caption={`女士純憑猜測時，${dist.total} 種挑法各有相同機會。猜對 ${half} 杯的挑法只有 1 種，所以全部猜對的機率是 1/${dist.total}。這個數字是數出來的，不是抽樣估的。`}
+        title={c.title}
+        caption={c.caption(dist.total)}
       >
         <Grid scale={y} ticks={niceTicks([0, yMax], 4)} />
-        <AxisY scale={y} ticks={niceTicks([0, yMax], 4)} label="挑法數" />
-        <AxisX
-          scale={x}
-          ticks={dist.counts.map((_, k) => k)}
-          center
-          format={(k) => `猜對 ${k}`}
-        />
+        <AxisY scale={y} ticks={niceTicks([0, yMax], 4)} label={c.y} />
+        <AxisX scale={x} ticks={dist.counts.map((_, k) => k)} center format={c.x} />
         <Bars
-          data={dist.counts.map((c, k) => ({ key: k, value: c }))}
+          data={dist.counts.map((count, k) => ({ key: k, value: count }))}
           x={x}
           y={y}
-          cat={2}
+          cat={8}
+          highlightCat={2}
           highlight={(d) => submitted && d.key === correct}
         />
       </ChartFrame>
