@@ -25,7 +25,9 @@ export default function ArticleLayout({ title, eyebrow, summary, meta, nav, tocL
   return (
     <div className="mx-auto grid max-w-[86rem] gap-10 px-4 sm:px-6 lg:grid-cols-[15rem_minmax(0,44rem)_14rem] lg:gap-12">
       <aside className="hidden lg:block">
-        <div className="sticky top-10 max-h-[calc(100vh-5rem)] overflow-y-auto border-r border-line-soft pr-5">
+        {/* Clears the sticky site bar above it (see SiteHeader) — a rail that
+            slides under the toolbar loses its first item. */}
+        <div className="sticky top-16 max-h-[calc(100vh-6rem)] overflow-y-auto border-r border-line-soft pr-5">
           {nav}
         </div>
       </aside>
@@ -59,7 +61,9 @@ export default function ArticleLayout({ title, eyebrow, summary, meta, nav, tocL
       </article>
 
       <aside className="hidden lg:block">
-        <div className="sticky top-10 max-h-[calc(100vh-5rem)] overflow-y-auto pb-10">
+        {/* Clears the sticky site bar above it (see SiteHeader) — a rail that
+            slides under the toolbar loses its first item. */}
+        <div className="sticky top-16 max-h-[calc(100vh-6rem)] overflow-y-auto pb-10">
           <TableOfContents containerRef={bodyRef} label={tocLabel} refreshKey={tocKey} />
         </div>
       </aside>

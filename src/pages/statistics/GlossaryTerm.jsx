@@ -1,7 +1,8 @@
 import { useEffect, useMemo } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import FontSizeControl, { useFontScale } from '../../components/FontSizeControl';
-import LangSwitch, { useLang } from '../../components/LangSwitch';
+import { useFontScale } from '../../components/FontSizeControl';
+import { useLang } from '../../components/LangSwitch';
+import SiteHeader from '../../components/SiteHeader';
 import Prose from '../../components/lab/Prose';
 import HoverCite from '../../components/lab/HoverCite';
 import TermLink from '../../components/lab/TermLink';
@@ -64,16 +65,14 @@ export default function GlossaryTerm() {
   const usedIn = term.usedIn ?? [];
 
   return (
-    <main className="reading-grain min-h-screen bg-paper py-10 text-ink" style={{ zoom: scale }}>
-      <div className="mx-auto mb-6 flex max-w-[86rem] items-center justify-between gap-4 px-4 sm:px-6">
-        <Link to="/statistics/glossary" className="text-token-sm text-ink-faint transition-colors duration-fast hover:text-accent">
-          ← {en ? 'Glossary' : '術語表'}
-        </Link>
-        <div className="flex items-center gap-2">
-          <LangSwitch lang={lang} onChange={setLang} />
-          <FontSizeControl scale={scale} onChange={setScale} />
-        </div>
-      </div>
+    <main className="reading-grain min-h-screen bg-paper pb-10 text-ink" style={{ zoom: scale }}>
+      <SiteHeader
+        back={{ href: '/statistics/glossary', label: en ? 'Glossary' : '術語表' }}
+        lang={lang}
+        onLangChange={setLang}
+        scale={scale}
+        onScaleChange={setScale}
+      />
 
       <ArticleLayout
         title={name}

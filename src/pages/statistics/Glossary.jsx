@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Search } from 'lucide-react';
-import FontSizeControl, { useFontScale } from '../../components/FontSizeControl';
-import LangSwitch, { useLang } from '../../components/LangSwitch';
+import { useFontScale } from '../../components/FontSizeControl';
+import { useLang } from '../../components/LangSwitch';
+import SiteHeader from '../../components/SiteHeader';
 import glossary from '../../data/statistics-glossary.json';
 import hub from '../../data/statistics.json';
 
@@ -11,6 +12,13 @@ import hub from '../../data/statistics.json';
  * The definitions are the same strings the hover cards use, so a reader who
  * scans this page and a reader who hovers a word in an article are told exactly
  * the same thing.
+ *
+ * The terms are laid out in groups, and the groups are what a term is *for* —
+ * the parts a test is built from, the ways it fails, what people do with it —
+ * not which article happened to introduce it. Grouping by topic was the obvious
+ * thing and it was useless: every term the site has is "inference", so the
+ * headings all said the same word. The groups and their order live in the data
+ * repo (data/glossary-groups.json); this page prints whatever is there.
  *
  * The filter matches the name, the aliases and the definition, because a reader
  * who half-remembers a term usually half-remembers the wrong half of it.
@@ -38,6 +46,15 @@ export default function Glossary() {
 
   const terms = useMemo(() => Object.values(glossary.terms ?? {}), []);
 
+  // Index order comes from the data repo (see the group comment below), so the
+  // list is filtered and never sorted: sorting it alphabetically would replace an
+  // argument with a filing system.
+  const order = useMemo(() => {
+    const seq = new Map();
+    (hub.glossaryGroups ?? []).forEach((g) => g.terms.forEach((slug) => seq.set(slug, seq.size)));
+    return seq;
+  }, []);
+
   const shown = useMemo(() => {
     const q = query.trim().toLowerCase();
     const list = terms.filter((t) => {
@@ -57,37 +74,31 @@ export default function Glossary() {
         .toLowerCase();
       return haystack.includes(q);
     });
-    return list.sort((a, b) =>
-      (en ? a.en.term : a.term).localeCompare(en ? b.en.term : b.term, en ? 'en' : 'zh-Hant'),
-    );
-  }, [terms, query, en]);
+    return list.sort((a, b) => (order.get(a.slug) ?? 0) - (order.get(b.slug) ?? 0));
+  }, [terms, query, order]);
 
-  const byTopic = useMemo(() => {
-    const groups = new Map();
-    for (const t of shown) {
-      if (!groups.has(t.topic)) groups.set(t.topic, []);
-      groups.get(t.topic).push(t);
-    }
-    return groups;
-  }, [shown]);
-
-  const topicLabel = (id) => {
-    const topic = hub.topics?.find((t) => t.id === id);
-    if (!topic) return id;
-    return en ? topic.en?.label ?? topic.label : topic.label;
-  };
+  // The groups, and the sequence inside them, are declared in the data repo
+  // (data/glossary-groups.json): the groups run from the parts of a test, through
+  // the ways it fails, to what people do with it, and within a group the terms run
+  // in the order you would have to learn them. This page prints that order.
+  const groups = useMemo(
+    () =>
+      (hub.glossaryGroups ?? [])
+        .map((g) => ({ ...g, list: g.terms.map((slug) => shown.find((t) => t.slug === slug)).filter(Boolean) }))
+        .filter((g) => g.list.length > 0),
+    [shown],
+  );
 
   return (
-    <main className="reading-grain min-h-screen bg-paper py-10 text-ink" style={{ zoom: scale }}>
-      <div className="mx-auto mb-6 flex max-w-[52rem] items-center justify-between gap-4 px-4 sm:px-6">
-        <Link to="/statisticslab" className="text-token-sm text-ink-faint transition-colors duration-fast hover:text-accent">
-          ← {en ? 'Statistics Lab' : '統計學實驗室'}
-        </Link>
-        <div className="flex items-center gap-2">
-          <LangSwitch lang={lang} onChange={setLang} />
-          <FontSizeControl scale={scale} onChange={setScale} />
-        </div>
-      </div>
+    <main className="reading-grain min-h-screen bg-paper pb-10 text-ink" style={{ zoom: scale }}>
+      <SiteHeader
+        back={{ href: '/statisticslab', label: en ? 'Statistics Lab' : '統計學實驗室' }}
+        width="prose"
+        lang={lang}
+        onLangChange={setLang}
+        scale={scale}
+        onScaleChange={setScale}
+      />
 
       <div className="mx-auto max-w-[52rem] px-4 sm:px-6">
         <header className="mb-8">
@@ -118,13 +129,18 @@ export default function Glossary() {
           </span>
         </label>
 
-        {[...byTopic.entries()].map(([topic, list]) => (
-          <section key={topic} className="mb-10">
-            <h2 className="mb-4 font-accent text-token-xs uppercase tracking-[0.12em] text-ink-faint">
-              {topicLabel(topic)}
-            </h2>
+        {groups.map((g) => (
+          <section key={g.id} className="mb-12">
+            <div className="mb-4 border-b border-line-soft pb-2">
+              <h2 className="font-display text-token-lg text-ink">
+                {en ? g.en?.label ?? g.label : g.label}
+              </h2>
+              <p className="mt-1 text-token-sm leading-relaxed text-ink-faint">
+                {en ? g.en?.blurb ?? g.blurb : g.blurb}
+              </p>
+            </div>
             <ul className="space-y-5">
-              {list.map((t) => (
+              {g.list.map((t) => (
                 <li key={t.slug}>
                   <Link to={t.route} className="group block">
                     <span className="font-display text-token-lg text-ink transition-colors duration-fast group-hover:text-accent">

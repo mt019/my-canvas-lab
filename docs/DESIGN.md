@@ -31,6 +31,9 @@
 | `LangSwitch` ＋ `useLang` | `const { lang, setLang, t } = useLang(dict)`；字典以中文原文為 key，zh 零成本、漏譯自動回退。localStorage `canvaslab:lang`，同步 `document.documentElement.lang`。新頁一律用它，不再自造 lang state。 |
 | `FontSizeControl` ＋ `useFontScale` | `const [scale, setScale] = useFontScale()`；七檔 0.85–1.6，localStorage `canvaslab:fontScale`。scale 掛頁根 `zoom`（見字級規則）。學術長文頁放 header 右側。 |
 | `PageShell` | 新頁與簡單長文頁的外殼：`--c-paper` 底、prose（~65ch）或 wide 寬度、document.title、header 右側 controls slot。自帶複雜外殼的儀表板頁（分頁導覽、側欄）不硬套。 |
+| `SiteHeader` | 主題站（統計站這類有自己首頁與多個子頁的站）內頁的頁首：返回鍵＋LangSwitch＋FontSizeControl。**`back` 是必填參數，且一律指向該站自己的首頁，不是 canvas 根首頁**——讀者在深處要回的是他正在讀的那個站；canvas 根從站首頁再一步就到。這條規則寫進 API（缺 `back` 直接 throw），不是寫在文件裡靠人記得。曾經三頁各自手刻同一條頁首，其中一頁的返回鍵已經漂到 canvas 根。 |
+| `AppearanceMenu` | 色票與紙紋，收在一顆「外觀」按鈕的下拉裡（不平鋪在工具列上——閱讀頁只付得起一排鉻件）。改的是全站設定（localStorage，開站時套用），與 `/palettelab` 同一組值；差別只在讀者不必離開正文就能換。色票圓點顯示的是 accent 不是 paper——每套票的 paper 依規則都近白，排出來會是一排白方塊。 |
+| `ScrollToTop` | 掛在 Router 內一次，全站生效：換 pathname 就回捲到頂。點連結是換一頁，新的一頁從頭開始；React Router 預設只換元件不動捲軸，於是從索引中段點進詞條會落在該詞條的中段。帶 `#hash` 的錨點導覽與瀏覽器上一頁不干預（那兩種情況讀者自己指定了落點）。 |
 | `Eyebrow` | 眉標 kicker。打字機 accent 字體（Erikas）唯一的預設允許位置——曾於 2026-07-07 短暫用於 h1–h3 拉丁面，同日因行內數字紋理過噪而改回 Radio Newsman；標題中文面維持 Huiwen Mincho（與內文同，取代 GenWanMin2）。GenWanMin2 已無 token 引用，字檔暫留。 |
 
 ## 頁內建構元件（`src/components/lab/`，2026-07-13 建）
@@ -89,6 +92,25 @@ Notion 的 tag／badge 色系從不出醜，原因是四條紀律，本站色彩
 **和諧 vs 可辨識的取捨（一手實證：同明度和諧色在無標籤時難辨）**：本站選擇「一組色盤通吃 badge 與圖表」，因為圖表一律有文字圖例＋hover 標籤——**讓標籤負責辨識、讓顏色負責和諧**。這是明知取捨的決定，不是忽略衝突；未來若出現無標籤圖表才需要另備高區辨分類色。
 
 **規則**：要配任何分類/狀態色，**引用 `--status-*` 或 `--cat-*`，不要再開頁面級 hex 孤島**（`ConstitutionalCourt` 的 `Badge`／`TENURE_*` 已示範改吃 token，移除了 13 個 `--cc-badge-*`）。其餘 7 頁的 `*_VARS` hex 孤島列為 Phase 2 增量收斂（見 HANDOFF）。深色模式現在不做，但兩層結構讓未來只需換 Layer 0 值、語意名不變（Obsidian 模型）。
+
+## 閱讀面（2026-07-13 使用者裁定，全站通則）
+
+長文與正文所在的那一面，底色永遠是 `--c-paper`（近白），不填任何色——這條舊有規則現在補上它的邊界條件：
+
+- **可以有克制的紙張紋理，不可以有底色。** 紋理的用途是讓白面在近看時不死平，一旦它濃到讀成「一片顏色」，它就已經是底色了。判準很硬：整頁看下去若感覺到「這頁有底色」，就是超標。`.reading-grain`（`src/index.css`）是唯一許可的實作——程式生成的灰噪、opacity 0.018。它的前一版是 0.035，鋪滿整個視窗後整頁讀成一層灰，使用者當場指為底色。**要調就往更淡調，不要往回加。**
+- 閱讀欄本身（`ArticleLayout` 的中欄）不掛任何 background：紋理屬於整頁，單獨畫在閱讀欄上會露出一個看得見的矩形，那就是換個名字的色塊。
+
+## 清單與索引（全站通則）
+
+- **分層要分得出東西。** 用一個所有項目都相同的欄位去分組（例：術語全部都屬「統計推論」），等於印出一排講同一個詞的標題，比不分組更糟。分組維度要選「讀者拿它來找東西」的那一個。統計站術語表的實例：由 `topic`（全部都是推論）改為 `group`（檢定的機件／它會怎麼出錯／誤用與它的後果）。
+- **順序本身是內容。** 概念之間有學習順序時，索引就按那個順序排，不要按字母序——字母序把一條線索換成一個檔案櫃。順序寫在資料層（統計站是 `data/glossary-groups.json` 的 `terms` 陣列），前端只負責印出來，不 sort。
+- 成員關係只宣告一次。分組成員寫在群組檔裡，不要同時在每個項目自己的 meta 裡再寫一次 `group`——兩邊遲早會漂移。
+
+## 字型子集（2026-07-13 起自己修好自己）
+
+新內容帶進新字時，build 曾經會紅掉並要人手動去跑 `scripts/rebuild-font-subsets.mjs`。那是白繞一圈：閘門已經知道缺哪些字，重建腳本也不需要任何人做決定。現在 `validate:fonts` 偵測到缺字就**自己重建一次再驗**，只有在來源字型本身畫不出那個字時才停下來叫人（換字，或接受系統 fallback 並把碼位寫進 `scripts/font-coverage-exceptions.txt`）。
+
+重建約 20 秒，但只在真的缺字時才跑，平常 build 不付這個成本；而且它是冪等的（同樣的字進去，byte-identical 的 .woff2 出來），不會每次 build 都製造 git 雜訊。
 
 ## 品味參照 → 具體規則
 

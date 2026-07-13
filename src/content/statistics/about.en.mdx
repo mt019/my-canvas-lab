@@ -1,0 +1,47 @@
+## What this site is for
+
+Most statistics textbooks are operating manuals: for this situation use this test, here is the formula, put your numbers in. A manual is under no obligation to tell you what question the test was invented to answer, how the person who invented it actually used it, or how two incompatible logics were later welded into the thing every textbook now teaches.
+
+None of that is antiquarian detail. The <Term id="p-value">p value</Term> gets read as "the probability that the null is true" not because readers are careless, but because textbooks teach Fisher's logic of evidence and Neyman and Pearson's logic of decision on the same page — and those two men spent their careers arguing about exactly that. Knowing what the argument was about is worth more than one more memorised definition.
+
+So each piece takes one idea: why it has the shape it has, who built it and for what, and where it breaks when it is misused.
+
+## Every example has a source
+
+Every historical claim on this site — who ran which experiment in which year, how many subjects a paper had, whether a number was 0.03 or 0.3 — carries its source. Hover it and you get the book or journal, the year, and the page.
+
+The standard is page-level: author, container, year, and a locator as precise as could actually be confirmed. Where a locator could not be pinned down, the entry says so, rather than asserting a page number nobody ever checked. Some books — Fisher's *Design of Experiments*, printed and reprinted with different pagination — produce two honest citations that disagree; both are kept, instead of quietly picking one.
+
+The other half of the rule: an example with no traceable source does not get written. A vivid anecdote of unknown provenance is a liability here.
+
+## Why the simulations give the same numbers every time
+
+The figures are not pictures. Press the button and the resampling really does run ten thousand times, in your browser.
+
+That comes with a discipline. Every randomised simulation carries a fixed seed, and the same seed produces the same sequence — the distribution you see on your machine is the one someone else sees on theirs. A figure that reshuffles its numbers on every reload is not teaching material; it is noise dressed as evidence.
+
+The parameters (sample size, effect size, number of repetitions, seed) all come from the data repository. The browser computes with what it was handed and never goes looking for numbers of its own. And it generates distributions, not arguments: sampling, running the test and drawing the histogram happen in the browser; what any of it *means* is written in the prose, and the prose carries citations.
+
+## How the glossary works
+
+Terms marked in the prose surface a one-line definition where they stand. Click one and you land on its own page: what it is, where it came from, an example that actually happened, and the way it is usually misread.
+
+The line in the hover card and the line on the term's page are the same string — someone scanning the glossary and someone hovering a word mid-sentence are told the same thing, never two versions of it. The list of articles at the foot of a term page is generated from the marks in the prose itself, so it cannot go stale.
+
+The terms are laid out in three layers: the machinery of a test, how it goes wrong, and misuse and its consequences. The order is an argument — from the parts a test is assembled from, through the ways it fails, to how ordinary research habits turn a reasonable method into a machine for manufacturing false positives.
+
+## How the site is put together
+
+Content and presentation live in two separate repositories. Every word you can read, every citation, every simulation parameter lives in the data repository; the site draws them and invents nothing.
+
+The data repository has a validation gate. A citation pointing at nothing, a term with no definition or no example, a simulation with no seed, a term belonging to no layer, a page whose English is missing — any of these and the site does not build. These are not rules someone has to remember. They run on every build.
+
+## Where the layout comes from
+
+Nothing about the way a long piece is laid out here is original. The three columns — what else there is to read on the left, the prose in the middle, the headings of this page on the right — are bookdown's arrangement, and GitBook's. People who read technical writing already know where to look; moving those things somewhere else would only prove that some thought went into it, and the reader would pay for the proof.
+
+Yihui Xie's knitr and bookdown did something more fundamental than a layout: they made the document and the code that computes the document the same file, so an analysis could be re-run rather than merely believed. The fixed seeds here, the parameters kept out of the prose, the build that refuses to ship a citation pointing at nothing — that is the same idea, moved into the browser, with the re-running handed to the reader.
+
+## Two languages
+
+The whole site exists in both, switchable at the top right. The English is not the Chinese translated sentence by sentence — an essay put through that process reads like a translation. They are two writings of the same piece: same argument, same sources, sentences allowed to grow the way each language grows them.

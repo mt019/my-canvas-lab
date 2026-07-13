@@ -2,6 +2,7 @@ import React, { Suspense, lazy, useMemo } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { ArrowRight, BookMarked, CalendarDays, Droplets, FileSearch, Gavel, Globe2, GraduationCap, Landmark, Languages, Mic, Music, Music2, Palette, Piano, Scale, ScrollText, Sigma, Wind } from 'lucide-react';
 import SeoHead from './components/SeoHead';
+import ScrollToTop from './components/ScrollToTop';
 
 /*
  * Pages are routed by file path. A file directly under pages/ keeps the old flat
@@ -254,6 +255,7 @@ export default function App() {
 
   return (
     <Router>
+      <ScrollToTop />
       <Suspense fallback={
         <div className="min-h-screen bg-paper flex items-center justify-center">
           <div className="w-10 h-10 border-[3px] border-line-soft border-t-ink-faint rounded-full animate-spin" />

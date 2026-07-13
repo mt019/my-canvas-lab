@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from 'react';
-import { Link } from 'react-router-dom';
-import FontSizeControl, { useFontScale } from '../../components/FontSizeControl';
-import LangSwitch, { useLang } from '../../components/LangSwitch';
+import { useFontScale } from '../../components/FontSizeControl';
+import { useLang } from '../../components/LangSwitch';
+import SiteHeader from '../../components/SiteHeader';
 import Prose from '../../components/lab/Prose';
 import HoverCite from '../../components/lab/HoverCite';
 import TermLink from '../../components/lab/TermLink';
@@ -66,16 +66,14 @@ export default function NullHypothesis() {
   useEffect(() => { document.title = `${title}｜Canvas Lab`; }, [title]);
 
   return (
-    <main className="reading-grain min-h-screen bg-paper py-10 text-ink" style={{ zoom: scale }}>
-      <div className="mx-auto mb-6 flex max-w-[86rem] items-center justify-between gap-4 px-4 sm:px-6">
-        <Link to="/" className="text-token-sm text-ink-faint transition-colors duration-fast hover:text-accent">
-          ← Canvas Lab
-        </Link>
-        <div className="flex items-center gap-2">
-          <LangSwitch lang={lang} onChange={setLang} />
-          <FontSizeControl scale={scale} onChange={setScale} />
-        </div>
-      </div>
+    <main className="reading-grain min-h-screen bg-paper pb-10 text-ink" style={{ zoom: scale }}>
+      <SiteHeader
+        back={{ href: '/statisticslab', label: en ? 'Statistics Lab' : '統計學實驗室' }}
+        lang={lang}
+        onLangChange={setLang}
+        scale={scale}
+        onScaleChange={setScale}
+      />
 
       <ArticleLayout
         title={title}

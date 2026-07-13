@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-07-13T08:10:28.038Z",
+  "source": "statistics-lab-data, built by engineering/scripts/build-app-json.mjs",
+  "meta": {
+    "slug": "about",
+    "title": "本站說明",
+    "summary": "這個站怎麼寫、例子怎麼查、模擬為什麼每次跑出同樣的數字。",
+    "updatedAt": "2026-07-13",
+    "en": {
+      "title": "About this site",
+      "summary": "How the site is written, how the examples are checked, and why the simulations give the same numbers every time."
+    }
+  },
+  "sources": {},
+  "terms": {
+    "p-value": {
+      "slug": "p-value",
+      "term": "p 值",
+      "oneLine": "假設虛無為真，得到「像這樣或更極端」的結果的機率。",
+      "example": "八杯茶全挑對，純靠猜的機率是 70 分之 1，約 0.014。這個 0.014 就是 p。",
+      "route": "/statistics/glossary/p-value",
+      "en": {
+        "term": "p value",
+        "oneLine": "The probability of a result at least as extreme as the one you got, if the null were true.",
+        "example": "Picking all four milk-first cups by luck alone has probability 1 in 70, about 0.014. That 0.014 is the p value."
+      }
+    }
+  }
+}
