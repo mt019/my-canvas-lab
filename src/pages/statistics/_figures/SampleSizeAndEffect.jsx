@@ -93,7 +93,7 @@ export default function SampleSizeAndEffect({ d = 0.15, seed = 991, nDefault = 8
       <ChartFrame
         width={560}
         height={240}
-        margin={{ top: 12, right: 14, bottom: 34, left: 50 }}
+        margin={{ top: 26, right: 14, bottom: 38, left: 50 }}
         title={c.title}
         caption={c.caption}
       >
@@ -101,8 +101,8 @@ export default function SampleSizeAndEffect({ d = 0.15, seed = 991, nDefault = 8
         <AxisY scale={y} ticks={yTicks} format={(v) => v.toFixed(1)} label={c.y} />
         <AxisX scale={xLog} ticks={[20, 50, 120, 320, 800, 2000]} format={String} label={c.x} />
         <RuleLine at={0.05} scale={y} orient="horizontal" label="0.05" />
-        <Line points={curve} x={xLog} y={y} cat={8} />
-        <Dots points={curve} x={xLog} y={y} cat={8} r={2.5} />
+        <Line points={curve} x={xLog} y={y} cat={2} />
+        <Dots points={curve} x={xLog} y={y} cat={2} r={2.5} />
         <Dots points={[[n, current]]} x={xLog} y={y} cat={2} r={5} />
       </ChartFrame>
     </div>

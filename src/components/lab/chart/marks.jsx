@@ -1,11 +1,9 @@
 import { useFrame } from './ChartFrame';
 
 /*
- * Data marks. The one rule they enforce: a large filled area is always a
- * near-white wash with a thin ink keyline of the same hue — deep ink is for
- * strokes, text and small marks, never for a big block of pixels. So <Bars>
- * and <AreaWash> take a categorical slot (1–8), not a color; there is no fill
- * prop to abuse.
+ * Data marks. Large filled areas stay light — deep ink is for strokes, text and
+ * small marks, never for a big block of pixels — and they carry a categorical
+ * slot (1–8), never a color, so there is no fill prop to abuse.
  */
 
 const slot = (n) => {
@@ -15,10 +13,17 @@ const slot = (n) => {
 
 /*
  * Restraint is the default: bars carry one quiet tone, and a second tone appears
- * only on the bars the reader is being asked to look at. A chart where every bar
- * has its own color is a chart with nothing to say.
+ * only on the bars the reader is meant to look at. A chart where every bar has
+ * its own color is a chart with nothing to say.
+ *
+ * A bar is a tint of its own ink, not a near-white box with a hairline around it.
+ * The wireframe version — pale fill plus 1px outline — is fine at chip size and
+ * reads as an empty placeholder once it is 200px tall, which is why the fill here
+ * is the ink color at low opacity: the hue survives, the area still stays light.
+ * Corners get a small radius, the way Notion and GitHub draw theirs; hard 90°
+ * corners on a thin outline are what make a chart look like a spreadsheet.
  */
-export function Bars({ data, x, y, y0, cat = 8, highlightCat = 6, highlight = () => false, onHover }) {
+export function Bars({ data, x, y, y0, cat = 8, highlightCat = 6, highlight = () => false, radius = 3, onHover }) {
   const { inner } = useFrame();
   const base = y0 ?? inner.y0;
   const w = x.bandwidth ? x.bandwidth() : 8;
@@ -31,15 +36,19 @@ export function Bars({ data, x, y, y0, cat = 8, highlightCat = 6, highlight = ()
         const top = y(d.value);
         const on = highlight(d, i);
         const c = on ? hot : tone;
+        const h = Math.abs(base - top);
         return (
           <rect
             key={d.key ?? i}
             x={x(d.key ?? i)}
             y={Math.min(top, base)}
             width={w}
-            height={Math.abs(base - top)}
-            fill={c.bg}
+            height={h}
+            rx={Math.min(radius, w / 2, h)}
+            fill={c.tx}
+            fillOpacity={on ? 0.85 : 0.22}
             stroke={c.tx}
+            strokeOpacity={on ? 0 : 0.35}
             strokeWidth="1"
             onMouseEnter={onHover ? () => onHover(d, i) : undefined}
             onMouseLeave={onHover ? () => onHover(null, -1) : undefined}

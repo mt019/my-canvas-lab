@@ -1,4 +1,6 @@
 import { MDXProvider } from '@mdx-js/react';
+import 'katex/dist/katex.min.css';
+import '../../styles/katex.css';
 
 /*
  * The typography layer for MDX articles.
@@ -12,6 +14,11 @@ import { MDXProvider } from '@mdx-js/react';
  * `components` also carries the interactive figures, so an article can write
  * <LadyTastingTea /> without importing anything — the page that renders the
  * article decides which figures exist.
+ *
+ * KaTeX's stylesheet is imported here rather than in Math.jsx, because prose gets
+ * its formulas from remark-math at build time and never touches that component.
+ * Without the stylesheet, KaTeX's MathML copy of every formula stops being hidden
+ * and each one renders twice ("1/701/70").
  */
 
 const BASE = {

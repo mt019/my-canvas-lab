@@ -22,6 +22,12 @@ export function Grid({ scale, ticks, orient = 'horizontal' }) {
   );
 }
 
+/*
+ * The y-axis title sits horizontally above the axis, not rotated up its side.
+ * Sideways text is a habit inherited from print, and every quiet interface —
+ * Notion, GitHub, Observable — dropped it: a reader should not have to tilt their
+ * head to learn what the numbers count.
+ */
 export function AxisY({ scale, ticks, format = String, label }) {
   const { inner } = useFrame();
   return (
@@ -29,7 +35,7 @@ export function AxisY({ scale, ticks, format = String, label }) {
       {ticks.map((t) => (
         <text
           key={t}
-          x={inner.x0 - 6}
+          x={inner.x0 - 8}
           y={scale(t) + 3.5}
           textAnchor="end"
           fontSize="10"
@@ -39,12 +45,7 @@ export function AxisY({ scale, ticks, format = String, label }) {
         </text>
       ))}
       {label ? (
-        <text
-          transform={`translate(11 ${(inner.y0 + inner.y1) / 2}) rotate(-90)`}
-          textAnchor="middle"
-          fontSize="10"
-          fill="var(--c-ink-faint)"
-        >
+        <text x={0} y={10} textAnchor="start" fontSize="10" fill="var(--c-ink-faint)">
           {label}
         </text>
       ) : null}

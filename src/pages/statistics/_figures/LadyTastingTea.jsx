@@ -20,7 +20,8 @@ const COPY = {
     title: '猜對杯數在虛無假設下的精確分佈',
     caption: (total) => `純憑猜測時，${total} 種挑法機會均等。全中的挑法只有一種，所以全中的機率是 1/${total}。這個數字是數出來的，不是抽樣估的。`,
     y: '挑法數',
-    x: (k) => `猜對 ${k}`,
+    x: (k) => `${k}`,
+    xLabel: '猜對杯數',
   },
   en: {
     prompt: (half, picked) => `Pick the ${half} cups you say had milk first (${picked} chosen)`,
@@ -30,7 +31,8 @@ const COPY = {
     title: 'Exact null distribution of the number of correct cups',
     caption: (total) => `A guesser is equally likely to pick any of the ${total} selections, and exactly one of them is fully correct. So guessing all four right happens with probability 1/${total}. That number was counted, not estimated.`,
     y: 'ways to choose',
-    x: (k) => `${k} right`,
+    x: (k) => `${k}`,
+    xLabel: 'cups correct',
   },
 };
 
@@ -53,7 +55,7 @@ export default function LadyTastingTea({ cups = 8, truth = [1, 3, 5, 8], lang = 
   const correct = picked.filter((i) => truth.includes(i)).length;
   const p = dist.pAtLeast(correct);
 
-  const x = bandScale({ domain: dist.counts.map((_, k) => k), range: [44, 460], padding: 0.35 });
+  const x = bandScale({ domain: dist.counts.map((_, k) => k), range: [44, 460], padding: 0.22 });
   const yMax = Math.max(...dist.counts);
   const y = linearScale({ domain: [0, yMax], range: [200, 12] });
 
@@ -103,19 +105,19 @@ export default function LadyTastingTea({ cups = 8, truth = [1, 3, 5, 8], lang = 
       <ChartFrame
         width={480}
         height={230}
-        margin={{ top: 12, right: 20, bottom: 30, left: 44 }}
+        margin={{ top: 26, right: 20, bottom: 34, left: 44 }}
         minWidth={420}
         title={c.title}
         caption={c.caption(dist.total)}
       >
         <Grid scale={y} ticks={niceTicks([0, yMax], 4)} />
         <AxisY scale={y} ticks={niceTicks([0, yMax], 4)} label={c.y} />
-        <AxisX scale={x} ticks={dist.counts.map((_, k) => k)} center format={c.x} />
+        <AxisX scale={x} ticks={dist.counts.map((_, k) => k)} center format={c.x} label={c.xLabel} />
         <Bars
           data={dist.counts.map((count, k) => ({ key: k, value: count }))}
           x={x}
           y={y}
-          cat={8}
+          cat={2}
           highlightCat={2}
           highlight={(d) => submitted && d.key === correct}
         />

@@ -45,7 +45,15 @@
 | `HoverCite` | 引註標記，hover/focus 顯示出處。出處物件來自資料倉，缺 locator 的引註在資料倉就 FAIL，前端不做把關。 |
 | `Math`（匯入時建議命名為 `Tex`，避免遮蔽全域 `Math`） | KaTeX 包裝，見下方例外。 |
 | `Prose` | MDX 文章的排版映射層：`.mdx` 只寫純 markdown，`h2`/`p`/`blockquote` 的樣式在這裡一次決定。這是 markdown 驅動內容而不破壞設計系統的關鍵。 |
-| `chart/`（`scale.js`、`ChartFrame`、`Axis`、`marks`） | 只有原語（比例尺、軸、格線、`Bars`/`Line`/`Dots`/`AreaWash`/`RuleLine`），沒有「圖表元件」。`Bars` 與 `AreaWash` 只吃分類色槽、**內建近白淡底＋同色相細框**，沒有 `fill` 參數可以繞過——深墨色不塗大面積這條規則同樣寫進 API。 |
+| `chart/`（`scale.js`、`ChartFrame`、`Axis`、`marks`） | 只有原語（比例尺、軸、格線、`Bars`/`Line`/`Dots`/`AreaWash`/`RuleLine`），沒有「圖表元件」。只吃分類色槽，沒有 `fill` 參數可以繞過——深墨色不塗大面積這條規則寫進 API。 |
+
+### 長條怎麼畫（2026-07-13 修訂，取代舊的「近白淡底＋細框」）
+
+舊寫法是 `--cat-N-bg` 近白填色加 1px 同色細框。這在色籤尺寸成立，放大到一根 200px 高的長條就變成**空的線框**：沒有量感，直角＋細框讀起來像試算表。Notion、GitHub、Observable 的長條都是**實色填充、低彩度、無外框、小圓角**。
+
+現行 `Bars` 的畫法：填色＝該色槽的墨色 `--cat-N-tx`，`fill-opacity` 0.22（重點長條 0.85）；同色描邊 `stroke-opacity` 0.35（重點長條無框）；圓角 3px。色彩淡而有色相，面積仍然輕。**一張圖只有一個色相**，重點長條用同色實心或單一語意色（如偽陽性用 danger），不要每根一個顏色。
+
+Y 軸標題橫排放在軸頂，不旋轉 90 度立在側邊。
 
 ## 色票庫
 

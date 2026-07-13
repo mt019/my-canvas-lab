@@ -112,7 +112,7 @@ export default function PUnderNull({ n = 30, runs = 2000, seed = 20260713, delta
       <ChartFrame
         width={560}
         height={240}
-        margin={{ top: 12, right: 14, bottom: 32, left: 46 }}
+        margin={{ top: 26, right: 14, bottom: 36, left: 46 }}
         title={c.title}
         caption={isNull ? c.captionNull : c.captionPower}
       >
@@ -129,7 +129,7 @@ export default function PUnderNull({ n = 30, runs = 2000, seed = 20260713, delta
           data={bins.map((count, i) => ({ key: i, value: count }))}
           x={x}
           y={y}
-          cat={8}
+          cat={2}
           highlightCat={6}
           highlight={(d) => (d.key + 1) / BINS <= alpha}
         />
