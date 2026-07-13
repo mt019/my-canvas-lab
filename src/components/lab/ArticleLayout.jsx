@@ -12,6 +12,11 @@ import TableOfContents from './TableOfContents';
  * Both rails are sticky and both disappear below a wide screen, where the reading
  * column takes the whole width and the headings collapse into a summary at the top
  * — a sidebar squeezed onto a phone is worse than no sidebar.
+ *
+ * The reading column is bare paper. No card, no tint, no panel behind the words:
+ * a filled block under body text is the surest way to make a page look like a
+ * product landing page. Color belongs to the shell — the rail carries a restrained
+ * wash of the site's own tone, which is what tells you which site you are on.
  */
 export default function ArticleLayout({ title, eyebrow, summary, nav, tocLabel, children }) {
   const bodyRef = useRef(null);
@@ -19,7 +24,10 @@ export default function ArticleLayout({ title, eyebrow, summary, nav, tocLabel, 
   return (
     <div className="mx-auto grid max-w-[86rem] gap-10 px-4 sm:px-6 lg:grid-cols-[15rem_minmax(0,44rem)_14rem] lg:gap-12">
       <aside className="hidden lg:block">
-        <div className="sticky top-10 max-h-[calc(100vh-5rem)] overflow-y-auto pb-10">
+        <div
+          className="sticky top-10 max-h-[calc(100vh-5rem)] overflow-y-auto rounded-token-md border border-line-soft px-4 py-5"
+          style={{ background: 'var(--lab-rail, var(--c-surface))' }}
+        >
           {nav}
         </div>
       </aside>

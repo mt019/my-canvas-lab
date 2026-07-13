@@ -60,7 +60,12 @@ export default function NullHypothesis() {
   useEffect(() => { document.title = `${title}｜Canvas Lab`; }, [title]);
 
   return (
-    <main className="min-h-screen bg-paper paper-texture py-10 text-ink" style={{ zoom: scale }}>
+    // --lab-rail is the one place this site takes a color: a soft wash on the
+    // sidebar, same hue as the charts. The reading column stays on paper.
+    <main
+      className="min-h-screen bg-paper paper-texture py-10 text-ink"
+      style={{ zoom: scale, '--lab-rail': 'var(--cat-2-bg)' }}
+    >
       <div className="mx-auto mb-6 flex max-w-[86rem] items-center justify-between gap-4 px-4 sm:px-6">
         <Link to="/" className="text-token-sm text-ink-faint transition-colors duration-fast hover:text-accent">
           ← Canvas Lab

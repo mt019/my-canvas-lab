@@ -54,8 +54,10 @@ const BASE = {
   hr: () => <hr className="my-10 border-line-soft" />,
   strong: (props) => <strong className="font-normal text-ink [text-emphasis:filled_dot] [text-emphasis-position:under]" {...props} />,
   em: (props) => <em className="not-italic text-ink-muted" {...props} />,
+  // No fill in the reading column: the body sits on paper and nothing else.
+  // Inline code is marked by its face and a hairline, not by a grey box.
   code: (props) => (
-    <code className="rounded-token-sm bg-surface px-1 py-0.5 font-accent text-scaled-sm text-ink" {...props} />
+    <code className="rounded-token-sm border border-line-soft px-1 py-0.5 font-accent text-scaled-sm text-ink" {...props} />
   ),
   table: (props) => (
     <div className="my-6 overflow-x-auto">
