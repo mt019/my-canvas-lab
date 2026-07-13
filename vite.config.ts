@@ -3,6 +3,7 @@ import react from '@vitejs/plugin-react'
 import mdx from '@mdx-js/rollup'
 import remarkMath from 'remark-math'
 import rehypeKatex from 'rehype-katex'
+import rehypeSlug from 'rehype-slug'
 import { resolveTarget, fetchUpstream, streamPdf } from './api/_pdfProxy.mjs'
 
 // Dev-only：複刻 Vercel 的 /api/pdf serverless function（vite dev 不跑 Vercel functions），
@@ -41,7 +42,7 @@ export default defineConfig({
       providerImportSource: '@mdx-js/react',
       mdExtensions: [],
       remarkPlugins: [remarkMath],
-      rehypePlugins: [rehypeKatex],
+      rehypePlugins: [rehypeSlug, rehypeKatex],
     }) },
     react({ include: /\.(jsx|js|mdx|md|tsx|ts)$/ }),
     pdfProxyDev(),

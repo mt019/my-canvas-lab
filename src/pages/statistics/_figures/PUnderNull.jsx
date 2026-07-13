@@ -130,7 +130,7 @@ export default function PUnderNull({ n = 30, runs = 2000, seed = 20260713, delta
           x={x}
           y={y}
           cat={2}
-          highlightCat={6}
+          highlightCat={2}
           highlight={(d) => (d.key + 1) / BINS <= alpha}
         />
         <RuleLine at={alpha} scale={pAxis} orient="vertical" label={`p = ${alpha}`} />

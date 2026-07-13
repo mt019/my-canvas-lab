@@ -1,12 +1,14 @@
-import { useMemo } from 'react';
-import PageShell from '../../components/PageShell';
+import { useEffect, useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import FontSizeControl, { useFontScale } from '../../components/FontSizeControl';
 import LangSwitch, { useLang } from '../../components/LangSwitch';
 import Prose from '../../components/lab/Prose';
 import HoverCite from '../../components/lab/HoverCite';
+import ArticleLayout, { ArticleNav } from '../../components/lab/ArticleLayout';
 import ArticleZh from '../../content/statistics/null-hypothesis.zh.mdx';
 import ArticleEn from '../../content/statistics/null-hypothesis.en.mdx';
 import data from '../../data/statistics-null-hypothesis.json';
+import hub from '../../data/statistics.json';
 import LadyTastingTea from './_figures/LadyTastingTea';
 import PUnderNull from './_figures/PUnderNull';
 import TwoLogics from './_figures/TwoLogics';
@@ -30,6 +32,7 @@ export default function NullHypothesis() {
   const { meta, figures, sources, misreadings, timeline } = data;
   const [scale, setScale] = useFontScale();
   const { lang, setLang } = useLang();
+  const en = lang === 'en';
 
   const params = useMemo(
     () => Object.fromEntries(Object.entries(figures ?? {}).map(([id, f]) => [id, f.params ?? {}])),
@@ -47,32 +50,47 @@ export default function NullHypothesis() {
     Timeline: () => <Timeline items={timeline ?? []} lang={lang} />,
     // <Cite id="fisher1935…">…</Cite> — the id is checked against sources.json in
     // the data repo, so a citation with no source cannot reach the page.
-    Cite: ({ id, children }) => <HoverCite source={sources?.[id]}>{children}</HoverCite>,
+    Cite: ({ id, children }) => <HoverCite source={sources?.[id]} lang={lang}>{children}</HoverCite>,
   }), [params, sources, misreadings, timeline, lang]);
 
-  const en = lang === 'en';
   const title = en ? meta.en?.title ?? meta.title : meta.title;
   const summary = en ? meta.en?.summary ?? meta.summary : meta.summary;
   const Article = en ? ArticleEn : ArticleZh;
 
+  useEffect(() => { document.title = `${title}｜Canvas Lab`; }, [title]);
+
   return (
-    <PageShell
-      title={title}
-      eyebrow={en ? 'Statistics Lab' : '統計學實驗室'}
-      width="prose"
-      backHref="/statisticslab"
-      fontScale={scale}
-      controls={
-        <>
+    <main className="min-h-screen bg-paper paper-texture py-10 text-ink" style={{ zoom: scale }}>
+      <div className="mx-auto mb-6 flex max-w-[86rem] items-center justify-between gap-4 px-4 sm:px-6">
+        <Link to="/" className="text-token-sm text-ink-faint transition-colors duration-fast hover:text-accent">
+          ← Canvas Lab
+        </Link>
+        <div className="flex items-center gap-2">
           <LangSwitch lang={lang} onChange={setLang} />
           <FontSizeControl scale={scale} onChange={setScale} />
-        </>
-      }
-    >
-      <p className="mb-10 text-token-sm leading-relaxed text-ink-muted">{summary}</p>
-      <Prose components={components}>
-        <Article />
-      </Prose>
-    </PageShell>
+        </div>
+      </div>
+
+      <ArticleLayout
+        title={title}
+        eyebrow={en ? 'Statistics Lab' : '統計學實驗室'}
+        summary={summary}
+        tocLabel={en ? 'On this page' : '本頁目次'}
+        nav={
+          <ArticleNav
+            topics={hub.topics}
+            articles={hub.articles}
+            currentSlug={meta.slug}
+            homeHref="/statisticslab"
+            homeLabel={en ? 'Statistics Lab' : '統計學實驗室'}
+            lang={lang}
+          />
+        }
+      >
+        <Prose components={components}>
+          <Article />
+        </Prose>
+      </ArticleLayout>
+    </main>
   );
 }

@@ -81,9 +81,9 @@ export default function PHacking({ outcomes = 20, n = 20, seed = 424242, lang = 
                   key={i}
                   className="inline-flex h-7 min-w-[3.6rem] items-center justify-center rounded-token-sm border px-1 text-token-xs tabular-nums"
                   style={{
-                    borderColor: hit ? 'var(--status-danger-tx)' : 'var(--c-line-soft)',
-                    background: hit ? 'var(--status-danger-bg)' : 'var(--c-paper)',
-                    color: hit ? 'var(--status-danger-tx)' : 'var(--c-ink-faint)',
+                    borderColor: hit ? 'var(--c-accent)' : 'var(--c-line-soft)',
+                    background: hit ? 'var(--c-accent-soft)' : 'var(--c-paper)',
+                    color: hit ? 'var(--c-accent)' : 'var(--c-ink-faint)',
                   }}
                 >
                   {p.toFixed(3)}

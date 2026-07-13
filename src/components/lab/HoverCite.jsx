@@ -21,7 +21,7 @@ import { ExternalLink } from 'lucide-react';
 const CARD_W = 320;
 const GAP = 8;
 
-export default function HoverCite({ source, children }) {
+export default function HoverCite({ source, lang = 'zh', children }) {
   const [open, setOpen] = useState(false);
   const [pinned, setPinned] = useState(false);
   const [pos, setPos] = useState(null);
@@ -89,7 +89,13 @@ export default function HoverCite({ source, children }) {
     closeTimer.current = setTimeout(() => setOpen(false), 160);
   };
 
-  const { author, title, year, container, locator, url, quote, accessibility } = source;
+  // The card is reader-facing: author, work, where in it, and a way to read it.
+  // Anything about how the citation was checked stays in the data repo.
+  const en = lang === 'en';
+  const { author, title, year, container, url } = source;
+  const locator = (en ? source.en?.locator : source.locator) ?? source.locator;
+  const quote = (en ? source.en?.quote : source.quote) ?? source.quote;
+  const linkLabel = en ? 'Read it' : '原文';
 
   return (
     <span
@@ -121,26 +127,23 @@ export default function HoverCite({ source, children }) {
           className="z-30 block rounded-token-md border border-line bg-surface-raised px-3.5 py-3 text-left text-token-xs leading-relaxed shadow-token-md"
         >
           <span className="block text-ink">
-            {author}（{year}）。{title}
+            {author}{en ? ` (${year}). ` : `（${year}）。`}{title}
           </span>
           {container ? <span className="mt-0.5 block text-ink-muted">{container}</span> : null}
           {quote ? (
             <span className="mt-1.5 block border-l-2 border-line pl-2 text-ink-muted">{quote}</span>
           ) : null}
           {locator ? <span className="mt-1.5 block text-ink-faint">{locator}</span> : null}
-          <span className="mt-2 flex items-center gap-3">
-            {url ? (
-              <a
-                href={url}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-1 text-accent hover:underline"
-              >
-                原文 <ExternalLink size={11} />
-              </a>
-            ) : null}
-            {accessibility ? <span className="text-ink-faint">{accessibility}</span> : null}
-          </span>
+          {url ? (
+            <a
+              href={url}
+              target="_blank"
+              rel="noreferrer"
+              className="mt-2 inline-flex items-center gap-1 text-accent hover:underline"
+            >
+              {linkLabel} <ExternalLink size={11} />
+            </a>
+          ) : null}
         </span>
       ) : null}
     </span>

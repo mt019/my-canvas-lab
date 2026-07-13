@@ -107,7 +107,7 @@ export function Dots({ points, x, y, cat = 2, r = 3 }) {
 /* A reference line the reader is meant to compare against — an alpha
    threshold, a null value, an expected level. Dashed and labelled, so it
    never reads as data. */
-export function RuleLine({ at, scale, orient = 'vertical', label, tone = 'var(--c-pop)' }) {
+export function RuleLine({ at, scale, orient = 'vertical', label, tone = 'var(--c-ink-muted)' }) {
   const { inner } = useFrame();
   const p = scale(at);
   const vertical = orient === 'vertical';
