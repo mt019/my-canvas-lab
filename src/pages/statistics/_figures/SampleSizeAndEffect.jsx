@@ -21,7 +21,8 @@ const REPS = 400;
 const COPY = {
   zh: {
     n: '每組樣本數',
-    fixed: (d) => `真實效果固定在 d = ${d}，一個小到不值得談的差距`,
+    fixed: (d) => `兩組真實的差距固定在 d = ${d}`,
+    fixedHelp: (d) => `d = ${d} 的意思是：兩組的真實平均只差 ${d} 個標準差。換算成分數，大約是兩班平均差 1.5 分、而分數標準差有 10 分——小到沒有人會在意。整張圖裡這個差距完全沒有變過，變的只有人數。`,
     reading: (n, p) => `每組收 ${n} 個人，重做 ${REPS} 次研究，其中典型的一次會得到 p = ${p}`,
     sig: '。已經算顯著了，而效果從頭到尾沒變過。',
     notSig: '。還不顯著。多收一點人就會。',
@@ -34,7 +35,8 @@ const COPY = {
   },
   en: {
     n: 'Sample size per group',
-    fixed: (d) => `The true effect is frozen at d = ${d}, a difference too small to care about`,
+    fixed: (d) => `The true gap between the groups is frozen at d = ${d}`,
+    fixedHelp: (d) => `d = ${d} means the two group means really differ by ${d} of a standard deviation — about 1.5 points on a test whose scores have a standard deviation of 10. Nobody would care about a gap that size. It never changes across this chart; only the number of people does.`,
     reading: (n, p) => `With ${n} people per group, run ${REPS} times, the typical study comes back with p = ${p}`,
     sig: '. That already counts as significant, and the effect never changed.',
     notSig: '. Not significant yet. Collect a few more people and it will be.',
@@ -90,6 +92,8 @@ export default function SampleSizeAndEffect({ d = 0.15, seed = 991, nDefault = 8
         <span className="w-14 tabular-nums text-ink">{n}</span>
         <span>{c.fixed(d)}</span>
       </label>
+
+      <p className="mt-2 text-token-xs leading-relaxed text-ink-faint">{c.fixedHelp(d)}</p>
 
       <p className="mt-3 text-token-sm text-ink">
         {c.reading(n, current.toFixed(3))}

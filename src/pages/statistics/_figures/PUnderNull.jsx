@@ -17,7 +17,8 @@ const ALPHAS = [0.1, 0.05, 0.01];
 
 const COPY = {
   zh: {
-    effect: '真實效果 delta',
+    effect: '兩組真實的差距 delta',
+    effectHelp: 'delta 是兩組真實平均數的差距，用標準差當尺：兩班平均差 2 分、分數標準差 10 分，delta 就是 0.2。delta = 0 代表兩組真的一模一樣，任何看起來的差異都只是抽樣的隨機起伏。',
     threshold: '門檻 alpha',
     hits: (runs, pct) => `${runs} 次研究裡，有 ${pct}% 落在門檻以內`,
     nullTail: (a) => `。效果是零，這些全是偽陽性，比率就是你設的 ${a}。`,
@@ -29,7 +30,8 @@ const COPY = {
     x: 'p 值',
   },
   en: {
-    effect: 'True effect delta',
+    effect: 'True difference between the groups, delta',
+    effectHelp: 'Delta is the real gap between the two group means, measured in standard deviations: if two classes differ by 2 points on a test whose scores have a standard deviation of 10, delta is 0.2. Delta = 0 means the groups really are identical, and any difference you see is sampling noise.',
     threshold: 'Threshold alpha',
     hits: (runs, pct) => `${pct}% of ${runs} studies came out below the threshold`,
     nullTail: (a) => `. The effect is zero, so every one of them is a false positive — at exactly the rate you set, ${a}.`,
@@ -103,6 +105,8 @@ export default function PUnderNull({ n = 30, runs = 2000, seed = 20260713, delta
           ))}
         </span>
       </div>
+
+      <p className="mt-2 text-token-xs leading-relaxed text-ink-faint">{c.effectHelp}</p>
 
       <p className="mt-3 text-token-sm text-ink">
         {c.hits(runs, (hitRate * 100).toFixed(1))}
