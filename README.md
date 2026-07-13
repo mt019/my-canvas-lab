@@ -31,7 +31,7 @@
 
 全站以 `src/components/SeoHead.jsx` 統一產生路由層級的 title、description、canonical、Open Graph／Twitter metadata、breadcrumb 與 WebSite／WebPage JSON-LD。首頁列出的頁面會各自帶有可辨識的名稱與摘要；僅供個人決策或設計測試的頁面不進入索引。
 
-`public/robots.txt` 與 `public/sitemap.xml` 使用正式網域 `https://phenom.design`。若部署網域改變，需同時更新兩者，並在部署環境設定 `VITE_SITE_URL` 為新的完整 HTTPS 網址；它會作為 canonical 與結構化資料的來源。內容頁保持可讀的標題層級、來源連結與可驗證敘述；不要為取得 FAQ rich result 而加入畫面上沒有的問答或結構化資料。
+在正式部署環境設定 `VITE_SITE_URL` 為本站完整 HTTPS 網址；它會作為 canonical、Open Graph 與結構化資料的來源。未設定時，前端會使用目前開啟網站的網域，絕不預設指向其他人的網址。若要提交 sitemap，請在確定正式網域後再產生其中的絕對網址，並在 `robots.txt` 加入對應的 Sitemap 行。內容頁保持可讀的標題層級、來源連結與可驗證敘述；不要為取得 FAQ rich result 而加入畫面上沒有的問答或結構化資料。
 
 ### 資料 repo 與 Canvas 的責任邊界
 

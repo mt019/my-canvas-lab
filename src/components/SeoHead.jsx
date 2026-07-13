@@ -1,8 +1,9 @@
 import { useEffect, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 
-const DEFAULT_SITE_URL = 'https://phenom.design';
-const SITE_URL = (import.meta.env.VITE_SITE_URL || DEFAULT_SITE_URL).replace(/\/$/, '');
+// Do not fall back to a third-party domain. Set VITE_SITE_URL in production
+// when a fixed public URL is needed; local previews use their current origin.
+const SITE_URL = (import.meta.env.VITE_SITE_URL || window.location.origin).replace(/\/$/, '');
 
 function setMeta(attribute, key, content) {
   let node = document.head.querySelector(`meta[${attribute}="${key}"]`);
