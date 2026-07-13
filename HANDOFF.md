@@ -49,6 +49,22 @@ alpha=.05 的偽陽性率 5.1%，品茶精確分佈 [1,16,36,16,1]/70。
 六個互動 figure 全部實跑通過（零 console error）。刻意不做的圖：Fisher/Neyman 引用數逐年變化、
 誤讀出現頻率——沒有真實資料就不畫，見 `docs/DESIGN.md` 與資料倉的 figures 註記。
 
+### 統計站的長文外殼與排版（2026-07-13 補）
+
+`lab/ArticleLayout`＋`ArticleNav`＋`TableOfContents`＋`ArticleMeta`：左書目、中閱讀欄、右自動目次
+（rehype-slug 給標題 id，IntersectionObserver 標當前章節，`refreshKey` 讓它隨語言重讀——否則切成
+英文後仍列中文標題）。閱讀欄**不填色、不加材質、不畫邊界**；紙張顆粒鋪整頁（只鋪在 article 上會畫出
+一個看得見的矩形，那就是面板）。主題色只出現在「當前位置」的標記。
+
+雙語：文章走兩份 `.mdx`（字典式逐句翻譯對散文是錯的形狀），六個互動元件各自帶 zh/en 完整文案，
+引註卡讀資料倉的 `en` 欄位。
+
+**CJK 排版三條全域規則**（`src/index.css` body）：`line-break: strict`（行首不得為收尾標點）、
+`text-wrap: pretty`、`overflow-wrap: break-word`。**`HoverCite` 用 `<span role="button">` 而非
+`<button>`**：Chromium 把表單控制項當成不可分割的行內物件，其中文字不進入周圍文字流，斷行規則跨不
+過去，句號會被丟到下一行。卡片用 `createPortal` 掛到 body，否則 hover 時段落會位移。實測判準：
+全文行首孤立標點 0 處、hover 前後段落 boundingBox 相同。
+
 ### `IiasPublications`（中研院法研所出版品，2026-07-11）
 
 Backed by sibling `../iias-publications-data` repo（GitHub mt019/iias-publications-data，

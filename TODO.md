@@ -2,6 +2,11 @@
 
 ## 全局（2026-07-13 新增）
 
+### 統計學實驗室（下一輪，兩件都未動工）
+- [ ] **教材語料建置**：資料倉 `docs/教科書與參考書單.md` 已有六領域、14 個實測可取用的免費全文。`engineering/scripts/fetch-books.mjs` 已寫好未跑。要做：由書單生 `data/materials/booklist.json` → 跑 fetch → 新增 `index-books.mjs`（pdftotext 抽文字、產 `docs/教材索引.md`）→ 運維三件套（gitignore 擋 PDF、validate 檢查 manifest、LOG、負向測試）。
+- [ ] **全站 SEO／AEO**：JSON-LD（Article／FAQPage／BreadcrumbList）、語言進網址 `?lang=en` ＋hreflang（現在語言只存 localStorage，爬蟲看不到英文版）、sitemap.xml／robots.txt 隨 build 產生、可索引頁面 build 後預渲染靜態 HTML。
+- [ ] 正文兩處仍偏抽象待補具體例子：p 值均勻分佈、Neyman-Pearson 的長期錯誤率。
+
 - [ ] **eslint 根本沒在檢查 `.jsx`**：`eslint.config.js` 的 files 只有 `**/*.{ts,tsx}`，所以 17 個 `.jsx` 頁面與 `src/components/lab/` 全部逃過 lint，`npm run lint` 的綠燈是假訊號。加上 jsx 支援會一次噴出既有錯誤，要排一輪處理。
 - [ ] **共用層下一個該抽的東西**：點標籤／註記標註（帶避讓）。GovernmentDebt 的折線末端國名與 ECFA `ThesisTimeline` 的事件標註各自手刻同一套避讓邏輯——兩個真實用例已到齊。順帶：`AreaWash` 缺漸層、`Dots` 只有單一半徑。
 - [ ] **比喻黑話殘留**：`HANDOFF.md` 與資料倉腳本裡還有 `sentinel`／`哨兵`／`棘輪` 等命名（見 jargon-check hook 每次的告警）。改名要跨 repo 動識別字，排一輪專門處理。
