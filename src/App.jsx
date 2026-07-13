@@ -1,11 +1,51 @@
 import React, { Suspense, lazy, useMemo } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import { ArrowRight, BookMarked, CalendarDays, Droplets, FileSearch, Gavel, Globe2, GraduationCap, Landmark, Languages, Mic, Music, Music2, Palette, Piano, Scale, ScrollText, Wind } from 'lucide-react';
+import { ArrowRight, BookMarked, CalendarDays, Droplets, FileSearch, Gavel, Globe2, GraduationCap, Landmark, Languages, Mic, Music, Music2, Palette, Piano, Scale, ScrollText, Sigma, Wind } from 'lucide-react';
 import SeoHead from './components/SeoHead';
 
-const pages = import.meta.glob('./pages/*.{jsx,tsx}');
+/*
+ * Pages are routed by file path. A file directly under pages/ keeps the old flat
+ * rule (AutoTuner.jsx -> /autotuner), so every existing URL is untouched; a file
+ * in a sub-directory gets a namespaced route (statistics/NullHypothesis.jsx ->
+ * /statistics/null-hypothesis), which is how a site with several articles under
+ * one topic stays legible in the address bar. Anything under a path segment
+ * starting with "_" is a building block, not a page — figures, simulation code —
+ * and never becomes a route.
+ */
+const pages = import.meta.glob('./pages/**/*.{jsx,tsx}');
+
+const kebab = (name) => name.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();
+
+function routeFor(path) {
+  const rel = path.replace('./pages/', '').replace(/\.(jsx|tsx)$/, '');
+  const parts = rel.split('/');
+  const name = parts.pop();
+  return parts.length === 0
+    ? `/${name.toLowerCase()}`
+    : `/${parts.map(kebab).join('/')}/${kebab(name)}`;
+}
 
 const PAGE_META = { // token-exempt: per-page identity chip colors (data, not styling)
+  StatisticsLab: {
+    name: '統計學實驗室',
+    desc: '把統計方法拆開來，用可以親手操作的模擬解釋它為什麼長這樣',
+    Icon: Sigma,
+    accent: '#dfe3ea',
+    accentText: '#6c7690',
+    group: 'learn',
+  },
+  // Articles carry meta for SEO (canonical, title, Article schema) but stay off
+  // the index: the hub lists them, the front page lists the hub.
+  NullHypothesis: {
+    name: '為什麼叫虛無假設',
+    desc: 'null 的語源、Fisher 與 Neyman-Pearson 的兩套邏輯，以及教科書把它們縫在一起之後',
+    Icon: Sigma,
+    accent: '#dfe3ea',
+    accentText: '#6c7690',
+    group: 'learn',
+    listed: false,
+    type: 'Article',
+  },
   AutoTuner: {
     name: '自動調音器',
     desc: '吉他、烏克麗麗、吉他麗麗全支援，含 Open G、DADGAD 等特殊定弦',
@@ -162,6 +202,7 @@ const HOME_VARS = { // token-exempt
 };
 
 const GROUPS = [
+  { key: 'learn', label: '教學實驗室', desc: '方法本身的來歷與限制，配上可以親手轉動的模擬' },
   { key: 'research', label: '研究地圖', desc: '資料層分離、可延伸成長期研究的小型工作台' },
   { key: 'doctrine', label: '法政解析', desc: '法律、財稅、投資與制度案例的結構化拆解' },
   { key: 'tool', label: '即用工具', desc: '可直接操作的音樂與聲音工具' },
@@ -170,15 +211,17 @@ const GROUPS = [
 
 export default function App() {
   const routes = useMemo(() => {
-    return Object.keys(pages).map((path) => {
-      const name = path.split('/').pop().replace(/\.(jsx|tsx)$/, '');
-      return {
-        name,
-        path: `/${name.toLowerCase()}`,
-        component: lazy(pages[path]),
-        meta: PAGE_META[name] ?? null,
-      };
-    });
+    return Object.keys(pages)
+      .filter((path) => !path.includes('/_'))
+      .map((path) => {
+        const name = path.split('/').pop().replace(/\.(jsx|tsx)$/, '');
+        return {
+          name,
+          path: routeFor(path),
+          component: lazy(pages[path]),
+          meta: PAGE_META[name] ?? null,
+        };
+      });
   }, []);
 
   return (
@@ -204,7 +247,7 @@ function PageRoute({ route }) {
     ...route.meta,
     title: `${route.meta.name}｜Phenom Canvas Lab`,
     description: route.meta.desc,
-    type: route.meta.group === 'tool' ? 'SoftwareApplication' : 'WebPage',
+    type: route.meta.type ?? (route.meta.group === 'tool' ? 'SoftwareApplication' : 'WebPage'),
     indexable: !['PaletteLab', 'TaipeiFilmFestival'].includes(route.name),
   } : undefined;
   const Page = route.component;
@@ -237,6 +280,7 @@ function RouteRow({ route }) {
 }
 
 const GROUP_META = {
+  learn: { note: 'interactive method teaching' },
   research: { note: 'long-running research canvas' },
   doctrine: { note: 'legal and policy analysis' },
   tool: { note: 'interactive instruments' },
@@ -244,7 +288,10 @@ const GROUP_META = {
 };
 
 function HomePage({ routes }) {
-  const known = routes.filter((r) => r.meta);
+  // listed: false — the page is real and indexable, it just is not a front-door
+  // entry (an article reached through its hub). Without this it would still
+  // surface below, via the ungrouped fallback.
+  const known = routes.filter((r) => r.meta && r.meta.listed !== false);
   const unknown = routes.filter((r) => !r.meta);
   return (
     <div

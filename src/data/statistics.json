@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-07-13T04:19:48.706Z",
+  "source": "statistics-lab-data, built by engineering/scripts/build-app-json.mjs",
+  "topics": [
+    {
+      "id": "inference",
+      "label": "統計推論",
+      "blurb": "假設檢定、估計、信賴區間——被用得最多、也被誤解得最深的一塊。"
+    }
+  ],
+  "articles": [
+    {
+      "slug": "null-hypothesis",
+      "route": "/statistics/null-hypothesis",
+      "topic": "inference",
+      "title": "為什麼叫虛無假設",
+      "subtitle": "從一位喝茶的女士到一份聯署聲明：p 值爭議的觀念史",
+      "summary": "虛無假設是被設計來讓資料推翻的那個假設，「虛無」這個譯名把它讀成了「什麼都沒發生」。這篇追一條觀念史的線：Fisher 一個下午的品茶實驗如何生出「虛無假設從不被證明，只可能被否證」這句話；Neyman 與 Pearson 如何把它改造成一套關於長期錯誤率的決策規則；教科書如何把兩套邏輯焊成一個誰都沒設計過的混血程序；以及這個程序如何在二十一世紀招來一份美國統計學會的聲明與一份二十五條的誤讀清單。",
+      "publishedAt": "2026-07-13",
+      "readingMinutes": 14
+    }
+  ]
+}

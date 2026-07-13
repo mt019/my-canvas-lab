@@ -1,5 +1,8 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import mdx from '@mdx-js/rollup'
+import remarkMath from 'remark-math'
+import rehypeKatex from 'rehype-katex'
 import { resolveTarget, fetchUpstream, streamPdf } from './api/_pdfProxy.mjs'
 
 // Dev-only：複刻 Vercel 的 /api/pdf serverless function（vite dev 不跑 Vercel functions），
@@ -26,7 +29,19 @@ function pdfProxyDev() {
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react(), pdfProxyDev()],
+  plugins: [
+    // MDX must run before the React plugin (enforce: 'pre'): it turns .mdx into
+    // JSX, which the React plugin then compiles. Math in prose is written as
+    // $…$ / $$…$$ and compiled to KaTeX HTML at build time, so no Unicode math
+    // character ever enters the source (see scripts/validate-math-notation.mjs).
+    { enforce: 'pre', ...mdx({
+      providerImportSource: '@mdx-js/react',
+      remarkPlugins: [remarkMath],
+      rehypePlugins: [rehypeKatex],
+    }) },
+    react({ include: /\.(jsx|js|mdx|md|tsx|ts)$/ }),
+    pdfProxyDev(),
+  ],
   server: {
     proxy: {
       '/api/opentix/search': {

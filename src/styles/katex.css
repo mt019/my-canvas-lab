@@ -1,0 +1,24 @@
+/*
+ * KaTeX lives inside a fence. Its own faces (KaTeX_Main, KaTeX_Math, …) are the
+ * one exception to the site's "no new fonts" rule (docs/DESIGN.md), and they are
+ * allowed to render formulas and nothing else — never body text, headings or UI.
+ * Everything below only re-sizes and re-inks KaTeX to sit level with Mincho body
+ * text; no colors other than the ink tokens.
+ */
+.katex {
+  color: var(--c-ink);
+  font-size: 1.02em; /* KaTeX_Main runs small next to an 18px Ming face */
+}
+
+.katex-display {
+  margin: var(--space-5) 0;
+  overflow-x: auto;  /* a long formula scrolls in its own box; the page never does */
+  overflow-y: hidden;
+  padding: var(--space-1) 0;
+}
+
+/* Display formulas are a quiet statement of fact, not a highlighted card:
+   no background block, no border, no accent color. */
+.katex-display > .katex {
+  color: var(--c-ink);
+}

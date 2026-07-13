@@ -6,6 +6,12 @@ import {
   DollarSign, Hash, FileText, TrendingDown,
 } from 'lucide-react';
 import governmentDebtData from '../data/governmentDebt.json';
+import Tabs, { useTabParams } from '../components/lab/Tabs';
+import { useExpandedSet } from '../components/lab/Accordion';
+import ChartFrame from '../components/lab/chart/ChartFrame';
+import { Grid, AxisX, AxisY } from '../components/lab/chart/Axis';
+import { Line, Dots } from '../components/lab/chart/marks';
+import { linearScale } from '../components/lab/chart/scale';
 
 const GD_VARS = { // token-exempt
   '--gd-ink': '#2d3748',
@@ -86,67 +92,41 @@ const RESEARCH_LAYERS = RAW_RESEARCH_LAYERS.map((layer) => ({
 // HELPER COMPONENTS
 // ═══════════════════════════════════════════════════════════════════
 
-function SubNav({ tabs, active, onChange }) {
-  return (
-    <div className="flex gap-1 mb-5 overflow-x-auto pb-1">
-      {tabs.map(({ id, label }) => (
-        <button
-          key={id}
-          onClick={() => onChange(id)}
-          className="shrink-0 px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all"
-          style={{
-            background: active === id ? 'var(--gd-nav-bg)' : 'white',
-            color: active === id ? 'white' : 'var(--gd-ink-soft)',
-            border: active === id ? 'none' : '1px solid var(--gd-border)',
-          }}
-        >
-          {label}
-        </button>
-      ))}
-    </div>
-  );
-}
+// Country -> categorical color slot. TREND_SERIES used to carry its own raw
+// hex per country; the chart primitives only take cat-1..cat-8 slots, so this
+// mapping is a deliberate visual change (unifying onto the shared categorical
+// palette) rather than a like-for-like port.
+const TREND_SERIES_CAT = { '日本': 1, '義大利': 2, '美國': 3, '中國（官方）': 4, '德國': 5 };
 
 function TrendChart() {
-  const W = 560, H = 210, L = 48, R = 8, T = 12, B = 32;
-  const xRange = W - L - R, yRange = H - T - B;
-  const maxVal = 280;
-  const cx = (yr) => L + ((yr - 2010) / 14) * xRange;
-  const cy = (v) => T + yRange - (v / maxVal) * yRange;
-  const path = (pts) => pts.map(([y, v], i) => `${i ? 'L' : 'M'}${cx(y).toFixed(1)} ${cy(v).toFixed(1)}`).join(' ');
-  const yLines = [0, 50, 100, 150, 200, 250];
-  const xLabels = [2010, 2014, 2018, 2020, 2022, 2024];
+  const yTicks = [0, 50, 100, 150, 200, 250];
+  const xTicks = [2010, 2014, 2018, 2020, 2022, 2024];
+  const xScale = linearScale({ domain: [2010, 2024], range: [48, 560 - 8] });
+  const yScale = linearScale({ domain: [0, 280], range: [210 - 32, 12] });
 
   // Y-offsets to avoid label collisions at right edge (2024 values)
   const labelOffsets = { '日本': -4, '義大利': 4, '美國': -4, '中國（官方）': 10, '德國': -10 };
 
   return (
-    <svg viewBox={`0 0 ${W} ${H}`} className="w-full" style={{ height: 210 }}>
-      {yLines.map(v => (
-        <g key={v}>
-          <line x1={L} y1={cy(v)} x2={W - R} y2={cy(v)} stroke="var(--gd-border)" strokeWidth={v === 0 ? 1.5 : 1} />
-          <text x={L - 4} y={cy(v) + 3.5} textAnchor="end" fontSize="9" fill="var(--gd-label)">{v}%</text>
-        </g>
-      ))}
-      {xLabels.map(yr => (
-        <text key={yr} x={cx(yr)} y={H - 4} textAnchor="middle" fontSize="9" fill="var(--gd-label)">{yr}</text>
+    <ChartFrame width={560} height={210} margin={{ top: 12, right: 8, bottom: 32, left: 48 }}>
+      <Grid scale={yScale} ticks={yTicks} orient="horizontal" />
+      <AxisY scale={yScale} ticks={yTicks} format={(v) => `${v}%`} />
+      <AxisX scale={xScale} ticks={xTicks} />
+      {TREND_SERIES.map(s => (
+        <Line key={s.name} points={s.pts} x={xScale} y={yScale} cat={TREND_SERIES_CAT[s.name]} width={2.2} />
       ))}
       {TREND_SERIES.map(s => (
-        <path key={s.name} d={path(s.pts)} fill="none" stroke={s.color} strokeWidth="2.2" strokeLinejoin="round" strokeLinecap="round" />
+        <Dots key={s.name} points={[s.pts[s.pts.length - 1]]} x={xScale} y={yScale} cat={TREND_SERIES_CAT[s.name]} r={3} />
       ))}
-      {TREND_SERIES.map(s => {
-        const [yr, v] = s.pts[s.pts.length - 1];
-        return <circle key={s.name} cx={cx(yr)} cy={cy(v)} r="3" fill={s.color} stroke="white" strokeWidth="1.5" />;
-      })}
       {TREND_SERIES.map(s => {
         const [yr, v] = s.pts[s.pts.length - 1];
         return (
-          <text key={s.name} x={cx(yr) - 6} y={cy(v) + (labelOffsets[s.name] || 0)} fontSize="8.5" fill={s.color} fontWeight="700" textAnchor="end">
+          <text key={s.name} x={xScale(yr) - 6} y={yScale(v) + (labelOffsets[s.name] || 0)} fontSize="8.5" fill={`var(--cat-${TREND_SERIES_CAT[s.name]}-tx)`} fontWeight="700" textAnchor="end">
             {s.name} {v}%
           </text>
         );
       })}
-    </svg>
+    </ChartFrame>
   );
 }
 
@@ -187,18 +167,19 @@ function LitCard({ paper }) {
 const DEFAULT_SUBTABS = { overview: 'rank', china: 'summary', research: 'framework', compare: 'rules' };
 
 export default function GovernmentDebt() {
-  const [mainTab, setMainTab] = useState('overview');
-  const [subTab, setSubTab] = useState('rank');
-  const [openLayer, setOpenLayer] = useState(() => new Set(RESEARCH_LAYERS.map(l => l.id)));
-  const [openTimeline, setOpenTimeline] = useState(() => new Set(CHINA_TIMELINE.map((_, i) => i)));
-  const [openGlossary, setOpenGlossary] = useState(() => new Set(GLOSSARY.map((_, i) => i)));
-  const [openCase, setOpenCase] = useState(() => new Set(CASE_STUDIES.map((_, i) => i)));
-  const tog = (setFn, key) => setFn(prev => { const s = new Set(prev); s.has(key) ? s.delete(key) : s.add(key); return s; });
+  // One hook for both dimensions: picking a main tab also resets the sub-tab, and
+  // the two values have to reach the URL in a single write (see useTabParams).
+  const [{ tab: mainTab, sub: subTab }, setTabs] = useTabParams({ tab: 'overview', sub: 'rank' });
+  const setSubTab = (sub) => setTabs({ sub });
+  const handleMainTab = (tab) => setTabs({ tab, sub: DEFAULT_SUBTABS[tab] });
+  const layerAcc = useExpandedSet(RESEARCH_LAYERS.map(l => l.id));
+  const timelineAcc = useExpandedSet(CHINA_TIMELINE.map((_, i) => i));
+  const glossaryAcc = useExpandedSet(GLOSSARY.map((_, i) => i));
+  const caseAcc = useExpandedSet(CASE_STUDIES.map((_, i) => i));
   const [litFilters, setLitFilters] = useState({ type: 'all', topic: 'all' });
 
   useEffect(() => { document.title = '政府債務研究 — Canvas Lab'; }, []);
 
-  const handleMainTab = (tab) => { setMainTab(tab); setSubTab(DEFAULT_SUBTABS[tab]); };
   const maxDebt = Math.max(...COUNTRY_DEBT.map(d => d.debt));
 
   const filteredLit = useMemo(() => LITERATURE_DB.filter(p => {
@@ -208,10 +189,10 @@ export default function GovernmentDebt() {
   }), [litFilters]);
 
   const MAIN_TABS = [
-    { id: 'overview',  label: '全球概覽',   Icon: BarChart2 },
-    { id: 'china',     label: '中國深度',   Icon: Building2 },
-    { id: 'research',  label: '學術架構',   Icon: BookOpen },
-    { id: 'compare',   label: '制度比較',   Icon: Scale },
+    { id: 'overview',  label: (<span className="inline-flex items-center gap-1.5"><BarChart2 size={13} />全球概覽</span>) },
+    { id: 'china',     label: (<span className="inline-flex items-center gap-1.5"><Building2 size={13} />中國深度</span>) },
+    { id: 'research',  label: (<span className="inline-flex items-center gap-1.5"><BookOpen size={13} />學術架構</span>) },
+    { id: 'compare',   label: (<span className="inline-flex items-center gap-1.5"><Scale size={13} />制度比較</span>) },
   ];
 
   return (
@@ -240,16 +221,18 @@ export default function GovernmentDebt() {
         </div>
       </div>
 
-      {/* ── Main tab nav ── */}
+      {/* ── Main tab nav: the dark strip belongs to this page's masthead, so the
+          bar variant carries the page's own navy rather than the shared accent. */}
       <div style={{ background: 'var(--gd-nav-bg)' }}>
-        <div className="max-w-2xl mx-auto px-4 sm:px-6 flex overflow-x-auto">
-          {MAIN_TABS.map(({ id, label, Icon }) => (
-            <button key={id} onClick={() => handleMainTab(id)}
-              className="shrink-0 flex items-center gap-1.5 px-4 py-3 text-xs font-bold transition-all border-b-2"
-              style={{ color: mainTab === id ? 'white' : 'rgba(255,255,255,0.45)', borderBottomColor: mainTab === id ? 'white' : 'transparent' }}>
-              <Icon size={13} />{label}
-            </button>
-          ))}
+        <div className="max-w-2xl mx-auto px-4 sm:px-6">
+          <Tabs
+            items={MAIN_TABS}
+            value={mainTab}
+            onChange={handleMainTab}
+            variant="bar"
+            style={{ background: 'var(--gd-nav-bg)', paddingLeft: 0, paddingRight: 0 }}
+            label="主分頁"
+          />
         </div>
       </div>
 
@@ -260,11 +243,11 @@ export default function GovernmentDebt() {
             TAB: 全球概覽
         ════════════════════════════════════════ */}
         {mainTab === 'overview' && (<>
-          <SubNav active={subTab} onChange={setSubTab} tabs={[
+          <Tabs className="mb-5" items={[
             { id: 'rank',   label: '排行比較' },
             { id: 'trend',  label: '歷史趨勢' },
             { id: 'struct', label: '中央 vs 地方' },
-          ]} />
+          ]} value={subTab} onChange={setSubTab} variant="pill" label="次分頁" />
 
           {subTab === 'rank' && (
             <div className="flex flex-col gap-4">
@@ -410,12 +393,12 @@ export default function GovernmentDebt() {
             TAB: 中國深度
         ════════════════════════════════════════ */}
         {mainTab === 'china' && (<>
-          <SubNav active={subTab} onChange={setSubTab} tabs={[
+          <Tabs className="mb-5" items={[
             { id: 'summary',  label: '總體分析' },
             { id: 'lgfv',     label: 'LGFV 機制' },
             { id: 'province', label: '省級分佈' },
             { id: 'timeline', label: '政策時間軸' },
-          ]} />
+          ]} value={subTab} onChange={setSubTab} variant="pill" label="次分頁" />
 
           {subTab === 'summary' && (
             <div className="flex flex-col gap-4">
@@ -547,15 +530,15 @@ export default function GovernmentDebt() {
                 {CHINA_TIMELINE.map((item, i) => (
                   <div key={item.year} className="relative mb-3 last:mb-0">
                     <div className="absolute left-[-20px] top-1 w-4 h-4 rounded-full border-2 border-white cursor-pointer"
-                      style={{ background: openTimeline.has(i) ? 'var(--gd-accent)' : 'var(--gd-timeline-dot)' }}
-                      onClick={() => tog(setOpenTimeline, i)} />
-                    <button className="w-full text-left" onClick={() => tog(setOpenTimeline, i)}>
+                      style={{ background: timelineAcc.isOpen(i) ? 'var(--gd-accent)' : 'var(--gd-timeline-dot)' }}
+                      onClick={() => timelineAcc.toggle(i)} />
+                    <button className="w-full text-left" onClick={() => timelineAcc.toggle(i)}>
                       <div className="flex items-center gap-2">
                         <span className="text-[10px] font-black" style={{ color: 'var(--gd-accent)', minWidth: 32 }}>{item.year}</span>
                         <span className="text-xs font-bold" style={{ color: 'var(--gd-ink)' }}>{item.event}</span>
-                        <ChevronDown size={12} style={{ color: 'var(--gd-label)', transform: openTimeline.has(i) ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s', marginLeft: 'auto', flexShrink: 0 }} />
+                        <ChevronDown size={12} style={{ color: 'var(--gd-label)', transform: timelineAcc.isOpen(i) ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s', marginLeft: 'auto', flexShrink: 0 }} />
                       </div>
-                      {openTimeline.has(i) && (
+                      {timelineAcc.isOpen(i) && (
                         <p className="text-[11px] leading-relaxed mt-1.5 pl-9 pr-2" style={{ color: 'var(--gd-body)' }}>{item.detail}</p>
                       )}
                     </button>
@@ -570,12 +553,12 @@ export default function GovernmentDebt() {
             TAB: 學術架構
         ════════════════════════════════════════ */}
         {mainTab === 'research' && (<>
-          <SubNav active={subTab} onChange={setSubTab} tabs={[
+          <Tabs className="mb-5" items={[
             { id: 'framework',   label: '研究框架' },
             { id: 'deepanalysis',label: '深度分析' },
             { id: 'litdb',       label: `文獻庫（${LITERATURE_DB.length}篇）` },
             { id: 'glossary',    label: '概念辭典' },
-          ]} />
+          ]} value={subTab} onChange={setSubTab} variant="pill" label="次分頁" />
 
           {subTab === 'framework' && (
             <div className="flex flex-col gap-4">
@@ -588,11 +571,11 @@ export default function GovernmentDebt() {
               </div>
 
               {RESEARCH_LAYERS.map(layer => {
-                const isOpen = openLayer.has(layer.id);
+                const isOpen = layerAcc.isOpen(layer.id);
                 const layerPapers = LITERATURE_DB.filter(p => p.topics.includes(layer.id));
                 return (
                   <div key={layer.id} className="rounded-2xl border border-white/60 bg-white/80 shadow-sm overflow-hidden">
-                    <button className="w-full text-left px-5 py-4 flex items-center gap-3" onClick={() => tog(setOpenLayer, layer.id)}>
+                    <button className="w-full text-left px-5 py-4 flex items-center gap-3" onClick={() => layerAcc.toggle(layer.id)}>
                       <div className="shrink-0 w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: layer.color }}>
                         <layer.Icon size={16} style={{ color: layer.textColor }} strokeWidth={2.2} />
                       </div>
@@ -683,16 +666,16 @@ export default function GovernmentDebt() {
               </div>
               {GLOSSARY.map((g, i) => (
                 <div key={g.term} className="rounded-xl border border-white/60 bg-white/80 overflow-hidden">
-                  <button className="w-full text-left px-4 py-3 flex items-center gap-3" onClick={() => tog(setOpenGlossary, i)}>
+                  <button className="w-full text-left px-4 py-3 flex items-center gap-3" onClick={() => glossaryAcc.toggle(i)}>
                     <Hash size={12} style={{ color: 'var(--gd-label)', flexShrink: 0 }} />
                     <div className="flex-1 min-w-0">
                       <span className="text-xs font-black" style={{ color: 'var(--gd-ink)' }}>{g.term}</span>
                       <span className="text-[10px] ml-2" style={{ color: 'var(--gd-label)' }}>{g.en}</span>
                     </div>
                     {g.src && <span className="text-[9px] font-bold shrink-0" style={{ color: 'var(--gd-src-text)' }}>{g.src}</span>}
-                    <ChevronDown size={13} style={{ color: 'var(--gd-label)', transform: openGlossary.has(i) ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s', flexShrink: 0 }} />
+                    <ChevronDown size={13} style={{ color: 'var(--gd-label)', transform: glossaryAcc.isOpen(i) ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s', flexShrink: 0 }} />
                   </button>
-                  {openGlossary.has(i) && (
+                  {glossaryAcc.isOpen(i) && (
                     <div className="border-t px-4 py-3" style={{ borderColor: 'var(--gd-bg)' }}>
                       <p className="text-[11px] leading-relaxed" style={{ color: 'var(--gd-body)' }}>{g.def}</p>
                     </div>
@@ -751,10 +734,10 @@ export default function GovernmentDebt() {
             TAB: 制度比較
         ════════════════════════════════════════ */}
         {mainTab === 'compare' && (<>
-          <SubNav active={subTab} onChange={setSubTab} tabs={[
+          <Tabs className="mb-5" items={[
             { id: 'rules', label: '財政規則比較' },
             { id: 'cases', label: '歷史案例' },
-          ]} />
+          ]} value={subTab} onChange={setSubTab} variant="pill" label="次分頁" />
 
           {subTab === 'rules' && (
             <div className="flex flex-col gap-4">
@@ -808,7 +791,7 @@ export default function GovernmentDebt() {
               </div>
               {CASE_STUDIES.map((cs, i) => (
                 <div key={cs.title} className="rounded-2xl border border-white/60 bg-white/80 shadow-sm overflow-hidden">
-                  <button className="w-full text-left px-5 py-4 flex items-center gap-3" onClick={() => tog(setOpenCase, i)}>
+                  <button className="w-full text-left px-5 py-4 flex items-center gap-3" onClick={() => caseAcc.toggle(i)}>
                     <div className="shrink-0 w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: cs.color }}>
                       <Clock size={16} style={{ color: cs.textColor }} strokeWidth={2.2} />
                     </div>
@@ -819,9 +802,9 @@ export default function GovernmentDebt() {
                       </div>
                       <p className="text-[10px] mt-0.5" style={{ color: 'var(--gd-ink-soft)' }}>{cs.year}　債務峰值：{cs.peak}</p>
                     </div>
-                    <ChevronDown size={15} style={{ color: 'var(--gd-label)', transform: openCase.has(i) ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s', flexShrink: 0 }} />
+                    <ChevronDown size={15} style={{ color: 'var(--gd-label)', transform: caseAcc.isOpen(i) ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s', flexShrink: 0 }} />
                   </button>
-                  {openCase.has(i) && (
+                  {caseAcc.isOpen(i) && (
                     <div className="border-t px-5 py-4 flex flex-col gap-3" style={{ borderColor: 'var(--gd-bg)' }}>
                       {[
                         { label: '觸發因素', text: cs.trigger },

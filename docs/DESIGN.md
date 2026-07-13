@@ -33,6 +33,20 @@
 | `PageShell` | 新頁與簡單長文頁的外殼：`--c-paper` 底、prose（~65ch）或 wide 寬度、document.title、header 右側 controls slot。自帶複雜外殼的儀表板頁（分頁導覽、側欄）不硬套。 |
 | `Eyebrow` | 眉標 kicker。打字機 accent 字體（Erikas）唯一的預設允許位置——曾於 2026-07-07 短暫用於 h1–h3 拉丁面，同日因行內數字紋理過噪而改回 Radio Newsman；標題中文面維持 Huiwen Mincho（與內文同，取代 GenWanMin2）。GenWanMin2 已無 token 引用，字檔暫留。 |
 
+## 頁內建構元件（`src/components/lab/`，2026-07-13 建）
+
+`components/` 放站級外殼，`components/lab/` 放頁內建構材料。抽取判準：**同一個東西已被兩個以上真實頁面各自手刻過**才抽；只出現一次的形狀留在該頁。抽象若在真實用例上套不動，改的是抽象不是頁面。
+
+| 元件 | 用法與硬規則 |
+|---|---|
+| `Tabs` ＋ `useTabParam(key, fallback)` | 分頁狀態一律進網址 query（深連結、上一頁可回），預設值不寫進 query，切頁自動捲到頂。`variant="underline"` 給頁面主分頁，`"quiet"` 給次分頁與元件內部切換。 |
+| `Accordion` ＋ `useExpandedSet(ids)` | 多選展開，**初值一律全部展開，且沒有「預設收合」的參數**——收合卡片會把讀者要的東西藏起來，這條規則寫進 API 而不是寫在文件裡靠人記得。 |
+| `Badge` | `tone` 只吃語意色槽（danger/warning/success/info/neutral 或 cat-1…cat-8），不吃任意顏色。 |
+| `HoverCite` | 引註標記，hover/focus 顯示出處。出處物件來自資料倉，缺 locator 的引註在資料倉就 FAIL，前端不做把關。 |
+| `Math`（匯入時建議命名為 `Tex`，避免遮蔽全域 `Math`） | KaTeX 包裝，見下方例外。 |
+| `Prose` | MDX 文章的排版映射層：`.mdx` 只寫純 markdown，`h2`/`p`/`blockquote` 的樣式在這裡一次決定。這是 markdown 驅動內容而不破壞設計系統的關鍵。 |
+| `chart/`（`scale.js`、`ChartFrame`、`Axis`、`marks`） | 只有原語（比例尺、軸、格線、`Bars`/`Line`/`Dots`/`AreaWash`/`RuleLine`），沒有「圖表元件」。`Bars` 與 `AreaWash` 只吃分類色槽、**內建近白淡底＋同色相細框**，沒有 `fill` 參數可以繞過——深墨色不塗大面積這條規則同樣寫進 API。 |
+
 ## 色票庫
 
 **色票庫的家是 `/palettelab`（資料層在 `src/styles/palettes.js`）**：站內現用、名畫、器物、水果、中國色五組候選票，整頁即時試穿、可複製成 tokens.css 片段。**「設為全站配色」**把選定票寫進 localStorage（`canvaslab:palette`）並在開站時（`main.jsx` 的 `bootSitePalette()`）套到 `:root` 的 `--c-*` token——全站配色是每台瀏覽器的使用者設定，tokens.css 只是無設定時的中性 fallback。紙面材質（手工紙／簾紋／布紋／細點，全部程式生成、2–4% 透明度）同機制（`canvaslab:texture`），套在 body 的 `--paper-texture`。
@@ -88,8 +102,17 @@ Notion 的 tag／badge 色系從不出醜，原因是四條紀律，本站色彩
 - **金箔限文字筆畫**（2026-07-07 使用者裁定）：`GOLD_FOIL` 漸層只准以 `.foil-text`（background-clip: text）染文字，或細描邊、髮絲線等同量級小面積；禁止整面填充按鈕、卡片、大色塊——整顆金箔按鈕已被判定醜。`.foil` 的整面用法退場，現存唯一違例在 `PaletteLab.jsx:211-215`（修正任務見 TODO 全局）。
 - 正文區底色只准 `--c-paper`（或頁面色票中同角色的近白值）；不放任何搶眼背景色。
 - 不引入 UI 框架（shadcn、MUI 等）。
-- 不新增字體、不改 `--font-*` 三變數與 @font-face（見 HANDOFF）。
+- 不新增字體、不改 `--font-*` 三變數與 @font-face（見 HANDOFF）。**唯一例外：數學公式，見下節。**
 - 遷移過的檔案不寫裸 hex：色值進 tokens.css 或頁面 `*_VARS`。`npm run validate:tokens` 在 build 時強制檢查；`scripts/design-token-exceptions.txt` 是未遷移清單，只准變短。
+
+## 例外：數學公式與 KaTeX（2026-07-13 使用者裁定）
+
+數學排版是內容，不是裝飾。統計教學站引入 KaTeX，連同它自帶的 KaTeX_* 字族。這是「不新增字體」的唯一例外，邊界如下：
+
+1. KaTeX 字型只准出現在 `.katex` 作用域內。不得指派給正文、標題、UI，不得寫進 `--font-*`，不得進 tokens.css。覆寫樣式一律寫在 `src/styles/katex.css`，只用 ink token，不寫裸 hex。
+2. **數學記號一律以 LaTeX 進場**：`.mdx` 用 `$…$` / `$$…$$`（remark-math ＋ rehype-katex 在建置時轉換），JSX 用 `<Math tex="…" />`。原始碼裡不得直接打 Unicode 數學字元。理由有二：同一個符號若一半走明體、一半走 KaTeX_Math，同一頁上會出現兩種字形；而且 Unicode 數學字元會被拖進字型子集掃描。`npm run validate:math` 在 build 時強制，範圍是統計站、`src/content/`、`src/data/statistics*` 與 `src/components/lab/`（舊頁把 `≥`、`≈` 當散文標點用，字型子集已覆蓋，不在此範圍）。
+3. KaTeX 只在統計站的 async chunk 載入（路由已是 `lazy()` 分包），不進全站 bundle。
+4. 公式區塊仍受「正文區底色只准 `--c-paper`」約束：公式不做色塊、不做卡片、不加 accent 色。
 
 ## 遷移現況（2026-07-06）
 

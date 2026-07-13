@@ -1,9 +1,15 @@
 # Canvas Lab · TODO
 
+## 全局（2026-07-13 新增）
+
+- [ ] **eslint 根本沒在檢查 `.jsx`**：`eslint.config.js` 的 files 只有 `**/*.{ts,tsx}`，所以 17 個 `.jsx` 頁面與 `src/components/lab/` 全部逃過 lint，`npm run lint` 的綠燈是假訊號。加上 jsx 支援會一次噴出既有錯誤，要排一輪處理。
+- [ ] **共用層下一個該抽的東西**：點標籤／註記標註（帶避讓）。GovernmentDebt 的折線末端國名與 ECFA `ThesisTimeline` 的事件標註各自手刻同一套避讓邏輯——兩個真實用例已到齊。順帶：`AreaWash` 缺漸層、`Dots` 只有單一半徑。
+- [ ] **比喻黑話殘留**：`HANDOFF.md` 與資料倉腳本裡還有 `sentinel`／`哨兵`／`棘輪` 等命名（見 jargon-check hook 每次的告警）。改名要跨 repo 動識別字，排一輪專門處理。
+
 ## 功能增強
 
 ### AirPollutionFee 空氣污染防制費
-- [ ] 安裝 KaTeX，將費額公式 `Σ(Qᵢ · rᵢ) × D × E` 及 D/E 係數計算式渲染為數學符號
+- [x] ~~安裝 KaTeX~~（2026-07-13 已裝，隨統計站進場）；費額公式 `Σ(Qᵢ · rᵢ) × D × E` 與 D/E 係數式仍待改用 `<Math tex="…" />` 渲染（注意：本頁不在 `validate:math` 範圍內，但公式一律 LaTeX 的規則同樣適用）
 - [ ] 稽徵程序：將 `QUARTERLY_DEADLINES` 渲染成季申報截止日速查卡（日曆式表格）
 - [ ] 費率查詢：補入重金屬（Pb/Cd/Hg/As/Cr⁶⁺）與戴奧辛費率表
 - [ ] 逃漏：補充具體裁判案例或行政裁處實例（目前僅有條文，缺乏實務例證）

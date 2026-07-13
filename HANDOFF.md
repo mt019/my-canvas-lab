@@ -27,6 +27,28 @@ copy. When writing digest/topic prose, narrate what a *reader* learns
 
 ## Pages
 
+### `StatisticsLab` ＋ `statistics/*`（統計學實驗室，2026-07-13 新建）
+
+站的形狀：hub（`/statisticslab`，依 topic 列文章，清單由資料驅動，加第二篇不用改它）＋每篇一
+個路由頁（`/statistics/null-hypothesis`）。路由來自 `App.jsx` 的巢狀 glob（`pages/**`；子目錄
+→ 命名空間網址；`_` 開頭的路徑段不進路由，所以 `_figures/`、`_lib/` 安全）。文章頁在 `PAGE_META`
+標 `listed: false`（要 SEO、不上首頁；首頁的 ungrouped fallback 會撿走沒有 group 的頁，所以省
+略 group 達不到這個效果）＋`type: 'Article'`。
+
+資料倉 `../statistics-lab-data`：正文 `article.mdx`、`figures.json`（互動元件參數與 seed）、
+`sources.json`（引文出處，缺 locator 就 validate FAIL）、`misreadings.json`、`timeline.json`、
+`quiz.json`。`npm run sync` 一次投影三個檔（兩個 JSON ＋ 一份 .mdx 正文）。
+
+**這是全站唯一允許在瀏覽器算數的頁**（資料倉 `docs/simulation-policy.md` 明文例外）：教學需要
+讀者親手重跑一萬次。邊界四條——只算已投影參數的純函式；一律 seeded（seed 在 figures.json）；
+資料倉 `data/reference/` 存同一 seed 下的期望輸出，`npm run verify:sim` 重跑比對；**瀏覽器只
+生成分佈，不生成論點**（統計解釋、門檻、史料一律來自資料倉）。模擬引擎在 `_lib/`（mulberry32、
+Box-Muller、pooled-variance t 檢定、regularized incomplete beta）；實測校準：虛無為真時
+alpha=.05 的偽陽性率 5.1%，品茶精確分佈 [1,16,36,16,1]/70。
+
+六個互動 figure 全部實跑通過（零 console error）。刻意不做的圖：Fisher/Neyman 引用數逐年變化、
+誤讀出現頻率——沒有真實資料就不畫，見 `docs/DESIGN.md` 與資料倉的 figures 註記。
+
 ### `IiasPublications`（中研院法研所出版品，2026-07-11）
 
 Backed by sibling `../iias-publications-data` repo（GitHub mt019/iias-publications-data，
@@ -798,6 +820,62 @@ per research — sources in scratchpad `research-*.md`, proposal in
 do it incrementally, don't open new hex islands.** Rule for any new
 chart/status color: reference `--status-*` / `--cat-*`, never a fresh page hex.
 
+## Page building blocks: `src/components/lab/` (2026-07-13, new)
+
+`src/components/` holds site chrome; `src/components/lab/` holds the pieces a
+page is built from, and it exists because 17 pages had each hand-rolled their
+own tabs, accordions and SVG axes (16k lines of page code against 287 lines of
+shared code). What is in it, and the rules baked into the API rather than into
+prose:
+
+- `Tabs` + `useTabParam(key, fallback)` / `useTabParams(defaults)` — tab state
+  lives in the URL, so every tabbed view is deep-linkable; the default value is
+  kept out of the query string; switching scrolls to top. **Use `useTabParams`
+  when a page has two tab dimensions** (a main tab that resets a sub-tab): two
+  separate `useTabParam` calls cannot both write in one click handler — each
+  closes over its own render-time query snapshot, so the second write silently
+  drops the first. This bit GovernmentDebt during migration and is why the
+  multi-key hook exists. Variants: `underline` (page sections), `quiet` (inside
+  a figure), `bar` (a dark strip under a page's own colored masthead), `pill`
+  (sub-tabs that read as buttons).
+- `Accordion` + `useExpandedSet(ids)` — multi-select, and **everything starts
+  open, with no parameter to ask otherwise**. The standing "cards default to
+  fully expanded" rule is enforced by the type, not by memory.
+- `chart/` — primitives only (`linearScale`/`bandScale`/`niceTicks`,
+  `ChartFrame`, `Grid`/`AxisX`/`AxisY`, `Bars`/`Line`/`Dots`/`AreaWash`/
+  `RuleLine`). No chart components: two real charts had nothing in common above
+  the scale/axis layer. `Bars` and `AreaWash` take a categorical slot (1–8), not
+  a color, and bake in pale fill + same-hue ink keyline — there is no `fill`
+  prop to route around it.
+- `Badge`, `HoverCite`, `Math` (import it as `Tex`; the name `Math` shadows the
+  global), `Prose` (the MDX typography mapping).
+
+**Known gaps (found by migrating GovernmentDebt and reading ECFA's
+ThesisTimeline, both real users):** no primitive for point labels / annotation
+callouts with collision avoidance (both pages hand-roll it — the strongest
+candidate for the next extraction); `AreaWash` has no gradient; `Dots` has one
+radius for all points.
+
+## MDX + KaTeX (2026-07-13, new)
+
+Long-form articles are `.mdx`: plain markdown prose with interactive figures
+written inline (`<LadyTastingTea />`). `@mdx-js/rollup` runs `enforce: 'pre'` in
+`vite.config.ts`; `remark-math` + `rehype-katex` compile `$…$` at build time.
+The `.mdx` file imports nothing — the page shell (`src/pages/statistics/
+NullHypothesis.jsx`) injects the figure components and the `<Cite>` binding
+through `Prose`'s MDXProvider, so writing the next article is writing prose.
+
+**Math is LaTeX-only.** No Unicode math character (Greek, sub/superscripts,
+operators) may be typed into the statistics pages, `src/content/`,
+`src/data/statistics*`, or `src/components/lab/`; `npm run validate:math`
+(fourth build gate, `scripts/validate-math-notation.mjs`) fails the build on
+one. Reason: the same symbol would otherwise render in Mincho in one place and
+KaTeX_Math in another, on the same page. Older pages use `>=`-type characters as
+ordinary prose punctuation and are out of scope. KaTeX's own fonts are the one
+sanctioned exception to "no new fonts" (`docs/DESIGN.md`), confined to `.katex`,
+and land only in the statistics async chunk (verified: `dist/index.html` and the
+home chunk contain no katex).
+
 ## Font system (stable, don't re-derive)
 
 `src/index.css` defines three CSS variables:
@@ -821,6 +899,16 @@ chart/status color: reference `--status-*` / `--cat-*`, never a fresh page hex.
 - `npm run build` runs `scripts/validate-font-coverage.mjs` before
   Vite. Rebuild font subsets before building if new page/data text
   introduces new characters. Don't bypass this check.
+- **`scripts/rebuild-font-subsets.mjs` now rebuilds all three subsets
+  (2026-07-13).** It used to rebuild only Huiwen and GenWanMin2, while
+  the coverage validator checked the *union* of Huiwen and the Chiron
+  fallback — so "Huiwen lacks it, Chiron covers it" was a hand-maintained
+  claim with no script behind it. The script now subsets Chiron to exactly
+  the codepoints Huiwen cannot draw, and prints the `unicode-range` line
+  that `src/index.css` must carry. Paste it back after every rebuild: a
+  stale range means those glyphs fall through to the system font while the
+  validator still passes. (First run of the fixed script found the range
+  had drifted from 19 codepoints to 110.)
 
 Erikas Farbband / Radio Newsman have **undocumented upstream
 redistribution terms** — bundled at the user's explicit, informed,
@@ -850,6 +938,12 @@ old commits** — they contained the leak by design of the fix.
 `~/.claude/skills/` (user-level — reusable across all projects, not
 project-scoped):
 
+- `canvas-new-page/SKILL.md` (2026-07-13) — adding a page, an MDX
+  article, or a whole topic site to this canvas: routing and PAGE_META
+  (incl. the `listed: false` trap), the `lab/` building blocks and the
+  rules baked into them, MDX + KaTeX, the four build gates, the
+  prohibitions, and how to actually verify with Playwright. Hands the
+  data layer off to the Codex skill below.
 - `font-clearance/SKILL.md` — license clearance → subsetting → woff2 →
   `LICENSES.md`. Use before bundling any font anywhere.
 - `css-modules-porting/SKILL.md` — porting a standalone app's global

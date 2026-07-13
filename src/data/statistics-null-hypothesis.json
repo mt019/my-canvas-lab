@@ -1,0 +1,344 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-07-13T04:19:48.706Z",
+  "source": "statistics-lab-data, built by engineering/scripts/build-app-json.mjs",
+  "meta": {
+    "slug": "null-hypothesis",
+    "topic": "inference",
+    "title": "為什麼叫虛無假設",
+    "subtitle": "從一位喝茶的女士到一份聯署聲明：p 值爭議的觀念史",
+    "summary": "虛無假設是被設計來讓資料推翻的那個假設，「虛無」這個譯名把它讀成了「什麼都沒發生」。這篇追一條觀念史的線：Fisher 一個下午的品茶實驗如何生出「虛無假設從不被證明，只可能被否證」這句話；Neyman 與 Pearson 如何把它改造成一套關於長期錯誤率的決策規則；教科書如何把兩套邏輯焊成一個誰都沒設計過的混血程序；以及這個程序如何在二十一世紀招來一份美國統計學會的聲明與一份二十五條的誤讀清單。",
+    "publishedAt": "2026-07-13",
+    "readingMinutes": 14
+  },
+  "figures": {
+    "lady-tasting-tea": {
+      "id": "lady-tasting-tea",
+      "type": "exact-enumeration",
+      "title": "一位喝茶的女士",
+      "description": "Fisher 1935 年設計的原型實驗：8 杯奶茶，其中 4 杯先加奶、4 杯先加茶，隨機排列後請品茶者把它們分成兩組各 4 杯。在虛無假設（她其實無法分辨）之下，把全部 C(8,4)=70 種排列窮舉出來，看她答對 0 到 4 杯（猜對「先加奶」組別交集數）的機率各是多少。",
+      "params": {
+        "cups": 8,
+        "truth": [
+          1,
+          3,
+          5,
+          8
+        ]
+      },
+      "notes": "非模擬，是完全列舉：C(4,k) * C(4,4-k) / C(8,4)，k=0..4。不需要 seed。 / 原始參數註記：{\"totalCups\":8,\"milkFirstCups\":4,\"method\":\"hypergeometric exact enumeration, no sampling\"}"
+    },
+    "two-logics": {
+      "id": "two-logics",
+      "type": "fixed-data-test",
+      "title": "兩套邏輯，一組資料",
+      "description": "同一組固定資料，分別套用 Fisher 的顯著性檢定邏輯（只問這個 p 值算不算證據）與 Neyman-Pearson 的決策邏輯（事先訂好 alpha，只問拒絕或不拒絕），對照兩套邏輯在同一資料上給出的不同讀法，以及教科書常見的「混血」讀法（拿 p 值又拿固定 alpha，兩套一起用卻沒說清楚在用哪一套）。",
+      "params": {
+        "groupA": [
+          82,
+          79,
+          88,
+          91,
+          85,
+          77,
+          94,
+          83,
+          80,
+          90,
+          86,
+          78
+        ],
+        "groupB": [
+          75,
+          88,
+          79,
+          82,
+          70,
+          84,
+          76,
+          81,
+          73,
+          87,
+          77,
+          80
+        ],
+        "labels": {
+          "a": "處理組",
+          "b": "對照組"
+        }
+      },
+      "notes": "資料是寫死的固定值，不是每次重抽。t 與 p 是用零依賴的 pooled t-test 加正規化不完全 beta函數（regularized incomplete beta function）算出來的，算法見 engineering/scripts/verify-simulation-reference.mjs。p 約為 0.0336：alpha=0.05 會拒絕虛無假設，alpha=0.01 不會拒絕，這就是對照兩套邏輯的着力點。不需要 seed。 / 原始參數註記：{\"test\":\"two-sample pooled-variance t-test (Student's t), two-tailed\",\"n1\":12,\"n2\":12,\"df\":22,\"alphaFisher\":\"報告精確 p 值，不套用固定門檻\",\"alphaNeymanPearson5pct\":0.05,\"alphaNeymanPearson1pct\":0.01,\"precomputedT\":2.2671894903949465,\"precomputedP\":0.033550928093355345}"
+    },
+    "p-under-null": {
+      "id": "p-under-null",
+      "type": "resampling-simulation",
+      "title": "虛無為真時，p 值長什麼樣子",
+      "description": "重複從兩組真的沒有差異（或使用者用滑桿調出的固定差異 delta）的常態分布重新抽樣、跑雙樣本 t 檢定，把每次算出的 p 值畫成分布。重點結論：只要虛無假設真的為真（delta=0），p 值不會集中在任何地方，是均勻分布——p=0.03 跟 p=0.83 出現的機率一樣高。",
+      "params": {
+        "n": 30,
+        "runs": 2000,
+        "seed": 1935,
+        "delta": 0
+      },
+      "seed": 1935,
+      "notes": "seed=1935 是 Fisher《The Design of Experiments》出版年份，純粹取好記，與統計性質無關。演算法：mulberry32(seed) 依序產生 uniform(0,1) 亂數，每兩個一組經 Box-Muller 轉換成一對標準常態變量；依序填滿 group A（n1 個，N(0,1)）再填滿 group B（n2 個，N(delta,1)）；每個 repeat 重新抽樣、算 pooled t 與雙尾 p；共 repeats 次。決定性演算法，同一 seed 與同一參數必重現同一序列——瀏覽器端實作必須逐步照抄這個抽樣順序，否則會跟 data/reference/null-hypothesis.json 對不上。 / 原始參數註記：{\"n1PerGroup\":30,\"n2PerGroup\":30,\"deltaSliderRange\":[0,1],\"deltaDefault\":0,\"repeats\":2000,\"alpha\":0.05,\"test\":\"two-sample pooled-variance t-test, two-tailed\",\"prng\":\"mulberry32\",\"normalSampling\":\"Box-Muller transform on two mulberry32 draws per pair\"}"
+    },
+    "p-hacking": {
+      "id": "p-hacking",
+      "type": "resampling-simulation",
+      "title": "測 20 次，總有一次會亮",
+      "description": "同時觀察 20 個互相獨立、且全部真的沒有效應的變數，每個都跑一次雙樣本 t 檢定。就算每個變數各自的假陽性機率只有 5%，只要挑「20 個裡面只要有一個顯著就報告」，整批下來出現至少一個顯著結果的機率遠高於 5%。",
+      "params": {
+        "outcomes": 20,
+        "n": 20,
+        "seed": 2004
+      },
+      "seed": 2004,
+      "notes": "seed=2004 是 Gigerenzer, Krauss & Vitouch 出版年份，純粹取好記。每個 trial 依序跑完 20 個變數（每個變數各自抽兩組 N(0,1)、n=nPerGroup），任一變數 p<alpha 就記這個 trial「至少一個顯著」。analyticExpected 是解析解 1-0.95^20，約為 0.6415，供跟模擬比例對照，不是拿來取代模擬結果。 / 原始參數註記：{\"nullVariables\":20,\"nPerGroup\":20,\"trials\":3000,\"alpha\":0.05,\"test\":\"two-sample pooled-variance t-test, two-tailed\",\"prng\":\"mulberry32\",\"normalSampling\":\"Box-Muller transform on two mulberry32 draws per pair\",\"analyticExpected\":\"1 - (1 - alpha)^nullVariables\"}"
+    },
+    "n-and-effect": {
+      "id": "n-and-effect",
+      "type": "analytic",
+      "title": "樣本數養大，小效應也能顯著",
+      "description": "固定一個很小的真實效應量（Cohen's d=0.15），滑動樣本數 n（每組），看檢定力（power）怎麼隨 n 增加而爬升。重點：統計顯著只等於「偵測到了某個非零效應」，不等於「這個效應大到有意義」——n 夠大，任何非零效應遲早會被偵測到。",
+      "params": {
+        "d": 0.15,
+        "nDefault": 80,
+        "seed": 314
+      },
+      "notes": "解析公式，不涉及亂數，不需要 seed。Phi 是標準常態分布的累積分布函數，用 Abramowitz-Stegun 7.1.26 erf 近似式計算，誤差量級 1.5e-7。 / 原始參數註記：{\"effectSizeD\":0.15,\"nSliderRange\":[20,2000],\"alpha\":0.05,\"formula\":\"power = Phi(d * sqrt(n/2) - z_(1-alpha/2))，雙尾檢定、等樣本數兩組的常態近似公式（z_(1-alpha/2)=1.959963985 對應 alpha=0.05）\",\"note\":\"這是常態近似，不是精確的非中心 t 分布檢定力；教學用途下誤差可忽略，但不宜宣稱為精確值\"}"
+    },
+    "ppv-2x2": {
+      "id": "ppv-2x2",
+      "type": "analytic",
+      "title": "顯著結果有多可能是真的",
+      "description": "把先驗勝算（研究前，這個假設有多可能是真的）、檢定力、alpha 三個輸入放進 Ioannidis (2005) 那套 2x2 陽性預測值（PPV）公式：即使 alpha=0.05、power=0.8 都達標，如果先驗勝算很低，「顯著」結果裡有相當高的比例其實是假陽性。",
+      "params": {
+        "priorOdds": 0.1,
+        "power": 0.8,
+        "alpha": 0.05
+      },
+      "notes": "解析公式，不涉及亂數，不需要 seed。預設值刻意選在教學上有反直覺效果的區間：先驗機率換算後很低時，就算 alpha 與 power 都是教科書標準值，PPV 也遠低於直覺預期的 95%。 / 原始參數註記：{\"priorOddsDefault\":0.1,\"powerDefault\":0.8,\"alphaDefault\":0.05,\"formula\":\"PPV = (power * R) / (power * R + alpha)，R 是 Ioannidis (2005) 定義的先驗勝算（pre-study odds），直接代入即可，不要再把它換算成機率——這是最容易寫錯的一步\",\"precomputedDefaultPPV\":0.6153846153846154}"
+    }
+  },
+  "sources": {
+    "fisher1935DesignOfExperiments": {
+      "author": "Ronald A. Fisher",
+      "title": "The Design of Experiments",
+      "year": 1935,
+      "container": "Edinburgh: Oliver and Boyd (1st ed.)",
+      "locator": "Ch. II, §5 'The Statement of Experiment', p.13（茶品實驗設定：8 杯，4 杯先加奶）；§8 'The Null Hypothesis'，常見引用為 p.18。頁碼在不同刷次／版本間有落差——University of Southampton 的 Fisher 文獻頁（J. Aldrich 維護）與多個獨立二手引用一致標注 p.18；本檔核對 Internet Archive 上 Digital Library of India 掃描本（in.ernet.dli.2015.502684）之 OCR 全文，該掃描本將同一段落定位在 p.19。兩者引同一句，頁碼因印次不同而異，這裡兩個都保留，不強行統一成一個數字。",
+      "url": "https://archive.org/stream/in.ernet.dli.2015.502684/2015.502684.The-Design_djvu.txt",
+      "quote": "In relation to any experiment we may speak of this hypothesis as the null hypothesis, and it should be noted that the null hypothesis is never proved or established, but is possibly disproved, in the course of experimentation. Every experiment may be said to exist only in order to give the facts a chance of disproving the null hypothesis.",
+      "accessibility": "免費全文（Internet Archive 上有多個 Digital Library of India 掃描本，含可搜尋 OCR 全文；亦有可借閱的完整掃描版）"
+    },
+    "fisher1925StatisticalMethods": {
+      "author": "Ronald A. Fisher",
+      "title": "Statistical Methods for Research Workers",
+      "year": 1925,
+      "container": "Edinburgh: Oliver and Boyd",
+      "locator": "13th ed. (1958 印次系列), p.44——見 Ioannidis 團隊綜述文章（PMC4850233）逐字核對之引用。另見部分文獻資料庫（如 Google Books 條目）將同一段落標注為 p.47，應是不同版本／刷次的頁碼差異，未能取得該版原件逐一核對，兩個頁碼都記在這裡。",
+      "url": "https://archive.org/details/dli.ernet.233797",
+      "quote": "The value for which P=0.05, or 1 in 20, is 1.96 or nearly 2; it is convenient to take this point as a limit in judging whether a deviation ought to be considered significant or not.",
+      "accessibility": "免費全文（Internet Archive 上有多個 Digital Library of India 掃描本，可下載／線上閱讀）"
+    },
+    "neymanPearson1933": {
+      "author": "Jerzy Neyman and Egon S. Pearson",
+      "title": "On the Problem of the Most Efficient Tests of Statistical Hypotheses",
+      "year": 1933,
+      "container": "Philosophical Transactions of the Royal Society of London, Series A, vol. 231, pp.289–337",
+      "locator": "p.291（「rule of behaviour」段落，決策式邏輯的原始表述）；pp.296–297（H0 記號、「errors of the first kind」與「second source of error」即第一類／第二類錯誤用語首次系統性提出之處）。「power」一詞本身在這篇論文中尚未以此固定術語出現，論文用的是 P_1(w)（拒絕 H0 時樣本點落入臨界域 w 的機率，在 H1 為真時）這種寫法；「power」作為標準名稱是後續文獻（包括 Neyman 與 Pearson 稍後的合作論文）才逐漸固定下來，本檔不把「power」一詞本身的鑄造算在這篇論文頭上，只確認第一類／第二類錯誤與臨界域的框架出自這裡。",
+      "url": "https://www.joelvelasco.net/teaching/249/Neyman%20Pearson%201933.pdf",
+      "quote": "If we reject H0, we may reject it when it is true; if we accept H0, we may be accepting it when it is false, that is to say, when really some alternative H_t is true. These two sources of error can rarely be eliminated completely... In trying to choose a proper critical region, we notice at once that it is very easy to control errors of the first kind referred to above.",
+      "accessibility": "免費全文（第三方教學網站掛載之 PDF 全文，含原始 JSTOR 掃描頁面；期刊官方 DOI 頁 royalsocietypublishing.org 為付費牆）"
+    },
+    "gigerenzerKraussVitouch2004NullRitual": {
+      "author": "Gerd Gigerenzer, Stefan Krauss, and Oliver Vitouch",
+      "title": "The Null Ritual: What You Always Wanted to Know About Significance Testing but Were Afraid to Ask",
+      "year": 2004,
+      "container": "In D. Kaplan (Ed.), The Sage Handbook of Quantitative Methodology for the Social Sciences, pp.391–408. Thousand Oaks, CA: Sage",
+      "locator": "p.392（「虛無儀式」三步驟定義；六題是非題示範 p 值的六種常見誤讀，全部為 False）",
+      "url": "https://library.mpib-berlin.mpg.de/ft/gg/GG_Null_2004.pdf",
+      "quote": "The essence of the ritual is the following: (1) Set up a statistical null hypothesis of \"no mean difference\" or \"zero correlation.\" Don't specify the predictions of your research hypothesis or of any alternative substantive hypotheses. (2) Use 5% as a convention for rejecting the null. If significant, accept your research hypothesis. (3) Always perform this procedure.",
+      "accessibility": "免費全文（Max Planck Institute for Human Development 圖書館掛載之作者自存檔 PDF）"
+    },
+    "gigerenzerKraussVitouch2004NullEtymology": {
+      "author": "Gerd Gigerenzer, Stefan Krauss, and Oliver Vitouch",
+      "title": "The Null Ritual: What You Always Wanted to Know About Significance Testing but Were Afraid to Ask",
+      "year": 2004,
+      "container": "In D. Kaplan (Ed.), The Sage Handbook of Quantitative Methodology for the Social Sciences, pp.391–408. Thousand Oaks, CA: Sage",
+      "locator": "p.392——這是本檔對「為什麼叫 null」查得到的最好二手說法，是作者對 Fisher 原意的詮釋性重述，不是辭典級的語源學條目。牛津英語辭典（OED）「null hypothesis, n.」條目據查證入口頁存在（首見書證標注 1935 年、即指向 Fisher 本書），但該條目全文須訂閱才能閱讀，本檔未能取得逐字內容，故不引其正文，只記存在。",
+      "url": "https://library.mpib-berlin.mpg.de/ft/gg/GG_Null_2004.pdf",
+      "quote": "Some suggest that it was authorized by the eminent statistician Sir Ronald A. Fisher, owing to the emphasis on null hypothesis testing (not to be confused with the null ritual) in his 1935 book. However, Fisher would have rejected all three ingredients of this procedure. First, null does not refer to a zero mean difference or correlation but to the hypothesis to be \"nullified,\" which could postulate a correlation of .3, for instance.",
+      "accessibility": "免費全文（同上；OED 條目本身未尋得免費全文，僅作存在性註記）"
+    },
+    "wassersteinLazar2016": {
+      "author": "Ronald L. Wasserstein and Nicole A. Lazar",
+      "title": "The ASA Statement on p-Values: Context, Process, and Purpose",
+      "year": 2016,
+      "container": "The American Statistician, vol. 70, no. 2, pp.129–133",
+      "locator": "六條原則列表，正文 p.131（\"Principle 1\" 起）",
+      "url": "https://www.amstat.org/asa/files/pdfs/p-valuestatement.pdf",
+      "quote": "P-values do not measure the probability that the studied hypothesis is true, or the probability that the data were produced by random chance alone.",
+      "accessibility": "免費全文（美國統計學會官方 PDF，amstat.org 直接掛載；Taylor & Francis 期刊頁本身為訂閱制，但 ASA 自己公開了同一份聲明全文）"
+    },
+    "greenland2016": {
+      "author": "Sander Greenland, Stephen J. Senn, Kenneth J. Rothman, John B. Carlin, Charles Poole, Steven N. Goodman, and Douglas G. Altman",
+      "title": "Statistical Tests, P Values, Confidence Intervals, and Power: A Guide to Misinterpretations",
+      "year": 2016,
+      "container": "European Journal of Epidemiology, vol. 31, no. 4, pp.337–350",
+      "locator": "§2「常見誤讀清單」，列舉 25 條——正文標題即為 \"Twenty-five misinterpretations\" 對應段落",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4877414/",
+      "quote": "Misinterpretation and abuse of statistical tests, confidence intervals, and statistical power have been decried for decades, yet remain rampant.",
+      "accessibility": "免費全文（PubMed Central open access，PMC4877414；期刊原文採 CC-BY 授權）"
+    }
+  },
+  "quiz": [
+    {
+      "id": "q1-p-as-null-probability",
+      "prompt": "一個檢定算出 p=0.03。這代表什麼？",
+      "options": [
+        "虛無假設為真的機率只有 3%",
+        "如果虛無假設為真，得到目前這組資料（或更極端資料）的機率是 3%",
+        "研究假設為真的機率有 97%",
+        "這個結果有 97% 的機率可以被重複驗證"
+      ],
+      "correctIndex": 1,
+      "explain": "p 值的定義是「條件在虛無假設為真之上，觀察到目前資料或更極端資料的機率」，寫成符號是 p(D|H0)。它不是任何一個假設為真或為假的機率——要問假設為真的機率，需要貝氏方法帶入先驗，單靠 p 值算不出來。Gigerenzer, Krauss & Vitouch (2004) 的六題是非題示範就是專門打這個誤解。"
+    },
+    {
+      "id": "q2-significant-means-important",
+      "prompt": "一個效應在統計上顯著（p<0.05），代表這個效應在實際意義上也夠大、值得關心嗎？",
+      "options": [
+        "對，顯著就代表效應夠大",
+        "不一定，樣本數夠大時，極小的效應也會顯著",
+        "只有 p<0.01 才代表效應夠大",
+        "顯著程度和效應大小是同一件事，數學上等價"
+      ],
+      "correctIndex": 1,
+      "explain": "統計顯著只回答「這個效應是不是剛好等於零」，不回答「這個效應大不大」。n 越大，越小的真實效應也越容易被偵測出來——這正是 n-and-effect 那個互動元件想示範的：固定一個很小的效應量 d=0.15，把 n 從 20 拉到 2000，檢定力會一路爬升，即使效應大小從頭到尾沒變過。"
+    },
+    {
+      "id": "q3-multiple-testing",
+      "prompt": "同時檢定 20 個彼此獨立、且全部真的沒有效應的變數，每個都用 alpha=0.05。整批下來，至少出現一個「顯著」結果的機率大約是多少？",
+      "options": [
+        "5%，因為每個變數各自的門檻就是 5%",
+        "100%，因為測得夠多一定會中",
+        "大約 64%",
+        "0%，因為全部變數真的沒有效應"
+      ],
+      "correctIndex": 2,
+      "explain": "每個變數各自的假陽性機率是 5%，但 20 個獨立變數全部都不顯著的機率是 0.95^20 約 0.36，所以至少一個顯著的機率約為 1-0.95^20，約 64%。這就是 p-hacking 那個互動元件用模擬示範的數字，本檔案也用解析公式與模擬雙重驗證過。"
+    },
+    {
+      "id": "q4-fisher-vs-neyman-pearson",
+      "prompt": "Fisher 的顯著性檢定邏輯，跟 Neyman-Pearson 的決策邏輯，最核心的差異是什麼？",
+      "options": [
+        "兩者其實是同一套方法，只是用詞不同",
+        "Fisher 只問這次資料提供多少「證據」去質疑虛無假設；Neyman-Pearson 事先訂好 alpha，把每次檢定當成一條長期不會太常出錯的決策規則，不對單次結果做證據強弱的解讀",
+        "Neyman-Pearson 邏輯不需要虛無假設，只有 Fisher 的邏輯需要",
+        "Fisher 邏輯只能用在小樣本，Neyman-Pearson 邏輯只能用在大樣本"
+      ],
+      "correctIndex": 1,
+      "explain": "Fisher 1935 年的立場是「虛無假設從不被證明，只可能被推翻」，p 值報告的是這次資料構成多強的反對證據。Neyman 與 Pearson 1933 年的論文則是另一套語言：先訂好長期犯錯率（第一類、第二類錯誤），把檢定當成一條「規則」（rule of behaviour），不對單一結果做證據強弱的解讀，只問要不要照這條規則行動。今天教科書里常見的「用 p 值報告、又套一個固定 0.05 門檻」，是兩套邏輯焊接出來、誰都没有正式設計過的混血程序——Gigerenzer 等人管這個叫 hybrid logic。"
+    },
+    {
+      "id": "q5-asa-statement",
+      "prompt": "2016 年美國統計學會（ASA）發表〈p 值聲明〉，最主要的立場是什麼？",
+      "options": [
+        "呼籲把顯著門檻從 0.05 改成 0.005",
+        "宣布 p 值完全沒用，應該全面廢除",
+        "列出一組原則，指出 p 值本身不能單獨決定一個科學結論是否成立、也不等於效應大小或重要性",
+        "只是重申 alpha=0.05 是唯一正確的門檻"
+      ],
+      "correctIndex": 2,
+      "explain": "ASA 聲明（Wasserstein & Lazar, 2016）沒有廢除 p 值，也沒有指定新門檻，而是列出六條原則，說明 p 值能回答什麼、不能回答什麼——例如它不是虛無假設為真的機率，也不能單獨拿來判斷一個科學或商業決策是否成立。這份聲明本身也成為後續一系列「後 p<0.05 時代」討論的起點，包括 Greenland 等人（2016）那份列出 25 條常見誤讀的清單。"
+    }
+  ],
+  "misreadings": [
+    {
+      "id": "prob-null-true",
+      "claim": "p = 0.03 代表虛無假設為真的機率只有 3%",
+      "why": "p 值算的是「虛無為真的前提下，看到這種資料的機率」。這句話把條件反過來讀成「看到這種資料的前提下，虛無為真的機率」。兩者可以差很遠，差多遠取決於這個領域裡本來有多少假說是真的——而 p 值對此一無所知。",
+      "instead": "要回答「這個結果有多大機會是真的」，必須額外引入事前勝算與檢定力（見本文的 2x2 表）。",
+      "source": "greenland2016"
+    },
+    {
+      "id": "prob-h1-true",
+      "claim": "p 越小，對立假設為真的機率越大",
+      "why": "同一個條件方向的錯誤。p 值的計算從頭到尾只用到虛無假設，對立假設沒有進入這個算式。",
+      "instead": "把對立假設的可信度納入計算，需要的是貝氏因子或事後機率，那是另一套工具。",
+      "source": "greenland2016"
+    },
+    {
+      "id": "non-significant-means-no-effect",
+      "claim": "p > 0.05，所以沒有效果",
+      "why": "沒有拒絕虛無假設，只代表這批資料沒有提供足夠的理由去推翻它。樣本太小、變異太大、測量太粗，都會讓真實存在的效果過不了門檻。虛無假設從不被證明。",
+      "instead": "報告效果量與信賴區間；若真要正面宣稱「差距小到不重要」，用等價檢定，並事先講清楚多小算不重要。",
+      "source": "greenland2016"
+    },
+    {
+      "id": "p-measures-effect-size",
+      "claim": "p 值越小，效果越大、越重要",
+      "why": "p 值同時受效果大小與樣本數影響。樣本夠大時，任何微不足道的差距都能得到極小的 p 值。",
+      "instead": "效果大小要看效果量本身（差值、比值、標準化效果量），不看 p。",
+      "source": "greenland2016"
+    },
+    {
+      "id": "significance-threshold-is-scientific",
+      "claim": "0.05 是科學上的門檻",
+      "why": "0.05 是 Fisher 順手取的一個方便界線，沒有理論地位。它之所以流傳，一部分原因是當年查表方便。",
+      "instead": "門檻的高低該由這個決策的代價決定：偽陽性有多貴、偽陰性有多貴。",
+      "source": "fisher1925StatisticalMethods"
+    },
+    {
+      "id": "replication-guaranteed",
+      "claim": "p = 0.01 代表重做這個研究有 99% 的機會再次顯著",
+      "why": "重複研究的成功率取決於真實效果與檢定力，跟這一次的 p 值不是同一回事。單次 p 值對複製機率的資訊量很低。",
+      "instead": "要談複製，先談檢定力與效果量的估計精度。",
+      "source": "greenland2016"
+    }
+  ],
+  "timeline": [
+    {
+      "year": "1925",
+      "title": "Fisher 出版《研究工作者的統計方法》",
+      "body": "顯著性檢定的操作手冊。二十分之一被說成一個方便的界線，日後成為 0.05。"
+    },
+    {
+      "year": "1933",
+      "title": "Neyman 與 Pearson 提出最有效檢定",
+      "body": "H0 與 H1 的配對、第一類與第二類錯誤、臨界域。統計檢定被改寫成一套關於長期行為的決策規則。"
+    },
+    {
+      "year": "1935",
+      "title": "Fisher 出版《實驗設計》",
+      "body": "女士品茶登場。虛無假設被明確界定為那個可能被否證、卻永遠不會被證明的假設。"
+    },
+    {
+      "year": "1935-1955",
+      "title": "Fisher 與 Neyman 的長期爭執",
+      "body": "兩人在期刊與講台上互相攻擊。爭的是統計推論到底在做什麼：衡量證據，還是規範行為。"
+    },
+    {
+      "year": "1940s-",
+      "title": "教科書把兩套邏輯縫起來",
+      "body": "心理學與社會科學的方法教科書開始教一套混合程序：報告 p 值，同時宣稱長期錯誤率的保證。兩位當事人都不會承認這是自己的東西。"
+    },
+    {
+      "year": "2004",
+      "title": "Gigerenzer 稱之為 null ritual",
+      "body": "這套程序被指認為一種儀式：機械執行、沒有作者、也沒有人願意為它的邏輯辯護。"
+    },
+    {
+      "year": "2011-",
+      "title": "複製危機",
+      "body": "大規模重做實驗的計畫顯示，大量已發表的顯著結果重做不出來。p-hacking、發表偏誤、低檢定力被指認為結構性原因。"
+    },
+    {
+      "year": "2016",
+      "title": "美國統計學會發表 p 值聲明",
+      "body": "六條原則。最直白的一條：科學結論不該只建立在 p 值是否越過某個門檻上。同年 Greenland 等人列出二十五條常見誤讀。"
+    }
+  ]
+}
