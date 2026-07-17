@@ -233,7 +233,9 @@ export default function IndexView({ initialQ = '', onOpenDoc }) {
       if (kw && !(d.字號.includes(kw) || d.爭點.includes(kw) || d.主文.includes(kw) || d.系爭法令?.some((x) => x.includes(kw)) || d.原理原則.some((x) => x.includes(kw)))) return false;
       return true;
     });
-  }, [scoped, type, topic, subtopic, outcome, standard, decade, q, typo]);
+    // exactSet 目前只隨 q 變，而 q 已在下面；仍然寫進依賴，不靠這條推理鏈。哪天 exact 改成也吃
+    // 別的輸入（例如跨機關搜尋開關），少了它就會拿到舊的置頂集合＝那件同時出現在下面清單裡。
+  }, [scoped, exactSet, type, topic, subtopic, outcome, standard, decade, q, typo]);
 
   // 精準命中永遠在最前面，不隨新→舊／舊→新翻動：它是「你指名的那一件」，不是排序結果之一。
   const sorted = useMemo(() => {
