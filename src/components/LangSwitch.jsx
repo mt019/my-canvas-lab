@@ -38,14 +38,19 @@ export default function LangSwitch({
   buttonClassName,
   activeClassName,
 }) {
+  /*
+   * 預設外觀跟 FontSizeControl 與 AppearanceMenu 是同一套：髮絲框、不填底、同圓角、同字級。
+   * 這三顆永遠並排在同一列工具列上，而閱讀頁只付得起一排鉻件——三種邊框、三種底色、三種
+   * 字級排在標題上面，是三個框在吵架，不是三個控制項。
+   *
+   * 帶自己外殼色的頁（FiscalEnforcementRisk 的深色 masthead）照樣傳 className 覆寫。
+   */
   const base =
     className ??
-    'inline-flex items-center gap-1 rounded-token-md border border-line bg-surface p-1';
+    'inline-flex items-center rounded-token-sm border border-line-soft text-token-xs text-ink-muted transition-colors duration-fast hover:border-line';
   const btn =
-    buttonClassName ??
-    'rounded-token-sm px-2 py-0.5 text-token-sm text-ink-muted transition-colors duration-fast';
-  const active =
-    activeClassName ?? 'bg-surface-raised text-ink shadow-token-sm';
+    buttonClassName ?? 'px-2 py-1 transition-colors duration-fast hover:text-ink';
+  const active = activeClassName ?? 'text-ink';
 
   return (
     <div className={base} role="group" aria-label="Language switch">
@@ -57,9 +62,11 @@ export default function LangSwitch({
       >
         中文
       </button>
+      {/* 兩格之間一條髮絲線，跟 FontSizeControl 同一個做法：兩顆鍵在同一個框裡，靠線分開，
+          不靠各自的底色。帶自己外殼色的頁傳了 buttonClassName，那條線就不畫——它有自己的分法。 */}
       <button
         type="button"
-        className={`${btn} ${lang === 'en' ? active : ''}`.trim()}
+        className={`${btn} ${buttonClassName ? '' : 'border-l border-line-soft'} ${lang === 'en' ? active : ''}`.trim()}
         aria-pressed={lang === 'en'}
         onClick={() => onChange('en')}
       >

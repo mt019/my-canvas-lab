@@ -29,6 +29,21 @@ export function useFontScale() {
   return [scale, setScale];
 }
 
+/*
+ * The control wears the same clothes as AppearanceMenu, because they always sit
+ * next to each other and a reading page can afford one row of chrome, not two.
+ * It used to be a filled `bg-surface` pill with a heavier border and a larger
+ * type size than the button beside it: two boxes of different sizes, different
+ * radii and different weights, arguing with each other above the title.
+ * Hairline, no fill, same radius, same type size — chrome over an essay has to
+ * be almost nothing.
+ *
+ * The middle slot shows the level you are actually on. Seven steps between 0.85
+ * and 1.6 and the old control said only "A": pressing A− five times told you
+ * nothing about how far you had gone or how much further you could. It is also
+ * the reset, which is where a reader reaches for it anyway. The slot keeps its
+ * width across 85%–160% so the two arrows never shift under the cursor.
+ */
 export default function FontSizeControl({ scale, onChange }) {
   const idx = FONT_SCALES.indexOf(scale);
   const step = (delta) => {
@@ -37,11 +52,11 @@ export default function FontSizeControl({ scale, onChange }) {
   };
 
   const btn =
-    'rounded-token-sm px-2 py-0.5 text-ink-muted transition-colors duration-fast hover:text-ink disabled:opacity-40 disabled:hover:text-ink-muted';
+    'px-2 py-1 transition-colors duration-fast hover:text-ink disabled:opacity-40 disabled:hover:text-ink-muted';
 
   return (
     <div
-      className="inline-flex items-center gap-1 rounded-token-md border border-line bg-surface p-1 text-token-sm"
+      className="inline-flex items-center rounded-token-sm border border-line-soft text-token-xs text-ink-muted transition-colors duration-fast hover:border-line"
       role="group"
       aria-label="Font size"
     >
@@ -50,11 +65,11 @@ export default function FontSizeControl({ scale, onChange }) {
       </button>
       <button
         type="button"
-        className={`${btn} ${scale === 1 ? 'text-ink' : ''}`.trim()}
+        className={`${btn} min-w-[2.9rem] border-x border-line-soft text-center tabular-nums ${scale === 1 ? '' : 'text-ink'}`}
         aria-label="Reset text size"
         onClick={() => onChange(1)}
       >
-        A
+        {Math.round(scale * 100)}%
       </button>
       <button
         type="button"

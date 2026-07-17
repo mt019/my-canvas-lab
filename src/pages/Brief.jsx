@@ -3,59 +3,109 @@ import { Link } from 'react-router-dom';
 import PageShell from '../components/PageShell';
 import AppearanceMenu from '../components/AppearanceMenu';
 import FontSizeControl, { useFontScale } from '../components/FontSizeControl';
+import Tabs, { useTabParams } from '../components/lab/Tabs';
 import {
   blindSpots,
   closingIn,
   dateText,
   dayDiff,
-  defaultEventSources,
-  asideEventSources,
   entryOf,
   entryText,
   eventFacts,
+  eventSections,
   events,
   followed,
   inDays,
   inDefaultView,
-  isAside,
+  isAsideSection,
   isOngoing,
+  itemDateText,
+  itemFacts,
+  itemRevisedText,
+  itemSections,
   items,
-  itemSources,
+  itemsOfSource,
   md,
-  monthKey,
-  monthLabel,
+  sectionId,
   sourceLabel,
+  sources,
   todayInTaipei,
   URGENT_WINDOW,
 } from './brief/data';
 
 /*
  * 打開就看到的那一頁。它是儀表板，不是連結列表——一份「活動曆 →」的索引，讀者還是得
- * 點進去才知道有沒有事，那等於什麼都沒回答。這頁直接回答：有什麼快關門了、接下來有什麼、
- * 什麼正在進行、有什麼可以讀、看不到什麼。
+ * 點進去才知道有沒有事，那等於什麼都沒回答。這頁直接回答：有什麼快關門了、每一類各有
+ * 什麼新的、看不到什麼。
  *
- * 活動只是其中一類。上一版整頁只講活動，因為資料端當時只有中研院；論文與央行講辭進來
- * 之後，「每一筆東西都有日期、地點、報名」這個假設整個塌掉——論文兩個都沒有。
+ * **區塊從資料長出來。** 上一版是手寫的六區，於是資料端從 5 個來源長到 27 個的那一天，
+ * 站上還是六區，多出來的 22 個來源全部擠進「讀的東西」底下一條長清單。現在每個 kind 一區
+ * （見 data.js 的 sectionsOf），資料倉加一個新類的來源＝站上多一區，這裡一個字都不用改。
  *
- * 由上而下的順序是照「錯過的代價」排的，不是照量排的：快關門的在最上面（錯過就真的沒了），
- * 售票節目在最下面而且收起來（444 檔，他大部分沒興趣）。**這是全頁唯一一次替他排序**；
- * 各區內部一律照時間，不按「重要性」重排——替他決定什麼重要，正是這個東西要殺的病。
+ * **版面的比例不跟資料的比例走。** 活動 528 場、讀的東西 247 篇，但活動只有 2 種 kind、
+ * 讀的東西有 10 種——區塊數照類別算，不照筆數算。使用者原話：「活動只是整個 brief 裡面
+ * 很小的一部分。」量最大的東西會把版面長成它的形狀，而那個形狀看起來完全正常。
  *
- * 每個數字都從它旁邊那個名字所指的同一個集合算出來。這條規矩是上一輪自己犯錯換來的：
- * 挑「預設視圖的來源」當名字、卻拿「全部場次」當數字，寫出「中研院、NCTS，共 528 場」，
- * 而那 528 裡有 444 場是售票節目。名字兩個、數字三個。
+ * 區之間排一次，照「錯過的代價」：門這幾天要關的在最上面（錯過就真的沒了），活動有日期
+ * 要排行程，讀的東西不會消失所以在後面，整區預設不跳出來的沉到該收藏的位置。**各區內部
+ * 一律照時間，不按「重要」重排**——替他決定什麼重要，正是這個東西要殺的病。
+ *
+ * 每一區只出每個來源的前幾件，全部在內頁（活動曆／讀的東西）。這兩件事在這裡是同一條規則：
+ * 上一版活動有一整個內頁，讀的東西一個都沒有——那也是一種版面跟著資料比例走。
+ *
+ * 每個數字都從它旁邊那個名字所指的同一個集合算出來。這條規矩是自己犯錯換來的：挑「預設
+ * 視圖的來源」當名字、卻拿「全部場次」當數字，寫出「中研院、NCTS，共 528 場」，而那 528
+ * 裡有 444 場是售票節目。名字兩個、數字三個。
  */
 
+const PREVIEW_PER_SOURCE = 4;
+const SHOW_ASIDE_CLOSING = 5;
+
 /* 這一批東西各來自哪個來源、各幾件——名字與數字從同一個陣列數出來，不是從別處搬來的。 */
-function asideBreakdown(rows) {
+function breakdown(rows, key = (x) => x.source) {
   const n = new Map();
-  for (const { e } of rows) n.set(e.source, (n.get(e.source) ?? 0) + 1);
+  for (const r of rows) n.set(key(r), (n.get(key(r)) ?? 0) + 1);
   return [...n.entries()].map(([id, count]) => ({ label: sourceLabel(id), n: count }));
 }
 
-const SHOW_TICKETED_CLOSING = 5;
-const ITEMS_PER_SOURCE = 8;
-const TICKETED_PREVIEW = 12;
+/* 一區的抬頭：類別的名字、這一區有幾件、來自哪幾個來源。三個數字同一個集合。 */
+function SectionHead({ sec, count, unit, children }) {
+  return (
+    <>
+      <h2 id={sectionId(sec.kind)} className="font-display text-token-lg text-ink">
+        {sec.kind}
+        <span className="ml-2 text-token-sm tabular-nums text-ink-faint">
+          {count} {unit}
+        </span>
+      </h2>
+      <p className="mb-4 mt-1 text-token-sm leading-relaxed text-ink-muted">{children}</p>
+    </>
+  );
+}
+
+/*
+ * 一個類別只有一個來源時，來源標題就不印。
+ *
+ * 「預印本 12 篇」底下再掛一個「arXiv 12 篇」，而區的說明那行也寫著「arXiv 12 篇」——同一個
+ * 數字講三遍，多出來的兩層一個字的資訊都沒有。分層要分得出東西：用一個所有項目都相同的
+ * 欄位去分組，等於印出一排講同一個詞的標題，比不分組更糟。
+ *
+ * 這是條件不是特例：資料倉哪天在「預印本」底下多接一個來源，那一層自己就會長回來。
+ */
+function SourceHead({ source, count, unit, note, alone }) {
+  if (alone) return note ? <p className="mb-2 text-token-xs leading-relaxed text-ink-faint">{note}</p> : null;
+  return (
+    <>
+      <h3 className="font-display text-token-base text-ink-muted">
+        {source.label}
+        <span className="ml-2 text-token-xs tabular-nums text-ink-faint">
+          {count} {unit}
+        </span>
+      </h3>
+      {note ? <p className="mb-2 text-token-xs leading-relaxed text-ink-faint">{note}</p> : null}
+    </>
+  );
+}
 
 function EventRow({ event, today, showSource }) {
   const entry = entryText(event, today);
@@ -98,15 +148,19 @@ function EventRow({ event, today, showSource }) {
 }
 
 /*
- * 第一區：門這幾天就要關的。
+ * 最上面那一區：門這幾天就要關的。
  *
- * 這是整個站上唯一「錯過就真的沒了」的東西，所以它在最上面，而且不分來源——中研院是
- * 報名截止、OPENTIX 是售票結束，對讀者的意義相同：過了就進不去。
+ * 它不是照 kind 長出來的，因為它問的是另一個軸：**不是「這是哪一類東西」，是「哪些東西
+ * 今天不動手就沒了」。** 這是整個站上唯一「錯過就真的沒了」的東西，所以它在最上面，而且
+ * 不分來源也不分類——中研院是報名截止、OPENTIX 是售票結束，對讀者的意義相同：過了就進不去。
  *
- * 但售票的那些另置一塊，不跟報名的混在同一條清單裡。今天的實況：這 7 天要關門的 36 件
- * 裡，34 件是售票結束，2 件是報名截止——混著按急迫度排，那 2 件會沉在 34 檔戲中間，
- * 而其中一件正是渡邊浩那場（8/14 開、7/20 截止）。把量大的來源跟量小的混排，就是把
- * 使用者真正在追的東西沖掉，那正是這頁存在要消滅的失敗模式。
+ * 只有活動有門（讀的東西沒有 closesAt，論文不會關門），所以這裡只掃 events。哪天有個來源
+ * 的東西也會關門（投稿截止之類），它帶 closesAt 進來就會自己出現在這裡。
+ *
+ * 但預設視圖以外的另置一塊，不跟上面混在同一條清單裡。今天的實況：這 7 天要關門的 36 件
+ * 裡，34 件是售票結束，2 件是報名截止——混著按急迫度排，那 2 件會沉在 34 檔戲中間，而其中
+ * 一件正是渡邊浩那場（8/14 開、7/20 截止）。把量大的來源跟量小的混排，就是把使用者真正在
+ * 追的東西沖掉，那正是這頁存在要消滅的失敗模式。
  */
 function ClosingSoon({ today }) {
   const { core, aside, untilFull } = useMemo(() => {
@@ -116,8 +170,8 @@ function ClosingSoon({ today }) {
     };
     const rows = events.filter(soon).map((e) => ({ e, left: closingIn(e, today) }));
     return {
-      // 額滿為止：要報名、有報名表、卻一個日期都沒公告。沒有任何一天可以倒數，所以它
-      // 排在有截止日的前面——它比有截止日的更急，不是更鬆。
+      // 額滿為止：要報名、有報名表，一個日期都沒公告。沒有任何一天可以倒數，所以它排在
+      // 有截止日的前面——它比有截止日的更急，不是更鬆。
       untilFull: events.filter((e) => entryOf(e) === 'untilFull' && inDefaultView(e)),
       core: rows.filter(({ e }) => inDefaultView(e)).sort((a, b) => a.left - b.left),
       // 另置一塊的不是「售票的」，是「預設視圖以外的」——今天它剛好全是售票節目，但要是
@@ -132,6 +186,7 @@ function ClosingSoon({ today }) {
     <section>
       <h2 id="closing" className="font-display text-token-lg text-ink">
         這 {URGENT_WINDOW} 天關門的
+        <span className="ml-2 text-token-sm tabular-nums text-ink-faint">{rows.length} 件</span>
       </h2>
       <p className="mb-4 mt-1 text-token-sm leading-relaxed text-ink-muted">
         活動日還很遠，門這幾天就關。讓人錯過的從來不是活動日，是報名截止日。
@@ -187,10 +242,10 @@ function ClosingSoon({ today }) {
         <div className="mt-5">
           <p className="text-token-xs leading-relaxed text-ink-faint">
             另有 {aside.length} 件不在預設視圖裡的門這 {URGENT_WINDOW} 天要關（
-            {asideBreakdown(aside).map((x) => `${x.label} ${x.n} 件`).join('、')}）。
+            {breakdown(aside.map(({ e }) => e)).map((x) => `${x.label} ${x.n} 件`).join('、')}）。
             不跟上面混排：{aside.length} 比 {rows.length}，混著排會把上面那 {rows.length} 件沖掉。
           </p>
-          {aside.slice(0, SHOW_TICKETED_CLOSING).map(({ e, left }) => (
+          {aside.slice(0, SHOW_ASIDE_CLOSING).map(({ e, left }) => (
             <div key={e.id} className="flex items-baseline justify-between gap-3 border-b border-line-soft py-1.5">
               <a
                 href={e.detailUrl ?? undefined}
@@ -205,13 +260,9 @@ function ClosingSoon({ today }) {
               </span>
             </div>
           ))}
-          {aside.length > SHOW_TICKETED_CLOSING ? (
+          {aside.length > SHOW_ASIDE_CLOSING ? (
             <p className="mt-1.5 text-token-xs text-ink-faint">
-              還有 {aside.length - SHOW_TICKETED_CLOSING} 件，
-              <a href="#ticketed" className="text-accent underline underline-offset-2">
-                在下面的售票節目裡
-              </a>
-              。
+              還有 {aside.length - SHOW_ASIDE_CLOSING} 件，在下面各自的類別裡。
             </p>
           ) : null}
         </div>
@@ -221,252 +272,178 @@ function ClosingSoon({ today }) {
 }
 
 /*
- * 第二區：接下來的活動。來源分組，組內照時間——不排序。
+ * 一類活動一區。中研院＋NCTS 是「學術活動」，OPENTIX 是「文化活動」——那兩個字是資料倉
+ * 標的（sources.json 的 kind），不是這裡編的分類。
  *
- * 不做「重要度」排序是刻意的：這個系統要對付的是「滑兩百則垃圾換三則有用的」，而演算法
- * 替人決定什麼重要，正是那個病本身。這裡只負責把東西照時間攤平，判斷留給讀者。
+ * kind 不跨來源統一：每一筆活動自己的 kind（「演講或講座」對「音樂／戲劇」）是各來源自己
+ * 的一套，硬併成一套就是編的。這裡分區用的是**來源層**的 kind，那一層資料倉已經編好了。
  */
-function Upcoming({ today }) {
-  const groups = useMemo(() => {
-    const shown = events.filter((e) => inDefaultView(e) && !isOngoing(e, today));
-    return defaultEventSources
-      .map((s) => ({
-        source: s,
-        rows: shown.filter((e) => e.source === s.id).sort((a, b) => a.date.localeCompare(b.date)),
-      }))
-      .filter((g) => g.rows.length > 0);
-  }, [today]);
+function EventKindSection({ sec, today, first }) {
+  const aside = isAsideSection(sec);
+  const all = useMemo(() => events.filter((e) => sec.sources.some((s) => s.id === e.source)), [sec]);
+  /* 收起來的區整區都是預設不跳出來的來源，沒有「我追蹤誰」這回事；沒收起來的區預設只給
+     我追蹤的主辦單位，其餘照實講有幾場、去哪找。 */
+  const shown = useMemo(() => (aside ? all : all.filter((e) => inDefaultView(e))), [all, aside]);
+  const [open, setOpen] = useState(!aside);
 
-  const total = groups.reduce((n, g) => n + g.rows.length, 0);
-  /* 預設視圖以外、但同樣來自這幾個來源的場次。這個數字要講出來——不講的話，這一區看起來
-     就像那幾個來源的全部，而它只是我追蹤的那部分。 */
-  const notFollowed = useMemo(
-    () => events.filter((e) => !isAside(e) && !inDefaultView(e) && !isOngoing(e, today)).length,
-    [today],
-  );
+  const notFollowed = all.length - shown.length;
+  const groups = sec.sources
+    .map((s) => {
+      const rows = shown
+        .filter((e) => e.source === s.id)
+        .sort((a, b) => {
+          // 進行中的排前面：一個 6/29 開始、7/17 結束的暑期課程，照開始日排會沉到最底下
+          // 然後標「18 天前」，讀起來像過期的東西——它今天還開著。
+          const og = Number(isOngoing(b, today)) - Number(isOngoing(a, today));
+          return og || a.date.localeCompare(b.date);
+        });
+      return { source: s, rows };
+    })
+    .filter((g) => g.rows.length > 0);
+
+  if (groups.length === 0) return null;
+
+  const cities = [...new Set(shown.map((e) => e.city).filter(Boolean))];
+  const ongoingCount = shown.filter((e) => isOngoing(e, today)).length;
 
   return (
-    <section className="mt-12 border-t border-line pt-6">
-      <h2 id="upcoming" className="font-display text-token-lg text-ink">
-        接下來的活動
-        <span className="ml-2 text-token-sm text-ink-faint">{total} 場</span>
-      </h2>
-      <p className="mb-4 mt-1 text-token-sm leading-relaxed text-ink-muted">
+    <section className={first ? 'mt-8' : 'mt-12 border-t border-line pt-6'}>
+      <SectionHead sec={sec} count={shown.length} unit="場">
         {groups.map((g) => `${g.source.label} ${g.rows.length} 場`).join('、')}
-        ，只列我追蹤的 {followed.length} 個主辦單位。另外 {notFollowed} 場在沒追蹤的單位底下，一樣在庫裡，
-        <Link to="/brief/events?hosts=all" className="text-accent underline underline-offset-2">
-          活動曆
-        </Link>
-        切一下就找得到——篩選是視圖，不是入庫條件。
-      </p>
+        {ongoingCount > 0 ? `。其中 ${ongoingCount} 場正在進行中——已經開始、還沒結束` : ''}
+        {aside ? (
+          <>
+            。{cities.length > 0 ? `${cities.join('、')}。` : ''}
+            預設收起來：這一區的量比其他全部加起來還大，攤開會把上面每一區都淹掉。收起來不是刪掉，
+            數字、售票期間、進去看的路都在。
+          </>
+        ) : (
+          <>
+            ，只列我追蹤的 {followed.length} 個主辦單位。另外 {notFollowed} 場在沒追蹤的單位底下，
+            一樣在庫裡，
+            <Link to="/brief/events?hosts=all" className="text-accent underline underline-offset-2">
+              活動曆
+            </Link>
+            切一下就找得到——篩選是視圖，不是入庫條件。
+          </>
+        )}
+      </SectionHead>
 
-      {groups.map(({ source, rows }) => (
-        <div key={source.id} className="mt-6">
-          <h3 className="mb-1 font-display text-token-base text-ink-muted">
-            {source.label}
-            <span className="ml-2 text-token-xs text-ink-faint">{rows.length} 場</span>
-          </h3>
-          {monthsOf(rows).map(({ key, rows: inMonth }) => (
-            <div key={key} className="mt-3">
-              <p className="mb-0.5 font-accent text-token-xs uppercase tracking-[0.12em] text-ink-faint">
-                {monthLabel(key)}
-              </p>
-              {inMonth.map((e) => (
+      {aside ? (
+        <button
+          type="button"
+          onClick={() => setOpen(!open)}
+          className="mb-3 text-token-xs text-accent underline underline-offset-2"
+        >
+          {open ? '收起來' : `展開每個來源的前 ${PREVIEW_PER_SOURCE} 檔`}
+        </button>
+      ) : null}
+
+      {open
+        ? groups.map(({ source, rows }) => (
+            <div key={source.id} className="mt-5">
+              <SourceHead source={source} count={rows.length} unit="場" alone={groups.length === 1} />
+              {rows.slice(0, PREVIEW_PER_SOURCE).map((e) => (
                 <EventRow key={e.id} event={e} today={today} showSource={false} />
               ))}
+              {rows.length > PREVIEW_PER_SOURCE ? (
+                <p className="mt-1.5 text-token-xs text-ink-faint">
+                  還有 {rows.length - PREVIEW_PER_SOURCE} 場，
+                  <Link
+                    to={`/brief/events?sources=${source.id}&hosts=${aside ? 'all' : 'followed'}`}
+                    className="text-accent underline underline-offset-2"
+                  >
+                    在活動曆裡按月份或類型切
+                  </Link>
+                  。
+                </p>
+              ) : null}
             </div>
-          ))}
-        </div>
-      ))}
+          ))
+        : null}
     </section>
   );
 }
 
-function monthsOf(rows) {
-  const out = [];
-  for (const e of rows) {
-    const k = monthKey(e.date);
-    if (out.length === 0 || out[out.length - 1].key !== k) out.push({ key: k, rows: [e] });
-    else out[out.length - 1].rows.push(e);
-  }
-  return out;
-}
-
 /*
- * 第三區：正在進行中的。跨日的東西自成一區，別混進「接下來」。
+ * 一類讀的東西一區。10 區，因為資料倉標了 10 種 kind——不是因為我覺得該有 10 區。
  *
- * 一個 6/29 開始、7/17 結束的暑期課程，混進「接下來的活動」裡會排在最前面然後標「18 天前」，
- * 讀起來像過期的東西——它其實今天還開著。開始日已經過去、但還沒結束，那是第三種處境。
+ * **沒有倒數。** 論文沒有「來不及」——它的日期是「什麼時候出來的」，不是「你得在那天到場」。
+ * 拿倒數去算一篇三天前的預印本還剩幾天，就是把兩種東西畫成同一種。
+ *
+ * 同一區裡的來源不合併成一條清單：BIS 是別人挑過整理過的二手收錄，Fed 是講者自己貼的一手
+ * 講辭，兩者都是「央行講辭」但「誰說的」不一樣，併成一堆就是把那件事抹掉。而且合併之後
+ * 話多的來源會把話少的擠掉，畫面上完全看不出來。
  */
-function Ongoing({ today }) {
-  const rows = useMemo(
-    () => events.filter((e) => inDefaultView(e) && isOngoing(e, today)).sort((a, b) => a.endDate.localeCompare(b.endDate)),
-    [today],
-  );
-  const asideCount = useMemo(() => events.filter((e) => isAside(e) && isOngoing(e, today)).length, [today]);
+function ItemKindSection({ sec, today, first }) {
+  const groups = sec.sources.map((s) => ({ source: s, rows: itemsOfSource(s.id) })).filter((g) => g.rows.length > 0);
+  if (groups.length === 0) return null;
 
-  if (rows.length === 0 && asideCount === 0) return null;
+  const total = groups.reduce((n, g) => n + g.rows.length, 0);
+  const overflow = groups.filter((g) => g.rows.length > PREVIEW_PER_SOURCE);
+  const readingHref = `/brief/reading?sources=${groups.map((g) => g.source.id).join(',')}`;
 
   return (
-    <section className="mt-12 border-t border-line pt-6">
-      <h2 id="ongoing" className="font-display text-token-lg text-ink">
-        正在進行中
-        <span className="ml-2 text-token-sm text-ink-faint">{rows.length} 場</span>
-      </h2>
-      <p className="mb-4 mt-1 text-token-sm leading-relaxed text-ink-muted">
-        已經開始、還沒結束。這種東西在只看開始日的清單上會在開幕隔天消失，而它還開著。
-      </p>
-      {rows.map((e) => (
-        <EventRow key={e.id} event={e} today={today} showSource />
+    <section className={first ? 'mt-8' : 'mt-12 border-t border-line pt-6'}>
+      <SectionHead sec={sec} count={total} unit="篇">
+        {groups.map((g) => `${g.source.label} ${g.rows.length} 篇`).join('、')}
+        。只排新舊，不倒數——這些東西沒有「來不及」。
+      </SectionHead>
+
+      {groups.map(({ source, rows }) => (
+        <div key={source.id} className="mt-5">
+          <SourceHead source={source} count={rows.length} unit="篇" note={source.note} alone={groups.length === 1} />
+          {rows.slice(0, PREVIEW_PER_SOURCE).map((i) => (
+            <div key={i.id} className="grid grid-cols-1 gap-x-4 border-b border-line-soft py-2 sm:grid-cols-[5rem_minmax(0,1fr)]">
+              <div className="text-token-xs leading-relaxed tabular-nums text-ink-faint">
+                {itemDateText(i, today)}
+                {itemRevisedText(i, today) ? <span className="ml-1">{itemRevisedText(i, today)}</span> : null}
+              </div>
+              <div className="min-w-0">
+                <a
+                  href={i.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-token-sm leading-snug text-ink transition-colors duration-fast hover:text-accent"
+                >
+                  {i.title}
+                </a>
+                <div className="text-token-xs leading-relaxed text-ink-faint">{itemFacts(i).join(' · ')}</div>
+              </div>
+            </div>
+          ))}
+        </div>
       ))}
-      {asideCount > 0 ? (
-        <p className="mt-2 text-token-xs leading-relaxed text-ink-faint">
-          另有 {asideCount} 檔售票節目正在檔期中，在
-          <a href="#ticketed" className="text-accent underline underline-offset-2">
-            下面
-          </a>
-          。
+
+      {overflow.length > 0 ? (
+        <p className="mt-3 text-token-xs leading-relaxed text-ink-faint">
+          每個來源這裡只出前 {PREVIEW_PER_SOURCE} 篇。
+          <Link to={readingHref} className="text-accent underline underline-offset-2">
+            這一區全部 {total} 篇連摘要
+          </Link>
+          在「讀的東西」裡。
         </p>
       ) : null}
     </section>
   );
 }
 
-/*
- * 第四區：讀的東西。
- *
- * 兩個來源分開兩區，不合併成「文章」：arXiv 是作者自己貼的一手預印本（沒人審過、會改版），
- * BIS 是別人挑過整理過的二手收錄。它們不同類，併成一堆就是把「誰說的」抹掉。
- *
- * **沒有倒數。** 論文沒有「來不及」——它的日期是「什麼時候出來的」，不是「你得在那天到場」。
- * 拿倒數去算一篇三天前的預印本還剩幾天，就是把兩種東西畫成同一種。
- */
-function Reading() {
-  return (
-    <section className="mt-12 border-t border-line pt-6">
-      <h2 id="reading" className="font-display text-token-lg text-ink">
-        讀的東西
-        <span className="ml-2 text-token-sm text-ink-faint">{items.length} 篇</span>
-      </h2>
-      <p className="mb-2 mt-1 text-token-sm leading-relaxed text-ink-muted">
-        只排新舊，不倒數——這些東西沒有「來不及」。每個來源各自的配額，話多的不會把話少的擠掉。
-      </p>
-
-      {itemSources.map((s) => {
-        const rows = items
-          .filter((i) => i.source === s.id)
-          .sort((a, b) => (b.revisedAt ?? b.publishedAt).localeCompare(a.revisedAt ?? a.publishedAt));
-        if (rows.length === 0) return null;
-        const shown = rows.slice(0, ITEMS_PER_SOURCE);
-        return (
-          <div key={s.id} className="mt-6">
-            <h3 className="font-display text-token-base text-ink-muted">
-              {s.label}
-              <span className="ml-2 text-token-xs text-ink-faint">{rows.length} 篇</span>
-            </h3>
-            <p className="mb-2 text-token-xs leading-relaxed text-ink-faint">{s.note}</p>
-            {shown.map((i) => (
-              <div key={i.id} className="grid grid-cols-1 gap-x-4 border-b border-line-soft py-2 sm:grid-cols-[5rem_minmax(0,1fr)]">
-                <div className="text-token-xs leading-relaxed tabular-nums text-ink-faint">
-                  {md(i.publishedAt)}
-                  {i.revisedAt ? <span className="ml-1">改版 {md(i.revisedAt)}</span> : null}
-                </div>
-                <div className="min-w-0">
-                  <a
-                    href={i.url}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-token-sm leading-snug text-ink transition-colors duration-fast hover:text-accent"
-                  >
-                    {i.title}
-                  </a>
-                  <div className="text-token-xs leading-relaxed text-ink-faint">
-                    {[
-                      i.authors?.length ? i.authors.slice(0, 3).join('、') + (i.authors.length > 3 ? ' 等' : '') : null,
-                      i.journalRef,
-                      i.topics?.length ? i.topics.slice(0, 3).join(' ') : null,
-                    ]
-                      .filter(Boolean)
-                      .join(' · ')}
-                  </div>
-                </div>
-              </div>
-            ))}
-            {rows.length > shown.length ? (
-              <p className="mt-1.5 text-token-xs text-ink-faint">還有 {rows.length - shown.length} 篇在資料裡，這頁還沒有翻頁。</p>
-            ) : null}
-          </div>
-        );
-      })}
-    </section>
-  );
-}
-
-/*
- * 第五區：售票節目。預設收起來——444 檔，他大部分沒興趣，攤開會把上面每一區都淹掉。
- *
- * 收起來不是刪掉：數字、售票期間、進去看的路都在，只是不佔據注意力。倉裡還有其他 19 個
- * 城市的節目沒送上站，那是版面的選擇，不是收錄的選擇。
- */
-function Ticketed({ today }) {
-  const [open, setOpen] = useState(false);
-  // 看的是來源，不是 inDefaultView——後者會把沒追蹤的所的講座也算成戲票。
-  const rows = useMemo(() => events.filter(isAside).sort((a, b) => a.date.localeCompare(b.date)), []);
-  if (rows.length === 0) return null;
-
-  const cities = [...new Set(rows.map((e) => e.city).filter(Boolean))];
-
-  return (
-    <section className="mt-12 border-t border-line pt-6">
-      <h2 id="ticketed" className="font-display text-token-lg text-ink">
-        售票節目
-        <span className="ml-2 text-token-sm text-ink-faint">{rows.length} 檔</span>
-      </h2>
-      <p className="mt-1 text-token-sm leading-relaxed text-ink-muted">
-        {asideEventSources.map((s) => s.label).join('、')}，{cities.join('、')}
-        。預設收起來：這一區的量比上面全部加起來還大，攤開就會把上面淹掉。
-      </p>
-      <p className="mt-1 text-token-xs leading-relaxed text-ink-faint">
-        剩幾張票這裡不存——那種數字幾小時就過期，存下來只會說謊。倉裡放穩定的、用來找到東西的；
-        要決定買不買，得去售票頁看當下的票況。
-      </p>
-      <div className="mt-3">
-        <button
-          type="button"
-          onClick={() => setOpen(!open)}
-          className="text-token-xs text-accent underline underline-offset-2"
-        >
-          {open ? '收起來' : `展開前 ${Math.min(TICKETED_PREVIEW, rows.length)} 檔`}
-        </button>
-        <Link to="/brief/events?sources=all" className="ml-4 text-token-xs text-accent underline underline-offset-2">
-          在活動曆裡看全部
-        </Link>
-      </div>
-      {open ? (
-        <div className="mt-3">
-          {rows.slice(0, TICKETED_PREVIEW).map((e) => (
-            <EventRow key={e.id} event={e} today={today} showSource={false} />
-          ))}
-          <p className="mt-1.5 text-token-xs text-ink-faint">
-            這裡只放前 {Math.min(TICKETED_PREVIEW, rows.length)} 檔。全部 {rows.length} 檔在活動曆，可以按類型與月份切。
-          </p>
-        </div>
-      ) : null}
-    </section>
-  );
-}
-
-/* 第六區：資料從哪裡來、看不到什麼。這一格會長，版面先假設它會長。 */
+/* 最後兩區：資料從哪裡來、看不到什麼。這一格會長，版面先假設它會長——上一輪它從 5 列長到 27 列。 */
 function Provenance() {
   return (
     <>
       <section className="mt-12 border-t border-line pt-6">
         <h2 id="sources" className="font-display text-token-lg text-ink">
           資料來自哪裡
-          <span className="ml-2 text-token-sm text-ink-faint">{[...defaultEventSources, ...asideEventSources, ...itemSources].length} 個來源</span>
+          <span className="ml-2 text-token-sm tabular-nums text-ink-faint">{sources.length} 個來源</span>
         </h2>
-        <dl className="mt-4">
-          {[...defaultEventSources, ...asideEventSources, ...itemSources].map((s) => (
+        <p className="mb-4 mt-1 text-token-sm leading-relaxed text-ink-muted">
+          {breakdown(sources, (s) => s.collection).map((x) => x.n).join(' 個來源給活動、')} 個來源給讀的東西。
+          上面每一區的名字（{[...new Set(sources.map((s) => s.kind))].length} 種類別）就是從這張表長出來的，
+          加一個來源＝多一區。
+        </p>
+        <dl>
+          {sources.map((s) => (
             <div key={s.id} className="grid grid-cols-1 gap-x-4 border-b border-line-soft py-2.5 sm:grid-cols-[9rem_minmax(0,1fr)]">
               <dt className="text-token-sm text-ink">
                 {s.label}
@@ -515,9 +492,34 @@ function Provenance() {
   );
 }
 
+/*
+ * 分頁切的是 collection，不是 kind。
+ *
+ * 兩種東西，兩種分頁：events 是「要決定去不去」，items 是「讀的東西」——時間的意義都不一樣
+ * （一個要倒數，一個只排新舊），那本來就是這一頁最上層的分界。切 kind 會生出 12 個分頁、
+ * 擠到要橫滾，而且資料倉每加一種 kind 就多一個分頁——分頁列自己會爆炸。切 collection 是
+ * 2＋1 個，加來源不會動到它。
+ *
+ * **「這 7 天關門的」釘在分頁之上，不屬於任何一個分頁。** 錯過就沒了的東西不能藏在別的
+ * 分頁後面——切到「讀的東西」就看不到今天最後一天的報名，那正是這個站要消滅的失敗模式。
+ *
+ * 預設落在「讀的東西」。使用者原話：「活動只是整個 brief 裡面很小的一部分。」預設分頁是
+ * 這一頁對「這是什麼站」的回答，不是對「哪一批筆數最多」的回答。
+ */
+const VIEWS = { reading: 'reading', events: 'events', sources: 'sources' };
+
 export default function Brief() {
   const [scale, setScale] = useFontScale();
+  const [{ view }, setTabs] = useTabParams({ view: VIEWS.reading });
   const today = todayInTaipei();
+
+  /* 整區預設不跳出來的沉到同一個 collection 的最後面。這是排序不是特例——今天剛好是
+     文化活動，哪天資料倉改了標記，換誰在最後面就自己會變。 */
+  const eventBlocks = [...eventSections].sort((a, b) => Number(isAsideSection(a)) - Number(isAsideSection(b)));
+
+  /* 每個分頁旁邊的數字都是它自己那一批數出來的。分頁標籤與它底下的東西不是同一個集合時，
+     讀者不會發現——他只會看到一個數字，然後相信它。 */
+  const eventCount = events.filter((e) => inDefaultView(e)).length;
 
   return (
     <PageShell
@@ -533,23 +535,44 @@ export default function Brief() {
       }
     >
       <p className="text-token-sm leading-relaxed text-ink-muted">
-        打開就看得到的東西，每天累積。快關門的排在最上面，售票節目收在最下面——這頁只替你排這一次，
-        每一區裡面都照時間，不按「重要」重排。
-        要細看活動、換個軸去切，
-        <Link to="/brief/events" className="text-accent underline underline-offset-2">
-          進活動曆
+        打開就看得到的東西，每天累積。門這幾天要關的釘在最上面，不分類也不分頁——這頁只替你排
+        這一次，每一區裡面都照時間，不按「重要」重排。每一區只出每個來源的前 {PREVIEW_PER_SOURCE} 件，
+        全部在
+        <Link to="/brief/reading" className="text-accent underline underline-offset-2">
+          讀的東西
         </Link>
-        。
+        與
+        <Link to="/brief/events" className="text-accent underline underline-offset-2">
+          活動曆
+        </Link>
+        裡。
       </p>
 
       <div className="mt-8">
         <ClosingSoon today={today} />
-        <Upcoming today={today} />
-        <Ongoing today={today} />
-        <Reading />
-        <Ticketed today={today} />
-        <Provenance />
       </div>
+
+      <div className="mt-12 border-t border-line pt-6">
+        <Tabs
+          variant="underline"
+          label="看哪一批"
+          value={view}
+          onChange={(v) => setTabs({ view: v })}
+          items={[
+            { id: VIEWS.reading, label: '讀的東西', count: items.length },
+            { id: VIEWS.events, label: '活動', count: eventCount },
+            { id: VIEWS.sources, label: '資料來自哪裡', count: sources.length },
+          ]}
+        />
+      </div>
+
+      {view === VIEWS.events
+        ? eventBlocks.map((sec, i) => <EventKindSection key={sec.kind} sec={sec} today={today} first={i === 0} />)
+        : null}
+      {view === VIEWS.reading
+        ? itemSections.map((sec, i) => <ItemKindSection key={sec.kind} sec={sec} today={today} first={i === 0} />)
+        : null}
+      {view === VIEWS.sources ? <Provenance /> : null}
     </PageShell>
   );
 }

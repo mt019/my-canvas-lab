@@ -221,7 +221,16 @@ const PAGE_META = { // token-exempt: per-page identity chip colors (data, not st
     accentText: '#4a5f7a',
     group: 'life',
   },
-  // 活動曆從簡報的門口進去，不上首頁——首頁列站，站列它自己的東西。
+  // 活動曆與讀的東西都從簡報的門口進去，不上首頁——首頁列站，站列它自己的東西。
+  Reading: {
+    name: '讀的東西',
+    desc: '論文、講辭、機構報告、學者部落格與社群討論，連摘要；來源逐個可切',
+    Icon: BookMarked,
+    accent: '#dde4ec',
+    accentText: '#4a5f7a',
+    group: 'life',
+    listed: false,
+  },
   Events: {
     name: '活動曆',
     desc: '各來源的活動攤在同一張表上：條列、月曆、交叉表，軸自己選',

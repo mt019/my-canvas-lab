@@ -41,7 +41,10 @@ export default function SiteHeader({ back, width = 'article', lang, onLangChange
           ← {back.label}
         </Link>
         <div className="flex items-center gap-2">
-          <LangSwitch lang={lang} onChange={onLangChange} />
+          {/* 沒有英文版就不掛語言鍵。這條是被 /brief/events 撞出來的：它沒傳 onLangChange，
+              於是「中文｜EN」照樣畫在工具列上，而 onChange 是 undefined——點下去直接丟例外。
+              一個按不動的按鈕比沒有按鈕糟：它宣稱這頁有英文版，而那是假的。 */}
+          {onLangChange ? <LangSwitch lang={lang} onChange={onLangChange} /> : null}
           <FontSizeControl scale={scale} onChange={onScaleChange} />
           <AppearanceMenu lang={lang} />
         </div>
