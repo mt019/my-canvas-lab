@@ -112,25 +112,6 @@ const sourceTierLabel = {
   lead_only: '待核對線索',
 };
 
-const statusLabel = {
-  lead_identified: '已定位，待整理',
-  parsed_catalog_rows: '已整理書目列',
-  raw_html_captured: '已取得來源',
-  raw_html_parsed: '已整理來源',
-  raw_pdf_text_parsed: '已整理文本',
-  raw_csv_captured: '已取得表格',
-  fetch_failed: '公開來源待複核',
-  fetch_failed_existing_raw_available: '已有來源，待複核',
-  not_started: '尚未開始',
-  data_endpoint_identified: '已定位資料入口',
-  scaffold_with_parsed_ndltd_catalog_and_seeded_source_map: '初版研究資料已建立',
-  official_ecfa_core_sources_parsed_with_thesis_meta_layer: 'ECFA 官方資料已整理',
-  needs_detail_url_and_abstract_enrichment: '待補論文詳目與摘要',
-  catalog_complete_from_pasted_pages: '三頁檢索結果已整理',
-  title_results_complete: '題名檢索已整理',
-  title_results_partial: '題名檢索待補齊',
-  title_keywords_and_methods_tagged: '已標註關鍵詞與方法',
-};
 
 const methodLabel = {
   staggered_did: '分期差異中之差異法',

@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { ExternalLink } from 'lucide-react';
 import data from '../../data/constitutionalCourt.json';
 import { Badge, CaseRef, PRES_COLOR, Select, docs, inkToFill, justices, pdfHref, usePref } from './shared';
@@ -142,15 +142,6 @@ function PairDetail({ pair, list, onClose }) {
   );
 }
 
-// 可重現的偽亂數（置換檢定用）：同一資料每次載入 p 值穩定，資料變則跟著變。
-function mulberry32(a) {
-  return function () {
-    a |= 0; a = (a + 0x6D2B79F5) | 0;
-    let t = Math.imul(a ^ (a >>> 15), 1 | a);
-    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
-}
 export default function GraphView() {
   const [eraKey, setEraKey] = useState(GRAPH_ERAS[0].key);
   const [mode, setMode] = useState('合計');
@@ -222,7 +213,12 @@ export default function GraphView() {
     return out;
   }, []);
 
-  const ed = eraData[eraKey] ?? { pairs: new Map(), directed: new Map(), byPair: new Map(), deg: new Map() };
+  // 這裡的 ?? 預設值原本寫在 render body 裡：eraData[eraKey] 不存在時，每次 render 都造一個新
+  // 空物件，底下每個吃 ed 的 useMemo 就跟著每次重算（快取形同虛設）。包成 useMemo 固定住身分。
+  const ed = useMemo(
+    () => eraData[eraKey] ?? { pairs: new Map(), directed: new Map(), byPair: new Map(), deg: new Map() },
+    [eraData, eraKey],
+  );
 
   const density = useMemo(() => {
     const m = {};
@@ -250,9 +246,14 @@ export default function GraphView() {
     return seriateOrder(names.length, wOf).map((i) => names[i]);
   }, [ed, minEdge]);
 
-  const cellVal = (a, b) => (mode === '有向'
-    ? ed.directed.get(`${a}${SEP}${b}`) ?? 0
-    : ed.pairs.get(pairKey(a, b))?.[mode] ?? 0);
+  // maxVal 與熱圖格子都用它；只依賴 ed 與 mode，兩者都已在 maxVal 的依賴裡，但仍固定住身分並列出，
+  // 不靠這條推理鏈。
+  const cellVal = useCallback(
+    (a, b) => (mode === '有向'
+      ? ed.directed.get(`${a}${SEP}${b}`) ?? 0
+      : ed.pairs.get(pairKey(a, b))?.[mode] ?? 0),
+    [ed, mode],
+  );
 
   const maxVal = useMemo(() => {
     let mx = 0;
@@ -261,7 +262,7 @@ export default function GraphView() {
       mx = Math.max(mx, cellVal(members[i], members[j]));
     }
     return mx;
-  }, [members, mode, ed]);
+  }, [members, mode, cellVal]);
 
   const namePartners = useMemo(() => {
     if (!selName) return [];

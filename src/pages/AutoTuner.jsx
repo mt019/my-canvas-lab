@@ -282,7 +282,6 @@ function resolveHarmonic(detectedPitch, notes) {
 
 function InfoOverlay({ type, instrument, onClose }) {
   const isStory = type === 'STORY';
-  const isHalfDown = type === 'HALF_DOWN';
 
   const title = isStory
     ? INSTRUMENTS[instrument].name

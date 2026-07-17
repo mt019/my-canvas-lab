@@ -1,10 +1,7 @@
 import React, { useState } from 'react';
 import {
-  ChevronDown, Globe, Scale, Shield, Network, Search,
-  CheckCircle, XCircle, AlertCircle, ExternalLink,
-  Building2, ArrowDown, FileText, BookOpen, Flag,
-  DollarSign, MapPin, Users, TrendingUp, ArrowRight,
-} from 'lucide-react';
+  ChevronDown, Globe, Scale, Shield, Network, CheckCircle, XCircle, AlertCircle, Building2, ArrowDown, Flag,
+  MapPin, } from 'lucide-react';
 import manusCase from '../data/intlTaxOps/manusCase.json';
 
 // ─── Palette ───────────────────────────────────────────────────────────────────
@@ -74,7 +71,6 @@ const P = {
 // Ziegler analytical framework and shares its topicDomain taxonomy. Only
 // rendering logic stays in this component.
 const PHASES = manusCase.phases;
-const STRUCTURE = manusCase.structure;
 const ICONS = { Shield, Network, Scale, Globe };
 const LEGAL = manusCase.legalDimensions.map((dim) => ({ ...dim, Icon: ICONS[dim.iconId] }));
 const RESEARCH_QS = manusCase.researchQuestions;

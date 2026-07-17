@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   ArrowLeft, BookMarked, ChevronRight, ExternalLink, FileText,
@@ -258,10 +258,15 @@ export default function IiasPublications() {
   const pubs = data.publications;
   const query = q.trim().toLowerCase();
 
-  const chapterHit = (ch) =>
-    ch.title.toLowerCase().includes(query) ||
-    (ch.authors || '').toLowerCase().includes(query) ||
-    (ch.section || '').toLowerCase().includes(query);
+  // 下面三個 useMemo 都用它。它只依賴 query，而三處都列了 query，所以原本沒列它也還是對的——
+  // 但那是碰巧對的。用 useCallback 把它固定住並列進依賴，往後改動 chapterHit 吃什麼都不會漏。
+  const chapterHit = useCallback(
+    (ch) =>
+      ch.title.toLowerCase().includes(query) ||
+      (ch.authors || '').toLowerCase().includes(query) ||
+      (ch.section || '').toLowerCase().includes(query),
+    [query],
+  );
 
   const filteredPubs = useMemo(() => {
     let list = pubs;
@@ -276,13 +281,13 @@ export default function IiasPublications() {
       );
     }
     return list;
-  }, [pubs, cat, query]);
+  }, [pubs, cat, query, chapterHit]);
 
   const journals = useMemo(() => {
     let list = pubs.filter((p) => p.category === '法學期刊');
     if (query) list = list.filter((p) => p.title.toLowerCase().includes(query) || p.chapters.some(chapterHit));
     return list;
-  }, [pubs, query]);
+  }, [pubs, query, chapterHit]);
 
   const indexRows = useMemo(() => {
     let rows = [];
@@ -293,7 +298,7 @@ export default function IiasPublications() {
       }
     }
     return rows;
-  }, [filteredPubs, query]);
+  }, [filteredPubs, query, chapterHit]);
 
   const selectedIssue = journals.find((p) => p.id === issueId) || null;
 

@@ -8,7 +8,6 @@ import { Badge, CaseRef, SegControl, docs, pdfHref, usePref } from './shared';
 // 經快照 被提名人批次 帶入；掛在哪些案件卡片由資料的 相關案件 決定（現為 114年憲判字第1號——
 // 兩批否決造成的員額僵局即憲訴法修正案的脈絡），前端不寫死字號。
 const nomineeBatches = data.被提名人批次 ?? null;
-const NOMINEE_CASES = new Set(nomineeBatches?.相關案件 ?? []);
 
 function NomineeDossiers({ pdfMode }) {
   if (!nomineeBatches?.批次?.length) return null;

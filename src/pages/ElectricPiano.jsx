@@ -591,7 +591,7 @@ export default function ElectricPiano() {
     setLabelMode(m => LABEL_MODES[(LABEL_MODES.indexOf(m) + 1) % LABEL_MODES.length]);
   };
 
-  const getNoteLabel = (note, id) => {
+  const getNoteLabel = (note) => {
     if (labelMode === 'none') return null;
     const isBlack = IS_BLACK.has(note);
     if (labelMode === 'name') return isBlack ? note : note;
@@ -738,7 +738,7 @@ export default function ElectricPiano() {
                 );
               })}
               {/* Black keys: right-aligned shorter bars */}
-              {blacks.map(({ note, oct, id, pos }) => {
+              {blacks.map(({ id, pos }) => {
                 const isActive = activeIds.has(id);
                 const top = (totalWhite - 1 - pos) * wkh_v - bkh_v / 2 + 1;
                 return (
@@ -813,7 +813,7 @@ export default function ElectricPiano() {
                   </div>
                 );
               })}
-              {blacks.map(({ note, oct, id, pos }) => {
+              {blacks.map(({ note, id, pos }) => {
                 const isActive = activeIds.has(id);
                 const inZone = kbZone.has(id);
                 const kbKey = inZone ? Object.entries(keyMap).find(([, v]) => v === id)?.[0] : null;

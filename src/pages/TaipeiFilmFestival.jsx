@@ -628,7 +628,6 @@ export default function TaipeiFilmFestival() {
     .slice(0, 8);
   const today = upcoming.filter((event) => dayKey(event.start) === dayKey(now));
   const lowStock = upcoming.filter((event) => event.kind === 'film' && event.remaining <= 20).sort((a, b) => a.remaining - b.remaining);
-  const days = [...new Set(upcoming.map((event) => event.day))].slice(0, 8);
   const catalogEvents = useMemo(() => CATALOG_PROGRAMS.flatMap((program) => (program.screenings ?? []).map((screening) => ({
     ...screening,
     programId: program.id,

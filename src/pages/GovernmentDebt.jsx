@@ -2,8 +2,8 @@ import React, { useState, useEffect, useMemo } from 'react';
 import {
   Landmark, Globe, BookOpen, AlertTriangle, Building2,
   ChevronDown, Scale, Network, ArrowDown, BarChart2,
-  ExternalLink, Info, Layers, ArrowRight, Shield, Clock,
-  DollarSign, Hash, FileText, TrendingDown,
+  ExternalLink, Info, Layers, Clock,
+  Hash, TrendingDown,
 } from 'lucide-react';
 import governmentDebtData from '../data/governmentDebt.json';
 import Tabs, { useTabParams } from '../components/lab/Tabs';

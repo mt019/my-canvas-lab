@@ -543,7 +543,7 @@ export default function VocalTuner() {
 
     redrawCanvas();
     rafRef.current = requestAnimationFrame(updateLoop);
-  }, [resetDetection, resetDisplay, redrawCanvas]);
+  }, [resetDetection, redrawCanvas]);
 
   const startMic = useCallback(async () => {
     try {

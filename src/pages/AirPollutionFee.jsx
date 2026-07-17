@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Wind, Factory, Car, Building2, Scale, Calculator,
-  ChevronRight, Info, Shield, BookOpen, TrendingUp,
-  ClipboardList, AlertTriangle, Gavel, CheckCircle,
-  ArrowRight, History, Landmark,
+  Wind, Factory, Scale, Calculator,
+  ChevronRight, Info, Shield, BookOpen, ClipboardList, AlertTriangle, Gavel, ArrowRight, History, Landmark,
 } from 'lucide-react';
 
 const APF_VARS = { // token-exempt
@@ -159,12 +157,6 @@ const ELEMENTS_DATA = [
   },
 ];
 
-const QUARTERLY_DEADLINES = [
-  { q: 'Q1', period: '1–3 月', deadline: '4 月 30 日', season: 'q23' },
-  { q: 'Q2', period: '4–6 月', deadline: '7 月 31 日', season: 'q23' },
-  { q: 'Q3', period: '7–9 月', deadline: '10 月 31 日', season: 'q23' },
-  { q: 'Q4', period: '10–12 月', deadline: '次年 1 月 31 日', season: 'q14' },
-];
 
 const PROCEDURE_STEPS = [
   {
@@ -791,7 +783,7 @@ export default function AirPollutionFee() {
             {/* 時間軸 */}
             <div className="relative pl-6">
               <div className="absolute left-[11px] top-2 bottom-2 w-0.5 bg-[var(--apf-line)]" />
-              {HISTORY_TIMELINE.map((item, i) => (
+              {HISTORY_TIMELINE.map((item) => (
                 <div key={item.year} className="relative mb-4 last:mb-0">
                   <div className="absolute -left-6 top-3 w-4 h-4 rounded-full border-2 border-white shadow-sm"
                     style={{ backgroundColor: item.color }} />

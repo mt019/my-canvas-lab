@@ -159,7 +159,6 @@ export const ERA_TONE = { dali: 6, zuigao: 8, sifayuan: 4, shizi: 7, xianpan: 2 
 // 年度密度堆疊條＝淡底＋ink 細線：解釋吃 shizi 色位（rose，維持頁面 rose 識別）、判決吃 xianpan 色位（blue），
 // 兩者與沿革同機關階段同色；實體裁定同屬憲法法庭時期、另給 green 以在堆疊中可辨。大面積吃淡底 -bg、境界與圖例用 ink -tx。
 const TYPE_TONE = { 解釋: ERA_TONE.shizi, 判決: ERA_TONE.xianpan, 實體裁定: 3 };
-const typeFill = (k) => `var(--cat-${TYPE_TONE[k]}-bg)`;
 const typeInk = (k) => `var(--cat-${TYPE_TONE[k]}-tx)`;
 const OUTCOME_TONE = {
   違憲: 'red',

@@ -20,9 +20,7 @@ import {
   Library,
   Scale,
   ShieldCheck,
-  Sparkles,
-  TriangleAlert,
-} from 'lucide-react';
+  } from 'lucide-react';
 import sources from '../data/intlTaxOps/sources.json';
 import topics from '../data/intlTaxOps/topics.json';
 import schema from '../data/intlTaxOps/data_classification_schema.json';

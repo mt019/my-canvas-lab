@@ -370,6 +370,39 @@ repo (sync state: `docs/DATA_SOURCES.md`). Page identity palette: FER
 never written down here — add them the next time this page gets real
 work.
 
+### eslint 從未檢查過這個網站（2026-07-17 修好）
+
+`eslint.config.js` 是 Vite **react-ts** 樣板的預設值，整份設定寫 `files: ['**/*.{ts,tsx}']`。
+這個 repo 有 **70 個 `.jsx`、21,000 行、`.tsx` 0 個** → `npm run lint` 的真實涵蓋範圍是
+**零規則、零 UI 檔，永遠會過**（連那 23 個被列出的 `.js`／`.mjs` 也沒套到規則，`js.configs.recommended`
+同樣關在 ts/tsx 區塊裡）。**而 `vite build` 不做型別檢查也不做 lint，它只轉譯**——四道 build 閘門
+檢查的是字型、色票、tokens、數學符號，沒有一道在看 JavaScript 本身。
+
+改成涵蓋 `js/jsx` 後第一次跑，抓到 **9 件 `exhaustive-deps`，其中一件是當天剛推的字號檢索**
+（`IndexView` 的 `rest` 少 `exactSet`）。全部已修：
+
+- `IiasPublications` ×3 與 `GraphView` 的 `cellVal`：render body 裡的函式包成 `useCallback` 並列進依賴。
+  原本都「碰巧對的」——只依賴 query／mode，而那些已在依賴裡。
+- `GraphView` 的 `ed`：`eraData[eraKey] ?? {…}` 寫在 render body，鍵不存在時**每次 render 都造新物件**，
+  底下三個 useMemo 的快取形同虛設。包成 useMemo 固定身分。
+- `VocalTuner`：`updateLoop` 列了沒用到的 `resetDisplay`。
+
+**設定上的判斷（都不是程式碼問題，是設定沒認得慣例）**：`no-unused-vars` 加 `^_` 放行
+（UkuleleTuner 有 7 個 `catch (_error)`）；`no-empty` 加 `allowEmptyCatch`（三個調音器頁的 Web Audio
+收音全是 `catch {}`，對已停止的 oscillator 再 stop 本來就會丟例外）；`no-irregular-whitespace`
+跳過字串與註解（全形空格是本站排版）；`vite.config.ts` 的 3 個 `any` 放行——要給真型別得裝
+`@types/node`（沒裝，`node:http` 解析不到），**填一個解析不到的型別等於假裝有檢查**。
+**該 override 必須放在設定最後**：flat config 後面蓋前面，放在 ts/tsx 區塊之前會被它的 recommended 蓋回去。
+
+另清掉 41 處死碼（未用的 lucide import、`mulberry32`、`QUARTERLY_DEADLINES`、`statusLabel`、
+`NOMINEE_CASES`、`STRUCTURE`、`typeFill` 等）。**清的過程中用 sed 一次改兩處 `blacks.map`，
+把第二處還在用的 `note` 也刪了——`no-undef` 當場抓到**。那會是 `vite build` 照過、使用者點下去
+才白畫面的 ReferenceError，正好證明這件事的價值。改完 15 個頁面路由逐條實跑，零 JS 錯誤。
+
+**尚未掛進 `npm run build`**，這是刻意的：先讓它在這個 repo 穩定為綠再說。掛太早會被一堆
+warning 擋住 build，然後被關掉——那比現在更糟，因為會以為它在把關。
+`src/pages/Brief.jsx` 目前還紅（brief 標記層在途，非本輪產出）。
+
 ### `ConstitutionalCourt` (landed 2026-07-06)
 
 - 2026-07-17 **字號精準檢索**（frontend-only，**DONE**，零資料 repo 改動）。原本搜尋框對
