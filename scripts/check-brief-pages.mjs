@@ -39,6 +39,7 @@ const inDefaultView = (e) => {
   return followed.has(`${e.source} ${e.host}`);
 };
 const today = new Date(Date.now() + 8 * 3600 * 1000).toISOString().slice(0, 10);
+const dayDiff = (from, to) => Math.round((new Date(`${to}T00:00:00Z`) - new Date(`${from}T00:00:00Z`)) / 864e5);
 const isOngoing = (e) => Boolean(e.endDate) && e.date < today && e.endDate >= today;
 
 const kindsOf = (collection) => [...new Set(data.sources.filter((s) => s.collection === collection).map((s) => s.kind))];
@@ -64,13 +65,13 @@ const sectionOf = (id) => page.locator(`#${id}`).locator('xpath=ancestor::sectio
 try {
   // ---- 錯過就沒了的東西不能藏在分頁後面：三個分頁切過去，它都要還在。
   const pinned = [];
-  for (const view of ['reading', 'events', 'sources']) {
+  for (const view of ['daily', 'week', 'month', 'sources']) {
     await page.goto(`${BASE}/brief?view=${view}`, { waitUntil: 'networkidle' });
     pinned.push((await page.locator('#closing').count()) === 1);
   }
-  check('「這 7 天關門的」釘在分頁之上，三個分頁都看得到', pinned.every(Boolean));
+  check('「這 7 天關門的」釘在分頁之上，四個分頁都看得到', pinned.every(Boolean));
 
-  // ---- 門口 /brief，預設分頁＝讀的東西
+  // ---- 門口 /brief，預設分頁＝日報（乾淨的瀏覽器＝一篇都沒看過）
   await page.goto(`${BASE}/brief`, { waitUntil: 'networkidle' });
   const brief = await page.locator('main').innerText();
   const closingText = await sectionOf('closing').innerText();
@@ -103,35 +104,68 @@ try {
   const missingSources = itemSources.filter((s) => !brief.includes(s.label));
   check(`讀的東西的 ${itemSources.length} 個來源都在門口列著`, missingSources.length === 0, missingSources.map((s) => s.id).join('、'));
 
-  // 論文沒有「來不及」——讀的東西那些區不准出現倒數
-  /* 倒數一定帶數字（inDays() 印的是「21 天後」）。不能只找「天後」——OECD 的來源說明裡
-     資料倉自己寫著「出版日有時排在幾天後」，那是散文，咬它只會訓練人忽略這道檢查。 */
+  /* 論文沒有「來不及」——讀的東西那幾區不准出現倒數。
+     **只掃那幾區**：報裡面讀的東西與活動在同一頁上，而活動的倒數是對的。舊版靠「分頁標籤
+     以下」切範圍，那在切 collection 的版面成立，換成報就沒意義了——它咬到的是隔壁區。
+     倒數一定帶數字（inDays() 印的是「21 天後」）：不能只找「天後」，OECD 的來源說明裡資料倉
+     自己寫著「出版日有時排在幾天後」，那是散文，咬它只會訓練人忽略這道檢查。 */
   const COUNTDOWN = /\d+ 天後|\d+ 天前|剩 \d+ 天|今天最後一天/;
-  const afterTabs = brief.slice(brief.indexOf('資料來自哪裡'));
-  check('讀的東西沒有倒數', !COUNTDOWN.test(afterTabs), afterTabs.match(COUNTDOWN)?.[0] ?? '');
+  const dirty = [];
+  for (const kind of itemKinds) {
+    /* 區不在就跳過——那件事「一種都不少」那一項已經在管了。這裡不能 await 一個不存在的
+       元素：它會等 30 秒然後丟例外，而例外會讓**它後面每一項都不跑**。一支在某個情境下
+       會 crash 的檢查，在那個情境下等於沒有檢查，而那通常正是出事的情境。 */
+    const sec = page.locator('h2', { hasText: kind }).first().locator('xpath=ancestor::section[1]');
+    if ((await sec.count()) === 0) continue;
+    const hit = (await sec.innerText()).match(COUNTDOWN);
+    if (hit) dirty.push(`${kind}：${hit[0]}`);
+  }
+  check('讀的東西沒有倒數', dirty.length === 0, dirty.join('、'));
 
-  // ---- 活動分頁
-  await page.goto(`${BASE}/brief?view=events`, { waitUntil: 'networkidle' });
-  const eventsTab = (await page.locator('main').innerText()).replace(/\n/g, ' ');
-  const eventHeads = await headings();
-  const eventKinds = kindsOf('events');
-  check(`活動：${eventKinds.length} 種 kind 各有一區`, eventKinds.every((k) => eventHeads.some((h) => h.startsWith(k))));
+  // ---- 日報＝我還沒看過的，不是「今天」
+  /* 乾淨的 context 沒有 localStorage → 一篇都沒看過 → 日報就是全部。這一條同時擋住兩種錯：
+     拿自然日當日報（今天只有 3 篇），以及自動標已讀（打開就清空）。 */
+  const unreadCount = data.items.length + data.events.filter(inDefaultView).length;
+  check(`日報＝還沒看過的 ${unreadCount} 件（乾淨瀏覽器＝全部）`, new RegExp(`日報\\s*${unreadCount}`).test(brief.replace(/\n/g, ' ')));
+
+  // 月精度的 24 篇進得了日報。以日期為準的日報會讓它們只在每月 1 號出現。
+  const monthly = data.items.filter((i) => i.datePrecision === 'month');
+  check(
+    `月精度的 ${monthly.length} 篇（${[...new Set(monthly.map((i) => SOURCE[i.source].label))].join('、')}）進得了日報`,
+    monthly.every((i) => brief.includes(i.title.slice(0, 20))),
+  );
+
+  // 不自動標已讀：重新整理之後日報還在
+  await page.reload({ waitUntil: 'networkidle' });
+  check('不自動標已讀：重新整理後日報沒有清空', new RegExp(`日報\\s*${unreadCount}`).test((await page.locator('main').innerText()).replace(/\n/g, ' ')));
+
+  // 按下「標為已讀」→ 日報空掉，且東西沒有不見（週報還在）
+  await page.locator('button', { hasText: '標為已讀' }).first().click();
+  await page.waitForTimeout(200);
+  const afterMark = (await page.locator('main').innerText()).replace(/\n/g, ' ');
+  check('標為已讀之後日報歸零', /日報\s*0/.test(afterMark) && afterMark.includes('這一批你都看過了'));
+  await page.goto(`${BASE}/brief?view=week`, { waitUntil: 'networkidle' });
+  check('標為已讀不會把東西弄丟：週報照樣在', (await page.locator('main').innerText()).includes('最近 7 天出的'));
+  await page.evaluate(() => localStorage.clear());
+
+  // ---- 週報月報：同一個天數，兩個方向
+  for (const { id, label, days } of [
+    { id: 'week', label: '週報', days: 7 },
+    { id: 'month', label: '月報', days: 30 },
+  ]) {
+    await page.goto(`${BASE}/brief?view=${id}`, { waitUntil: 'networkidle' });
+    const txt = (await page.locator('main').innerText()).replace(/\n/g, ' ');
+    // 讀的東西往回看
+    const back = data.items.filter((i) => dayDiff(i.publishedAt, today) <= days).length;
+    check(`${label}：讀的東西往回看 ${days} 天＝${back} 篇`, new RegExp(`最近 ${days} 天出的 ${back} 篇`).test(txt));
+    // 活動往前看
+    const fwd = data.events.filter(
+      (e) => inDefaultView(e) && (isOngoing(e) || (dayDiff(today, e.date) >= 0 && dayDiff(today, e.date) <= days)),
+    ).length;
+    check(`${label}：活動往前看 ${days} 天＝${fwd} 場`, new RegExp(`接下來 ${days} 天裡的 ${fwd} 場活動`).test(txt));
+  }
 
   const defaultEventCount = data.events.filter((e) => inDefaultView(e)).length;
-  check(`分頁標籤「活動 ${defaultEventCount}」＝預設視圖自己數的`, new RegExp(`活動\\s*${defaultEventCount}`).test(eventsTab));
-
-  const ongoingShown = data.events.filter((e) => inDefaultView(e) && isOngoing(e));
-  check('進行中的場次標「進行中」，不標「天前」', ongoingShown.length === 0 || eventsTab.includes('進行中'));
-
-  // 收起來的那一區＝來源層的事實。一個講座不會因為我沒追蹤它就變成一齣戲。
-  const asideCount = data.events.filter(isAside).length;
-  const asideKinds = eventKinds.filter((k) =>
-    data.sources.filter((s) => s.collection === 'events' && s.kind === k).every((s) => !s.inDefaultView),
-  );
-  check(
-    `整區都是預設不跳出來的來源就收起來（${asideKinds.join('、')} 共 ${asideCount} 場）`,
-    asideKinds.every((k) => eventHeads.includes(`${k}${asideCount}場`)),
-  );
 
   // ---- 讀的東西內頁 /brief/reading
   await page.goto(`${BASE}/brief/reading`, { waitUntil: 'networkidle' });

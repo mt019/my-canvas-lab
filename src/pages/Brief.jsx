@@ -1,9 +1,10 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import PageShell from '../components/PageShell';
 import AppearanceMenu from '../components/AppearanceMenu';
 import FontSizeControl, { useFontScale } from '../components/FontSizeControl';
 import Tabs, { useTabParams } from '../components/lab/Tabs';
+import { useSeen } from './brief/marks';
 import {
   blindSpots,
   closingIn,
@@ -12,6 +13,7 @@ import {
   entryOf,
   entryText,
   eventFacts,
+  eventInWindow,
   eventSections,
   events,
   followed,
@@ -22,6 +24,7 @@ import {
   itemDateText,
   itemFacts,
   itemRevisedText,
+  itemInWindow,
   itemSections,
   items,
   itemsOfSource,
@@ -31,6 +34,7 @@ import {
   sources,
   todayInTaipei,
   URGENT_WINDOW,
+  WINDOWS,
 } from './brief/data';
 
 /*
@@ -278,9 +282,9 @@ function ClosingSoon({ today }) {
  * kind 不跨來源統一：每一筆活動自己的 kind（「演講或講座」對「音樂／戲劇」）是各來源自己
  * 的一套，硬併成一套就是編的。這裡分區用的是**來源層**的 kind，那一層資料倉已經編好了。
  */
-function EventKindSection({ sec, today, first }) {
+function EventKindSection({ sec, today, first, pool }) {
   const aside = isAsideSection(sec);
-  const all = useMemo(() => events.filter((e) => sec.sources.some((s) => s.id === e.source)), [sec]);
+  const all = useMemo(() => pool.events.filter((e) => sec.sources.some((s) => s.id === e.source)), [sec, pool]);
   /* 收起來的區整區都是預設不跳出來的來源，沒有「我追蹤誰」這回事；沒收起來的區預設只給
      我追蹤的主辦單位，其餘照實講有幾場、去哪找。 */
   const shown = useMemo(() => (aside ? all : all.filter((e) => inDefaultView(e))), [all, aside]);
@@ -375,12 +379,17 @@ function EventKindSection({ sec, today, first }) {
  * 講辭，兩者都是「央行講辭」但「誰說的」不一樣，併成一堆就是把那件事抹掉。而且合併之後
  * 話多的來源會把話少的擠掉，畫面上完全看不出來。
  */
-function ItemKindSection({ sec, today, first }) {
-  const groups = sec.sources.map((s) => ({ source: s, rows: itemsOfSource(s.id) })).filter((g) => g.rows.length > 0);
+function ItemKindSection({ sec, today, first, pool, full }) {
+  const keep = useMemo(() => new Set(pool.items.map((i) => i.id)), [pool]);
+  const groups = sec.sources
+    .map((s) => ({ source: s, rows: itemsOfSource(s.id).filter((i) => keep.has(i.id)) }))
+    .filter((g) => g.rows.length > 0);
   if (groups.length === 0) return null;
 
   const total = groups.reduce((n, g) => n + g.rows.length, 0);
-  const overflow = groups.filter((g) => g.rows.length > PREVIEW_PER_SOURCE);
+  /* 日報是拿來讀的，不是拿來找的：這一批是「我還沒看過的」，看得完，所以全出、連摘要。
+     週報月報是回顧，112 與 192 篇——那個量攤開連摘要就是另一個滑不完的東西。 */
+  const overflow = full ? [] : groups.filter((g) => g.rows.length > PREVIEW_PER_SOURCE);
   const readingHref = `/brief/reading?sources=${groups.map((g) => g.source.id).join(',')}`;
 
   return (
@@ -393,7 +402,7 @@ function ItemKindSection({ sec, today, first }) {
       {groups.map(({ source, rows }) => (
         <div key={source.id} className="mt-5">
           <SourceHead source={source} count={rows.length} unit="篇" note={source.note} alone={groups.length === 1} />
-          {rows.slice(0, PREVIEW_PER_SOURCE).map((i) => (
+          {(full ? rows : rows.slice(0, PREVIEW_PER_SOURCE)).map((i) => (
             <div key={i.id} className="grid grid-cols-1 gap-x-4 border-b border-line-soft py-2 sm:grid-cols-[5rem_minmax(0,1fr)]">
               <div className="text-token-xs leading-relaxed tabular-nums text-ink-faint">
                 {itemDateText(i, today)}
@@ -409,6 +418,11 @@ function ItemKindSection({ sec, today, first }) {
                   {i.title}
                 </a>
                 <div className="text-token-xs leading-relaxed text-ink-faint">{itemFacts(i).join(' · ')}</div>
+                {/* 摘要可以是 null，而且那是事實（36/247：ECB 與 OECD 的登錄裡沒有 abstract，
+                    Reddit 轉貼連結的貼文沒有內文）。空著就空著，不拿別的欄位去湊。 */}
+                {full && i.summary ? (
+                  <p className="mt-1 text-token-xs leading-relaxed text-ink-muted">{i.summary}</p>
+                ) : null}
               </div>
             </div>
           ))}
@@ -493,33 +507,68 @@ function Provenance() {
 }
 
 /*
- * 分頁切的是 collection，不是 kind。
+ * 分頁切的是**時間**，不是類別。這一頁是一份報，不是一份目錄。
  *
- * 兩種東西，兩種分頁：events 是「要決定去不去」，items 是「讀的東西」——時間的意義都不一樣
- * （一個要倒數，一個只排新舊），那本來就是這一頁最上層的分界。切 kind 會生出 12 個分頁、
- * 擠到要橫滾，而且資料倉每加一種 kind 就多一個分頁——分頁列自己會爆炸。切 collection 是
- * 2＋1 個，加來源不會動到它。
+ * 上一版切 collection（讀的東西／活動／資料來自哪裡），於是它回答的是「這個站有哪些東西」。
+ * 使用者要的是「這段時間發生了什麼」——那是報。類別降成報裡面的欄目（區塊照樣從 sources[]
+ * 長出來，見 sectionsOf），時間升上來當主軸。
  *
- * **「這 7 天關門的」釘在分頁之上，不屬於任何一個分頁。** 錯過就沒了的東西不能藏在別的
- * 分頁後面——切到「讀的東西」就看不到今天最後一天的報名，那正是這個站要消滅的失敗模式。
+ * **日報＝我還沒看過的，不是「今天」。** 拿自然日當日報，每天早上打開都是空的：今天才過
+ * 一點，只有 3 篇，而昨天那 25 篇已經掉進週報了。而且月精度的來源（NBER、IMF 共 24 篇）
+ * 日期全部是該月 1 號，任何以日期為準的日報都會讓它們在 1 號噴出 24 篇、其餘 30 天掛零。
+ * 改成記 id（見 marks.js）之後兩個問題一起消失：看過就是看過，跟它宣稱哪天出生無關。
  *
- * 預設落在「讀的東西」。使用者原話：「活動只是整個 brief 裡面很小的一部分。」預設分頁是
- * 這一頁對「這是什麼站」的回答，不是對「哪一批筆數最多」的回答。
+ * **週報月報是往兩個方向走的。** 同一個天數，讀的東西往回看（這 7 天出了什麼），活動往前看
+ * （這 7 天要去哪）——因為那兩種日期的意義本來就相反。見 data.js 的 WINDOWS。
+ *
+ * **「這 N 天關門的」釘在分頁之上，不屬於任何一個分頁。** 錯過就沒了的東西不能藏在別的
+ * 分頁後面——切到月報就看不到今天最後一天的報名，那正是這個站要消滅的失敗模式。
  */
-const VIEWS = { reading: 'reading', events: 'events', sources: 'sources' };
+const SOURCES_VIEW = 'sources';
 
 export default function Brief() {
   const [scale, setScale] = useFontScale();
-  const [{ view }, setTabs] = useTabParams({ view: VIEWS.reading });
+  const [{ view }, setTabs] = useTabParams({ view: 'daily' });
+  const { marks: seen, add: markSeen } = useSeen();
   const today = todayInTaipei();
 
   /* 整區預設不跳出來的沉到同一個 collection 的最後面。這是排序不是特例——今天剛好是
      文化活動，哪天資料倉改了標記，換誰在最後面就自己會變。 */
-  const eventBlocks = [...eventSections].sort((a, b) => Number(isAsideSection(a)) - Number(isAsideSection(b)));
+  const eventBlocks = useMemo(
+    () => [...eventSections].sort((a, b) => Number(isAsideSection(a)) - Number(isAsideSection(b))),
+    [],
+  );
 
-  /* 每個分頁旁邊的數字都是它自己那一批數出來的。分頁標籤與它底下的東西不是同一個集合時，
-     讀者不會發現——他只會看到一個數字，然後相信它。 */
-  const eventCount = events.filter((e) => inDefaultView(e)).length;
+  /*
+   * 這一期報裡有什麼。**每個分頁的數字都是它自己這一批數出來的**，不是從別處搬來的——
+   * 分頁標籤上的數字跟它底下的東西不是同一個集合時，讀者不會發現，他只會相信那個數字。
+   */
+  const poolOf = useCallback(
+    (id) => {
+      if (id === 'daily') {
+        return {
+          items: items.filter((i) => !seen.has(i.id)),
+          events: events.filter((e) => !seen.has(e.id)),
+        };
+      }
+      const days = WINDOWS.find((w) => w.id === id)?.days;
+      return {
+        items: items.filter((i) => itemInWindow(i, today, days)),
+        events: events.filter((e) => eventInWindow(e, today, days)),
+      };
+    },
+    [seen, today],
+  );
+
+  const pool = useMemo(() => poolOf(view), [poolOf, view]);
+
+  /* 分頁上的數字只數預設視圖裡的活動：把 444 檔售票節目算進「週報 N」，那個數字講的就不是
+     這一頁在給你看的東西。收起來的那一區自己會在區裡講它有幾檔。 */
+  const countOf = (p) => p.items.length + p.events.filter(inDefaultView).length;
+
+  const full = view === 'daily';
+  const unread = poolOf('daily');
+  const shownIds = [...pool.items.map((i) => i.id), ...pool.events.map((e) => e.id)];
 
   return (
     <PageShell
@@ -536,16 +585,8 @@ export default function Brief() {
     >
       <p className="text-token-sm leading-relaxed text-ink-muted">
         打開就看得到的東西，每天累積。門這幾天要關的釘在最上面，不分類也不分頁——這頁只替你排
-        這一次，每一區裡面都照時間，不按「重要」重排。每一區只出每個來源的前 {PREVIEW_PER_SOURCE} 件，
-        全部在
-        <Link to="/brief/reading" className="text-accent underline underline-offset-2">
-          讀的東西
-        </Link>
-        與
-        <Link to="/brief/events" className="text-accent underline underline-offset-2">
-          活動曆
-        </Link>
-        裡。
+        這一次，每一區裡面都照時間，不按「重要」重排。日報是你還沒看過的那些；週報與月報同一個
+        天數往兩個方向走：讀的東西往回看，活動往前看。
       </p>
 
       <div className="mt-8">
@@ -555,24 +596,79 @@ export default function Brief() {
       <div className="mt-12 border-t border-line pt-6">
         <Tabs
           variant="underline"
-          label="看哪一批"
+          label="看哪一期"
           value={view}
           onChange={(v) => setTabs({ view: v })}
           items={[
-            { id: VIEWS.reading, label: '讀的東西', count: items.length },
-            { id: VIEWS.events, label: '活動', count: eventCount },
-            { id: VIEWS.sources, label: '資料來自哪裡', count: sources.length },
+            { id: 'daily', label: '日報', count: countOf(unread) },
+            ...WINDOWS.map((w) => ({ id: w.id, label: w.label, count: countOf(poolOf(w.id)) })),
+            { id: SOURCES_VIEW, label: '資料來自哪裡', count: sources.length },
           ]}
         />
       </div>
 
-      {view === VIEWS.events
-        ? eventBlocks.map((sec, i) => <EventKindSection key={sec.kind} sec={sec} today={today} first={i === 0} />)
-        : null}
-      {view === VIEWS.reading
-        ? itemSections.map((sec, i) => <ItemKindSection key={sec.kind} sec={sec} today={today} first={i === 0} />)
-        : null}
-      {view === VIEWS.sources ? <Provenance /> : null}
+      {view === 'daily' ? <DailyHead pool={pool} onMarkSeen={() => markSeen(shownIds)} /> : null}
+      {view === 'week' || view === 'month' ? (
+        <p className="mt-4 text-token-sm leading-relaxed text-ink-muted">
+          最近 {WINDOWS.find((w) => w.id === view).days} 天出的 {pool.items.length} 篇，
+          加上接下來 {WINDOWS.find((w) => w.id === view).days} 天裡的{' '}
+          {pool.events.filter(inDefaultView).length} 場活動。
+          同一個天數，兩個方向——讀的東西的日期是「它什麼時候出來的」，活動的日期是「你什麼時候
+          得到場」。每個來源這裡只出前 {PREVIEW_PER_SOURCE} 件。
+        </p>
+      ) : null}
+
+      {view === SOURCES_VIEW ? (
+        <Provenance />
+      ) : (
+        <>
+          {itemSections.map((sec, i) => (
+            <ItemKindSection key={sec.kind} sec={sec} today={today} pool={pool} full={full} first={i === 0} />
+          ))}
+          {eventBlocks.map((sec) => (
+            <EventKindSection key={sec.kind} sec={sec} today={today} pool={pool} />
+          ))}
+          {pool.items.length === 0 && pool.events.length === 0 ? (
+            <p className="mt-8 border-t border-line pt-6 text-token-sm leading-relaxed text-ink-muted">
+              {view === 'daily'
+                ? '這一批你都看過了。東西沒有不見——切到週報或月報就找得回來，或者到「讀的東西」把全部 ' +
+                  items.length +
+                  ' 篇攤開。'
+                : '這個窗口裡沒有東西。'}
+            </p>
+          ) : null}
+        </>
+      )}
     </PageShell>
+  );
+}
+
+/*
+ * 日報的抬頭與「標為已讀」。
+ *
+ * **不自動標。** 打開頁面就把畫面上的東西記成看過，日報會在你看它的那一秒清空，重新整理
+ * 就什麼都不剩——那不是讀完，那是弄丟。標記是一個動作，要按。
+ *
+ * 第一次來的人，這裡會是全部 247 篇。那是對的：你確實一篇都沒看過。
+ */
+function DailyHead({ pool, onMarkSeen }) {
+  const n = pool.items.length;
+  const e = pool.events.filter(inDefaultView).length;
+  if (n + e === 0) return null;
+  return (
+    <div className="mt-4 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2">
+      <p className="min-w-0 flex-1 text-token-sm leading-relaxed text-ink-muted">
+        你還沒看過的：{n} 篇讀的東西{e > 0 ? `、${e} 場活動` : ''}。
+        這裡不看日期——月精度的來源（NBER、IMF）日期全部是該月 1 號，那個日子是補的，
+        拿它算「今天新的」會說謊。看過就是看過。
+      </p>
+      <button
+        type="button"
+        onClick={onMarkSeen}
+        className="shrink-0 rounded-token-sm border border-line-soft px-2 py-1 text-token-xs text-ink-muted transition-colors duration-fast hover:border-line hover:text-ink"
+      >
+        這 {n + e} 件標為已讀
+      </button>
+    </div>
   );
 }
