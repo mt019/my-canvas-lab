@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { ArrowUpDown, BookOpen, CalendarClock, ChevronDown, ChevronRight, Download, FileText, Search, Shuffle } from 'lucide-react';
-import { A_ORDER, CaseCard, SegControl, Select, TYPO_AXES, citeString, docs, downloadFile, pickOnThisDay, pickRandomDoc, toBibtex, toCsv, toManifest, typoLabel, typoValues, usePref } from './shared';
+import { ArrowUpDown, BookOpen, CalendarClock, ChevronDown, ChevronRight, Download, FileText, Info, Search, Shuffle } from 'lucide-react';
+import { A_ORDER, CaseCard, SegControl, Select, TYPO_AXES, citeString, docs, downloadFile, findCases, pickOnThisDay, pickRandomDoc, toBibtex, toCsv, toManifest, typoLabel, typoValues, usePref } from './shared';
 
 // 篩選列滾動自動收合：往下捲藏、往上捲顯示。**只在黏著列真正「卡住」（sticky 貼齊頂端、
 // 其原始流內空間已捲離視窗）時才收合**——否則列還在正常流內，用 transform 上移會留下它原本
@@ -54,6 +54,67 @@ function sortKey(d) {
   if (d.系列) return `A${SERIES_RANK[d.系列] ?? 9}${String(d.號次 ?? 0).padStart(5, '0')}`;
   return `B${d.日期 ?? ''}`;
 }
+// 字號寫法說明：搜尋框右側一顆 info 圓圈鈕點開。放進 placeholder 會拉成一長條淺字，做成常駐
+// 範例鈕則佔掉搜尋框寬度；收進圓圈鈕裡，不想知道的人看不到它，想知道的人一次看到全部寫法。
+// 每列的範例本身可點＝說明與捷徑同一個東西。
+// 註：本檔在字型子集的掃描範圍內（scripts/font-chars.mjs），註解裡打 U+24D8 那個圈 i 字元
+// 會把它塞進出貨字型，而畫面上用的是 lucide 的 Info 向量圖示、根本不需要那個字。
+const 字號寫法 = [
+  ['#88', '釋字第88號'],
+  ['釋88', '同上，釋字也可以寫出來'],
+  ['113-1', '113年憲判字第1號（判決）'],
+  ['111憲裁57', '裁定要打明字別'],
+  ['院解2876', '行憲前：院解字第2876號'],
+  ['統1000', '行憲前：院字・統字・解字同理'],
+];
+function SyntaxHint({ onPick }) {
+  const [open, setOpen] = useState(false);
+  const boxRef = useRef(null);
+  // 點別處或按 Esc 就收。只在開著時掛監聽。
+  useEffect(() => {
+    if (!open) return;
+    const onDown = (e) => { if (!boxRef.current?.contains(e.target)) setOpen(false); };
+    const onKey = (e) => { if (e.key === 'Escape') setOpen(false); };
+    document.addEventListener('mousedown', onDown);
+    document.addEventListener('keydown', onKey);
+    return () => { document.removeEventListener('mousedown', onDown); document.removeEventListener('keydown', onKey); };
+  }, [open]);
+  return (
+    <span ref={boxRef} className="relative shrink-0">
+      <button
+        type="button"
+        aria-label="字號怎麼打"
+        aria-expanded={open}
+        onClick={(e) => { e.preventDefault(); setOpen((v) => !v); }}
+        className={`flex items-center transition-colors ${open ? 'text-[var(--cc-accent)]' : 'text-[var(--cc-eyebrow)] hover:text-[var(--cc-accent)]'}`}
+      >
+        <Info size={14} />
+      </button>
+      {open ? (
+        <span className="absolute right-0 top-full z-30 mt-2 block w-max rounded-lg border border-[var(--cc-border)] bg-white p-3 shadow-lg">
+          <span className="block text-[12px] font-bold text-[var(--cc-ink-strong)]">字號直接打就跳到那一件</span>
+          <span className="mt-2 block">
+            {字號寫法.map(([ex, 說明]) => (
+              <button
+                key={ex}
+                type="button"
+                onClick={(e) => { e.preventDefault(); onPick(ex); setOpen(false); }}
+                className="flex w-full items-baseline gap-2.5 rounded px-1 py-1 text-left hover:bg-[var(--cc-track)]"
+              >
+                <span className="min-w-[72px] font-mono text-[12px] font-bold text-[var(--cc-accent)]">{ex}</span>
+                <span className="text-[11.5px] text-[var(--cc-ink-mid)]">{說明}</span>
+              </button>
+            ))}
+          </span>
+          <span className="mt-2 block max-w-[260px] border-t border-[var(--cc-line)] pt-2 text-[11px] leading-relaxed text-[var(--cc-ink-soft)]">
+            命中的那件會置頂，且不受上方篩選影響。只打數字（如 88）仍當一般關鍵字搜尋。
+          </span>
+        </span>
+      ) : null}
+    </span>
+  );
+}
+
 const INDEX_PAGE = 40; // 索引初始/重置顯示件數（比舊 30 多，配合下拉自動加載）
 export default function IndexView({ initialQ = '', onOpenDoc }) {
   const [機關, set機關] = useState(readInitial機關);
@@ -145,9 +206,17 @@ export default function IndexView({ initialQ = '', onOpenDoc }) {
   }, [scoped]);
   const activeTypoN = Object.values(typo).filter((v) => v && v !== '全部').length;
 
-  const filtered = useMemo(() => {
+  // 字號精準命中（#88／113-1／釋88／院解2876…）。刻意繞過機關與所有篩選：使用者指名一件時，
+  // 那件不該因為視圖停在行憲前、或結論篩選卡著就搜不到。命中件在下方置頂，其餘關鍵字結果照舊接在後面
+  // ——所以搜「釋字第88號」仍找得到引用它的那些件，精準只是多給一件，不是換掉原本的搜尋。
+  const exact = useMemo(() => findCases(q), [q]);
+  const exactSet = useMemo(() => new Set(exact.map((d) => d.字號)), [exact]);
+
+  const rest = useMemo(() => {
     const kw = q.trim();
     return scoped.filter((d) => {
+      if (exactSet.has(d.字號)) return false; // 已置頂，不重複列
+
       if (type !== '全部' && d.類型 !== type) return false;
       if (topic !== '全部' && !d.主題.includes(topic)) return false;
       if (subtopic !== '全部' && !d.子主題?.includes(subtopic)) return false;
@@ -166,11 +235,14 @@ export default function IndexView({ initialQ = '', onOpenDoc }) {
     });
   }, [scoped, type, topic, subtopic, outcome, standard, decade, q, typo]);
 
+  // 精準命中永遠在最前面，不隨新→舊／舊→新翻動：它是「你指名的那一件」，不是排序結果之一。
   const sorted = useMemo(() => {
-    const arr = [...filtered];
+    const arr = [...rest];
     arr.sort((a, b) => (sortDir === 'desc' ? sortKey(b).localeCompare(sortKey(a)) : sortKey(a).localeCompare(sortKey(b))));
-    return arr;
-  }, [filtered, sortDir]);
+    return [...exact, ...arr];
+  }, [exact, rest, sortDir]);
+  // 匯出／件數用的集合＝畫面上實際列出的集合。
+  const filtered = sorted;
 
   const shown = sorted.slice(0, limit);
   // 下拉自動加載（取代「顯示更多」按鈕）：底部 sentinel 進入視窗前 800px 就預取下一批。
@@ -214,14 +286,15 @@ export default function IndexView({ initialQ = '', onOpenDoc }) {
           ) : null}
         </div>
         <div className="flex items-center gap-3">
-          <label className="flex w-full items-center gap-2 rounded-md border border-[var(--cc-border)] bg-white px-2.5 py-1.5">
-            <Search size={13} className="text-[var(--cc-eyebrow)]" />
+          <label className="relative flex w-full items-center gap-2 rounded-md border border-[var(--cc-border)] bg-white px-2.5 py-1.5">
+            <Search size={13} className="shrink-0 text-[var(--cc-eyebrow)]" />
             <input
               value={q}
               onChange={(e) => { setQ(e.target.value); setLimit(INDEX_PAGE); }}
-              placeholder="搜尋字號、爭點、主文、系爭法令、原理原則"
+              placeholder="搜尋爭點、主文、系爭法令、原理原則"
               className="w-full bg-transparent text-[13px] text-[var(--cc-ink-strong)] placeholder-[var(--cc-placeholder)] focus:outline-none"
             />
+            <SyntaxHint onPick={(ex) => { setQ(ex); setLimit(INDEX_PAGE); }} />
           </label>
         </div>
         <div className="mt-2 flex flex-wrap items-center gap-2">
@@ -282,6 +355,11 @@ export default function IndexView({ initialQ = '', onOpenDoc }) {
         ) : null}
         <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-[12px] text-[var(--cc-ink-soft)]">
           <span className="font-bold text-[var(--cc-ink-strong)]">符合 {filtered.length} 件</span>
+          {exact.length ? (
+            <span className="text-[var(--cc-ink-soft)]" title="字號精準命中，已置頂；為了指名即找得到，這幾件不受機關與其他篩選影響">
+              字號命中 <strong className="text-[var(--cc-ink-strong)]">{exact.map((d) => d.字號).join('、')}</strong>
+            </span>
+          ) : null}
           <button
             onClick={() => setSortDir((d) => (d === 'desc' ? 'asc' : 'desc'))}
             className="inline-flex items-center gap-1 font-bold text-[var(--cc-accent)] hover:text-[var(--cc-link-hover)]"

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { BookOpen, CalendarClock, ChevronDown, ExternalLink, Search, Shuffle, X } from 'lucide-react';
 import data from '../../data/constitutionalCourt.json';
+import { lookupCases } from './caseQuery';
 import { formatDate, formatDateRange } from '../../utils/date';
 
 // ── 憲法法庭案例庫：跨分頁共用元件與工具 ──────────────────────────────────
@@ -64,6 +65,9 @@ export const presidents = data.總統任期 ?? [];
 
 // 字號 → 案件文件的全域查找表，供 <CaseRef> 由任一處字號回連官方頁並取一句話爭點預覽。
 const docByNo = new Map(docs.map((d) => [d.字號, d]));
+// 字號精準檢索（#88／113-1／釋88／院解2876…）：寫法認定在 caseQuery.js，這裡只負責對照全庫。
+// 刻意不吃機關／類型等篩選——指名一件時，那件不該因為視圖停在別的機關就消失。
+export const findCases = (q) => lookupCases(q, docByNo);
 // 姓名 → 大法官名冊，供 <JusticeRef> 判斷某名字是否在冊、hover 迷你預覽、點擊連個人頁。
 const justiceByName = new Map(justices.map((j) => [j.姓名, j]));
 // ── 隨機挑件（純前端 view 選取，非資料處理）────────────────────────────────

@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "npm run validate:fonts && npm run validate:tokens && npm run validate:colors && npm run validate:math && vite build",
+    "build": "npm run validate:fonts && npm run validate:tokens && npm run validate:colors && npm run validate:math && npm run validate:cases && vite build",
+    "validate:cases": "node scripts/validate-case-query.mjs",
     "validate:fonts": "node scripts/validate-font-coverage.mjs",
     "validate:tokens": "node scripts/validate-design-tokens.mjs",
     "validate:colors": "node scripts/validate-color-system.mjs",
