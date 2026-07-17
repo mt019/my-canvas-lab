@@ -213,6 +213,24 @@ const PAGE_META = { // token-exempt: per-page identity chip colors (data, not st
     accentText: '#6f6455',
     group: 'tool',
   },
+  Brief: {
+    name: '簡報',
+    desc: '打開就看得到的東西，每天累積：快關門的講座、接下來的活動、值得讀的論文與講辭',
+    Icon: CalendarDays,
+    accent: '#dde4ec',
+    accentText: '#4a5f7a',
+    group: 'life',
+  },
+  // 活動曆從簡報的門口進去，不上首頁——首頁列站，站列它自己的東西。
+  Events: {
+    name: '活動曆',
+    desc: '各來源的活動攤在同一張表上：條列、月曆、交叉表，軸自己選',
+    Icon: CalendarDays,
+    accent: '#dde4ec',
+    accentText: '#4a5f7a',
+    group: 'life',
+    listed: false,
+  },
   TaipeiFilmFestival: {
     name: '台北電影節售票雷達',
     desc: 'OpenTix 即時餘額同步，將可買場次壓成首頁式決策儀表板',

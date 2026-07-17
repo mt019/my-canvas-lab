@@ -11,7 +11,8 @@
     "validate:colors": "node scripts/validate-color-system.mjs",
     "lint": "eslint .",
     "preview": "vite preview",
-    "validate:math": "node scripts/validate-math-notation.mjs"
+    "validate:math": "node scripts/validate-math-notation.mjs",
+    "check:brief": "node scripts/check-brief-pages.mjs"
   },
   "dependencies": {
     "@dagrejs/dagre": "^3.0.0",
