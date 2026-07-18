@@ -36,7 +36,9 @@ export default function ArticleLayout({ title, eyebrow, summary, meta, nav, tocL
           paper grain belongs to the whole page (see the page component) — painted
           onto this column alone it draws a visible rectangle, which is a panel by
           another name. */}
-      <article>
+      {/* reader-scale: 字級放大只縮放這欄閱讀內容，兩側導覽 rail 與工具列固定。欄寬由
+          grid track（minmax(0,44rem)）決定、在 zoom 之外，所以邊界不隨字級移動。 */}
+      <article className="reader-scale">
         <header className="mb-8">
           {eyebrow ? (
             <p className="mb-2 font-accent text-token-xs uppercase tracking-[0.18em] text-ink-faint">

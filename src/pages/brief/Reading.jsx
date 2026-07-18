@@ -3,7 +3,10 @@ import { Link } from 'react-router-dom';
 import { useFontScale } from '../../components/FontSizeControl';
 import SiteHeader from '../../components/SiteHeader';
 import ArticleLayout from '../../components/lab/ArticleLayout';
+import SourceFilter, { usePersistedFlag } from '../../components/lab/SourceFilter';
 import { useTabParams } from '../../components/lab/Tabs';
+import MarkButton from './_MarkButton';
+import { snapshotItem, useKept } from './marks';
 import {
   blindSpots,
   itemDateText,
@@ -45,7 +48,7 @@ const DEFAULT_SOURCES = 'all';
  * 來源沒有給我們摘要」這件事從畫面上消失，而讀者會以為他看到的就是全部。空著就空著；
  * 那一行少一句話，正好就是那則東西的實況。
  */
-function ItemRow({ item, today }) {
+function ItemRow({ item, today, kept }) {
   const revised = itemRevisedText(item, today);
   const facts = itemFacts(item);
   return (
@@ -75,9 +78,11 @@ function ItemRow({ item, today }) {
             PDF
           </a>
         ) : null}
-        {facts.length > 0 ? (
-          <div className="text-token-xs leading-relaxed text-ink-faint">{facts.join(' · ')}</div>
-        ) : null}
+        <div className="text-token-xs leading-relaxed text-ink-faint">
+          {facts.join(' · ')}
+          {facts.length > 0 ? <span className="mx-1.5">·</span> : null}
+          <MarkButton on={kept.has(item.id)} onToggle={() => kept.toggle(snapshotItem(item))} label="留著" />
+        </div>
         {item.summary ? (
           <p className="mt-1 text-token-xs leading-relaxed text-ink-muted">{item.summary}</p>
         ) : null}
@@ -90,46 +95,39 @@ export default function Reading() {
   const [scale, setScale] = useFontScale();
   const [{ sources: sourceParam }, setTabs] = useTabParams({ sources: DEFAULT_SOURCES });
   const [query, setQuery] = useState('');
+  // 單選模式與「只看有摘要」是 UI 偏好，重開頁面不該重置——存 localStorage（選擇本身在網址）。
+  const [radio, setRadio] = usePersistedFlag('canvaslab:brief:reading:radio');
+  const [onlySummary, setOnlySummary] = usePersistedFlag('canvaslab:brief:reading:withSummary');
+  const kept = useKept();
   const today = todayInTaipei();
 
   const selected = useMemo(() => {
     if (sourceParam === 'all') return itemSources.map((s) => s.id);
+    if (sourceParam === 'none') return [];
     const ids = sourceParam.split(',').filter((id) => itemSources.some((s) => s.id === id));
     return ids.length ? ids : itemSources.map((s) => s.id);
   }, [sourceParam]);
 
+  // 空集合是合法狀態（全不選）：內容區有它自己的空狀態，不再擋。
   const write = (ids) => {
     const ordered = itemSources.filter((s) => ids.includes(s.id)).map((s) => s.id);
-    setTabs({ sources: ordered.length === itemSources.length ? 'all' : ordered.join(',') });
-  };
-
-  const toggleSource = (id) => {
-    const next = selected.includes(id) ? selected.filter((x) => x !== id) : [...selected, id];
-    if (next.length === 0) return; // 一個來源都不選＝空白頁，那不是篩選是壞掉
-    write(next);
-  };
-
-  /* 整類一起切。24 個來源要一個一個關掉才能只看某一類，那不是篩選是勞動。 */
-  const toggleKind = (sec) => {
-    const ids = sec.sources.map((s) => s.id);
-    const allOn = ids.every((id) => selected.includes(id));
-    const next = allOn ? selected.filter((id) => !ids.includes(id)) : [...new Set([...selected, ...ids])];
-    if (next.length === 0) return;
-    write(next);
+    setTabs({ sources: ordered.length === 0 ? 'none' : ordered.length === itemSources.length ? 'all' : ordered.join(',') });
   };
 
   /* 篩選只決定先看到什麼，不決定存了什麼。關鍵字掃標題、作者與摘要——摘要是 null 的那些
-     照樣掃得到標題，不會因為沒摘要就從搜尋結果裡消失。 */
+     照樣掃得到標題，不會因為沒摘要就從搜尋結果裡消失。「只看有摘要」是另一回事：那是主動
+     把沒附摘要的那 36 篇濾掉，不是它們搜不到。 */
   const shown = useMemo(() => {
     const q = query.trim();
     return items.filter((i) => {
       if (!selected.includes(i.source)) return false;
+      if (onlySummary && !i.summary) return false;
       if (!q) return true;
       return [i.title, i.summary, i.journalRef, ...(i.authors ?? []), ...(i.topics ?? [])]
         .filter(Boolean)
         .some((f) => f.toLowerCase().includes(q.toLowerCase()));
     });
-  }, [selected, query]);
+  }, [selected, query, onlySummary]);
 
   const blocks = useMemo(() => {
     const keep = new Set(shown.map((i) => i.id));
@@ -157,44 +155,30 @@ export default function Reading() {
         className="mb-5 w-full rounded border border-line-soft bg-paper px-2 py-1 text-token-xs text-ink outline-none focus:border-accent"
       />
 
-      <p className="mb-2 font-accent uppercase tracking-[0.12em] text-ink-faint">來源</p>
-      {itemSections.map((sec) => {
-        const ids = sec.sources.map((s) => s.id);
-        const allOn = ids.every((id) => selected.includes(id));
-        return (
-          <div key={sec.kind} className="mb-3">
-            <button
-              type="button"
-              onClick={() => toggleKind(sec)}
-              aria-pressed={allOn}
-              className={`mb-0.5 text-left transition-colors duration-fast hover:text-accent ${allOn ? 'text-ink-muted' : 'text-ink-faint'}`}
-            >
-              {sec.kind}
-            </button>
-            <div className="flex flex-col items-start gap-0.5">
-              {sec.sources.map((s) => {
-                const on = selected.includes(s.id);
-                return (
-                  <button
-                    key={s.id}
-                    type="button"
-                    onClick={() => toggleSource(s.id)}
-                    aria-pressed={on}
-                    className={`w-full text-left transition-colors duration-fast hover:text-accent ${on ? 'text-ink' : 'text-ink-faint'}`}
-                  >
-                    <span className="mr-1.5 tabular-nums">{on ? '■' : '□'}</span>
-                    {s.label}
-                    <span className="ml-1.5 tabular-nums text-ink-faint">{itemsOfSource(s.id).length}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        );
-      })}
+      <SourceFilter
+        sources={itemSources}
+        sections={itemSections.map((sec) => ({ kind: sec.kind, sources: sec.sources }))}
+        selectedIds={selected}
+        onChange={write}
+        radio={radio}
+        onRadioChange={setRadio}
+        countOf={(id) => itemsOfSource(id).length}
+        extras={
+          /* 只看有摘要：主動濾掉沒附摘要的那些（ECB／OECD／Reddit 轉貼），不是它們搜不到。 */
+          <button
+            type="button"
+            onClick={() => setOnlySummary((v) => !v)}
+            aria-pressed={onlySummary}
+            className={`text-token-xs transition-colors duration-fast hover:text-accent ${onlySummary ? 'text-ink' : 'text-ink-faint'}`}
+          >
+            <span className="mr-1 tabular-nums">{onlySummary ? '◉' : '○'}</span>
+            只看有摘要
+          </button>
+        }
+      />
 
-      <p className="leading-relaxed text-ink-faint">
-        篩選是視圖，不是入庫條件。沒列出來的一樣在庫裡——每個來源的配額與涵蓋範圍在
+      <p className="mt-3 leading-relaxed text-ink-faint">
+        篩選只是換個看法，不是把東西丟掉。沒列出來的都還在——每個來源各留幾篇、涵蓋到哪裡，在
         <Link to="/brief?view=sources" className="text-accent underline underline-offset-2">
           資料來自哪裡
         </Link>
@@ -204,7 +188,7 @@ export default function Reading() {
   );
 
   return (
-    <main className="reading-grain min-h-screen bg-paper pb-10 text-ink" style={{ zoom: scale }}>
+    <main className="reading-grain min-h-screen bg-paper pb-10 text-ink" style={{ '--reader-scale': scale }}>
       <SiteHeader back={{ href: '/brief', label: '簡報' }} width="article" scale={scale} onScaleChange={setScale} />
       <ArticleLayout
         title="讀的東西"
@@ -226,7 +210,7 @@ export default function Reading() {
             {/* 名字與數字從同一個集合算。這一行的每個數字都是 shown 自己數出來的，不是從
                 coverage 搬來的——coverage 是整份資料的，跟畫面上這一批不是同一個集合。 */}
             {noSummary > 0
-              ? `其中 ${noSummary} 篇沒有摘要——那是來源本來就沒給（ECB 與 OECD 的登錄裡沒有 abstract，Reddit 轉貼連結的貼文沒有內文），不是漏抓，也不拿別的欄位去湊。`
+              ? `其中 ${noSummary} 篇沒有摘要——那是來源本來就沒附（ECB 與 OECD 就是沒給摘要，Reddit 轉貼連結的貼文沒有內文），不是漏掉，也不拿別的東西去湊。`
               : ''}
           </p>
         </section>
@@ -234,7 +218,7 @@ export default function Reading() {
         {shown.length === 0 ? (
           <p className="py-6 text-token-sm text-ink-muted">
             {query ? `「${query}」在這個篩選底下沒有東西。` : '這個篩選底下沒有東西。'}
-            　東西還在庫裡——把來源切回全部再找一次。
+            　東西都還在——把來源切回全部再找一次。
           </p>
         ) : (
           blocks.map(({ sec, groups }) => (
@@ -262,7 +246,7 @@ export default function Reading() {
                   )}
                   <p className="mb-2 text-token-xs leading-relaxed text-ink-faint">{source.note}</p>
                   {rows.map((i) => (
-                    <ItemRow key={i.id} item={i} today={today} />
+                    <ItemRow key={i.id} item={i} today={today} kept={kept} />
                   ))}
                 </div>
               ))}
@@ -276,7 +260,7 @@ export default function Reading() {
           </h2>
           <p className="mt-1 text-token-sm leading-relaxed text-ink-muted">
             有缺口就講出來。一份看起來完整的清單，比一份說得出自己漏了什麼的清單危險。
-            每個來源的涵蓋範圍與配額在
+            每個來源涵蓋到哪裡、各留幾篇，在
             <Link to="/brief?view=sources" className="text-accent underline underline-offset-2">
               門口的「資料來自哪裡」
             </Link>

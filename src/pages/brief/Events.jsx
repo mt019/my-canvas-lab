@@ -2,12 +2,15 @@ import { useMemo, useState } from 'react';
 import { useFontScale } from '../../components/FontSizeControl';
 import SiteHeader from '../../components/SiteHeader';
 import ArticleLayout from '../../components/lab/ArticleLayout';
+import SourceFilter, { usePersistedFlag } from '../../components/lab/SourceFilter';
 import Tabs, { useTabParams } from '../../components/lab/Tabs';
+import MarkButton from './_MarkButton';
+import { snapshotEvent, useGoing, useWent } from './marks';
 import {
   ENTRY_LABEL,
   URGENT_WINDOW,
   blindSpots,
-  dateText,
+  dateSegments,
   dayDiff,
   defaultEventSources,
   entryOf,
@@ -17,7 +20,6 @@ import {
   events,
   followed,
   inDays,
-  inDefaultView,
   isFollowed,
   isOngoing,
   md,
@@ -66,14 +68,29 @@ const DEFAULT_SOURCES = defaultEventSources.map((s) => s.id).join(',');
    給它一顆「我關注的」按鈕是家具不是篩選。 */
 const FOLLOWED_SOURCES = new Set(followed.map((f) => f.source));
 
-function EventLine({ event, today, showSource }) {
+/*
+ * 一場活動一列。時間線排法：左邊窄欄放日期，右邊一整塊放標題與其下的一切——不是三欄
+ * 表格。三欄表格的問題是中欄（標題＋名單＋場地）動輒五到十行，兩側短欄只有兩三行，於是
+ * 每列被撐得跟標題一樣高、旁邊留一大片空白，讀起來像壞掉。窄螢幕本來就是這樣疊的，讀起來
+ * 反而順，桌機照抄那個順序，只把日期拉到左邊。
+ *
+ * 進場方式與「我要去／我去了」收進標題底下的一行 meta，不另立一欄。而且**佔多數的
+ * 「還沒查到」不印字**——48 場裡 42 場都是它，印出來就是整頁重複同一句沒用的話（entryText
+ * 早就為了同個理由不給它掛徽章，這裡把文字也一起收掉，只有真的有截止日／額滿／自由入座
+ * 才印進場方式）。
+ */
+function EventLine({ event, today, showSource, going, went }) {
   const entry = entryText(event, today);
   const facts = eventFacts(event);
+  const d = dateSegments(event);
+  const showEntry = entryOf(event) !== 'unknown';
   return (
-    <div className="grid grid-cols-1 gap-x-4 border-b border-line-soft py-2 sm:grid-cols-[8.5rem_minmax(0,1fr)_10rem]">
+    <div className="grid grid-cols-1 gap-x-4 border-b border-line-soft py-2 sm:grid-cols-[minmax(0,1fr)_minmax(0,4fr)]">
       <div className="text-token-xs leading-relaxed tabular-nums text-ink-muted">
-        {dateText(event)}
-        <span className="ml-1 text-ink-faint">
+        <span className="whitespace-nowrap">{d.start}</span>
+        {d.end ? <>–<span className="whitespace-nowrap">{d.end}</span></> : null}
+        {d.time ? <span className="whitespace-nowrap"> {d.time}</span> : null}{' '}
+        <span className="whitespace-nowrap text-ink-faint">
           {isOngoing(event, today) ? '進行中' : inDays(dayDiff(today, event.date))}
         </span>
       </div>
@@ -95,13 +112,21 @@ function EventLine({ event, today, showSource }) {
         {event.scheduleNote ? (
           <div className="text-token-xs leading-relaxed text-ink-faint">{event.scheduleNote}</div>
         ) : null}
-      </div>
-      <div className={`text-token-xs leading-relaxed tabular-nums sm:text-right ${entry.loud ? 'text-ink' : 'text-ink-faint'}`}>
-        {entry.text}
-        {event.registerUrl ? (
-          <a href={event.registerUrl} target="_blank" rel="noreferrer" className="ml-1.5 text-accent underline underline-offset-2">
-            報名
-          </a>
+        {showEntry || event.registerUrl || going || went ? (
+          <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-token-xs tabular-nums">
+            {showEntry ? <span className={entry.loud ? 'text-ink' : 'text-ink-faint'}>{entry.text}</span> : null}
+            {event.registerUrl ? (
+              <a href={event.registerUrl} target="_blank" rel="noreferrer" className="text-accent underline underline-offset-2">
+                報名
+              </a>
+            ) : null}
+            {going ? (
+              <MarkButton on={going.has(event.id)} onToggle={() => going.toggle(snapshotEvent(event))} label="我要去" />
+            ) : null}
+            {went ? (
+              <MarkButton on={went.has(event.id)} onToggle={() => went.toggle(snapshotEvent(event))} label="我去了" />
+            ) : null}
+          </div>
         ) : null}
       </div>
     </div>
@@ -220,7 +245,7 @@ function CalendarView({ events: shown, today }) {
  * 類型（kind）這個軸不跨來源合併：「演講或講座」與「音樂」本來就不是同一套分類，硬併成
  * 一套就是編的。它們在表上各佔一列，這樣才看得出哪一套是誰的。
  */
-function PivotView({ events: shown, today, rows, cols, onPick, picked }) {
+function PivotView({ events: shown, today, rows, cols, onPick, picked, going, went }) {
   const rowAxis = ROW_AXES.find((a) => a.id === rows) ?? ROW_AXES[0];
   const colAxis = COL_AXES.find((a) => a.id === cols) ?? COL_AXES[0];
 
@@ -314,7 +339,7 @@ function PivotView({ events: shown, today, rows, cols, onPick, picked }) {
             <span className="ml-2 text-token-xs text-ink-faint">{pickedEvents.length} 場</span>
           </h3>
           {pickedEvents.map((e) => (
-            <EventLine key={e.id} event={e} today={today} showSource />
+            <EventLine key={e.id} event={e} today={today} showSource going={going} went={went} />
           ))}
         </div>
       ) : null}
@@ -333,19 +358,25 @@ export default function Events() {
   });
   const [query, setQuery] = useState('');
   const [picked, setPicked] = useState(null);
+  // 單選模式是 UI 偏好，重開頁面不該重置（選擇本身在網址）。
+  const [radio, setRadio] = usePersistedFlag('canvaslab:brief:events:radio');
+  const going = useGoing();
+  const went = useWent();
   const today = todayInTaipei();
 
   const selected = useMemo(() => {
     if (sourceParam === 'all') return eventSources.map((s) => s.id);
+    if (sourceParam === 'none') return []; // 全不選是合法狀態，內容區有空狀態
     const ids = sourceParam.split(',').filter((id) => eventSources.some((s) => s.id === id));
     return ids.length ? ids : defaultEventSources.map((s) => s.id);
   }, [sourceParam]);
 
-  const toggleSource = (id) => {
-    const next = selected.includes(id) ? selected.filter((x) => x !== id) : [...selected, id];
-    if (next.length === 0) return; // 一個來源都不選＝空白頁，那不是篩選是壞掉
-    const ordered = eventSources.filter((s) => next.includes(s.id)).map((s) => s.id);
-    setTabs({ sources: ordered.length === eventSources.length ? 'all' : ordered.join(',') });
+  // 空集合是合法狀態（全不選）：內容區有它自己的空狀態，不再擋。
+  const writeSources = (ids) => {
+    const ordered = eventSources.filter((s) => ids.includes(s.id)).map((s) => s.id);
+    setTabs({
+      sources: ordered.length === 0 ? 'none' : ordered.length === eventSources.length ? 'all' : ordered.join(','),
+    });
     setPicked(null);
   };
 
@@ -391,41 +422,30 @@ export default function Events() {
 
   const rail = (
     <nav className="text-token-xs">
-      <p className="mb-2 font-accent uppercase tracking-[0.12em] text-ink-faint">來源</p>
-      <div className="mb-1 flex flex-col items-start gap-0.5">
-        {eventSources.map((s) => {
-          const on = selected.includes(s.id);
-          return (
-            <button
-              key={s.id}
-              type="button"
-              onClick={() => toggleSource(s.id)}
-              aria-pressed={on}
-              className={`w-full text-left transition-colors duration-fast hover:text-accent ${on ? 'text-ink' : 'text-ink-faint'}`}
-            >
-              <span className="mr-1.5 tabular-nums">{on ? '■' : '□'}</span>
-              {s.label}
-              <span className="ml-1.5 tabular-nums text-ink-faint">{events.filter((e) => e.source === s.id).length}</span>
-            </button>
-          );
-        })}
-      </div>
-      <p className="mb-5 leading-relaxed text-ink-faint">
+      <SourceFilter
+        sources={eventSources}
+        selectedIds={selected}
+        onChange={writeSources}
+        radio={radio}
+        onRadioChange={setRadio}
+        countOf={(id) => events.filter((e) => e.source === id).length}
+      />
+      <p className="mb-5 mt-3 leading-relaxed text-ink-faint">
         預設不含{eventSources.filter((s) => !s.inDefaultView).map((s) => s.label).join('、')}
         ——它一個來源就比其他全部加起來多，混進來會把別的沖掉。
       </p>
 
       {hostSwitchApplies ? (
         <>
-          <p className="mb-2 font-accent uppercase tracking-[0.12em] text-ink-faint">主辦單位</p>
+          <p className="mb-2 font-accent uppercase tracking-[0.12em] text-ink-faint">主辦單位（中研院）</p>
           <Tabs
             variant="quiet"
-            label="主辦單位"
+            label="主辦單位（中研院）"
             value={hosts}
             onChange={(v) => { setTabs({ hosts: v }); setPicked(null); }}
             className="mb-5 !flex-col !items-start gap-0.5"
             items={[
-              { id: 'followed', label: `我追蹤的 ${followed.length} 家` },
+              { id: 'followed', label: `精選 ${followed.length} 個` },
               { id: 'all', label: '全部' },
             ]}
           />
@@ -465,13 +485,13 @@ export default function Events() {
       ) : null}
 
       <p className="leading-relaxed text-ink-faint">
-        篩選是視圖，不是入庫條件。沒列出來的一樣在庫裡——把來源或主辦單位切成全部就找得到。
+        篩選只是換個看法，不是把東西刪掉。沒列出來的都還在——把來源或主辦單位切成全部就找得到。
       </p>
     </nav>
   );
 
   return (
-    <main className="reading-grain min-h-screen bg-paper pb-10 text-ink" style={{ zoom: scale }}>
+    <main className="reading-grain min-h-screen bg-paper pb-10 text-ink" style={{ '--reader-scale': scale }}>
       <SiteHeader back={{ href: '/brief', label: '簡報' }} width="article" scale={scale} onScaleChange={setScale} />
       <ArticleLayout
         title="活動曆"
@@ -514,12 +534,12 @@ export default function Events() {
           {shown.length === 0 ? (
             <p className="py-6 text-token-sm text-ink-muted">
               {query ? `「${query}」在這個篩選底下沒有場次。` : '這個篩選底下沒有場次。'}
-              　東西還在庫裡——把來源或主辦單位切成全部再找一次。
+              　東西都還在——把來源或主辦單位切成全部再找一次。
             </p>
           ) : mode === 'calendar' ? (
             <CalendarView events={shown} today={today} />
           ) : mode === 'pivot' ? (
-            <PivotView events={shown} today={today} rows={rows} cols={cols} picked={picked} onPick={setPicked} />
+            <PivotView events={shown} today={today} rows={rows} cols={cols} picked={picked} onPick={setPicked} going={going} went={went} />
           ) : (
             byMonth.map(({ key, events: inMonth }) => (
               <div key={key} className="mt-6">
@@ -528,7 +548,7 @@ export default function Events() {
                   <span className="ml-2 text-token-xs text-ink-faint">{inMonth.length} 場</span>
                 </h3>
                 {inMonth.map((e) => (
-                  <EventLine key={e.id} event={e} today={today} showSource={selected.length > 1} />
+                  <EventLine key={e.id} event={e} today={today} showSource={selected.length > 1} going={going} went={went} />
                 ))}
               </div>
             ))
@@ -540,7 +560,7 @@ export default function Events() {
             右邊那一欄在講什麼
           </h2>
           <p className="mt-1 text-token-sm leading-relaxed text-ink-muted">
-            進場的方式不只報名一種，而「不知道」跟「不用」是兩件不同的事。這幾種狀態底下各有幾場，
+            進場的方式不只報名一種，而「還沒查到」跟「不用」是兩件不同的事。這幾種狀態底下各有幾場，
             是這個篩選自己數的。
           </p>
           <dl className="mt-4">
@@ -548,7 +568,7 @@ export default function Events() {
               const n = shown.filter((e) => entryOf(e) === state).length;
               if (n === 0) return null;
               return (
-                <div key={state} className="grid grid-cols-1 gap-x-4 border-b border-line-soft py-2 sm:grid-cols-[8.5rem_minmax(0,1fr)]">
+                <div key={state} className="grid grid-cols-1 gap-x-4 border-b border-line-soft py-2 sm:grid-cols-[minmax(0,1fr)_minmax(0,3fr)]">
                   <dt className="text-token-sm text-ink">
                     {ENTRY_LABEL[state]}
                     <span className="ml-1.5 text-token-xs tabular-nums text-ink-faint">{n} 場</span>
@@ -593,5 +613,5 @@ const ENTRY_NOTE = {
   untilFull: '要報名、有報名表，一個日期都沒公告。額滿就關，沒有任何一天可以倒數——這種比有截止日的更急。',
   open: '查過了，不用報名也不用買票。可以放心。',
   ticketed: '要買票，有票價與售票期間。剩幾張票這裡不存，那種數字幾小時就過期。',
-  unknown: '這裡不知道怎麼進場——不是「不用」，是還沒查到。得自己去問。',
+  unknown: '這場要不要報名、買不買票，還沒查到——不是「不用」，是還沒查證，得自己去問。',
 };

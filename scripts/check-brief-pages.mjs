@@ -31,7 +31,6 @@ const data = JSON.parse(readFileSync(new URL('../src/data/brief-events.json', im
 const SOURCE = Object.fromEntries(data.sources.map((s) => [s.id, s]));
 const followed = new Set(data.followed.map((f) => `${f.source} ${f.host}`));
 const sourcesWithFollowed = new Set(data.followed.map((f) => f.source));
-const isAside = (e) => !SOURCE[e.source]?.inDefaultView;
 const inDefaultView = (e) => {
   const s = SOURCE[e.source];
   if (!s?.inDefaultView) return false;
@@ -63,13 +62,22 @@ const headings = async () => (await page.locator('h2, h3').allInnerTexts()).map(
 const sectionOf = (id) => page.locator(`#${id}`).locator('xpath=ancestor::section[1]');
 
 try {
-  // ---- 錯過就沒了的東西不能藏在分頁後面：三個分頁切過去，它都要還在。
+  // ---- 錯過就沒了的東西不能藏在分頁後面：日報是完整那一塊，其餘分頁至少要有一行連回它。
+  //      有要關的門（urgentN>0）時，每個分頁都得 surface 得到 #closing（日報＝整塊 h2、其餘＝
+  //      一行 banner，兩者都掛 id="closing"）；沒有要關的門時不強制。
   const pinned = [];
+  let urgentN = 0;
   for (const view of ['daily', 'week', 'month', 'sources']) {
     await page.goto(`${BASE}/brief?view=${view}`, { waitUntil: 'networkidle' });
-    pinned.push((await page.locator('#closing').count()) === 1);
+    const has = (await page.locator('#closing').count()) === 1;
+    if (view === 'daily') {
+      urgentN = Number((await sectionOf('closing').innerText()).match(/(\d+)\s*件/)?.[1] ?? '0');
+      pinned.push(has);
+    } else {
+      pinned.push(urgentN > 0 ? has : true);
+    }
   }
-  check('「這 7 天關門的」釘在分頁之上，四個分頁都看得到', pinned.every(Boolean));
+  check('要關的門在每個分頁都 surface 得到（日報整塊、其餘一行連回日報）', pinned.every(Boolean));
 
   // ---- 門口 /brief，預設分頁＝日報（乾淨的瀏覽器＝一篇都沒看過）
   await page.goto(`${BASE}/brief`, { waitUntil: 'networkidle' });
@@ -165,6 +173,68 @@ try {
     check(`${label}：活動往前看 ${days} 天＝${fwd} 場`, new RegExp(`接下來 ${days} 天裡的 ${fwd} 場活動`).test(txt));
   }
 
+  /* ---- 標記層：留著／我要去
+   *
+   * 這幾項要咬的是同一件事：**「留著」是不是真的留得住。** 資料倉每個來源只送最新 12 篇
+   * （sync-to-canvas.mjs 的 ITEM_QUOTA_DEFAULT），你留的東西幾天內就會被新的擠出這批投影。
+   * 上一版三種標記共用一份實作、一律剪掉「不在這批投影裡」的 id，於是留著的東西會在某次
+   * sync 之後連同標記一起消失，**而畫面上一個字都不會說**。
+   *
+   * 這種錯永遠不會在今天的資料上出現——它要等資料換一批才發作，那時候沒有人在看。所以
+   * 這裡直接把「已經輪替出去」那個未來狀態做出來：塞一筆 id 不在庫裡的標記進去。
+   */
+  await page.evaluate(() => localStorage.clear());
+  await page.goto(`${BASE}/brief?view=kept`, { waitUntil: 'networkidle' });
+  check('沒標過東西時，「留著的」講得出它是什麼', (await page.locator('main').innerText()).includes('還沒有標記過東西'));
+
+  const GONE = { id: 'gone:already-rotated-out', title: '這筆已經被新的擠出投影了' };
+  await page.evaluate((gone) => {
+    localStorage.setItem(
+      'canvaslab:brief:kept',
+      JSON.stringify([
+        {
+          id: gone.id,
+          kind: 'item',
+          title: gone.title,
+          url: 'https://example.org/gone',
+          date: '2026-01-01',
+          source: 'nope',
+          sourceLabel: '某個來源',
+          markedAt: '2026-01-01T00:00:00.000Z',
+        },
+      ]),
+    );
+  }, GONE);
+  await page.goto(`${BASE}/brief?view=kept`, { waitUntil: 'networkidle' });
+  const keptGone = await page.locator('main').innerText();
+  check('留著的東西撐得過投影輪替：id 不在這批庫裡，它照樣列著', keptGone.includes(GONE.title));
+  check('而且明說它為什麼看起來不一樣，不是假裝沒事', keptGone.includes('已經不在現在這批裡了'));
+
+  // 留著 ≠ 看過。兩個標記共用過一份實作，混起來的話按「留著」會把東西從日報裡弄不見。
+  await page.evaluate(() => localStorage.clear());
+  await page.goto(`${BASE}/brief`, { waitUntil: 'networkidle' });
+  await page.locator('[data-mark="留著"]').first().click();
+  await page.waitForTimeout(100);
+  const afterKeep = (await page.locator('main').innerText()).replace(/\n/g, ' ');
+  check('按了留著，分頁上就有 1 件', /留著的\s*1/.test(afterKeep));
+  check('留著不等於看過：日報沒有因此少一件', new RegExp(`日報\\s*${unreadCount}`).test(afterKeep));
+
+  await page.reload({ waitUntil: 'networkidle' });
+  check('留著撐得過重新整理', /留著的\s*1/.test((await page.locator('main').innerText()).replace(/\n/g, ' ')));
+
+  await page.goto(`${BASE}/brief?view=kept`, { waitUntil: 'networkidle' });
+  check('「留著的」列得出剛才那一件', (await page.locator('main').innerText()).replace(/\s/g, '').includes('留著1篇'));
+
+  // 我要去：活動曆按下去，門口的「留著的」看得到——兩頁同一份標記
+  await page.evaluate(() => localStorage.clear());
+  await page.goto(`${BASE}/brief/events`, { waitUntil: 'networkidle' });
+  await page.locator('[data-mark="我要去"]').first().click();
+  await page.waitForTimeout(100);
+  await page.goto(`${BASE}/brief?view=kept`, { waitUntil: 'networkidle' });
+  const goingText = (await page.locator('main').innerText()).replace(/\s/g, '');
+  check('活動曆按的「我要去」，門口的「留著的」看得到（兩頁同一份標記）', goingText.includes('我要去1場'));
+  await page.evaluate(() => localStorage.clear());
+
   const defaultEventCount = data.events.filter((e) => inDefaultView(e)).length;
 
   // ---- 讀的東西內頁 /brief/reading
@@ -190,7 +260,8 @@ try {
   const noSummary = data.items.filter((i) => !i.summary);
   check(`${noSummary.length} 篇沒有摘要，頁面照實講出這件事`, new RegExp(`其中 ${noSummary.length} 篇沒有摘要`).test(reading));
 
-  check('來源逐個可切', (await page.locator('nav button[aria-pressed]').count()) >= itemSources.length);
+  // 來源按鈕帶 data-source-id（SourceFilter 元件），控制列的全選/反選/單選不算在內
+  check('來源逐個可切', (await page.locator('nav button[data-source-id]').count()) === itemSources.length);
 
   // 篩選進網址
   const one = itemSources[0];
@@ -201,17 +272,42 @@ try {
     (await page.locator('main').innerText()).replace(/\s/g, '').includes(`這一批${oneCount}篇`),
   );
 
+  // 反選：從單一來源反選 → 剩下的都在（總數 − 這一家）。控制列抽到共用 SourceFilter，兩頁同一顆。
+  await page.locator('nav button', { hasText: '反選' }).click();
+  await page.waitForLoadState('networkidle');
+  check(
+    `反選：?sources=${one.id} 反選後剩 ${data.items.length - oneCount} 篇`,
+    (await page.locator('main').innerText()).replace(/\s/g, '').includes(`這一批${data.items.length - oneCount}篇`),
+  );
+
+  // 只看有摘要：濾掉沒附摘要的那些，剩下的每一篇都有摘要
+  const withSummary = data.items.filter((i) => i.summary).length;
+  await page.goto(`${BASE}/brief/reading`, { waitUntil: 'networkidle' });
+  await page.locator('nav button', { hasText: '只看有摘要' }).click();
+  check(
+    `只看有摘要：${data.items.length} 篇濾成 ${withSummary} 篇有摘要的`,
+    (await page.locator('#all-items').innerText()).replace(/\s/g, '').includes(`這一批${withSummary}篇`),
+  );
+
   // ---- 活動曆 /brief/events
   await page.goto(`${BASE}/brief/events`, { waitUntil: 'networkidle' });
   const events = await page.locator('main').innerText();
   check('沒有單一來源的內部詞彙（所／院）', !/全院|關注的所|中研院 \d+ 個所/.test(events));
   check(
     '來源逐個可切',
-    (await page.locator('nav button[aria-pressed]').count()) === data.sources.filter((s) => s.collection === 'events').length,
+    (await page.locator('nav button[data-source-id]').count()) === data.sources.filter((s) => s.collection === 'events').length,
   );
   check(
     `預設場次數＝${defaultEventCount}（不含預設收起來的來源）`,
     new RegExp(`場次\\s*${defaultEventCount}\\s*場`).test((await page.locator('#all-events').innerText()).replace(/\n/g, '')),
+  );
+
+  // 全不選是合法狀態（與讀的東西一致）：內容區顯示空狀態，不是壞掉的空白頁
+  await page.goto(`${BASE}/brief/events?sources=none`, { waitUntil: 'networkidle' });
+  check(
+    '全不選合法：?sources=none 顯示空狀態、0 場，不當機',
+    new RegExp('場次\\s*0\\s*場').test((await page.locator('#all-events').innerText()).replace(/\n/g, '')) &&
+      (await page.locator('main').innerText()).includes('這個篩選底下沒有場次'),
   );
 
   for (const mode of ['calendar', 'pivot']) {

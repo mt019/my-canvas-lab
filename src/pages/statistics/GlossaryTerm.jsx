@@ -65,7 +65,7 @@ export default function GlossaryTerm() {
   const usedIn = term.usedIn ?? [];
 
   return (
-    <main className="reading-grain min-h-screen bg-paper pb-10 text-ink" style={{ zoom: scale }}>
+    <main className="reading-grain min-h-screen bg-paper pb-10 text-ink" style={{ '--reader-scale': scale }}>
       <SiteHeader
         back={{ href: '/statistics/glossary', label: en ? 'Glossary' : '術語表' }}
         lang={lang}

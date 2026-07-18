@@ -8,18 +8,20 @@ import { useEffect, useState } from 'react';
  *
  * Headings get their ids from rehype-slug at build time (see vite.config.ts).
  */
-export default function TableOfContents({ containerRef, label = '本頁目次', refreshKey }) {
+export default function TableOfContents({ containerRef, label = '本頁目次', refreshKey, levels = [2, 3] }) {
   const [items, setItems] = useState([]);
   const [active, setActive] = useState(null);
 
   // refreshKey re-reads the headings when the article underneath changes — the
   // language switch swaps the whole body, and a table of contents built once at
   // mount would keep listing the previous language's headings.
+  // levels is a literal at the call site; compare by content, not identity.
+  const levelsKey = levels.join(',');
   useEffect(() => {
     const root = containerRef.current;
     if (!root) return undefined;
 
-    const headings = [...root.querySelectorAll('h2[id], h3[id]')];
+    const headings = [...root.querySelectorAll(levels.map((l) => `h${l}[id]`).join(', '))];
     setItems(headings.map((h) => ({ id: h.id, text: h.textContent, level: Number(h.tagName[1]) })));
 
     // The section counts as current once its heading reaches the top third of the
@@ -34,7 +36,8 @@ export default function TableOfContents({ containerRef, label = '本頁目次', 
     );
     headings.forEach((h) => spy.observe(h));
     return () => spy.disconnect();
-  }, [containerRef, refreshKey]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [containerRef, refreshKey, levelsKey]);
 
   if (items.length === 0) return null;
 

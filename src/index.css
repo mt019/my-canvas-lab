@@ -94,7 +94,21 @@ body {
   overflow-x: clip;
   overscroll-behavior-x: none;
   max-width: 100%;
-  /* 紙面材質（PaletteLab 可選，程式生成、極低透明度） */
+  position: relative;
+}
+
+/* 紙面材質畫在獨立的 ::before 兄弟層（絕對定位、負 z-index），不再當作背景畫在
+   容器本身上。原因：字級放大是用 zoom 縮放內容，而 zoom 的子元素會逼瀏覽器把
+   「祖先的背景」一起重新取樣——紙紋那種 1px 細線一經非整數倍（如 160%）重取樣
+   就出現摩爾紋（使用者 2026-07-18 在 160% 看到布紋、簾紋・雙層變形）。把紋理放進
+   ::before，它與被 zoom 的內容是同層兄弟、不是祖先，就不會被牽連重取樣。負 z-index
+   讓它疊在容器自己的底色之上、內文之下（容器需自成 stacking context）。 */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
   background-image: var(--paper-texture, none);
   background-size: var(--paper-texture-size, auto);
 }
@@ -106,15 +120,27 @@ body {
    整頁就讀成一層灰底——紋理一旦看得出是「一片顏色」，它就不再是紙紋，而是底色，
    而閱讀面不准有底色。現值把顆粒調細（頻率 0.9→1.2）並壓到 0.018，只在近看時
    讓白面不死平。要調就往更淡調，不要往回加。 */
-.reading-grain {
+.reading-grain,
+.paper-texture {
+  position: relative;
+  z-index: 0;
+}
+.reading-grain::before,
+.paper-texture::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+.reading-grain::before {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23g)' opacity='0.018'/%3E%3C/svg%3E");
   background-repeat: repeat;
   background-size: 140px 140px;
 }
-
-/* 各頁自己的不透明底色容器（PageShell、首頁）疊在 body 之上，
-   單靠 body 的材質背景會被蓋住；套這個 class 讓材質在任何頁面底色上都顯示。 */
-.paper-texture {
+/* 各頁自己的不透明底色容器（PageShell、首頁）疊在 body 之上，單靠 body 的材質層
+   會被蓋住；這個 ::before 讓材質在任何頁面底色上都顯示。 */
+.paper-texture::before {
   background-image: var(--paper-texture, none);
   background-size: var(--paper-texture-size, auto);
 }
@@ -127,6 +153,20 @@ h1, h2, h3 {
    Only prose opts in; dashboards and instrument UIs stay fixed. */
 .prose-scaled {
   font-size: calc(var(--text-body) * var(--fs, 1));
+}
+
+/* Reader size lever. FontSizeControl sets --reader-scale on the page root;
+   this class carries it as `zoom` on the *content wrapper inside* a shell's
+   fixed-width frame — never on the full-width <main>. That is the whole trick:
+   because the max-width column and the outer gutter live outside the zoom, the
+   margins never move when the type grows. The content (text, spacing, charts)
+   scales proportionally and reflows inside a column whose on-screen width is
+   fixed — the way an in-page reader control behaves on Substack / Kindle / NYT,
+   as opposed to browser zoom (Cmd +/−), which scales the frame too. Navigation
+   rails and the toolbar deliberately do NOT get this class, so chrome stays a
+   stable, comfortable size while you enlarge the reading. */
+.reader-scale {
+  zoom: var(--reader-scale, 1);
 }
 
 /* Metallic foil sheen (e.g. Klimt gold). Sanctioned exception to the

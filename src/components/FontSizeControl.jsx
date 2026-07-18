@@ -4,12 +4,16 @@ const STORAGE_KEY = 'canvaslab:fontScale';
 export const FONT_SCALES = [0.85, 0.925, 1, 1.1, 1.25, 1.4, 1.6];
 
 /*
- * Reader size control. Primary mechanism (2026-07-07 user decision): apply
- * the scale as CSS zoom on the page content root — style={{ zoom: scale }} —
- * so every element scales proportionally, like browser Cmd+/Cmd-. PageShell
- * does this built-in; pages with their own shell put it on their root div.
- * The older --fs / .prose-scaled text-only multiplier still works but is
- * secondary. localStorage-persisted, shared across pages.
+ * Reader size control. The page sets --reader-scale on its root; the shared
+ * .reader-scale class (index.css) carries it as `zoom` on the content wrapper
+ * *inside* each shell's fixed-width frame — never on the full-width root
+ * (2026-07-18). That is the difference between this and an earlier build that
+ * zoomed the whole <main>: because the max-width column and the outer gutter
+ * live outside the zoom, enlarging the type reflows the content but never
+ * moves the margins — the way an in-page reader control behaves on Substack /
+ * Kindle / NYT, as opposed to browser Cmd+/Cmd-, which scales the frame too.
+ * Navigation rails and the toolbar stay unscaled. localStorage-persisted,
+ * shared across pages.
  */
 export function useFontScale() {
   const [scale, setScale] = useState(() => {

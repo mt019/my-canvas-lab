@@ -820,11 +820,11 @@ export default function ECFAResearch() {
   }, []);
 
   return (
-    <div className="min-h-screen paper-texture bg-[var(--ecfa-bg)] font-sans text-[var(--ecfa-ink-strong)]" style={{ ...ECFA_VARS, paddingBottom: 60, zoom: fontScale }}>
+    <div className="min-h-screen paper-texture bg-[var(--ecfa-bg)] font-sans text-[var(--ecfa-ink-strong)]" style={{ ...ECFA_VARS, paddingBottom: 60, '--reader-scale': fontScale }}>
       <header className="border-b border-[var(--ecfa-line)] bg-white">
         <div className="mx-auto max-w-6xl px-4 py-7 sm:px-6">
           <div className="flex items-start justify-between gap-3">
-            <div className="max-w-4xl">
+            <div className="reader-scale max-w-4xl">
               <div className="mb-3 inline-flex items-center gap-2 font-accent text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--ecfa-eyebrow-header)]">
                 <ScrollText size={13} />
                 ECFA Research Lab
@@ -859,6 +859,7 @@ export default function ECFAResearch() {
       </nav>
 
       <main className="mx-auto max-w-6xl px-4 sm:px-6 prose-scaled">
+       <div className="reader-scale">
         {active === 'core' ? <CoreView /> : null}
         {active === 'events' ? <EventTimelineView /> : null}
         {active === 'exposure' ? <ExposureView /> : null}
@@ -868,6 +869,7 @@ export default function ECFAResearch() {
         {active === 'glossary' ? <GlossaryView /> : null}
         {active === 'sources' ? <SourcesView /> : null}
         {active === 'next' ? <NextView /> : null}
+       </div>
       </main>
     </div>
   );

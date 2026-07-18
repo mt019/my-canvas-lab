@@ -26,32 +26,33 @@ export default function PageShell({
     if (title) document.title = title;
   }, [title]);
 
-  // zoom scales the whole page content proportionally (browser-zoom-like).
-  // Deliberately does NOT also set --fs: that would compound with zoom on
-  // .prose-scaled / text-scaled-* text.
-  const scaleStyle = fontScale != null ? { zoom: fontScale } : undefined;
+  // The reader lever rides on a CSS var, and .reader-scale (index.css) turns it
+  // into `zoom` on the content wrapper *below* the toolbar — never on the full
+  // width <main>. The mx-auto frame stays outside the zoom, so the margins hold
+  // still while the type grows. The toolbar row keeps its own fixed size.
+  const scaleStyle = fontScale != null ? { '--reader-scale': fontScale } : undefined;
 
   return (
     <main className="min-h-screen bg-paper paper-texture text-ink" style={scaleStyle}>
       <div className={`mx-auto px-4 py-10 sm:px-6 ${WIDTHS[width] ?? WIDTHS.prose}`}>
-        <header className="mb-8">
-          <div className="mb-4 flex items-center justify-between gap-4">
-            <a
-              href={backHref}
-              className="text-token-sm text-ink-faint transition-colors duration-fast hover:text-accent"
-            >
-              ← Canvas Lab
-            </a>
-            {controls ? <div className="flex items-center gap-2">{controls}</div> : null}
-          </div>
-          {eyebrow ? <Eyebrow className="mb-2">{eyebrow}</Eyebrow> : null}
-          {title ? (
-            <h1 className="font-display text-token-2xl leading-tight sm:text-token-3xl">
-              {title}
-            </h1>
-          ) : null}
-        </header>
-        <div className={width === 'prose' ? 'prose-scaled' : undefined}>
+        <div className="mb-4 flex items-center justify-between gap-4">
+          <a
+            href={backHref}
+            className="text-token-sm text-ink-faint transition-colors duration-fast hover:text-accent"
+          >
+            ← Canvas Lab
+          </a>
+          {controls ? <div className="flex items-center gap-2">{controls}</div> : null}
+        </div>
+        <div className={`reader-scale ${width === 'prose' ? 'prose-scaled' : ''}`}>
+          <header className="mb-8">
+            {eyebrow ? <Eyebrow className="mb-2">{eyebrow}</Eyebrow> : null}
+            {title ? (
+              <h1 className="font-display text-token-2xl leading-tight sm:text-token-3xl">
+                {title}
+              </h1>
+            ) : null}
+          </header>
           {children}
         </div>
       </div>

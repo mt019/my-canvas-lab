@@ -20,8 +20,9 @@
 ## 字級規則
 
 - 正文 18px（`--text-body`）。匯文明朝筆畫細，CJK 明朝正文要比拉丁預設大一級；16px 以下視為過小。
-- 讀者字級控制（2026-07-07 起）＝**整頁等比縮放**：頁面內容根容器 `style={{ zoom: scale }}`，七檔 0.85–1.6，像瀏覽器 ⌘+。PageShell 內建；自帶外殼的頁把 zoom 掛頁根 div。所有元素（含表格、nav、寫死 px 的字）一律跟著縮放。
-- 舊的 `--fs`／`.prose-scaled`／`text-scaled-*` 文字級 multiplier 保留為次要機制；**不要與 zoom 同時掛 --fs**，會疊乘。
+- 讀者字級控制（2026-07-18 起）＝**固定外框、只縮放閱讀內容**：頁面在根容器設 `style={{ '--reader-scale': scale }}`，共用 class `.reader-scale`（index.css）把它當 `zoom` 掛在**外框裡的內容 wrapper**上——不是掛滿寬的 `<main>`。因為 max-width 欄與外側 gutter 都在 zoom 之外，放大字級時內容重新折行、**左右邊界永遠不動**（成熟閱讀器 Substack／Kindle／NYT 的作法；瀏覽器 ⌘+ 才會連外框一起縮）。導覽 rail 與工具列不縮放。七檔 0.85–1.6。三個共用外殼（PageShell／ArticleLayout／DashboardLayout）內建；自帶版型的頁（Glossary、ECFA）在自己的固定框內套 `.reader-scale`。
+  - **紙紋不放在會被 zoom 牽連的祖先背景上**：`.reader-scale` 的 zoom 子元素會逼瀏覽器把祖先的背景一起重取樣，1px 細線紋（布紋、簾紋・雙層）在非整數倍會出摩爾紋（2026-07-18 實測 160%）。紙紋一律畫在 `::before` 兄弟層（`body::before`、`.paper-texture::before`、`.reading-grain::before`，負 z-index），與被縮放的內容同層兄弟、不受重取樣。
+- 舊的 `--fs`／`.prose-scaled`／`text-scaled-*` 文字級 multiplier 保留為次要機制；**不要與 reader-scale 同時掛 --fs**，會疊乘。
 - 不動 `html` 的 font-size。
 
 ## 共用元件（`src/components/`）
@@ -29,7 +30,7 @@
 | 元件 | 用法 |
 |---|---|
 | `LangSwitch` ＋ `useLang` | `const { lang, setLang, t } = useLang(dict)`；字典以中文原文為 key，zh 零成本、漏譯自動回退。localStorage `canvaslab:lang`，同步 `document.documentElement.lang`。新頁一律用它，不再自造 lang state。 |
-| `FontSizeControl` ＋ `useFontScale` | `const [scale, setScale] = useFontScale()`；七檔 0.85–1.6，localStorage `canvaslab:fontScale`。scale 掛頁根 `zoom`（見字級規則）。學術長文頁放 header 右側。 |
+| `FontSizeControl` ＋ `useFontScale` | `const [scale, setScale] = useFontScale()`；七檔 0.85–1.6，localStorage `canvaslab:fontScale`。scale 設在頁根 `--reader-scale`，由 `.reader-scale` 掛在外框內的內容 wrapper（見字級規則）。學術長文頁放 header 右側。 |
 | `PageShell` | 新頁與簡單長文頁的外殼：`--c-paper` 底、prose（~65ch）或 wide 寬度、document.title、header 右側 controls slot。自帶複雜外殼的儀表板頁（分頁導覽、側欄）不硬套。 |
 | `SiteHeader` | 主題站（統計站這類有自己首頁與多個子頁的站）內頁的頁首：返回鍵＋LangSwitch＋FontSizeControl。**`back` 是必填參數，且一律指向該站自己的首頁，不是 canvas 根首頁**——讀者在深處要回的是他正在讀的那個站；canvas 根從站首頁再一步就到。這條規則寫進 API（缺 `back` 直接 throw），不是寫在文件裡靠人記得。曾經三頁各自手刻同一條頁首，其中一頁的返回鍵已經漂到 canvas 根。 |
 | `AppearanceMenu` | 色票與紙紋，收在一顆「外觀」按鈕的下拉裡（不平鋪在工具列上——閱讀頁只付得起一排鉻件）。改的是全站設定（localStorage，開站時套用），與 `/palettelab` 同一組值；差別只在讀者不必離開正文就能換。色票圓點顯示的是 accent 不是 paper——每套票的 paper 依規則都近白，排出來會是一排白方塊。 |
@@ -44,6 +45,9 @@
 |---|---|
 | `Tabs` ＋ `useTabParam(key, fallback)` | 分頁狀態一律進網址 query（深連結、上一頁可回），預設值不寫進 query，切頁自動捲到頂。`variant="underline"` 給頁面主分頁，`"quiet"` 給次分頁與元件內部切換。 |
 | `Accordion` ＋ `useExpandedSet(ids)` | 多選展開，**初值一律全部展開，且沒有「預設收合」的參數**——收合卡片會把讀者要的東西藏起來，這條規則寫進 API 而不是寫在文件裡靠人記得。 |
+| `SourceFilter` ＋ `usePersistedFlag(key)` | 左欄來源篩選（`/brief` 兩個內頁共用）。受控元件，選擇由上層放進網址 `?sources=all\|none\|逗號串`；給 `sections` 就按 kind 分組（整類一起切）、給 `sources` 就平鋪。控制列固定四顆：全選／全不選／反選／單選(radio)，**空集合(全不選)是合法狀態**，內容區給空狀態不擋。UI 偏好（單選模式等）用 `usePersistedFlag` 存 localStorage（`canvaslab:*` 慣例），選擇本身留在網址才貼得出去。 |
+| `DashboardLayout` | 儀表板版三欄殼（`/brief` 用；與文章版 `ArticleLayout` 是姊妹不是同一個）。header 捲走＋吸頂 underline `Tabs` 分頁列＋三欄 `[12rem_1fr_12rem]`：左欄 h2-only 目次（含可選 `leftRailTop` 放緊急提醒）、滿寬內容欄、右欄 `SubOutline`。頁面提供抬頭／分頁項目／內容，殼負責版型與把 TOC／SubOutline 接到內容容器。文章要固定閱讀寬度就用 `ArticleLayout`，儀表板要滿寬密集列就用這個。 |
+| `SubOutline` | 比左欄目次深一層：左欄列區（h2），這裡列當前區底下的細目（h3），scroll-spy 追蹤。**永遠落在一個區**（還沒捲就第一區），右欄不會在單一來源／收合的區中途變空白。`DashboardLayout` 的右欄用它。 |
 | `Badge` | `tone` 只吃語意色槽（danger/warning/success/info/neutral 或 cat-1…cat-8），不吃任意顏色。 |
 | `HoverCite` | 引註標記，hover/focus 顯示出處。出處物件來自資料倉，缺 locator 的引註在資料倉就 FAIL，前端不做把關。 |
 | `Math`（匯入時建議命名為 `Tex`，避免遮蔽全域 `Math`） | KaTeX 包裝，見下方例外。 |
@@ -60,7 +64,7 @@ Y 軸標題橫排放在軸頂，不旋轉 90 度立在側邊。
 
 ## 色票庫
 
-**色票庫的家是 `/palettelab`（資料層在 `src/styles/palettes.js`）**：站內現用、名畫、器物、水果、中國色五組候選票，整頁即時試穿、可複製成 tokens.css 片段。**「設為全站配色」**把選定票寫進 localStorage（`canvaslab:palette`）並在開站時（`main.jsx` 的 `bootSitePalette()`）套到 `:root` 的 `--c-*` token——全站配色是每台瀏覽器的使用者設定，tokens.css 只是無設定時的中性 fallback。紙面材質（手工紙／簾紋／布紋／細點，全部程式生成、2–4% 透明度）同機制（`canvaslab:texture`），套在 body 的 `--paper-texture`。
+**色票庫的家是 `/palettelab`（資料層在 `src/styles/palettes.js`）**：站內現用、名畫、器物、水果、中國色五組候選票，整頁即時試穿、可複製成 tokens.css 片段。**「設為全站配色」**把選定票寫進 localStorage（`canvaslab:palette`）並在開站時（`main.jsx` 的 `bootSitePalette()`）套到 `:root` 的 `--c-*` token——全站配色是每台瀏覽器的使用者設定，tokens.css 只是無設定時的中性 fallback。紙面材質（手工紙／簾紋／布紋／細點，全部程式生成、2–4% 透明度）同機制（`canvaslab:texture`），設在 `--paper-texture`、畫在 `::before` 兄弟層（見字級規則的紙紋條）。
 
 **閱讀面鐵律（2026-07-07 使用者裁定）**：色票只管裝飾與框架；每套色票的 `paper` 角色（大段正文的底）必須近白、只准帶極輕微色傾向，有色的 `surface` 只能用在邊框、側欄、badge 等鉻件。新色票不符此規則不收。
 
@@ -116,8 +120,9 @@ Notion 的 tag／badge 色系從不出醜，原因是四條紀律，本站色彩
 
 這幾條是活動曆那一輪逐條被退回來的。每一條都對應一個當場做錯的版本。
 
-- **先用既有的系統，不要為單頁手刻外殼。** 頁面外殼＝`PageShell`（單頁）或 `SiteHeader`＋
-  `ArticleLayout`（主題站內頁：左欄篩選／中欄正文／右欄自動目次）；分頁一律 `Tabs`＋`useTabParam(s)`。
+- **先用既有的系統，不要為單頁手刻外殼。** 頁面外殼＝`PageShell`（單頁）、`SiteHeader`＋
+  `ArticleLayout`（文章／主題站內頁：左欄篩選／中欄正文／右欄自動目次）、或 `DashboardLayout`
+  （儀表板：header 捲走＋吸頂分頁＋滿寬內容＋右欄 `SubOutline`，`/brief` 用）；分頁一律 `Tabs`＋`useTabParam(s)`。
   使用者原話：「我的 UI 設計裡面的分頁標籤系統、側邊欄系統……都白設計了？」——手刻一個一次性的
   外殼，等於把已經校準過的東西丟掉重造一個比較差的。**動手前先問：這個形狀已經有元件了嗎。**
 - **徽章／色籤只給「可以動手」的狀態。** 判準是資訊量，不是語意：**在該欄位上佔多數的那個值不准掛籤**。
@@ -135,6 +140,31 @@ Notion 的 tag／badge 色系從不出醜，原因是四條紀律，本站色彩
 - **有真實的時間關係就畫出來，別讓讀者心算。** 「8/14 開」與「7/20 截止」寫成兩行字，讀者得自己
   相減才看得到陷阱。這不牴觸「沒有真分佈就別做圖」——那條擋的是把等差序列分桶（必然均勻＝零資訊）；
   真實類別 × 真實時間的疏密本身就是內容。
+
+## 使用者標記的東西不准被資料輪替吃掉（2026-07-17，全站通則）
+
+任何讓使用者標記、收藏、留著、勾選的功能，都要先回答一個問題：**這個標記活得比它標的那筆資料久嗎？**
+
+canvas 上的資料頁多半吃的是投影過的檔（資料倉送上站的那一份），而**投影是會輪替的**：
+`brief` 每個來源只送最新 12 篇，一篇東西幾天內就會被新的擠出去。這時候只記 id 的標記會遇到
+一個沒有好答案的處境——那個 id 查不到東西了。把它剪掉，使用者留的東西就連同標記一起消失，
+**而畫面上一個字都不會說**；留著不剪，那一行又畫不出來。
+
+規則：
+
+- **「我看過了」這類講「我跟那筆資料的關係」的標記，記 id 就好**，而且該剪——那個 id 再也不會
+  被問到，留著只會讓 localStorage 一直長。
+- **「我要留著它」這類講「那個東西本身」的標記，存快照**（標題、連結、日期、來源、按下去的時刻），
+  **而且不准剪**。按下去的那一刻是唯一還拿得到那筆東西的時候；等到要畫清單時才去查，資料可能
+  已經走了，手上只剩一個 id。
+- **快照是退路不是主要來源**：庫裡還在就畫庫裡那一筆（東西會改版、期限會延，快照不會知道），
+  走了才退回快照，**並且明說它為什麼看起來不一樣**。
+- **標記的清單照「按下去的時間」排**，不照東西本身的日期——那份清單記的是使用者的決定。
+- **一個會把你留的東西弄丟的「留著」，比沒有留著更糟**：後者你至少知道要自己記。
+- 這種錯**永遠不會在今天的資料上出現**，要等資料換一批才發作，那時候沒有人在看。所以固定檢查
+  要直接把那個未來狀態做出來（塞一筆 id 不在庫裡的標記進去），不能等它自己發生。
+
+實作與檢查：`pages/brief/marks.js`、`pages/brief/MarkButton.jsx`、`scripts/check-brief-pages.mjs`。
 
 ## 也不准被單一「種類」綁架（2026-07-17 使用者裁定，同日第二次）
 

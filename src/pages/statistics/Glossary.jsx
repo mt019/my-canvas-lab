@@ -90,7 +90,7 @@ export default function Glossary() {
   );
 
   return (
-    <main className="reading-grain min-h-screen bg-paper pb-10 text-ink" style={{ zoom: scale }}>
+    <main className="reading-grain min-h-screen bg-paper pb-10 text-ink" style={{ '--reader-scale': scale }}>
       <SiteHeader
         back={{ href: '/statisticslab', label: en ? 'Statistics Lab' : '統計學實驗室' }}
         width="prose"
@@ -101,6 +101,7 @@ export default function Glossary() {
       />
 
       <div className="mx-auto max-w-[52rem] px-4 sm:px-6">
+       <div className="reader-scale">
         <header className="mb-8">
           <p className="mb-2 font-accent text-token-xs uppercase tracking-[0.18em] text-ink-faint">
             {en ? 'Statistics Lab' : '統計學實驗室'}
@@ -169,6 +170,7 @@ export default function Glossary() {
             {en ? 'Nothing matches that.' : '沒有符合的術語。'}
           </p>
         ) : null}
+       </div>
       </div>
     </main>
   );
