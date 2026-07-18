@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-07-18T06:54:57.585Z",
+  "generatedAt": "2026-07-18T13:46:09.394Z",
   "source": "statistics-lab-data, built by engineering/scripts/build-app-json.mjs",
   "site": {
     "intro": "統計課本教你怎麼算，很少告訴你這些東西當初是為了什麼問題被發明出來，又是在哪裡開始被誤用。這個站一次處理一個看起來理所當然、來歷卻可疑的概念：它為什麼長成這樣，是誰為了什麼發明它，以及它壞掉的時候會壞在哪裡。文章裡的模擬都可以親手轉動，因為有些事情得自己按下去重跑一萬次才會相信。",
@@ -76,6 +76,39 @@
       }
     },
     {
+      "slug": "confidence-interval",
+      "route": "/statistics/confidence-interval",
+      "topic": "inference",
+      "title": "到底什麼是信賴區間",
+      "subtitle": "一則民調的「誤差 ±4 個百分點」，和那句 95% 到底掛在誰身上",
+      "summary": "民調說某人的支持度是 45%、誤差 ±4 個百分點，於是報紙寫「真實支持度有 95% 的機率落在 41% 到 49% 之間」。這句話幾乎每個人都會講，而它是錯的。這篇從一個平均數把信賴區間親手推一遍，看那句 95% 是怎麼在「代入手上的數字」那一步失去立足點的；再用潛艇、比值區間、六句自測，指出連專家都栽在同一個地方。頻率派的工具沒有壞——它正確回答了一個定義清楚的問題，只是那個問題不是你想問的那個。",
+      "publishedAt": "2026-07-18",
+      "updatedAt": "2026-07-18",
+      "readingMinutes": 12,
+      "tags": [
+        "信賴區間",
+        "誤差幅度",
+        "頻率派推論",
+        "Neyman",
+        "可信區間",
+        "誤讀"
+      ],
+      "en": {
+        "title": "What a Confidence Interval Actually Is",
+        "subtitle": "A poll's '±4 points', and the question of whom that 95% is really about",
+        "summary": "A poll puts a candidate at 45% with a margin of error of ±4 points, and the paper writes that there is a 95% chance the true support lies between 41% and 49%. Almost everyone says this, and it is wrong. This piece derives a confidence interval by hand from a single mean, and watches the 95% lose its footing at the exact step where the observed numbers are plugged in. A submarine, a ratio interval, and a six-statement quiz then show that the experts fail at the same spot. The frequentist tool is not broken — it answers a well-defined question correctly. That question is just not the one you meant to ask.",
+        "tags": [
+          "confidence interval",
+          "margin of error",
+          "frequentist inference",
+          "Neyman",
+          "credible interval",
+          "misinterpretation"
+        ],
+        "readingMinutes": 11
+      }
+    },
+    {
       "slug": "null-hypothesis",
       "route": "/statistics/null-hypothesis",
       "topic": "inference",
@@ -145,8 +178,8 @@
   "glossaryGroups": [
     {
       "id": "machinery",
-      "label": "檢定的機件",
-      "blurb": "一次檢定跑起來要用到的零件：假設、分佈、機率、門檻。",
+      "label": "一次檢定的組成",
+      "blurb": "跑一次假設檢定會用到的基本概念：假設、分佈、機率、門檻。",
       "terms": [
         "null-hypothesis",
         "sampling-distribution",
@@ -157,14 +190,14 @@
         "equivalence-test"
       ],
       "en": {
-        "label": "The machinery of a test",
-        "blurb": "The parts a test is assembled from: the hypothesis, the distribution, the probability, the threshold."
+        "label": "What a test is made of",
+        "blurb": "The basic ideas a hypothesis test is built from: the hypothesis, the distribution, the probability, the threshold."
       }
     },
     {
       "id": "errors",
       "label": "它會怎麼出錯",
-      "blurb": "同一套機件在錯的地方會給出錯的答案，這幾個詞講的是錯在哪、錯多少。",
+      "blurb": "同樣一套方法，用錯地方就給出錯的答案；這幾個詞講的是錯在哪、錯多少。",
       "terms": [
         "type-i-and-type-ii-error",
         "statistical-power",
@@ -172,13 +205,13 @@
       ],
       "en": {
         "label": "How it goes wrong",
-        "blurb": "The same machinery gives wrong answers in the wrong places. These terms are about which way it fails, and by how much."
+        "blurb": "The same method gives wrong answers in the wrong places. These terms are about which way it fails, and by how much."
       }
     },
     {
       "id": "misuse",
       "label": "誤用與它的後果",
-      "blurb": "研究者的實作習慣如何把一套合理的方法變成一台生產假陽性的機器。",
+      "blurb": "研究者的實作習慣，如何把一套合理的方法變成大量製造假陽性的來源。",
       "terms": [
         "p-hacking",
         "multiple-comparisons",
@@ -188,7 +221,7 @@
       ],
       "en": {
         "label": "Misuse and its consequences",
-        "blurb": "How ordinary research habits turn a reasonable method into a machine for manufacturing false positives."
+        "blurb": "How ordinary research habits turn a reasonable method into a source of false positives."
       }
     }
   ],

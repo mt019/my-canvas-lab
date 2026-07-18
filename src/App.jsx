@@ -101,6 +101,16 @@ const PAGE_META = { // token-exempt: per-page identity chip colors (data, not st
     listed: false,
     type: 'Article',
   },
+  ConfidenceInterval: {
+    name: '到底什麼是信賴區間',
+    desc: '一則民調的「誤差 ±4 個百分點」，那句 95% 到底掛在誰身上——覆蓋率、潛艇、比值區間與六句自測',
+    Icon: Sigma,
+    accent: '#dfe3ea',
+    accentText: '#6c7690',
+    group: 'learn',
+    listed: false,
+    type: 'Article',
+  },
   About: {
     name: '本站說明',
     desc: '統計學實驗室在做什麼：方法、例子怎麼查證、模擬為何每次跑出同樣數字',

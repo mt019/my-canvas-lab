@@ -1,0 +1,117 @@
+{/* English prose. A rewrite of the Chinese, not a translation. Title and summary live in meta.json.
+    All math in LaTeX (including $$ blocks); no Unicode math glyphs in prose or source fields.
+    Interactive components (PollErrorBand, Coverage, Submarine, Fieller, FreqVsBayes, Quiz) and <Cite>, <Term>, <Derivation> are injected by the front end; nothing is imported here. */}
+
+In October 2024, Gallup interviewed 1,023 U.S. adults and reported Kamala Harris's job approval at 45%, with <Cite id="gallup2024HarrisApproval">a sampling error of ±4 percentage points at the 95% confidence level</Cite>. The next day's coverage turned that into a sentence everyone understands: there is a 95% chance her true approval lies between 41% and 49%.
+
+<PollErrorBand />
+
+I used to say that sentence too, and it rolls off the tongue. It has one flaw: it is false. The error is not a small slip; it reads the whole meaning of a <Term id="confidence-interval">confidence interval</Term> in reverse. Once the 41%-to-49% band is computed, it is fixed. It either contains the true value or it does not, and no "95% probability" attaches to it. The 95% is not a statement about this interval at all.
+
+I am not here to scold anyone. "I just want to know the probability that the true value is in this range" is a completely reasonable wish — it is, in fact, the question everyone silently asks when they see a poll. The trouble is that the tool in your hand does not compute that. To see where the gap opens, build the interval by hand.
+
+## Build the interval first
+
+Suppose you are estimating a mean. The population mean is $\mu$, unknown; you have $n$ observations, with sample mean $\bar X$ and sample standard deviation $s$. One quantity ties the unknown $\mu$ to the computable $\bar X$:
+
+$$ T = \frac{\bar X - \mu}{s / \sqrt{n}} $$
+
+This $T$ has a useful property. Whatever $\mu$ actually equals, as long as the data are roughly normal, $T$ follows a $t$ distribution with $n-1$ degrees of freedom. Its shape does not depend on the unknown $\mu$. A quantity that carries an unknown parameter inside yet has a fixed distribution is called a **pivot**, and it is what the whole construction turns on.
+
+Because the distribution of $T$ is fixed, I can write one probability statement on it that holds firmly. Let $t^* = t_{0.975,\,n-1}$, the critical value that brackets the middle 95% of the $t$ distribution:
+
+$$ P\!\left( -t^* \le \frac{\bar X - \mu}{s / \sqrt{n}} \le t^* \right) = 0.95 $$
+
+Nothing has gone wrong yet. Now a step of pure algebra: unwrap the inequality so that $\mu$ stands alone in the middle. Multiply through by $s/\sqrt n$, rearrange, flip signs, and
+
+$$ P\!\left( \bar X - t^* \frac{s}{\sqrt n} \;\le\; \mu \;\le\; \bar X + t^* \frac{s}{\sqrt n} \right) = 0.95 $$
+
+That $\bar X \pm t^*\, s/\sqrt n$ is the confidence interval. The poll's ±4-point band is the proportion version of the same object: score each "approve" as a 1 and each "disapprove" as a 0, and 45% is the mean of those 0s and 1s, with standard error $\sqrt{p(1-p)/n}$. Plug in $p=0.45$ and $n=1023$, and $1.96$ standard errors come to about 3 points; Gallup reports ±4 because <Cite id="pew2016MarginOfError">the actual margin of error also absorbs weighting and the survey design</Cite>, running a little above the textbook value. The skeleton is identical.
+
+Now look at the subject of that probability statement. When $P(\dots) = 0.95$ is written down, $\mu$ is a fixed constant; the thing that varies is $\bar X$, still unobserved, still a random variable. The 95% says this: **before sampling, while $\bar X$ still bounces around, the event "$\bar X$ lands close enough that the computed interval happens to cover $\mu$" has probability 95%.** The probability rides on the moving $\bar X$.
+
+Then you draw the sample, $\bar X = 45\%$, $s$ is fixed, and the interval comes out at 41% to 49%. That step swaps $\bar X$ from a random variable to a number in hand. $\bar X$ no longer moves, $\mu$ never moved, and the two endpoints are now nailed down. The 95% described "how often the interval covers while $\bar X$ bounces"; nothing bounces anymore, so it has nowhere left to stand. The segment 41% to 49% either contains $\mu$ or it does not — a fact that is zero or one, not a probability. **The misreading is born at the plug-in step: a sentence about the long-run behaviour of a procedure gets read as a sentence about the one interval on the table.**
+
+<Derivation title="Expand: the full algebra, and why coverage is exactly 1 minus alpha">
+
+Every step of solving the probability statement for $\mu$:
+
+$$ -t^* \le \frac{\bar X - \mu}{s/\sqrt n} \le t^* $$
+
+Multiply all three parts by $s/\sqrt n$ (positive, so the inequalities keep their direction):
+
+$$ -t^* \frac{s}{\sqrt n} \le \bar X - \mu \le t^* \frac{s}{\sqrt n} $$
+
+Subtract $\bar X$ from all three parts, then multiply by $-1$ (negative, so both inequalities flip):
+
+$$ \bar X - t^* \frac{s}{\sqrt n} \le \mu \le \bar X + t^* \frac{s}{\sqrt n} $$
+
+As for why coverage is **exactly** $1-\alpha$, no more and no less: the distribution of $T$ is continuous. By definition $t^*$ satisfies $P(-t^* \le T \le t^*) = 1-\alpha$, a property of the $t$ distribution that does not depend on $\mu$. Solving the inequality above is a **reversible** equivalence — "$T$ falls in $[-t^*, t^*]$" and "$\mu$ falls in $[\bar X - t^* s/\sqrt n,\ \bar X + t^* s/\sqrt n]$" are two ways of writing the same event. The same event has the same probability, so the coverage equals $1-\alpha$ precisely. This also shows Neyman's general recipe: carve out a region of probability $1-\alpha$ on the pivot, then translate it back into the language of the parameter. It is dual to a hypothesis test — every value inside the interval is exactly a value that would not be rejected at level $\alpha$ if taken as the null.
+
+</Derivation>
+
+## That 95% is a coverage rate
+
+Draw the sentence and it becomes plain. The population mean $\mu$ is a fixed line; each sample gives one interval. Draw a sample, draw a line, stack it:
+
+<Coverage />
+
+Stack enough of them and about 95% cover the line while about 5% miss. The 95% is a property of the whole stack — the long-run fraction that this procedure covers — which is the **coverage rate**. It describes the machine that manufactures intervals, not any single interval the machine spits out. Your 41%-to-49% is one line in the stack; it carries no probability of its own. What carries the 95% is the procedure.
+
+While we are here, clear away a cruder misreading: this interval is not the spread of the data. It is the uncertainty of the **mean**, and it narrows as $n$ grows; the spread of the data itself is $s$, which does not shrink because you collected more observations. Reading a confidence interval as "most individuals fall in here" gets the very object wrong.
+
+Slide the level to 90% or 99% and watch the interval tighten and widen. Slide $n$. However you slide them, the percentage always names "the fraction of this stack that covers", never "how likely the line you picked is the right one".
+
+## The man who built it vetoed that reading on the spot
+
+This is not hindsight. In the 1937 paper that founded confidence intervals, Jerzy Neyman blocked the tempting reading on the **same page** he proposed the construction. He first states that applying the rules permanently yields statements that are right in about $100a\%$ of cases. Then he asks and answers his own question: <Cite id="neyman1937ConfidenceIntervals">can we say that for this particular computed interval the probability of the true value falling inside equals the confidence coefficient? The answer is obviously in the negative. The parameter is an unknown constant, and no probability statement about its value may be made</Cite>.
+
+From the moment it was born, the confidence interval was never built to answer "the probability that this segment covers the truth". It answers a question about a procedure, and Neyman could not have been clearer about that.
+
+## Cracks inside the frequentist framework
+
+Maybe you now want to say: fine, record the 95% as "the long-run fraction that covers", never pin it on a single interval, and the problem is gone. Even under that discipline, the frequentist framework has two cracks of its own, visible without ever calling on Bayes.
+
+The first comes from an innocent-looking quantity: the ratio of two means. Such estimates are everywhere — a half-maximal dose, a ratio of two costs, a regression slope. Its 95% confidence set is given by Fieller's method, and <Cite id="casellaBerger2002StatisticalInference">what that lawful procedure returns can be an interval, the complement of an interval, or the entire real line; and to keep 95% coverage it must be infinite with positive probability</Cite>.
+
+<Fieller />
+
+Slide the denominator's signal-to-noise ratio down — the denominator mean shrinks relative to its error and grows more likely to cross zero. The confidence set is a finite interval, then it hollows out into the complement of an interval with two infinite tails, then it swells into the entire real line. The entire real line means "every value is compatible", carrying zero information. Nothing was miscalculated; this is the price the well-behaved procedure must pay, when the denominator might be zero, to keep 95% coverage. A lawful 95% procedure hands you an answer that says nothing with positive probability.
+
+The second crack cuts harder, straight at "how much this interval can be trusted". Morey and colleagues told it in 2016 with a submarine. To be upfront, these authors are Bayesians whose paper concludes that for inference you should <Cite id="morey2016">stop using confidence intervals altogether</Cite>; I borrow their demonstration, not that verdict.
+
+The story: a 10-metre submarine sits on the seabed, its rescue hatch at the exact centre of the hull, position unknown. The hatch releases bubbles, which rise uniformly along the hull within 5 metres on either side of it. You get one dive to attempt a rescue. The first two bubbles surface at $x_1$ and $x_2$. A frequentist builds a 50% confidence interval from them: the segment between the two bubbles, $\bar x \pm |x_1 - x_2|/2$. It is a genuine 50% procedure — the two bubbles straddle the hatch with probability exactly one half.
+
+<Submarine />
+
+Drag the two bubbles. When they sit close together the interval is narrow, and the statistician calls it precise — yet two bubbles that near each other say almost nothing about where the hatch is, so the narrowness is unearned. Now pull them more than 5 metres apart: since a bubble can land at most 5 metres from the hatch, two bubbles more than 5 metres apart must straddle it, and **the 50% interval is then guaranteed to contain the hatch**. One lawful 50% procedure, and the segment in hand can be certainly right or almost certainly wrong, depending entirely on the gap between the bubbles.
+
+Morey sorts the usual misreadings into three named fallacies. The **precision fallacy**: taking a narrow interval to mean a precise estimate — the narrowest interval in the submarine is the least informative. The **likelihood fallacy**: taking values inside the interval to be more probable than values outside — when the bubbles are nearly 10 metres apart, the interval is almost all impossible positions. The **fundamental confidence fallacy**: reading "the random procedure covers 50% in the long run" as "this observed interval has a 50% probability of containing the truth" — the very error the paper makes about the poll.
+
+Behind all three is one thing, which Fisher named back in 1959: **relevant subsets**. Your observed data often fall in a subset where the interval's probability of covering the truth differs from the overall average, and the gap between the bubbles marks exactly such a subset. Look again at the coverage figure: sort the two thousand intervals by length, and the narrowest thousand cover only 92% while the widest thousand cover 98%. All of them are "95% intervals", yet their coverage sits below and above 95%. Which half your interval resembles is something its length already gave away.
+
+## Even the experts fail it
+
+If by now this feels like a collection of contrived corner cases that daily research never meets, a 2014 survey by Hoekstra and colleagues is uncomfortable reading. They gave respondents a fictional vignette: a professor reports a 95% confidence interval of 0.1 to 0.4 for a mean, followed by six statements about that interval to judge true or false.
+
+All six statements are false. And <Cite id="hoekstra2014">the 442 undergraduates and 120 researchers (PhD students and faculty) both endorsed three or more of them on average; statistical training had no bearing on the score, and the researchers barely beat first-years who had never taken an inference course</Cite>. This was not a fluke — as early as 1986, <Cite id="oakes1986">Oakes put six misreadings of a significant p value to 70 academic psychologists, who endorsed about 2.5 on average, with only around one in ten fully correct</Cite>.
+
+Try it. All six statements are below; check your answers afterward:
+
+<Quiz />
+
+The six err in the same place. <Cite id="hoekstra2014">A confidence interval does not directly indicate a property of the parameter; it indicates a property of the procedure, as is typical for a frequentist technique</Cite>. Every misreading tries to squeeze, out of a procedural statement, one sentence about this parameter, this time. It cannot be squeezed out.
+
+## Name the wish
+
+The circle closes back on the reasonable wish we started with: I just want the probability that the true value is in this range. That question has an answer; it simply belongs to another framework. What you want is a **credible interval**: given a model and a prior, the parameter has a 95% posterior probability of lying in this segment — this time, this segment, genuinely a probability. It looks like a confidence interval and answers precisely the question you meant to ask. The poll's band, redrawn with a prior under Bayesian arithmetic, would become the thing the newspaper already assumed it was. (How the prior enters, and how the credible interval moves with it, is left to the sequel.)
+
+<FreqVsBayes />
+
+The same data, two intervals side by side. Numerically they nearly coincide, but they read as different things: the left says the procedure that made it covers the truth 95% of the time in the long run; the right actually says the parameter has a 95% posterior probability of being inside.
+
+How to close? Not by announcing "so you should become a Bayesian". The frequentist tool is not broken — it answers a well-defined question exactly: what is this procedure's long-run coverage rate. What is broken is treating two frameworks' questions as one, using a frequentist interval to answer a Bayesian's question.
+
+Some have lately wanted to change even the tool's name. In 2019, <Cite id="amrhein2019">a Nature comment co-signed by more than 800 scientists stated plainly that one should never conclude "no difference" merely because a p value exceeds a threshold or a confidence interval includes zero</Cite> — the grown-up form, in the scientific literature, of the poll's misreading. Within the same group, Greenland goes further and proposes to <Cite id="rafiGreenland2020">rename it the compatibility interval: the values inside are those more compatible with the data, under this model and its assumptions, than the values outside</Cite>. The name shifts attention from whether a boundary is crossed to how compatible each value across the whole interval is.
+
+Back to Gallup's 45%, ±4 points. The band is honest; it marks how much sampling wobble sits under the estimate. What gets broken is the sentence right after it, the one that sounds self-evident: "a 95% chance it is inside". The gap is not a matter of a little precision. It is a sentence about a procedure, mistaken for a sentence about this one time. The tool answered correctly. It just never answered the question you thought you asked.

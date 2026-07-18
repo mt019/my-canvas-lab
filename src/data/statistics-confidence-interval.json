@@ -1,0 +1,359 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-07-18T13:46:09.394Z",
+  "source": "statistics-lab-data, built by engineering/scripts/build-app-json.mjs",
+  "meta": {
+    "slug": "confidence-interval",
+    "topic": "inference",
+    "title": "到底什麼是信賴區間",
+    "subtitle": "一則民調的「誤差 ±4 個百分點」，和那句 95% 到底掛在誰身上",
+    "summary": "民調說某人的支持度是 45%、誤差 ±4 個百分點，於是報紙寫「真實支持度有 95% 的機率落在 41% 到 49% 之間」。這句話幾乎每個人都會講，而它是錯的。這篇從一個平均數把信賴區間親手推一遍，看那句 95% 是怎麼在「代入手上的數字」那一步失去立足點的；再用潛艇、比值區間、六句自測，指出連專家都栽在同一個地方。頻率派的工具沒有壞——它正確回答了一個定義清楚的問題，只是那個問題不是你想問的那個。",
+    "publishedAt": "2026-07-18",
+    "en": {
+      "title": "What a Confidence Interval Actually Is",
+      "subtitle": "A poll's '±4 points', and the question of whom that 95% is really about",
+      "summary": "A poll puts a candidate at 45% with a margin of error of ±4 points, and the paper writes that there is a 95% chance the true support lies between 41% and 49%. Almost everyone says this, and it is wrong. This piece derives a confidence interval by hand from a single mean, and watches the 95% lose its footing at the exact step where the observed numbers are plugged in. A submarine, a ratio interval, and a six-statement quiz then show that the experts fail at the same spot. The frequentist tool is not broken — it answers a well-defined question correctly. That question is just not the one you meant to ask.",
+      "tags": [
+        "confidence interval",
+        "margin of error",
+        "frequentist inference",
+        "Neyman",
+        "credible interval",
+        "misinterpretation"
+      ],
+      "readingMinutes": 11
+    },
+    "updatedAt": "2026-07-18",
+    "tags": [
+      "信賴區間",
+      "誤差幅度",
+      "頻率派推論",
+      "Neyman",
+      "可信區間",
+      "誤讀"
+    ],
+    "readingMinutes": 12
+  },
+  "figures": {
+    "poll-error-band": {
+      "id": "poll-error-band",
+      "type": "analytic",
+      "title": "一則真民調的誤差帶",
+      "description": "Gallup 2024 年 10 月 1 至 12 日電訪、隨機抽樣 1,023 位美國成年人，賀錦麗施政滿意度 45%，抽樣誤差 ±4 個百分點（95% 信心水準）。在一條 0% 到 100% 的數線上標出點估計 45% 與 41% 到 49% 的誤差帶。這段帶子就是一個 95% 信賴區間；報紙緊接著的那句『真實支持度有 95% 機率落在裡面』，正是本文要拆的誤讀。",
+      "params": {
+        "estimate": 45,
+        "marginOfError": 4,
+        "low": 41,
+        "high": 49,
+        "n": 1023,
+        "level": 0.95
+      },
+      "notes": "靜態顯示，非模擬、不需要 seed。數字為 Gallup 公開報告（見 sources.json 的 gallup2024HarrisApproval，逐字核對）。不做互動：這裡只需要讓讀者看見『±4 個百分點』就是一段區間。 / 原始參數註記：{\"pollster\":\"Gallup\",\"field\":\"2024-10-01/2024-10-12\",\"n\":1023,\"pointEstimate\":45,\"marginOfErrorPct\":4,\"confidenceLevel\":0.95}"
+    },
+    "coverage": {
+      "id": "coverage",
+      "type": "resampling-simulation",
+      "title": "那句 95% 是覆蓋率",
+      "description": "從一個固定不動的母體 Normal(mu, sigma) 反覆抽樣，每抽一次就用 t 程序算一段信賴區間，把區間一條條疊起來。母體平均 mu 是一條固定的直線；飄動的是每一段區間。約 95% 的區間會蓋到那條線，約 5% 不會。95% 這個數字掛在『製造區間的程序』上，不掛在你手上任一段。把區間依長度排序、著色，會露出更深的一層：短的區間反而比較常沒蓋到——這就是相關子集（Fisher 1959、Morey 2016 圖 1）。滑桿：信心水準（90/95/99）、每段的樣本數 n。",
+      "params": {
+        "populationMean": 50,
+        "populationSD": 10,
+        "n": 20,
+        "df": 19,
+        "level": 0.95,
+        "tCritical": 2.093024054,
+        "repeats": 2000,
+        "displayCount": 60,
+        "seed": 1937
+      },
+      "seed": 1937,
+      "notes": "seed=1937 是 Neyman 發表信賴區間理論的年份，取好記，與統計性質無關。演算法（瀏覽器端必須逐步照抄，否則對不上 data/reference/confidence-interval.json）：mulberry32(seed) 依序產生 uniform(0,1)，每兩個一組經 Box-Muller 轉成一對標準常態；每個 repeat 依序抽 n 個標準常態 z_i，令 x_i = mu + sigma*z_i，算樣本平均 xbar 與樣本標準差 s（除以 n-1），區間為 xbar +/- tCritical * s / sqrt(n)；若 mu 落在 [L,U] 內記為一次覆蓋。coverageCount 是 repeats 段中覆蓋的段數。relevant subsets：把 repeats 段依寬度排序，最窄一半與最寬一半各自的覆蓋數（coverageNarrowHalf / coverageWideHalf）會分別低於、高於整體——窄區間常沒蓋。displayCount 只是畫面上疊幾條（取這條抽樣流的前 displayCount 段），不影響覆蓋統計。tCritical=2.093024054 是 t_{0.975,19}；換信心水準/換 n 時瀏覽器需用對應的 t 臨界值重跑，reference 只鎖預設 (level=0.95, n=20) 這一組。決定性演算法，同 seed 同參數必重現。 / 原始參數註記：{\"populationMean\":50,\"populationSD\":10,\"nDefault\":20,\"levelStops\":[0.90,0.95,0.99],\"repeats\":2000,\"prng\":\"mulberry32\",\"normalSampling\":\"Box-Muller transform on two mulberry32 draws per pair, same order as null-hypothesis figures\",\"interval\":\"one-sample Student t, xbar +/- t_(1-alpha/2, n-1) * s/sqrt(n)\"}"
+    },
+    "submarine": {
+      "id": "submarine",
+      "type": "analytic",
+      "title": "潛艇：同一段區間，可以確定對、也可以幾乎確定錯",
+      "description": "Morey 2016 的思想實驗。一艘 10 公尺長的研究潛艇沉底，救援艙門在船身正中央、位置未知。氣泡沿船身在艙門左右各 5 公尺內均勻、獨立冒出。頻率派用頭兩個氣泡 x1、x2 造一段 50% 信賴區間 CP1 = xbar +/- |x1-x2|/2（兩泡之間那段）。拖動兩個氣泡：兩泡很近時 CP1 很窄，救援員卻會被誤導；兩泡相距超過 5 公尺時，CP1 保證 100% 含艙門——寬不等於精確。這段區間可以確定對、可以幾乎確定錯，全看兩泡間距落在哪個相關子集。",
+      "params": {
+        "shipLength": 10,
+        "halfWidth": 5,
+        "confidenceLevel": 0.5,
+        "bubble1Default": -1.2,
+        "bubble2Default": 1.2
+      },
+      "notes": "解析、決定性，不涉及亂數、不需要 seed。CP1（頻率派 50% 區間）= xbar +/- |x1-x2|/2，其中 xbar=(x1+x2)/2；等價於 N=2、t*=1 的 Student t 程序（s=|x1-x2|/sqrt(2)，半寬 t* s/sqrt(2)=|x1-x2|/2）。可信區間（平坦先驗）中央 50% = xbar +/- (5 - |x1-x2|/2)，隨精確度伸縮並排除不可能的位置。關鍵事實：|x1-x2|>5 時 CP1 必含艙門（見 sources.json morey2016，逐字核）。艙門真實位置在畫面上可設為 0（座標以艙門為原點），氣泡座標相對艙門。 / 原始參數註記：{\"shipLengthMetres\":10,\"bubbleUniformHalfWidth\":5,\"cp1\":\"xbar +/- abs(x1-x2)/2\",\"credible50\":\"xbar +/- (5 - abs(x1-x2)/2)\",\"guaranteedContainWhen\":\"abs(x1-x2) > 5\"}"
+    },
+    "fieller": {
+      "id": "fieller",
+      "type": "analytic",
+      "title": "合法的 95%，可以吐出整條實數線",
+      "description": "兩個常態平均數的比值的信賴集（Fieller）。拉滑桿壓低分母的訊噪比（分母平均相對於它的標準誤越來越小），數線上的 95% 信賴集會從一段有限區間，變成一段區間的補集（中間被挖空、兩端無限），再變成整條實數線。這不是算錯，是這個合法程序為了維持 95% 覆蓋率、在分母可能為零時必須付出的代價（Casella–Berger 9.5.3）。一個合法信賴程序，有正機率給你一個資訊量為零的答案。",
+      "params": {
+        "numeratorEstimate": 2,
+        "numeratorSE": 1,
+        "denominatorEstimate": 2,
+        "denominatorSE": 1,
+        "denominatorSNRDefault": 2,
+        "level": 0.95,
+        "zCritical": 1.959963985
+      },
+      "notes": "解析、決定性，不需要 seed。Fieller 集：滿足 (a - r*b)^2 <= z^2 * (Va - 2*r*Cov + r^2*Vb) 的所有比值 r，其中 a、b 是分子分母的點估計，Va、Vb 是變異、Cov 共變（此處設 Cov=0）。整理成 r 的二次不等式 A*r^2 + B*r + C <= 0（開口方向與判別式決定解集形狀）：判別式>0 且 A>0 得有限區間；A<0 得區間補集（兩段無限）；無實根則整條實數線。分母訊噪比 = denominatorEstimate/denominatorSE，滑桿壓低它就逼近 A<=0。zCritical=1.959963985 對應 95%。 / 原始參數註記：{\"quadratic\":\"A=b^2 - z^2*Vb; B=-2*(a*b - z^2*Cov); C=a^2 - z^2*Va\",\"shapeByDiscriminantAndA\":\"A>0,disc>0: interval; A<0: complement of interval; disc<0: whole real line\",\"cov\":0}"
+    },
+    "freq-vs-bayes": {
+      "id": "freq-vs-bayes",
+      "type": "analytic",
+      "title": "同一筆資料，兩種區間",
+      "description": "把同一個平均數例子，並排畫出 95% 信賴區間與（平坦先驗下的）95% 可信區間。數字上兩段幾乎重合，讀法卻是兩件事：信賴區間說的是製造它的程序長期會蓋到真值 95% 的時候；可信區間才真的說『在這個模型與先驗下，參數有 95% 的事後機率落在這段裡』。你原本想講的是右邊那句。拉先驗、看可信區間怎麼移動的互動，留給續篇。",
+      "params": {
+        "sampleMean": 45,
+        "sampleSE": 2.04,
+        "level": 0.95,
+        "zCritical": 1.959963985,
+        "priorNote": "flat"
+      },
+      "notes": "靜態並排，決定性，不需要 seed。示範用：sampleMean=45、sampleSE 取一個好對照的值；平坦（無資訊）先驗下，常態模型的可信區間與信賴區間數值重合，用來凸顯『數字一樣、讀法不同』。這裡不做拉先驗的互動（那是續篇〈你其實想要的是可信區間〉的心臟）。SE=2.04 僅為示意刻度，非某筆真實研究。 / 原始參數註記：{\"ci\":\"sampleMean +/- zCritical*sampleSE\",\"credibleFlatPrior\":\"same limits under a flat prior normal model\",\"illustrativeOnly\":true}"
+    }
+  },
+  "sources": {
+    "amrhein2019": {
+      "author": "Valentin Amrhein, Sander Greenland and Blake McShane",
+      "title": "Scientists rise up against statistical significance (Retire statistical significance)",
+      "year": 2019,
+      "container": "Nature, 567, pp.305-307",
+      "locator": "由三位作者主筆、超過八百位科學家連署的評論。主張顯著性被二分化地誤用，並直說：不能只因為 p 值大於門檻、或信賴區間含零，就下結論說「沒有差別」。這正是本文開場民調誤讀在科學文獻裡的成年版。作者聲明不是要禁用 p 值。",
+      "quote": "Let's be clear about what must stop: we should never conclude there is 'no difference' or 'no association' just because a P value is larger than a threshold such as 0.05 or, equivalently, because a confidence interval includes zero.",
+      "url": "https://www.nature.com/articles/d41586-019-00857-9",
+      "en": {
+        "locator": "A comment led by three authors and co-signed by more than 800 scientists. It argues that significance is misused dichotomously and states plainly that one should never conclude 'no difference' merely because a p value exceeds a threshold or a confidence interval includes zero. This is the grown-up version, in the scientific literature, of the opening poll's misreading. The authors state they are not calling for a ban on p values.",
+        "quote": "Let's be clear about what must stop: we should never conclude there is 'no difference' or 'no association' just because a P value is larger than a threshold such as 0.05 or, equivalently, because a confidence interval includes zero."
+      }
+    },
+    "casellaBerger2002StatisticalInference": {
+      "author": "George Casella and Roger L. Berger",
+      "title": "Statistical Inference (2nd edition)",
+      "year": 2002,
+      "container": "Duxbury / Thomson Learning, Section 9.5.3 (Miscellanea)",
+      "locator": "兩個常態平均數的比值的 1-alpha 信賴集（Fieller）依分母訊噪比而定，可以是一段區間、一段區間的補集、或整條實數線；而且為了維持 1-alpha 的覆蓋率，它必然以正機率成為無限。這是頻率派內部、不靠貝氏就能指出的病態：一個合法的信賴程序，有正機率吐出「整條實數線」這種資訊量為零的答案。",
+      "quote": "it can be an interval, the complement of an interval, or the entire real line ... Furthermore, to maintain [1 minus alpha] confidence, this interval must be infinite with positive probability.",
+      "en": {
+        "locator": "The 1-alpha confidence set for the ratio of two normal means (Fieller) depends on the signal-to-noise ratio in the denominator and can be an interval, the complement of an interval, or the entire real line; and to keep 1-alpha coverage it must be infinite with positive probability. This is a pathology internal to the frequentist framework, pointed out without any appeal to Bayes: a lawful confidence procedure that with positive probability returns the whole real line, an answer carrying no information.",
+        "quote": "it can be an interval, the complement of an interval, or the entire real line ... Furthermore, to maintain [1 minus alpha] confidence, this interval must be infinite with positive probability."
+      }
+    },
+    "gallup2024HarrisApproval": {
+      "author": "Gallup",
+      "title": "At 45%, Harris' Approval Rating Is Higher Than Biden's",
+      "year": 2024,
+      "container": "Gallup News",
+      "locator": "2024 年 10 月 1 至 12 日的電訪，隨機抽樣 1,023 位美國成年人；賀錦麗（Kamala Harris）施政滿意度 45%。方法欄註明抽樣誤差為 ±4 個百分點、信心水準 95%。開場那條 41% 到 49% 的「誤差帶」就是一個 95% 信賴區間。",
+      "quote": "For results based on the total sample of national adults, the margin of sampling error is ±4 percentage points at the 95% confidence level.",
+      "url": "https://news.gallup.com/poll/652178/harris-approval-rating-higher-biden.aspx",
+      "en": {
+        "locator": "Telephone interviews conducted October 1-12, 2024 with a random sample of 1,023 U.S. adults; Kamala Harris job approval at 45%. The methods note states a sampling error of ±4 percentage points at the 95% confidence level. The 41%-to-49% band quoted at the top of this article is one 95% confidence interval.",
+        "quote": "For results based on the total sample of national adults, the margin of sampling error is ±4 percentage points at the 95% confidence level."
+      }
+    },
+    "hoekstra2014": {
+      "author": "Rink Hoekstra, Richard D. Morey, Jeffrey N. Rouder and Eric-Jan Wagenmakers",
+      "title": "Robust misinterpretation of confidence intervals",
+      "year": 2014,
+      "container": "Psychonomic Bulletin & Review, 21(5), pp.1157-1164",
+      "locator": "受測者拿到一句虛構情境：某教授報告一個平均數的 95% 信賴區間為 0.1 到 0.4，隨後六句對這個區間的陳述，逐句判真假。六句全錯。樣本＝442 位尚未修過推論統計的大學一年級生、34 位碩士生、120 位研究者（博士生與教職）。三組平均都認可三句以上；統計訓練與表現無關，研究者幾乎沒贏過學生。",
+      "quote": "A CI ... does not, however, directly indicate a property of the parameter; instead, it indicates a property of the procedure, as is typical for a frequentist technique.",
+      "url": "https://link.springer.com/article/10.3758/s13423-013-0572-3",
+      "en": {
+        "locator": "Respondents read one fictional vignette: a professor reports a 95% confidence interval of 0.1 to 0.4 for a mean, followed by six statements about that interval to be judged true or false. All six are false. The sample was 442 first-year students with no training in inferential statistics, 34 master's students, and 120 researchers (PhD students and faculty). Every group endorsed three or more of the false statements on average; statistical training was unrelated to performance, and the researchers barely outperformed the students.",
+        "quote": "A CI ... does not, however, directly indicate a property of the parameter; instead, it indicates a property of the procedure, as is typical for a frequentist technique."
+      }
+    },
+    "morey2016": {
+      "author": "Richard D. Morey, Rink Hoekstra, Jeffrey N. Rouder, Michael D. Lee and Eric-Jan Wagenmakers",
+      "title": "The fallacy of placing confidence in confidence intervals",
+      "year": 2016,
+      "container": "Psychonomic Bulletin & Review, 23(1), pp.103-123",
+      "locator": "沉沒潛艇的思想實驗（救援艙門位置未知，氣泡在艙門左右各 5 公尺內均勻冒出）用來拆穿三個具名迷思：精確度誤（窄區間即精確）、似真誤（區間內的值比較可能）、根本信賴謬誤（隨機程序的 X% 覆蓋率被讀成這一段觀測區間也有 X%）。兩泡相距超過 5 公尺時，其 50% 程序算出的區間必定百分之百含艙門；相距極近時同寬區間幾乎不含——同一合法程序，手上這段可以確定對、也可以幾乎確定錯（相關子集，Fisher 1959）。圖 1 畫 200 條 N=2 的隨機 50% 區間，107 條（53.5%）含真值，依長度排序即見短區間幾乎不含、長區間幾乎都含。",
+      "quote": "For this reason, we recommend against the use of the method of CIs for inference.",
+      "url": "https://learnbayes.org/papers/confidenceIntervalsFallacy/",
+      "en": {
+        "locator": "The sunken-submarine thought experiment (the rescue hatch sits at an unknown position, with bubbles surfacing uniformly within 5 metres on either side of it) is used to dismantle three named fallacies: the precision fallacy (a narrow interval means a precise estimate), the likelihood fallacy (values inside the interval are more probable), and the fundamental confidence fallacy (reading the X% long-run coverage of the procedure as an X% probability for the single observed interval). When the two bubbles are more than 5 metres apart, the 50% procedure's interval is certain to contain the hatch; when they are very close, an interval of the same width almost never does. One lawful procedure, and the interval in hand can be certainly right or almost certainly wrong (relevant subsets, Fisher 1959). Figure 1 draws 200 random 50% intervals from N=2 samples; 107 (53.5%) contain the true value, and sorting them by length shows the short ones almost never cover while the long ones almost always do.",
+        "quote": "For this reason, we recommend against the use of the method of CIs for inference."
+      }
+    },
+    "neyman1937ConfidenceIntervals": {
+      "author": "Jerzy Neyman",
+      "title": "Outline of a Theory of Statistical Estimation Based on the Classical Theory of Probability",
+      "year": 1937,
+      "container": "Philosophical Transactions of the Royal Society of London, Series A, vol. 231, pp.333-380",
+      "locator": "p.349（信賴區間的頻率解釋：長期而言，照這套規則做的陳述有 100a% 是對的；緊接著自問「對這一個已經算出來的區間，能不能說參數落在裡面的機率是 a」，並自答不能）。",
+      "quote": "It follows that if the practical statistician applies permanently the rules (a), (b) and (c) ... in the long run he will be correct in about 99 per cent. of all cases. ... Can we say that in this particular case the probability of the true value of [the parameter] falling between 1 and 2 is equal to [the confidence coefficient]? The answer is obviously in the negative. The parameter ... is an unknown constant and no probability statement concerning its value may be made.",
+      "url": "https://wwwusers.ts.infn.it/~milotti/Didattica/StatisticaAvanzata/Neyman_1937.pdf",
+      "en": {
+        "locator": "p.349 (the frequency reading of a confidence interval: in the long run the statements will be right in 100a per cent of cases; Neyman then asks whether one may say of a single computed interval that the parameter lies in it with probability a, and answers that one may not).",
+        "quote": "It follows that if the practical statistician applies permanently the rules (a), (b) and (c) ... in the long run he will be correct in about 99 per cent. of all cases. ... Can we say that in this particular case the probability of the true value of [the parameter] falling between 1 and 2 is equal to [the confidence coefficient]? The answer is obviously in the negative. The parameter ... is an unknown constant and no probability statement concerning its value may be made."
+      }
+    },
+    "oakes1986": {
+      "author": "Michael Oakes",
+      "title": "Statistical Inference: A Commentary for the Social and Behavioural Sciences",
+      "year": 1986,
+      "container": "Wiley, Chichester",
+      "locator": "更早的同型結果：70 位學術心理學家判讀一個顯著 p 值的六句陳述，平均認可約 2.5 句、完全正確者僅約 11%。是 Hoekstra 2014 信賴區間版自測的直接前身。",
+      "url": "https://www.google.com/books/edition/Statistical_Inference/qh2eAAAAIAAJ",
+      "en": {
+        "locator": "An earlier result of the same kind: 70 academic psychologists judged six statements about a significant p value, endorsing about 2.5 on average, with only around 11% fully correct. It is the direct forerunner of the confidence-interval quiz in Hoekstra et al. 2014."
+      }
+    },
+    "pew2016MarginOfError": {
+      "author": "Pew Research Center",
+      "title": "Understanding the margin of error in election polls",
+      "year": 2016,
+      "container": "Pew Research Center, Decoded / Short Reads",
+      "locator": "以一個候選人得票 48%、誤差 ±3 個百分點（95% 信心水準）的例子解釋抽樣誤差描述的是「結果離母體真值有多近」，並提醒「領先幅度大於個別候選人的誤差幅度」不足以斷定領先在統計上為真——即報導端最常見的誤讀。",
+      "quote": "The margin of sampling error describes how close we can reasonably expect a survey result to fall relative to the true population value.",
+      "url": "https://www.pewresearch.org/short-reads/2016/09/08/understanding-the-margin-of-error-in-election-polls/",
+      "en": {
+        "locator": "Uses a worked example of a candidate at 48% with a ±3 percentage point margin of error (95% confidence) to explain that the margin of sampling error describes how close a result falls to the true population value, and warns that one candidate leading by more than the individual-candidate margin is not enough to call the lead statistically real.",
+        "quote": "The margin of sampling error describes how close we can reasonably expect a survey result to fall relative to the true population value."
+      }
+    },
+    "rafiGreenland2020": {
+      "author": "Zad Rafi and Sander Greenland",
+      "title": "Semantic and cognitive tools to aid statistical science: replace confidence and significance by compatibility and surprise",
+      "year": 2020,
+      "container": "arXiv:1909.08579 [stat.ME], v7 (1 Oct 2020); also in BMC Medical Research Methodology, 20:244",
+      "locator": "把信賴區間正名為「相容區間」（compatibility interval）：區間內的參數值，是在背景假設下比區間外的值更「相容於資料」的那些；縮寫仍作 CI。這一步把注意力從「有沒有跨過某條界線」移到「整段區間裡的值各有多相容」，正是本文收尾要落到的地方。",
+      "quote": "Thus the CI contains a range of parameter values that are more compatible with the data than are values outside the interval, under the background assumptions ... We thus refer to CI as compatibility intervals rather than confidence intervals; their abbreviation remains 'CI.'",
+      "url": "https://arxiv.org/abs/1909.08579",
+      "en": {
+        "locator": "Renames the confidence interval as a 'compatibility interval': the parameter values inside are those more compatible with the data, under the background assumptions, than the values outside; the abbreviation stays 'CI'. The move shifts attention from whether a boundary is crossed to how compatible each value across the whole interval is, which is where this article's closing lands.",
+        "quote": "Thus the CI contains a range of parameter values that are more compatible with the data than are values outside the interval, under the background assumptions ... We thus refer to CI as compatibility intervals rather than confidence intervals; their abbreviation remains 'CI.'"
+      }
+    }
+  },
+  "quiz": [
+    {
+      "id": "h1-prob-mean-greater-than-zero",
+      "prompt": "情境：某教授報告一個平均數的 95% 信賴區間是 0.1 到 0.4。這句話對嗎——「真實平均大於 0 的機率，至少有 95%。」",
+      "options": [
+        "對",
+        "錯"
+      ],
+      "correctIndex": 1,
+      "explain": "錯。真實平均是一個固定的未知常數，對它不能做機率陳述。95% 是「製造區間的程序」的覆蓋率，不是「真實平均大於 0」這個特定命題的機率。區間整段在 0 的右邊，頂多告訴你：拿 0 當虛無假設會在 0.05 水準被拒絕——那是程序的性質，不是命題為真的機率。",
+      "en": {
+        "prompt": "Setup: a professor reports a 95% confidence interval of 0.1 to 0.4 for a mean. Is this true? \"The probability that the true mean is greater than 0 is at least 95%.\"",
+        "options": [
+          "True",
+          "False"
+        ],
+        "explain": "False. The true mean is a fixed unknown constant; no probability statement can be made about it. The 95% is the coverage rate of the procedure that builds intervals, not the probability of the proposition 'the true mean exceeds 0'. That the whole interval sits to the right of 0 tells you only that 0, taken as a null, would be rejected at the 0.05 level — a property of the procedure, not a probability that the claim is true."
+      }
+    },
+    {
+      "id": "h2-prob-mean-equals-zero",
+      "prompt": "同一情境（95% 信賴區間 0.1 到 0.4）。這句話對嗎——「真實平均等於 0 的機率，小於 5%。」",
+      "options": [
+        "對",
+        "錯"
+      ],
+      "correctIndex": 1,
+      "explain": "錯。同樣是對固定參數談機率。信賴區間不含 0，只代表「以 0 為虛無會被 0.05 水準拒絕」，不能翻譯成「真實平均等於 0 的機率小於 5%」——後者是一句貝氏式的事後機率，要有先驗才算得出來，單靠這段區間給不出。",
+      "en": {
+        "prompt": "Same setup (95% CI of 0.1 to 0.4). Is this true? \"The probability that the true mean equals 0 is smaller than 5%.\"",
+        "options": [
+          "True",
+          "False"
+        ],
+        "explain": "False. Again a probability attached to a fixed parameter. That the interval excludes 0 means only that 0, as a null, would be rejected at the 0.05 level; it does not translate into 'the probability that the true mean equals 0 is under 5%'. That latter statement is a Bayesian posterior probability, computable only with a prior, and this interval alone cannot supply it."
+      }
+    },
+    {
+      "id": "h3-null-likely-incorrect",
+      "prompt": "同一情境。這句話對嗎——「『真實平均等於 0』這個虛無假設，很可能是錯的。」",
+      "options": [
+        "對",
+        "錯"
+      ],
+      "correctIndex": 1,
+      "explain": "錯。這是把「區間排除了 0」直接讀成「0 為真的可能性很低」。信賴區間是頻率派程序，不對任何假設賦予「為真的機率」或「為假的機率」。要講一個假設有多可能對或錯，需要先驗與貝氏，而這正是信賴區間沒有做、也不宣稱做的事。",
+      "en": {
+        "prompt": "Same setup. Is this true? \"The null hypothesis that the true mean equals 0 is likely to be incorrect.\"",
+        "options": [
+          "True",
+          "False"
+        ],
+        "explain": "False. This reads 'the interval excludes 0' as 'it is unlikely that 0 is true'. A confidence interval is a frequentist procedure; it assigns no probability of being true or false to any hypothesis. Saying how likely a hypothesis is to be right or wrong needs a prior and Bayes, which is exactly what a confidence interval does not do and does not claim to do."
+      }
+    },
+    {
+      "id": "h4-95-prob-in-interval",
+      "prompt": "同一情境。這句話對嗎——「真實平均有 95% 的機率，落在 0.1 到 0.4 之間。」",
+      "options": [
+        "對",
+        "錯"
+      ],
+      "correctIndex": 1,
+      "explain": "錯。這是根本信賴謬誤（本文的主角）。0.1 到 0.4 一旦算出來就是固定的，真實平均也是固定的，它要嘛在裡面、要嘛不在，是非零即一的事實。95% 掛在「程序長期覆蓋的比例」上，不掛在這一段。這句話正是報紙對民調犯的錯。",
+      "en": {
+        "prompt": "Same setup. Is this true? \"There is a 95% probability that the true mean lies between 0.1 and 0.4.\"",
+        "options": [
+          "True",
+          "False"
+        ],
+        "explain": "False. This is the fundamental confidence fallacy, the lead character of this article. Once 0.1 to 0.4 is computed it is fixed, and the true mean is fixed; it either lies inside or it does not, a zero-or-one fact. The 95% belongs to the procedure's long-run covering fraction, not to this segment. This is exactly the error the newspaper makes about the poll."
+      }
+    },
+    {
+      "id": "h5-95-confident",
+      "prompt": "同一情境。這句話對嗎——「我們可以有 95% 的信心，說真實平均落在 0.1 到 0.4 之間。」",
+      "options": [
+        "對",
+        "錯"
+      ],
+      "correctIndex": 1,
+      "explain": "錯。把「機率」換成「信心」聽起來比較保守，其實是同一個謬誤換了層皮。這裡的「信心水準」仍然是製造區間那個程序的長期性質，不是眼前這一段區間的可信度。改個溫和的詞，並沒有把一句程序性的話變成一句關於這一次的話。",
+      "en": {
+        "prompt": "Same setup. Is this true? \"We can be 95% confident that the true mean lies between 0.1 and 0.4.\"",
+        "options": [
+          "True",
+          "False"
+        ],
+        "explain": "False. Swapping 'probability' for 'confidence' sounds more cautious but is the same fallacy in a new skin. The 'confidence level' here is still a long-run property of the procedure that builds intervals, not the credibility of this one interval. A gentler word does not turn a statement about a procedure into a statement about this single time."
+      }
+    },
+    {
+      "id": "h6-repeat-95-percent",
+      "prompt": "同一情境。這句話對嗎——「如果我們一再重複這個實驗，95% 的時候真實平均會落在 0.1 到 0.4 之間。」",
+      "options": [
+        "對",
+        "錯"
+      ],
+      "correctIndex": 1,
+      "explain": "錯，而且錯得最隱微。重複實驗時，變動的是「每次重新算出來的區間」，不是真實平均——真實平均固定不動，0.1 到 0.4 這一段也固定不動。正確的說法是「95% 的『區間』會含住真實平均」；這句話卻把該動的（區間）和不該動的（真值、與這段固定的 0.1–0.4）對調了。差別就在覆蓋率是掛在飄動的區間上，不是掛在固定的真值上。",
+      "en": {
+        "prompt": "Same setup. Is this true? \"If we repeated the experiment over and over, 95% of the time the true mean would fall between 0.1 and 0.4.\"",
+        "options": [
+          "True",
+          "False"
+        ],
+        "explain": "False, and the most subtle miss. Under repetition, what varies is the interval recomputed each time, not the true mean — the true mean is fixed, and so is this segment 0.1 to 0.4. The correct statement is '95% of the intervals contain the true mean'; this one swaps what should move (the interval) with what should not (the true value, and this fixed 0.1-to-0.4). Coverage rides on the moving interval, not on the fixed truth."
+      }
+    }
+  ],
+  "misreadings": [],
+  "timeline": [],
+  "terms": {
+    "confidence-interval": {
+      "slug": "confidence-interval",
+      "term": "信賴區間",
+      "oneLine": "一套會生出區間的規則。95% 是這套規則的長期命中率，不是眼前這一個區間的機率。",
+      "example": "Neyman 1937 自己問：對已經算出來的那一個區間，能不能說真值落在裡面的機率是 95%？他的答案是不能。",
+      "route": "/statistics/glossary/confidence-interval",
+      "en": {
+        "term": "Confidence interval",
+        "oneLine": "A rule for producing intervals. The 95% is the rule's long-run hit rate, not the probability for the one interval in front of you.",
+        "example": "Neyman asked it himself in 1937: of an interval already computed, may we say the true value lies inside it with probability 95%? His answer was no."
+      }
+    }
+  }
+}
