@@ -68,9 +68,9 @@ function Dumbbell({ rows, domain, dp = 2 }) {
   return (
     <div className="mt-2 max-w-2xl overflow-x-auto">
       <div className="mb-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-[var(--cc-ink-soft)]">
-        <span className="inline-flex items-center gap-1"><span className="inline-block h-2.5 w-2.5 rounded-full" style={{ background: VIZ_PALE, border: '1.5px solid var(--cc-ink-strong)' }} />同組</span>
-        <span className="inline-flex items-center gap-1"><span className="inline-block h-2.5 w-2.5 rounded-full" style={{ background: 'var(--cc-bg)', border: '1.5px solid var(--cc-ink-soft)' }} />跨組</span>
-        <span>連線＝同組−跨組差；p&lt;.05 標記為顯著（✓），p&lt;.1 標 ⁺</span>
+        <span className="inline-flex items-center gap-1"><span className="inline-block h-2.5 w-2.5 rounded-full" style={{ background: 'var(--cc-ink-strong)', border: '1.5px solid var(--cc-ink-strong)' }} />同組（兩位屬同一類）</span>
+        <span className="inline-flex items-center gap-1"><span className="inline-block h-2.5 w-2.5 rounded-full" style={{ background: 'var(--cc-bg)', border: '1.5px solid var(--cc-ink-soft)' }} />跨組（分屬不同類）</span>
+        <span>連線＝兩者差距；p 是「純屬巧合的機率」，低於 .05 標顯著（✓）、低於 .1 標 ⁺</span>
       </div>
       <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label="同組與跨組平均比較（啞鈴圖）" style={{ width: '100%', height: 'auto', maxWidth: W }}>
         {[lo, (lo + hi) / 2, hi].map((t) => (
@@ -87,7 +87,7 @@ function Dumbbell({ rows, domain, dp = 2 }) {
               <text x={PL - 8} y={y + 3} textAnchor="end" fontSize={RVIZ.lbl} fill="var(--cc-ink-mid)">{r.維度}</text>
               <line x1={xAt(r.同組)} y1={y} x2={xAt(r.跨組)} y2={y} stroke="var(--cc-line)" strokeWidth={2} />
               <circle cx={xAt(r.跨組)} cy={y} r={RVIZ.r} fill="var(--cc-bg)" stroke="var(--cc-ink-soft)" strokeWidth={1.5} />
-              <circle cx={xAt(r.同組)} cy={y} r={RVIZ.r} fill={VIZ_PALE} stroke={c} strokeWidth={1.6} />
+              <circle cx={xAt(r.同組)} cy={y} r={RVIZ.r} fill={c} stroke={c} strokeWidth={1.6} />
               <text x={PR + 8} y={y + 3} textAnchor="start" fontSize={RVIZ.tick} fontWeight={sig ? 700 : 400} fill={sig ? 'var(--cc-accent)' : 'var(--cc-ink-soft)'}>{`p ${r.p.toFixed(3)}${sig ? ' ✓' : (r.p < 0.1 ? ' ⁺' : '')}`}</text>
             </g>
           );
@@ -302,6 +302,114 @@ const rpP = (t, i) => <p key={i} className="mt-2 max-w-3xl text-[13.5px] leading
 const rpEyebrow = (t) => <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">{t}</p>;
 
 // 敘事 beat 派工：依 beat.類型 選版面，文字一律取自母本成品字串（renderInline 轉 **粗體**）。
+// 協作層森林圖（貝氏 MCMC）：8 種算法的「同提名人」效果，換算成勝算倍數（e^β）＋90% 可信區間。
+// 全部落在「1×＝沒差」右邊＝穩健。讀 data.問題意識.圖表.協作層森林；無資料不渲染。
+function ForestPlot({ 森林, 收斂 }) {
+  const [hov, setHov] = useState(null);
+  if (!森林?.length) return null;
+  const rows = 森林.map((r) => ({ ...r, or: Math.exp(r.β), lo: Math.exp(r.ci[0]), hi: Math.exp(r.ci[1]) }));
+  const W = 672, PL = 152, PR = 556, top = 20, rowH = 30;
+  const H = top + rows.length * rowH + 26;
+  const dLo = 0.9, dHi = Math.max(2.1, ...rows.map((r) => r.hi));
+  const xAt = (v) => PL + ((Math.max(dLo, Math.min(dHi, v)) - dLo) / (dHi - dLo)) * (PR - PL);
+  return (
+    <div className="mt-3 max-w-2xl overflow-x-auto">
+      <p className="text-[11px] font-bold text-[var(--cc-ink-strong)]">同一總統提名者比較常一起連署——換 8 種算法都成立</p>
+      <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label="同提名人效果的森林圖（8 種算法的勝算倍數與 90% 可信區間）" style={{ width: '100%', height: 'auto', maxWidth: W }}>
+        <line x1={xAt(1)} y1={top - 6} x2={xAt(1)} y2={top + rows.length * rowH} stroke="var(--cc-ink-soft)" strokeWidth={1} />
+        <text x={xAt(1)} y={top - 9} textAnchor="middle" fontSize={RVIZ.tick} fill="var(--cc-ink-soft)">1×（沒差）</text>
+        {[1.5, 2].map((t) => (
+          <g key={t}>
+            <line x1={xAt(t)} y1={top - 4} x2={xAt(t)} y2={top + rows.length * rowH} stroke="var(--cc-line)" strokeWidth={1} strokeDasharray="2 2" opacity={0.6} />
+            <text x={xAt(t)} y={H - 6} textAnchor="middle" fontSize={RVIZ.tick} fill="var(--cc-axis-text)">{t}×</text>
+          </g>
+        ))}
+        {rows.map((r, i) => {
+          const y = top + i * rowH + rowH / 2;
+          return (
+            <g key={r.算法} onMouseEnter={() => setHov(i)} onMouseLeave={() => setHov(null)} className="cursor-pointer">
+              <rect x={0} y={y - rowH / 2} width={W} height={rowH} fill={hov === i ? 'var(--cc-hover-bg)' : 'transparent'} />
+              <text x={PL - 8} y={y + 3} textAnchor="end" fontSize={RVIZ.lbl} fill="var(--cc-ink-mid)">{r.算法}</text>
+              <line x1={xAt(r.lo)} y1={y} x2={xAt(r.hi)} y2={y} stroke="var(--cc-accent)" strokeWidth={2} />
+              <line x1={xAt(r.lo)} y1={y - 3.5} x2={xAt(r.lo)} y2={y + 3.5} stroke="var(--cc-accent)" strokeWidth={1.5} />
+              <line x1={xAt(r.hi)} y1={y - 3.5} x2={xAt(r.hi)} y2={y + 3.5} stroke="var(--cc-accent)" strokeWidth={1.5} />
+              <circle cx={xAt(r.or)} cy={y} r={4} fill="var(--cc-accent)" stroke="var(--cc-bg)" strokeWidth={1} />
+              <text x={PR + 6} y={y + 3} textAnchor="start" fontSize={RVIZ.tick} fill="var(--cc-ink-soft)">{r.or.toFixed(2)}×</text>
+            </g>
+          );
+        })}
+      </svg>
+      {hov != null ? (
+        <div className="mt-1 max-w-2xl rounded-md border border-[var(--cc-border)] bg-[var(--cc-bg)] px-2.5 py-1 text-[12px] leading-snug text-[var(--cc-ink-mid)]">
+          <strong className="text-[var(--cc-ink-strong)]">{rows[hov].算法}</strong>（{rows[hov].註}）：勝算 {rows[hov].or.toFixed(2)}×、90% 可信區間 [{rows[hov].lo.toFixed(2)}, {rows[hov].hi.toFixed(2)}]，效果為正的把握 {Math.round(rows[hov].pgt0 * 100)}%
+        </div>
+      ) : null}
+      <p className="mt-1.5 max-w-2xl text-[12px] leading-relaxed text-[var(--cc-figure-note)]">
+        每一列是一種統計算法；點＝勝算倍數的估計，橫線＝90% 可信區間（有 90% 把握真值落在這段）。8 條全部在「1×（沒差）」右邊、下界都大於 1——「同一總統提名者比較常一起連署」這個結論換算法都站得住。<span className="text-[var(--cc-ink-soft)]">貝氏階層模型，{收斂?.dyad} 對共事、{收斂?.N} 筆；種子 {收斂?.seed} 可重現。</span>
+      </p>
+    </div>
+  );
+}
+
+// 投票層貝氏理想點：19 位 θ（違憲宣告傾向）＋90% 可信區間，與古典估計並排（同人同序）。
+// 顏色＝提名總統（entity，PRES_COLOR）。古典位置讀 LCT_RESULT.理想點，貝氏讀 data.問題意識.圖表.貝氏理想點。
+function BayesIdealPoints({ 貝氏, 收斂 }) {
+  const [hov, setHov] = useState(null);
+  if (!貝氏?.length) return null;
+  const presOf = new Map(LCT_RESULT.理想點.map((p) => [p.姓名, p.提名總統]));
+  const clsOf = new Map(LCT_RESULT.理想點.map((p) => [p.姓名, p.x]));
+  const rows = 貝氏.map((b) => ({ ...b, 提名總統: presOf.get(b.姓名), cls: clsOf.get(b.姓名) })).sort((a, b) => a.θ - b.θ);
+  const ink = (nm) => PRES_COLOR[presOf.get(nm)] ?? 'var(--cc-ink-mid)';
+  const θlo = Math.min(...rows.map((r) => r.ci[0])), θhi = Math.max(...rows.map((r) => r.ci[1]));
+  const clsV = rows.map((r) => r.cls).filter((v) => v != null);
+  const cLo = Math.min(...clsV), cHi = Math.max(...clsV);
+  const W = 672, NAME = 66, CLS_W = 118, GAP = 26, top = 30, rowH = 22;
+  const BAY_X = NAME + CLS_W + GAP, BAY_W = W - BAY_X - 48;
+  const H = top + rows.length * rowH + 8;
+  const cx = (v) => NAME + ((v - cLo) / ((cHi - cLo) || 1)) * CLS_W;
+  const bx = (v) => BAY_X + ((v - θlo) / (θhi - θlo)) * BAY_W;
+  const presList = [...new Set(rows.map((r) => r.提名總統).filter(Boolean))];
+  return (
+    <div className="mt-3 max-w-2xl overflow-x-auto">
+      <p className="text-[11px] font-bold text-[var(--cc-ink-strong)]">投票立場：古典估計 vs 貝氏估計（同 19 位、同順序；越右＝越常投違憲）</p>
+      <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label="19 位大法官的古典與貝氏投票立場位置並排（貝氏含 90% 可信區間）" style={{ width: '100%', height: 'auto', maxWidth: W }}>
+        <text x={NAME} y={14} fontSize={RVIZ.tick} fill="var(--cc-ink-soft)">古典（只有位置）</text>
+        <text x={BAY_X} y={14} fontSize={RVIZ.tick} fill="var(--cc-ink-soft)">貝氏（位置＋90% 可信區間）</text>
+        <line x1={cx(0)} y1={top - 4} x2={cx(0)} y2={top + rows.length * rowH} stroke="var(--cc-line)" strokeWidth={1} />
+        <line x1={bx(0)} y1={top - 4} x2={bx(0)} y2={top + rows.length * rowH} stroke="var(--cc-line)" strokeWidth={1} />
+        {rows.map((r, i) => {
+          const y = top + i * rowH + rowH / 2, c = ink(r.姓名);
+          return (
+            <g key={r.姓名} onMouseEnter={() => setHov(i)} onMouseLeave={() => setHov(null)} className="cursor-pointer">
+              <rect x={0} y={y - rowH / 2} width={W} height={rowH} fill={hov === i ? 'var(--cc-hover-bg)' : 'transparent'} />
+              <text x={NAME - 6} y={y + 3} textAnchor="end" fontSize={10.5} fontWeight={700} fill={c}>{r.姓名}</text>
+              {r.cls != null ? <circle cx={cx(r.cls)} cy={y} r={3.5} fill="var(--cc-bg)" stroke={c} strokeWidth={1.5} /> : null}
+              <line x1={bx(r.ci[0])} y1={y} x2={bx(r.ci[1])} y2={y} stroke={c} strokeWidth={1.5} opacity={0.5} />
+              <circle cx={bx(r.θ)} cy={y} r={4} fill={inkToFill(c)} stroke={c} strokeWidth={1.5} />
+            </g>
+          );
+        })}
+      </svg>
+      {hov != null ? (
+        <div className="mt-1 max-w-2xl rounded-md border border-[var(--cc-border)] bg-[var(--cc-bg)] px-2.5 py-1 text-[12px] leading-snug text-[var(--cc-ink-mid)]">
+          <strong className="text-[var(--cc-ink-strong)]">{rows[hov].姓名}</strong>（{rows[hov].提名總統 ?? '—'} 提名）：貝氏 θ {rows[hov].θ >= 0 ? '+' : ''}{rows[hov].θ.toFixed(2)}、90% 可信區間 [{rows[hov].ci[0].toFixed(2)}, {rows[hov].ci[1].toFixed(2)}]{rows[hov].cls != null ? `；古典位置 ${rows[hov].cls >= 0 ? '+' : ''}${rows[hov].cls.toFixed(2)}` : ''}
+        </div>
+      ) : null}
+      <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-[var(--cc-ink-soft)]">
+        <span>顏色＝提名總統：</span>
+        {presList.map((p) => (
+          <span key={p} className="inline-flex items-center gap-1">
+            <span className="inline-block h-2.5 w-2.5 rounded-full" style={{ background: inkToFill(PRES_COLOR[p] ?? 'var(--cc-ink-mid)'), border: `1.5px solid ${PRES_COLOR[p] ?? 'var(--cc-ink-mid)'}` }} />{p}
+          </span>
+        ))}
+      </div>
+      <p className="mt-1.5 max-w-2xl text-[12px] leading-relaxed text-[var(--cc-figure-note)]">
+        左邊古典估計只有位置、看起來精準；右邊貝氏估計替每個位置加上 90% 可信區間，範圍普遍很寬、而且顏色（提名總統）交錯不成塊——同一總統提名的大法官在投票立場上並沒有站在一起。兩種算法排序大致一致，但真要看準沒那麼準＝這屆測不到任命效果。<span className="text-[var(--cc-ink-soft)]">貝氏 GRM，{收斂?.法官} 位、{收斂?.觀測} 筆觀測，R̂ {收斂?.rhat}、0 divergent。</span>
+      </p>
+    </div>
+  );
+}
+
 function BeatBlock({ beat: b, 圖 }) {
   switch (b.類型) {
     case '導言':
@@ -353,6 +461,7 @@ function BeatBlock({ beat: b, 圖 }) {
             <h3 className="text-[15px] font-bold text-[var(--cc-title-ink)]">{b.標題}</h3>
             <Dumbbell rows={rows} domain={[0, max]} dp={2} />
             <p className="mt-1.5 max-w-2xl text-[12.5px] leading-relaxed text-[var(--cc-ink-mid)]">{renderNarrative(b.圖說)}</p>
+            {圖.協作層森林 ? <ForestPlot 森林={圖.協作層森林} 收斂={圖.貝氏收斂?.協作層} /> : null}
           </div>
         );
       }
@@ -363,6 +472,7 @@ function BeatBlock({ beat: b, 圖 }) {
           <h3 className="text-[15px] font-bold text-[var(--cc-title-ink)]">{b.標題}</h3>
           {(b.段落 ?? []).map((t, i) => <p key={i} className="mt-1.5 max-w-2xl text-[13.5px] leading-relaxed text-[var(--cc-ink)]">{renderNarrative(t)}</p>)}
           <IdealPointChart />
+          {圖.貝氏理想點 ? <BayesIdealPoints 貝氏={圖.貝氏理想點} 收斂={圖.貝氏收斂?.理想點} /> : null}
           <p className="mt-3 text-[11px] font-bold text-[var(--cc-ink-strong)]">真投票同質性：同組 vs 跨組同意率（四維度全測不到）</p>
           <Dumbbell rows={homoRows} domain={[0.5, 0.8]} dp={3} />
           <p className="mt-1.5 max-w-2xl text-[12.5px] leading-relaxed text-[var(--cc-ink-mid)]">{renderNarrative(b.表圖說)}</p>
