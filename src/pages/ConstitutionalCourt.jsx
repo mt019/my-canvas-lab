@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useSearchParams, useParams } from 'react-router-dom';
+import { Link, useSearchParams, useParams, useNavigate } from 'react-router-dom';
 import {
   CalendarClock,
   FileText,
@@ -12,6 +12,7 @@ import {
   Users,
 } from 'lucide-react';
 import data from '../data/constitutionalCourt.json';
+import { ccJusticePath } from './_constitutional-court/seo';
 import { CC_VARS, DocSpotlight, docs } from './_constitutional-court/shared';
 import IndexView from './_constitutional-court/IndexView';
 import TimelineView from './_constitutional-court/TimelineView';
@@ -37,26 +38,33 @@ const tabs = [
 ];
 
 export default function ConstitutionalCourt() {
-  // 分頁與大法官個人頁都掛在 URL（?tab=…&j=姓名）：可深連結、可分享、可返回
   const [params, setParams] = useSearchParams();
-  // Tab comes from the clean path route (/constitutionalcourt/:tab) when present,
-  // else the ?tab= query (kept for existing deep links), else the default index.
+  const navigate = useNavigate();
+  // Tab and justice come from the clean path route when present
+  // (/constitutionalcourt/:tab, /constitutionalcourt/justices/:justiceName),
+  // else the legacy ?tab=／?j= query deep links, else the default index.
   const routeParams = useParams();
-  const active = params.get('tab') ?? routeParams.tab ?? 'index';
-  const justiceName = params.get('j');
+  const queryJustice = params.get('j');
+  const routeJustice = routeParams.justiceName ? decodeURIComponent(routeParams.justiceName) : null;
+  const justiceName = queryJustice ?? routeJustice;
+  const active = params.get('tab') ?? routeParams.tab ?? (justiceName ? 'justices' : 'index');
   const focusDoc = params.get('doc');
-  const setActive = (id) => setParams(id === 'index' ? {} : { tab: id });
-  const openJustice = (name) => setParams({ tab: 'justices', j: name });
-  // ?doc=字號 案件浮層：保留現有分頁狀態疊在其上，關閉即移除 doc 參數。
+
+  const tabPath = (id) => (id === 'index' ? '/constitutionalcourt' : `/constitutionalcourt/${id}`);
+  // Justices navigate to their own clean, indexable URL; a crawler that reaches
+  // the 大法官 tab can follow every one of them from there.
+  const openJustice = (name) => navigate(ccJusticePath(name));
+  // ?doc=字號 案件浮層：疊在目前路由上，關閉即移除 doc 參數，不動路由。
   const openDoc = (字號) => { if (!字號) return; const next = Object.fromEntries(params); next.doc = 字號; setParams(next); };
   const closeDoc = () => { const next = Object.fromEntries(params); delete next.doc; setParams(next); };
-  const viewInIndex = (字號) => setParams({ q: 字號 }); // 跳索引分頁、以字號預搜、關浮層
+  const viewInIndex = (字號) => navigate(`/constitutionalcourt?q=${encodeURIComponent(字號)}`); // 跳索引分頁、以字號預搜、關浮層
 
   useEffect(() => {
-    // The justice deep-view (?j=) has no registered route, so SeoHead can't title
-    // it — set it here. Base and tab titles are owned by SeoHead; don't clobber.
-    if (justiceName) document.title = `${justiceName}｜憲法法庭案例庫`;
-  }, [justiceName]);
+    // The legacy ?j= deep view has no registered route, so SeoHead can't title
+    // it — set it here. The clean /justices/<name> path owns its own title via
+    // JusticeRoute's SeoHead, so don't clobber that.
+    if (queryJustice) document.title = `${queryJustice}｜憲法法庭案例庫`;
+  }, [queryJustice]);
 
   // 切換分頁／大法官個人頁時捲回頂端：SPA 不會自動重置 window 捲動位置，否則案件索引捲到
   // 很下面點大法官，換到的個人頁會沿用同一捲動量、看起來也停在下面（兩頁捲動「聯動」）。
@@ -107,15 +115,15 @@ export default function ConstitutionalCourt() {
       <nav className="sticky top-0 z-20 border-b border-[var(--cc-line)] bg-white/94 backdrop-blur">
         <div className="mx-auto flex max-w-6xl gap-1 overflow-x-auto px-4 py-2 sm:px-6">
           {tabs.map(({ id, label, icon: Icon }) => (
-            <button
+            <Link
               key={id}
-              onClick={() => setActive(id)}
+              to={tabPath(id)}
               className="flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-2 text-[13px] font-bold transition hover:bg-[var(--cc-hover-bg)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--cc-highlight)]"
               style={{ background: active === id ? 'var(--cc-tab-active-bg)' : undefined, color: active === id ? 'var(--cc-tab-active-text)' : 'var(--cc-tab-inactive-text)' }}
             >
               <Icon size={14} />
               {label}
-            </button>
+            </Link>
           ))}
         </div>
       </nav>
@@ -125,14 +133,14 @@ export default function ConstitutionalCourt() {
         {active === 'timeline' ? <TimelineView /> : null}
         {active === 'justices' ? (
           justiceName
-            ? <JusticeDetail name={justiceName} onBack={() => setParams({ tab: 'justices' })} onOpen={openJustice} onOpenDoc={openDoc} />
-            : <JusticesView onOpen={openJustice} />
+            ? <JusticeDetail name={justiceName} onBack={() => navigate('/constitutionalcourt/justices')} onOpen={openJustice} onOpenDoc={openDoc} />
+            : <JusticesView />
         ) : null}
         {active === 'tenure' ? <TenureView onOpen={openJustice} /> : null}
         {active === 'graph' ? <GraphView /> : null}
         {active === 'research' ? <ResearchProblem /> : null}
         {active === 'case1' ? <Case1Analysis /> : null}
-        {active === 'history' ? <HistoryView onOpenIndex={(機關) => setParams(機關 && 機關 !== '行憲後' ? { 機關 } : {})} /> : null}
+        {active === 'history' ? <HistoryView onOpenIndex={(機關) => navigate(機關 && 機關 !== '行憲後' ? `/constitutionalcourt?機關=${encodeURIComponent(機關)}` : '/constitutionalcourt')} /> : null}
         {active === 'about' ? <AboutView /> : null}
         {active === 'typology-report' ? <TypologyReportView /> : null}
       </main>

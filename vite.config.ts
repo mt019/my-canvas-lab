@@ -47,6 +47,22 @@ export default defineConfig({
     react({ include: /\.(jsx|js|mdx|md|tsx|ts)$/ }),
     pdfProxyDev(),
   ],
+  build: {
+    rollupOptions: {
+      output: {
+        // Pull the libraries every route loads (React, the router, the icon set)
+        // into one stable chunk. It's hashed only when those deps change, so a
+        // normal redeploy re-downloads just the small app code, not the runtime.
+        // Per-page libraries (KaTeX, the graph lib) are left untouched so Vite
+        // keeps them in their own lazy page chunks rather than loading them here.
+        manualChunks(id) {
+          if (/[\\/]node_modules[\\/](react|react-dom|scheduler|react-router|react-router-dom|lucide-react)[\\/]/.test(id)) {
+            return 'react-vendor';
+          }
+        },
+      },
+    },
+  },
   server: {
     proxy: {
       '/api/opentix/search': {

@@ -11,7 +11,9 @@ const today = new Date().toISOString().slice(0, 10);
 const routes = collectRoutes();
 
 const body = routes.map((route) => {
-  const loc = `${SITE_URL}${route === '/' ? '/' : route}`;
+  // encodeURI so justice routes (Chinese names) become valid, percent-encoded
+  // URLs that match the canonical the app emits; ASCII routes pass through.
+  const loc = `${SITE_URL}${route === '/' ? '/' : encodeURI(route)}`;
   const priority = route === '/' ? '1.0' : '0.7';
   return `  <url>\n    <loc>${loc}</loc>\n    <lastmod>${today}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>${priority}</priority>\n  </url>`;
 }).join('\n');

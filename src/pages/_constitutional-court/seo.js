@@ -86,3 +86,68 @@ export const CC_TABS_SEO = [
 ];
 
 export const CC_TAB_SLUGS = CC_TABS_SEO.map((t) => t.slug);
+
+// --- Per-justice pages: /constitutionalcourt/justices/<姓名> ---------------
+// Each justice with real activity gets a clean, separately-indexable URL and a
+// schema.org Person node, so "某某大法官意見書" style queries land on a page
+// about that justice rather than the tab default. The path carries the Chinese
+// name undecoded; React Router, the sitemap and the prerender server each apply
+// URL-encoding at their own HTTP boundary, so every layer agrees on the URL.
+export const ccJusticePath = (name) => `/constitutionalcourt/justices/${name}`;
+
+// Who gets a page: anyone who authored, joined, or sat on any decision. The few
+// justices with no recorded activity have nothing to show, so they stay out of
+// the index (their URL still resolves, marked noindex).
+export const justiceHasContent = (j) =>
+  (j.提出意見書 ?? 0) > 0 || (j.加入意見書 ?? 0) > 0 ||
+  (j.參與判決 ?? 0) > 0 || (j.參與解釋 ?? 0) > 0;
+
+function tenureText(j) {
+  return (j.任期 ?? [])
+    .map((t) => {
+      const a = t.起?.slice(0, 4);
+      const b = t.訖?.slice(0, 4);
+      return a && b ? `${a}–${b}` : a ? `${a}–` : '';
+    })
+    .filter(Boolean)
+    .join('、');
+}
+
+// SEO page descriptor for one justice record. Pure data (no React), so the node
+// build scripts can reuse it. Numbers and tenure come straight from the record
+// the page renders, so the metadata never drifts from what a reader sees.
+export function justiceSeo(j) {
+  const name = j.姓名;
+  const tt = tenureText(j);
+  const 提名 = j.各段提名總統?.length
+    ? [...new Set(j.各段提名總統)].join('、')
+    : j.提名總統;
+  const bits = [];
+  if (j.提出意見書) bits.push(`提出意見書 ${j.提出意見書} 份`);
+  if (j.加入意見書) bits.push(`加入 ${j.加入意見書} 份`);
+  if (j.參與解釋) bits.push(`參與釋字 ${j.參與解釋} 件`);
+  if (j.參與判決) bits.push(`參與憲法法庭裁判 ${j.參與判決} 件`);
+  const description =
+    `司法院大法官${name}${tt ? `（任期 ${tt}）` : ''}${提名 ? `，${提名}提名` : ''}的意見書與釋憲參與：` +
+    `${bits.join('、')}。附可匯出的引註與 BibTeX。`;
+  return {
+    name: `${name}大法官`,
+    title: `${name}大法官的意見書與釋憲參與｜憲法法庭案例庫`,
+    description,
+    keywords: `${name}, ${name} 大法官, ${name} 意見書, ${name} 協同意見書, ${name} 不同意見書, 司法院大法官`,
+    type: 'ProfilePage',
+    indexable: true,
+    parent: { name: '歷任大法官', path: '/constitutionalcourt/justices' },
+    // SeoHead calls this with (SITE_URL, pageUrl); pageUrl already carries the
+    // encoded name, so the Person @id and the page @id line up.
+    buildSchema: (SITE_URL, url) => [{
+      '@type': 'Person',
+      '@id': `${url}#person`,
+      name,
+      jobTitle: '大法官',
+      worksFor: { '@type': 'GovernmentOrganization', name: '司法院憲法法庭', url: 'https://cons.judicial.gov.tw/' },
+      ...(j.簡歷頁 ? { sameAs: [j.簡歷頁] } : {}),
+      mainEntityOfPage: url,
+    }],
+  };
+}

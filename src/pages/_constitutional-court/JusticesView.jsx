@@ -1,8 +1,10 @@
 import { useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import data from '../../data/constitutionalCourt.json';
+import { ccJusticePath } from './seo';
 import { Select, justices } from './shared';
 
-export default function JusticesView({ onOpen }) {
+export default function JusticesView() {
   const [sortKey, setSortKey] = useState('提出意見書');
   const list = useMemo(
     () => [...justices].sort((a, b) => (b[sortKey] ?? 0) - (a[sortKey] ?? 0)),
@@ -39,7 +41,7 @@ export default function JusticesView({ onOpen }) {
             {list.map((j) => (
               <tr key={j.姓名} className="border-t border-[var(--cc-row-border)]">
                 <td className="px-3 py-2 whitespace-nowrap">
-                  <button onClick={() => onOpen?.(j.姓名)} className="font-bold text-[var(--cc-ink-heavy)] underline decoration-[var(--cc-link-underline)] underline-offset-2 hover:text-[var(--cc-accent)]">{j.姓名}</button>
+                  <Link to={ccJusticePath(j.姓名)} className="font-bold text-[var(--cc-ink-heavy)] underline decoration-[var(--cc-link-underline)] underline-offset-2 hover:text-[var(--cc-accent)]">{j.姓名}</Link>
                 </td>
                 <td className="px-2 py-2 font-bold text-[var(--cc-accent)]">{j.提出意見書}</td>
                 <td className="px-1 py-2">

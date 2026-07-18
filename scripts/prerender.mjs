@@ -70,7 +70,10 @@ async function main() {
   const warnings = [];
 
   for (const route of routes) {
-    await page.goto(`${base}${route}`, { waitUntil: 'networkidle', timeout: 30000 });
+    // Routes carry Chinese names undecoded (justice pages); encodeURI turns them
+    // into a valid URL while leaving ASCII routes untouched. The output dir keeps
+    // the decoded name so the deployed file path matches what the server serves.
+    await page.goto(`${base}${encodeURI(route)}`, { waitUntil: 'networkidle', timeout: 30000 });
     try {
       await page.waitForFunction(() => {
         const root = document.getElementById('root');
