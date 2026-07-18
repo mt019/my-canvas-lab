@@ -1,6 +1,6 @@
 import React, { Suspense, lazy, useMemo } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useParams, Navigate } from 'react-router-dom';
-import { ArrowRight, BookMarked, CalendarDays, Droplets, FileSearch, Gavel, Globe2, GraduationCap, Landmark, Languages, Mic, Music, Music2, Palette, Piano, Scale, ScrollText, Sigma, Wind } from 'lucide-react';
+import { ArrowRight, BookMarked, CalendarDays, Droplets, FileSearch, Film, Gavel, Globe2, GraduationCap, Landmark, Languages, Mic, Music, Music2, Palette, Piano, Scale, ScrollText, Sigma, Wind } from 'lucide-react';
 import SeoHead from './components/SeoHead';
 import ScrollToTop from './components/ScrollToTop';
 import { CC_BASE_SEO, CC_TABS_SEO, ccDataset } from './pages/_constitutional-court/seo';
@@ -273,11 +273,11 @@ const PAGE_META = { // token-exempt: per-page identity chip colors (data, not st
     listed: false,
   },
   TaipeiFilmFestival: {
-    name: '台北電影節售票雷達',
-    desc: 'OpenTix 即時餘額同步，將可買場次壓成首頁式決策儀表板',
-    Icon: CalendarDays,
-    accent: '#d8e8e0',
-    accentText: '#2f6f60',
+    name: '台北電影節・回顧',
+    desc: '2026 台北電影節的售票片單、我的觀影名單與講座論壇，閉幕後留成的一份回顧',
+    Icon: Film,
+    accent: '#f2e3e7',
+    accentText: '#945d70',
     group: 'life',
   },
 };
