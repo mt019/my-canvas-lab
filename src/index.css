@@ -4,15 +4,18 @@
 
 /*
  * Site-wide type system.
- * CJK: Huiwen-mincho (body AND display headings, CC0/public domain).
+ * CJK: Huiwen-mincho (body AND display headings, CC0/public domain). Its subset
+ * is a FIXED, comprehensive one (common BMP CJK + kana + punctuation + symbols),
+ * so ordinary new text never needs a font rebuild — see scripts/font-chars.mjs
+ * (comprehensiveChars) and scripts/rebuild-font-subsets.mjs. Chiron Sung HK fills
+ * the few codepoints Huiwen itself cannot draw (unicode-range face below).
  * Latin display: Radio Newsman (headings) — clean at any size; Erikas was tried
  * for headings (2026-07-07) and reverted same day: its ink-ribbon texture reads
- * as noise on inline digits inside CJK headings. GenWanMin2 face kept loaded but
- * unreferenced by tokens — cleanup candidate.
+ * as noise on inline digits inside CJK headings.
  * Latin accent: Erikas Farbband — has a heavy ink-ribbon texture that reads
  * as noisy at small sizes or mixed inline with CJK. Opt-in only, for large/
  * sparse decorative text (kickers, eyebrows) — never the default body font.
- * All files are subset to the glyphs this site actually uses; see public/fonts/.
+ * (GenWanMin2 was removed 2026-07-18 — loaded but referenced by no stack.)
  */
 @font-face {
   font-family: 'Huiwen Mincho';
@@ -32,14 +35,7 @@
      subsetting Chiron to exactly the codepoints Huiwen cannot draw. Paste it
      back here whenever the subsets are rebuilt; a stale range means those
      glyphs silently fall through to the system font. */
-  unicode-range: U+007E, U+2027, U+2039, U+203A, U+2076, U+2083, U+2264, U+2265, U+22EF, U+2474, U+2475, U+2476, U+2477, U+2478, U+2550, U+2571, U+28EF6, U+3220, U+3221, U+3222, U+3223, U+4F0B, U+5027, U+5051, U+5231, U+536C, U+56CD, U+5734, U+57D7, U+583A, U+5888, U+5898, U+598F, U+59F8, U+5ABA, U+5B4B, U+5BD6, U+5C2A, U+5E82, U+5F76, U+601A, U+601E, U+6039, U+6179, U+627A, U+62EB, U+630C, U+654A, U+66B8, U+684B, U+686F, U+6996, U+69E4, U+6BCC, U+6D97, U+6DEF, U+70DC, U+70F1, U+711C, U+715D, U+725E, U+7440, U+7444, U+7607, U+7679, U+79A0, U+7D6A, U+7E20, U+7E30, U+81B8, U+8283, U+8294, U+82FE, U+830D, U+83BF, U+841B, U+8893, U+889A, U+889B, U+88AA, U+894C, U+8A77, U+8B22, U+8C9F, U+8CF7, U+8E53, U+8F47, U+8F55, U+8FFC, U+90E4, U+91EE, U+9256, U+92D5, U+92FB, U+93E7, U+946F, U+959E, U+96FA, U+9719, U+FE30, U+FE50, U+FE51, U+FE54, U+FE56;
-}
-
-@font-face {
-  font-family: 'GenWanMin2';
-  src: url('/fonts/GenWanMin2-subset.woff2') format('woff2');
-  font-weight: 400 700;
-  font-display: swap;
+  unicode-range: U+007E, U+02CB, U+2011, U+2027, U+2039, U+203A, U+2083, U+2122, U+2264, U+2265, U+22EF, U+2474, U+2475, U+2476, U+2477, U+2478, U+2550, U+2571, U+26A0, U+28EF6, U+3220, U+3221, U+3222, U+3223, U+4F03, U+4F0B, U+4F6E, U+5027, U+5051, U+5231, U+536C, U+56CD, U+5734, U+57D7, U+583A, U+5888, U+5898, U+598F, U+59F8, U+5ABA, U+5B4B, U+5BD6, U+5C2A, U+5CF8, U+5E82, U+5F76, U+601A, U+601E, U+6039, U+6179, U+627A, U+62EB, U+630C, U+654A, U+65FB, U+6667, U+66B8, U+684B, U+686F, U+6996, U+69E4, U+6BCC, U+6D97, U+6DEF, U+70DC, U+70F1, U+711C, U+715D, U+725E, U+7440, U+7444, U+7607, U+7679, U+79A0, U+7D6A, U+7E20, U+7E30, U+81B8, U+8283, U+8294, U+82FE, U+830D, U+83BF, U+841B, U+8893, U+889A, U+889B, U+88AA, U+894C, U+8995, U+8A77, U+8B22, U+8C9F, U+8CF7, U+8E53, U+8F47, U+8F55, U+8FFC, U+90E4, U+91EE, U+920A, U+9256, U+92D5, U+92FB, U+93E7, U+946F, U+959E, U+96FA, U+9719, U+9A6B, U+FE30, U+FE50, U+FE51, U+FE54, U+FE56;
 }
 
 @font-face {

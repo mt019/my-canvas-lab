@@ -1,25 +1,22 @@
 import { readFileSync } from 'node:fs';
-import { execFileSync } from 'node:child_process';
 import * as fontkit from 'fontkit';
 import { extractChars } from './font-chars.mjs';
 
 /*
- * Does every character the site actually renders exist in the subsetted fonts?
+ * Does every character the site renders exist in the committed font subsets?
  *
- * When it does not, this used to stop the build and tell a person to go and run
- * the rebuild script. That is a chore, and it fires on something as ordinary as
- * writing a paragraph with a character no page had used before — the build knows
- * exactly which characters are missing and the rebuild script needs no decisions
- * from anyone, so asking a human to relay the message between them was pointless.
+ * This only VALIDATES. It never rebuilds (2026-07-18): the rebuild needs the
+ * licensed source fonts, which live on one machine and are deliberately not in
+ * the repo, so a build server (Vercel) cannot run it — the old auto-rebuild
+ * crashed there on a missing source font. The body face is now a fixed,
+ * comprehensive subset (see rebuild-font-subsets.mjs), so an ordinary new
+ * paragraph is already covered and this passes without anyone doing anything.
  *
- * So: a miss rebuilds the subsets and checks again. The build only stops when the
- * *source* font itself cannot draw the character, which is the one case that does
- * need a person (pick a different character, or accept the fallback stack and say
- * so in font-coverage-exceptions.txt).
- *
- * The rebuild is ~20s and is not run unless something is missing, so an ordinary
- * build pays nothing. It is deterministic — same characters in, byte-identical
- * .woff2 out — so it does not churn the repo on every run.
+ * When something genuinely falls outside coverage (an exotic character beyond
+ * common CJK), this fails with instructions instead of trying to fix it here:
+ * either avoid the character, accept the system fallback for it via
+ * font-coverage-exceptions.txt, or — on a machine that has the source fonts —
+ * run `npm run fonts:rebuild` and commit the updated subsets.
  */
 function loadExceptions() {
   return new Set(
@@ -48,42 +45,29 @@ function describe(missing) {
   return `${missing.length} glyph(s), e.g. ${sample} — ${codes}`;
 }
 
+// The body family is two faces stacked under one name: Huiwen carries the text,
+// Chiron fills the codepoints Huiwen has no glyph for (unicode-range in
+// index.css). Every CJK stack in index.css (body, display, accent) resolves to
+// this family, so this single union is the whole site's coverage.
 const BODY = {
   label: 'Huiwen Mincho body family (incl. Chiron fallback)',
   paths: ['public/fonts/HuiwenMincho-subset.woff2', 'public/fonts/ChironSungHK-fallback-subset.woff2'],
 };
-const DISPLAY = {
-  label: 'GenWanMin2 display CJK subset',
-  paths: ['public/fonts/GenWanMin2-subset.woff2'],
-};
 
-function check() {
-  const { chars, cjkChars } = extractChars();
-  const exceptions = loadExceptions();
-  return [
-    { ...BODY, missing: missingFrom(BODY.paths, chars, exceptions) },
-    { ...DISPLAY, missing: missingFrom(DISPLAY.paths, cjkChars, exceptions) },
-  ].filter((f) => f.missing.length > 0);
-}
+const { chars } = extractChars();
+const exceptions = loadExceptions();
+const missing = missingFrom(BODY.paths, chars, exceptions);
 
-let gaps = check();
-
-if (gaps.length > 0) {
-  for (const gap of gaps) console.log(`${gap.label}: missing ${describe(gap.missing)}`);
-  console.log('Rebuilding the font subsets from the text the site currently contains…');
-  execFileSync('node', ['scripts/rebuild-font-subsets.mjs'], { stdio: 'inherit' });
-  gaps = check();
-}
-
-if (gaps.length > 0) {
-  const detail = gaps.map((g) => `  ${g.label}: ${describe(g.missing)}`).join('\n');
+if (missing.length > 0) {
   throw new Error(
-    'These characters are used on the site but the source fonts cannot draw them, so a rebuild ' +
-    'will not fix it:\n' + detail +
-    '\nEither use a different character, or accept the system fallback for it by adding the ' +
-    'codepoint to scripts/font-coverage-exceptions.txt.',
+    `${BODY.label}: the committed subsets are missing ${describe(missing)}\n` +
+    'These characters are rendered on the site but no committed font subset can draw them.\n' +
+    '→ Either use a different character, accept the system fallback by adding the codepoint(s) ' +
+    'to scripts/font-coverage-exceptions.txt, or — on a machine with the source fonts — run ' +
+    '`npm run fonts:rebuild`, paste the printed unicode-range into src/index.css, and commit ' +
+    'the updated public/fonts/*.woff2.\n' +
+    '(This build never rebuilds fonts itself — the source fonts are not in the repo.)',
   );
 }
 
-const { chars, cjkChars } = extractChars();
-console.log(`Font coverage validated: ${chars.length} text glyphs, ${cjkChars.length} CJK glyphs.`);
+console.log(`Font coverage validated: ${chars.length} glyphs against the committed subsets.`);

@@ -1,45 +1,52 @@
-// Rebuild the CJK webfont subsets from the local source fonts, using the same
-// character extraction as validate-font-coverage.mjs. Run whenever new text
-// (synced research data, new pages) introduces glyphs the current subsets lack
-// and `npm run validate:fonts` fails.
+// Rebuild the CJK webfont subsets from the local source fonts.
 //
-// Three subsets, because the body family is two faces stacked under one name:
-// Huiwen Mincho carries the text, and Chiron Sung HK fills the codepoints
-// Huiwen itself has no glyph for, via a unicode-range @font-face in index.css.
-// validate-font-coverage.mjs checks the union of the two, so the Chiron subset
-// has to be rebuilt from the same corpus — otherwise "Huiwen lacks it, Chiron
-// covers it" is a hand-maintained claim that quietly rots.
+// Strategy (2026-07-18): the body face carries everything, so it is subset ONCE
+// to a fixed, comprehensive character set (common BMP CJK + kana + punctuation +
+// symbols — see comprehensiveChars in font-chars.mjs), NOT to the exact text the
+// site currently uses. That is the whole point: an ordinary new article never
+// introduces a glyph outside common CJK, so the body subset never needs
+// rebuilding again, and a Vercel build (which has no source fonts) never has to.
+//
+// Two faces, stacked under one family name "Huiwen Mincho":
+//   - Huiwen Mincho carries the text (fixed comprehensive subset).
+//   - Chiron Sung HK fills the few codepoints the site uses that Huiwen itself
+//     cannot draw, via a unicode-range @font-face in index.css. This one stays
+//     small and text-driven — it only needs the handful of gaps Huiwen has.
+//
+// GenWanMin2 was removed: it was loaded but unreferenced by any font stack (all
+// CJK renders in Huiwen), so it was ~1.8MB of dead weight.
 //
 // Requires: pyftsubset (fonttools) and the source fonts in ~/Library/Fonts.
+// Run it with `npm run fonts:rebuild` only when validate:fonts reports a glyph
+// the committed subsets cannot draw (rare — an exotic character outside common
+// CJK). It prints the Chiron unicode-range to paste into src/index.css.
 import { execFileSync } from 'node:child_process';
 import { existsSync, writeFileSync, mkdtempSync, rmSync } from 'node:fs';
 import { homedir, tmpdir } from 'node:os';
 import { join } from 'node:path';
 import * as fontkit from 'fontkit';
-import { extractChars } from './font-chars.mjs';
+import { extractChars, comprehensiveChars } from './font-chars.mjs';
 
 const HUIWEN_SRC = join(homedir(), 'Library/Fonts/SCUQuoteCards-HuiwenMincho-Improved.ttf');
 const CHIRON_SRC = join(homedir(), 'Library/Fonts/SCUQuoteCards-ChironSungHK-Text-R.ttf');
 
-const { chars, cjkChars } = extractChars();
-
 if (!existsSync(HUIWEN_SRC)) {
   console.error(`source font missing: ${HUIWEN_SRC}`);
+  console.error('The source fonts live only on a machine that has them (not CI). Run this there.');
   process.exit(1);
 }
 
-// What the corpus needs but the Huiwen source itself cannot draw — exactly the
-// job of the Chiron fallback face.
+// Body: fixed comprehensive coverage — does not depend on the site's current text.
+const bodyChars = comprehensiveChars(HUIWEN_SRC);
+
+// Chiron fallback: exactly the codepoints the site actually renders that the
+// Huiwen source cannot draw. Small and text-driven.
+const { chars: siteChars } = extractChars();
 const huiwenSource = fontkit.openSync(HUIWEN_SRC);
-const fallbackChars = chars.filter((c) => !huiwenSource.hasGlyphForCodePoint(c.codePointAt(0)));
+const fallbackChars = siteChars.filter((c) => !huiwenSource.hasGlyphForCodePoint(c.codePointAt(0)));
 
 const SOURCES = {
-  'public/fonts/HuiwenMincho-subset.woff2': { source: HUIWEN_SRC, text: chars },
-  'public/fonts/GenWanMin2-subset.woff2': {
-    source: join(homedir(), 'Library/Fonts/SCUQuoteCards-GenWanMin2-R.ttc'),
-    text: cjkChars,
-    fontNumber: '0',
-  },
+  'public/fonts/HuiwenMincho-subset.woff2': { source: HUIWEN_SRC, text: bodyChars },
   'public/fonts/ChironSungHK-fallback-subset.woff2': { source: CHIRON_SRC, text: fallbackChars },
 };
 
@@ -64,7 +71,6 @@ try {
       '--ignore-missing-glyphs',
       `--output-file=${target}`,
     ];
-    if (cfg.fontNumber !== undefined) args.splice(1, 0, `--font-number=${cfg.fontNumber}`);
     execFileSync('pyftsubset', args, { encoding: 'utf8' });
     console.log(`rebuilt ${target} (${cfg.text.length} glyph targets)`);
   }
