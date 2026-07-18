@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-07-13T17:20:32.240Z",
+  "generatedAt": "2026-07-18T06:54:57.585Z",
   "source": "statistics-lab-data, built by engineering/scripts/build-app-json.mjs",
   "meta": {
     "slug": "justice-partial-pooling",
@@ -32,7 +32,7 @@
       "不確定性"
     ],
     "readingMinutes": 5,
-    "updatedAt": "2026-07-13"
+    "updatedAt": "2026-07-14"
   },
   "figures": {},
   "sources": {

@@ -1,0 +1,58 @@
+{/* Prose is plain markdown. All math is LaTeX ($…$).
+    Interactive figures and <Cite> are injected by the shell; nothing is imported here. */}
+
+Before a generic blood-pressure drug can go on sale, its maker has to show it works the same as the brand-name original. So they run a trial: two groups of patients, one on the brand, one on the generic, and they compare how far each group's systolic pressure drops. The two groups differ by 0.6 mmHg. A t test gives $p \approx 0.56$. Not significant.
+
+The maker concludes: no significant difference, so the two drugs are the same.
+
+That conclusion is wrong, and it is wrong in the way the first article was about. A <Term id="null-hypothesis">null hypothesis</Term> is never established by your failure to overturn it. All $p \approx 0.56$ tells you is that this data could not reject "the two are identical" — and the same data cannot reject "the two differ by 2 mmHg" either. A non-significant result can mean there really is no difference, or it can mean the study had no power to see one. The two situations look identical, and the $p$ value cannot tell them apart.
+
+So what should you do? If you genuinely want to claim "the two differ by nothing that matters in practice", you have to ask a different question. This article covers two things: how large an effect the study can even see (<Term id="statistical-power">statistical power</Term>), and how to bound the effect inside a margin on purpose (<Term id="equivalence-test">equivalence testing</Term>).
+
+## What a non-significant result is compatible with
+
+Start by opening up that $p \approx 0.56$. Underneath it sits an estimate and its uncertainty: the two groups differ by 0.6 mmHg, with a 95% <Term id="confidence-interval">confidence interval</Term> running from -1.4 to +2.6 mmHg.
+
+<CompatibilityInterval />
+
+The interval contains 0, which is why the test is not significant — another way of saying "we did not detect a difference". It also contains +2 mmHg, and -1 mmHg. Drag the slider and you will see that this data is just as compatible with "the generic is actually 2 mmHg better" as it is with "the two are identical". <Cite id="lakens2017EquivalenceTests">Non-significant cannot be read as "no effect"</Cite>: it says only that 0 lies inside the interval, not that 0 is any more credible than the other values in there.
+
+How wide the interval is depends on how many patients the study enrolled. More people, a narrower interval, a clearer view. That property has a name.
+
+## How large an effect the study can see
+
+<Term id="statistical-power">Statistical power</Term> asks: if an effect of some given size is really there, what is the chance this study detects it as significant? Turned around, the smallest effect a study can reliably detect is its minimum detectable effect. For this trial — 120 patients per group, a standard deviation of 8 mmHg — only a true difference larger than about 2.9 mmHg has an 80% chance of coming out significant. A difference smaller than that, the design was never able to see.
+
+So "not significant" splits into two situations that have nothing in common. In one, the study is powerful enough to see any difference that matters, and it genuinely saw none — here you have earned the right to say "no meaningful difference". In the other, the study had no power, and would have missed a real difference anyway — here all you can honestly say is "I don't know". To make the first statement, you need a tool built for it.
+
+## Equivalence testing: bounding the effect
+
+<Cite id="schuirmann1987TOST">In 1987 Schuirmann proposed a procedure for exactly this, for the review of generic drugs</Cite>: instead of asking "is there a difference", first say plainly "how large a difference would matter", then ask "can the effect be bounded inside that range".
+
+Fix a margin $\Delta$. In the blood-pressure example, clinicians already agree that a gap below some size makes no practical difference to a patient. That $\Delta$ is a medical judgement, and it has to be set before you look at the data.
+
+Then run two one-sided tests (TOST for short): one testing whether the difference exceeds the upper bound $+\Delta$, one testing whether it falls below the lower bound $-\Delta$. Reject both, and you have said that the effect is neither above $+\Delta$ nor below $-\Delta$ — it is boxed inside $\pm\Delta$. Now you can declare equivalence, as a positive claim.
+
+There is a cleaner way to say the same thing. <Cite id="bergerHsu1996Equivalence">Declaring equivalence by TOST at $\alpha = 0.05$ is the same as checking whether the 90% confidence interval lies entirely inside $\pm\Delta$</Cite> (90%, not 95%: two one-sided tests at 5% each correspond to a 90% two-sided interval).
+
+<EquivalenceBounds />
+
+Drag the margin $\Delta$: when the 90% interval shrinks entirely inside $\pm\Delta$, both one-sided $p$ values drop below 0.05 and equivalence holds. Drag $\Delta$ narrower than the interval's half-width and you can no longer declare it — the "sameness" you are demanding is tighter than the study can guarantee.
+
+## Two non-significances, two conclusions
+
+Back to that $p \approx 0.56$. Its 90% confidence interval runs from -1.1 to +2.3 mmHg.
+
+If clinicians agree that "within 3 mmHg is no difference" ($\Delta = 3$), the interval sits entirely inside $\pm 3$, both one-sided tests pass, and you can state it: the two drugs are clinically equivalent. This non-significance is the first kind — the study had power, and it genuinely saw no difference that mattered.
+
+If the clinical standard is stricter, requiring "within 2 mmHg to count as the same" ($\Delta = 2$), the interval's upper edge at +2.3 pokes past it. The same data now cannot declare equivalence: the study lacks the precision to guarantee a difference below 2 mmHg. This non-significance is the second kind — could not detect is not the same as does not exist.
+
+The discipline lives here: $\Delta$ has to be fixed before the data, never chosen after seeing where the interval landed and picking one that just barely contains it. That is drawing the target around the arrow, the same disease as the <Term id="p-hacking">p-hacking</Term> from the first article.
+
+## Why it matters, and where it breaks
+
+Generic-drug review is where equivalence testing is most fully institutionalised. <Cite id="fdaBioequivalence8025">The U.S. FDA standard is that the 90% confidence interval for the ratio of geometric-mean blood concentrations of the generic and the brand must lie entirely within 80% to 125%</Cite> for the two to count as the same. That is precisely the logic above: nothing gets approved on the strength of "we found no difference"; the difference has to be boxed inside a range fixed in advance.
+
+Three limits, all concrete. First, $\Delta$ is a value judgement, not a statistic — how large a difference counts as "unimportant" is decided by knowledge of the field, and statistics cannot stand in for it. Second, $\Delta$ has to be set in advance. Third, with too small a sample both directions fail: you can neither reject "there is a difference" nor declare "equivalent", and all you can report is that the study settled nothing. Saying "I don't know" is more honest than forcing a side.
+
+The first article closed on one line: when the null really holds, use an equivalence test to say outright that "the gap is too small to matter", instead of vaguely reporting "no significant difference". This article is that line unfolded. "We did not detect a difference" is a statement about the study; "the difference is too small to matter" is a statement about the two drugs. Passing the first off as the second is the most common substitution in statistics.

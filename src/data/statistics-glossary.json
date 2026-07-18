@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-07-13T17:20:32.240Z",
+  "generatedAt": "2026-07-18T06:54:57.585Z",
   "source": "statistics-lab-data, built by engineering/scripts/build-app-json.mjs",
   "terms": {
     "confidence-interval": {
@@ -91,6 +91,14 @@
         }
       },
       "usedIn": [
+        {
+          "slug": "equivalence-testing",
+          "route": "/statistics/equivalence-testing",
+          "title": "怎麼證明「沒有差別」",
+          "en": {
+            "title": "How to Show There Is No Difference"
+          }
+        },
         {
           "slug": "justice-partial-pooling",
           "route": "/statistics/justice-partial-pooling",
@@ -212,6 +220,139 @@
           "title": "為什麼叫虛無假設",
           "en": {
             "title": "Why It Is Called the Null Hypothesis"
+          }
+        }
+      ]
+    },
+    "equivalence-test": {
+      "slug": "equivalence-test",
+      "term": "等價檢定",
+      "aliases": [
+        "equivalence test",
+        "等價性檢定",
+        "TOST",
+        "two one-sided tests"
+      ],
+      "oneLine": "先說清楚多大的差異才算重要，再用資料把效果關進這個範圍。",
+      "example": "美國 FDA 審學名藥靠它：兩藥血中濃度比值的 90% 信賴區間要整個落在 80%–125%，才算相等。",
+      "related": [
+        {
+          "slug": "confidence-interval",
+          "term": "信賴區間",
+          "oneLine": "一套會生出區間的規則。95% 是這套規則的長期命中率，不是眼前這一個區間的機率。",
+          "example": "Neyman 1937 自己問：對已經算出來的那一個區間，能不能說真值落在裡面的機率是 95%？他的答案是不能。",
+          "route": "/statistics/glossary/confidence-interval",
+          "en": {
+            "term": "Confidence interval",
+            "oneLine": "A rule for producing intervals. The 95% is the rule's long-run hit rate, not the probability for the one interval in front of you.",
+            "example": "Neyman asked it himself in 1937: of an interval already computed, may we say the true value lies inside it with probability 95%? His answer was no."
+          }
+        },
+        {
+          "slug": "statistical-power",
+          "term": "檢定力",
+          "oneLine": "效果真的存在時，這個研究抓得到它的機率。",
+          "example": "Cohen 在 1962 年算過：那年頭的心理學研究要抓一個中等大小的效果，平均只有 .48 的機會，比丟銅板還差一點。",
+          "route": "/statistics/glossary/statistical-power",
+          "en": {
+            "term": "Statistical power",
+            "oneLine": "The probability that a study will catch an effect that is really there.",
+            "example": "Cohen worked it out in 1962: to catch a medium effect, the psychology studies of the day averaged a .48 chance. Slightly worse than a coin toss."
+          }
+        },
+        {
+          "slug": "significance-level",
+          "term": "顯著水準",
+          "oneLine": "事前選定的門檻：長期而言，你願意讓多少比例的真虛無被錯判為顯著。",
+          "example": "Fisher 說二十分之一是個方便的界線，如此而已。方便，而且當年好查表。",
+          "route": "/statistics/glossary/significance-level",
+          "en": {
+            "term": "Significance level",
+            "oneLine": "A threshold fixed in advance: the share of true nulls you are willing to reject in the long run.",
+            "example": "Fisher called one in twenty a convenient limit. Convenient, and easy to look up in a table."
+          }
+        }
+      ],
+      "en": {
+        "term": "Equivalence test",
+        "aliases": [
+          "TOST",
+          "two one-sided tests"
+        ],
+        "oneLine": "State how large a difference would matter, then use the data to bound the effect inside that range.",
+        "example": "It is how the U.S. FDA reviews generic drugs: the 90% confidence interval for the ratio of blood concentrations must sit entirely within 80%–125%."
+      },
+      "topic": "inference",
+      "route": "/statistics/glossary/equivalence-test",
+      "sources": {
+        "fdaBioequivalence8025": {
+          "author": "U.S. Food and Drug Administration, Center for Drug Evaluation and Research",
+          "title": "Statistical Approaches to Establishing Bioequivalence (Guidance for Industry)",
+          "year": 2001,
+          "container": "U.S. Department of Health and Human Services, FDA/CDER",
+          "locator": "平均生體相等性判準：以對數轉換後的 AUC 與 Cmax，計算試驗藥／參考藥幾何平均比值的 90% 信賴區間，該區間須整個落在 80.00%–125.00% 之間才算相等。等價邊界在對數尺度上對稱（ln 0.80 = -ln 1.25）。相關法規見 21 CFR Part 320（§320.24 列生體相等性的證明方式）。",
+          "url": "https://www.ecfr.gov/current/title-21/part-320",
+          "en": {
+            "locator": "Average bioequivalence criterion: on the log-transformed AUC and Cmax, the 90% confidence interval for the test/reference ratio of geometric means must lie entirely within 80.00%–125.00%. The bounds are symmetric on the log scale (ln 0.80 = -ln 1.25). See 21 CFR Part 320 (§320.24 lists the accepted ways to demonstrate bioequivalence)."
+          }
+        },
+        "schuirmann1987TOST": {
+          "author": "Donald J. Schuirmann",
+          "title": "A Comparison of the Two One-Sided Tests Procedure and the Power Approach for Assessing the Equivalence of Average Bioavailability",
+          "year": 1987,
+          "container": "Journal of Pharmacokinetics and Biopharmaceutics, 15(6), pp.657-680",
+          "locator": "全篇：two one-sided tests（TOST）程序的原始提出。把等價問題拆成兩個單尾檢定——一個檢定「差異是否大於下界 -Delta」、一個檢定「差異是否小於上界 +Delta」，兩個都在 alpha 下被拒絕，才宣告等價；文中並說明此程序與 (1-2alpha)×100% 信賴區間內含法給出相同判定。DOI 10.1007/BF01068419。",
+          "url": "https://link.springer.com/article/10.1007/BF01068419",
+          "en": {
+            "locator": "The paper as a whole: the original proposal of the two one-sided tests (TOST) procedure. Equivalence is split into two one-sided tests — one against the lower bound -Delta, one against the upper bound +Delta — and declared only if both are rejected at level alpha; the paper also shows this gives the same decision as checking whether the (1-2alpha)×100% confidence interval lies inside ±Delta. DOI 10.1007/BF01068419."
+          }
+        }
+      },
+      "mentions": {
+        "null-hypothesis": {
+          "slug": "null-hypothesis",
+          "term": "虛無假設",
+          "oneLine": "被設計來承受攻擊的那個假設：設下它，是為了讓資料有機會推翻它。",
+          "example": "品茶實驗的虛無假設是「她只是在猜」。Fisher 端出八杯茶，就是為了給這個假設一次被推翻的機會。",
+          "route": "/statistics/glossary/null-hypothesis",
+          "en": {
+            "term": "Null hypothesis",
+            "oneLine": "The hypothesis set up to be attacked: it exists so the data have something to argue against.",
+            "example": "In the tea experiment the null is \"she is guessing.\" Fisher poured eight cups precisely to give that hypothesis a chance of being overturned."
+          }
+        },
+        "statistical-power": {
+          "slug": "statistical-power",
+          "term": "檢定力",
+          "oneLine": "效果真的存在時，這個研究抓得到它的機率。",
+          "example": "Cohen 在 1962 年算過：那年頭的心理學研究要抓一個中等大小的效果，平均只有 .48 的機會，比丟銅板還差一點。",
+          "route": "/statistics/glossary/statistical-power",
+          "en": {
+            "term": "Statistical power",
+            "oneLine": "The probability that a study will catch an effect that is really there.",
+            "example": "Cohen worked it out in 1962: to catch a medium effect, the psychology studies of the day averaged a .48 chance. Slightly worse than a coin toss."
+          }
+        },
+        "confidence-interval": {
+          "slug": "confidence-interval",
+          "term": "信賴區間",
+          "oneLine": "一套會生出區間的規則。95% 是這套規則的長期命中率，不是眼前這一個區間的機率。",
+          "example": "Neyman 1937 自己問：對已經算出來的那一個區間，能不能說真值落在裡面的機率是 95%？他的答案是不能。",
+          "route": "/statistics/glossary/confidence-interval",
+          "en": {
+            "term": "Confidence interval",
+            "oneLine": "A rule for producing intervals. The 95% is the rule's long-run hit rate, not the probability for the one interval in front of you.",
+            "example": "Neyman asked it himself in 1937: of an interval already computed, may we say the true value lies inside it with probability 95%? His answer was no."
+          }
+        }
+      },
+      "usedIn": [
+        {
+          "slug": "equivalence-testing",
+          "route": "/statistics/equivalence-testing",
+          "title": "怎麼證明「沒有差別」",
+          "en": {
+            "title": "How to Show There Is No Difference"
           }
         }
       ]
@@ -439,6 +580,14 @@
         }
       },
       "usedIn": [
+        {
+          "slug": "equivalence-testing",
+          "route": "/statistics/equivalence-testing",
+          "title": "怎麼證明「沒有差別」",
+          "en": {
+            "title": "How to Show There Is No Difference"
+          }
+        },
         {
           "slug": "null-hypothesis",
           "route": "/statistics/null-hypothesis",
@@ -673,6 +822,14 @@
       },
       "mentions": {},
       "usedIn": [
+        {
+          "slug": "equivalence-testing",
+          "route": "/statistics/equivalence-testing",
+          "title": "怎麼證明「沒有差別」",
+          "en": {
+            "title": "How to Show There Is No Difference"
+          }
+        },
         {
           "slug": "null-hypothesis",
           "route": "/statistics/null-hypothesis",
@@ -1531,6 +1688,14 @@
         }
       },
       "usedIn": [
+        {
+          "slug": "equivalence-testing",
+          "route": "/statistics/equivalence-testing",
+          "title": "怎麼證明「沒有差別」",
+          "en": {
+            "title": "How to Show There Is No Difference"
+          }
+        },
         {
           "slug": "null-hypothesis",
           "route": "/statistics/null-hypothesis",

@@ -1,0 +1,13 @@
+## What it says
+
+An equivalence test uses the hypotheses the other way round. An ordinary test puts "no difference" in the <Term id="null-hypothesis">null hypothesis</Term> and tries to reject it; an equivalence test puts "the difference is large enough to matter" in the null and tries to reject that instead. Succeed, and you can state it positively: the difference is too small to matter.
+
+Everything turns on the margin $\Delta$ — how large a difference would count as important. It is a substantive judgement, and it has to be fixed before you look at the data.
+
+## One worked example
+
+<Cite id="schuirmann1987TOST">Schuirmann proposed TOST (two one-sided tests) in 1987 for the review of generic drugs</Cite>: run two one-sided tests, one asking whether the difference exceeds the upper bound $+\Delta$, one whether it falls below $-\Delta$, and declare equivalence only if both are rejected. <Cite id="fdaBioequivalence8025">Today's FDA bioequivalence criterion is exactly this: the 90% confidence interval for the ratio of blood concentrations must lie entirely within 80% to 125%</Cite>.
+
+## Why it matters
+
+"No significant difference" is a statement about the study, and it may only mean the study had no power to see clearly. An equivalence test moves the conclusion back onto the thing being studied: the effect has been boxed inside $\pm\Delta$. That takes enough <Term id="statistical-power">power</Term> — with too small a sample the <Term id="confidence-interval">confidence interval</Term> is wider than $\Delta$, and you can neither reject "there is a difference" nor declare "equivalent".

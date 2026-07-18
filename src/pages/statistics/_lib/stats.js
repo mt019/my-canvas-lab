@@ -35,6 +35,34 @@ export function tTwoSidedP(t, df) {
   return incompleteBeta(x, df / 2, 0.5);
 }
 
+/* Upper-tail probability P(T > t): half the two-sided tail on the right of the
+   centre, its complement on the left. One-sided p values for TOST are read off
+   this and its mirror below. */
+export function tUpperP(t, df) {
+  const half = tTwoSidedP(t, df) / 2;
+  return t >= 0 ? half : 1 - half;
+}
+
+/* Lower-tail probability P(T < t). */
+export function tLowerP(t, df) {
+  return 1 - tUpperP(t, df);
+}
+
+/* The critical value t* for a two-sided confidence level (0.95 -> t_{0.975}),
+   found by bisection on the monotone two-sided tail. A 95% interval uses
+   conf = 0.95; a 90% interval, the TOST-dual level, uses conf = 0.90. */
+export function tCritical(conf, df) {
+  const targetTail = 1 - conf;
+  let lo = 0;
+  let hi = 1000;
+  for (let i = 0; i < 100; i += 1) {
+    const mid = (lo + hi) / 2;
+    if (tTwoSidedP(mid, df) > targetTail) lo = mid;
+    else hi = mid;
+  }
+  return (lo + hi) / 2;
+}
+
 /* Regularized incomplete beta, by continued fraction (Lentz). Standard recipe;
    accurate to ~1e-10 over the range these figures use. */
 export function incompleteBeta(x, a, b) {

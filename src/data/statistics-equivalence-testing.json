@@ -1,0 +1,216 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-07-18T06:54:57.585Z",
+  "source": "statistics-lab-data, built by engineering/scripts/build-app-json.mjs",
+  "meta": {
+    "slug": "equivalence-testing",
+    "topic": "inference",
+    "title": "怎麼證明「沒有差別」",
+    "subtitle": "檢定力與等價檢定：把「沒測到差異」變成「差異小到不重要」",
+    "summary": "一個檢定跑出 p = 0.56，你不能因此說兩者相同——不顯著可能只是這個研究沒力氣把差異看清楚。本文用學名藥的生體相等性當例子，說明檢定力（研究看得見多大的效果）與等價檢定（TOST：把效果正面關進一個事先訂好的邊界），以及為什麼「不顯著」要拆成「能排除任何重要差異」與「只是測不到」兩種。",
+    "publishedAt": "2026-07-18",
+    "en": {
+      "title": "How to Show There Is No Difference",
+      "subtitle": "Power and equivalence tests: turning \"we found no difference\" into \"any difference is too small to matter\"",
+      "summary": "A test returns p = 0.56, and you cannot conclude the two are the same — a non-significant result may just mean the study had no power to see the difference. This article uses drug bioequivalence to explain statistical power (how large an effect a study can see) and equivalence testing (TOST: bounding the effect inside a margin fixed in advance), and why \"not significant\" has to be split into \"we can rule out any meaningful difference\" and \"we simply could not tell\".",
+      "tags": [
+        "equivalence testing",
+        "TOST",
+        "statistical power",
+        "confidence intervals",
+        "bioequivalence",
+        "null results"
+      ],
+      "readingMinutes": 6
+    },
+    "tags": [
+      "等價檢定",
+      "TOST",
+      "檢定力",
+      "信賴區間",
+      "生體相等性",
+      "虛無結果"
+    ],
+    "readingMinutes": 5,
+    "updatedAt": "2026-07-18"
+  },
+  "figures": {
+    "compatibility-interval": {
+      "id": "compatibility-interval",
+      "type": "fixed-data-test",
+      "title": "一個不顯著的結果相容於哪些真相",
+      "description": "同一批固定資料（學名藥與原廠藥的收縮壓降幅差 0.6 mmHg，每組 120 人，合併標準差 8 mmHg，雙尾 t 檢定 p 約 0.56、不顯著），畫出點估計與 95% 信賴區間。使用者用滑桿移動一個假設的真實差異值，看它是否落在區間內：這批資料和「差異為 0（兩者相同）」相容，也和「差異為 +2 mmHg」相容。重點：不顯著只說明 0 在區間裡，沒說 0 比區間裡其他值更可信。",
+      "params": {
+        "meanDiff": 0.6,
+        "pooledSD": 8,
+        "nPerGroup": 120,
+        "unit": "mmHg",
+        "deltaDefault": 2
+      },
+      "notes": "決定性計算，不涉及亂數，不需要 seed。SE = pooledSD * sqrt(2/nPerGroup) = 8 * sqrt(2/120) = 1.032796；df = 2*(nPerGroup-1) = 238；t = meanDiff/SE = 0.58095；雙尾 p = 0.5616（用 stats.js 的 tTwoSidedP，Student's t、pooled variance）。95% 信賴區間 = meanDiff ± t_{0.975,238} * SE，t_{0.975,238} = 1.9700，得 0.6 ± 2.035 = [-1.435, +2.635]。瀏覽器端須用同一組公式重算，數字要對得上這裡。 / 原始參數註記：{\"test\":\"two-sample pooled-variance t-test, two-tailed\",\"precomputedT\":0.58095,\"precomputedTwoSidedP\":0.5616,\"tCrit95\":1.9700,\"ci95\":[-1.435,2.635]}"
+    },
+    "equivalence-bounds": {
+      "id": "equivalence-bounds",
+      "type": "fixed-data-test",
+      "title": "把效果關進邊界：TOST 與 90% 區間內含法",
+      "description": "同一批固定資料。使用者用滑桿設定等價邊界（預設 3 mmHg）。畫出 90% 信賴區間與正負邊界的帶，判定區間是否整個落在邊界之內（Berger–Hsu 對偶：這等於顯著水準 0.05 的 TOST 宣告等價），並顯示兩個單尾檢定的 p 值與 TOST 的 p = max(p1, p2)。把邊界拖到比區間半寬還小，就宣告不了等價。",
+      "params": {
+        "meanDiff": 0.6,
+        "pooledSD": 8,
+        "nPerGroup": 120,
+        "unit": "mmHg",
+        "marginDefault": 3,
+        "alpha": 0.05
+      },
+      "notes": "決定性計算，不涉及亂數，不需要 seed。SE = 1.032796、df = 238（同上）。90% 信賴區間 = meanDiff ± t_{0.95,238} * SE，t_{0.95,238} = 1.6510，得 0.6 ± 1.7052 = [-1.105, +2.305]；最小可宣告等價的邊界 Delta* = max(|下界|,|上界|) = 2.305。TOST 兩個單尾檢定：t1 = (meanDiff - (-Delta))/SE 檢右尾、t2 = (meanDiff - Delta)/SE 檢左尾；p1 = P(T > t1)、p2 = P(T < t2)，TOST p = max(p1,p2)，兩者皆 < alpha 才宣告等價。以 Delta = 3：t1 = 3.4857 → p1 = 0.00029；t2 = -2.3238 → p2 = 0.0105；TOST p = 0.0105 < 0.05 → 等價。單尾 p 由雙尾 tTwoSidedP 換算：t>0 時上尾 = tTwoSidedP/2，t<0 時下尾 = tTwoSidedP/2。 / 原始參數註記：{\"tCrit90\":1.6510,\"ci90\":[-1.105,2.305],\"deltaStar\":2.305,\"atDelta3\":{\"t1\":3.4857,\"p1\":0.00029,\"t2\":-2.3238,\"p2\":0.0105,\"tostP\":0.0105,\"verdict\":\"equivalent\"}}"
+    }
+  },
+  "sources": {
+    "bergerHsu1996Equivalence": {
+      "author": "Roger L. Berger and Jason C. Hsu",
+      "title": "Bioequivalence Trials, Intersection–Union Tests and Equivalence Confidence Sets",
+      "year": 1996,
+      "container": "Statistical Science, 11(4), pp.283-319 (with discussion)",
+      "locator": "全篇：TOST 與信賴區間內含法之對偶關係的嚴謹處理。核心結果——以 90% 信賴區間是否落在 ±Delta 內，來判定 alpha=0.05 的等價，兩者給出完全相同的決策（Berger–Hsu 對偶）；並把等價檢定放進交集—聯集檢定（intersection–union）的架構。DOI 10.1214/ss/1032280304。",
+      "url": "https://projecteuclid.org/journals/statistical-science/volume-11/issue-4/Bioequivalence-trials-intersection-union-tests-and-equivalence-confidence-sets/10.1214/ss/1032280304.full",
+      "en": {
+        "locator": "The paper as a whole: a rigorous treatment of the duality between TOST and the confidence-interval inclusion rule. The key result is that deciding equivalence at alpha = 0.05 by checking whether a 90% confidence interval falls inside ±Delta gives exactly the same decision as TOST (the Berger–Hsu duality); it also places equivalence testing inside the intersection–union framework. DOI 10.1214/ss/1032280304."
+      }
+    },
+    "fdaBioequivalence8025": {
+      "author": "U.S. Food and Drug Administration, Center for Drug Evaluation and Research",
+      "title": "Statistical Approaches to Establishing Bioequivalence (Guidance for Industry)",
+      "year": 2001,
+      "container": "U.S. Department of Health and Human Services, FDA/CDER",
+      "locator": "平均生體相等性判準：以對數轉換後的 AUC 與 Cmax，計算試驗藥／參考藥幾何平均比值的 90% 信賴區間，該區間須整個落在 80.00%–125.00% 之間才算相等。等價邊界在對數尺度上對稱（ln 0.80 = -ln 1.25）。相關法規見 21 CFR Part 320（§320.24 列生體相等性的證明方式）。",
+      "url": "https://www.ecfr.gov/current/title-21/part-320",
+      "en": {
+        "locator": "Average bioequivalence criterion: on the log-transformed AUC and Cmax, the 90% confidence interval for the test/reference ratio of geometric means must lie entirely within 80.00%–125.00%. The bounds are symmetric on the log scale (ln 0.80 = -ln 1.25). See 21 CFR Part 320 (§320.24 lists the accepted ways to demonstrate bioequivalence)."
+      }
+    },
+    "lakens2017EquivalenceTests": {
+      "author": "Daniël Lakens",
+      "title": "Equivalence Tests: A Practical Primer for t Tests, Correlations, and Meta-Analyses",
+      "year": 2017,
+      "container": "Social Psychological and Personality Science, 8(4), pp.355-362",
+      "locator": "全篇：把 TOST 從藥學帶進一般社會科學的實務入門。說明如何事先設定『最小在乎的效果量』（smallest effect size of interest）當等價邊界、如何對 t 檢定與相關係數做等價檢定，並反覆強調『不顯著』不能讀成『沒有效果』。DOI 10.1177/1948550617697177。",
+      "url": "https://journals.sagepub.com/doi/10.1177/1948550617697177",
+      "en": {
+        "locator": "The paper as a whole: a practical primer bringing TOST out of pharmacology into general social science. It shows how to set a smallest effect size of interest as the equivalence bound in advance, how to run equivalence tests for t tests and correlations, and stresses that 'not significant' cannot be read as 'no effect'. DOI 10.1177/1948550617697177."
+      }
+    },
+    "schuirmann1987TOST": {
+      "author": "Donald J. Schuirmann",
+      "title": "A Comparison of the Two One-Sided Tests Procedure and the Power Approach for Assessing the Equivalence of Average Bioavailability",
+      "year": 1987,
+      "container": "Journal of Pharmacokinetics and Biopharmaceutics, 15(6), pp.657-680",
+      "locator": "全篇：two one-sided tests（TOST）程序的原始提出。把等價問題拆成兩個單尾檢定——一個檢定「差異是否大於下界 -Delta」、一個檢定「差異是否小於上界 +Delta」，兩個都在 alpha 下被拒絕，才宣告等價；文中並說明此程序與 (1-2alpha)×100% 信賴區間內含法給出相同判定。DOI 10.1007/BF01068419。",
+      "url": "https://link.springer.com/article/10.1007/BF01068419",
+      "en": {
+        "locator": "The paper as a whole: the original proposal of the two one-sided tests (TOST) procedure. Equivalence is split into two one-sided tests — one against the lower bound -Delta, one against the upper bound +Delta — and declared only if both are rejected at level alpha; the paper also shows this gives the same decision as checking whether the (1-2alpha)×100% confidence interval lies inside ±Delta. DOI 10.1007/BF01068419."
+      }
+    }
+  },
+  "quiz": [
+    {
+      "id": "q1-nonsignificant",
+      "prompt": "兩種藥的試驗跑出 p = 0.56，不顯著。下列哪一句話最準確？",
+      "options": [
+        "兩種藥一樣有效",
+        "這批資料沒能推翻「兩者相同」，但也沒能推翻某些有意義的差異",
+        "兩種藥一定有差異，只是沒被測到",
+        "樣本數一定不夠"
+      ],
+      "correctIndex": 1,
+      "explain": "不顯著只說明 0 落在信賴區間內；同一個區間也可能包含大到值得在意的差異。不顯著不能讀成「沒有效果」，也不能反過來讀成「一定有效果」。"
+    },
+    {
+      "id": "q2-tost-margin",
+      "prompt": "做等價檢定時，等價邊界 應該什麼時候決定？",
+      "options": [
+        "看到信賴區間落在哪裡之後，挑一個剛好包得住的 邊界",
+        "在看資料之前，根據這個領域「多大的差異才算重要」的知識決定",
+        "統計軟體會自動算出最佳的 邊界",
+        "取樣本標準差的兩倍"
+      ],
+      "correctIndex": 1,
+      "explain": "邊界 是一個實質判斷，必須事先定好。看了區間再回頭挑一個剛好包得住的 邊界，等於先射箭再畫靶，和 p-hacking 是同一個病。"
+    },
+    {
+      "id": "q3-two-nonsignificances",
+      "prompt": "一個不顯著的結果，等價檢定卻宣告不了等價。最可能的原因是？",
+      "options": [
+        "檢定一定算錯了",
+        "資料證明了兩者有差異",
+        "這個研究的精度不足，信賴區間比等價邊界還寬，只能承認測不到",
+        "應該把 邊界 改大一點直到宣告成功"
+      ],
+      "correctIndex": 2,
+      "explain": "「測不到差異」和「差異小到不重要」是兩件事。當研究沒有足夠精度、信賴區間比 邊界 還寬時，你既拒絕不了「有差異」、也宣告不了「等價」，誠實的結論是「不知道」。事後放大 邊界 直到通過，就是把靶畫到箭上。"
+    }
+  ],
+  "misreadings": [],
+  "timeline": [],
+  "terms": {
+    "confidence-interval": {
+      "slug": "confidence-interval",
+      "term": "信賴區間",
+      "oneLine": "一套會生出區間的規則。95% 是這套規則的長期命中率，不是眼前這一個區間的機率。",
+      "example": "Neyman 1937 自己問：對已經算出來的那一個區間，能不能說真值落在裡面的機率是 95%？他的答案是不能。",
+      "route": "/statistics/glossary/confidence-interval",
+      "en": {
+        "term": "Confidence interval",
+        "oneLine": "A rule for producing intervals. The 95% is the rule's long-run hit rate, not the probability for the one interval in front of you.",
+        "example": "Neyman asked it himself in 1937: of an interval already computed, may we say the true value lies inside it with probability 95%? His answer was no."
+      }
+    },
+    "equivalence-test": {
+      "slug": "equivalence-test",
+      "term": "等價檢定",
+      "oneLine": "先說清楚多大的差異才算重要，再用資料把效果關進這個範圍。",
+      "example": "美國 FDA 審學名藥靠它：兩藥血中濃度比值的 90% 信賴區間要整個落在 80%–125%，才算相等。",
+      "route": "/statistics/glossary/equivalence-test",
+      "en": {
+        "term": "Equivalence test",
+        "oneLine": "State how large a difference would matter, then use the data to bound the effect inside that range.",
+        "example": "It is how the U.S. FDA reviews generic drugs: the 90% confidence interval for the ratio of blood concentrations must sit entirely within 80%–125%."
+      }
+    },
+    "null-hypothesis": {
+      "slug": "null-hypothesis",
+      "term": "虛無假設",
+      "oneLine": "被設計來承受攻擊的那個假設：設下它，是為了讓資料有機會推翻它。",
+      "example": "品茶實驗的虛無假設是「她只是在猜」。Fisher 端出八杯茶，就是為了給這個假設一次被推翻的機會。",
+      "route": "/statistics/glossary/null-hypothesis",
+      "en": {
+        "term": "Null hypothesis",
+        "oneLine": "The hypothesis set up to be attacked: it exists so the data have something to argue against.",
+        "example": "In the tea experiment the null is \"she is guessing.\" Fisher poured eight cups precisely to give that hypothesis a chance of being overturned."
+      }
+    },
+    "p-hacking": {
+      "slug": "p-hacking",
+      "term": "p-hacking",
+      "oneLine": "一邊看結果一邊調分析：多收幾個樣本、換個共變量、換個結果變數，直到 p 掉到門檻底下。",
+      "example": "Simmons 等人 2011 年「證明」聽披頭四的〈When I'm Sixty-Four〉會讓人年輕一歲半（p = .040）。拿掉一個共變量，p 就跳回 .33。",
+      "route": "/statistics/glossary/p-hacking",
+      "en": {
+        "term": "p-hacking",
+        "oneLine": "Adjusting the analysis while watching the result — a few more subjects, another covariate, another outcome — until p drops below the line.",
+        "example": "Simmons and colleagues \"showed\" in 2011 that hearing \"When I'm Sixty-Four\" made people a year and a half younger (p = .040). Drop one covariate and p goes back to .33."
+      }
+    },
+    "statistical-power": {
+      "slug": "statistical-power",
+      "term": "檢定力",
+      "oneLine": "效果真的存在時，這個研究抓得到它的機率。",
+      "example": "Cohen 在 1962 年算過：那年頭的心理學研究要抓一個中等大小的效果，平均只有 .48 的機會，比丟銅板還差一點。",
+      "route": "/statistics/glossary/statistical-power",
+      "en": {
+        "term": "Statistical power",
+        "oneLine": "The probability that a study will catch an effect that is really there.",
+        "example": "Cohen worked it out in 1962: to catch a medium effect, the psychology studies of the day averaged a .48 chance. Slightly worse than a coin toss."
+      }
+    }
+  }
+}
