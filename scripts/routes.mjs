@@ -6,7 +6,7 @@
 import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { ROOT } from './site-config.mjs';
-import { CC_TAB_SLUGS, ccJusticePath, justiceHasContent } from '../src/pages/_constitutional-court/seo.js';
+import { CC_TAB_SLUGS, ccJusticePath, justiceHasContent, ccCasePath, caseIsIndexable } from '../src/pages/_constitutional-court/seo.js';
 
 const PAGES = join(ROOT, 'src', 'pages');
 const kebab = (s) => s.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();
@@ -54,6 +54,17 @@ function justiceRoutes() {
   }
 }
 
+// One route per indexable case: every 憲判 (live from the data) plus the frozen
+// curated 釋字 list — the same caseIsIndexable predicate the runtime uses.
+function caseRoutes() {
+  try {
+    const d = JSON.parse(readFileSync(join(ROOT, 'src', 'data', 'constitutionalCourt.json'), 'utf8'));
+    return (d.文件 || []).filter((doc) => caseIsIndexable(doc.字號)).map((doc) => ccCasePath(doc.字號));
+  } catch {
+    return [];
+  }
+}
+
 export function collectRoutes() {
   const routes = new Set(['/']);
   for (const rel of walkPages(PAGES)) {
@@ -66,9 +77,10 @@ export function collectRoutes() {
       routes.add(route);
     }
   }
-  // Constitutional Court archive: one clean, prerendered URL per tab, plus one
-  // per justice with recorded activity.
+  // Constitutional Court archive: one clean, prerendered URL per tab, per justice
+  // with recorded activity, and per indexable case.
   for (const slug of CC_TAB_SLUGS) routes.add(`/constitutionalcourt/${slug}`);
   for (const route of justiceRoutes()) routes.add(route);
+  for (const route of caseRoutes()) routes.add(route);
   return [...routes].sort();
 }

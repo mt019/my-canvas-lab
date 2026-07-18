@@ -5,6 +5,8 @@
 // describes the whole archive as a schema.org Dataset (eligible for Google
 // Dataset Search). Descriptions state only what the page actually shows.
 
+import { CC_INDEXED_釋字 } from './case-index.js';
+
 // Base route: /constitutionalcourt (the 案件索引 default tab).
 export const CC_BASE_SEO = {
   name: '憲法法庭案例庫',
@@ -148,6 +150,56 @@ export function justiceSeo(j) {
       worksFor: { '@type': 'GovernmentOrganization', name: '司法院憲法法庭', url: 'https://cons.judicial.gov.tw/' },
       ...(j.簡歷頁 ? { sameAs: [j.簡歷頁] } : {}),
       mainEntityOfPage: url,
+    }],
+  };
+}
+
+// --- Per-case pages: /constitutionalcourt/case/<字號> -----------------------
+// A curated long tail of individually-indexable cases — landmark and frequently
+// cited interpretations plus the憲法法庭 judgments — rather than all 813, which
+// would balloon the per-deploy prerender. The selected 釋字 are the frozen list
+// in case-index.js; every 憲判 is always in. A case not in the set still
+// resolves (marked noindex).
+const CC_INDEXED_釋字_SET = new Set(CC_INDEXED_釋字);
+export const ccCasePath = (字號) => `/constitutionalcourt/case/${字號}`;
+export const caseIsIndexable = (字號) => /憲判/.test(字號) || CC_INDEXED_釋字_SET.has(字號);
+
+// SEO page descriptor for one case record (from data.文件). Pure data. Title
+// leads with the case number so a "釋字748" search lands here; the schema models
+// the decision itself as a schema.org Legislation (the closest standard type for
+// a binding legal instrument), describing only fields the page shows.
+export function caseSeo(doc) {
+  const no = doc.字號;
+  const 憲判 = /憲判/.test(no);
+  const kind = 憲判 ? '憲法法庭判決' : '司法院大法官解釋';
+  const 爭點 = (doc.爭點 || '').trim();
+  const short = 爭點.length > 26 ? `${爭點.slice(0, 26)}…` : 爭點;
+  const opinions = (doc.意見書 || []).filter((o) => o.作者類別 === '大法官').length;
+  const parts = [`${no}（${doc.機關 ?? ''}${doc.日期 ? `，${doc.日期}` : ''}）`];
+  if (爭點) parts.push(`爭點：${爭點}`);
+  if (doc.結論類型) parts.push(`審查結論：${doc.結論類型}`);
+  if (opinions) parts.push(`大法官意見書 ${opinions} 份`);
+  return {
+    name: no,
+    title: `${no}${short ? `：${short}` : ''}｜憲法法庭案例庫`,
+    description: parts.join('。').slice(0, 155),
+    keywords: `${no}, ${no.replace(/第|號/g, '')}, ${kind}, 憲法法庭, 大法官解釋, 違憲審查${doc.主題 ? `, ${doc.主題}` : ''}`,
+    type: 'Article',
+    indexable: caseIsIndexable(no),
+    parent: { name: '憲法法庭案例庫', path: '/constitutionalcourt' },
+    buildSchema: (SITE_URL, url) => [{
+      '@type': 'Legislation',
+      '@id': `${url}#decision`,
+      name: `${no}${doc.主題 ? `・${doc.主題}` : ''}`,
+      legislationType: kind,
+      legislationIdentifier: no,
+      ...(doc.日期 ? { legislationDate: doc.日期 } : {}),
+      legislationJurisdiction: '中華民國',
+      inLanguage: 'zh-Hant-TW',
+      ...(爭點 ? { about: 爭點 } : {}),
+      creator: { '@type': 'GovernmentOrganization', name: 憲判 ? '憲法法庭' : '司法院大法官', url: 'https://cons.judicial.gov.tw/' },
+      ...(doc.官方頁 ? { isBasedOn: doc.官方頁 } : {}),
+      url,
     }],
   };
 }

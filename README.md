@@ -41,7 +41,11 @@ npm run dev
 
 `public/og-default.png`（1200×630）由 `scripts/generate-og-image.mjs` 產，改文案或色票後重跑 `npm run og:image`，PNG 進版控。
 
-**憲法法庭案例庫：分頁與大法官都有可索引網址。** 走 `?tab=` query 的頁面，爬蟲只看得到預設分頁。案例庫改成每個分頁一條乾淨路由 `/constitutionalcourt/<tab>`、每位有實質參與的大法官一條 `/constitutionalcourt/justices/<姓名>`，各帶鎖定關鍵字的 title／description 與結構化資料（整庫一個 schema.org `Dataset`、大法官頁一個 `Person`）。分頁列與大法官名都是真的 `<Link>`，爬蟲跟得下去；`?tab=`／`?j=` 舊深連結仍可用。SEO 資料集中在 `src/pages/_constitutional-court/seo.js`（純資料，node 腳本與前端共用），路由在 `App.jsx`，分頁與姓名由 `ConstitutionalCourt.jsx` 從 path param 讀。要為別的研究頁比照辦理，就複製這幾個接點。
+**憲法法庭案例庫：分頁、大法官、案件都有可索引網址。** 走 `?tab=` query 的頁面，爬蟲只看得到預設分頁。案例庫改成三層乾淨路由：每個分頁 `/constitutionalcourt/<tab>`、每位有實質參與的大法官 `/constitutionalcourt/justices/<姓名>`、精選長尾案件 `/constitutionalcourt/case/<字號>`，各帶鎖定關鍵字的 title／description 與結構化資料（整庫一個 schema.org `Dataset`、大法官頁 `Person`、案件頁 `Legislation`）。分頁列與大法官名都是真的 `<Link>`；`?tab=`／`?j=`／`?doc=` 舊深連結仍可用。
+
+案件不全建（813 件會讓每次部署的預渲染爆量），只收精選長尾：全部憲法法庭判決（憲判，從資料現算、新件自動納入）＋一份凍結的釋字清單 `case-index.js`（引用網絡 in-degree 高者、稅法核心、大眾地標、湯德宗東吳憲法課 OCW 講義討論的案）。凍結的原因是那份清單有一部分來源在 repo 外的講義檔，Vercel build 時拿不到，故在本機算好後入版控。哪些可索引由 `seo.js` 的 `caseIsIndexable` 決定，`routes.mjs`（build）與 `CaseRoute.jsx`（runtime）共用它，索引集合與 robots 永遠一致。
+
+SEO 資料集中在 `src/pages/_constitutional-court/seo.js`（純資料，node 腳本與前端共用），路由在 `App.jsx`，分頁／姓名／字號由 `ConstitutionalCourt.jsx` 從 path param 讀。要為別的研究頁比照辦理，就複製這幾個接點。
 
 **責任邊界。** 索引技術（metadata、robots、sitemap、預渲染、schema）屬 canvas 前端；研究事實、原始來源、引註、更新日期屬各 data repo。canvas 把 data repo 的公開快照投影成搜尋摘要與結構化資料，不把 private repo 路徑或內部處理狀態輸出到頁面。
 

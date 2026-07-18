@@ -65,14 +65,13 @@ async function main() {
     console.warn(`prerender: skipped — could not launch Chromium (${err.message}). Build continues with client-only SEO.`);
     return;
   }
-  const page = await browser.newPage();
   let ok = 0;
   const warnings = [];
 
-  for (const route of routes) {
-    // Routes carry Chinese names undecoded (justice pages); encodeURI turns them
-    // into a valid URL while leaving ASCII routes untouched. The output dir keeps
-    // the decoded name so the deployed file path matches what the server serves.
+  async function renderOne(page, route) {
+    // Routes carry Chinese names undecoded (justice/case pages); encodeURI turns
+    // them into a valid URL while leaving ASCII routes untouched. The output dir
+    // keeps the decoded name so the deployed file path matches what's served.
     await page.goto(`${base}${encodeURI(route)}`, { waitUntil: 'networkidle', timeout: 30000 });
     try {
       await page.waitForFunction(() => {
@@ -90,6 +89,21 @@ async function main() {
     await writeFile(join(outDir, 'index.html'), html);
     ok += 1;
   }
+
+  // Render a pool of pages in parallel — 425 routes one-at-a-time is minutes of
+  // wall time; a handful of concurrent tabs cuts it to about one. Each worker
+  // owns one page and pulls the next route until the queue drains. Concurrency
+  // is bounded (and overridable) so a CI box with few cores doesn't thrash.
+  const CONCURRENCY = Math.max(1, Number(process.env.PRERENDER_CONCURRENCY) || 8);
+  let next = 0;
+  async function worker() {
+    const page = await browser.newPage();
+    for (let i = next++; i < routes.length; i = next++) {
+      await renderOne(page, routes[i]);
+    }
+    await page.close();
+  }
+  await Promise.all(Array.from({ length: Math.min(CONCURRENCY, routes.length) }, worker));
 
   await browser.close();
   server.close();

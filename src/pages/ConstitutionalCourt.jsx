@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 import data from '../data/constitutionalCourt.json';
 import { ccJusticePath } from './_constitutional-court/seo';
-import { CC_VARS, DocSpotlight, docs } from './_constitutional-court/shared';
+import { CaseCard, CC_VARS, DocSpotlight, docs, usePref } from './_constitutional-court/shared';
 import IndexView from './_constitutional-court/IndexView';
 import TimelineView from './_constitutional-court/TimelineView';
 import JusticesView from './_constitutional-court/JusticesView';
@@ -47,8 +47,12 @@ export default function ConstitutionalCourt() {
   const queryJustice = params.get('j');
   const routeJustice = routeParams.justiceName ? decodeURIComponent(routeParams.justiceName) : null;
   const justiceName = queryJustice ?? routeJustice;
+  // A single-case landing page (/constitutionalcourt/case/<字號>) shows that case
+  // as the main view rather than a tab; the ?doc= overlay is untouched.
+  const routeCase = routeParams.caseNo ? decodeURIComponent(routeParams.caseNo) : null;
   const active = params.get('tab') ?? routeParams.tab ?? (justiceName ? 'justices' : 'index');
   const focusDoc = params.get('doc');
+  const [pdfMode] = usePref('pdfMode', 'preview');
 
   const tabPath = (id) => (id === 'index' ? '/constitutionalcourt' : `/constitutionalcourt/${id}`);
   // Justices navigate to their own clean, indexable URL; a crawler that reaches
@@ -69,7 +73,9 @@ export default function ConstitutionalCourt() {
   // 切換分頁／大法官個人頁時捲回頂端：SPA 不會自動重置 window 捲動位置，否則案件索引捲到
   // 很下面點大法官，換到的個人頁會沿用同一捲動量、看起來也停在下面（兩頁捲動「聯動」）。
   // 只依 active／justiceName——開關案件浮層（focusDoc）不重置，讓關浮層後回到索引原位。
-  useEffect(() => { window.scrollTo(0, 0); }, [active, justiceName]);
+  useEffect(() => { window.scrollTo(0, 0); }, [active, justiceName, routeCase]);
+
+  const caseDoc = routeCase ? docs.find((x) => x.字號 === routeCase) : null;
 
   return (
     <div className="min-h-screen paper-texture bg-[var(--cc-bg)] font-sans text-[var(--cc-ink)]" style={{ ...CC_VARS, paddingBottom: 60, overflowX: 'clip' }}>
@@ -129,7 +135,17 @@ export default function ConstitutionalCourt() {
       </nav>
 
       <main className="mx-auto max-w-6xl px-4 sm:px-6">
-        {active === 'index' ? <IndexView initialQ={params.get('q') ?? ''} onOpenDoc={openDoc} /> : null}
+        {routeCase ? (
+          <section className="py-5">
+            <Link to="/constitutionalcourt" className="text-[13px] font-bold text-[var(--cc-accent)] hover:underline">← 回案件索引</Link>
+            <div className="mt-3">
+              {caseDoc
+                ? <CaseCard d={caseDoc} q="" reasoningDefault pdfMode={pdfMode} />
+                : <p className="py-8 text-[14px] text-[var(--cc-ink-mid)]">案例庫查無「{routeCase}」這一件。</p>}
+            </div>
+          </section>
+        ) : null}
+        {!routeCase && active === 'index' ? <IndexView initialQ={params.get('q') ?? ''} onOpenDoc={openDoc} /> : null}
         {active === 'timeline' ? <TimelineView /> : null}
         {active === 'justices' ? (
           justiceName

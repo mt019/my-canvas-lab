@@ -5,9 +5,10 @@ import SeoHead from './components/SeoHead';
 import ScrollToTop from './components/ScrollToTop';
 import { CC_BASE_SEO, CC_TABS_SEO, ccDataset } from './pages/_constitutional-court/seo';
 
-// A single justice's indexable page. Lazy-loaded so the Constitutional Court
-// archive JSON it pulls in never lands in the main entry bundle.
+// A single justice's / single case's indexable page. Lazy-loaded so the
+// Constitutional Court archive JSON they pull in never lands in the main bundle.
 const CCJusticeRoute = lazy(() => import('./pages/_constitutional-court/JusticeRoute'));
+const CCCaseRoute = lazy(() => import('./pages/_constitutional-court/CaseRoute'));
 
 /*
  * Pages are routed by file path. A file directly under pages/ keeps the old flat
@@ -338,10 +339,11 @@ export default function App() {
           {routes.map((route) => (
             <Route key={route.path} path={route.path} element={<PageRoute route={route} />} />
           ))}
-          {/* One clean, indexable URL per justice — matched before the tab route
-              since it has an extra path segment. Lazy so the archive JSON stays
-              out of the main bundle. */}
+          {/* One clean, indexable URL per justice / per case — matched before the
+              tab route since they have an extra path segment. Lazy so the archive
+              JSON stays out of the main bundle. */}
           <Route path="/constitutionalcourt/justices/:justiceName" element={<CCJusticeRoute />} />
+          <Route path="/constitutionalcourt/case/:caseNo" element={<CCCaseRoute />} />
           {/* Clean, separately-indexable URL per Constitutional Court tab
               (/constitutionalcourt/research …). Backward-compatible: the ?tab=
               query deep links still resolve on the base route above. */}
