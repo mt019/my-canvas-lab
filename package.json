@@ -5,7 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "npm run validate:fonts && npm run validate:tokens && npm run validate:colors && npm run validate:math && npm run validate:cases && vite build",
+    "build": "npm run validate:fonts && npm run validate:tokens && npm run validate:colors && npm run validate:math && npm run validate:cases && vite build && npm run prerender && npm run sitemap",
+    "preprerender": "playwright install chromium",
+    "prerender": "node scripts/prerender.mjs",
+    "sitemap": "node scripts/generate-sitemap.mjs",
+    "og:image": "node scripts/generate-og-image.mjs",
     "validate:cases": "node scripts/validate-case-query.mjs",
     "validate:fonts": "node scripts/validate-font-coverage.mjs",
     "fonts:rebuild": "node scripts/rebuild-font-subsets.mjs",

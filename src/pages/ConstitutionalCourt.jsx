@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useParams } from 'react-router-dom';
 import {
   CalendarClock,
   FileText,
@@ -39,7 +39,10 @@ const tabs = [
 export default function ConstitutionalCourt() {
   // 分頁與大法官個人頁都掛在 URL（?tab=…&j=姓名）：可深連結、可分享、可返回
   const [params, setParams] = useSearchParams();
-  const active = params.get('tab') ?? 'index';
+  // Tab comes from the clean path route (/constitutionalcourt/:tab) when present,
+  // else the ?tab= query (kept for existing deep links), else the default index.
+  const routeParams = useParams();
+  const active = params.get('tab') ?? routeParams.tab ?? 'index';
   const justiceName = params.get('j');
   const focusDoc = params.get('doc');
   const setActive = (id) => setParams(id === 'index' ? {} : { tab: id });
@@ -50,7 +53,9 @@ export default function ConstitutionalCourt() {
   const viewInIndex = (字號) => setParams({ q: 字號 }); // 跳索引分頁、以字號預搜、關浮層
 
   useEffect(() => {
-    document.title = justiceName ? `${justiceName}｜憲法法庭案例庫` : '憲法法庭案例庫';
+    // The justice deep-view (?j=) has no registered route, so SeoHead can't title
+    // it — set it here. Base and tab titles are owned by SeoHead; don't clobber.
+    if (justiceName) document.title = `${justiceName}｜憲法法庭案例庫`;
   }, [justiceName]);
 
   // 切換分頁／大法官個人頁時捲回頂端：SPA 不會自動重置 window 捲動位置，否則案件索引捲到

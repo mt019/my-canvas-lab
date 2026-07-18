@@ -29,9 +29,22 @@
 
 ## AEO 與 SEO
 
-全站以 `src/components/SeoHead.jsx` 統一產生路由層級的 title、description、canonical、Open Graph／Twitter metadata、breadcrumb 與 WebSite／WebPage JSON-LD。首頁列出的頁面會各自帶有可辨識的名稱與摘要；僅供個人決策或設計測試的頁面不進入索引。
+全站以 `src/components/SeoHead.jsx` 統一產生路由層級的 title、description、canonical、Open Graph／Twitter（`summary_large_image`＋固定 og 圖）、breadcrumb 與 Organization／WebSite／WebPage／Article JSON-LD。首頁另帶一份 `ItemList`，內容就是頁面上實際列出的 canvas 目錄（描述畫面上有的東西，不憑空捏造）。首頁列出的頁面會各自帶有可辨識的名稱與摘要；僅供個人決策或設計測試的頁面不進入索引。
 
-在正式部署環境設定 `VITE_SITE_URL` 為本站完整 HTTPS 網址；它會作為 canonical、Open Graph 與結構化資料的來源。未設定時，前端會使用目前開啟網站的網域，絕不預設指向其他人的網址。若要提交 sitemap，請在確定正式網域後再產生其中的絕對網址，並在 `robots.txt` 加入對應的 Sitemap 行。內容頁保持可讀的標題層級、來源連結與可驗證敘述；不要為取得 FAQ rich result 而加入畫面上沒有的問答或結構化資料。
+正式網址寫在 `.env.production` 的 `VITE_SITE_URL`（目前為 `https://my-canvas-lab.vercel.app`），build 時烤進 client bundle，node 腳本則透過 `scripts/site-config.mjs` 讀同一個值——canonical、Open Graph、JSON-LD、sitemap 全部指向同一處。網址搬家只改這一行。內容頁保持可讀的標題層級、來源連結與可驗證敘述；不要為取得 FAQ rich result 而加入畫面上沒有的問答或結構化資料。
+
+### Build 期預渲染（讓不跑 JS 的爬蟲與答案引擎看得到內文）
+
+`vite build` 之後接兩步（見 `package.json` 的 `build`）：
+
+- `scripts/prerender.mjs`：用 Playwright 起一個 headless Chromium，把 `dist/` 以 SPA fallback 靜態服務起來，逐一開啟每條可索引路由，等 React 掛載完、`SeoHead` 寫好 `<head>` 後，抓渲染後的完整 HTML 寫回 `dist/<route>/index.html`。爬蟲因此拿到真的內文與正確的 per-page metadata，而非空的 `#root`。路由列表由 `scripts/routes.mjs` 依 `src/pages/` 的檔案路徑規則列出（與 `App.jsx` 同一套；`_` 開頭是零件不成路由），新增頁面不用改腳本。noindex 頁（PaletteLab、TaipeiFilmFestival）不預渲染。趕時間可用 `PRERENDER=0 npm run build` 跳過。
+- `scripts/generate-sitemap.mjs`：用同一份路由列表產 `dist/sitemap.xml`（絕對網址、排除 noindex）。`public/robots.txt` 已放行主要 AI／答案引擎爬蟲（GPTBot、ClaudeBot、PerplexityBot、Google-Extended 等）並指向 sitemap。
+
+`public/og-default.png`（1200×630）由 `scripts/generate-og-image.mjs` 用 Playwright 渲染首頁識別色的模板產生；改文案或色票時重跑 `npm run og:image`，PNG 進版控。Vercel 以檔案系統優先於 `vercel.json` 的 SPA rewrite，預渲染的巢狀 `index.html` 會先被服務，catch-all 只接沒有預渲染檔的路徑。
+
+### 內容豐富的研究頁：每個分頁一個可索引網址
+
+分頁走 `?tab=` query param 的頁面，爬蟲只看得到預設分頁，其餘高價值內容沒有各自的網址可排名。憲法法庭案例庫的作法是替每個分頁開一條乾淨、可預渲染、可獨立索引的路由 `/constitutionalcourt/<tab>`（研究問題、意見書圖譜、沿革、大法官…），各帶鎖定關鍵字的 title／description／keywords 與三層 breadcrumb，整個案例庫另以 schema.org `Dataset` 描述（可進 Google Dataset Search）。SEO 資料集中在 `src/pages/_constitutional-court/seo.js`（純資料，node 腳本與前端共用），路由在 `App.jsx` 的 `CCTabRoute`，分頁狀態由 `ConstitutionalCourt.jsx` 從 path param 讀取；`?tab=` 深連結全部沿用不動。要為別的研究頁比照辦理就複製這三個接點。
 
 ### 資料 repo 與 Canvas 的責任邊界
 

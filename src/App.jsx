@@ -1,8 +1,9 @@
 import React, { Suspense, lazy, useMemo } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link, useParams, Navigate } from 'react-router-dom';
 import { ArrowRight, BookMarked, CalendarDays, Droplets, FileSearch, Gavel, Globe2, GraduationCap, Landmark, Languages, Mic, Music, Music2, Palette, Piano, Scale, ScrollText, Sigma, Wind } from 'lucide-react';
 import SeoHead from './components/SeoHead';
 import ScrollToTop from './components/ScrollToTop';
+import { CC_BASE_SEO, CC_TABS_SEO, ccDataset } from './pages/_constitutional-court/seo';
 
 /*
  * Pages are routed by file path. A file directly under pages/ keeps the old flat
@@ -194,6 +195,11 @@ const PAGE_META = { // token-exempt: per-page identity chip colors (data, not st
     accent: '#e8dae0',
     accentText: '#8f6071',
     group: 'research',
+    // Richer SEO for the archive: keywords + CollectionPage + a Dataset node
+    // (Google Dataset Search eligible). Tab sub-routes add their own below.
+    keywords: CC_BASE_SEO.keywords,
+    type: CC_BASE_SEO.type,
+    buildSchema: (SITE_URL) => [ccDataset(SITE_URL)],
   },
   IiasPublications: {
     name: '中研院法研所出版品',
@@ -328,6 +334,10 @@ export default function App() {
           {routes.map((route) => (
             <Route key={route.path} path={route.path} element={<PageRoute route={route} />} />
           ))}
+          {/* Clean, separately-indexable URL per Constitutional Court tab
+              (/constitutionalcourt/research …). Backward-compatible: the ?tab=
+              query deep links still resolve on the base route above. */}
+          <Route path="/constitutionalcourt/:tab" element={<CCTabRoute routes={routes} />} />
         </Routes>
       </Suspense>
     </Router>
@@ -343,6 +353,27 @@ function PageRoute({ route }) {
     indexable: !['PaletteLab', 'TaipeiFilmFestival'].includes(route.name),
   } : undefined;
   const Page = route.component;
+  return <><SeoHead page={page} /><Page /></>;
+}
+
+// A Constitutional Court tab under its own clean URL. Renders the same lazy
+// ConstitutionalCourt component (which reads the tab from the path param) with
+// tab-specific SEO; unknown slugs fall back to the base archive.
+function CCTabRoute({ routes }) {
+  const { tab } = useParams();
+  const seo = CC_TABS_SEO.find((t) => t.slug === tab);
+  const cc = routes.find((r) => r.name === 'ConstitutionalCourt');
+  if (!seo || !cc) return <Navigate to="/constitutionalcourt" replace />;
+  const page = {
+    name: seo.name,
+    title: seo.title,
+    description: seo.description,
+    type: seo.type,
+    keywords: seo.keywords,
+    indexable: true,
+    parent: { name: '憲法法庭案例庫', path: '/constitutionalcourt' },
+  };
+  const Page = cc.component;
   return <><SeoHead page={page} /><Page /></>;
 }
 
@@ -385,12 +416,15 @@ function HomePage({ routes }) {
   // surface below, via the ungrouped fallback.
   const known = routes.filter((r) => r.meta && r.meta.listed !== false);
   const unknown = routes.filter((r) => !r.meta);
+  // Directory of the front-door canvases, as an ItemList in the homepage JSON-LD.
+  // Mirrors the links rendered below, so it describes on-screen content only.
+  const directory = known.map((r) => ({ name: r.meta.name, description: r.meta.desc, path: r.path }));
   return (
     <div
       className="min-h-screen paper-texture bg-[var(--home-bg)] px-4 font-sans text-[var(--home-ink)] sm:px-6"
       style={{ ...HOME_VARS, paddingTop: 46, paddingBottom: 64 }}
     >
-      <SeoHead />
+      <SeoHead itemList={directory} />
       <div className="mx-auto w-full max-w-5xl">
 
         <header className="mb-8 border-b border-[var(--home-line)] pb-7">
