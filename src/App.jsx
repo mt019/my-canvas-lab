@@ -1,6 +1,6 @@
 import React, { Suspense, lazy, useMemo } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useParams, Navigate } from 'react-router-dom';
-import { ArrowRight, BookMarked, CalendarDays, Droplets, FileSearch, Film, Gavel, Globe2, GraduationCap, Landmark, Languages, Mic, Music, Music2, Palette, Piano, Scale, ScrollText, Sigma, Wind } from 'lucide-react';
+import { ArrowRight, BookMarked, CalendarDays, Droplets, FileSearch, Film, Gavel, Globe2, GraduationCap, Landmark, Languages, Mic, Music, Music2, Palette, Piano, Scale, ScrollText, ShieldAlert, Sigma, Wind } from 'lucide-react';
 import SeoHead from './components/SeoHead';
 import ScrollToTop from './components/ScrollToTop';
 import { CC_BASE_SEO, CC_TABS_SEO, ccDataset } from './pages/_constitutional-court/seo';
@@ -203,6 +203,15 @@ const PAGE_META = { // token-exempt: per-page identity chip colors (data, not st
     accentText: '#315f4d',
     group: 'research',
   },
+  XiaohongshuRisk: {
+    name: '小紅書詐騙風險',
+    title: '小紅書詐騙風險研究',
+    desc: '165 打詐案例與數位素養材料整理：平台風險、詐騙樣態與研究資料成熟度',
+    Icon: ShieldAlert,
+    accent: '#f2e4dd',
+    accentText: '#9b5f4c',
+    group: 'research',
+  },
   ConstitutionalCourt: {
     name: '憲法法庭案例庫',
     desc: '813 件釋字與憲法法庭裁判的主題檢索、意見書網絡與引註匯出',
@@ -367,7 +376,7 @@ export default function App() {
 function PageRoute({ route }) {
   const page = route.meta ? {
     ...route.meta,
-    title: `${route.meta.name}｜Phenom Canvas Lab`,
+    title: route.meta.title ?? `${route.meta.name}｜Phenom Canvas Lab`,
     description: route.meta.desc,
     type: route.meta.type ?? (route.meta.group === 'tool' ? 'SoftwareApplication' : 'WebPage'),
     indexable: !['PaletteLab', 'TaipeiFilmFestival'].includes(route.name),
