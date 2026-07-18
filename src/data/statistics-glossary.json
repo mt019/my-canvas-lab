@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-07-18T06:54:57.585Z",
+  "generatedAt": "2026-07-18T14:47:03.758Z",
   "source": "statistics-lab-data, built by engineering/scripts/build-app-json.mjs",
   "terms": {
     "confidence-interval": {
@@ -91,6 +91,14 @@
         }
       },
       "usedIn": [
+        {
+          "slug": "confidence-interval",
+          "route": "/statistics/confidence-interval",
+          "title": "到底什麼是信賴區間",
+          "en": {
+            "title": "What a Confidence Interval Actually Is"
+          }
+        },
         {
           "slug": "equivalence-testing",
           "route": "/statistics/equivalence-testing",

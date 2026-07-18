@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-07-18T13:46:09.394Z",
+  "generatedAt": "2026-07-18T14:47:03.758Z",
   "source": "statistics-lab-data, built by engineering/scripts/build-app-json.mjs",
   "site": {
     "intro": "統計課本教你怎麼算，很少告訴你這些東西當初是為了什麼問題被發明出來，又是在哪裡開始被誤用。這個站一次處理一個看起來理所當然、來歷卻可疑的概念：它為什麼長成這樣，是誰為了什麼發明它，以及它壞掉的時候會壞在哪裡。文章裡的模擬都可以親手轉動，因為有些事情得自己按下去重跑一萬次才會相信。",
@@ -105,7 +105,7 @@
           "credible interval",
           "misinterpretation"
         ],
-        "readingMinutes": 11
+        "readingMinutes": 12
       }
     },
     {

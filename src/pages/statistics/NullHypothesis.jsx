@@ -17,7 +17,7 @@ import TwoLogics from './_figures/TwoLogics';
 import PHacking from './_figures/PHacking';
 import SampleSizeAndEffect from './_figures/SampleSizeAndEffect';
 import PositivePredictiveValue from './_figures/PositivePredictiveValue';
-import Misreadings from './_figures/Misreadings';
+import StatementsPanel from './_figures/StatementsPanel';
 import Timeline from './_figures/Timeline';
 
 /*
@@ -31,7 +31,7 @@ import Timeline from './_figures/Timeline';
  * sentence by sentence reads like a translation.
  */
 export default function NullHypothesis() {
-  const { meta, figures, sources, misreadings, timeline, terms } = data;
+  const { meta, figures, sources, statements, timeline, terms } = data;
   const [scale, setScale] = useFontScale();
   const { lang, setLang } = useLang();
   const en = lang === 'en';
@@ -48,7 +48,7 @@ export default function NullHypothesis() {
     PHacking: () => <PHacking {...params['p-hacking']} lang={lang} />,
     SampleSizeAndEffect: () => <SampleSizeAndEffect {...params['n-and-effect']} lang={lang} />,
     PPV: () => <PositivePredictiveValue {...params['ppv-2x2']} lang={lang} />,
-    Misreadings: () => <Misreadings items={misreadings ?? []} lang={lang} />,
+    Statements: () => <StatementsPanel statements={statements ?? {}} lang={lang} />,
     Timeline: () => <Timeline items={timeline ?? []} lang={lang} />,
     // <Cite id="fisher1935…">…</Cite> — the id is checked against sources.json in
     // the data repo, so a citation with no source cannot reach the page.
@@ -57,7 +57,7 @@ export default function NullHypothesis() {
     // card carries the definition, the card's link carries the reader to the
     // term's own page.
     Term: ({ id, children }) => <TermLink term={terms?.[id]} lang={lang}>{children}</TermLink>,
-  }), [params, sources, terms, misreadings, timeline, lang]);
+  }), [params, sources, terms, statements, timeline, lang]);
 
   const title = en ? meta.en?.title ?? meta.title : meta.title;
   const summary = en ? meta.en?.summary ?? meta.summary : meta.summary;

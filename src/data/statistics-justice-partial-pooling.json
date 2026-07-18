@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-07-18T06:54:57.585Z",
+  "generatedAt": "2026-07-18T14:47:03.758Z",
   "source": "statistics-lab-data, built by engineering/scripts/build-app-json.mjs",
   "meta": {
     "slug": "justice-partial-pooling",
@@ -114,6 +114,10 @@
       "explain": "意見書篇數可以描述發表行為，不能自行變成立場。統計模型只能處理已定義的結果變項，不能修補構念和指標之間的落差。"
     }
   ],
+  "statements": {
+    "right": [],
+    "wrong": []
+  },
   "misreadings": [],
   "timeline": [],
   "terms": {

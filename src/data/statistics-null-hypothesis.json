@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-07-18T06:54:57.585Z",
+  "generatedAt": "2026-07-18T14:47:03.758Z",
   "source": "statistics-lab-data, built by engineering/scripts/build-app-json.mjs",
   "meta": {
     "slug": "null-hypothesis",
@@ -383,9 +383,127 @@
         "只是重申 alpha=0.05 是唯一正確的門檻"
       ],
       "correctIndex": 2,
-      "explain": "ASA 聲明（Wasserstein & Lazar, 2016）沒有廢除 p 值，也沒有指定新門檻，而是列出六條原則，說明 p 值能回答什麼、不能回答什麼——例如它不是虛無假設為真的機率，也不能單獨拿來判斷一個科學或商業決策是否成立。這份聲明本身也成為後續一系列「後 p<0.05 時代」討論的起點，包括 Greenland 等人（2016）那份列出 25 條常見誤讀的清單。"
+      "explain": "ASA 聲明（Wasserstein & Lazar, 2016）沒有廢除 p 值，也沒有指定新門檻。它列出六條原則，說明 p 值能回答什麼、不能回答什麼——例如它不是虛無假設為真的機率，也不能單獨拿來判斷一個科學或商業決策是否成立。這份聲明本身也成為後續一系列「後 p<0.05 時代」討論的起點，包括 Greenland 等人（2016）那份列出 25 條常見誤讀的清單。"
     }
   ],
+  "statements": {
+    "right": [
+      {
+        "id": "p-is-conditional-on-null",
+        "statement": "p 值是：假設虛無為真，得到至少和手上這批一樣極端的資料的機率。",
+        "why": "條件方向是對的——它算的是「資料｜虛無」，一句關於資料的話，不是關於假設的話。整排誤讀幾乎都從把這個條件反過來讀開始，所以先把正確的方向記牢，反而是最省事的防身術。",
+        "source": "wassersteinLazar2016",
+        "en": {
+          "statement": "A p value is the probability of getting data at least as extreme as these, assuming the null holds.",
+          "why": "The direction of the condition is right: it is P(data | null), a sentence about the data, not about the hypothesis. Almost every misreading below starts by flipping that condition, so holding on to the correct direction is the cheapest defence there is."
+        }
+      },
+      {
+        "id": "fisher-null-is-nullifiable",
+        "statement": "Fisher 的虛無假設是為了被推翻而設的：實驗架起它，好讓資料有一個明確的東西可以反駁。",
+        "why": "null 講的是可推翻性，不是「什麼都沒發生」。這正是這篇文章的主軸，也是「虛無」這個譯名最容易帶錯的地方。",
+        "source": "gigerenzerKraussVitouch2004NullEtymology",
+        "en": {
+          "statement": "Fisher's null is set up to be nullified: the experiment erects it so the data have one definite thing to argue against.",
+          "why": "Null is about refutability, not about nothing happening. That is this article's spine, and it is exactly where the Chinese translation 虛無 most easily misleads."
+        }
+      },
+      {
+        "id": "nonsignificant-is-insufficient-evidence",
+        "statement": "沒有拒絕虛無假設，代表這批資料不足以推翻它，不代表它為真。",
+        "why": "把「沒證據反對」和「有證據支持」分開。樣本小、變異大、測量粗，都會讓真實存在的效果過不了門檻；虛無假設從不被證明。",
+        "source": "greenland2016",
+        "en": {
+          "statement": "Failing to reject the null means these data are not enough to overturn it, not that it is true.",
+          "why": "It keeps 'no evidence against' apart from 'evidence for'. A small sample, high variance, or a coarse measure can all hide a real effect; the null is never proved."
+        }
+      },
+      {
+        "id": "alpha-is-a-chosen-error-rate",
+        "statement": "在 Neyman-Pearson 架構裡，選顯著水準是事先決定願意長期承受多少偽陽性率，不是在量這一次的結論有多真。",
+        "why": "顯著水準是一條決策規則的參數，屬於「長期會錯幾成」的層次；它不告訴你眼前這個結果為真的機率。把決策規則讀成證據強度，正是課本把兩套邏輯焊在一起後裂開的地方。",
+        "source": "neymanPearson1933",
+        "en": {
+          "statement": "In the Neyman-Pearson framework, choosing the significance level decides in advance what long-run false-positive rate you will tolerate, not how true this one conclusion is.",
+          "why": "The significance level is a parameter of a decision rule, living at the level of 'how often you err in the long run'; it says nothing about the probability that this result is true. Reading a decision rule as evidential strength is exactly where the welded-together textbook logic cracks."
+        }
+      }
+    ],
+    "wrong": [
+      {
+        "id": "prob-null-true",
+        "claim": "p = 0.03 代表虛無假設為真的機率只有 3%",
+        "why": "p 值算的是「虛無為真的前提下，看到這種資料的機率」。這句話把條件反過來讀成「看到這種資料的前提下，虛無為真的機率」。兩者可以差很遠，差多遠取決於這個領域裡本來有多少假說是真的——而 p 值對此一無所知。",
+        "instead": "要回答「這個結果有多大機會是真的」，必須額外引入事前勝算與檢定力（見本文的 2x2 表）。",
+        "source": "greenland2016",
+        "en": {
+          "claim": "p = 0.03 means there is only a 3% chance the null is true",
+          "why": "A p value is the probability of data like these given that the null holds. This reads the condition backwards. How far apart the two numbers are depends on how many hypotheses in the field were true to begin with, and the p value knows nothing about that.",
+          "instead": "To ask how likely a finding is to be real, you have to bring in prior odds and power (see the 2x2 table above)."
+        }
+      },
+      {
+        "id": "prob-h1-true",
+        "claim": "p 越小，對立假設為真的機率越大",
+        "why": "同一個條件方向的錯誤。p 值的計算從頭到尾只用到虛無假設，對立假設沒有進入這個算式。",
+        "instead": "把對立假設的可信度納入計算，需要的是貝氏因子或事後機率，那是另一套工具。",
+        "source": "greenland2016",
+        "en": {
+          "claim": "The smaller the p, the more likely the alternative is true",
+          "why": "Same reversal. The alternative hypothesis never enters the calculation of a p value; only the null does.",
+          "instead": "Weighing the credibility of the alternative needs a Bayes factor or a posterior, which is a different tool."
+        }
+      },
+      {
+        "id": "non-significant-means-no-effect",
+        "claim": "p > 0.05，所以沒有效果",
+        "why": "沒有拒絕虛無假設，只代表這批資料沒有提供足夠的理由去推翻它。樣本太小、變異太大、測量太粗，都會讓真實存在的效果過不了門檻。虛無假設從不被證明。",
+        "instead": "報告效果量與信賴區間；若真要正面宣稱「差距小到不重要」，用等價檢定，並事先講清楚多小算不重要。",
+        "source": "greenland2016",
+        "en": {
+          "claim": "p > 0.05, so there is no effect",
+          "why": "Failing to reject means the data gave you no good reason to reject. A small sample, a noisy measure, or high variance will hide a real effect. The null is never proved.",
+          "instead": "Report the effect size and interval. If you want to claim the difference is negligible, run an equivalence test and say in advance what negligible means."
+        }
+      },
+      {
+        "id": "p-measures-effect-size",
+        "claim": "p 值越小，效果越大、越重要",
+        "why": "p 值同時受效果大小與樣本數影響。樣本夠大時，任何微不足道的差距都能得到極小的 p 值。",
+        "instead": "效果大小要看效果量本身（差值、比值、標準化效果量），不看 p。",
+        "source": "greenland2016",
+        "en": {
+          "claim": "A smaller p means a bigger, more important effect",
+          "why": "The p value moves with both effect size and sample size. With a large enough sample, a trivial difference produces a tiny p.",
+          "instead": "Size lives in the effect size — a difference, a ratio, a standardized effect — not in p."
+        }
+      },
+      {
+        "id": "significance-threshold-is-scientific",
+        "claim": "0.05 是科學上的門檻",
+        "why": "0.05 是 Fisher 順手取的一個方便界線，沒有理論地位。它之所以流傳，一部分原因是當年查表方便。",
+        "instead": "門檻的高低該由這個決策的代價決定：偽陽性有多貴、偽陰性有多貴。",
+        "source": "fisher1925StatisticalMethods",
+        "en": {
+          "claim": "0.05 is a scientific threshold",
+          "why": "Fisher picked one in twenty as a convenient line, partly because it made the tables usable. There is no theory behind it.",
+          "instead": "Let the cost of the decision set the threshold: how expensive is a false positive, how expensive is a false negative."
+        }
+      },
+      {
+        "id": "replication-guaranteed",
+        "claim": "p = 0.01 代表重做這個研究有 99% 的機會再次顯著",
+        "why": "重複研究的成功率取決於真實效果與檢定力，跟這一次的 p 值不是同一回事。單次 p 值對複製機率的資訊量很低。",
+        "instead": "要談複製，先談檢定力與效果量的估計精度。",
+        "source": "greenland2016",
+        "en": {
+          "claim": "p = 0.01 means a replication has a 99% chance of coming out significant again",
+          "why": "Replication success depends on the true effect and the power of the study, not on this one p value, which carries very little information about it.",
+          "instead": "Talk about power and the precision of the effect estimate instead."
+        }
+      }
+    ]
+  },
   "misreadings": [
     {
       "id": "prob-null-true",

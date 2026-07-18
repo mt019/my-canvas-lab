@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-07-18T06:54:57.585Z",
+  "generatedAt": "2026-07-18T14:47:03.758Z",
   "source": "statistics-lab-data, built by engineering/scripts/build-app-json.mjs",
   "meta": {
     "slug": "equivalence-testing",
@@ -149,6 +149,10 @@
       "explain": "「測不到差異」和「差異小到不重要」是兩件事。當研究沒有足夠精度、信賴區間比 邊界 還寬時，你既拒絕不了「有差異」、也宣告不了「等價」，誠實的結論是「不知道」。事後放大 邊界 直到通過，就是把靶畫到箭上。"
     }
   ],
+  "statements": {
+    "right": [],
+    "wrong": []
+  },
   "misreadings": [],
   "timeline": [],
   "terms": {
