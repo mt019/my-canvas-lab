@@ -140,7 +140,7 @@ function DivergenceTimeSeries({ 分歧時序, eyebrow, 標題, 圖說 }) {
   const B = useMemo(() => (分歧時序.代理 ?? []).map((d) => ({ y: d.年, n: d.n, v: d.值 })), [分歧時序]);
   const [hy, setHy] = useState(null);
   if (!B.length) return null;
-  const PAD_L = 26, PAD_R = 10, PAD_T = 10, PAD_B = 18, W = 580, H = 140;
+  const PAD_L = 26, PAD_R = 10, PAD_T = 10, PAD_B = 18, W = 672, H = 168;
   const y0 = B[0].y, y1 = B[B.length - 1].y;
   const yMax = Math.max(0.3, Math.ceil(Math.max(...B.map((d) => d.v)) * 10) / 10);
   const yTicks = []; for (let t = 0; t <= yMax + 1e-9; t += 0.1) yTicks.push(+t.toFixed(1));
@@ -200,9 +200,9 @@ function IdealPointChart() {
   const pos = (x) => ((x - (lo - pad)) / ((hi + pad) - (lo - pad))) * 100;
   const ink = (p) => PRES_COLOR[p.提名總統] ?? 'var(--cc-ink-mid)';
   return (
-    <div className="mt-2 max-w-md space-y-0.5">
+    <div className="mt-2 max-w-2xl space-y-0.5">
       {pts.map((p) => (
-        <div key={p.姓名} className="grid grid-cols-[58px_1fr_46px] items-center gap-2 text-[12.5px]">
+        <div key={p.姓名} className="grid grid-cols-[64px_1fr_52px] items-center gap-2 text-[12.5px]">
           <span className="font-bold" style={{ color: ink(p) }}>{p.姓名}</span>
           <span className="relative block h-3.5">
             <span className="absolute inset-y-0 w-px bg-[var(--cc-line)]" style={{ left: `${pos(0)}%` }} />
@@ -220,8 +220,8 @@ function MethodGradientChart() {
   const R = LCT_RESULT;
   const dP = (arr) => (arr || []).find((r) => r.維度 === '提名總統') || {};
   const rows = [
-    { label: '全 roll（粗糙口徑）', p: dP(R.同質性_全roll).p },
-    { label: '主分析（僅爭議 roll）', p: dP(R.同質性).p },
+    { label: '全案表決（粗糙口徑）', p: dP(R.同質性_全roll).p },
+    { label: '主分析（僅爭議表決）', p: dP(R.同質性).p },
     { label: '共同視窗（馬蔡同任期）', p: (R.共同視窗?.維度 || []).find((r) => r.維度 === '提名總統')?.p },
     { label: '案件層級 FE（逐案固定）', p: R.案件層級?.提名總統?.p },
     { label: 'MRQAP（控批次＋資歷）', p: R.MRQAP?.p?.同提名人 },
@@ -327,7 +327,7 @@ function BeatBlock({ beat: b, 圖 }) {
           <div className="mt-5">
             {rpEyebrow(b.eyebrow)}
             <h3 className="text-[15px] font-bold text-[var(--cc-title-ink)]">{b.標題}</h3>
-            <div className="mt-2 max-w-xl space-y-1">
+            <div className="mt-2 max-w-2xl space-y-1">
               {圖.趨勢.map((r) => (
                 <div key={r.期} className="grid grid-cols-[86px_1fr_112px] items-center gap-2 text-[13px]">
                   <span className="text-[var(--cc-ink-mid)]">{r.期}</span>

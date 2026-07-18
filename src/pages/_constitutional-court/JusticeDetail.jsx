@@ -61,7 +61,7 @@ export default function JusticeDetail({ name, onBack, onOpen, onOpenDoc }) {
   );
   const exportBib = () => downloadFile(toBibtex(involvedCases), `${name}_案件_${stamp}.bib`, 'text/plain');
   const exportManifest = () => downloadFile(JSON.stringify({
-    說明: '此清單供本機批次下載使用：到資料庫 repo 執行 npm run fetch-batch -- --manifest <本檔>',
+    說明: '離線批次下載用的案件索引（字號、標題、官方連結、意見書與立場表下載網址）。',
     大法官: name,
     產生時間: new Date().toISOString(),
     文件: involvedCases.map((d) => ({
@@ -214,10 +214,9 @@ export default function JusticeDetail({ name, onBack, onOpen, onOpenDoc }) {
       ) : null}
 
       <p className="border-t border-[var(--cc-line)] py-4 text-[12px] leading-relaxed text-[var(--cc-ink-soft)]">
-        意見書清單解析自官方附件檔名與內嵌正文；「收於抄本」表示該意見書僅收於全案合訂 PDF。參與名單皆為官方實據：
+        意見書清單整理自官方附件檔名與內嵌正文；「收於抄本」表示該意見書僅收於全案合訂 PDF。參與名單皆為官方實據：
         解釋來自官方頁末尾的大法官署名列（813 件全覆蓋，迴避或未參與評議者不在列），裁判來自官方合議庭名單；
-        「加入◯◯部分」等範圍限定照檔名原文附註。批次下載清單需回研究資料庫執行
-        <code className="mx-1 rounded bg-[var(--cc-hover-bg)] px-1">npm run fetch-batch -- --manifest</code>下載官方 PDF。
+        「加入◯◯部分」等範圍限定照檔名原文附註。頁面上的「匯出清單」提供離線批次下載用的案件索引。
       </p>
     </div>
   );

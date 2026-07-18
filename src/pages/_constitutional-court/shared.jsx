@@ -278,7 +278,7 @@ export function toCsv(list) {
 export function toManifest(list) {
   return JSON.stringify(
     {
-      說明: '此清單供本機批次下載使用：到資料庫 repo 執行 npm run fetch-batch -- --manifest <本檔>',
+      說明: '離線批次下載用的案件索引（字號、官方頁、意見書與立場表下載網址）。',
       產生時間: new Date().toISOString(),
       文件: list.map((d) => ({
         字號: d.字號,
@@ -411,7 +411,7 @@ export function CaseCard({ d, q, reasoningDefault, pdfMode }) {
     setLoadingFull(false);
   };
   // 理由書（行憲後）：初值取全域預設（僅新卡受全域切換影響）；開啟時懶載全文檔。
-  const hasReasoning = !d.系列; // 行憲前走「全文」機制，不另掛理由書
+  const hasReasoning = !d.系列 && !!d.有理由書; // 行憲前走「全文」機制；無理由書全文（如釋字 1–79）不顯示理由書按鈕
   const [showReason, setShowReason] = useState(reasoningDefault && hasReasoning);
   const [reason, setReason] = useState(null); // null=未載；{理由書,來源}｜{none:true}
   const [loadingReason, setLoadingReason] = useState(false);
