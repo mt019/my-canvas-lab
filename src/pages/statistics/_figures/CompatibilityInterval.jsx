@@ -94,7 +94,7 @@ export default function CompatibilityInterval({
           onChange={(e) => setDelta(Number(e.target.value))}
           className="w-52 accent-[var(--c-accent)]"
         />
-        <span className="w-16 tabular-nums text-ink">{delta.toFixed(1)} {unit}</span>
+        <span className="w-20 shrink-0 whitespace-nowrap tabular-nums text-ink">{delta.toFixed(1)} {unit}</span>
       </label>
 
       <p className="mt-3 text-token-sm text-ink">
