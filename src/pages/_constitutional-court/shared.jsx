@@ -153,12 +153,12 @@ function JusticeRef({ name, className = '' }) {
   );
 }
 // 釋憲文件類型 ↔ 制度沿革機關階段 的單一對應表：同一機關作成的文件與其沿革階段共用 --cat-* 分類色位，
-// 讓「案件時間軸」的色條與「制度沿革」四段對得起來。解釋(釋字)＝大法官階段(shizi)、判決/裁定(憲判)＝
-// 憲法法庭階段(xianpan)、最高法院解字＝zuigao、司法院院字/院解字＝sifayuan；四段在同一條合併時間軸相接。
-export const ERA_TONE = { dali: 6, zuigao: 8, sifayuan: 4, shizi: 7, xianpan: 2 };
-// 年度密度堆疊條＝淡底＋ink 細線：解釋吃 shizi 色位（rose，維持頁面 rose 識別）、判決吃 xianpan 色位（blue），
+// 讓「案件時間軸」的色條與「制度沿革」四段對得起來：解釋(釋字)＝大法官階段、判決/裁定＝憲法法庭階段(憲判)、
+// 最高法院解字、司法院院字/院解字各自成段；四段在同一條合併時間軸相接。
+export const ERA_TONE = { 大理院: 6, 最高法院: 8, 司法院: 4, 釋字: 7, 憲判: 2 };
+// 年度密度堆疊條＝淡底＋ink 細線：解釋吃 釋字 色位（rose，維持頁面 rose 識別）、判決吃 憲判 色位（blue），
 // 兩者與沿革同機關階段同色；實體裁定同屬憲法法庭時期、另給 green 以在堆疊中可辨。大面積吃淡底 -bg、境界與圖例用 ink -tx。
-const TYPE_TONE = { 解釋: ERA_TONE.shizi, 判決: ERA_TONE.xianpan, 實體裁定: 3 };
+const TYPE_TONE = { 解釋: ERA_TONE.釋字, 判決: ERA_TONE.憲判, 實體裁定: 3 };
 const typeInk = (k) => `var(--cat-${TYPE_TONE[k]}-tx)`;
 const OUTCOME_TONE = {
   違憲: 'red',

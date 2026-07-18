@@ -5,10 +5,10 @@ import TopicHeatmaps from './TopicHeatmaps';
 // 合併案件時間軸的四條「解釋機制」色帶（沿革同色，時間上前後相接、幾乎不重疊）：
 // 最高法院解字→司法院院字/院解字（統一解釋）→大法官釋字→憲法法庭憲判/裁定。大理院統字無日期，不入此軸。
 const BANDS = [
-  { key: '最高法院解字', tone: ERA_TONE.zuigao, label: '最高法院　解字' },
-  { key: '司法院統一解釋', tone: ERA_TONE.sifayuan, label: '司法院　院字・院解字' },
-  { key: '大法官釋字', tone: ERA_TONE.shizi, label: '大法官　釋字' },
-  { key: '憲法法庭', tone: ERA_TONE.xianpan, label: '憲法法庭　判決・裁定' },
+  { key: '最高法院解字', tone: ERA_TONE.最高法院, label: '最高法院　解字' },
+  { key: '司法院統一解釋', tone: ERA_TONE.司法院, label: '司法院　院字・院解字' },
+  { key: '大法官釋字', tone: ERA_TONE.釋字, label: '大法官　釋字' },
+  { key: '憲法法庭', tone: ERA_TONE.憲判, label: '憲法法庭　判決・裁定' },
 ];
 const BAND_TONE = Object.fromEntries(BANDS.map((b) => [b.key, b.tone]));
 const bandOf = (d) => {
@@ -226,7 +226,7 @@ function Pre1947Supplement() {
       </div>
     );
   };
-  const 系列TONE = { 統字: ERA_TONE.dali, 解字: ERA_TONE.zuigao, 院字: ERA_TONE.sifayuan, 院解字: 3 };
+  const 系列TONE = { 統字: ERA_TONE.大理院, 解字: ERA_TONE.最高法院, 院字: ERA_TONE.司法院, 院解字: 3 };
 
   return (
     <>
