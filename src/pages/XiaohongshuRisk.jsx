@@ -24,26 +24,30 @@ const STRENGTH_TONE = {
   'official-construction': 'warning',
 };
 
-function SectionHead({ children }) {
-  return <h2 className="font-display text-token-xl leading-tight">{children}</h2>;
+function SectionHead({ id, children }) {
+  return <h2 id={id} className="font-display text-token-xl leading-tight text-ink">{children}</h2>;
 }
 
-function StatTile({ value, label, note }) {
+function SubHead({ id, children }) {
+  return <h3 id={id} className="mb-3 mt-6 font-display text-token-base text-ink-muted">{children}</h3>;
+}
+
+// Left-border callout on paper — no filled card (the big empty rounded card is banned).
+function KeyPoint({ children }) {
   return (
-    <div className="rounded-token-lg border border-line-soft bg-surface p-4">
-      <div className="font-display text-token-2xl leading-none tabular-nums text-ink">{value}</div>
-      <div className="mt-2 text-token-sm text-ink">{label}</div>
-      {note ? <div className="mt-1 text-token-xs leading-relaxed text-ink-faint">{note}</div> : null}
-    </div>
+    <p className="border-l-2 border-accent pl-4 text-token-base font-medium leading-relaxed text-ink">
+      {children}
+    </p>
   );
 }
 
 // Pale fill + thin accent keyline; width driven by pct (0–100).
-function bar(pct) {
+function bar(pct, thin) {
+  const h = thin ? 'h-2' : 'h-2.5';
   return (
-    <div className="h-2.5 rounded-full bg-surface">
+    <div className={`${h} rounded-full bg-surface`}>
       <div
-        className="h-2.5 rounded-full border border-accent bg-accent-soft"
+        className={`${h} rounded-full border border-accent bg-accent-soft`}
         style={{ width: `${Math.max(3, Math.min(100, pct))}%` }}
       />
     </div>
@@ -76,23 +80,10 @@ function BreakdownBars({ rows }) {
             <span className="text-token-sm text-ink">{row.label}</span>
             <span className="shrink-0 whitespace-nowrap tabular-nums text-token-sm text-ink-muted">{row.pct}%</span>
           </div>
-          <div className="h-2 rounded-full bg-surface">
-            <div
-              className="h-2 rounded-full border border-accent bg-accent-soft"
-              style={{ width: `${Math.max(3, (row.pct / max) * 100)}%` }}
-            />
-          </div>
+          {bar((row.pct / max) * 100, true)}
         </div>
       ))}
     </div>
-  );
-}
-
-function KeyPoint({ children }) {
-  return (
-    <p className="rounded-token-md border-l-2 border-accent bg-accent-soft px-4 py-3 text-token-base leading-relaxed text-ink">
-      {children}
-    </p>
   );
 }
 
@@ -112,9 +103,9 @@ function LayerSection({ layer }) {
   const breakdown = layer.registerSplit ?? layer.vectorBreakdown;
   const breakdownTitle = layer.registerSplit ? '語域分布' : '真正的接觸／金流媒介';
   return (
-    <section className="mb-12">
+    <section className="mb-14">
       <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
-        <SectionHead>第 {CN[layer.order]} 層 · {LAYER_TAG[layer.id]}</SectionHead>
+        <SectionHead id={`layer-${layer.id}`}>第 {CN[layer.order]} 層 · {LAYER_TAG[layer.id]}</SectionHead>
         <Badge tone={STRENGTH_TONE[layer.id]}>{layer.strength}</Badge>
       </div>
       <p className="font-display text-token-lg leading-snug text-ink">{layer.claim}</p>
@@ -140,24 +131,24 @@ function LayerSection({ layer }) {
       ) : null}
 
       {breakdown ? (
-        <div className="mt-6 border-t border-line-soft pt-5">
-          <p className="mb-3 text-token-xs uppercase tracking-[0.12em] text-ink-faint">{breakdownTitle}</p>
+        <>
+          <SubHead id={`${layer.id}-breakdown`}>{breakdownTitle}</SubHead>
           <BreakdownBars rows={breakdown} />
-        </div>
+        </>
       ) : null}
 
       {layer.keyPoint ? <div className="mt-6"><KeyPoint>{layer.keyPoint}</KeyPoint></div> : null}
 
       {layer.examples ? (
-        <div className="mt-6">
-          <p className="mb-1 text-token-xs uppercase tracking-[0.12em] text-ink-faint">去識別化摘錄</p>
+        <>
+          <SubHead id={`${layer.id}-examples`}>去識別化摘錄</SubHead>
           {layer.examples.map((item, i) => (
             <Excerpt key={`${layer.id}-${i}`} item={item} />
           ))}
-        </div>
+        </>
       ) : null}
 
-      <p className="mt-5 border-t border-dashed border-line pt-3 text-token-xs leading-relaxed text-ink-faint">
+      <p className="mt-6 border-t border-dashed border-line pt-3 text-token-xs leading-relaxed text-ink-faint">
         <span className="font-semibold text-ink-muted">本層界線：</span>{layer.weakness}
       </p>
     </section>
@@ -200,21 +191,30 @@ export default function XiaohongshuRisk() {
     >
       {tab === 'question' && (
         <>
-          <div className="mb-10 grid grid-cols-1 gap-3 sm:grid-cols-3">
-            <StatTile value={corpus.caseRecords} label="關鍵字命中案例" note="keyWord=小紅書" />
-            <StatTile value={corpus.contentLength.median} label="案情中位字數" note={`最短 ${corpus.contentLength.min}・最長 ${corpus.contentLength.max}`} />
-            <StatTile value={corpus.savedDashboardPages} label="保存儀錶板頁" note="原始 HTML" />
-          </div>
+          <dl className="mb-10 flex flex-wrap gap-x-10 gap-y-4 border-y border-line-soft py-4">
+            <div>
+              <dt className="text-token-xs text-ink-faint">關鍵字命中案例 · keyWord=小紅書</dt>
+              <dd className="font-display text-token-2xl tabular-nums text-ink">{corpus.caseRecords}</dd>
+            </div>
+            <div>
+              <dt className="text-token-xs text-ink-faint">案情中位字數 · 最短 {corpus.contentLength.min}／最長 {corpus.contentLength.max}</dt>
+              <dd className="font-display text-token-2xl tabular-nums text-ink">{corpus.contentLength.median}</dd>
+            </div>
+            <div>
+              <dt className="text-token-xs text-ink-faint">保存儀錶板頁 · 原始 HTML</dt>
+              <dd className="font-display text-token-2xl tabular-nums text-ink">{corpus.savedDashboardPages}</dd>
+            </div>
+          </dl>
 
           <section className="mb-10">
-            <SectionHead>這個敘事站得住嗎</SectionHead>
+            <SectionHead id="q-thesis">這個敘事站得住嗎</SectionHead>
             <p className="mt-3 max-w-3xl text-token-base leading-relaxed text-ink-muted">
               {source.question}關鍵字搜尋的範圍是 {corpus.keywordSearchScope}。也就是說，「{corpus.caseRecords} 件小紅書詐騙」是對案情自由文字做子字串比對的結果，資料庫裡並沒有一個「平台＝小紅書」的欄位。
             </p>
           </section>
 
           <section className="mb-10">
-            <SectionHead>資料庫結構上沒有「平台」這個維度</SectionHead>
+            <SectionHead id="q-structure">資料庫結構上沒有「平台」這個維度</SectionHead>
             <div className="mt-4 grid gap-6 md:grid-cols-2">
               <div>
                 <p className="mb-2 text-token-sm font-semibold text-ink">每筆有的欄位</p>
@@ -236,8 +236,8 @@ export default function XiaohongshuRisk() {
             </div>
           </section>
 
-          <section className="mb-4">
-            <SectionHead>材料範圍</SectionHead>
+          <section>
+            <SectionHead id="q-scope">材料範圍</SectionHead>
             <p className="mt-3 max-w-3xl text-token-sm leading-relaxed text-ink-muted">
               後端是 {source.backend}；本頁分析以 {corpus.caseRecords} 筆關鍵字命中案例為主，另留存 {corpus.savedDashboardPages} 份儀錶板頁與 {corpus.eliteracyFiles} 份數位素養素材作脈絡對照。{source.publicBoundary}
             </p>
@@ -247,7 +247,7 @@ export default function XiaohongshuRisk() {
 
       {tab === 'context' && (
         <section>
-          <SectionHead>{context.title}</SectionHead>
+          <SectionHead id="timeline">{context.title}</SectionHead>
           <p className="mt-3 mb-8 max-w-3xl text-token-base leading-relaxed text-ink-muted">{context.summary}</p>
           <ol className="relative space-y-6 border-l border-line pl-6">
             {context.timeline.map((item) => (
@@ -274,8 +274,8 @@ export default function XiaohongshuRisk() {
 
       {tab === 'limits' && (
         <>
-          <section className="mb-10">
-            <SectionHead>要坐實第三層，還需要什麼</SectionHead>
+          <section className="mb-12">
+            <SectionHead id="confirm">要坐實第三層，還需要什麼</SectionHead>
             <p className="mt-3 mb-4 max-w-3xl text-token-sm leading-relaxed text-ink-faint">
               第三層是「高度可疑」而非鐵證；資料本身到不了「動機」。以下佐證若能取得，才能把它從可疑推向坐實。
             </p>
@@ -289,8 +289,8 @@ export default function XiaohongshuRisk() {
             </ol>
           </section>
 
-          <section className="mb-10">
-            <SectionHead>偵測方法可複現</SectionHead>
+          <section className="mb-12">
+            <SectionHead id="method">偵測方法可複現</SectionHead>
             <ul className="mt-4 space-y-4">
               {layers.filter((l) => l.methodNote).map((l) => (
                 <li key={l.id} className="border-t border-line-soft pt-3">
@@ -302,15 +302,15 @@ export default function XiaohongshuRisk() {
           </section>
 
           <section className="mb-12">
-            <SectionHead>數位素養脈絡</SectionHead>
+            <SectionHead id="eliteracy">數位素養脈絡</SectionHead>
             <p className="mt-3 max-w-3xl text-token-sm leading-relaxed text-ink-muted">
               另留存 {eliteracyContext.sourceClass} {eliteracyContext.files} 份素材。{eliteracyContext.note}
             </p>
           </section>
 
-          <section className="mb-12 rounded-token-lg border border-line bg-surface p-6 sm:p-8" style={{ borderLeftWidth: 4, borderLeftColor: 'var(--c-pop)' }}>
-            <h2 className="font-display text-token-xl leading-tight text-ink">{closing.title}</h2>
-            <div className="mt-4 max-w-3xl space-y-4">
+          <section className="mb-12 border-l-4 pl-5" style={{ borderColor: 'var(--c-pop)' }}>
+            <h2 id="closing" className="font-display text-token-xl leading-tight text-ink">{closing.title}</h2>
+            <div className="mt-3 max-w-3xl space-y-4">
               {closing.paragraphs.map((p, i) => (
                 <p key={i} className="text-token-base leading-relaxed text-ink">{p}</p>
               ))}
@@ -318,7 +318,7 @@ export default function XiaohongshuRisk() {
           </section>
 
           <section>
-            <SectionHead>來源</SectionHead>
+            <SectionHead id="sources">來源</SectionHead>
             <ul className="mt-4 grid gap-2.5 sm:grid-cols-2">
               {sources.map((s) => (
                 <li key={s.url}>
