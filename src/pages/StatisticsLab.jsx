@@ -1,58 +1,62 @@
+import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
-import PageShell from '../components/PageShell';
 import LangSwitch, { useLang } from '../components/LangSwitch';
+import FontSizeControl, { useFontScale } from '../components/FontSizeControl';
 import AppearanceMenu from '../components/AppearanceMenu';
-import Tabs, { useTabParam } from '../components/lab/Tabs';
+import { useTabParam } from '../components/lab/Tabs';
+import DashboardLayout from '../components/lab/DashboardLayout';
 import data from '../data/statistics.json';
 
 /*
- * The hub. It lists whatever the data repo says exists — a new article means a
- * new entry in statistics.json and a new page file, and nothing here changes.
+ * The hub, as a dashboard. It used to be a flat index inside PageShell; now it
+ * sits in the same shell /brief does (DashboardLayout): a sticky tab bar picks
+ * 文章 or 術語, the left rail lists the sections of whichever tab is open, and
+ * the right rail (SubOutline) follows the reader down whichever section they are
+ * in. The pattern is the reusable canvas layout — see docs/DESIGN.md.
  *
- * The words on this page (the opening, what each section is for, the closing
- * note) come from the payload too, not from a string in this file: they are what
- * the site says about itself, and they get rewritten as it grows.
+ * Everything still comes from the data repo: a new article means a new entry in
+ * statistics.json and nothing here changes. The tab structure is deliberately
+ * about kind (articles vs terms), not topic — topics are the h2 sections inside
+ * the 文章 tab, so they grow into the left rail on their own as the site grows.
  *
- * Two sections, not one list with a footnote. Until there are many articles the
- * glossary is the thicker half of the site, and hiding fourteen terms behind a
- * single line reading "Glossary →" tells a first-time reader nothing about what
- * is actually here. So the terms are laid out in full, grouped the way they are
- * grouped on their own index — someone can see the whole site from the door.
- *
- * The topic tabs only appear once there is something to filter (see MIN_TABS).
- * One tab labelled "All" and one labelled "Inference" over a list of one article
- * is furniture, not navigation.
+ * The right rail wants h3s to list. Under 文章 each article title is an h3, so
+ * the rail is a live table of the current topic's articles. Under 術語 a group
+ * has no sub-headings, so the rail simply names the current group — which is the
+ * SubOutline's intended behaviour for a section with no children.
  */
-const MIN_TABS = 3;
-
 const COPY = {
   zh: {
     title: '統計學實驗室',
-    all: '全部',
-    topicsLabel: '主題',
-    empty: '這個主題還沒有文章。',
+    tabsLabel: '看哪一區',
+    articles: '文章',
+    glossary: '術語表',
     minutes: (m) => `約 ${m} 分鐘`,
-    seeGlossary: '進術語表',
+    seeGlossary: '進完整術語表',
     terms: (n) => `${n} 條`,
     about: '本站說明：方法、出處、模擬的紀律',
+    empty: '這個主題還沒有文章。',
+    tocLabel: '本頁區塊',
   },
   en: {
     title: 'Statistics Lab',
-    all: 'All',
-    topicsLabel: 'Topics',
-    empty: 'Nothing here yet.',
+    tabsLabel: 'Sections',
+    articles: 'Articles',
+    glossary: 'Glossary',
     minutes: (m) => `${m} min read`,
-    seeGlossary: 'Open the glossary',
+    seeGlossary: 'Open the full glossary',
     terms: (n) => `${n} terms`,
     about: 'About this site: method, sources, and the discipline behind the simulations',
+    empty: 'Nothing here yet.',
+    tocLabel: 'On this page',
   },
 };
 
 export default function StatisticsLab() {
   const { site, topics = [], articles = [], glossary = [], glossaryGroups = [] } = data;
-  const [topic, setTopic] = useTabParam('topic', 'all');
+  const [scale, setScale] = useFontScale();
   const { lang, setLang } = useLang();
+  const [tab, setTab] = useTabParam('tab', 'articles');
   const en = lang === 'en';
   const c = COPY[en ? 'en' : 'zh'];
   const copy = en ? { ...site, ...site.en } : site;
@@ -60,93 +64,94 @@ export default function StatisticsLab() {
   const label = (t) => (en ? t.en?.label ?? t.label : t.label);
   const blurb = (t) => (en ? t.en?.blurb ?? t.blurb : t.blurb);
 
-  const showTabs = articles.length >= MIN_TABS;
-  const tabs = [
-    { id: 'all', label: c.all, count: articles.length },
-    ...topics.map((t) => ({
-      id: t.id,
-      label: label(t),
-      count: articles.filter((a) => a.topic === t.id).length,
-    })),
-  ];
+  useEffect(() => { document.title = `${c.title}｜Canvas Lab`; }, [c.title]);
 
-  const shown = showTabs && topic !== 'all' ? articles.filter((a) => a.topic === topic) : articles;
-  const active = showTabs ? topics.find((t) => t.id === topic) : null;
+  const topicsWithArticles = topics.filter((t) => articles.some((a) => a.topic === t.id));
 
   return (
-    <PageShell
-      title={c.title}
-      eyebrow="Statistics Lab"
-      width="prose"
-      controls={
+    <DashboardLayout
+      scale={scale}
+      back={{ href: '/', label: 'Canvas Lab' }}
+      headerRight={
         <>
           <LangSwitch lang={lang} onChange={setLang} />
+          <FontSizeControl scale={scale} onChange={setScale} />
           <AppearanceMenu lang={lang} />
         </>
       }
+      eyebrow="Statistics Lab"
+      title={c.title}
+      summary={copy.intro}
+      tocLabel={c.tocLabel}
+      tabs={{
+        label: c.tabsLabel,
+        value: tab,
+        onChange: setTab,
+        items: [
+          { id: 'articles', label: c.articles, count: articles.length },
+          { id: 'glossary', label: c.glossary, count: glossary.length },
+        ],
+      }}
+      refreshKey={`${tab}-${lang}`}
     >
-      <p className="mb-12 text-token-base leading-loose text-ink-muted">{copy.intro}</p>
-
-      <Section title={copy.sections.articles.label} blurb={copy.sections.articles.blurb}>
-        {showTabs ? (
-          <>
-            <Tabs items={tabs} value={topic} onChange={setTopic} label={c.topicsLabel} />
-            {active ? <p className="mt-3 text-token-sm text-ink-faint">{blurb(active)}</p> : null}
-          </>
-        ) : null}
-
-        <div className={showTabs ? 'mt-6' : undefined}>
-          {shown.map((a) => (
-            <ArticleRow key={a.slug} article={a} lang={lang} minutes={c.minutes} />
-          ))}
-          {shown.length === 0 ? <p className="py-8 text-token-sm text-ink-faint">{c.empty}</p> : null}
-        </div>
-      </Section>
-
-      {glossary.length > 0 ? (
-        <Section
-          title={copy.sections.glossary.label}
-          blurb={copy.sections.glossary.blurb}
-          aside={c.terms(glossary.length)}
-        >
-          <div className="mt-6 space-y-6">
-            {glossaryGroups.map((g) => {
-              const list = glossary.filter((t) => t.group === g.id);
-              if (list.length === 0) return null;
-              return (
-                <div key={g.id}>
-                  <h3 className="font-accent text-token-xs uppercase tracking-[0.12em] text-ink-faint">
-                    {en ? g.en?.label ?? g.label : g.label}
-                  </h3>
-                  {/* Names only, set close together: this is a map of the ground, and
-                      the definitions are one click away on the term's own page. */}
-                  <p className="mt-2 text-token-sm leading-relaxed">
-                    {list.map((t, i) => (
-                      <span key={t.slug}>
-                        {i > 0 ? <span className="text-ink-faint">{en ? ' · ' : '、'}</span> : null}
-                        <Link
-                          to={t.route}
-                          className="text-ink transition-colors duration-fast hover:text-accent"
-                        >
-                          {en ? t.en?.term ?? t.term : t.term}
-                        </Link>
-                      </span>
-                    ))}
-                  </p>
-                </div>
-              );
-            })}
-          </div>
+      {tab === 'glossary' ? (
+        <>
+          {glossaryGroups.map((g, i) => {
+            const list = glossary.filter((t) => t.group === g.id);
+            if (list.length === 0) return null;
+            return (
+              <section key={g.id} className={i === 0 ? '' : 'mt-10 border-t border-line pt-6'}>
+                <h2 id={`group-${g.id}`} className="font-display text-token-lg text-ink">
+                  {en ? g.en?.label ?? g.label : g.label}
+                  <span className="ml-2 text-token-sm tabular-nums text-ink-faint">{c.terms(list.length)}</span>
+                </h2>
+                <p className="mb-3 mt-1 text-token-sm leading-relaxed text-ink-muted">
+                  {en ? g.en?.blurb ?? g.blurb : g.blurb}
+                </p>
+                {/* Names only, set close together: a map of the ground, with the
+                    definition one click away on the term's own page. */}
+                <p className="text-token-sm leading-relaxed">
+                  {list.map((t, j) => (
+                    <span key={t.slug}>
+                      {j > 0 ? <span className="text-ink-faint">{en ? ' · ' : '、'}</span> : null}
+                      <Link to={t.route} className="text-ink transition-colors duration-fast hover:text-accent">
+                        {en ? t.en?.term ?? t.term : t.term}
+                      </Link>
+                    </span>
+                  ))}
+                </p>
+              </section>
+            );
+          })}
 
           <Link
             to="/statistics/glossary"
-            className="group mt-6 inline-flex items-center gap-1.5 text-token-sm text-ink-muted transition-colors duration-fast hover:text-accent"
+            className="group mt-8 inline-flex items-center gap-1.5 text-token-sm text-ink-muted transition-colors duration-fast hover:text-accent"
           >
             {c.seeGlossary}
             <ArrowRight size={14} className="transition-transform duration-fast group-hover:translate-x-0.5" />
           </Link>
-        </Section>
-      ) : null}
+        </>
+      ) : (
+        <>
+          {topicsWithArticles.map((t, i) => (
+            <section key={t.id} className={i === 0 ? '' : 'mt-12 border-t border-line pt-8'}>
+              <h2 id={`topic-${t.id}`} className="font-display text-token-lg text-ink">{label(t)}</h2>
+              <p className="mb-2 mt-1 text-token-sm leading-relaxed text-ink-muted">{blurb(t)}</p>
+              <div className="mt-2">
+                {articles
+                  .filter((a) => a.topic === t.id)
+                  .map((a) => (
+                    <ArticleRow key={a.slug} article={a} lang={lang} minutes={c.minutes} />
+                  ))}
+              </div>
+            </section>
+          ))}
+          {topicsWithArticles.length === 0 ? (
+            <p className="py-8 text-token-sm text-ink-faint">{c.empty}</p>
+          ) : null}
+        </>
+      )}
 
       <div className="mt-14 border-t border-line-soft pt-5">
         <p className="text-token-sm leading-relaxed text-ink-faint">{copy.note}</p>
@@ -158,26 +163,12 @@ export default function StatisticsLab() {
           <ArrowRight size={14} className="transition-transform duration-fast group-hover:translate-x-0.5" />
         </Link>
       </div>
-    </PageShell>
+    </DashboardLayout>
   );
 }
 
-/* A section of the home page: a name, a sentence saying what it is for, and the
-   thing itself. The rule is one heading per kind of content — a reader should be
-   able to tell what this site holds by reading only the headings. */
-function Section({ title, blurb, aside, children }) {
-  return (
-    <section className="mb-14">
-      <div className="mb-1 flex items-baseline justify-between gap-4 border-b border-line-soft pb-2">
-        <h2 className="font-display text-token-xl text-ink">{title}</h2>
-        {aside ? <span className="shrink-0 font-accent text-token-xs text-ink-faint">{aside}</span> : null}
-      </div>
-      <p className="mb-2 mt-3 text-token-sm leading-relaxed text-ink-muted">{blurb}</p>
-      {children}
-    </section>
-  );
-}
-
+/* One article: the title is an h3 so the right rail can list it, with the
+   subtitle, summary, and a line of metadata below. */
 function ArticleRow({ article: a, lang, minutes }) {
   const en = lang === 'en';
   const tags = (en ? a.en?.tags : a.tags) ?? [];
@@ -189,7 +180,10 @@ function ArticleRow({ article: a, lang, minutes }) {
       className="group -mx-3 block rounded-token-md px-3 py-5 transition-colors duration-fast hover:bg-surface"
     >
       <div className="flex items-baseline justify-between gap-4">
-        <h3 className="font-display text-token-lg text-ink transition-colors duration-fast group-hover:text-accent">
+        <h3
+          id={`article-${a.slug}`}
+          className="font-display text-token-lg text-ink transition-colors duration-fast group-hover:text-accent"
+        >
           {en ? a.en?.title ?? a.title : a.title}
         </h3>
         <ArrowRight

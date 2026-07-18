@@ -85,6 +85,26 @@ const PAGE_META = { // token-exempt: per-page identity chip colors (data, not st
     listed: false,
     type: 'Article',
   },
+  EquivalenceTesting: {
+    name: '怎麼證明「沒有差別」',
+    desc: '檢定力與等價檢定：把「沒測到差異」變成「差異小到不重要」，用學名藥生體相等性當例子',
+    Icon: Sigma,
+    accent: '#dfe3ea',
+    accentText: '#6c7690',
+    group: 'learn',
+    listed: false,
+    type: 'Article',
+  },
+  About: {
+    name: '本站說明',
+    desc: '統計學實驗室在做什麼：方法、例子怎麼查證、模擬為何每次跑出同樣數字',
+    Icon: Sigma,
+    accent: '#dfe3ea',
+    accentText: '#6c7690',
+    group: 'learn',
+    listed: false,
+    type: 'WebPage',
+  },
   AutoTuner: {
     name: '自動調音器',
     desc: '吉他、烏克麗麗、吉他麗麗全支援，含 Open G、DADGAD 等特殊定弦',
@@ -147,7 +167,9 @@ const PAGE_META = { // token-exempt: per-page identity chip colors (data, not st
     Icon: Scale,
     accent: '#d8dff0',
     accentText: '#3b4f78',
-    group: 'doctrine',
+    // 研究而非法政解析：吃 intlTaxOps/manusCase.json，跟「國際稅法研究桌」同一個資料域，
+    // 是有資料層的 IEL 研究案例（見 memory project_manus_research），不是靜態制度解析。
+    group: 'research',
   },
   InternationalTaxOps: {
     name: '國際稅法研究桌',
@@ -267,11 +289,14 @@ const HOME_VARS = { // token-exempt
   '--home-foot': '#b8a3ab',
 };
 
+/* 順序＝首頁區塊的先後（研究地圖在最前＝主線工作，工具與生活雷達收在後面）。版面是
+   CSS 多欄，區塊照這個順序在兩欄裡按高度均分填入，不再是舊的 row grid 把 1 項的
+   「教學實驗室」和 8 項的「研究地圖」硬排在同一列、底下留一大片空。 */
 const GROUPS = [
-  { key: 'learn', label: '教學實驗室', desc: '方法本身的來歷與限制，配上可以親手轉動的模擬' },
   { key: 'research', label: '研究地圖', desc: '資料層分離、可延伸成長期研究的小型工作台' },
   { key: 'doctrine', label: '法政解析', desc: '法律、財稅、投資與制度案例的結構化拆解' },
-  { key: 'tool', label: '即用工具', desc: '可直接操作的音樂與聲音工具' },
+  { key: 'learn', label: '教學實驗室', desc: '方法本身的來歷與限制，配上可以親手轉動的模擬' },
+  { key: 'tool', label: '即用工具', desc: '可直接操作的工具：音樂、聲音與設計' },
   { key: 'life', label: '生活雷達', desc: '活動、餘額、行程與日常決策輔助' },
 ];
 
@@ -350,7 +375,7 @@ const GROUP_META = {
   learn: { note: 'interactive method teaching' },
   research: { note: 'long-running research canvas' },
   doctrine: { note: 'legal and policy analysis' },
-  tool: { note: 'interactive instruments' },
+  tool: { note: 'interactive tools' },
   life: { note: 'practical decision radar' },
 };
 
@@ -380,13 +405,14 @@ function HomePage({ routes }) {
           </p>
         </header>
 
-        <div className="grid gap-x-10 gap-y-8 lg:grid-cols-[1.05fr_0.95fr]">
+        {/* 兩欄 masonry（CSS 多欄）：區塊照高度均分填入，短區塊底下不留空。lg 以下收成單欄。 */}
+        <div className="lg:columns-2 lg:gap-x-10">
           {GROUPS.map(({ key, label }) => {
             const items = known.filter((r) => r.meta.group === key);
             if (items.length === 0) return null;
             const gm = GROUP_META[key];
             return (
-              <section key={key}>
+              <section key={key} className="mb-8 break-inside-avoid">
                 <div className="mb-2 flex items-end justify-between gap-3 border-b border-[var(--home-line-strong)] pb-2">
                   <div>
                     <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--home-accent)]">{gm?.note}</p>
@@ -404,7 +430,7 @@ function HomePage({ routes }) {
           {(() => {
             const ungrouped = known.filter((r) => !r.meta.group);
             return ungrouped.length > 0 ? (
-              <section>
+              <section className="mb-8 break-inside-avoid">
                 <div className="flex flex-col gap-2">
                   {ungrouped.map((route) => <RouteRow key={route.path} route={route} />)}
                 </div>
@@ -413,7 +439,7 @@ function HomePage({ routes }) {
           })()}
 
           {unknown.length > 0 && (
-            <section>
+            <section className="mb-8 break-inside-avoid">
               <p className="mb-2 border-b border-[var(--home-line-strong)] pb-2 text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--home-accent)]">
                 其他
               </p>
