@@ -59,7 +59,7 @@ const VIZ_PALE = inkToFill('var(--cat-7-tx)');
 // 通用啞鈴圖（同組 vs 跨組）：證據二共同具名與證據三真投票同質性共用一套視覺語言。
 // rows=[{維度,同組,跨組,p}]；domain=[lo,hi] 決定 x 軸範圍（真投票率用寬帶避免放大微小差）；dp=小數位。
 function Dumbbell({ rows, domain, dp = 2 }) {
-  const W = 560, PL = 120, PR = 440, top = 16, rowH = 30;
+  const W = 672, PL = 120, PR = 552, top = 16, rowH = 30;
   const H = top + rows.length * rowH + 20;
   const [lo, hi] = domain;
   const xAt = (v) => PL + ((Math.max(lo, Math.min(hi, v)) - lo) / (hi - lo)) * (PR - PL);
@@ -230,7 +230,7 @@ function MethodGradientChart() {
       { label: '分向票·激進（上界）', p: R.分向票敏感性.激進?.提名總統?.p },
     ] : []),
   ].filter((r) => typeof r.p === 'number');
-  const W = 560, PL = 180, PR = 470, PMAX = 0.6, rowH = 26, top = 22;
+  const W = 672, PL = 180, PR = 582, PMAX = 0.6, rowH = 26, top = 22;
   const xP = (p) => PL + (Math.min(p, PMAX) / PMAX) * (PR - PL);
   const H = top + rows.length * rowH + 16;
   const ax = xP(0.05);
@@ -393,6 +393,26 @@ function BeatBlock({ beat: b, 圖 }) {
           {rpEyebrow(b.eyebrow)}
           {(b.段落 ?? []).map((t, i) => <p key={i} className="mt-1 text-[13.5px] leading-relaxed text-[var(--cc-ink)]">{renderNarrative(t)}</p>)}
         </div>
+      );
+    // 頁尾可折疊附錄（預設收合＝方法旁白，是本頁唯一對「展開卡預設全展開」的刻意破例）：
+    // <summary> 顯示 eyebrow＋標題＋一句摘要，展開才顯段落。純渲染母本字串，不算數。
+    case '分層附錄':
+      return (
+        <details className="group mt-6 max-w-3xl rounded-lg border border-[var(--cc-line)]">
+          <summary className="cursor-pointer list-none px-3.5 py-3">
+            <span className="flex items-baseline gap-2">
+              <span className="text-[11px] font-bold text-[var(--cc-ink-soft)] transition-transform group-open:rotate-90" aria-hidden="true">▸</span>
+              <span className="flex-1">
+                {rpEyebrow(b.eyebrow)}
+                <span className="mt-0.5 block text-[14px] font-bold text-[var(--cc-title-ink)]">{b.標題}</span>
+                {b.摘要 ? <span className="mt-1 block text-[12.5px] leading-relaxed text-[var(--cc-ink-soft)] group-open:hidden">{renderNarrative(b.摘要)}</span> : null}
+              </span>
+            </span>
+          </summary>
+          <div className="border-t border-[var(--cc-line)] px-3.5 py-3">
+            {(b.段落 ?? []).map((t, i) => <p key={i} className="mt-2 first:mt-0 text-[13.5px] leading-relaxed text-[var(--cc-ink)]">{renderNarrative(t)}</p>)}
+          </div>
+        </details>
       );
     default:
       return null;
