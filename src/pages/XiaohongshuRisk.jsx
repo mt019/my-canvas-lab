@@ -7,7 +7,7 @@ import { useTabParams } from '../components/lab/Tabs';
 import Badge from '../components/lab/Badge';
 import data from '../data/xiaohongshuRisk.json';
 
-const { source, corpus, structure, layers, eliteracyContext, context, closing, sources } = data;
+const { source, corpus, structure, layers, eliteracyContext, context, closing, sources, crossCheck } = data;
 
 const CN = ['零', '一', '二', '三', '四', '五'];
 
@@ -184,6 +184,7 @@ export default function XiaohongshuRisk() {
           { id: 'question', label: '問題意識' },
           { id: 'context', label: '當時發生了什麼' },
           { id: 'layers', label: '三層論證', count: layers.length },
+          { id: 'crosscheck', label: '可查證對照' },
           { id: 'limits', label: '界線與待補' },
         ],
       }}
@@ -270,6 +271,80 @@ export default function XiaohongshuRisk() {
             <LayerSection key={layer.id} layer={layer} />
           ))}
         </div>
+      )}
+
+      {tab === 'crosscheck' && (
+        <section className="mb-8">
+          <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+            <SectionHead id="crosscheck">{crossCheck.title}</SectionHead>
+            <Badge tone="success">{crossCheck.strength}</Badge>
+          </div>
+          <p className="font-display text-token-lg leading-snug text-ink">{crossCheck.claim}</p>
+          <p className="mt-2 max-w-3xl text-token-xs leading-relaxed text-ink-faint">
+            {crossCheck.source}。{crossCheck.method}
+          </p>
+
+          <div className="mt-6 flex items-baseline gap-3 border-y border-line-soft py-4">
+            <span className="font-display text-token-3xl tabular-nums text-ink">{crossCheck.total}</span>
+            <span className="max-w-2xl text-token-sm leading-relaxed text-ink-muted">筆有案號、可調閱全文的刑事判決。{crossCheck.totalNote}</span>
+          </div>
+
+          <SubHead id="cc-cause">案由分布</SubHead>
+          <BreakdownBars rows={crossCheck.causeBreakdown.map((c) => ({ label: c.label, pct: c.count }))} />
+          <p className="mt-2 text-token-xs leading-relaxed text-ink-faint">{crossCheck.causeNote}</p>
+
+          <SubHead id="cc-sample">抽樣查證（8 則·跨 8 法院）</SubHead>
+          <p className="mb-4 max-w-3xl text-token-sm leading-relaxed text-ink-muted">{crossCheck.sampleFinding}</p>
+          <ul className="space-y-2">
+            {crossCheck.samples.map((s) => (
+              <li key={s.caseNo} className="flex flex-wrap items-center gap-x-3 gap-y-1 border-t border-line-soft py-2">
+                <span className="text-token-sm text-ink">{s.court}</span>
+                <span className="font-accent text-token-xs text-ink-muted">{s.caseNo}</span>
+                <Badge tone="neutral">{s.cause}</Badge>
+                <span className="ml-auto flex items-center gap-2 text-token-xs text-ink-faint">
+                  <span className="tabular-nums">小紅書 ×{s.xhs}</span>
+                  {s.offPlatform ? <Badge tone="warning">站外媒介</Badge> : null}
+                </span>
+              </li>
+            ))}
+          </ul>
+
+          <SubHead id="cc-compare">並排對照</SubHead>
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[36rem] border-collapse text-left">
+              <thead>
+                <tr className="border-b border-line text-token-xs text-ink-faint">
+                  <th className="py-2 pr-4 font-medium" />
+                  <th className="py-2 pr-4 font-semibold text-ink">裁判書系統（可查證）</th>
+                  <th className="py-2 font-semibold text-ink">165 儀錶板（去識別化）</th>
+                </tr>
+              </thead>
+              <tbody>
+                {crossCheck.compare.map((row) => (
+                  <tr key={row.field} className="border-b border-line-soft align-top">
+                    <td className="py-3 pr-4 text-token-xs font-semibold text-ink-muted">{row.field}</td>
+                    <td className="py-3 pr-4 text-token-sm leading-relaxed text-ink">{row.judgment}</td>
+                    <td className="py-3 text-token-sm leading-relaxed text-ink-muted">{row.dashboard}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <SubHead id="cc-synthesis">這說明了什麼</SubHead>
+          <ul className="space-y-2.5">
+            {crossCheck.synthesis.map((line) => (
+              <li key={line} className="grid grid-cols-[14px_1fr] gap-2 text-token-base leading-relaxed text-ink">
+                <span className="mt-2.5 h-1.5 w-1.5 rounded-full bg-accent" />
+                <span>{line}</span>
+              </li>
+            ))}
+          </ul>
+
+          <p className="mt-6 border-t border-dashed border-line pt-3 text-token-xs leading-relaxed text-ink-faint">
+            <span className="font-semibold text-ink-muted">界線：</span>{crossCheck.caveat}
+          </p>
+        </section>
       )}
 
       {tab === 'limits' && (
