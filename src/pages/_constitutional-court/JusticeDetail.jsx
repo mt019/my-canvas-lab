@@ -110,7 +110,7 @@ export default function JusticeDetail({ name, onBack, onOpen, onOpenDoc }) {
               {j.各段提名總統?.length > 1 ? [...new Set(j.各段提名總統)].join('、') : j.提名總統}
             </span>
           ) : null}
-          {j.出身 && j.出身 !== '待確認' ? <span><strong className="text-[var(--cc-accent)]">出身</strong>　{j.出身}</span> : null}
+          {j.出身 && j.出身 !== '未著錄' ? <span><strong className="text-[var(--cc-accent)]">出身</strong>　{j.出身}</span> : null}
           {j.留學國 ? <span><strong className="text-[var(--cc-accent)]">留學</strong>　{j.留學國}</span> : null}
           {j.性別 === '女' ? <span><strong className="text-[var(--cc-accent)]">性別</strong>　女</span> : null}
           {j.簡歷頁 ? (

@@ -6,23 +6,23 @@ import { PRES_COLOR, Select, formatTenureRange, inkToFill, justices, presidents 
 // 著色改吃全站語意色 token 的分類色 --cat-N-tx（2026-07-08，tokens.css Layer 1b）：
 // 學者=cat-1 紫、法官=cat-2 藍、律師=cat-3 綠、檢察官=cat-4 金——這組 cat 色的值就是
 // 站內 Badge 校準色調，明度齊一（L≈0.5）、彩度中低、色相各異（Notion tag 的和諧原理），
-// 由 validate:colors 在 build 時鎖住明度帶，改色相不超出帶才過得了 build。其他／待確認
+// 由 validate:colors 在 build 時鎖住明度帶，改色相不超出帶才過得了 build。其他／未著錄
 // 保持淺灰退場（不在分類色內，是「無類別」的中性退場色，故留字面值）。
 const TENURE_BG_COLOR = { // token-exempt: 分類色引用 --cat-* token；退場中性用 --cc-retire-*
-  學者: 'var(--cat-1-tx)', 法官: 'var(--cat-2-tx)', 律師: 'var(--cat-3-tx)', 檢察官: 'var(--cat-4-tx)', 其他: 'var(--cc-retire-tx)', 待確認: 'var(--cc-retire-tx)',
+  學者: 'var(--cat-1-tx)', 法官: 'var(--cat-2-tx)', 律師: 'var(--cat-3-tx)', 檢察官: 'var(--cat-4-tx)', 其他: 'var(--cc-retire-tx)', 未著錄: 'var(--cc-retire-tx)',
 };
-// 留學地分群：null 再分「國內」（逐人查核確認無外國學位）與「待確認」（查不到可靠線索）
+// 留學地分群：null 再分「國內」（逐人查核確認無外國學位）與「未著錄」（查不到可靠線索）
 const ABROAD_GROUP = (j) => {
   const c = j.留學國;
   if (c === '德國' || c === '奧地利' || c === '瑞士') return '德語圈';
   if (c === '美國' || c === '英國') return '英美';
   if (c === '日本') return '日本';
   if (c) return '其他';
-  return (j.留學國來源 ?? '').includes('查核') ? '國內' : '待確認';
+  return j.留學已查核 ? '國內' : '未著錄';
 };
 // 與 TENURE_BG_COLOR 共用同一組分類色（--cat-1..4），維持兩種著色模式視覺一致
 const TENURE_ABROAD_COLOR = { // token-exempt: 分類色引用 --cat-* token；退場中性用 --cc-retire-*
-  德語圈: 'var(--cat-1-tx)', 英美: 'var(--cat-2-tx)', 日本: 'var(--cat-3-tx)', 其他: 'var(--cat-4-tx)', 國內: 'var(--cc-retire-tx)', 待確認: 'var(--cc-retire-tx)',
+  德語圈: 'var(--cat-1-tx)', 英美: 'var(--cat-2-tx)', 日本: 'var(--cat-3-tx)', 其他: 'var(--cat-4-tx)', 國內: 'var(--cc-retire-tx)', 未著錄: 'var(--cc-retire-tx)',
 };
 // 各總統提名大法官人數（鍵與 presidents[].總統／PRES_COLOR 同一套字串，含「（代）」）
 const PRES_NOM_COUNT = justices.reduce((m, j) => {
@@ -74,14 +74,14 @@ export default function TenureView({ onOpen }) {
   const x = (yr) => LABEL + ((yr - Y0) / (Y1 - Y0)) * CHART;
   const maxOps = Math.max(...justices.map((j) => j.提出意見書 + j.加入意見書), 1);
   const colorOf = (j) => (colorBy === '出身'
-    ? TENURE_BG_COLOR[j.出身] ?? TENURE_BG_COLOR.待確認
+    ? TENURE_BG_COLOR[j.出身] ?? TENURE_BG_COLOR.未著錄
     : colorBy === '提名總統'
-      ? PRES_COLOR[j.提名總統] ?? TENURE_BG_COLOR.待確認
+      ? PRES_COLOR[j.提名總統] ?? TENURE_BG_COLOR.未著錄
       : TENURE_ABROAD_COLOR[ABROAD_GROUP(j)]);
   const fillOf = (j) => inkToFill(colorOf(j)); // 大條吃淡底，色相辨識交給 colorOf 的 ink 細框與圖例
-  // 「待確認」畫空心條（描邊無填滿）：留學地模式與「國內」灰實心區分，出身模式與「其他」（查核後四類皆非）區分
-  const isHollow = (j) => (colorBy === '留學國' && ABROAD_GROUP(j) === '待確認')
-    || (colorBy === '出身' && j.出身 === '待確認');
+  // 「未著錄」畫空心條（描邊無填滿）：留學地模式與「國內」灰實心區分，出身模式與「其他」（查核後四類皆非）區分
+  const isHollow = (j) => (colorBy === '留學國' && ABROAD_GROUP(j) === '未著錄')
+    || (colorBy === '出身' && j.出身 === '未著錄');
   const legend = colorBy === '出身' ? TENURE_BG_COLOR : colorBy === '提名總統' ? PRES_COLOR : TENURE_ABROAD_COLOR;
 
   return (
@@ -108,7 +108,7 @@ export default function TenureView({ onOpen }) {
       <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-[12px] text-[var(--cc-ink-soft)]">
         {Object.entries(legend).map(([k, c]) => (
           <span key={k} className="inline-flex items-center gap-1.5">
-            {k === '待確認' && colorBy !== '提名總統'
+            {k === '未著錄' && colorBy !== '提名總統'
               ? <span className="h-2.5 w-2.5 rounded-sm border border-dashed" style={{ borderColor: c }} />
               : <span className="h-2.5 w-2.5 rounded-sm border" style={{ background: inkToFill(c), borderColor: c }} />}
             {k}
@@ -131,7 +131,7 @@ export default function TenureView({ onOpen }) {
             <strong>{hover.姓名}</strong>
             <span>{hover.任期.map(formatTenureRange).join('；')}</span>
             <span><span className="text-[var(--cc-ink-soft)]">出身</span> {hover.出身}</span>
-            <span><span className="text-[var(--cc-ink-soft)]">留學</span> {hover.留學國 ?? ((hover.留學國來源 ?? '').includes('查核') ? '無（國內）' : '待確認')}</span>
+            <span><span className="text-[var(--cc-ink-soft)]">留學</span> {hover.留學國 ?? (hover.留學已查核 ? '無（國內）' : '未著錄')}</span>
             {hover.提名總統 ? <span><span className="text-[var(--cc-ink-soft)]">提名</span> {hover.提名總統}</span> : null}
             {hover.性別 === '女' ? <span><span className="text-[var(--cc-ink-soft)]">性別</span> 女</span> : null}
             {hover.提出意見書 + hover.加入意見書 > 0
@@ -230,7 +230,7 @@ export default function TenureView({ onOpen }) {
         任期資料三層來源：官方個人簡歷（48 人，精確到月日，含早逝、辭職與連任）、官方屆次區間（其餘多數）、
         逐人查核後的人工核定（現任八人與翁岳生、城仲模等特殊任期）。橫條一律淡底＋同色細邊框；虛線邊框＝現任（任期未封口）。
         出身與留學地由官方經歷、官職資料庫與維基百科條目逐人查核標註；「國內」「其他」（灰底實線框）＝查核後確認
-        （無外國學位／非學者法官律師檢察官四類的行政文官），「待確認」（無色底虛線框）＝尚查不到可靠線索。
+        （無外國學位／非學者法官律師檢察官四類的行政文官），「未著錄」（無色底虛線框）＝尚查不到可靠線索。
         提名總統逐批查證核定：每位大法官的提名事件對到政大官職資料庫（『任命者:總統』欄）、總統府與司法院官方名冊，
         再任者逐段歸批（如許宗力 2003 陳水扁提名、2016 蔡英文再任）；性別由維基條目語彙機標（女 14 人），
         無條目的 20 人（多為第一、二屆與部分現任）尚待人工補注，圖上暫不標。

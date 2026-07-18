@@ -42,7 +42,7 @@ export const CC_VARS = { // token-exempt
   '--cc-edge-line': '#c9b3bc',
   '--cc-dim-text': '#c4b4ba',
   '--cc-placeholder': '#b09aa2',
-  // 退場中性色：非分類色的「其他／待確認／國內／任期尚短」用，刻意不佔 --cat-* 身分位。
+  // 退場中性色：非分類色的「其他／未著錄／國內／任期尚短」用，刻意不佔 --cat-* 身分位。
   // ink 為已審過的暖灰，bg 為近白（淡底屬 DESIGN.md 准許新增的低風險轉換）。走 -tx/-bg 慣例讓 inkToFill 自動導出淡底。
   '--cc-retire-tx': '#b3a8ad',
   '--cc-retire-bg': '#ece9ea',
