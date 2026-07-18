@@ -31,12 +31,14 @@ function HeatStrip({ id, rows, maxN, marks, ticks, label, sub, hov, setHov }) {
         </div>
       ) : null}
       <div
-        className="relative h-7 max-w-2xl cursor-crosshair overflow-hidden rounded-md border border-[var(--cc-line)]"
+        className="relative h-7 max-w-2xl cursor-crosshair rounded-md border border-[var(--cc-line)]"
         onMouseMove={(e) => { const r = e.currentTarget.getBoundingClientRect(); const i = Math.min(rows.length - 1, Math.max(0, Math.floor(((e.clientX - r.left) / r.width) * rows.length))); setHov({ id, left: e.clientX - r.left, ...rows[i] }); }}
         onMouseLeave={() => setHov(null)}
       >
-        <div className="flex h-full w-full">{slices}</div>
+        {/* slices 圓角裁切放在內層，外層不 overflow-hidden，否則上方 tooltip 被裁掉＝hover 看不到 */}
+        <div className="flex h-full w-full overflow-hidden rounded-md">{slices}</div>
         {marks?.map((m) => <span key={m.label} className="pointer-events-none absolute inset-y-0 w-px" style={{ left: `${m.frac * 100}%`, background: 'var(--cc-bg)', opacity: 0.65 }} />)}
+        {a ? <span className="pointer-events-none absolute inset-y-0 z-10 w-px bg-[var(--cc-ink-strong)]" style={{ left: `${a.left}px` }} /> : null}
         {a ? (
           <div className="pointer-events-none absolute -top-8 z-10 -translate-x-1/2 whitespace-nowrap rounded border border-[var(--cc-line)] bg-[var(--cc-bg)] px-1.5 py-0.5 text-[11px] font-bold text-[var(--cc-ink-strong)] shadow-sm" style={{ left: `${a.left}px` }}>
             {a.字號}・{a.c ? `${a.c} 份意見書` : '無'}
@@ -53,7 +55,7 @@ function HeatStrip({ id, rows, maxN, marks, ticks, label, sub, hov, setHov }) {
 }
 
 // 問題意識分頁圖表統一規格（字級貼近內文、淡底 ink 細框；dataviz：thin marks、text 用 ink token、≥8px 標記）。
-const RVIZ = { lbl: 10, tick: 9, r: 4 };
+const RVIZ = { lbl: 12, tick: 11, r: 4 };
 const VIZ_PALE = inkToFill('var(--cat-7-tx)');
 
 // 通用啞鈴圖（同組 vs 跨組）：證據二共同具名與證據三真投票同質性共用一套視覺語言。
@@ -170,7 +172,7 @@ function DivergenceTimeSeries({ 分歧時序, eyebrow, 標題, 圖說 }) {
           {eras.map(([y, label]) => (
             <g key={y}>
               <line x1={xAt(y)} y1={PAD_T} x2={xAt(y)} y2={PAD_T + H} stroke="var(--cc-line)" strokeWidth={1} strokeDasharray="2 2" />
-              <text x={xAt(y)} y={PAD_T + H + 11} textAnchor="middle" fontSize={8.5} fill="var(--cc-ink-soft)">{label}</text>
+              <text x={xAt(y)} y={PAD_T + H + 11} textAnchor="middle" fontSize={9.5} fill="var(--cc-ink-soft)">{label}</text>
             </g>
           ))}
           <path d={area} fill="var(--cc-ink-strong)" opacity={0.06} />
