@@ -171,7 +171,7 @@ D 軸保守偏漏。D／E 定點補跑 103 候選中 86 件兩 pass 交集為空
 | tie-break 腳本 | `engineering/scripts/typology-tiebreak.mjs` |
 | 證據併檔腳本 | `engineering/scripts/typology-evidence-merge.mjs` |
 | D／E 併檔腳本 | `engineering/scripts/typology-de-merge.mjs` |
-| validate 哨兵 | `engineering/scripts/validate-processed.mjs`（依據s 逐值憑證檢查） |
+| validate 固定檢查 | `engineering/scripts/validate-processed.mjs`（依據s 逐值憑證檢查） |
 
 標註規模（按 engineering/LOG.md 可查者）：
 

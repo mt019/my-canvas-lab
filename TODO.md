@@ -9,7 +9,7 @@
 
 - [ ] **eslint 根本沒在檢查 `.jsx`**：`eslint.config.js` 的 files 只有 `**/*.{ts,tsx}`，所以 17 個 `.jsx` 頁面與 `src/components/lab/` 全部逃過 lint，`npm run lint` 的綠燈是假訊號。加上 jsx 支援會一次噴出既有錯誤，要排一輪處理。
 - [ ] **共用層下一個該抽的東西**：點標籤／註記標註（帶避讓）。GovernmentDebt 的折線末端國名與 ECFA `ThesisTimeline` 的事件標註各自手刻同一套避讓邏輯——兩個真實用例已到齊。順帶：`AreaWash` 缺漸層、`Dots` 只有單一半徑。
-- [ ] **比喻黑話殘留**：`HANDOFF.md` 與資料倉腳本裡還有 `sentinel`／`哨兵`／`棘輪` 等命名（見 jargon-check hook 每次的告警）。改名要跨 repo 動識別字，排一輪專門處理。
+- [ ] **比喻黑話殘留（僅剩程式識別字）**：文件散文中的舊比喻（咬／哨兵／棘輪／死法／地基…）已於 2026-07-18 全部改直白。**剩下的是程式識別字** `sentinel`／`sentinelRef`（`useHideOnScrollDown` 的 IntersectionObserver 觀測基準元素，HANDOFF:489/490/512、TODO:44）與資料倉腳本裡的對應命名。改名要跨 repo 動變數名＋重跑相關測試，排一輪專門處理。
 
 ## 功能增強
 

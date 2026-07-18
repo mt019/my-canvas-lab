@@ -44,7 +44,7 @@ canvas repo（`~/Documents/NTU/1142/my-canvas-lab`）最近提交：
 - **驗證走 fresh-context subagent，產出者不自驗**。驗收要證據（檔案:行號、命令輸出關鍵行），不收「已確認」三個字。
 - **研究倫理**：以發現真實為目的，不追顯著。null 帶紀律照樣是貢獻；顯著先攻擊它。分析選擇要先於看結果就固定。使用者說「怪怪的」是最高優先訊號。
 
-## 這套研究目前的方法地基（別重造）
+## 這套研究目前的方法基礎（別重造）
 
 - 立場表投票母本 `data/processed/立場表投票.json`；主分析 `analyze-lct.mjs`（僅爭議 roll、共投≥8、置換檢定）。
 - 測量模型：方向尺度＋貝氏 graded-response IRT（`engineering/stan/grm.stan`＋`fit-grm.py`，潛在特質＝違憲宣告傾向）；編碼層單一事實源＝`data/materials/{主文項宣告方向,分向票偏離方向}.json`。
