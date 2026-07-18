@@ -1,35 +1,35 @@
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import {
-  AlertTriangle,
   BarChart3,
-  CheckCircle2,
-  Database,
+  Clock,
+  ExternalLink,
   FileSearch,
   Layers3,
   ListChecks,
-  ShieldAlert,
+  ScanSearch,
+  ShieldQuestion,
 } from 'lucide-react';
 import data from '../data/xiaohongshuRisk.json';
 
-const ds = data.datasets;
+const { source, corpus, structure, layers, eliteracyContext, context, closing, sources } = data;
 
 const tabs = [
-  { id: 'overview', label: '問題意識', icon: ShieldAlert },
-  { id: 'materials', label: '材料狀態', icon: Database },
-  { id: 'patterns', label: '案例樣態', icon: Layers3 },
-  { id: 'methods', label: '方法與下一步', icon: ListChecks },
+  { id: 'question', label: '問題意識', icon: ShieldQuestion },
+  { id: 'context', label: '當時發生了什麼', icon: Clock },
+  { id: 'layers', label: '三層論證', icon: Layers3 },
+  { id: 'limits', label: '界線與待補', icon: ListChecks },
 ];
 
-const statusLabel = {
-  done: '已完成',
-  partial: '部分完成',
-  not_started: '未開始',
+const strengthTone = {
+  'text-synthesis': 'green',
+  'attribution-inflation': 'gold',
+  'official-construction': 'slate',
 };
 
-const statusTone = {
-  done: 'green',
-  partial: 'gold',
-  not_started: 'slate',
+const layerIcon = {
+  'text-synthesis': FileSearch,
+  'attribution-inflation': BarChart3,
+  'official-construction': ScanSearch,
 };
 
 const XHS_VARS = { // token-exempt
@@ -48,8 +48,7 @@ const XHS_VARS = { // token-exempt
   '--xhs-gold-ink': '#806539',
   '--xhs-slate-bg': '#ece9e5',
   '--xhs-slate-ink': '#6c6258',
-  '--xhs-red-bg': '#f3dfda',
-  '--xhs-red-ink': '#8f4f42',
+  '--xhs-bar-fill': '#f6efe9',
   '--xhs-bar-track': '#eee7e0',
 };
 
@@ -58,7 +57,6 @@ function Badge({ children, tone = 'slate' }) {
     green: ['var(--xhs-green-bg)', 'var(--xhs-green-ink)'],
     gold: ['var(--xhs-gold-bg)', 'var(--xhs-gold-ink)'],
     slate: ['var(--xhs-slate-bg)', 'var(--xhs-slate-ink)'],
-    red: ['var(--xhs-red-bg)', 'var(--xhs-red-ink)'],
   };
   const [background, color] = pairs[tone] ?? pairs.slate;
   return (
@@ -75,7 +73,9 @@ function Panel({ eyebrow, title, icon: Icon, children, aside }) {
         <div className="flex items-start gap-2.5">
           {Icon ? <Icon className="mt-0.5 shrink-0 text-[var(--xhs-accent)]" size={16} /> : null}
           <div>
-            <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--xhs-accent)]">{eyebrow}</p>
+            {eyebrow ? (
+              <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--xhs-accent)]">{eyebrow}</p>
+            ) : null}
             <h2 className="font-sans text-base font-bold leading-tight text-[var(--xhs-ink)]">{title}</h2>
           </div>
         </div>
@@ -83,29 +83,6 @@ function Panel({ eyebrow, title, icon: Icon, children, aside }) {
       </div>
       {children}
     </section>
-  );
-}
-
-function BarList({ rows, maxRows = 10 }) {
-  const shown = rows.slice(0, maxRows);
-  const max = Math.max(...shown.map((row) => row.count), 1);
-  return (
-    <div className="space-y-2">
-      {shown.map((row) => (
-        <div key={row.label}>
-          <div className="mb-1 flex items-baseline justify-between gap-3 text-token-xs">
-            <span className="font-bold text-[var(--xhs-ink)]">{row.label}</span>
-            <span className="tabular-nums text-[var(--xhs-ink-muted)]">{row.count}</span>
-          </div>
-          <div className="h-2 rounded-full bg-[var(--xhs-bar-track)]">
-            <div
-              className="h-2 rounded-full bg-[var(--xhs-accent)]"
-              style={{ width: `${Math.max(5, (row.count / max) * 100)}%` }}
-            />
-          </div>
-        </div>
-      ))}
-    </div>
   );
 }
 
@@ -119,28 +96,153 @@ function Kpi({ label, value, note }) {
   );
 }
 
+// Pale fill + thin ink keyline; width driven by pct (0–100).
+function MetricBar({ label, pct, count, total, note }) {
+  return (
+    <div>
+      <div className="mb-1 flex items-baseline justify-between gap-3 text-token-xs">
+        <span className="font-bold text-[var(--xhs-ink)]">{label}</span>
+        <span className="shrink-0 whitespace-nowrap tabular-nums text-[var(--xhs-ink-muted)]">
+          <span className="font-bold text-[var(--xhs-accent-ink)]">{pct}%</span>
+          {typeof count === 'number' ? <span className="ml-2">{count}/{total}</span> : null}
+        </span>
+      </div>
+      <div className="h-2.5 rounded-full bg-[var(--xhs-bar-track)]">
+        <div
+          className="h-2.5 rounded-full border border-[var(--xhs-accent)] bg-[var(--xhs-bar-fill)]"
+          style={{ width: `${Math.max(4, Math.min(100, pct))}%` }}
+        />
+      </div>
+      {note ? <p className="mt-1 text-[11px] leading-relaxed text-[var(--xhs-ink-muted)]">{note}</p> : null}
+    </div>
+  );
+}
+
+function BreakdownBars({ rows }) {
+  const max = Math.max(...rows.map((r) => r.pct), 1);
+  return (
+    <div className="space-y-2">
+      {rows.map((row) => (
+        <div key={row.label}>
+          <div className="mb-1 flex items-baseline justify-between gap-3 text-token-xs">
+            <span className="font-bold text-[var(--xhs-ink)]">{row.label}</span>
+            <span className="shrink-0 whitespace-nowrap tabular-nums text-[var(--xhs-ink-muted)]">{row.pct}%</span>
+          </div>
+          <div className="h-2 rounded-full bg-[var(--xhs-bar-track)]">
+            <div
+              className="h-2 rounded-full border border-[var(--xhs-accent)] bg-[var(--xhs-bar-fill)]"
+              style={{ width: `${Math.max(4, (row.pct / max) * 100)}%` }}
+            />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function Excerpt({ item }) {
+  return (
+    <div className="border-t border-[var(--xhs-line)] py-3">
+      <div className="mb-1 flex flex-wrap items-center gap-2">
+        <Badge tone="slate">{item.caseType}</Badge>
+        <span className="text-[11px] text-[var(--xhs-ink-muted)]">{item.date} · {item.city}</span>
+      </div>
+      <p className="text-token-xs leading-relaxed text-[var(--xhs-ink-soft)]">{item.excerpt}……</p>
+    </div>
+  );
+}
+
+function LayerCard({ layer }) {
+  const Icon = layerIcon[layer.id] ?? Layers3;
+  const breakdown = layer.registerSplit ?? layer.vectorBreakdown;
+  const breakdownTitle = layer.registerSplit ? '語域分布' : '真正的接觸／金流媒介';
+  return (
+    <section className="rounded-xl border border-[var(--xhs-line-strong)] bg-white/40 p-5 sm:p-6">
+      <div className="mb-4 flex items-start justify-between gap-3">
+        <div className="flex items-start gap-2.5">
+          <Icon className="mt-0.5 shrink-0 text-[var(--xhs-accent)]" size={18} />
+          <div>
+            <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--xhs-accent)]">
+              第 {layer.order} 層
+            </p>
+            <h2 className="font-sans text-base font-bold leading-snug text-[var(--xhs-ink)] sm:text-lg">
+              {layer.claim}
+            </h2>
+          </div>
+        </div>
+        <Badge tone={strengthTone[layer.id]}>{layer.strength}</Badge>
+      </div>
+
+      <p className="mb-4 text-[11px] leading-relaxed text-[var(--xhs-ink-muted)]">{layer.strengthNote}</p>
+
+      {layer.metrics ? (
+        <div className="space-y-3">
+          {layer.metrics.map((m) => (
+            <MetricBar key={m.label} label={m.label} pct={m.pct} count={m.count} total={m.total} note={m.note} />
+          ))}
+        </div>
+      ) : null}
+
+      {layer.evidence ? (
+        <ul className="space-y-2.5">
+          {layer.evidence.map((line) => (
+            <li key={line} className="grid grid-cols-[14px_1fr] gap-2 text-token-xs leading-relaxed text-[var(--xhs-ink-soft)]">
+              <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-[var(--xhs-accent)]" />
+              <span>{line}</span>
+            </li>
+          ))}
+        </ul>
+      ) : null}
+
+      {breakdown ? (
+        <div className="mt-5 border-t border-[var(--xhs-line)] pt-4">
+          <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--xhs-accent)]">{breakdownTitle}</p>
+          <BreakdownBars rows={breakdown} />
+        </div>
+      ) : null}
+
+      {layer.keyPoint ? (
+        <p className="mt-5 rounded-lg bg-[var(--xhs-accent-soft)] px-4 py-3 text-token-sm font-bold leading-relaxed text-[var(--xhs-accent-ink)]">
+          {layer.keyPoint}
+        </p>
+      ) : null}
+
+      {layer.examples ? (
+        <div className="mt-4">
+          <p className="mb-1 text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--xhs-accent)]">去識別化摘錄</p>
+          {layer.examples.map((item, index) => (
+            <Excerpt key={`${layer.id}-${index}`} item={item} />
+          ))}
+        </div>
+      ) : null}
+
+      <p className="mt-4 border-t border-dashed border-[var(--xhs-line)] pt-3 text-[11px] leading-relaxed text-[var(--xhs-ink-muted)]">
+        <span className="font-bold text-[var(--xhs-ink-soft)]">本層界線：</span>{layer.weakness}
+      </p>
+    </section>
+  );
+}
+
 export default function XiaohongshuRisk() {
-  const [activeTab, setActiveTab] = useState('overview');
-  const topType = ds.caseTypeDistribution[0];
-  const topCity = ds.cityDistribution[0];
-  const monthCount = useMemo(() => ds.monthlyDistribution.filter((row) => row.label !== '未標示').length, []);
+  const [activeTab, setActiveTab] = useState('question');
+  const layer3 = layers.find((l) => l.id === 'official-construction');
 
   return (
     <main className="min-h-screen bg-[var(--xhs-bg)] px-4 py-8 font-sans text-[var(--xhs-ink-soft)] sm:px-6" style={XHS_VARS}>
       <div className="mx-auto max-w-6xl">
         <header className="mb-7 border-b border-[var(--xhs-line-strong)] pb-6">
-          <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--xhs-accent)]">Platform Risk</p>
+          <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--xhs-accent)]">Credibility Audit</p>
           <div className="grid gap-5 lg:grid-cols-[1fr_320px] lg:items-end">
             <div>
-              <h1 className="font-sans text-3xl font-bold leading-tight text-[var(--xhs-ink)] sm:text-4xl">小紅書詐騙風險研究</h1>
+              <h1 className="font-sans text-3xl font-bold leading-tight text-[var(--xhs-ink)] sm:text-4xl">{source.title}</h1>
               <p className="mt-3 max-w-3xl text-token-sm leading-relaxed text-[var(--xhs-ink-soft)]">
-                這份研究整理 165 打詐案例與數位素養材料，先看小紅書相關詐騙如何出現、常見話術集中在哪裡，以及哪些材料還需要補強。
+                {source.question}把這批案例拆開來看，會發現三件事層層疊起：文本先被改寫過、平台歸因靠關鍵字搜出來、最後由官方端聚合成一套敘事。三層的證據強度不同，這裡分層標示，不含混當成同一種確定。
               </p>
             </div>
             <div className="grid grid-cols-3 gap-3 lg:grid-cols-1">
-              <Kpi label="案例筆數" value={ds.summary.caseRecords} note="165 打詐資料" />
-              <Kpi label="保存頁面" value={ds.summary.savedDashboardPages} note="原始 HTML" />
-              <Kpi label="月份跨度" value={monthCount} note={`${ds.summary.dateCoverage.first} 至 ${ds.summary.dateCoverage.last}`} />
+              <Kpi label="關鍵字命中案例" value={corpus.caseRecords} note="keyWord=小紅書" />
+              <Kpi label="案情中位字數" value={corpus.contentLength.median} note={`最短 ${corpus.contentLength.min}・最長 ${corpus.contentLength.max}`} />
+              <Kpi label="保存儀錶板頁" value={corpus.savedDashboardPages} note="原始 HTML" />
             </div>
           </div>
         </header>
@@ -164,117 +266,80 @@ export default function XiaohongshuRisk() {
           ))}
         </div>
 
-        {activeTab === 'overview' && (
+        {activeTab === 'question' && (
           <>
-            <Panel eyebrow="judgment" title="值得整理成長期研究頁" icon={CheckCircle2}>
-              <div className="grid gap-4 md:grid-cols-3">
-                <div className="border-t border-[var(--xhs-line)] py-3">
-                  <p className="text-token-sm font-bold text-[var(--xhs-ink)]">目前成熟度</p>
-                  <p className="mt-2 text-token-xs leading-relaxed">{ds.summary.currentMaturity}</p>
+            <Panel eyebrow="question" title="這個敘事站得住嗎" icon={ShieldQuestion}>
+              <p className="max-w-3xl text-token-sm leading-relaxed">
+                {source.question}關鍵字搜尋的範圍是 {corpus.keywordSearchScope}。也就是說，「{corpus.caseRecords} 件小紅書詐騙」是對案情自由文字做子字串比對的結果，不是資料庫裡有一個「平台＝小紅書」的欄位。
+              </p>
+            </Panel>
+
+            <Panel eyebrow="structure" title="資料庫結構上沒有「平台」這個維度" icon={Layers3}>
+              <div className="grid gap-5 md:grid-cols-2">
+                <div>
+                  <p className="mb-2 text-token-xs font-bold text-[var(--xhs-ink)]">每筆有的欄位</p>
+                  <div className="flex flex-wrap gap-2">
+                    {structure.perRecordFields.map((f) => (
+                      <Badge key={f} tone="slate">{f}</Badge>
+                    ))}
+                  </div>
+                  <p className="mb-2 mt-4 text-token-xs font-bold text-[var(--xhs-ink)]">缺的欄位</p>
+                  <div className="flex flex-wrap gap-2">
+                    {structure.missingFields.map((f) => (
+                      <Badge key={f} tone="gold">{f}</Badge>
+                    ))}
+                  </div>
                 </div>
-                <div className="border-t border-[var(--xhs-line)] py-3">
-                  <p className="text-token-sm font-bold text-[var(--xhs-ink)]">最高頻類型</p>
-                  <p className="mt-2 text-token-xs leading-relaxed">{topType.label}，共 {topType.count} 筆。</p>
-                </div>
-                <div className="border-t border-[var(--xhs-line)] py-3">
-                  <p className="text-token-sm font-bold text-[var(--xhs-ink)]">最高頻縣市</p>
-                  <p className="mt-2 text-token-xs leading-relaxed">{topCity.label}，共 {topCity.count} 筆。</p>
-                </div>
+                <p className="border-l-2 border-[var(--xhs-line-strong)] pl-4 text-token-xs leading-relaxed text-[var(--xhs-ink-soft)]">
+                  {structure.note}
+                </p>
               </div>
             </Panel>
-            <Panel eyebrow="boundary" title="公開頁面只呈現聚合與去識別摘錄" icon={AlertTriangle}>
-              <p className="max-w-3xl text-token-sm leading-relaxed">
-                完整案例頁面與帳號線索只作研究留存；公開頁面只呈現聚合結果與去識別摘錄，避免放出原始頁面內容、不必要的內部資訊或未驗證個人資料。
+
+            <Panel eyebrow="corpus" title="材料範圍" icon={FileSearch}>
+              <p className="max-w-3xl text-token-xs leading-relaxed text-[var(--xhs-ink-soft)]">
+                後端是 {source.backend}；本頁分析以 {corpus.caseRecords} 筆關鍵字命中案例為主，另留存 {corpus.savedDashboardPages} 份儀錶板頁與 {corpus.eliteracyFiles} 份數位素養素材作脈絡對照。{source.publicBoundary}
               </p>
             </Panel>
           </>
         )}
 
-        {activeTab === 'materials' && (
-          <Panel eyebrow="sources" title="材料覆蓋" icon={Database}>
-            <div className="overflow-x-auto">
-              <table className="min-w-full border-collapse text-left text-token-xs">
-                <thead>
-                  <tr className="border-b border-[var(--xhs-line)] text-[var(--xhs-accent-ink)]">
-                    <th className="py-2 pr-4">來源</th>
-                    <th className="py-2 pr-4">材料</th>
-                    <th className="py-2 pr-4">數量</th>
-                    <th className="py-2 pr-4">狀態</th>
-                    <th className="py-2">限制</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {ds.sourceCoverage.map((row) => (
-                    <tr key={`${row.sourceClass}-${row.material}`} className="border-b border-[var(--xhs-line)] align-top">
-                      <td className="py-3 pr-4 font-bold text-[var(--xhs-ink)]">{row.sourceClass}</td>
-                      <td className="py-3 pr-4">{row.material}</td>
-                      <td className="py-3 pr-4 tabular-nums">{row.count}</td>
-                      <td className="py-3 pr-4"><Badge tone="gold">已保存</Badge></td>
-                      <td className="py-3 leading-relaxed">{row.limitation}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </Panel>
+        {activeTab === 'context' && (
+          <>
+            <Panel eyebrow="timeline" title={context.title} icon={Clock}>
+              <p className="mb-5 max-w-3xl text-token-sm leading-relaxed text-[var(--xhs-ink-soft)]">{context.summary}</p>
+              <ol className="relative space-y-5 border-l border-[var(--xhs-line-strong)] pl-6">
+                {context.timeline.map((item) => (
+                  <li key={item.date} className="relative">
+                    <span className="absolute -left-[27px] top-1 h-3 w-3 rounded-full border-2 border-[var(--xhs-accent)] bg-[var(--xhs-bg)]" />
+                    <div className="text-token-xs font-bold tabular-nums text-[var(--xhs-accent-ink)]">{item.date}</div>
+                    <p className="mt-1 text-token-sm leading-relaxed text-[var(--xhs-ink-soft)]">{item.event}</p>
+                  </li>
+                ))}
+              </ol>
+              <p className="mt-6 rounded-lg bg-[var(--xhs-accent-soft)] px-4 py-3 text-token-sm font-bold leading-relaxed text-[var(--xhs-accent-ink)]">
+                {context.note}
+              </p>
+            </Panel>
+          </>
         )}
 
-        {activeTab === 'patterns' && (
-          <div className="grid gap-6 lg:grid-cols-2">
-            <Panel eyebrow="distribution" title="案例標題類型" icon={BarChart3}>
-              <BarList rows={ds.caseTypeDistribution} />
-            </Panel>
-            <Panel eyebrow="geography" title="發布縣市" icon={FileSearch}>
-              <BarList rows={ds.cityDistribution} />
-            </Panel>
-            <Panel eyebrow="typology" title="規則式樣態初分群" icon={Layers3}>
-              <div className="space-y-3">
-                {ds.scamPatternSummary.map((row) => (
-                  <div key={row.label} className="border-t border-[var(--xhs-line)] py-3">
-                    <div className="flex items-center justify-between gap-3">
-                      <p className="text-token-sm font-bold text-[var(--xhs-ink)]">{row.label}</p>
-                      <Badge>{row.count} 筆</Badge>
-                    </div>
-                    <p className="mt-1 text-token-xs leading-relaxed">{row.note}</p>
-                  </div>
-                ))}
-              </div>
-            </Panel>
-            <Panel eyebrow="samples" title="去識別案例摘錄" icon={FileSearch}>
-              <div className="space-y-3">
-                {ds.sampleCases.map((item, index) => (
-                  <div key={`${item.date}-${index}`} className="border-t border-[var(--xhs-line)] py-3">
-                    <div className="mb-1 flex flex-wrap items-center gap-2">
-                      <Badge tone="red">{item.pattern}</Badge>
-                      <span className="text-[11px] text-[var(--xhs-ink-muted)]">{item.date} · {item.city}</span>
-                    </div>
-                    <p className="text-token-xs font-bold text-[var(--xhs-ink)]">{item.caseType}</p>
-                    <p className="mt-1 text-token-xs leading-relaxed">{item.excerpt}</p>
-                  </div>
-                ))}
-              </div>
-            </Panel>
+        {activeTab === 'layers' && (
+          <div className="space-y-5">
+            {layers.map((layer) => (
+              <LayerCard key={layer.id} layer={layer} />
+            ))}
           </div>
         )}
 
-        {activeTab === 'methods' && (
-          <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
-            <Panel eyebrow="method" title="從材料到可檢查研究" icon={ListChecks}>
-              <div className="space-y-3">
-                {ds.methodPlan.map((item) => (
-                  <div key={item.step} className="border-t border-[var(--xhs-line)] py-3">
-                    <div className="mb-1 flex items-center gap-2">
-                      <p className="text-token-sm font-bold text-[var(--xhs-ink)]">{item.step}</p>
-                      <Badge tone={statusTone[item.status]}>{statusLabel[item.status] ?? item.status}</Badge>
-                    </div>
-                    <p className="text-token-xs leading-relaxed">{item.detail}</p>
-                  </div>
-                ))}
-              </div>
-            </Panel>
-            <Panel eyebrow="queue" title="下一輪工作" icon={CheckCircle2}>
+        {activeTab === 'limits' && (
+          <div className="grid gap-6 lg:grid-cols-2">
+            <Panel eyebrow="confirm" title="要坐實第三層，還需要什麼" icon={ListChecks}>
+              <p className="mb-3 text-token-xs leading-relaxed text-[var(--xhs-ink-muted)]">
+                第三層是「高度可疑」而非鐵證；資料本身到不了「動機」。以下佐證若能取得，才能把它從可疑推向坐實。
+              </p>
               <ol className="space-y-3 text-token-xs leading-relaxed">
-                {ds.immediateNextWork.map((item, index) => (
+                {layer3.whatWouldConfirm.map((item, index) => (
                   <li key={item} className="grid grid-cols-[24px_1fr] gap-2 border-t border-[var(--xhs-line)] pt-3">
                     <span className="font-bold tabular-nums text-[var(--xhs-accent)]">{index + 1}</span>
                     <span>{item}</span>
@@ -282,6 +347,56 @@ export default function XiaohongshuRisk() {
                 ))}
               </ol>
             </Panel>
+
+            <div className="space-y-6">
+              <Panel eyebrow="method" title="偵測方法可複現" icon={ScanSearch}>
+                <ul className="space-y-3">
+                  {layers.filter((l) => l.methodNote).map((l) => (
+                    <li key={l.id} className="border-t border-[var(--xhs-line)] pt-3">
+                      <p className="text-token-xs font-bold text-[var(--xhs-ink)]">第 {l.order} 層</p>
+                      <p className="mt-1 text-token-xs leading-relaxed text-[var(--xhs-ink-soft)]">{l.methodNote}</p>
+                    </li>
+                  ))}
+                </ul>
+              </Panel>
+
+              <Panel eyebrow="context" title="數位素養脈絡" icon={FileSearch}>
+                <p className="text-token-xs leading-relaxed text-[var(--xhs-ink-soft)]">
+                  另留存 {eliteracyContext.sourceClass} {eliteracyContext.files} 份素材。{eliteracyContext.note}
+                </p>
+              </Panel>
+            </div>
+
+            <section className="lg:col-span-2 rounded-xl border border-[var(--xhs-line-strong)] bg-[var(--xhs-accent-soft)] p-6 sm:p-8">
+              <h2 className="font-sans text-lg font-bold leading-tight text-[var(--xhs-accent-ink)]">{closing.title}</h2>
+              <div className="mt-4 max-w-3xl space-y-4">
+                {closing.paragraphs.map((p, index) => (
+                  <p key={index} className="text-token-sm leading-relaxed text-[var(--xhs-ink)]">{p}</p>
+                ))}
+              </div>
+            </section>
+
+            <section className="lg:col-span-2 border-t border-[var(--xhs-line)] pt-5">
+              <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--xhs-accent)]">來源</p>
+              <ul className="grid gap-2 sm:grid-cols-2">
+                {sources.map((s) => (
+                  <li key={s.url}>
+                    <a
+                      href={s.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group inline-flex items-start gap-1.5 text-token-xs leading-relaxed text-[var(--xhs-ink-soft)] hover:text-[var(--xhs-accent-ink)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--xhs-accent)]"
+                    >
+                      <ExternalLink className="mt-0.5 shrink-0 text-[var(--xhs-accent)]" size={13} />
+                      <span>
+                        <span className="font-bold text-[var(--xhs-ink)] group-hover:text-[var(--xhs-accent-ink)]">{s.label}</span>
+                        <span className="ml-1 text-[var(--xhs-ink-muted)]">· {s.publisher}</span>
+                      </span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </section>
           </div>
         )}
       </div>

@@ -204,9 +204,9 @@ const PAGE_META = { // token-exempt: per-page identity chip colors (data, not st
     group: 'research',
   },
   XiaohongshuRisk: {
-    name: '小紅書詐騙風險',
-    title: '小紅書詐騙風險研究',
-    desc: '165 打詐案例與數位素養材料整理：平台風險、詐騙樣態與研究資料成熟度',
+    name: '小紅書資料集查核',
+    title: '165「小紅書」資料集可信度查核',
+    desc: '把 446 筆官方「小紅書詐騙」案例拆開：文本經改寫、平台歸因靠關鍵字、敘事由官方端建構',
     Icon: ShieldAlert,
     accent: '#f2e4dd',
     accentText: '#9b5f4c',
