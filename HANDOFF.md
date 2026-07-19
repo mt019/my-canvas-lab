@@ -199,6 +199,22 @@ Martin-Quinn／Clinton-Jackman-Rivers）。`data/glossary-groups.json` 為此新
 「把行為估成位置」（收 ideal-point，未來 latent-trait/GRM 進此群）。剩餘術語（latent-trait、GRM、
 odds-ratio、specification-curve、dyad/MRQAP）待使用者過目範本後推廣。
 
+**兩層結論的分寸（2026-07-19 修，已推送 canvas `09e3508`／data `03ccaf8`）**：§6 與 quiz `two-layer` 原用「不同構念／更常加入不代表對齊」
+圓兩層分裂，把協作層（1949 以來上百人）與投票層（現任 19 人）當同一批「他們」——已改成靠「不同母體、
+不可通約，不相印證也不相矛盾」，代理疑慮交還 §7。**English 版仍是佔位，且記號約定（$H_0$/null）、四個 Term
+連結、這個兩層修正全只在 zh；寫 en 時以 zh 為準，勿把舊框架譯進去。** kuuu 已核投票層數字未過期（逐法官 θ
+對 CC 母本 `立場表GRM.json` 逐一相符、CI 寬 1.068／相關 0.967／p 0.34 全對得上）。
+
+**標籤系統（2026-07-19，canvas 已推送 `6a4c495`）**：每篇文章的主題標籤通往「談同一件事的所有文章」。
+`/statistics/tags` 是總覽頁（`Tags.jsx`），`/statistics/tags/:slug` 是單標籤頁（`TagPage.jsx`）。標籤索引在
+資料倉 `build-app-json.mjs` 產出，落進 `statistics-app.json` 的 `tags`（slug＋成員），sync 成 canvas
+`statistics.json` 的 `hub.tags`——**canvas 端不手改**。`routes.mjs` 新增 `tagSlugs()` 把每個標籤頁納入
+prerender＋sitemap（458 頁；`Tags` 總覽頁列 `NOINDEX`）。`ArticleMeta` 的 tag chip 由純文字改成 `<Link>`：
+`tags[i]` 配 `tagSlugs[i]`，**slug 以中文標籤為鍵、語言中性**，沒有 slug 的標籤仍以純文字渲染。標籤詞表已正規化
+（「虛無結果」→「非顯著結果」、"null results"→"non-significant result"），`validate-processed.mjs` 加了標籤
+slug 驗證。**資料倉這一半已推送 `statistics-lab-data` master `5d227b0`**（build 引擎＋驗證器＋meta 標籤＋
+processed＋LOG）；兩 repo 同步。
+
 ### 統計站的長文外殼與排版（2026-07-13 補）
 
 `lab/ArticleLayout`＋`ArticleNav`＋`TableOfContents`＋`ArticleMeta`：左書目、中閱讀欄、右自動目次
