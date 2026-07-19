@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-07-19T00:05:17.998Z",
+  "generatedAt": "2026-07-19T06:35:06.839Z",
   "source": "statistics-lab-data, built by engineering/scripts/build-app-json.mjs",
   "meta": {
     "slug": "judicial-ideal-points",
@@ -17,7 +17,7 @@
       "貝氏估計",
       "置換檢定",
       "司法行為量化",
-      "虛無結果"
+      "非顯著結果"
     ],
     "en": {
       "title": "Where Do the Justices Stand: Estimating Ideal Points from Votes",
@@ -30,11 +30,20 @@
         "Bayesian estimation",
         "permutation test",
         "judicial behavior",
-        "null result"
+        "non-significant result"
       ],
       "readingMinutes": 1
     },
-    "readingMinutes": 12
+    "readingMinutes": 12,
+    "tagSlugs": [
+      "理想點",
+      "項目反應理論",
+      "分級反應模型",
+      "貝氏估計",
+      "置換檢定",
+      "司法行為量化",
+      "非顯著結果"
+    ]
   },
   "figures": {
     "bayes-ideal-points": {
@@ -536,14 +545,14 @@
         "不正確"
       ],
       "correctIndex": 1,
-      "explain": "不正確。兩層測的是不同構念，不互相印證。共同具名是「誰願意跟誰署在一起」的結盟行為，投票立場是「同不同意結論」。同提名總統的大法官在意見書上更常彼此加入，不代表他們在主文立場上依提名人對齊。協作層的正效果與投票層的 null 可以並存，各說各的。",
+      "explain": "不正確。兩層測的是不同人群裡的不同行為，本就不在同一個母體上：協作層的正效果來自 1949 年以來跨屆上百位出庭者的共同具名，投票層的 null 只針對現任十九人的主文立場。一個測得到、一個測不到，說的是不同的事，前者不構成修正後者的理由。而共同具名是「誰願意跟誰署在一起」的結盟，能不能代理投票立場本身沒有把握，所以正效果與 null 可以並存。",
       "en": {
         "prompt": "The collaboration layer finds that same-nominee justices co-sign more often (about 1.5× the odds), while the voting layer detects no appointment politics. Is this reading correct: 'Since the collaboration layer has a signal, the voting-layer null should be revised to an effect too'?",
         "options": [
           "Correct",
           "Incorrect"
         ],
-        "explain": "Incorrect. The two layers measure different constructs and do not confirm each other. Co-signing is a coalition behaviour — who is willing to sign alongside whom — while a vote is agreement with an outcome. Justices nominated by the same president joining each other's opinions more often does not mean they align on the merits. The collaboration-layer effect and the voting-layer null can coexist."
+        "explain": "Incorrect. The two layers measure different behaviours in different populations and are not on the same footing: the collaboration effect comes from co-signing across a hundred-plus justices since 1949, while the voting-layer null concerns only the merits positions of the current nineteen. One shows a signal and the other does not because they describe different things, so the former is no reason to revise the latter. Co-signing is a coalition behaviour, who is willing to sign alongside whom, and whether it proxies a voting position is itself uncertain, so the positive effect and the null can coexist."
       }
     }
   ],
