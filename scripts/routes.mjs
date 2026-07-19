@@ -10,7 +10,10 @@ import { CC_TAB_SLUGS, ccJusticePath, justiceHasContent, ccCasePath, caseIsIndex
 
 const PAGES = join(ROOT, 'src', 'pages');
 const kebab = (s) => s.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();
-const NOINDEX = new Set(['PaletteLab', 'TaipeiFilmFestival']);
+// Glossary: the standalone /statistics/glossary page was folded into the
+// Statistics Lab hub's 術語表 tab. The file stays only to redirect old links, so
+// it is kept out of prerender and the sitemap (no duplicate of the tab's content).
+const NOINDEX = new Set(['PaletteLab', 'TaipeiFilmFestival', 'Glossary']);
 const PARAM_ROUTES = { GlossaryTerm: '/statistics/glossary/:slug' };
 
 function walkPages(dir, rel = '') {

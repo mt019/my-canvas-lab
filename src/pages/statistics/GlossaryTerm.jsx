@@ -8,6 +8,7 @@ import HoverCite from '../../components/lab/HoverCite';
 import TermLink from '../../components/lab/TermLink';
 import ArticleLayout from '../../components/lab/ArticleLayout';
 import glossary from '../../data/statistics-glossary.json';
+import hub from '../../data/statistics.json';
 
 /*
  * One term, one page. The hover card in an article gives the reader the
@@ -50,7 +51,7 @@ export default function GlossaryTerm() {
       <main className="min-h-screen bg-paper py-20 text-ink">
         <div className="mx-auto max-w-2xl px-4 text-center">
           <p className="text-token-lg">{en ? 'No such term.' : '查無此術語。'}</p>
-          <Link to="/statistics/glossary" className="mt-4 inline-block text-token-sm text-accent hover:underline">
+          <Link to="/statisticslab?tab=glossary" className="mt-4 inline-block text-token-sm text-accent hover:underline">
             {en ? 'Back to the glossary' : '回到術語表'}
           </Link>
         </div>
@@ -67,7 +68,7 @@ export default function GlossaryTerm() {
   return (
     <main className="reading-grain min-h-screen bg-paper pb-10 text-ink" style={{ '--reader-scale': scale }}>
       <SiteHeader
-        back={{ href: '/statistics/glossary', label: en ? 'Glossary' : '術語表' }}
+        back={{ href: '/statisticslab?tab=glossary', label: en ? 'Glossary' : '術語表' }}
         lang={lang}
         onLangChange={setLang}
         scale={scale}
@@ -137,12 +138,29 @@ export default function GlossaryTerm() {
 }
 
 /* The left rail on a term page: every other term, so a reader following one
-   definition into another never has to go back through the index. */
+   definition into another never has to go back through the index. The terms are
+   laid out in the same groups, and the same order within a group, as the glossary
+   index (data/glossary-groups.json) — a reader who learned the shape of the
+   glossary on the index page meets the same shape here. Never sorted: the order
+   is the argument. Any term not placed in a group falls to an "other" bucket so a
+   sibling page can still reach it. */
 function GlossaryNav({ terms, currentSlug, lang }) {
   const en = lang === 'en';
-  const list = Object.values(terms).sort((a, b) =>
-    (en ? a.en.term : a.term).localeCompare(en ? b.en.term : b.term, en ? 'en' : 'zh-Hant'),
-  );
+
+  const sections = useMemo(() => {
+    const groups = (hub.glossaryGroups ?? [])
+      .map((g) => ({
+        id: g.id,
+        label: en ? g.en?.label ?? g.label : g.label,
+        list: g.terms.map((slug) => terms[slug]).filter(Boolean),
+      }))
+      .filter((g) => g.list.length > 0);
+    const placed = new Set(groups.flatMap((g) => g.list.map((t) => t.slug)));
+    const loose = Object.values(terms).filter((t) => !placed.has(t.slug));
+    return loose.length > 0
+      ? [...groups, { id: '__loose', label: en ? 'Other' : '其他', list: loose }]
+      : groups;
+  }, [terms, en]);
 
   return (
     <nav aria-label={en ? 'Glossary' : '術語表'} className="text-token-xs">
@@ -152,26 +170,38 @@ function GlossaryNav({ terms, currentSlug, lang }) {
       >
         {en ? 'Statistics Lab' : '統計學實驗室'}
       </Link>
-      <p className="mb-1.5 text-ink-muted">{en ? 'Glossary' : '術語表'}</p>
-      <ul className="space-y-1 border-l border-line-soft">
-        {list.map((t) => {
-          const on = t.slug === currentSlug;
-          return (
-            <li key={t.slug}>
-              <Link
-                to={t.route}
-                className="-ml-px block border-l-2 py-1 pl-3 leading-snug transition-colors duration-fast"
-                style={{
-                  borderColor: on ? 'var(--c-accent)' : 'transparent',
-                  color: on ? 'var(--c-ink)' : 'var(--c-ink-faint)',
-                }}
-              >
-                {en ? t.en.term : t.term}
-              </Link>
-            </li>
-          );
-        })}
-      </ul>
+      <Link
+        to="/statisticslab?tab=glossary"
+        className="mb-4 block text-ink-muted transition-colors duration-fast hover:text-accent"
+      >
+        {en ? 'Glossary' : '術語表'}
+      </Link>
+      <div className="space-y-5">
+        {sections.map((g) => (
+          <div key={g.id}>
+            <p className="mb-1.5 leading-snug text-ink-muted">{g.label}</p>
+            <ul className="space-y-1 border-l border-line-soft">
+              {g.list.map((t) => {
+                const on = t.slug === currentSlug;
+                return (
+                  <li key={t.slug}>
+                    <Link
+                      to={t.route}
+                      className="-ml-px block border-l-2 py-1 pl-3 leading-snug transition-colors duration-fast"
+                      style={{
+                        borderColor: on ? 'var(--c-accent)' : 'transparent',
+                        color: on ? 'var(--c-ink)' : 'var(--c-ink-faint)',
+                      }}
+                    >
+                      {en ? t.en.term : t.term}
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        ))}
+      </div>
     </nav>
   );
 }

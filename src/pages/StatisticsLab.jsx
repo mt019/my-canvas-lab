@@ -1,6 +1,6 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Search } from 'lucide-react';
 import LangSwitch, { useLang } from '../components/LangSwitch';
 import FontSizeControl, { useFontScale } from '../components/FontSizeControl';
 import AppearanceMenu from '../components/AppearanceMenu';
@@ -68,6 +68,30 @@ export default function StatisticsLab() {
 
   const topicsWithArticles = topics.filter((t) => articles.some((a) => a.topic === t.id));
 
+  // The glossary tab is the full, searchable glossary now (the standalone page
+  // was folded in). The filter matches a term's name and its one-line definition,
+  // in whichever language is showing; a group with nothing left drops out, and the
+  // left rail follows because query is part of refreshKey.
+  const [query, setQuery] = useState('');
+  const q = query.trim().toLowerCase();
+  const glossaryShown = useMemo(() => {
+    if (!q) return glossary;
+    return glossary.filter((t) =>
+      [t.term, t.oneLine, t.en?.term, t.en?.oneLine]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase()
+        .includes(q),
+    );
+  }, [glossary, q]);
+  const visibleGroups = useMemo(
+    () =>
+      glossaryGroups
+        .map((g) => ({ g, list: glossaryShown.filter((t) => t.group === g.id) }))
+        .filter((x) => x.list.length > 0),
+    [glossaryGroups, glossaryShown],
+  );
+
   return (
     <DashboardLayout
       scale={scale}
@@ -92,45 +116,61 @@ export default function StatisticsLab() {
           { id: 'glossary', label: c.glossary, count: glossary.length },
         ],
       }}
-      refreshKey={`${tab}-${lang}`}
+      refreshKey={`${tab}-${lang}-${q}`}
     >
       {tab === 'glossary' ? (
         <>
-          {glossaryGroups.map((g, i) => {
-            const list = glossary.filter((t) => t.group === g.id);
-            if (list.length === 0) return null;
-            return (
-              <section key={g.id} className={i === 0 ? '' : 'mt-10 border-t border-line pt-6'}>
-                <h2 id={`group-${g.id}`} className="font-display text-token-lg text-ink">
-                  {en ? g.en?.label ?? g.label : g.label}
-                  <span className="ml-2 text-token-sm tabular-nums text-ink-faint">{c.terms(list.length)}</span>
-                </h2>
-                <p className="mb-3 mt-1 text-token-sm leading-relaxed text-ink-muted">
-                  {en ? g.en?.blurb ?? g.blurb : g.blurb}
-                </p>
-                {/* Names only, set close together: a map of the ground, with the
-                    definition one click away on the term's own page. */}
-                <p className="text-token-sm leading-relaxed">
-                  {list.map((t, j) => (
-                    <span key={t.slug}>
-                      {j > 0 ? <span className="text-ink-faint">{en ? ' · ' : '、'}</span> : null}
-                      <Link to={t.route} className="text-ink transition-colors duration-fast hover:text-accent">
-                        {en ? t.en?.term ?? t.term : t.term}
-                      </Link>
-                    </span>
-                  ))}
-                </p>
-              </section>
-            );
-          })}
+          <label className="mb-8 flex items-center gap-2 border-b border-line pb-2">
+            <Search size={14} className="shrink-0 text-ink-faint" />
+            <input
+              type="search"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder={en ? 'Filter terms' : '搜尋術語'}
+              className="w-full bg-transparent text-token-sm text-ink outline-none placeholder:text-ink-faint"
+            />
+            <span className="shrink-0 font-accent text-token-xs tabular-nums text-ink-faint">
+              {glossaryShown.length}/{glossary.length}
+            </span>
+          </label>
 
-          <Link
-            to="/statistics/glossary"
-            className="group mt-8 inline-flex items-center gap-1.5 text-token-sm text-ink-muted transition-colors duration-fast hover:text-accent"
-          >
-            {c.seeGlossary}
-            <ArrowRight size={14} className="transition-transform duration-fast group-hover:translate-x-0.5" />
-          </Link>
+          {visibleGroups.map(({ g, list }, i) => (
+            <section key={g.id} className={i === 0 ? '' : 'mt-10 border-t border-line pt-6'}>
+              <h2 id={`group-${g.id}`} className="font-display text-token-lg text-ink">
+                {en ? g.en?.label ?? g.label : g.label}
+                <span className="ml-2 text-token-sm tabular-nums text-ink-faint">{c.terms(list.length)}</span>
+              </h2>
+              <p className="mb-3 mt-1 text-token-sm leading-relaxed text-ink-muted">
+                {en ? g.en?.blurb ?? g.blurb : g.blurb}
+              </p>
+              {/* Each term hangs off a thin keyline — the marker that says "this
+                  is an entry", not a run of prose — with its one-line definition
+                  under it and the full page one click away. */}
+              <ul className="space-y-4">
+                {list.map((t) => (
+                  <li key={t.slug}>
+                    <Link
+                      to={t.route}
+                      className="group block border-l-2 border-line pl-4 transition-colors duration-fast hover:border-accent"
+                    >
+                      <span className="font-display text-token-base text-ink transition-colors duration-fast group-hover:text-accent">
+                        {en ? t.en?.term ?? t.term : t.term}
+                      </span>
+                      <span className="mt-1 block text-token-sm leading-relaxed text-ink-muted">
+                        {en ? t.en?.oneLine ?? t.oneLine : t.oneLine}
+                      </span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ))}
+
+          {visibleGroups.length === 0 ? (
+            <p className="py-10 text-center text-token-sm text-ink-faint">
+              {en ? 'Nothing matches that.' : '沒有符合的術語。'}
+            </p>
+          ) : null}
         </>
       ) : (
         <>
