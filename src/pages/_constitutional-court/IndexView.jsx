@@ -1,35 +1,60 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { ArrowUpDown, BookOpen, CalendarClock, ChevronDown, ChevronRight, Download, FileText, Info, Search, Shuffle } from 'lucide-react';
-import { A_ORDER, CaseCard, SegControl, Select, TYPO_AXES, citeString, docs, downloadFile, findCases, pickOnThisDay, pickRandomDoc, toBibtex, toCsv, toManifest, typoLabel, typoValues, usePref } from './shared';
+import { ArrowUpDown, BookOpen, CalendarClock, ChevronDown, ChevronRight, Download, FileText, Info, PanelRight, Search, Shuffle } from 'lucide-react';
+import { A_ORDER, CaseCard, ERA_TONE, SegControl, Select, TYPO_AXES, citeString, docs, downloadFile, findCases, pickOnThisDay, pickRandomDoc, toBibtex, toCsv, toManifest, typoLabel, typoValues, usePref } from './shared';
+import TimeRail from './TimeRail';
 
-// 篩選列滾動自動收合：往下捲藏、往上捲顯示。**只在黏著列真正「卡住」（sticky 貼齊頂端、
-// 其原始流內空間已捲離視窗）時才收合**——否則列還在正常流內，用 transform 上移會留下它原本
-// 佔的版面高度（＝那塊大空白）。用列前的 0 高 sentinel 判斷是否卡住：sentinel.top ≤ 貼齊
-// 偏移即代表列已 pin，此時上移只會露出底下滾動的卡片、不留空白。回傳 [sentinelRef, hidden]。
-function useHideOnScrollDown(stickyOffset = 49) {
-  const sentinelRef = useRef(null);
+// 案件所屬的「解釋機制」時代（供右欄時間軸的時代帶與著色）：沿革時序前後相接。
+// 與 TimelineView 的 bandOf 同義，這裡回傳時代鍵。
+const RAIL_ERA_LABEL = { 大理院: '統字', 最高法院: '解字', 司法院: '院字', 大法官: '釋字', 憲法法庭: '憲判' };
+function railBand(d) {
+  if (d.系列 === '統字') return '大理院';
+  if (d.系列 === '解字') return '最高法院';
+  if (d.系列 === '院字' || d.系列 === '院解字') return '司法院';
+  if (!d.系列) return d.類型 === '解釋' ? '大法官' : '憲法法庭';
+  return null;
+}
+const RAIL_TONE = { 大理院: ERA_TONE.大理院, 最高法院: ERA_TONE.最高法院, 司法院: ERA_TONE.司法院, 大法官: ERA_TONE.釋字, 憲法法庭: ERA_TONE.憲判 };
+
+// 篩選列滾動自動收合：往下捲藏、往上「持續捲一段」才顯示。三道門檻：
+// (1) 只在黏著列真正「卡住」（sticky 貼齊頂端、其原始流內空間已捲離視窗）時才收——否則列還在
+//     正常流內，用 transform 上移會留下它原本佔的版面高度（＝那塊大空白）。用列前的 0 高標記元素
+//     判斷：標記元素.top ≤ 貼齊偏移即代表列已貼齊頂端。
+// (2) 卡住後還要「再往下捲過 armPx 安全距離」才啟用自動收合，避免剛卡住就一觸即收的突兀。
+// (3) 顯示要「累積往上捲 ≥ REVEAL_UP px」才觸發，一往下就重置累積。這樣觸控板的微小抖動、
+//     或滑鼠移動時混進來的 1、2 px 反向捲動，都不會把列叫出來——只有明確、持續往上捲才顯示。
+//     頁面靜止不動＝沒有 scroll 事件＝列維持現狀，不會無故跳出。
+// 回傳 [markRef, hidden]。
+const REVEAL_UP = 90; // 需累積往上捲這麼多 px 才顯示篩選列
+function useHideOnScrollDown(stickyOffset = 49, armPx = 160) {
+  const markRef = useRef(null);
   const [hidden, setHidden] = useState(false);
   useEffect(() => {
     let last = window.scrollY;
+    let upAccum = 0;   // 連續往上捲的累積距離；一往下就歸零
     let ticking = false;
     const onScroll = () => {
       if (ticking) return;
       ticking = true;
       requestAnimationFrame(() => {
         const y = window.scrollY;
-        const s = sentinelRef.current;
-        const stuck = s ? s.getBoundingClientRect().top <= stickyOffset + 1 : y > 400;
-        if (!stuck) setHidden(false);            // 還沒卡住＝仍在正常流，絕不收（避免留白）
-        else if (y > last + 4) setHidden(true);  // 卡住後往下捲才收
-        else if (y < last - 4) setHidden(false); // 往上捲即還原
+        const m = markRef.current;
+        // pastPin＝已捲過貼齊點的距離（px）；越大代表讀得越深。無標記元素時退回用捲動量估。
+        const pastPin = m ? stickyOffset - m.getBoundingClientRect().top : y - 400;
+        const enabled = pastPin >= armPx;        // 卡住後再捲過 armPx 才啟用自動收合
+        if (!enabled) { setHidden(false); upAccum = 0; }      // 頂端定位＝不收，隨頁自然捲動
+        else if (y > last + 2) { setHidden(true); upAccum = 0; } // 往下捲：收，並重置往上累積
+        else if (y < last - 2) {                                 // 往上捲：累積，夠多才顯示
+          upAccum += last - y;
+          if (upAccum >= REVEAL_UP) setHidden(false);
+        }
         last = y;
         ticking = false;
       });
     };
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
-  }, [stickyOffset]);
-  return [sentinelRef, hidden];
+  }, [stickyOffset, armPx]);
+  return [markRef, hidden];
 }
 // 機關維度（行憲前後切分）：預設只顯示行憲後（大法官＋憲法法庭），行憲前 6,354 件 opt-in，
 // 避免舊號淹沒 874 新號。順序＝解釋權沿革時序。
@@ -128,11 +153,12 @@ export default function IndexView({ initialQ = '', onOpenDoc }) {
   // 「在索引中檢視」由 URL ?q= 帶入字號預搜；此頁已掛載時亦同步（初次掛載為 no-op）。
   useEffect(() => { setQ(initialQ); }, [initialQ]);
   const [limit, setLimit] = useState(INDEX_PAGE);
-  const [toolbarSentinel, toolbarHidden] = useHideOnScrollDown();
+  const [toolbarMark, toolbarHidden] = useHideOnScrollDown();
   const loadMoreRef = useRef(null);
   const [sortDir, setSortDir] = useState('desc');
   const [reasoningDefault, setReasoningDefault] = usePref('ccReasoningDefault', false);
   const [pdfMode, setPdfMode] = usePref('pdfMode', 'preview');
+  const [showRail, setShowRail] = usePref('ccShowRail', true); // 右側時間軸開關（記住偏好）
   const [typo, setTypo] = useState({});           // 類型學 6 軸篩選：{ 軸id: 代碼 }
   const [showTypo, setShowTypo] = useState(false); // 類型學篩選面板展開
 
@@ -247,8 +273,8 @@ export default function IndexView({ initialQ = '', onOpenDoc }) {
   const filtered = sorted;
 
   const shown = sorted.slice(0, limit);
-  // 下拉自動加載（取代「顯示更多」按鈕）：底部 sentinel 進入視窗前 800px 就預取下一批。
-  // deps 含 limit——每次加載後重建 observer，若 sentinel 仍在預取區間會再次觸發、連續補到看得完為止；
+  // 下拉自動加載（取代「顯示更多」按鈕）：底部標記元素進入視窗前 800px 就預取下一批。
+  // deps 含 limit——每次加載後重建 observer，若標記元素仍在預取區間會再次觸發、連續補到看得完為止；
   // 全部顯示（shown 覆蓋 sorted）時直接不掛 observer，避免無限迴圈。
   useEffect(() => {
     if (shown.length >= sorted.length) return;
@@ -260,20 +286,85 @@ export default function IndexView({ initialQ = '', onOpenDoc }) {
     io.observe(el);
     return () => io.disconnect();
   }, [limit, sorted.length, shown.length]);
+
+  // 右欄時間軸資料：只取有日期者，每年一格。band＝該年多數件的解釋機制；firstIndex＝該年在
+  // 目前清單裡第一次出現的位置（清單已按日期排，firstIndex 即該年區塊的起點卡，供「點年跳轉」）。
+  // 隨 sorted（含所有篩選）與 sortDir 重算——時間軸永遠是「你正在捲的這份清單」的縮影。
+  // railYears＝每年一格（沿工具欄新舊排序）；railPosByJid＝每張卡在時間軸上的分數位置
+  // ＝年索引＋該卡在那年裡的序位/該年件數。焦點依此連續平移，捲過件數多的年也一路滑動不卡死。
+  const { railYears, railPosByJid } = useMemo(() => {
+    const m = new Map();
+    sorted.forEach((d, i) => {
+      if (!d.日期 || !/^\d{4}-\d{2}-\d{2}$/.test(d.日期)) return;
+      const y = Number(d.日期.slice(0, 4));
+      if (!Number.isFinite(y)) return;
+      let rec = m.get(y);
+      if (!rec) { rec = { year: y, count: 0, bands: new Map(), firstIndex: i, firstJid: d.字號 }; m.set(y, rec); }
+      rec.count++;
+      const b = railBand(d);
+      if (b) rec.bands.set(b, (rec.bands.get(b) ?? 0) + 1);
+    });
+    const arr = [...m.values()].map((r) => {
+      const band = [...r.bands.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] ?? '大法官';
+      return { year: r.year, count: r.count, band, tone: RAIL_TONE[band], label: RAIL_ERA_LABEL[band], firstIndex: r.firstIndex, firstJid: r.firstJid };
+    });
+    arr.sort((a, b) => (sortDir === 'desc' ? b.year - a.year : a.year - b.year));
+    const idxOfYear = new Map(arr.map((y, idx) => [y.year, idx]));
+    const seen = new Map();
+    const pos = new Map();
+    sorted.forEach((d) => {
+      if (!d.日期 || !/^\d{4}-\d{2}-\d{2}$/.test(d.日期)) return;
+      const y = Number(d.日期.slice(0, 4));
+      const idx = idxOfYear.get(y);
+      if (idx == null) return;
+      const k = seen.get(y) ?? 0;
+      seen.set(y, k + 1);
+      const cnt = m.get(y).count;
+      pos.set(d.字號, idx + (cnt > 1 ? k / cnt : 0));
+    });
+    return { railYears: arr, railPosByJid: pos };
+  }, [sorted, sortDir]);
+
+  // 切換機關/母體時回到「分頁列」位置（不是整頁最上方的大表頭）：捲到讓表頭捲離、分頁列（sticky
+  // 頂端 49px）貼齊視窗頂端。基準用工具欄前那個 0 高標記——它不是 sticky，getBoundingClientRect
+  // 的絕對文件座標不受捲動與工具欄收合影響（用 <nav> 會因它 sticky pin 住而讀到 0，不可靠）。
+  const scrollToTabs = () => {
+    const el = toolbarMark.current;
+    if (!el) { window.scrollTo(0, 0); return; }
+    const top = el.getBoundingClientRect().top + window.scrollY - 49; // 49＝分頁列高
+    window.scrollTo(0, Math.max(0, top));
+  };
+
+  // 點年跳轉：目標卡若還沒被延遲載入進 DOM，先把 limit 撐到含它，等下一影格再捲過去。
+  const railJump = (item) => {
+    if (!item) return;
+    const go = () => {
+      const el = document.querySelector(`[data-jid="${(window.CSS && CSS.escape) ? CSS.escape(item.firstJid) : item.firstJid}"]`);
+      if (el) el.scrollIntoView({ behavior: 'auto', block: 'start' }); // 瞬間跳到，不做整頁慢捲
+    };
+    if (item.firstIndex >= limit) {
+      setLimit((l) => Math.max(l, item.firstIndex + INDEX_PAGE));
+      requestAnimationFrame(() => requestAnimationFrame(go));
+    } else {
+      go();
+    }
+  };
+
   const stamp = new Date().toISOString().slice(0, 10);
   // 是否只看行憲前：決定隱藏大法官時代才有的篩選（類型/主題/審查基準對統一解釋無意義）。
   const isPre = 機關 === '行憲前' || 機關_ERA.行憲前.includes(機關);
   const seg = 機關 === '行憲後' ? '行憲後' : 機關 === '全部' ? '全部' : '行憲前';
 
   return (
-    <div>
-      <div ref={toolbarSentinel} aria-hidden className="h-0" />
-      <div className={`sticky top-[49px] z-10 -mx-4 border-b border-[var(--cc-line)] bg-[var(--cc-bg)]/95 px-4 py-3 backdrop-blur transition-transform duration-200 ease-out sm:-mx-6 sm:px-6 ${toolbarHidden ? '-translate-y-full' : 'translate-y-0'}`}>
+    <div className={showRail ? 'lg:grid lg:grid-cols-[minmax(0,1fr)_3.75rem] lg:gap-2 xl:gap-3' : ''}>
+      <div className="min-w-0">
+      <div ref={toolbarMark} aria-hidden className="h-0" />
+      <div className={`sticky top-[49px] z-10 -mx-4 border-b border-[var(--cc-line)] bg-[var(--cc-bg)]/95 px-4 py-3 backdrop-blur transition-transform duration-200 ease-out sm:-mx-6 sm:px-6 lg:mr-0 ${toolbarHidden ? '-translate-y-full' : 'translate-y-0'}`}>
         {/* 頂部大分段鈕：行憲前後明確切開（預設行憲後）。行憲前另給機關子篩選。 */}
         <div className="mb-2.5 flex flex-wrap items-center gap-2">
           <SegControl
             value={seg}
-            onChange={(v) => { set機關(v); setType('全部'); setTopic('全部'); setSubtopic('全部'); setOutcome('全部'); setStandard('全部'); setDecade('全部'); setTypo({}); setLimit(INDEX_PAGE); }}
+            onChange={(v) => { set機關(v); setType('全部'); setTopic('全部'); setSubtopic('全部'); setOutcome('全部'); setStandard('全部'); setDecade('全部'); setTypo({}); setLimit(INDEX_PAGE); scrollToTabs(); }}
             options={[
               ['行憲後', '行憲後　釋字・憲判', 機關Counts.行憲後],
               ['行憲前', '行憲前　統一解釋', 機關Counts.行憲前],
@@ -281,7 +372,7 @@ export default function IndexView({ initialQ = '', onOpenDoc }) {
             ]}
           />
           {seg === '行憲前' ? (
-            <Select label="機關" value={機關 === '行憲前' ? '行憲前' : 機關} onChange={(v) => { set機關(v); setLimit(INDEX_PAGE); }} options={[['行憲前', `全部機關（${機關Counts.行憲前}）`], ...機關_ERA.行憲前.map((k) => [k, `${k}（${機關Counts.m.get(k) ?? 0}）`])]} />
+            <Select label="機關" value={機關 === '行憲前' ? '行憲前' : 機關} onChange={(v) => { set機關(v); setLimit(INDEX_PAGE); scrollToTabs(); }} options={[['行憲前', `全部機關（${機關Counts.行憲前}）`], ...機關_ERA.行憲前.map((k) => [k, `${k}（${機關Counts.m.get(k) ?? 0}）`])]} />
           ) : null}
           {seg === '行憲前' ? (
             <span className="text-[12px] text-[var(--cc-ink-soft)]">大理院／最高法院／司法院的統一解釋，非大法官憲法解釋；主題與審查基準為大法官時代機標，此處不適用。</span>
@@ -355,6 +446,8 @@ export default function IndexView({ initialQ = '', onOpenDoc }) {
             ) : null}
           </div>
         ) : null}
+        {/* 第一列：件數＋檢視控制（排序／理由書／時間軸／PDF），右端擺探索用的隨機一則與今日同日期，
+            不再讓那兩顆單獨落在最底一排。第二列專放匯出，兩列各自不擁擠。 */}
         <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-[12px] text-[var(--cc-ink-soft)]">
           <span className="font-bold text-[var(--cc-ink-strong)]">符合 {filtered.length} 件</span>
           {exact.length ? (
@@ -376,35 +469,58 @@ export default function IndexView({ initialQ = '', onOpenDoc }) {
             <BookOpen size={11} />理由書預設{reasoningDefault ? '展開' : '收合'}
           </button>
           <button
+            onClick={() => setShowRail((v) => !v)}
+            className="hidden items-center gap-1 font-bold text-[var(--cc-accent)] hover:text-[var(--cc-link-hover)] lg:inline-flex"
+            title="顯示／隱藏右側時間軸捲軸（隱藏後內文回到滿寬）"
+          >
+            <PanelRight size={11} />時間軸{showRail ? '開' : '關'}
+          </button>
+          <button
             onClick={() => setPdfMode((m) => (m === 'preview' ? 'download' : 'preview'))}
             className="inline-flex items-center gap-1 font-bold text-[var(--cc-accent)] hover:text-[var(--cc-link-hover)]"
             title="官方 PDF 點擊行為：預覽＝新分頁同源代理內嵌開啟；下載＝直接連官方（強制下載）"
           >
             <FileText size={11} />官方 PDF：{pdfMode === 'preview' ? '新分頁預覽' : '直接下載'}
           </button>
+          <span className="ml-auto inline-flex items-center gap-3">
+            <button onClick={() => onOpenDoc(pickRandomDoc())} className="inline-flex items-center gap-1 font-bold text-[var(--cc-accent)] hover:text-[var(--cc-link-hover)]"><Shuffle size={11} />隨機一則</button>
+            <button onClick={() => onOpenDoc(pickOnThisDay())} title="與今天同日期的解釋／判決" aria-label="與今天同日期的解釋／判決" className="inline-flex items-center text-[var(--cc-accent)] hover:text-[var(--cc-link-hover)]"><CalendarClock size={13} /></button>
+          </span>
+        </div>
+        {/* 第二列：匯出目前篩選集 */}
+        <div className="mt-1.5 flex flex-wrap items-center gap-x-4 gap-y-1 text-[12px] text-[var(--cc-ink-soft)]">
           <span className="text-[var(--cc-eyebrow)]">匯出目前篩選集：</span>
           <button onClick={() => downloadFile(toCsv(filtered), `憲法案件_${stamp}.csv`, 'text/csv')} className="inline-flex items-center gap-1 font-bold text-[var(--cc-accent)] hover:text-[var(--cc-link-hover)]"><Download size={11} />CSV</button>
           <button onClick={() => downloadFile(JSON.stringify(filtered, null, 1), `憲法案件_${stamp}.json`, 'application/json')} className="inline-flex items-center gap-1 font-bold text-[var(--cc-accent)] hover:text-[var(--cc-link-hover)]"><Download size={11} />JSON</button>
           <button onClick={() => downloadFile(toBibtex(filtered), `憲法案件_${stamp}.bib`, 'text/plain')} className="inline-flex items-center gap-1 font-bold text-[var(--cc-accent)] hover:text-[var(--cc-link-hover)]"><Download size={11} />BibTeX</button>
           <button onClick={() => downloadFile(filtered.map(citeString).join('\n'), `引註清單_${stamp}.txt`, 'text/plain')} className="inline-flex items-center gap-1 font-bold text-[var(--cc-accent)] hover:text-[var(--cc-link-hover)]"><Download size={11} />引註清單</button>
           <button onClick={() => downloadFile(toManifest(filtered), `下載清單_${stamp}.json`, 'application/json')} className="inline-flex items-center gap-1 font-bold text-[var(--cc-blue-ink)] hover:text-[var(--cc-blue-ink-hover)]"><Download size={11} />批次下載清單</button>
-          <span className="ml-auto inline-flex items-center gap-3">
-            <button onClick={() => onOpenDoc(pickRandomDoc())} className="inline-flex items-center gap-1 font-bold text-[var(--cc-accent)] hover:text-[var(--cc-link-hover)]"><Shuffle size={11} />隨機一則</button>
-            <button onClick={() => onOpenDoc(pickOnThisDay())} title="與今天同日期的解釋／判決" aria-label="與今天同日期的解釋／判決" className="inline-flex items-center text-[var(--cc-accent)] hover:text-[var(--cc-link-hover)]"><CalendarClock size={13} /></button>
-          </span>
         </div>
       </div>
 
       {shown.map((d) => (
-        <CaseCard key={d.字號} d={d} q={q} reasoningDefault={reasoningDefault} pdfMode={pdfMode} />
+        <div key={d.字號} data-jid={d.字號} data-year={d.日期?.slice(0, 4) || undefined} className="scroll-mt-[64px]">
+          <CaseCard d={d} q={q} reasoningDefault={reasoningDefault} pdfMode={pdfMode} />
+        </div>
       ))}
-      {/* 下拉自動加載：sentinel 進視窗前就補下一批，無需手動點。 */}
+      {/* 下拉自動加載：底部標記元素進視窗前就補下一批，無需手動點。 */}
       {sorted.length > limit ? (
         <div ref={loadMoreRef} className="py-6 text-center text-[12px] text-[var(--cc-ink-soft)]">
           載入更多…（尚有 {sorted.length - limit} 件）
         </div>
       ) : sorted.length ? (
         <p className="py-6 text-center text-[12px] text-[var(--cc-ink-soft)]">已顯示全部 {sorted.length} 件</p>
+      ) : null}
+      </div>
+
+      {/* 右欄時間軸捲軸：只在 lg 以上、且開關開啟時出現，吸頂跟著捲動。 */}
+      {showRail ? (
+        <aside className="hidden lg:block">
+          {/* z-30：讓右欄（含往左溢出的年份浮標）疊在工具欄（z-10）與分頁列（z-20）之上，浮標才不會被壓住。 */}
+          <div className="sticky top-[57px] z-30 h-[calc(100vh-72px)] py-1">
+            <TimeRail years={railYears} posByJid={railPosByJid} onJump={railJump} />
+          </div>
+        </aside>
       ) : null}
     </div>
   );

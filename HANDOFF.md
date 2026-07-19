@@ -171,6 +171,34 @@ alpha=.05 的偽陽性率 5.1%，品茶精確分佈 [1,16,36,16,1]/70。
 六個互動 figure 全部實跑通過（零 console error）。刻意不做的圖：Fisher/Neyman 引用數逐年變化、
 誤讀出現頻率——沒有真實資料就不畫，見 `docs/DESIGN.md` 與資料倉的 figures 註記。
 
+### `statistics/judicial-ideal-points`（大法官理想點論文，2026-07-19 新建）
+
+定位＝**一篇剛好放在統計站的高水準論文草稿**（使用者 2026-07-19 拍板），非教學隨筆：出版結構
+（摘要＋1–8 編號節＋獨立文獻回顧＋參考文獻），深度優先、術語照學術慣例首次定義（非全面白話）。
+中文正文完稿；英文 `article.en.mdx` 是佔位（僅摘要＋兩圖英標），待譯。
+
+兩張互動圖在 `_figures/`：`BayesIdealPoints.jsx`（古典 MDS vs 貝氏 GRM θ 毛毛蟲，19 位＋90% CI，
+提名總統上色＝cat-1/cat-2 設計系統固定順序；tone 指派用純函數每次由資料重算，勿改回 module 層
+可變狀態——那會讓 re-render 後圖例色塊落空，已踩過）、`SameNomineeForest.jsx`（八算法勝算森林，
+1× 參考線＋淡底 ink 細框）。**圖資料是一次性硬拷**進資料倉 figures.json 的 params（抽自 CC 資料倉
+`立場表GRM.json`／`共同具名-TierB-{階層,穩健}.json` 與 `立場表分析.json` 的古典位置），**沒有 sync
+接回 CC 母本——CC 分析一重跑就靜默過期**（見 `.claude/CHECKPOINT.statistics.md` 待決）。
+
+sources.json 這篇新增 18 條精確書目（台灣六篇＋Hanretty 逐一手 PDF 核對，2026-07-19）；另有
+`references.bib`（22 條，citekey 與 sources.json 1:1，供未來 LaTeX/PDF 版）。用到四個 `<Term>` 連結：
+permutation-test、credible-interval、ideal-point、equivalence-test（各在首見處，摘要不連）。
+資料倉 validate 的工程語言檢查已改「ASCII 詞加詞邊界」（否則 "New Democracies" 的 "ocr" 會誤中）。
+四閘＋playwright 全綠、console 0；display 數學置中（`.katex-display` text-align center 實測）。
+
+**記號約定（2026-07-19 統一）**：假設義「虛無假設（$H_0$）」§4.2 首見、之後 $H_0$；結果義全 null（§4.2
+定義為推翻不了 $H_0$ 的結果）。摘要保留純詞不上符號。動這篇時沿用，勿再混寫裸 `H0` 或「虛無分布」。
+
+**術語表條目（2026-07-19）**：這篇替統計站 glossary 新增兩條範本——`credible-interval`（貝氏可信區間，
+**與既有 frequentist `confidence-interval` 是不同概念，勿互連**）與 `ideal-point`（引 NOMINATE／
+Martin-Quinn／Clinton-Jackman-Rivers）。`data/glossary-groups.json` 為此新增第 4 群 `measurement`
+「把行為估成位置」（收 ideal-point，未來 latent-trait/GRM 進此群）。剩餘術語（latent-trait、GRM、
+odds-ratio、specification-curve、dyad/MRQAP）待使用者過目範本後推廣。
+
 ### 統計站的長文外殼與排版（2026-07-13 補）
 
 `lab/ArticleLayout`＋`ArticleNav`＋`TableOfContents`＋`ArticleMeta`：左書目、中閱讀欄、右自動目次
@@ -444,6 +472,38 @@ warning 擋住 build，然後被關掉——那比現在更糟，因為會以為
 `src/pages/Brief.jsx` 目前還紅（brief 標記層在途，非本輪產出）。
 
 ### `ConstitutionalCourt` (landed 2026-07-06)
+
+- 2026-07-19 **索引頁右欄時間軸捲軸 `TimeRail`＋工具列捲動行為修一輪**（frontend-only，**DONE**，
+  零資料 repo 改動）。新 `_constitutional-court/TimeRail.jsx`：索引頁右邊一條縱向時間脊柱，
+  只在 `lg` 以上出現。設計逐一被使用者拍板（過程反覆數輪）：
+  (1) **縱軸＝年、全高敷滿**（不留空、不擠一端；早期試過「中央固定滾輪」被打回，端點會留空「貼在下面」）。
+  (2) **刻度長度＝件數對數密度**（同「案件時間軸」頁的年度密度；早期「靠中央放大」的透鏡被打回，視覺不好看）。
+  (3) **每年間距上限 `MAX_STEP=15px`**：年份少的母體（統一解釋 ~22 年）不拉滿整條、改壓短，避免刻度太稀疏；
+      年份多（行憲後 ~76 年）照舊敷滿。
+  (4) **時代帶淡塗背景**（`ERA_TONE` 色票，統字/解字/院字/釋字/憲判），隨工具列母體（SegControl）增減。
+  (5) **焦點隨捲動連續滑動＋阻尼**：焦點用「分數位置」＝年索引＋該卡在那年的序位（`railPosByJid`，在
+      `IndexView` 算），捲過件數多的年也一路連續滑不卡格；`requestAnimationFrame` lerp（`EASE=0.12`）做阻尼。
+      焦點由「焦點線（視窗頂下 96px）上正在跨越的那張卡」的 `data-year`/`data-jid` 反推——故 `shown.map` 的
+      每張 `CaseCard` 外包一層 `data-jid`/`data-year`/`scroll-mt-[64px]` 的 div。
+  (6) hover highlight 該年、**點年瞬間跳**（`scrollIntoView({behavior:'auto'})`，非 smooth；使用者明確不要慢滑；
+      站上無全域 `scroll-behavior:smooth`）；跳轉目標若還沒延遲載入進 DOM，先撐 `limit` 再下一影格捲。
+  **踩到一個真 bug**：焦點原本完全不跟捲動。因 React **StrictMode 的 mount→cleanup→remount 共用同一
+  `rafRef`**，cleanup 取消動畫卻沒把 `rafRef.current` 歸零，remount 後 `setTarget` 的 `if(!rafRef.current)`
+  永遠 false ⇒ 永不重排。修法：cleanup 內 `cancelAnimationFrame` 後補 `rafRef.current = 0`。
+  **開關**：工具列動作區加 `時間軸開/關` 鈕（`usePref('ccShowRail', true)`）；關閉時版型從二欄塌回單欄、內文滿寬。
+  **z 疊層**：右欄容器 `z-30`，讓往左溢出的年份浮標疊在工具列（z-10）與分頁列（z-20）之上，不被壓住。
+  版型：`IndexView` root 改 `lg:grid grid-cols-[minmax(0,1fr)_3.75rem]`（開關開時），右欄 `<aside>` sticky `top-[57px]`。
+  **同輪一併修 `useHideOnScrollDown`**（工具列自動收合 hook，就在 `IndexView.jsx` 上方）：
+  (a) sentinel/哨兵 用語全改直白 `mark`/標記（plain-naming 全局禁令，hook 會糾）——**hook 現回傳 `[markRef, hidden]`**（舊筆記寫 `[sentinelRef, hidden]`，已過時）。
+  (b) 保留「只在 pin 後再捲過 `armPx=160` 才啟用收合」的防上跳門檻。
+  (c) **顯示改「累積往上捲 ≥ `REVEAL_UP=90px` 才觸發、一往下就歸零」**——修使用者回報「靜止時滑鼠一動、觸控板微抖就把工具列叫出來」；現在只有明確持續往上捲才顯示，頁面靜止＝無 scroll 事件＝不動。
+  **切換母體回分頁列位置**：SegControl 與機關下拉的 onChange 加 `scrollToTabs()`——捲到讓大表頭捲離、分頁列貼齊頂端（**不是**整頁最上方）。基準用非 sticky 的 `toolbarMark` 絕對座標 `-49`（用 `<nav>` 會因 sticky pin 讀到 0，不可靠）。
+  **工具列動作區改兩列**：第一列件數＋檢視控制（排序／理由書／時間軸／PDF）＋右端探索鈕（隨機一則／今日同日期）；
+  第二列專放匯出（CSV/JSON/BibTeX/引註/批次下載）。修「隨機一則＋今日兩顆單獨落在最底一排」的醜。
+  **待辦（使用者「先這樣吧」暫緩）**：工具列按鈕仍偏多，匯出 5 顆可折成一顆「匯出 ▾」下拉；`TimeRail` 手感旋鈕
+  （`SIGMA`/`AMP` 已無用、`MAX_STEP`/`TICK_MIN`/`TICK_SPAN`/`EASE`/`REVEAL_UP`）都在檔頭常數，要調改一個數字即可。
+  Playwright 實測：焦點 2026→2023 隨捲動追、切換後 scrollY 停在 264（分頁列位、非 0）、開關 present↔absent、
+  工具列微抖不彈出／持續上捲才彈出；`npm run build` 全綠、零 console error。
 
 - 2026-07-17 **字號精準檢索**（frontend-only，**DONE**，零資料 repo 改動）。原本搜尋框對
   `字號` 只做子字串比對，打「88」會同時撈到釋字第188號、第880號、院字第88號——指名一件
