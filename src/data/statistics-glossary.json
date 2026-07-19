@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-07-18T14:47:03.758Z",
+  "generatedAt": "2026-07-19T00:05:17.998Z",
   "source": "statistics-lab-data, built by engineering/scripts/build-app-json.mjs",
   "terms": {
     "confidence-interval": {
@@ -121,6 +121,131 @@
           "title": "為什麼叫虛無假設",
           "en": {
             "title": "Why It Is Called the Null Hypothesis"
+          }
+        }
+      ]
+    },
+    "credible-interval": {
+      "slug": "credible-interval",
+      "term": "可信區間",
+      "aliases": [
+        "credible interval",
+        "貝氏可信區間",
+        "後驗區間",
+        "posterior interval"
+      ],
+      "oneLine": "貝氏版的區間：在模型與先驗給定下，參數有 95% 的後驗機率落在這一段裡；正好是很多人誤以為信賴區間在說的那件事。",
+      "example": "把資料配上先驗、更新成一整條後驗分佈，取中央 95%，就能直說參數有 95% 機率落在這一段。Gelman 等人以二項分佈配 beta 先驗當最小例。",
+      "related": [
+        {
+          "slug": "confidence-interval",
+          "term": "信賴區間",
+          "oneLine": "一套會生出區間的規則。95% 是這套規則的長期命中率，不是眼前這一個區間的機率。",
+          "example": "Neyman 1937 自己問：對已經算出來的那一個區間，能不能說真值落在裡面的機率是 95%？他的答案是不能。",
+          "route": "/statistics/glossary/confidence-interval",
+          "en": {
+            "term": "Confidence interval",
+            "oneLine": "A rule for producing intervals. The 95% is the rule's long-run hit rate, not the probability for the one interval in front of you.",
+            "example": "Neyman asked it himself in 1937: of an interval already computed, may we say the true value lies inside it with probability 95%? His answer was no."
+          }
+        },
+        {
+          "slug": "sampling-distribution",
+          "term": "抽樣分佈",
+          "oneLine": "同一個統計量在反覆抽樣下會長成的樣子。p 值與信賴區間都是從它身上量出來的。",
+          "example": "品茶實驗的 70 種挑法就是一個抽樣分佈：全部列出來，再數有幾種跟實際結果一樣極端。",
+          "route": "/statistics/glossary/sampling-distribution",
+          "en": {
+            "term": "Sampling distribution",
+            "oneLine": "The shape a statistic takes under repeated sampling. Both p values and confidence intervals are read off it.",
+            "example": "The 70 ways of picking four cups out of eight are a sampling distribution: list them all, then count how many are as extreme as what actually happened."
+          }
+        },
+        {
+          "slug": "effect-size",
+          "term": "效果量",
+          "oneLine": "效果有多大，用一把不隨樣本數伸縮的尺量出來。",
+          "example": "1988 年的阿斯匹靈試驗 p 小於 0.00001，效果量換算成相關係數只有 0.03 左右。同一批數字，一個像鐵證，一個小到幾乎看不見。",
+          "route": "/statistics/glossary/effect-size",
+          "en": {
+            "term": "Effect size",
+            "oneLine": "How large the effect is, on a scale that does not stretch with the sample.",
+            "example": "The 1988 aspirin trial had p below 0.00001 and an effect size of about r = 0.03. Same numbers: one looks like proof, the other is nearly invisible."
+          }
+        }
+      ],
+      "en": {
+        "term": "Credible interval",
+        "aliases": [
+          "posterior interval",
+          "Bayesian interval"
+        ],
+        "oneLine": "The Bayesian interval: given the model and prior, the parameter has a 95% posterior probability of lying in this range. That is exactly what people wrongly believe a confidence interval reports.",
+        "example": "Update the data through a prior into a full posterior, take its central 95%, and you may say the parameter lies there with probability 95%. Gelman et al. use a binomial with a beta prior as the minimal case."
+      },
+      "topic": "inference",
+      "route": "/statistics/glossary/credible-interval",
+      "sources": {
+        "gelmanEtAl2013BayesianDataAnalysis": {
+          "author": "Andrew Gelman, John B. Carlin, Hal S. Stern, David B. Dunson, Aki Vehtari, and Donald B. Rubin",
+          "title": "Bayesian Data Analysis",
+          "year": 2013,
+          "container": "3rd ed., CRC Press",
+          "locator": "Ch. 2, §2.1, pp.29-37（binomial likelihood, beta prior, posterior distribution）；Ch. 5, pp.101-104（hierarchical models, exchangeability, and the rat-tumor example）。",
+          "quote": "Many statistical applications involve multiple parameters that can be regarded as related or connected in some way by the structure of the problem.",
+          "url": "https://sites.stat.columbia.edu/gelman/book/BDA3.pdf",
+          "en": {
+            "locator": "Ch. 2 §2.1, pp.29-37 (the binomial likelihood, beta prior, and posterior distribution); Ch. 5, pp.101-104 (hierarchical models, exchangeability, and the rat-tumor example).",
+            "quote": "Many statistical applications involve multiple parameters that can be regarded as related or connected in some way by the structure of the problem."
+          }
+        },
+        "neyman1937ConfidenceIntervals": {
+          "author": "Jerzy Neyman",
+          "title": "Outline of a Theory of Statistical Estimation Based on the Classical Theory of Probability",
+          "year": 1937,
+          "container": "Philosophical Transactions of the Royal Society of London, Series A, vol. 231, pp.333-380",
+          "locator": "p.349（信賴區間的頻率解釋：長期而言，照這套規則做的陳述有 100a% 是對的；緊接著自問「對這一個已經算出來的區間，能不能說參數落在裡面的機率是 a」，並自答不能）。",
+          "quote": "It follows that if the practical statistician applies permanently the rules (a), (b) and (c) ... in the long run he will be correct in about 99 per cent. of all cases. ... Can we say that in this particular case the probability of the true value of [the parameter] falling between 1 and 2 is equal to [the confidence coefficient]? The answer is obviously in the negative. The parameter ... is an unknown constant and no probability statement concerning its value may be made.",
+          "url": "https://wwwusers.ts.infn.it/~milotti/Didattica/StatisticaAvanzata/Neyman_1937.pdf",
+          "en": {
+            "locator": "p.349 (the frequency reading of a confidence interval: in the long run the statements will be right in 100a per cent of cases; Neyman then asks whether one may say of a single computed interval that the parameter lies in it with probability a, and answers that one may not).",
+            "quote": "It follows that if the practical statistician applies permanently the rules (a), (b) and (c) ... in the long run he will be correct in about 99 per cent. of all cases. ... Can we say that in this particular case the probability of the true value of [the parameter] falling between 1 and 2 is equal to [the confidence coefficient]? The answer is obviously in the negative. The parameter ... is an unknown constant and no probability statement concerning its value may be made."
+          }
+        }
+      },
+      "mentions": {
+        "sampling-distribution": {
+          "slug": "sampling-distribution",
+          "term": "抽樣分佈",
+          "oneLine": "同一個統計量在反覆抽樣下會長成的樣子。p 值與信賴區間都是從它身上量出來的。",
+          "example": "品茶實驗的 70 種挑法就是一個抽樣分佈：全部列出來，再數有幾種跟實際結果一樣極端。",
+          "route": "/statistics/glossary/sampling-distribution",
+          "en": {
+            "term": "Sampling distribution",
+            "oneLine": "The shape a statistic takes under repeated sampling. Both p values and confidence intervals are read off it.",
+            "example": "The 70 ways of picking four cups out of eight are a sampling distribution: list them all, then count how many are as extreme as what actually happened."
+          }
+        },
+        "confidence-interval": {
+          "slug": "confidence-interval",
+          "term": "信賴區間",
+          "oneLine": "一套會生出區間的規則。95% 是這套規則的長期命中率，不是眼前這一個區間的機率。",
+          "example": "Neyman 1937 自己問：對已經算出來的那一個區間，能不能說真值落在裡面的機率是 95%？他的答案是不能。",
+          "route": "/statistics/glossary/confidence-interval",
+          "en": {
+            "term": "Confidence interval",
+            "oneLine": "A rule for producing intervals. The 95% is the rule's long-run hit rate, not the probability for the one interval in front of you.",
+            "example": "Neyman asked it himself in 1937: of an interval already computed, may we say the true value lies inside it with probability 95%? His answer was no."
+          }
+        }
+      },
+      "usedIn": [
+        {
+          "slug": "judicial-ideal-points",
+          "route": "/statistics/judicial-ideal-points",
+          "title": "大法官站在哪裡：從投票估計理想點",
+          "en": {
+            "title": "Where Do the Justices Stand: Estimating Ideal Points from Votes"
           }
         }
       ]
@@ -361,6 +486,97 @@
           "title": "怎麼證明「沒有差別」",
           "en": {
             "title": "How to Show There Is No Difference"
+          }
+        },
+        {
+          "slug": "judicial-ideal-points",
+          "route": "/statistics/judicial-ideal-points",
+          "title": "大法官站在哪裡：從投票估計理想點",
+          "en": {
+            "title": "Where Do the Justices Stand: Estimating Ideal Points from Votes"
+          }
+        }
+      ]
+    },
+    "ideal-point": {
+      "slug": "ideal-point",
+      "term": "理想點",
+      "aliases": [
+        "ideal point",
+        "理想點模型",
+        "spatial voting",
+        "空間投票"
+      ],
+      "oneLine": "把每個投票者放到一條看不見的政策軸上，位置的選法要讓「誰跟誰投得像」被解釋得最好。這條軸是估出來的，不是先量好的。",
+      "example": "Martin 與 Quinn 用貝氏 MCMC 把美國最高法院大法官排到一條會隨時間移動的自由到保守軸上，位置全從幾十年的判決投票估出。",
+      "related": [
+        {
+          "slug": "credible-interval",
+          "term": "可信區間",
+          "oneLine": "貝氏版的區間：在模型與先驗給定下，參數有 95% 的後驗機率落在這一段裡；正好是很多人誤以為信賴區間在說的那件事。",
+          "example": "把資料配上先驗、更新成一整條後驗分佈，取中央 95%，就能直說參數有 95% 機率落在這一段。Gelman 等人以二項分佈配 beta 先驗當最小例。",
+          "route": "/statistics/glossary/credible-interval",
+          "en": {
+            "term": "Credible interval",
+            "oneLine": "The Bayesian interval: given the model and prior, the parameter has a 95% posterior probability of lying in this range. That is exactly what people wrongly believe a confidence interval reports.",
+            "example": "Update the data through a prior into a full posterior, take its central 95%, and you may say the parameter lies there with probability 95%. Gelman et al. use a binomial with a beta prior as the minimal case."
+          }
+        },
+        {
+          "slug": "sampling-distribution",
+          "term": "抽樣分佈",
+          "oneLine": "同一個統計量在反覆抽樣下會長成的樣子。p 值與信賴區間都是從它身上量出來的。",
+          "example": "品茶實驗的 70 種挑法就是一個抽樣分佈：全部列出來，再數有幾種跟實際結果一樣極端。",
+          "route": "/statistics/glossary/sampling-distribution",
+          "en": {
+            "term": "Sampling distribution",
+            "oneLine": "The shape a statistic takes under repeated sampling. Both p values and confidence intervals are read off it.",
+            "example": "The 70 ways of picking four cups out of eight are a sampling distribution: list them all, then count how many are as extreme as what actually happened."
+          }
+        }
+      ],
+      "en": {
+        "term": "Ideal point",
+        "aliases": [
+          "spatial voting"
+        ],
+        "oneLine": "Each voter is placed on an unobserved policy axis, positioned so that who-votes-like-whom is explained as well as possible. The axis is estimated, not measured in advance.",
+        "example": "Martin and Quinn used Bayesian MCMC to place U.S. Supreme Court justices on a liberal-to-conservative axis that moves over time, with positions estimated entirely from decades of decision votes."
+      },
+      "topic": "inference",
+      "route": "/statistics/glossary/ideal-point",
+      "sources": {
+        "clintonJackmanRivers2004RollCall": {
+          "author": "Joshua Clinton, Simon Jackman & Douglas Rivers",
+          "title": "The Statistical Analysis of Roll Call Data",
+          "year": 2004,
+          "container": "American Political Science Review 98(2): 355–370",
+          "locator": "把空間投票寫成項目反應模型；推論對象從投票紀錄轉成理想點與議案切點。"
+        },
+        "martinQuinn2002IdealPoint": {
+          "author": "Andrew D. Martin & Kevin M. Quinn",
+          "title": "Dynamic Ideal Point Estimation via Markov Chain Monte Carlo for the U.S. Supreme Court, 1953–1999",
+          "year": 2002,
+          "container": "Political Analysis 10(2): 134–153",
+          "locator": "美國最高法院動態理想點；貝氏 MCMC 測量模型。",
+          "quote": "we employ Markov chain Monte Carlo methods to fit a Bayesian measurement model of ideal points"
+        },
+        "pooleRosenthal1997Congress": {
+          "author": "Keith T. Poole & Howard Rosenthal",
+          "title": "Congress: A Political-Economic History of Roll Call Voting",
+          "year": 1997,
+          "container": "New York: Oxford University Press",
+          "locator": "NOMINATE 理想點；以正確分類率與 APRE 判維度；排除壓倒性表決（lopsided vote）的慣例。"
+        }
+      },
+      "mentions": {},
+      "usedIn": [
+        {
+          "slug": "judicial-ideal-points",
+          "route": "/statistics/judicial-ideal-points",
+          "title": "大法官站在哪裡：從投票估計理想點",
+          "en": {
+            "title": "Where Do the Justices Stand: Estimating Ideal Points from Votes"
           }
         }
       ]
@@ -1068,6 +1284,14 @@
         }
       },
       "usedIn": [
+        {
+          "slug": "judicial-ideal-points",
+          "route": "/statistics/judicial-ideal-points",
+          "title": "大法官站在哪裡：從投票估計理想點",
+          "en": {
+            "title": "Where Do the Justices Stand: Estimating Ideal Points from Votes"
+          }
+        },
         {
           "slug": "null-hypothesis",
           "route": "/statistics/null-hypothesis",

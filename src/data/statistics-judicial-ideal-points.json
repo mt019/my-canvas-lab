@@ -1,0 +1,606 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-07-19T00:05:17.998Z",
+  "source": "statistics-lab-data, built by engineering/scripts/build-app-json.mjs",
+  "meta": {
+    "slug": "judicial-ideal-points",
+    "topic": "inference",
+    "title": "大法官站在哪裡：從投票估計理想點",
+    "subtitle": "用貝氏分級反應模型把真投票變成一條違憲宣告傾向的軸，檢驗它沿不沿提名總統結構化——一個有紀律的 null，加一層測得到的協作訊號",
+    "summary": "把一位大法官放到一條「傾向」的軸上，這條軸從哪裡來？本文以憲法法庭 2022 年後官方逐項立場表為真投票，用 Samejima 分級反應模型的貝氏估計逐法官的違憲宣告傾向，再用置換檢定看它沿不沿提名總統排列。四個維度都測不到效果，而這個 null 帶檢定力、等價與規格曲線的紀律；逐法官可信區間普遍很寬、相鄰全部重疊，這屆在稀疏異議下多半彼此不可區分。另一層用 1949 年以來的意見書共同具名網絡、階層二項模型，測到同提名人中等而穩健的正效果。投票層測不到、協作層測得到，兩層各說各的。台灣既有實證研究沒有一篇用過官方逐項真投票——本文補上這個缺口，並對一篇問題意識高度重疊、迄今未取得全文的研究，在新穎性上保留。",
+    "publishedAt": "2026-07-19",
+    "updatedAt": "2026-07-19",
+    "tags": [
+      "理想點",
+      "項目反應理論",
+      "分級反應模型",
+      "貝氏估計",
+      "置換檢定",
+      "司法行為量化",
+      "虛無結果"
+    ],
+    "en": {
+      "title": "Where Do the Justices Stand: Estimating Ideal Points from Votes",
+      "subtitle": "A Bayesian graded-response model turns real votes into an axis of tendency to strike down, and a permutation test asks whether it lines up with the nominating president — a disciplined null, plus one collaboration-layer signal that is real",
+      "summary": "Where does the axis come from when we place a justice on a scale of tendency? Using the Taiwan Constitutional Court's official per-item vote records since 2022 as real votes, this piece estimates each justice's tendency to strike down (theta) with a Bayesian graded-response model, then tests whether that axis aligns with the nominating president. Nothing is detectable on four dimensions, and the null carries power, equivalence, and specification-curve discipline; per-justice credible intervals are wide and all adjacent ones overlap, so in this sparse-dissent term the justices are mostly indistinguishable. A second layer, the co-signing network of opinions since 1949 modelled with a hierarchical binomial, does find a moderate and robust same-nominee effect. The voting layer detects nothing; the collaboration layer detects something; the two speak to different things. No prior Taiwanese study has used official per-item real votes — this piece fills that gap, and reserves its novelty claim against one closely overlapping study whose full text remains unavailable.",
+      "tags": [
+        "ideal points",
+        "item response theory",
+        "graded response model",
+        "Bayesian estimation",
+        "permutation test",
+        "judicial behavior",
+        "null result"
+      ],
+      "readingMinutes": 1
+    },
+    "readingMinutes": 12
+  },
+  "figures": {
+    "bayes-ideal-points": {
+      "id": "bayes-ideal-points",
+      "type": "analytic",
+      "title": "古典 vs 貝氏理想點（19 位大法官）",
+      "description": "十九位大法官的違憲宣告傾向：左欄古典多維標度法的位置（空心點、只有位置），右欄貝氏分級反應模型（實心點＋90% 可信區間），同人同序，依提名總統上色。區間普遍很寬、相鄰重疊，顏色交錯不成塊——同提名總統者在投票立場上並沒有站在一起。",
+      "params": {
+        "justices": [
+          {
+            "name": "朱富美",
+            "theta": -1.954,
+            "ciLo": -2.683,
+            "ciHi": -1.279,
+            "classical": -0.303,
+            "president": "蔡英文"
+          },
+          {
+            "name": "蔡彩貞",
+            "theta": -1.319,
+            "ciLo": -1.98,
+            "ciHi": -0.674,
+            "classical": -0.063,
+            "president": "蔡英文"
+          },
+          {
+            "name": "張瓊文",
+            "theta": -1.103,
+            "ciLo": -1.604,
+            "ciHi": -0.629,
+            "classical": -0.229,
+            "president": "蔡英文"
+          },
+          {
+            "name": "詹森林",
+            "theta": -0.761,
+            "ciLo": -1.27,
+            "ciHi": -0.274,
+            "classical": -0.08,
+            "president": "蔡英文"
+          },
+          {
+            "name": "蔡宗珍",
+            "theta": -0.675,
+            "ciLo": -1.142,
+            "ciHi": -0.221,
+            "classical": -0.127,
+            "president": "蔡英文"
+          },
+          {
+            "name": "林俊益",
+            "theta": -0.638,
+            "ciLo": -1.31,
+            "ciHi": -0.001,
+            "classical": -0.088,
+            "president": "馬英九"
+          },
+          {
+            "name": "黃瑞明",
+            "theta": -0.517,
+            "ciLo": -0.981,
+            "ciHi": -0.079,
+            "classical": 0.076,
+            "president": "蔡英文"
+          },
+          {
+            "name": "黃虹霞",
+            "theta": -0.462,
+            "ciLo": -1.122,
+            "ciHi": 0.154,
+            "classical": -0.067,
+            "president": "馬英九"
+          },
+          {
+            "name": "許宗力",
+            "theta": -0.461,
+            "ciLo": -0.919,
+            "ciHi": -0.018,
+            "classical": 0.056,
+            "president": "蔡英文"
+          },
+          {
+            "name": "楊惠欽",
+            "theta": -0.385,
+            "ciLo": -0.845,
+            "ciHi": 0.067,
+            "classical": -0.086,
+            "president": "蔡英文"
+          },
+          {
+            "name": "蔡烱燉",
+            "theta": -0.373,
+            "ciLo": -0.842,
+            "ciHi": 0.071,
+            "classical": 0.041,
+            "president": "蔡英文"
+          },
+          {
+            "name": "陳忠五",
+            "theta": -0.155,
+            "ciLo": -0.694,
+            "ciHi": 0.392,
+            "classical": 0.142,
+            "president": "蔡英文"
+          },
+          {
+            "name": "許志雄",
+            "theta": -0.101,
+            "ciLo": -0.556,
+            "ciHi": 0.36,
+            "classical": 0.068,
+            "president": "蔡英文"
+          },
+          {
+            "name": "呂太郎",
+            "theta": -0.016,
+            "ciLo": -0.445,
+            "ciHi": 0.403,
+            "classical": 0.115,
+            "president": "蔡英文"
+          },
+          {
+            "name": "吳陳鐶",
+            "theta": 0.169,
+            "ciLo": -0.435,
+            "ciHi": 0.743,
+            "classical": -0.174,
+            "president": "馬英九"
+          },
+          {
+            "name": "謝銘洋",
+            "theta": 0.407,
+            "ciLo": -0.034,
+            "ciHi": 0.86,
+            "classical": 0.194,
+            "president": "蔡英文"
+          },
+          {
+            "name": "黃昭元",
+            "theta": 0.575,
+            "ciLo": 0.128,
+            "ciHi": 1.029,
+            "classical": 0.242,
+            "president": "蔡英文"
+          },
+          {
+            "name": "蔡明誠",
+            "theta": 1.323,
+            "ciLo": 0.738,
+            "ciHi": 1.947,
+            "classical": -0.046,
+            "president": "馬英九"
+          },
+          {
+            "name": "尤伯祥",
+            "theta": 1.421,
+            "ciLo": 0.727,
+            "ciHi": 2.17,
+            "classical": 0.329,
+            "president": "蔡英文"
+          }
+        ],
+        "convergence": {
+          "rhat": 1.0034,
+          "divergent": 0,
+          "corrNetDissent": 0.967,
+          "nJustices": 19,
+          "nObs": 1388
+        }
+      },
+      "notes": "靜態顯示、非模擬、不需 seed。資料抽自司法院計量母本 立場表GRM.json（逐法官後驗均值＋CI90、收斂）與 立場表分析.json（古典 MDS 位置 x、提名總統），非虛擬。傾向值與違憲側淨異議率相關 0.967＝面效度。"
+    },
+    "same-nominee-forest": {
+      "id": "same-nominee-forest",
+      "type": "analytic",
+      "title": "同提名人對共同具名的效果（八種算法）",
+      "description": "協作層森林圖：同提名人對共同具名的效果，換八種算法設定各估一次。點＝勝算倍數 exp(beta)，橫線＝90% 可信區間；八列全在 1×（沒差）右邊、下界都大於 1＝換算法都成立，勝算約高一點五倍。",
+      "params": {
+        "rows": [
+          {
+            "algo": "主模型（控資歷）",
+            "beta": 0.3677,
+            "ciLo": 0.0667,
+            "ciHi": 0.6624,
+            "pgt0": 0.9801,
+            "note": "基準"
+          },
+          {
+            "algo": "主模型＋年代趨勢",
+            "beta": 0.4237,
+            "ciLo": 0.1337,
+            "ciHi": 0.7093,
+            "pgt0": 0.9929,
+            "note": "控年代二次"
+          },
+          {
+            "algo": "釋字期固定效果",
+            "beta": 0.3344,
+            "ciLo": 0.0453,
+            "ciHi": 0.6326,
+            "pgt0": 0.9698,
+            "note": "年代改釋字期分段"
+          },
+          {
+            "algo": "限制樣條",
+            "beta": 0.4188,
+            "ciLo": 0.1294,
+            "ciHi": 0.7084,
+            "pgt0": 0.9899,
+            "note": "年代改彈性樣條"
+          },
+          {
+            "algo": "零膨脹二項",
+            "beta": 0.343,
+            "ciLo": 0.1825,
+            "ciHi": 0.5041,
+            "pgt0": 1,
+            "note": "處理過多零"
+          },
+          {
+            "algo": "零膨脹二項＋年代",
+            "beta": 0.3229,
+            "ciLo": 0.1637,
+            "ciHi": 0.4818,
+            "pgt0": 0.9998,
+            "note": "過多零＋年代"
+          },
+          {
+            "algo": "beta 二項",
+            "beta": 0.348,
+            "ciLo": 0.1041,
+            "ciHi": 0.5832,
+            "pgt0": 0.991,
+            "note": "過度離散"
+          },
+          {
+            "algo": "beta 二項＋年代",
+            "beta": 0.3905,
+            "ciLo": 0.1519,
+            "ciHi": 0.6296,
+            "pgt0": 0.9964,
+            "note": "過度離散＋年代"
+          }
+        ],
+        "meta": {
+          "N": 1144,
+          "dyad": 111,
+          "seed": 20260718
+        }
+      },
+      "notes": "靜態顯示、不需 seed。資料抽自司法院計量母本 共同具名-TierB-階層.json（主模型、年代趨勢）與 共同具名-TierB-穩健.json（釋字期固定效果、限制樣條、零膨脹二項、beta 二項），logit 係數畫圖時取 exp。含辛普森反轉（原始邊際方向相反，調整後為正）與正負對照探針，見正文 5.3。"
+    }
+  },
+  "sources": {
+    "bafumiEtAl2005IdealPoint": {
+      "author": "Joseph Bafumi, Andrew Gelman, David K. Park & Noah Kaplan",
+      "title": "Practical Issues in Implementing and Understanding Bayesian Ideal Point Estimation",
+      "year": 2005,
+      "container": "Political Analysis 13(2): 171–187",
+      "locator": "小樣本理想點的分離與不穩；主張貝氏先驗正則化（theta~N(0,1) 同時定尺度並約束資料稀薄處）。"
+    },
+    "bergerHsu1996Equivalence": {
+      "author": "Roger L. Berger and Jason C. Hsu",
+      "title": "Bioequivalence Trials, Intersection–Union Tests and Equivalence Confidence Sets",
+      "year": 1996,
+      "container": "Statistical Science, 11(4), pp.283-319 (with discussion)",
+      "locator": "全篇：TOST 與信賴區間內含法之對偶關係的嚴謹處理。核心結果——以 90% 信賴區間是否落在 ±Delta 內，來判定 alpha=0.05 的等價，兩者給出完全相同的決策（Berger–Hsu 對偶）；並把等價檢定放進交集—聯集檢定（intersection–union）的架構。DOI 10.1214/ss/1032280304。",
+      "url": "https://projecteuclid.org/journals/statistical-science/volume-11/issue-4/Bioequivalence-trials-intersection-union-tests-and-equivalence-confidence-sets/10.1214/ss/1032280304.full",
+      "en": {
+        "locator": "The paper as a whole: a rigorous treatment of the duality between TOST and the confidence-interval inclusion rule. The key result is that deciding equivalence at alpha = 0.05 by checking whether a 90% confidence interval falls inside ±Delta gives exactly the same decision as TOST (the Berger–Hsu duality); it also places equivalence testing inside the intersection–union framework. DOI 10.1214/ss/1032280304."
+      }
+    },
+    "borgGroenen2005MDS": {
+      "author": "Ingwer Borg & Patrick J. F. Groenen",
+      "title": "Modern Multidimensional Scaling: Theory and Applications",
+      "year": 2005,
+      "container": "2nd ed. Springer Series in Statistics. New York: Springer",
+      "locator": "古典 MDS（Torgerson 雙中心化）把距離矩陣尺度化成低維座標；描述性、無題目參數與不確定性量化。"
+    },
+    "carpenterEtAl2017Stan": {
+      "author": "Bob Carpenter, Andrew Gelman, Matthew D. Hoffman, et al.",
+      "title": "Stan: A Probabilistic Programming Language",
+      "year": 2017,
+      "container": "Journal of Statistical Software 76(1): 1–32. DOI: 10.18637/jss.v076.i01",
+      "locator": "以 Hamiltonian Monte Carlo 從後驗抽樣，適合帶潛在變數的階層模型。"
+    },
+    "chen2020ConsensusDissent": {
+      "author": "陳英鈐",
+      "title": "共識與歧異——司法院大法官解釋的數量危機",
+      "year": 2020,
+      "container": "收於蘇彥圖主編，《憲法解釋之理論與實務》第十輯，頁 105–182。臺北：中央研究院法律學研究所",
+      "locator": "釋字第 313–739 號、427 件；策略行為模型＋案件層卡方描述統計（SPSS 19），非迴歸。p.170：越要求跨越三分之二門檻，解釋案越少、每案分別意見書越多。",
+      "quote": "越是要求高度共識，必須跨越三分之二門檻，解釋案越少，而每個解釋的分別意見書越多"
+    },
+    "clintonJackmanRivers2004RollCall": {
+      "author": "Joshua Clinton, Simon Jackman & Douglas Rivers",
+      "title": "The Statistical Analysis of Roll Call Data",
+      "year": 2004,
+      "container": "American Political Science Review 98(2): 355–370",
+      "locator": "把空間投票寫成項目反應模型；推論對象從投票紀錄轉成理想點與議案切點。"
+    },
+    "cohen1988PowerAnalysis": {
+      "author": "Jacob Cohen",
+      "title": "Statistical Power Analysis for the Behavioral Sciences",
+      "year": 1988,
+      "container": "Hillsdale, NJ: Lawrence Erlbaum (2nd ed.)",
+      "locator": "§2.2「The Effect Size Index: d」，pp.24-27（小 d=.2、中 d=.5、大 d=.8 的約定，以及各自的真實對照物：雙胞胎與非雙胞胎的平均智商差距約當小效果，14 歲與 18 歲女孩的平均身高差距約當中效果，博士學位持有者與大一新生的平均智商差距約當大效果）。Cohen 在同節自承這組對應是任意的。",
+      "quote": "MEDIUM EFFECT SIZE: d = .5. A medium effect size is conceived as one large enough to be visible to the naked eye. ... We are thus reminded of the arbitrariness of this assignment of quantitative operational definitions to qualitative adjectives.",
+      "url": "https://utstat.toronto.edu/~brunner/oldclass/378f16/readings/CohenPower.pdf",
+      "en": {
+        "locator": "Section 2.2, \"The Effect Size Index: d\", pp.24-27 (the small d=.2, medium d=.5, large d=.8 conventions, each anchored to something real: the mean IQ gap between twins and non-twins is about a small effect, the mean height difference between 14- and 18-year-old girls about a medium one, the IQ gap between PhD holders and college freshmen about a large one). Cohen calls the mapping arbitrary in the same section.",
+        "quote": "MEDIUM EFFECT SIZE: d = .5. A medium effect size is conceived as one large enough to be visible to the naked eye. ... We are thus reminded of the arbitrariness of this assignment of quantitative operational definitions to qualitative adjectives."
+      }
+    },
+    "dallaPellegrinaGaroupaLin2012IdealPoints": {
+      "author": "Lucia Dalla Pellegrina, Nuno Garoupa & Shirley Ching-ping Lin",
+      "title": "Judicial Ideal Points in New Democracies: The Case of Taiwan",
+      "year": 2012,
+      "container": "National Taiwan University Law Review 7(1): 123–165",
+      "locator": "1988–2009、101 件、49 位大法官、1,415 筆票；靜態一維兩參數 IRT（R MCMCpack），錨定楊建華、李志鵬於 -2/+2（p.140–142）；理想點與提名總統無相關（p.142）；馬提名者僅 4 件、模型不收斂（fn.89）；跨 22 年非重疊法官壓在同一尺（p.128, 141）。措辭見引文（p.144）。",
+      "quote": "we believe that the robustness of our results—absolutely clear evidence of no relationship between presidential appointments and the systematic empirical identification of the same few polarized Justices’ points—evidences otherwise."
+    },
+    "fisher1935DesignOfExperiments": {
+      "author": "Ronald A. Fisher",
+      "title": "The Design of Experiments",
+      "year": 1935,
+      "container": "Edinburgh: Oliver and Boyd (1st ed.)",
+      "locator": "Ch. II, §5 'The Statement of Experiment', p.13（茶品實驗設定：8 杯，4 杯先加奶）；§8 'The Null Hypothesis'，p.18（1935 初版；部分刷次標為 p.19）。",
+      "quote": "In relation to any experiment we may speak of this hypothesis as the null hypothesis, and it should be noted that the null hypothesis is never proved or established, but is possibly disproved, in the course of experimentation. Every experiment may be said to exist only in order to give the facts a chance of disproving the null hypothesis.",
+      "url": "https://archive.org/stream/in.ernet.dli.2015.502684/2015.502684.The-Design_djvu.txt",
+      "en": {
+        "locator": "Ch. II §5 'The Statement of Experiment', p.13 (the tea-tasting setup); §8 'The Null Hypothesis', p.18 (1935 first edition; some reprints give p.19).",
+        "quote": "In relation to any experiment we may speak of this hypothesis as the null hypothesis, and it should be noted that the null hypothesis is never proved or established, but is possibly disproved, in the course of experimentation. Every experiment may be said to exist only in order to give the facts a chance of disproving the null hypothesis."
+      }
+    },
+    "garoupaGrembiLin2011Taiwan": {
+      "author": "Nuno Garoupa, Veronica Grembi & Shirley Ching-ping Lin",
+      "title": "Explaining Constitutional Review in New Democracies: The Case of Taiwan",
+      "year": 2011,
+      "container": "Pacific Rim Law & Policy Journal (Washington International Law Journal) 20(1): 1–40",
+      "locator": "1988–2008、97 件政治性解釋、44 位大法官、1,357 筆個人票；logit 配「提名總統×親國民黨聲請人」交互項（Table 3, p.22）。p.16 fn.85：大法官投票秘密進行、拒寫個別意見的少數票一律計入多數方——此為全期制度特徵，非限 1993 年前。",
+      "quote": "it is important to note that the Justices vote secretly. Therefore, if a Justice’s vote turns out to be a minority but he or she refuses to write any separate opinion...his or her vote will still be counted as a majority."
+    },
+    "good2005Permutation": {
+      "author": "Phillip I. Good",
+      "title": "Permutation, Parametric, and Bootstrap Tests of Hypotheses",
+      "year": 2005,
+      "container": "3rd ed. Springer Series in Statistics. New York: Springer",
+      "locator": "置換檢定作為小樣本精確推論的系統整理；樣本小是其適用場景。"
+    },
+    "greenland2016": {
+      "author": "Sander Greenland, Stephen J. Senn, Kenneth J. Rothman, John B. Carlin, Charles Poole, Steven N. Goodman, and Douglas G. Altman",
+      "title": "Statistical Tests, P Values, Confidence Intervals, and Power: A Guide to Misinterpretations",
+      "year": 2016,
+      "container": "European Journal of Epidemiology, vol. 31, no. 4, pp.337–350",
+      "locator": "§2「常見誤讀清單」，列舉 25 條——正文標題即為 \"Twenty-five misinterpretations\" 對應段落",
+      "quote": "Misinterpretation and abuse of statistical tests, confidence intervals, and statistical power have been decried for decades, yet remain rampant.",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4877414/",
+      "en": {
+        "locator": "§2, the list of 25 common misinterpretations, corresponding to the section headed \"Twenty-five misinterpretations.\"",
+        "quote": "Misinterpretation and abuse of statistical tests, confidence intervals, and statistical power have been decried for decades, yet remain rampant."
+      }
+    },
+    "hanretty2012Dissent": {
+      "author": "Chris Hanretty",
+      "title": "Dissent in Iberia: The Ideal Points of Justices on the Spanish and Portuguese Constitutional Tribunals",
+      "year": 2012,
+      "container": "European Journal of Political Research 51(5): 671–692. DOI: 10.1111/j.1475-6765.2012.02056.x",
+      "locator": "西班牙 2000–2009、葡萄牙 1989–2009 非一致決；二參數 probit IRT（MCMCirt1d）；西命中率 89.2%/APRE 0.47、葡 84.4%/APRE 0.41（Table 1）；p.4 挑西葡因其較政治、異議夠多，並警告異議稀疏可能估不出理想點。",
+      "quote": "If less political case loads lead to less dissent, then these courts may not exhibit sufficiently high levels of dissent for ideal points to be estimated."
+    },
+    "krackhardt1988QAP": {
+      "author": "David Krackhardt",
+      "title": "Predicting with Networks: Nonparametric Multiple Regression Analysis of Dyadic Data",
+      "year": 1988,
+      "container": "Social Networks 10: 359–381",
+      "locator": "MRQAP：以節點標籤置換處理 dyadic 資料的網絡自相關。"
+    },
+    "leeLinHo2018ScholarlyBackgrounds": {
+      "author": "Shao-Man Lee, Chien-Chih Lin & Han-Wei Ho",
+      "title": "Do Justices’ Scholarly Backgrounds Affect the Writing of Separate Opinions",
+      "year": 2018,
+      "container": "會議論文，Chicago–Tsinghua Young Faculty Forum on Law and Social Science, Tsinghua University（2018 年 5–6 月）；查無正式發表版",
+      "locator": "問題意識與本研究高度重疊（大法官學術背景是否影響撰寫個別意見）；2026-07 複查仍無公開全文，資料規模與方法不可知。"
+    },
+    "li2010JudicialStyle": {
+      "author": "李韶曼",
+      "title": "判決風格的功能——以大法官解釋為中心",
+      "year": 2010,
+      "container": "國立臺灣大學法律學系碩士論文（指導教授張文貞），152 頁。Airiti DocID: U0001-1908201009505900",
+      "locator": "釋字第 1–677 號全部解釋（理由書自第 80 號起）；量解釋文篇幅、段落、修辭（表一、表二）；p.77 明文把個別意見書排除在「解釋風格」測量之外；無顯著性檢定。",
+      "quote": "大法官解釋應被當成一個想像上的整體、以多數意見來做溝通的主體，所以以下的分析仍將以解釋文與理由書為主"
+    },
+    "martinQuinn2002IdealPoint": {
+      "author": "Andrew D. Martin & Kevin M. Quinn",
+      "title": "Dynamic Ideal Point Estimation via Markov Chain Monte Carlo for the U.S. Supreme Court, 1953–1999",
+      "year": 2002,
+      "container": "Political Analysis 10(2): 134–153",
+      "locator": "美國最高法院動態理想點；貝氏 MCMC 測量模型。",
+      "quote": "we employ Markov chain Monte Carlo methods to fit a Bayesian measurement model of ideal points"
+    },
+    "pooleRosenthal1997Congress": {
+      "author": "Keith T. Poole & Howard Rosenthal",
+      "title": "Congress: A Political-Economic History of Roll Call Voting",
+      "year": 1997,
+      "container": "New York: Oxford University Press",
+      "locator": "NOMINATE 理想點；以正確分類率與 APRE 判維度；排除壓倒性表決（lopsided vote）的慣例。"
+    },
+    "samejima1969GRM": {
+      "author": "Fumiko Samejima",
+      "title": "Estimation of Latent Ability Using a Response Pattern of Graded Scores",
+      "year": 1969,
+      "container": "Psychometrika Monograph No. 17 (Psychometrika 34, Suppl. 1, pp. 1–97). Richmond: Psychometric Society",
+      "locator": "有序類別反應的分級反應模型：累積機率 P(Y>=k)=logistic(a·theta - b_k)，共用鑑別度、逐級遞增門檻。"
+    },
+    "simonsohnEtAl2020SpecCurve": {
+      "author": "Uri Simonsohn, Joseph P. Simmons & Leif D. Nelson",
+      "title": "Specification Curve Analysis",
+      "year": 2020,
+      "container": "Nature Human Behaviour 4: 1208–1214",
+      "locator": "把多種合理口徑一起攤開、用聯合置換做推論，防止事後挑一個好看的口徑。"
+    },
+    "vehtari2021RankNormalization": {
+      "author": "Aki Vehtari, Andrew Gelman, Daniel Simpson, Bob Carpenter & Paul-Christian Bürkner",
+      "title": "Rank-Normalization, Folding, and Localization: An Improved R-hat for Assessing Convergence of MCMC",
+      "year": 2021,
+      "container": "Bayesian Analysis 16(2): 667–718. DOI: 10.1214/20-BA1221",
+      "locator": "rank-normalized R-hat 與有效樣本數；R-hat 貼近 1 表示各鏈已抽自同一分布。"
+    },
+    "wu2023CaseSelection": {
+      "author": "吳睿恩",
+      "title": "憲法法院的選案決策",
+      "year": 2023,
+      "container": "國立臺灣大學法律學系碩士論文（指導教授蘇彥圖）。DOI: 10.6342/NTU202300284",
+      "locator": "許宗力法庭（2016-11-11 至 2021-12-24）2,623 件不受理決議＋67 件受理比較組；存活分析＋獨立性檢定（p.82）；p.81 明言不知大法官個別票決、無法做個人層次。",
+      "quote": "由於我們並不知道大法官在個別案件中的票決立場，即便以意見書作為判斷指標，仍因大法官於不受理決議提出意見書的頻率不高，而將使分析大大受限"
+    }
+  },
+  "quiz": [
+    {
+      "id": "theta-vs-rate",
+      "prompt": "甲、乙兩位大法官的不同意率都是 40%。這是否表示測量模型會把兩人放在理想點軸上幾乎同一個位置？",
+      "options": [
+        "是",
+        "否"
+      ],
+      "correctIndex": 1,
+      "explain": "否。同意率只回答「多常同意」，理想點回答「站在哪裡」。兩人可以有相同的不同意率，卻在方向相反的案子上反對——一位常投「應該更違憲」、一位常投「應該更合憲」。分級反應模型用每題各自的參數與投票方向定位，兩人會落在軸的兩端，而不是同一點。",
+      "en": {
+        "prompt": "Two justices both dissent 40% of the time. Does this mean the measurement model will place them at nearly the same point on the ideal-point axis?",
+        "options": [
+          "Yes",
+          "No"
+        ],
+        "explain": "No. A dissent rate answers 'how often'; an ideal point answers 'where'. Two justices can share a dissent rate yet dissent in opposite directions — one often voting 'should strike down more', the other 'should uphold more'. The graded-response model locates them using each item's parameters and the direction of the vote, so they land at opposite ends, not the same point."
+      }
+    },
+    {
+      "id": "overlap-not-no-structure",
+      "prompt": "十九位大法官依理想點估計排序後，相鄰兩兩的 90% 可信區間全部重疊。這是否表示「已經測到大家的立場其實都在中間、沒有差別」？",
+      "options": [
+        "是",
+        "否"
+      ],
+      "correctIndex": 1,
+      "explain": "否。區間全重疊說的是「分不出誰在哪」，不是「大家都在中間」。稀疏異議、樣本小，位置就估不準，區間因此很寬。模型排得出先後，卻沒有把握把某個人和鄰座分開——這是資訊量不足的表現，不是「無差別」的證據。這也是 Hanretty 對高共識法院的警告：異議太稀可能根本估不出理想點。",
+      "en": {
+        "prompt": "After ranking the 19 justices by their theta point estimates, every adjacent pair's 90% credible interval overlaps. Does this show that 'we have measured everyone to be in the middle, with no differences'?",
+        "options": [
+          "Yes",
+          "No"
+        ],
+        "explain": "No. Full overlap means 'we can't tell who is where', not 'everyone is in the middle'. Sparse dissent and a small sample make positions imprecise, so the intervals are wide. The model can rank but cannot confidently separate a justice from a neighbour — a sign of too little information, not evidence of no difference. This is exactly Hanretty's warning about high-consensus courts: sparse dissent may leave ideal points unestimable."
+      }
+    },
+    {
+      "id": "disciplined-null",
+      "prompt": "提名總統維度的置換檢定 p 約為 0.34（不顯著）。本文還報告了 MDE 0.085、90% 區間把效果上界壓到約 ±0.1。加報後兩個數字的作用，是否只是讓 null 看起來比較豐富？",
+      "options": [
+        "是，主要是修辭",
+        "否，它們把「測不到」變成可檢驗的效果上界"
+      ],
+      "correctIndex": 1,
+      "explain": "否。單看 p=0.34 只知道「不顯著」，分不出是「沒有效果」還是「有效果但測不到」。檢定力（MDE）說這個設計要八成把握才測得到多大的效果，等價區間說效果最多被關到多窄。加起來，null 才有了數字邊界：效果若存在，量級在約 ±0.1 內、小於 0.085 測不到。這是一個有紀律、可檢驗的 null，不是心虛的 null。",
+      "en": {
+        "prompt": "The permutation test for the nominating-president dimension gives p = 0.34 (not significant). The piece also reports an MDE of 0.085 and a 90% interval bounding the effect to about ±0.1. Are these two extra numbers mainly there to make the null look richer?",
+        "options": [
+          "Yes, mostly rhetoric",
+          "No, they turn 'undetectable' into a testable effect ceiling"
+        ],
+        "explain": "No. p = 0.34 alone only says 'not significant' — it can't separate 'no effect' from 'an effect too small to detect'. Power (MDE) says how large an effect the design could catch with 80% probability; the equivalence interval says how tightly the effect can be bounded. Together they give the null numerical edges: if an effect exists, it is within about ±0.1, and anything below 0.085 is undetectable here. That is a disciplined, testable null."
+      }
+    },
+    {
+      "id": "two-layer",
+      "prompt": "協作層測到「同提名人更常共同具名」（勝算約高一點五倍），投票層卻測不到任命政治。以下讀法是否正確：「既然協作層有訊號，投票層的 null 應該修正成也有效果。」",
+      "options": [
+        "正確",
+        "不正確"
+      ],
+      "correctIndex": 1,
+      "explain": "不正確。兩層測的是不同構念，不互相印證。共同具名是「誰願意跟誰署在一起」的結盟行為，投票立場是「同不同意結論」。同提名總統的大法官在意見書上更常彼此加入，不代表他們在主文立場上依提名人對齊。協作層的正效果與投票層的 null 可以並存，各說各的。",
+      "en": {
+        "prompt": "The collaboration layer finds that same-nominee justices co-sign more often (about 1.5× the odds), while the voting layer detects no appointment politics. Is this reading correct: 'Since the collaboration layer has a signal, the voting-layer null should be revised to an effect too'?",
+        "options": [
+          "Correct",
+          "Incorrect"
+        ],
+        "explain": "Incorrect. The two layers measure different constructs and do not confirm each other. Co-signing is a coalition behaviour — who is willing to sign alongside whom — while a vote is agreement with an outcome. Justices nominated by the same president joining each other's opinions more often does not mean they align on the merits. The collaboration-layer effect and the voting-layer null can coexist."
+      }
+    }
+  ],
+  "statements": {
+    "right": [],
+    "wrong": []
+  },
+  "misreadings": [],
+  "timeline": [],
+  "terms": {
+    "credible-interval": {
+      "slug": "credible-interval",
+      "term": "可信區間",
+      "oneLine": "貝氏版的區間：在模型與先驗給定下，參數有 95% 的後驗機率落在這一段裡；正好是很多人誤以為信賴區間在說的那件事。",
+      "example": "把資料配上先驗、更新成一整條後驗分佈，取中央 95%，就能直說參數有 95% 機率落在這一段。Gelman 等人以二項分佈配 beta 先驗當最小例。",
+      "route": "/statistics/glossary/credible-interval",
+      "en": {
+        "term": "Credible interval",
+        "oneLine": "The Bayesian interval: given the model and prior, the parameter has a 95% posterior probability of lying in this range. That is exactly what people wrongly believe a confidence interval reports.",
+        "example": "Update the data through a prior into a full posterior, take its central 95%, and you may say the parameter lies there with probability 95%. Gelman et al. use a binomial with a beta prior as the minimal case."
+      }
+    },
+    "equivalence-test": {
+      "slug": "equivalence-test",
+      "term": "等價檢定",
+      "oneLine": "先說清楚多大的差異才算重要，再用資料把效果關進這個範圍。",
+      "example": "美國 FDA 審學名藥靠它：兩藥血中濃度比值的 90% 信賴區間要整個落在 80%–125%，才算相等。",
+      "route": "/statistics/glossary/equivalence-test",
+      "en": {
+        "term": "Equivalence test",
+        "oneLine": "State how large a difference would matter, then use the data to bound the effect inside that range.",
+        "example": "It is how the U.S. FDA reviews generic drugs: the 90% confidence interval for the ratio of blood concentrations must sit entirely within 80%–125%."
+      }
+    },
+    "ideal-point": {
+      "slug": "ideal-point",
+      "term": "理想點",
+      "oneLine": "把每個投票者放到一條看不見的政策軸上，位置的選法要讓「誰跟誰投得像」被解釋得最好。這條軸是估出來的，不是先量好的。",
+      "example": "Martin 與 Quinn 用貝氏 MCMC 把美國最高法院大法官排到一條會隨時間移動的自由到保守軸上，位置全從幾十年的判決投票估出。",
+      "route": "/statistics/glossary/ideal-point",
+      "en": {
+        "term": "Ideal point",
+        "oneLine": "Each voter is placed on an unobserved policy axis, positioned so that who-votes-like-whom is explained as well as possible. The axis is estimated, not measured in advance.",
+        "example": "Martin and Quinn used Bayesian MCMC to place U.S. Supreme Court justices on a liberal-to-conservative axis that moves over time, with positions estimated entirely from decades of decision votes."
+      }
+    },
+    "permutation-test": {
+      "slug": "permutation-test",
+      "term": "置換檢定",
+      "oneLine": "把標籤重新洗牌，看看純屬巧合能做到多好，再看真實資料排在哪裡。",
+      "example": "八杯茶就是最小的置換檢定：四杯先倒奶的挑法共 70 種，全對只有 1 種。",
+      "route": "/statistics/glossary/permutation-test",
+      "en": {
+        "term": "Permutation test",
+        "oneLine": "Shuffle the labels, see how well coincidence can do, then see where the real data land.",
+        "example": "Eight cups is the smallest permutation test there is: 70 ways to choose four, exactly one of them all correct."
+      }
+    }
+  }
+}

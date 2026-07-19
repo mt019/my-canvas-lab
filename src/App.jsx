@@ -111,6 +111,16 @@ const PAGE_META = { // token-exempt: per-page identity chip colors (data, not st
     listed: false,
     type: 'Article',
   },
+  JudicialIdealPoints: {
+    name: '大法官站在哪裡：從投票估計理想點',
+    desc: '用貝氏分級反應模型把真投票變成違憲宣告傾向的軸——投票層測不到任命政治的有紀律 null，加一層測得到的共同具名訊號',
+    Icon: Sigma,
+    accent: '#dfe3ea',
+    accentText: '#6c7690',
+    group: 'learn',
+    listed: false,
+    type: 'Article',
+  },
   About: {
     name: '本站說明',
     desc: '統計學實驗室在做什麼：方法、例子怎麼查證、模擬為何每次跑出同樣數字',

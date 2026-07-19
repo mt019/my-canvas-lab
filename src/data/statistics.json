@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-07-18T14:47:03.758Z",
+  "generatedAt": "2026-07-19T00:05:17.998Z",
   "source": "statistics-lab-data, built by engineering/scripts/build-app-json.mjs",
   "site": {
     "intro": "統計課本教你怎麼算，很少告訴你這些東西當初是為了什麼問題被發明出來，又是在哪裡開始被誤用。這個站一次處理一個看起來理所當然、來歷卻可疑的概念：它為什麼長成這樣，是誰為了什麼發明它，以及它壞掉的時候會壞在哪裡。文章裡的模擬都可以親手轉動，因為有些事情得自己按下去重跑一萬次才會相信。",
@@ -42,6 +42,41 @@
     }
   ],
   "articles": [
+    {
+      "slug": "judicial-ideal-points",
+      "route": "/statistics/judicial-ideal-points",
+      "topic": "inference",
+      "title": "大法官站在哪裡：從投票估計理想點",
+      "subtitle": "用貝氏分級反應模型把真投票變成一條違憲宣告傾向的軸，檢驗它沿不沿提名總統結構化——一個有紀律的 null，加一層測得到的協作訊號",
+      "summary": "把一位大法官放到一條「傾向」的軸上，這條軸從哪裡來？本文以憲法法庭 2022 年後官方逐項立場表為真投票，用 Samejima 分級反應模型的貝氏估計逐法官的違憲宣告傾向，再用置換檢定看它沿不沿提名總統排列。四個維度都測不到效果，而這個 null 帶檢定力、等價與規格曲線的紀律；逐法官可信區間普遍很寬、相鄰全部重疊，這屆在稀疏異議下多半彼此不可區分。另一層用 1949 年以來的意見書共同具名網絡、階層二項模型，測到同提名人中等而穩健的正效果。投票層測不到、協作層測得到，兩層各說各的。台灣既有實證研究沒有一篇用過官方逐項真投票——本文補上這個缺口，並對一篇問題意識高度重疊、迄今未取得全文的研究，在新穎性上保留。",
+      "publishedAt": "2026-07-19",
+      "updatedAt": "2026-07-19",
+      "readingMinutes": 12,
+      "tags": [
+        "理想點",
+        "項目反應理論",
+        "分級反應模型",
+        "貝氏估計",
+        "置換檢定",
+        "司法行為量化",
+        "虛無結果"
+      ],
+      "en": {
+        "title": "Where Do the Justices Stand: Estimating Ideal Points from Votes",
+        "subtitle": "A Bayesian graded-response model turns real votes into an axis of tendency to strike down, and a permutation test asks whether it lines up with the nominating president — a disciplined null, plus one collaboration-layer signal that is real",
+        "summary": "Where does the axis come from when we place a justice on a scale of tendency? Using the Taiwan Constitutional Court's official per-item vote records since 2022 as real votes, this piece estimates each justice's tendency to strike down (theta) with a Bayesian graded-response model, then tests whether that axis aligns with the nominating president. Nothing is detectable on four dimensions, and the null carries power, equivalence, and specification-curve discipline; per-justice credible intervals are wide and all adjacent ones overlap, so in this sparse-dissent term the justices are mostly indistinguishable. A second layer, the co-signing network of opinions since 1949 modelled with a hierarchical binomial, does find a moderate and robust same-nominee effect. The voting layer detects nothing; the collaboration layer detects something; the two speak to different things. No prior Taiwanese study has used official per-item real votes — this piece fills that gap, and reserves its novelty claim against one closely overlapping study whose full text remains unavailable.",
+        "tags": [
+          "ideal points",
+          "item response theory",
+          "graded response model",
+          "Bayesian estimation",
+          "permutation test",
+          "judicial behavior",
+          "null result"
+        ],
+        "readingMinutes": 1
+      }
+    },
     {
       "slug": "equivalence-testing",
       "route": "/statistics/equivalence-testing",
@@ -116,7 +151,7 @@
       "subtitle": "從一位喝茶的女士到一份聯署聲明：p 值爭議的觀念史",
       "summary": "「虛無」這個譯名，把 null 讀成了「什麼都沒發生」。Fisher 的 null 講的是可推翻性：實驗設下它，就是為了讓資料有東西可以反駁。這篇追一條線——品茶實驗如何生出第一個 p 值，Neyman 與 Pearson 如何把它改成一套決策規則，課本又如何把兩套邏輯焊成一個誰都沒設計過的東西，以及焊接處會裂在哪裡。",
       "publishedAt": "2026-07-13",
-      "updatedAt": "2026-07-13",
+      "updatedAt": "2026-07-18",
       "readingMinutes": 7,
       "tags": [
         "虛無假設",
@@ -187,6 +222,7 @@
         "significance-level",
         "permutation-test",
         "confidence-interval",
+        "credible-interval",
         "equivalence-test"
       ],
       "en": {
@@ -222,6 +258,18 @@
       "en": {
         "label": "Misuse and its consequences",
         "blurb": "How ordinary research habits turn a reasonable method into a source of false positives."
+      }
+    },
+    {
+      "id": "measurement",
+      "label": "把行為估成位置",
+      "blurb": "看不到的立場、能力或傾向，怎麼從一格一格的投票或作答反推出來，還帶著它自己的不確定性。",
+      "terms": [
+        "ideal-point"
+      ],
+      "en": {
+        "label": "Estimating positions from behavior",
+        "blurb": "How an unobserved stance, ability, or leaning is recovered from a grid of votes or responses, carrying its own uncertainty."
       }
     }
   ],
@@ -296,6 +344,18 @@
       "en": {
         "term": "Confidence interval",
         "oneLine": "A rule for producing intervals. The 95% is the rule's long-run hit rate, not the probability for the one interval in front of you."
+      }
+    },
+    {
+      "slug": "credible-interval",
+      "route": "/statistics/glossary/credible-interval",
+      "topic": "inference",
+      "group": "machinery",
+      "term": "可信區間",
+      "oneLine": "貝氏版的區間：在模型與先驗給定下，參數有 95% 的後驗機率落在這一段裡；正好是很多人誤以為信賴區間在說的那件事。",
+      "en": {
+        "term": "Credible interval",
+        "oneLine": "The Bayesian interval: given the model and prior, the parameter has a 95% posterior probability of lying in this range. That is exactly what people wrongly believe a confidence interval reports."
       }
     },
     {
@@ -404,6 +464,18 @@
       "en": {
         "term": "Replication crisis",
         "oneLine": "A large share of published significant findings do not come back when someone else runs the study again."
+      }
+    },
+    {
+      "slug": "ideal-point",
+      "route": "/statistics/glossary/ideal-point",
+      "topic": "inference",
+      "group": "measurement",
+      "term": "理想點",
+      "oneLine": "把每個投票者放到一條看不見的政策軸上，位置的選法要讓「誰跟誰投得像」被解釋得最好。這條軸是估出來的，不是先量好的。",
+      "en": {
+        "term": "Ideal point",
+        "oneLine": "Each voter is placed on an unobserved policy axis, positioned so that who-votes-like-whom is explained as well as possible. The axis is estimated, not measured in advance."
       }
     }
   ]

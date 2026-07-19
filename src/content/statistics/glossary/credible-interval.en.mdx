@@ -1,0 +1,11 @@
+## What it says
+
+A credible interval is the range Bayesian statistics draws around a parameter. You update the data through a model and a prior and get a whole <Term id="sampling-distribution">posterior distribution</Term>: every possible value of the parameter carries a probability. Take the central 95% of that distribution and you have a 95% credible interval. Its meaning is plain: under this model and prior, the parameter has a 95% probability of lying in this range.
+
+## A concrete example
+
+The smallest case is estimating a proportion. <Cite id="gelmanEtAl2013BayesianDataAnalysis">Gelman and colleagues use a binomial likelihood with a beta prior: observe some successes and failures, and the posterior is again a beta distribution whose central 95% is the credible interval.</Cite> The contrast is the <Term id="confidence-interval">confidence interval</Term>. <Cite id="neyman1937ConfidenceIntervals">Neyman asked in 1937 whether, of one already-computed confidence interval, we may say the true value lies inside it with probability 95%. His answer was no: the frequentist 95% is the rule's long-run hit rate, not a probability about the interval in front of you.</Cite> The credible interval is exactly where that misused sentence is finally true.
+
+## Its benefits and costs
+
+The benefit is that it answers what most people wanted to ask in the first place: for this one range, how sure are we. The cost is that the assurance has a source: it took in a prior. With a well-grounded prior the interval is robust; with a careless prior or thin data the interval follows the prior, and reports often omit what the prior even was. A Bayesian interval is always an interval "given the model and prior"; away from that condition it says nothing.

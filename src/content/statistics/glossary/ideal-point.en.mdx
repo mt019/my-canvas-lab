@@ -1,0 +1,11 @@
+## What it says
+
+An ideal point is the position spatial-voting theory assigns to each voter. Picture an unobserved policy axis running from most-opposed to most-in-favor; every legislator or justice sits at one point on it, their ideal point. The model works backwards: it sees only a grid of yes and no votes and estimates where each person must stand for the whole voting record to be explained as well as possible. The position is estimated by the model and never measured directly: a quantity revealed only indirectly through votes is what statistics calls a latent trait.
+
+## A concrete example
+
+<Cite id="pooleRosenthal1997Congress">Poole and Rosenthal's NOMINATE recovers a dominant left-right dimension from decades of U.S. congressional roll calls, with most votes explained well by that single dimension.</Cite> <Cite id="martinQuinn2002IdealPoint">Martin and Quinn carried the same idea into the courtroom and let positions move over time, using Bayesian MCMC to estimate dynamic ideal points for U.S. Supreme Court justices and reading off which way a justice drifts across the years.</Cite> <Cite id="clintonJackmanRivers2004RollCall">Clinton, Jackman, and Rivers wrote this spatial-voting model formally as an item response model, shifting the target of inference from the voting record to ideal points and the cutpoints of bills.</Cite>
+
+## Its benefits and costs
+
+The benefit is that it turns "where someone stands" into a comparable, plottable number that carries its own uncertainty; one axis already orders who sits to the left of whom. The cost comes in two layers. First, the axis has to be interpreted by hand: the model only guarantees this axis best explains the votes, not that the axis is ideology, since something else may be driving them. Second, almost all the signal comes from divided votes; unanimous decisions carry no discriminating power, so a court with sparse dissent yields wide ideal-point intervals, positions that can be ranked in order yet not told apart from their neighbors.
