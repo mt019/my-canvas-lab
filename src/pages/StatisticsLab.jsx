@@ -31,6 +31,12 @@ const COPY = {
     tabsLabel: '看哪一區',
     articles: '文章',
     glossary: '術語表',
+    tags: '標籤',
+    tagsAreTerms: '也是術語的標籤',
+    tagsAreTermsBlurb: '這些標籤剛好也是術語。點進去看同標籤的文章，那個詞另有定義。',
+    tagsTopics: '主題標籤',
+    tagsTopicsBlurb: '人、領域、方法、史觀——術語表裡沒有，但把談同一件事的文章連在一起。',
+    tagsUnit: (n) => `${n} 個`,
     minutes: (m) => `約 ${m} 分鐘`,
     seeGlossary: '進完整術語表',
     terms: (n) => `${n} 條`,
@@ -43,6 +49,12 @@ const COPY = {
     tabsLabel: 'Sections',
     articles: 'Articles',
     glossary: 'Glossary',
+    tags: 'Tags',
+    tagsAreTerms: 'Tags that are also terms',
+    tagsAreTermsBlurb: 'These tags happen to name a glossary term. Follow one for the articles about it — and its definition is one more click away.',
+    tagsTopics: 'Topic tags',
+    tagsTopicsBlurb: 'People, fields, methods, history of ideas — not in the glossary, but they tie together the articles about the same thing.',
+    tagsUnit: (n) => `${n} tags`,
     minutes: (m) => `${m} min read`,
     seeGlossary: 'Open the full glossary',
     terms: (n) => `${n} terms`,
@@ -53,7 +65,7 @@ const COPY = {
 };
 
 export default function StatisticsLab() {
-  const { site, topics = [], articles = [], glossary = [], glossaryGroups = [] } = data;
+  const { site, topics = [], articles = [], glossary = [], glossaryGroups = [], tags: tagIndex = [] } = data;
   const [scale, setScale] = useFontScale();
   const { lang, setLang } = useLang();
   const [tab, setTab] = useTabParam('tab', 'articles');
@@ -114,6 +126,7 @@ export default function StatisticsLab() {
         items: [
           { id: 'articles', label: c.articles, count: articles.length },
           { id: 'glossary', label: c.glossary, count: glossary.length },
+          { id: 'tags', label: c.tags, count: tagIndex.length },
         ],
       }}
       refreshKey={`${tab}-${lang}-${q}`}
@@ -171,6 +184,39 @@ export default function StatisticsLab() {
               {en ? 'Nothing matches that.' : '沒有符合的術語。'}
             </p>
           ) : null}
+        </>
+      ) : tab === 'tags' ? (
+        <>
+          {/* The second axis. Split by whether a tag also names a glossary term:
+              the split gives the dashboard rails their sections, and it says out
+              loud which words carry a definition and which are only labels. */}
+          {[
+            { id: 'terms', label: c.tagsAreTerms, blurb: c.tagsAreTermsBlurb, list: tagIndex.filter((t) => t.termRoute) },
+            { id: 'topics', label: c.tagsTopics, blurb: c.tagsTopicsBlurb, list: tagIndex.filter((t) => !t.termRoute) },
+          ]
+            .filter((s) => s.list.length > 0)
+            .map((s, i) => (
+              <section key={s.id} className={i === 0 ? '' : 'mt-10 border-t border-line pt-6'}>
+                <h2 id={`taggroup-${s.id}`} className="font-display text-token-lg text-ink">
+                  {s.label}
+                  <span className="ml-2 text-token-sm tabular-nums text-ink-faint">{c.tagsUnit(s.list.length)}</span>
+                </h2>
+                <p className="mb-3 mt-1 text-token-sm leading-relaxed text-ink-muted">{s.blurb}</p>
+                <ul className="flex flex-wrap gap-2.5">
+                  {s.list.map((t) => (
+                    <li key={t.slug}>
+                      <Link
+                        to={`/statistics/tags/${t.slug}`}
+                        className="group inline-flex items-baseline gap-1.5 rounded-token-sm border border-line-soft px-2.5 py-1 text-token-sm text-ink-muted transition-colors duration-fast hover:border-accent hover:text-accent"
+                      >
+                        {en ? t.en : t.zh}
+                        <span className="font-accent text-token-xs tabular-nums text-ink-faint">{t.count}</span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            ))}
         </>
       ) : (
         <>

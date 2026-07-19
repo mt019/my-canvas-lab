@@ -49,6 +49,7 @@ export default function JusticePartialPooling() {
             updatedAt={meta.updatedAt}
             readingMinutes={en ? meta.en?.readingMinutes : meta.readingMinutes}
             tags={(en ? meta.en?.tags : meta.tags) ?? []}
+            tagSlugs={meta.tagSlugs ?? []}
             lang={lang}
           />
         }

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-07-18T14:47:03.758Z",
+  "generatedAt": "2026-07-19T06:35:06.839Z",
   "source": "statistics-lab-data, built by engineering/scripts/build-app-json.mjs",
   "meta": {
     "slug": "confidence-interval",
@@ -32,7 +32,15 @@
       "可信區間",
       "誤讀"
     ],
-    "readingMinutes": 12
+    "readingMinutes": 12,
+    "tagSlugs": [
+      "信賴區間",
+      "誤差幅度",
+      "頻率派推論",
+      "neyman",
+      "可信區間",
+      "誤讀"
+    ]
   },
   "figures": {
     "poll-error-band": {

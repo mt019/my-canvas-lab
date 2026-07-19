@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-07-18T14:47:03.758Z",
+  "generatedAt": "2026-07-19T06:35:06.839Z",
   "source": "statistics-lab-data, built by engineering/scripts/build-app-json.mjs",
   "meta": {
     "slug": "equivalence-testing",
@@ -17,9 +17,9 @@
         "equivalence testing",
         "TOST",
         "statistical power",
-        "confidence intervals",
+        "confidence interval",
         "bioequivalence",
-        "null results"
+        "non-significant result"
       ],
       "readingMinutes": 6
     },
@@ -29,10 +29,18 @@
       "檢定力",
       "信賴區間",
       "生體相等性",
-      "虛無結果"
+      "非顯著結果"
     ],
     "readingMinutes": 5,
-    "updatedAt": "2026-07-18"
+    "updatedAt": "2026-07-18",
+    "tagSlugs": [
+      "等價檢定",
+      "tost",
+      "檢定力",
+      "信賴區間",
+      "生體相等性",
+      "非顯著結果"
+    ]
   },
   "figures": {
     "compatibility-interval": {

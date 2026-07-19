@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-07-19T00:05:17.998Z",
+  "generatedAt": "2026-07-19T06:35:06.839Z",
   "source": "statistics-lab-data, built by engineering/scripts/build-app-json.mjs",
   "site": {
     "intro": "統計課本教你怎麼算，很少告訴你這些東西當初是為了什麼問題被發明出來，又是在哪裡開始被誤用。這個站一次處理一個看起來理所當然、來歷卻可疑的概念：它為什麼長成這樣，是誰為了什麼發明它，以及它壞掉的時候會壞在哪裡。文章裡的模擬都可以親手轉動，因為有些事情得自己按下去重跑一萬次才會相信。",
@@ -59,7 +59,7 @@
         "貝氏估計",
         "置換檢定",
         "司法行為量化",
-        "虛無結果"
+        "非顯著結果"
       ],
       "en": {
         "title": "Where Do the Justices Stand: Estimating Ideal Points from Votes",
@@ -72,7 +72,7 @@
           "Bayesian estimation",
           "permutation test",
           "judicial behavior",
-          "null result"
+          "non-significant result"
         ],
         "readingMinutes": 1
       }
@@ -93,7 +93,7 @@
         "檢定力",
         "信賴區間",
         "生體相等性",
-        "虛無結果"
+        "非顯著結果"
       ],
       "en": {
         "title": "How to Show There Is No Difference",
@@ -103,9 +103,9 @@
           "equivalence testing",
           "TOST",
           "statistical power",
-          "confidence intervals",
+          "confidence interval",
           "bioequivalence",
-          "null results"
+          "non-significant result"
         ],
         "readingMinutes": 6
       }
@@ -477,6 +477,568 @@
         "term": "Ideal point",
         "oneLine": "Each voter is placed on an unobserved policy axis, positioned so that who-votes-like-whom is explained as well as possible. The axis is estimated, not measured in advance."
       }
+    }
+  ],
+  "tags": [
+    {
+      "zh": "非顯著結果",
+      "en": "non-significant result",
+      "slug": "非顯著結果",
+      "articles": [
+        {
+          "slug": "equivalence-testing",
+          "route": "/statistics/equivalence-testing",
+          "title": "怎麼證明「沒有差別」",
+          "topic": "inference",
+          "publishedAt": "2026-07-18",
+          "en": {
+            "title": "How to Show There Is No Difference"
+          }
+        },
+        {
+          "slug": "judicial-ideal-points",
+          "route": "/statistics/judicial-ideal-points",
+          "title": "大法官站在哪裡：從投票估計理想點",
+          "topic": "inference",
+          "publishedAt": "2026-07-19",
+          "en": {
+            "title": "Where Do the Justices Stand: Estimating Ideal Points from Votes"
+          }
+        }
+      ],
+      "count": 2
+    },
+    {
+      "zh": "信賴區間",
+      "en": "confidence interval",
+      "slug": "信賴區間",
+      "articles": [
+        {
+          "slug": "confidence-interval",
+          "route": "/statistics/confidence-interval",
+          "title": "到底什麼是信賴區間",
+          "topic": "inference",
+          "publishedAt": "2026-07-18",
+          "en": {
+            "title": "What a Confidence Interval Actually Is"
+          }
+        },
+        {
+          "slug": "equivalence-testing",
+          "route": "/statistics/equivalence-testing",
+          "title": "怎麼證明「沒有差別」",
+          "topic": "inference",
+          "publishedAt": "2026-07-18",
+          "en": {
+            "title": "How to Show There Is No Difference"
+          }
+        }
+      ],
+      "count": 2,
+      "termRoute": "/statistics/glossary/confidence-interval",
+      "termSlug": "confidence-interval"
+    },
+    {
+      "zh": "小樣本",
+      "en": "small samples",
+      "slug": "小樣本",
+      "articles": [
+        {
+          "slug": "justice-partial-pooling",
+          "route": "/statistics/justice-partial-pooling",
+          "title": "大法官的差異有多大？",
+          "topic": "inference",
+          "publishedAt": "2026-07-13",
+          "en": {
+            "title": "How Large Are the Differences Between Justices?"
+          }
+        }
+      ],
+      "count": 1
+    },
+    {
+      "zh": "不確定性",
+      "en": "uncertainty",
+      "slug": "不確定性",
+      "articles": [
+        {
+          "slug": "justice-partial-pooling",
+          "route": "/statistics/justice-partial-pooling",
+          "title": "大法官的差異有多大？",
+          "topic": "inference",
+          "publishedAt": "2026-07-13",
+          "en": {
+            "title": "How Large Are the Differences Between Justices?"
+          }
+        }
+      ],
+      "count": 1
+    },
+    {
+      "zh": "分級反應模型",
+      "en": "graded response model",
+      "slug": "分級反應模型",
+      "articles": [
+        {
+          "slug": "judicial-ideal-points",
+          "route": "/statistics/judicial-ideal-points",
+          "title": "大法官站在哪裡：從投票估計理想點",
+          "topic": "inference",
+          "publishedAt": "2026-07-19",
+          "en": {
+            "title": "Where Do the Justices Stand: Estimating Ideal Points from Votes"
+          }
+        }
+      ],
+      "count": 1
+    },
+    {
+      "zh": "可信區間",
+      "en": "credible interval",
+      "slug": "可信區間",
+      "articles": [
+        {
+          "slug": "confidence-interval",
+          "route": "/statistics/confidence-interval",
+          "title": "到底什麼是信賴區間",
+          "topic": "inference",
+          "publishedAt": "2026-07-18",
+          "en": {
+            "title": "What a Confidence Interval Actually Is"
+          }
+        }
+      ],
+      "count": 1,
+      "termRoute": "/statistics/glossary/credible-interval",
+      "termSlug": "credible-interval"
+    },
+    {
+      "zh": "司法行為量化",
+      "en": "judicial behavior",
+      "slug": "司法行為量化",
+      "articles": [
+        {
+          "slug": "judicial-ideal-points",
+          "route": "/statistics/judicial-ideal-points",
+          "title": "大法官站在哪裡：從投票估計理想點",
+          "topic": "inference",
+          "publishedAt": "2026-07-19",
+          "en": {
+            "title": "Where Do the Justices Stand: Estimating Ideal Points from Votes"
+          }
+        }
+      ],
+      "count": 1
+    },
+    {
+      "zh": "司法院資料",
+      "en": "Constitutional Court data",
+      "slug": "司法院資料",
+      "articles": [
+        {
+          "slug": "justice-partial-pooling",
+          "route": "/statistics/justice-partial-pooling",
+          "title": "大法官的差異有多大？",
+          "topic": "inference",
+          "publishedAt": "2026-07-13",
+          "en": {
+            "title": "How Large Are the Differences Between Justices?"
+          }
+        }
+      ],
+      "count": 1
+    },
+    {
+      "zh": "生體相等性",
+      "en": "bioequivalence",
+      "slug": "生體相等性",
+      "articles": [
+        {
+          "slug": "equivalence-testing",
+          "route": "/statistics/equivalence-testing",
+          "title": "怎麼證明「沒有差別」",
+          "topic": "inference",
+          "publishedAt": "2026-07-18",
+          "en": {
+            "title": "How to Show There Is No Difference"
+          }
+        }
+      ],
+      "count": 1
+    },
+    {
+      "zh": "貝氏估計",
+      "en": "Bayesian estimation",
+      "slug": "貝氏估計",
+      "articles": [
+        {
+          "slug": "judicial-ideal-points",
+          "route": "/statistics/judicial-ideal-points",
+          "title": "大法官站在哪裡：從投票估計理想點",
+          "topic": "inference",
+          "publishedAt": "2026-07-19",
+          "en": {
+            "title": "Where Do the Justices Stand: Estimating Ideal Points from Votes"
+          }
+        }
+      ],
+      "count": 1
+    },
+    {
+      "zh": "貝氏統計",
+      "en": "Bayesian statistics",
+      "slug": "貝氏統計",
+      "articles": [
+        {
+          "slug": "justice-partial-pooling",
+          "route": "/statistics/justice-partial-pooling",
+          "title": "大法官的差異有多大？",
+          "topic": "inference",
+          "publishedAt": "2026-07-13",
+          "en": {
+            "title": "How Large Are the Differences Between Justices?"
+          }
+        }
+      ],
+      "count": 1
+    },
+    {
+      "zh": "理想點",
+      "en": "ideal points",
+      "slug": "理想點",
+      "articles": [
+        {
+          "slug": "judicial-ideal-points",
+          "route": "/statistics/judicial-ideal-points",
+          "title": "大法官站在哪裡：從投票估計理想點",
+          "topic": "inference",
+          "publishedAt": "2026-07-19",
+          "en": {
+            "title": "Where Do the Justices Stand: Estimating Ideal Points from Votes"
+          }
+        }
+      ],
+      "count": 1,
+      "termRoute": "/statistics/glossary/ideal-point",
+      "termSlug": "ideal-point"
+    },
+    {
+      "zh": "部分匯聚",
+      "en": "partial pooling",
+      "slug": "部分匯聚",
+      "articles": [
+        {
+          "slug": "justice-partial-pooling",
+          "route": "/statistics/justice-partial-pooling",
+          "title": "大法官的差異有多大？",
+          "topic": "inference",
+          "publishedAt": "2026-07-13",
+          "en": {
+            "title": "How Large Are the Differences Between Justices?"
+          }
+        }
+      ],
+      "count": 1
+    },
+    {
+      "zh": "等價檢定",
+      "en": "equivalence testing",
+      "slug": "等價檢定",
+      "articles": [
+        {
+          "slug": "equivalence-testing",
+          "route": "/statistics/equivalence-testing",
+          "title": "怎麼證明「沒有差別」",
+          "topic": "inference",
+          "publishedAt": "2026-07-18",
+          "en": {
+            "title": "How to Show There Is No Difference"
+          }
+        }
+      ],
+      "count": 1,
+      "termRoute": "/statistics/glossary/equivalence-test",
+      "termSlug": "equivalence-test"
+    },
+    {
+      "zh": "虛無假設",
+      "en": "null hypothesis",
+      "slug": "虛無假設",
+      "articles": [
+        {
+          "slug": "null-hypothesis",
+          "route": "/statistics/null-hypothesis",
+          "title": "為什麼叫虛無假設",
+          "topic": "inference",
+          "publishedAt": "2026-07-13",
+          "en": {
+            "title": "Why It Is Called the Null Hypothesis"
+          }
+        }
+      ],
+      "count": 1,
+      "termRoute": "/statistics/glossary/null-hypothesis",
+      "termSlug": "null-hypothesis"
+    },
+    {
+      "zh": "階層模型",
+      "en": "hierarchical models",
+      "slug": "階層模型",
+      "articles": [
+        {
+          "slug": "justice-partial-pooling",
+          "route": "/statistics/justice-partial-pooling",
+          "title": "大法官的差異有多大？",
+          "topic": "inference",
+          "publishedAt": "2026-07-13",
+          "en": {
+            "title": "How Large Are the Differences Between Justices?"
+          }
+        }
+      ],
+      "count": 1
+    },
+    {
+      "zh": "項目反應理論",
+      "en": "item response theory",
+      "slug": "項目反應理論",
+      "articles": [
+        {
+          "slug": "judicial-ideal-points",
+          "route": "/statistics/judicial-ideal-points",
+          "title": "大法官站在哪裡：從投票估計理想點",
+          "topic": "inference",
+          "publishedAt": "2026-07-19",
+          "en": {
+            "title": "Where Do the Justices Stand: Estimating Ideal Points from Votes"
+          }
+        }
+      ],
+      "count": 1
+    },
+    {
+      "zh": "置換檢定",
+      "en": "permutation test",
+      "slug": "置換檢定",
+      "articles": [
+        {
+          "slug": "judicial-ideal-points",
+          "route": "/statistics/judicial-ideal-points",
+          "title": "大法官站在哪裡：從投票估計理想點",
+          "topic": "inference",
+          "publishedAt": "2026-07-19",
+          "en": {
+            "title": "Where Do the Justices Stand: Estimating Ideal Points from Votes"
+          }
+        }
+      ],
+      "count": 1,
+      "termRoute": "/statistics/glossary/permutation-test",
+      "termSlug": "permutation-test"
+    },
+    {
+      "zh": "誤差幅度",
+      "en": "margin of error",
+      "slug": "誤差幅度",
+      "articles": [
+        {
+          "slug": "confidence-interval",
+          "route": "/statistics/confidence-interval",
+          "title": "到底什麼是信賴區間",
+          "topic": "inference",
+          "publishedAt": "2026-07-18",
+          "en": {
+            "title": "What a Confidence Interval Actually Is"
+          }
+        }
+      ],
+      "count": 1
+    },
+    {
+      "zh": "誤讀",
+      "en": "misinterpretation",
+      "slug": "誤讀",
+      "articles": [
+        {
+          "slug": "confidence-interval",
+          "route": "/statistics/confidence-interval",
+          "title": "到底什麼是信賴區間",
+          "topic": "inference",
+          "publishedAt": "2026-07-18",
+          "en": {
+            "title": "What a Confidence Interval Actually Is"
+          }
+        }
+      ],
+      "count": 1
+    },
+    {
+      "zh": "複製危機",
+      "en": "replication crisis",
+      "slug": "複製危機",
+      "articles": [
+        {
+          "slug": "null-hypothesis",
+          "route": "/statistics/null-hypothesis",
+          "title": "為什麼叫虛無假設",
+          "topic": "inference",
+          "publishedAt": "2026-07-13",
+          "en": {
+            "title": "Why It Is Called the Null Hypothesis"
+          }
+        }
+      ],
+      "count": 1,
+      "termRoute": "/statistics/glossary/replication-crisis",
+      "termSlug": "replication-crisis"
+    },
+    {
+      "zh": "頻率派推論",
+      "en": "frequentist inference",
+      "slug": "頻率派推論",
+      "articles": [
+        {
+          "slug": "confidence-interval",
+          "route": "/statistics/confidence-interval",
+          "title": "到底什麼是信賴區間",
+          "topic": "inference",
+          "publishedAt": "2026-07-18",
+          "en": {
+            "title": "What a Confidence Interval Actually Is"
+          }
+        }
+      ],
+      "count": 1
+    },
+    {
+      "zh": "檢定力",
+      "en": "statistical power",
+      "slug": "檢定力",
+      "articles": [
+        {
+          "slug": "equivalence-testing",
+          "route": "/statistics/equivalence-testing",
+          "title": "怎麼證明「沒有差別」",
+          "topic": "inference",
+          "publishedAt": "2026-07-18",
+          "en": {
+            "title": "How to Show There Is No Difference"
+          }
+        }
+      ],
+      "count": 1,
+      "termRoute": "/statistics/glossary/statistical-power",
+      "termSlug": "statistical-power"
+    },
+    {
+      "zh": "觀念史",
+      "en": "history of ideas",
+      "slug": "觀念史",
+      "articles": [
+        {
+          "slug": "null-hypothesis",
+          "route": "/statistics/null-hypothesis",
+          "title": "為什麼叫虛無假設",
+          "topic": "inference",
+          "publishedAt": "2026-07-13",
+          "en": {
+            "title": "Why It Is Called the Null Hypothesis"
+          }
+        }
+      ],
+      "count": 1
+    },
+    {
+      "zh": "Fisher",
+      "en": "Fisher",
+      "slug": "fisher",
+      "articles": [
+        {
+          "slug": "null-hypothesis",
+          "route": "/statistics/null-hypothesis",
+          "title": "為什麼叫虛無假設",
+          "topic": "inference",
+          "publishedAt": "2026-07-13",
+          "en": {
+            "title": "Why It Is Called the Null Hypothesis"
+          }
+        }
+      ],
+      "count": 1
+    },
+    {
+      "zh": "Neyman",
+      "en": "Neyman",
+      "slug": "neyman",
+      "articles": [
+        {
+          "slug": "confidence-interval",
+          "route": "/statistics/confidence-interval",
+          "title": "到底什麼是信賴區間",
+          "topic": "inference",
+          "publishedAt": "2026-07-18",
+          "en": {
+            "title": "What a Confidence Interval Actually Is"
+          }
+        }
+      ],
+      "count": 1
+    },
+    {
+      "zh": "Neyman-Pearson",
+      "en": "Neyman-Pearson",
+      "slug": "neyman-pearson",
+      "articles": [
+        {
+          "slug": "null-hypothesis",
+          "route": "/statistics/null-hypothesis",
+          "title": "為什麼叫虛無假設",
+          "topic": "inference",
+          "publishedAt": "2026-07-13",
+          "en": {
+            "title": "Why It Is Called the Null Hypothesis"
+          }
+        }
+      ],
+      "count": 1
+    },
+    {
+      "zh": "p 值",
+      "en": "p value",
+      "slug": "p-值",
+      "articles": [
+        {
+          "slug": "null-hypothesis",
+          "route": "/statistics/null-hypothesis",
+          "title": "為什麼叫虛無假設",
+          "topic": "inference",
+          "publishedAt": "2026-07-13",
+          "en": {
+            "title": "Why It Is Called the Null Hypothesis"
+          }
+        }
+      ],
+      "count": 1,
+      "termRoute": "/statistics/glossary/p-value",
+      "termSlug": "p-value"
+    },
+    {
+      "zh": "TOST",
+      "en": "TOST",
+      "slug": "tost",
+      "articles": [
+        {
+          "slug": "equivalence-testing",
+          "route": "/statistics/equivalence-testing",
+          "title": "怎麼證明「沒有差別」",
+          "topic": "inference",
+          "publishedAt": "2026-07-18",
+          "en": {
+            "title": "How to Show There Is No Difference"
+          }
+        }
+      ],
+      "count": 1
     }
   ]
 }

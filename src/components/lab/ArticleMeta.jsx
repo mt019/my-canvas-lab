@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { Clock, RefreshCw, Tag } from 'lucide-react';
 
 /*
@@ -8,10 +9,17 @@ import { Clock, RefreshCw, Tag } from 'lucide-react';
  * body itself (Chinese by character, English by word, which is why it differs
  * between the two languages), and a missing tag or reading time fails validation
  * there rather than leaving a hole here.
+ *
+ * Each tag links to its own page — every other article about the same thing.
+ * The slug is language-neutral (keyed on the Chinese label) and comes paired with
+ * the tag from the data repo, so `tags[i]` and `tagSlugs[i]` are the same tag; a
+ * tag without a slug still renders, just as plain text.
  */
-export default function ArticleMeta({ publishedAt, updatedAt, readingMinutes, tags = [], lang = 'zh' }) {
+export default function ArticleMeta({ publishedAt, updatedAt, readingMinutes, tags = [], tagSlugs = [], lang = 'zh' }) {
   const en = lang === 'en';
   const changed = updatedAt && updatedAt !== publishedAt;
+  const tagClass =
+    'rounded-token-sm border border-line-soft px-1.5 py-0.5 text-ink-muted transition-colors duration-fast hover:border-accent hover:text-accent';
 
   return (
     <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 border-y border-line-soft py-3 text-token-xs text-ink-faint">
@@ -38,11 +46,17 @@ export default function ArticleMeta({ publishedAt, updatedAt, readingMinutes, ta
       {tags.length > 0 ? (
         <span className="inline-flex flex-wrap items-center gap-1.5">
           <Tag size={12} />
-          {tags.map((t) => (
-            <span key={t} className="rounded-token-sm border border-line-soft px-1.5 py-0.5 text-ink-muted">
-              {t}
-            </span>
-          ))}
+          {tags.map((t, i) =>
+            tagSlugs[i] ? (
+              <Link key={t} to={`/statistics/tags/${tagSlugs[i]}`} className={tagClass}>
+                {t}
+              </Link>
+            ) : (
+              <span key={t} className={tagClass}>
+                {t}
+              </span>
+            ),
+          )}
         </span>
       ) : null}
     </div>

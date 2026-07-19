@@ -28,6 +28,7 @@ const kebab = (name) => name.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase(
    glob a syntax for it, the two or three pages like this name their own path. */
 const PARAM_ROUTES = {
   GlossaryTerm: '/statistics/glossary/:slug',
+  TagPage: '/statistics/tags/:slug',
 };
 
 function routeFor(path) {
@@ -70,6 +71,26 @@ const PAGE_META = { // token-exempt: per-page identity chip colors (data, not st
     group: 'learn',
     listed: false,
     type: 'DefinedTerm',
+  },
+  Tags: {
+    name: '統計標籤',
+    desc: '文章的主題標籤總覽：每個標籤通往談同一件事的所有文章',
+    Icon: Sigma,
+    accent: '#dfe3ea',
+    accentText: '#6c7690',
+    group: 'learn',
+    listed: false,
+    type: 'CollectionPage',
+  },
+  TagPage: {
+    name: '統計標籤',
+    desc: '帶同一個標籤的所有文章；標籤剛好是術語時通往它的定義',
+    Icon: Sigma,
+    accent: '#dfe3ea',
+    accentText: '#6c7690',
+    group: 'learn',
+    listed: false,
+    type: 'CollectionPage',
   },
   NullHypothesis: {
     name: '為什麼叫虛無假設',

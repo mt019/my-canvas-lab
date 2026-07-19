@@ -13,8 +13,8 @@ const kebab = (s) => s.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();
 // Glossary: the standalone /statistics/glossary page was folded into the
 // Statistics Lab hub's 術語表 tab. The file stays only to redirect old links, so
 // it is kept out of prerender and the sitemap (no duplicate of the tab's content).
-const NOINDEX = new Set(['PaletteLab', 'TaipeiFilmFestival', 'Glossary']);
-const PARAM_ROUTES = { GlossaryTerm: '/statistics/glossary/:slug' };
+const NOINDEX = new Set(['PaletteLab', 'TaipeiFilmFestival', 'Glossary', 'Tags']);
+const PARAM_ROUTES = { GlossaryTerm: '/statistics/glossary/:slug', TagPage: '/statistics/tags/:slug' };
 
 function walkPages(dir, rel = '') {
   const out = [];
@@ -41,6 +41,16 @@ function glossarySlugs() {
   try {
     const g = JSON.parse(readFileSync(join(ROOT, 'src', 'data', 'statistics-glossary.json'), 'utf8'));
     return Object.keys(g.terms || {});
+  } catch {
+    return [];
+  }
+}
+
+// One route per tag, from the same derived index the runtime uses (hub.tags).
+function tagSlugs() {
+  try {
+    const h = JSON.parse(readFileSync(join(ROOT, 'src', 'data', 'statistics.json'), 'utf8'));
+    return (h.tags || []).map((t) => t.slug);
   } catch {
     return [];
   }
@@ -74,8 +84,10 @@ export function collectRoutes() {
     const name = rel.replace(/\.(jsx|tsx)$/, '').split('/').pop();
     if (NOINDEX.has(name)) continue;
     const route = routeFor(rel);
-    if (route.includes(':slug')) {
+    if (route === '/statistics/glossary/:slug') {
       for (const slug of glossarySlugs()) routes.add(`/statistics/glossary/${slug}`);
+    } else if (route === '/statistics/tags/:slug') {
+      for (const slug of tagSlugs()) routes.add(`/statistics/tags/${slug}`);
     } else {
       routes.add(route);
     }
