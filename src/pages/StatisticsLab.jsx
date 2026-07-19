@@ -150,8 +150,8 @@ export default function StatisticsLab() {
           {visibleGroups.map(({ g, list }, i) => (
             <section key={g.id} className={i === 0 ? '' : 'mt-10 border-t border-line pt-6'}>
               <h2 id={`group-${g.id}`} className="font-display text-token-lg text-ink">
-                {en ? g.en?.label ?? g.label : g.label}
-                <span className="ml-2 text-token-sm tabular-nums text-ink-faint">{c.terms(list.length)}</span>
+                {en ? g.en?.label ?? g.label : g.label}{' '}
+                <span className="text-token-sm tabular-nums text-ink-faint">{c.terms(list.length)}</span>
               </h2>
               <p className="mb-3 mt-1 text-token-sm leading-relaxed text-ink-muted">
                 {en ? g.en?.blurb ?? g.blurb : g.blurb}
