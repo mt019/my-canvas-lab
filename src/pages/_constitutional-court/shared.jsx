@@ -466,6 +466,12 @@ export function CaseCard({ d, q, reasoningDefault, pdfMode }) {
         ))}
       </div>
 
+      {/* 案名：憲判官方字號後的【…】案名（如「刑事訴訟上訴不可分原則適用範圍案」）。釋字無此欄。
+          自成一行的短標題，不擠進上方已滿的字號＋徽章列。 */}
+      {d.案名 ? (
+        <p className="mt-1 text-[14px] font-bold leading-snug text-[var(--cc-ink-strong)]">{hl(d.案名, q)}</p>
+      ) : null}
+
       {d.結論類型 && typoValues(d).some((v) => v.axis !== 'A') ? (
         <div className="mt-1.5 flex flex-wrap items-center gap-1.5" title={d.結論類型.依據 || undefined}>
           {typoValues(d).filter((v) => v.axis !== 'A').map((v) => (
