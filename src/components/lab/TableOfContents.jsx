@@ -22,6 +22,10 @@ export default function TableOfContents({ containerRef, label = '本頁目次', 
     if (!root) return undefined;
 
     const headings = [...root.querySelectorAll(levels.map((l) => `h${l}[id]`).join(', '))];
+    // Labels come from textContent, so any spacing inside a heading has to be a
+    // real character. CSS margin between a heading's parts (e.g. a count span with
+    // ml-2) shows on the page but is invisible here, so the outline would jam the
+    // parts together — put the space in the text, not in the margin.
     setItems(headings.map((h) => ({ id: h.id, text: h.textContent, level: Number(h.tagName[1]) })));
 
     // The section counts as current once its heading reaches the top third of the

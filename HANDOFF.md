@@ -231,6 +231,12 @@ processed＋LOG）；兩 repo 同步。
 過去，句號會被丟到下一行。卡片用 `createPortal` 掛到 body，否則 hover 時段落會位移。實測判準：
 全文行首孤立標點 0 處、hover 前後段落 boundingBox 相同。
 
+**標題內的間距要放進文字，不要靠 CSS margin（2026-07-19 修）**：`TableOfContents` 與 `SubOutline`
+的大綱／scroll-spy 是讀 h2/h3 的 `textContent` 生成的，**CSS margin 不進 textContent**。統計站術語表
+的組標題原本用 `<span className="ml-2">{n} 條</span>` 撐開組名與數量，頁面上有間距、但「本頁區塊」
+大綱顯示成「組成8 條」黏一起。改用 JSX `{' '}` 真實空格、拿掉 `ml-2`（`StatisticsLab.jsx`）。通則：
+凡標題會被 textContent-based 大綱消費，其內部間距一律用真實字元，兩個消費點已加行內註解。
+
 ### `IiasPublications`（中研院法研所出版品，2026-07-11）
 
 Backed by sibling `../iias-publications-data` repo（GitHub mt019/iias-publications-data，

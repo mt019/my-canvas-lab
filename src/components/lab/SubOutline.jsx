@@ -18,6 +18,9 @@ export default function SubOutline({ containerRef, refreshKey }) {
     if (!root) return undefined;
 
     const nodes = [...root.querySelectorAll('h2[id], h3[id]')];
+    // Labels are textContent: spacing inside a heading must be a real character.
+    // A CSS margin between heading parts (e.g. a count span) shows on the page but
+    // not here, so the outline would jam them together. Space goes in the text.
     const grps = [];
     for (const n of nodes) {
       if (n.tagName === 'H2') grps.push({ id: n.id, text: n.textContent, children: [] });
