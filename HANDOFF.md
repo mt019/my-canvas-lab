@@ -1072,6 +1072,81 @@ logical/`PAGE_META.group` grouping for the homepage display, separate
 from the question of whether `src/pages/` should be physically split
 into subfolders — see "Declined" below; the two aren't in tension.)
 
+## 憲法法庭年度密度圖：頂線式畫法（2026-07-20）
+
+`TimelineView.jsx` 的年度密度長條（100 根、跨 1927–2026、對數軸）反覆調色調不好看，連換
+四輪填色濃度（半透明 24%／實色 color-mix 52/60/40%）都被使用者否掉。根因不是選色，是
+**校準色的 `-tx` 彩度只有 0.05–0.10（莫蘭迪、故意壓低，DESIGN.md 明說它是為 badge／細線這種
+小面積設計的），鋪成大面積長條時，濃了沉悶、淡了發灰，先天不討好**。使用者自己點破關鍵：
+同一套色在右欄滾輪時間軸（`TimeRail.jsx`）上好看、在長條上醜——差別在面積。
+
+解法是複刻滾輪的用色：滾輪把深墨色只用在 1.5px 刻度線與 7px 焦點圓點（小面積），大面積時代帶
+用極淡 `-bg`＋0.38 透明。密度圖照做——每根長條拆兩層：主體（茎）用 `color-mix(-tx 22%, -bg)`
+的淡彩（大面積、不透背後參考線），頂端一道 3.4px 的 `-tx` 滿色深墨細線承載色相辨識（小面積）。
+茎不能用純 `-bg`：那太淡，rose 的 `-bg`（`#f7edf0`）在近白 paper 上幾乎消失——踩過。hover 非當前
+年時茎降到 0.82、頂線降到 0.6（都別更低，否則粉色那類淡色會不見——踩過兩次）。色相回到與滾輪
+`RAIL_TONE` 同一套 cat 槽（`ERA_TONE`），全頁統一。
+
+這是「換畫法而非再調數字」的案例：同一參數連調四輪都不對，就是該換路的信號，不是繼續調。
+過程中一度試把機關色改用空污費頁的候選 hex（`ERA_PAINT`），被使用者否（大面積長條上一樣醜），
+已撤除。**未竟**：密度圖頂線式的最終觀感待使用者拍板；`ERA_TONE` 裡最高法院 teal(H182) 與
+司法院 green(H139) 在滾輪淡帶下略難分，使用者提過但未修（記於 TODO）。
+
+**空窗年空心環（2026-07-20 追加）**：1950、1951 是全序列唯一整年零解釋的年份（1949 底政府遷台、
+大法官四散人數不足、會議無法召開，至 1952.05 釋字第3號恢復）。原本 `!byYear.get(y)` 直接
+`return null`＝該年默默消失、不能 hover，使用者要「空也要能護出標籤解釋為何空」。改法：空年若在
+`timelineGaps` 內就畫一個立在軸底的空心小環（`circle` fill none、色相取自該筆 `屬`、r 1.7、平時
+strokeOpacity 0.5／hover 0.95），hover 時 `hover.empty` 分支讓 tooltip 換成換行的說明句（max-w-280
+居中，非件數那條的 nowrap）。史脈另補一句進圖下散文。**史實文字走 data-repo-first，不寫死在 canvas**：
+使用者追問「資料段要不要補」後改為——資料倉 `data/materials/年表空窗註記.json` curate（含查證來源），
+`build-app-json.mjs` 公開投影成快照頂層 `年表空窗註記`（`查證`／`產生` 內部欄剝除），前端經
+`shared.jsx` 的 `timelineGaps` 只讀不寫。要新增空窗（如未來某年缺額）改資料倉那支 JSON、`npm run
+app-json && sync` 即可，前端零改。schema 見資料倉 `docs/data-contract.md`。
+
+## 全站預設色票：陶土粉（2026-07-20）
+
+`DEFAULT_PALETTE_ID` 從 `neutral-interim` 換成 `terracotta`，且該票的值烘進了
+`tokens.css` 的 `--c-*`。在此之前，站上「選定的色票」只存在每台瀏覽器的
+localStorage 裡——**首次到訪的讀者、459 個預渲染頁面、以及輻射出去的 MkDocs，
+拿到的全是過渡中性票**，那是 2026-07-07 標明「PaletteLab 決定前的暫用值」而後
+一直沒有人回來收尾的東西。
+
+兩處值必須一起改：`palettes.js` 的條目與 `tokens.css`。`applySitePalette()`
+對預設票的做法是移除全部 inline 覆寫、讓 tokens.css 露出來，所以兩邊不一致的話，
+使用者從別的票「選回預設」會得到第三個顏色。改完跑 `validate:tokens` 與
+`validate:colors`，再 grep 建置產物確認 `dist/assets/*.css` 裡是新值（first paint
+不該等 JS）。設計依據與 accent 的使用邊界寫在 `docs/DESIGN.md` 色票庫節。
+
+**已知缺口**：`validate-color-system.mjs` 只驗 Layer-0 的 `--tone-*` 八對，
+色票角色 `--c-*` 沒有任何機器檢查。分類色是機器擋出來的，全站色票好不好看純粹
+靠人選。補檢查的三條判準列在 `TODO.md` 全局節。
+
+## AirPollutionFee：改用共用儀表板殼（2026-07-20）
+
+964 行的單檔頁改成 TaxLitigation 那個形狀：薄殼 `AirPollutionFee.jsx`（~75 行）
+＋ `src/pages/_air-pollution-fee/`（`data.js` 純資料、`shared.jsx` 小零件、七個
+View）。連帶清掉三樣東西：自帶的 40 個 `--apf-*` 色變數（原本靠 `// token-exempt`
+標記豁免檢查，現在真的乾淨，`validate:tokens` 從 110 檔增至 118 檔通過）、四個
+複製版 `Accordion`／`InfoBox`／`BulletList`／`Tag`（改用 `components/lab/`）、
+以及寫死的 `text-[9px]`／`text-[12px]`（改 token 字級——寫死 px 會讓字級控制器
+對這頁完全無效，殼的 `reader-scale` 縮放不到它們）。
+
+費率查詢原本埋在「構成要件」底下一顆要點開的按鈕裡，現在是獨立分頁。
+
+**配色上踩過的一個彎路值得記**：中途一度新開了一個 `theme.js`，把那 40 個色變數
+整理成 18 對手寫 hex 並按色相命名（green/purple/gold）——那是在設計系統外另立一套
+色，`Badge.jsx` 的註解明寫呼叫端只能選意義不能選色碼，而且沒有任何 validator 管得到。
+使用者當場擋下。最後的做法是：真正帶資訊的分類維度只有污染物那四個（＋收入來源三個），
+各自吃 `cat-1…cat-4`；逃漏五節是意義不是類別，吃語意槽；章節圖示色、九個年份標記色、
+七段支出色不在頁面上使用——一項一個色相是裝飾不是資訊，識別本來就靠旁邊的標籤。
+`data.js` 現在零 hex。
+
+**但那些顏色本身留著，沒有丟。** 18 對「淡底＋深墨」移進
+`src/styles/tone-candidates.js`，當作 Layer-0 的擴充候選——tokens.css 現在只有 8 對，
+單是空污費一頁就要 7 個分類槽，遲早不夠用。該檔的檔頭寫了實算出來的分析（見下方
+「這組色為什麼好看」節），以及照抄進 Layer-0 會踩到的四處超標。**還沒重新校準，
+所以目前只是倉庫，不要直接引用。**
+
 ## Design system (tokens + shared components)
 
 Single source of truth: `src/styles/tokens.css` (plain CSS custom properties,

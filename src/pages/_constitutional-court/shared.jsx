@@ -62,6 +62,9 @@ export const justices = data.大法官;
 export const coSign = data.共同具名;
 export const citeEdges = data.引用網絡;
 export const presidents = data.總統任期 ?? [];
+// 年表空窗註記（資料倉 curate、build-app-json 投影）：整年零解釋且屬史實的年段，供密度圖畫可 hover 的
+// 空窗標記。每筆 { 起, 迄, 屬, 說明, 來源 }。目前僅 1950–51 政府遷台。缺鍵則空陣列（前端不畫空窗標記）。
+export const timelineGaps = data.年表空窗註記 ?? [];
 
 // 字號 → 案件文件的全域查找表，供 <CaseRef> 由任一處字號回連官方頁並取一句話爭點預覽。
 const docByNo = new Map(docs.map((d) => [d.字號, d]));
@@ -155,10 +158,16 @@ function JusticeRef({ name, className = '' }) {
 // 釋憲文件類型 ↔ 制度沿革機關階段 的單一對應表：同一機關作成的文件與其沿革階段共用 --cat-* 分類色位，
 // 讓「案件時間軸」的色條與「制度沿革」四段對得起來：解釋(釋字)＝大法官階段、判決/裁定＝憲法法庭階段(憲判)、
 // 最高法院解字、司法院院字/院解字各自成段；四段在同一條合併時間軸相接。
-export const ERA_TONE = { 大理院: 6, 最高法院: 8, 司法院: 4, 釋字: 7, 憲判: 2 };
+// 機關色＝cat 校準槽，與右欄滾輪 RAIL_TONE 同一套，全頁統一。曾在密度圖上把司法院配成大面積
+// 深綠、或用 amber 土黃而顯醜——根因不是選色，是「低飽和校準色鋪大面積」先天不討好（校準色的
+// -tx 彩度只有 0.05–0.10，本就是為 badge／細線這種小面積設計的）。已由密度圖改用頂線式畫法
+// （深色縮回 2px 細線、大面積吃極淡 -bg，複刻右欄滾輪；見 TimelineView）從根上解掉，所以色相
+// 分配回到最簡：只避開使用者明令禁用的 amber(土黃)與 slate(灰)，其餘依時序取色。
+// 已知小問題：最高法院 teal(H182) 與司法院 green(H139) 在滾輪淡帶下略難分（見 TODO，未修）。
+export const ERA_TONE = { 大理院: 6, 最高法院: 5, 司法院: 3, 釋字: 7, 憲判: 2 };
 // 年度密度堆疊條＝淡底＋ink 細線：解釋吃 釋字 色位（rose，維持頁面 rose 識別）、判決吃 憲判 色位（blue），
 // 兩者與沿革同機關階段同色；實體裁定同屬憲法法庭時期、另給 green 以在堆疊中可辨。大面積吃淡底 -bg、境界與圖例用 ink -tx。
-const TYPE_TONE = { 解釋: ERA_TONE.釋字, 判決: ERA_TONE.憲判, 實體裁定: 3 };
+const TYPE_TONE = { 解釋: ERA_TONE.釋字, 判決: ERA_TONE.憲判, 實體裁定: 3 }; // 堆疊三項色相間距 63°/143°/154°、彩度 1.2 倍內
 const typeInk = (k) => `var(--cat-${TYPE_TONE[k]}-tx)`;
 const OUTCOME_TONE = {
   違憲: 'red',

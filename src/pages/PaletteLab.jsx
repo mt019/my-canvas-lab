@@ -11,6 +11,7 @@ import {
   setSiteTexture,
   tokensSnippet,
 } from '../styles/palettes.js';
+import { POLLUTANT_TONES, SECTION_TONES, SEGMENT_FILLS } from '../styles/tone-candidates.js';
 
 /*
  * 這個測驗不再生成任何顏色——上一版用公式硬算色塊，結果跟站內真正的色票庫（PALETTES，
@@ -418,6 +419,104 @@ function TasteQuiz() {
   );
 }
 
+/*
+ * 分類色候選（tone-candidates.js 的 18 對）。這裡不只是把色塊印出來——每一對都當場
+ * 算 OKLCH 並對照 validate-color-system.mjs 的帶寬，超標的直接標出來。沒有這一欄的話，
+ * 「好不好看」與「進不進得了系統」會被混為一談：這 18 對好看，但有四處超標。
+ */
+const BANDS = { txL: [0.46, 0.58], txC: [0.045, 0.13], bgL: [0.90, 0.97], bgC: [0, 0.035] };
+
+function outOfBand(v, [lo, hi]) {
+  return v < lo || v > hi;
+}
+
+function ToneRow({ name, bg, ink }) {
+  const B = hexToOklch(bg);
+  const I = ink ? hexToOklch(ink) : null;
+  let hueGap = null;
+  if (I) {
+    const d = Math.abs(B.H - I.H);
+    hueGap = Math.round(d > 180 ? 360 - d : d);
+  }
+  const flags = [];
+  if (I && outOfBand(I.L, BANDS.txL)) flags.push(`墨色明度 ${I.L.toFixed(3)}`);
+  if (I && outOfBand(I.C, BANDS.txC)) flags.push(`墨色彩度 ${I.C.toFixed(3)}`);
+  if (outOfBand(B.L, BANDS.bgL)) flags.push(`底色明度 ${B.L.toFixed(3)}`);
+  if (outOfBand(B.C, BANDS.bgC)) flags.push(`底色彩度 ${B.C.toFixed(3)}`);
+
+  return (
+    <div className="flex flex-wrap items-center gap-x-4 gap-y-2 border-b py-3 last:border-b-0" style={{ borderColor: 'var(--pl-line)' }}>
+      {/* 實際用法的樣子：淡底填色＋同色相墨色細框與文字 */}
+      <div
+        className="flex h-9 w-32 shrink-0 items-center justify-center rounded-md border text-[12px] font-bold"
+        style={{ background: bg, borderColor: ink ?? 'transparent', color: ink ?? 'var(--pl-ink-muted)' }}
+      >
+        {name}
+      </div>
+      <div className="flex shrink-0 items-center gap-1.5">
+        <span className="size-4 rounded-full" style={{ background: bg }} title={bg} />
+        {ink ? <span className="size-4 rounded-full" style={{ background: ink }} title={ink} /> : null}
+        <code className="ml-1 text-[11px]" style={{ color: 'var(--pl-ink-faint)' }}>
+          {bg}{ink ? ` / ${ink}` : ''}
+        </code>
+      </div>
+      <div className="shrink-0 whitespace-nowrap font-mono text-[11px] tabular-nums" style={{ color: 'var(--pl-ink-muted)' }}>
+        底 L{B.L.toFixed(2)} H{Math.round(B.H)}
+        {I ? `　墨 L${I.L.toFixed(2)} C${I.C.toFixed(3)} H${Math.round(I.H)}` : ''}
+        {hueGap != null ? `　色相差 ${hueGap}°` : ''}
+      </div>
+      {flags.length ? (
+        <span className="rounded-full px-2 py-0.5 text-[11px]" style={{ background: 'var(--pl-surface)', color: 'var(--pl-pop)' }}>
+          超標：{flags.join('、')}
+        </span>
+      ) : (
+        <span className="text-[11px]" style={{ color: 'var(--pl-ink-faint)' }}>帶內</span>
+      )}
+    </div>
+  );
+}
+
+function ToneCandidates() {
+  const groups = [
+    { label: '污染物識別色（原為實色色塊，底色偏深）', entries: Object.entries(POLLUTANT_TONES) },
+    { label: '章節・條目・時間軸（較接近站內帶寬，是比較好的擴充候選）', entries: Object.entries(SECTION_TONES) },
+  ];
+  return (
+    <div>
+      <h2 className="font-display text-xl">分類色候選</h2>
+      <p className="mt-2 max-w-3xl text-[14px] leading-relaxed" style={{ color: 'var(--pl-ink-muted)' }}>
+        這 18 對「淡底＋深墨」原本是空氣污染防制費頁自帶的識別色。它們同色相配對（色相差中位數約 8°）、
+        墨色明度全部擠在 L 0.39–0.52，色相卻鋪滿整個色環——明度齊一負責和諧，色相多樣負責豐富。
+        它靠的是把 hex 通道值鎖在一把量化梯子上（墨色每階 8、底色每階 4），不是逐個憑眼睛調。
+      </p>
+      <p className="mt-3 max-w-3xl text-[14px] leading-relaxed" style={{ color: 'var(--pl-ink-muted)' }}>
+        右邊標「超標」的，是照 <code>validate-color-system.mjs</code> 的帶寬實算出來的——<strong>好看與進得了系統是兩件事</strong>。
+        要升進 tokens.css 的 Layer-0，得保留色相（色相才是身分）、把明度與彩度收進帶內。
+      </p>
+
+      {groups.map((g) => (
+        <div key={g.label} className="mt-7">
+          <div className="mb-1 text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: 'var(--pl-ink-faint)' }}>
+            {g.label}
+          </div>
+          {g.entries.map(([name, pair]) => (
+            <ToneRow key={name} name={name} bg={pair.bg} ink={pair.ink} />
+          ))}
+        </div>
+      ))}
+
+      <div className="mt-7">
+        <div className="mb-1 text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: 'var(--pl-ink-faint)' }}>
+          支出分段底色（當年只有底色，沒配墨色）
+        </div>
+        {Object.entries(SEGMENT_FILLS).map(([name, hex]) => (
+          <ToneRow key={name} name={name} bg={hex} ink={null} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function PaletteLab() {
   const [mode, setMode] = useState('browse');
   const [activeId, setActiveId] = useState(() => getSitePaletteId());
@@ -484,7 +583,7 @@ export default function PaletteLab() {
         </p>
 
         <div className="mt-5 inline-flex rounded-md border p-0.5" style={{ borderColor: 'var(--pl-line)' }}>
-          {[['browse', '試穿色票'], ['quiz', '品味測驗']].map(([id, label]) => (
+          {[['browse', '試穿色票'], ['tones', '分類色候選'], ['quiz', '品味測驗']].map(([id, label]) => (
             <button
               key={id}
               onClick={() => setMode(id)}
@@ -502,6 +601,10 @@ export default function PaletteLab() {
         {mode === 'quiz' ? (
           <div className="mt-8 rounded-lg border p-6 sm:p-8" style={{ borderColor: 'var(--pl-line)', background: 'var(--pl-surface)' }}>
             <TasteQuiz />
+          </div>
+        ) : mode === 'tones' ? (
+          <div className="mt-8">
+            <ToneCandidates />
           </div>
         ) : (
         <div className="mt-8 grid gap-8 lg:grid-cols-[300px_1fr] lg:items-start">

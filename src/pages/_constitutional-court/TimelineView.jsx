@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { ERA_TONE, citeEdges, docs } from './shared';
+import { ERA_TONE, citeEdges, docs, timelineGaps } from './shared';
 import TopicHeatmaps from './TopicHeatmaps';
 
 // 合併案件時間軸的四條「解釋機制」色帶（沿革同色，時間上前後相接、幾乎不重疊）：
@@ -11,6 +11,17 @@ const BANDS = [
   { key: '憲法法庭', tone: ERA_TONE.憲判, label: '憲法法庭　判決・裁定' },
 ];
 const BAND_TONE = Object.fromEntries(BANDS.map((b) => [b.key, b.tone]));
+
+// 零案件的「空窗年」：整年無解釋、且屬史實而非資料漏收的年段。內容一律來自資料倉（`timelineGaps`，
+// 每筆 { 起, 迄, 屬, 說明, 來源 }，經 build-app-json 投影進快照），前端不寫死史實——史實是資料、
+// 前端只負責畫。目前只有 1950–51 政府遷台一筆（1949 底遷台、大法官四散人數不足、會議無法召開，
+// 至 1952.05 釋字第3號恢復）。展開成 年→{說明, tone} 的查詢表：`屬` 決定用哪個時代色相（色相是
+// 呈現、留在前端），`說明` 是 hover 標籤要顯示的文字。不入此表的空年仍 return null（留白）。
+const EMPTY_YEAR_INFO = new Map();
+for (const g of timelineGaps) {
+  const tone = ERA_TONE[g.屬] ?? ERA_TONE.釋字;
+  for (let y = g.起; y <= g.迄; y++) EMPTY_YEAR_INFO.set(y, { 說明: g.說明, tone });
+}
 const bandOf = (d) => {
   if (d.系列 === '統字') return null; // 大理院，無作成日期
   if (d.系列 === '解字') return '最高法院解字';
@@ -94,7 +105,8 @@ export default function TimelineView() {
         <div className="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-[12px] text-[var(--cc-ink-soft)]">
           {BANDS.map((b) => (
             <span key={b.key} className="inline-flex items-center gap-1.5">
-              <span className="h-2.5 w-2.5 rounded-sm border" style={{ background: `var(--cat-${b.tone}-bg)`, borderColor: `var(--cat-${b.tone}-tx)` }} />
+              {/* 圖例的色塊要跟圖裡的長條同一種畫法，否則對不起來 */}
+              <span className="h-2.5 w-2.5 rounded-[3px]" style={{ background: `color-mix(in oklab, var(--cat-${b.tone}-tx) 60%, var(--cat-${b.tone}-bg))` }} />
               {b.label}
             </span>
           ))}
@@ -103,13 +115,37 @@ export default function TimelineView() {
           <svg viewBox={`0 0 ${svgW} ${svgH}`} preserveAspectRatio="xMinYMin meet" role="img" aria-label="每年作成件數對數長條圖" style={{ width: '100%', height: 'auto', maxWidth: svgW }}>
             {[1, 10, 100].filter((g) => g <= maxTotal).map((g) => (
               <g key={g}>
-                <line x1={PAD_L} y1={yAt(g)} x2={PAD_L + chartW} y2={yAt(g)} stroke="var(--cc-line)" strokeWidth={1} />
+                <line x1={PAD_L} y1={yAt(g)} x2={PAD_L + chartW} y2={yAt(g)} stroke="var(--cc-line)" strokeWidth={1} strokeOpacity={0.55} />
                 <text x={PAD_L - 5} y={yAt(g) + 3} textAnchor="end" fontSize={9} fill="var(--cc-axis-text)">{g}</text>
               </g>
             ))}
             {span.map((y, i) => {
               const v = byYear.get(y);
-              if (!v) return null;
+              if (!v) {
+                // 空窗年（目前 1950–51 政府遷台）：不 return null，改畫一個立在軸底的空心小環、可 hover。
+                // 空心＝「該有卻沒有」（有其它年那種實心色柱作對比）；色相取自資料倉該筆的 `屬`（釋字期）。
+                const info = EMPTY_YEAR_INFO.get(y);
+                if (!info) return null;
+                const focus = hover && hover.y === y;
+                return (
+                  <g key={y} transform={`translate(${PAD_L + i * W}, 0)`}
+                    onMouseEnter={() => setHover({ y, empty: true, 說明: info.說明 })}
+                    onMouseLeave={() => setHover(null)}>
+                    <rect x={0} y={PAD_T} width={W} height={H} fill="transparent" />
+                    {/* 空心環立在軸底（count=1 線稍下方，示意「不足一件」）。逐一交代參數：
+                        cy PAD_T+H-2：環心到軸底的距離，2px；越大越往上浮。
+                        r 1.7：環半徑（px），越大環越大。
+                        strokeWidth 1：環厚。fill none＝空心，是「缺席」的視覺語言。
+                        strokeOpacity {focus ? 0.95 : 0.5}：平時 0.5 克制不搶戲，hover 該年時加深到 0.95。 */}
+                    <circle cx={W / 2} cy={PAD_T + H - 2} r={1.7} fill="none"
+                      stroke={`var(--cat-${info.tone}-tx)`} strokeWidth={1}
+                      strokeOpacity={focus ? 0.95 : 0.5} />
+                    {y % 10 === 0 ? (
+                      <text x={W / 2} y={PAD_T + H + 14} textAnchor="middle" fontSize={9.5} fill="var(--cc-axis-text)">{y}</text>
+                    ) : null}
+                  </g>
+                );
+              }
               const tone = BAND_TONE[v.band];
               const top = yAt(v.total);
               return (
@@ -117,7 +153,26 @@ export default function TimelineView() {
                   onMouseEnter={() => setHover({ y, ...v })}
                   onMouseLeave={() => setHover(null)}>
                   <rect x={0} y={PAD_T} width={W} height={H} fill="transparent" />
-                  <rect x={0.75} y={top} width={W - 1.5} height={PAD_T + H - top} rx={1} fill={`var(--cat-${tone}-bg)`} stroke={`var(--cat-${tone}-tx)`} strokeWidth={0.6} opacity={hover && hover.y !== y ? 0.4 : 1} />
+                  {/* 每根長條拆兩層，複刻右欄滾輪時間軸（TimeRail）的用色原則：深墨色只出現在小面積
+                      （滾輪用在 1.5px 刻度線）、大面積吃極淡底。因為校準色的 -tx 彩度只有 0.05–0.10
+                      （為 badge／細線設計），鋪成大面積長條時濃了沉悶、淡了發灰，怎麼調都不對——使用者
+                      2026-07-20 連否四輪填色濃度後拍板改此畫法。逐一交代每個參數控制什麼：
+
+                      〔第一個 rect＝茎，佔滿長條高度的主體〕
+                        fill  color-mix(-tx 22%, -bg)：茎的淡彩濃度，22% 深墨混進近白底。這個數字越大茎
+                              越實、越小越淡。不可用純 -bg——太淡，rose 的 -bg（近乎白的極淡粉）在近白
+                              paper 上會消失（踩過）。
+                        opacity {hover 非焦點年 ? 0.82 : 1}：hover 時其它年的淡出程度。0.82，不可低於
+                              0.8，否則粉色那類淡色在 hover 態會不見（踩過兩次）。沒 hover 時為 1（滿）。
+
+                      〔第二個 rect＝頂帽，頂端那道承載色相辨識的深墨細線〕
+                        height Math.min(2.6, 條高)：頂帽厚度（px）。2.6（原 3.4，2026-07-20 使用者要求再細
+                              一點）。這個數字越大頂帽越粗。取 min(條高) 是防矮條（count 小、整條高度不到
+                              2.6px）被頂帽撐爆變形。
+                        opacity {hover 非焦點年 ? 0.6 : 1}：hover 時其它年淡出到 0.6；沒 hover 為 1（滿色
+                              深墨，才看得清）。 */}
+                  <rect x={0.75} y={top} width={W - 1.5} height={PAD_T + H - top} rx={1} fill={`color-mix(in oklab, var(--cat-${tone}-tx) 22%, var(--cat-${tone}-bg))`} opacity={hover && hover.y !== y ? 0.82 : 1} />
+                  <rect x={0.75} y={top} width={W - 1.5} height={Math.min(2.6, PAD_T + H - top)} rx={1} fill={`var(--cat-${tone}-tx)`} opacity={hover && hover.y !== y ? 0.6 : 1} />
                   {y % 10 === 0 ? (
                     <text x={W / 2} y={PAD_T + H + 14} textAnchor="middle" fontSize={9.5} fill="var(--cc-axis-text)">{y}</text>
                   ) : null}
@@ -137,14 +192,28 @@ export default function TimelineView() {
             })}
           </svg>
           {hover ? (
-            <div className="pointer-events-none absolute left-8 top-1 rounded-md border border-[var(--cc-border)] bg-white px-3 py-1.5 text-[12px] shadow-sm">
-              <strong className="text-[var(--cc-ink-strong)]">{hover.y} 年</strong>　共 {hover.total} 件
-              {Object.entries(hover.detail).map(([k, n]) => `　${k} ${n}`).join('')}
+            // 標籤固定在圖表頂部正中（left-1/2 + -translate-x-1/2），不跟游標移動。理由：圖的頂部
+            // 中段（1960–2010 釋字期都是個位到十餘件的矮條）恆是留白，標籤置中就落在這片空白上、
+            // 不壓任何條；而舊版寫死在左上角（left-8）會永遠擋住左邊司法院那片上百件的高條。
+            // 曾試「跟著 hover 的條走」，被否——跟隨反而把標籤帶到當前那根條頭上。top-1＝貼圖頂。
+            // 空窗年的說明句較長，改用固定寬度換行（max-w＋居中對齊）；件數標籤仍維持不換行單行。
+            <div className={`pointer-events-none absolute left-1/2 top-1 -translate-x-1/2 rounded-md border border-[var(--cc-border)] bg-white px-3 py-1.5 text-[12px] shadow-sm ${hover.empty ? 'max-w-[280px] text-center leading-relaxed' : 'whitespace-nowrap'}`}>
+              {hover.empty ? (
+                <>
+                  <strong className="text-[var(--cc-ink-strong)]">{hover.y} 年 · 無解釋</strong>
+                  <span className="mt-0.5 block text-[var(--cc-ink-soft)]">{hover.說明}</span>
+                </>
+              ) : (
+                <>
+                  <strong className="text-[var(--cc-ink-strong)]">{hover.y} 年</strong>　共 {hover.total} 件
+                  {Object.entries(hover.detail).map(([k, n]) => `　${k} ${n}`).join('')}
+                </>
+              )}
             </div>
           ) : null}
         </div>
         <p className="mt-1 max-w-3xl text-[12px] leading-relaxed text-[var(--cc-ink-soft)]">
-          縱軸為對數刻度（每格 ×10）：統一解釋期每年上百件、釋字期每年個位到十餘件，跨兩個量級，對數軸方能同框並列。1948 年院解字止、1949 年釋字起，中間無縫接續——司法院的統一解釋轉為大法官解釋，同一釋憲脈絡的延續。大理院統字 2,011 件未載作成日期，號次雖為大致時序卻無公曆年，不入此軸（見下）。2022 年憲法訴訟法施行後，改由憲法法庭以判決、裁定行使職權；2024 年底起大法官人數不足，作成件數明顯下降。
+          縱軸為對數刻度（每格 ×10）：統一解釋期每年上百件、釋字期每年個位到十餘件，跨兩個量級，對數軸方能同框並列。1948 年院解字止、1949 年釋字起，中間銜接無斷——司法院的統一解釋轉為大法官解釋，同一釋憲脈絡的延續。惟 1950、1951 兩年整年無解釋，是全序列唯一的空窗：1949 年底政府遷台，大法官四散、人數不足，會議無法召開，至 1952 年釋字第3號始恢復（滑過那兩個軸底空環可見說明）。大理院統字 2,011 件未載作成日期，號次雖為大致時序卻無公曆年，不入此軸（見下）。2022 年憲法訴訟法施行後，改由憲法法庭以判決、裁定行使職權；2024 年底起大法官人數不足，作成件數明顯下降。
         </p>
       </section>
 
@@ -226,7 +295,7 @@ function Pre1947Supplement() {
       </div>
     );
   };
-  const 系列TONE = { 統字: ERA_TONE.大理院, 解字: ERA_TONE.最高法院, 院字: ERA_TONE.司法院, 院解字: 3 };
+  const 系列TONE = { 統字: ERA_TONE.大理院, 解字: ERA_TONE.最高法院, 院字: ERA_TONE.司法院, 院解字: 2 }; // 統字red6/解字teal5/院字green3/院解字blue2，四類皆分得開 // 院解字改 plum(H358)：最高法院已改吃 cat-3，原本的 3 會在同一張圖裡撞色
 
   return (
     <>

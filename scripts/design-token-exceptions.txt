@@ -1,5 +1,5 @@
 # Files not yet migrated to design tokens (src/styles/tokens.css).
-# Ratchet: this list may only shrink. Remove a file once migrated; never add back.
+# This list may only shrink. Remove a file once migrated; never add one back.
 # Batch C (own isolated palettes; repoint values to tokens, keep architecture)
 src/pages/FiscalEnforcementRisk.jsx
 src/pages/InternationalTaxOps.jsx

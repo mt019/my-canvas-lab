@@ -8,24 +8,29 @@
  * next to their @font-face declarations (stable, don't re-derive).
  */
 :root {
-  /* Color roles — interim neutral default (2026-07-07). The warm-cream +
-     sage-teal combo was banned by the user as "AI default"; this cool
-     near-white / near-black set holds the fort until a palette is chosen
-     on the PaletteLab page. Page identity palettes stay local to each
-     page's wrapper. */
-  --c-paper: #fdfdfc;          /* main body background — the only allowed prose backdrop */
-  --c-surface: #f6f7f8;        /* cards, sidebars, quiet panels */
+  /* Color roles — 陶土粉 (terracotta), chosen 2026-07-20. Grew out of the air
+     pollution fee page's own look and was picked on PaletteLab; these values
+     are that palette's entry in palettes.js, baked in here so a first visit,
+     a prerendered page, and a MkDocs site all get it without waiting for
+     bootSitePalette() to run. Keep the two in sync: editing one alone makes
+     the page change color on hydration.
+     Per the standing rule, paper stays near-white — the terracotta lives in
+     surface/line (frames, cards, rules), never under prose. Readers can still
+     pick any other palette (localStorage); this is the no-setting default.
+     Page identity palettes stay local to each page's wrapper. */
+  --c-paper: #fdfaf9;          /* main body background — the only allowed prose backdrop */
+  --c-surface: #f5eceb;        /* cards, sidebars, quiet panels */
   --c-surface-raised: #ffffff; /* elevated cards, popovers */
-  --c-ink: #1f2328;            /* primary text */
-  --c-ink-muted: #57606a;      /* secondary text */
-  --c-ink-faint: #848d97;      /* tertiary text, captions */
-  --c-line: #d1d9e0;           /* borders, dividers */
-  --c-line-soft: #eaeef2;      /* hairlines, table grids */
-  --c-accent: #3d5a80;         /* desaturated deep blue (interim; PaletteLab decides) */
-  --c-accent-soft: #e7edf4;    /* accent wash for chips, hovers */
+  --c-ink: #5a4b48;            /* primary text */
+  --c-ink-muted: #8a7a78;      /* secondary text */
+  --c-ink-faint: #c5b4b2;      /* tertiary text, captions */
+  --c-line: #e8d3d1;           /* borders, dividers */
+  --c-line-soft: #f5eceb;      /* hairlines, table grids — surface stands in (see ROLE_TO_TOKEN) */
+  --c-accent: #b08060;         /* warm terracotta */
+  --c-accent-soft: #f5eceb;    /* accent wash for chips, hovers — surface stands in */
   --c-warn: #9a6700;
   --c-danger: #a3403a;
-  --c-info: #4a6d8c;
+  --c-info: #4a6880;           /* the palette's accent2: a misty blue against the warm frame */
   --c-pop: #a3403a;            /* clash color — at most one appearance per view */
   --c-accent-grad: none;       /* metallic accent gradient (e.g. gold foil), set by palette */
 

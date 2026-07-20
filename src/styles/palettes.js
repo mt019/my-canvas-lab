@@ -38,7 +38,7 @@ export const PALETTES = [
   {
     id: 'terracotta',
     name: '陶土粉',
-    story: '空氣污染費頁現用。暖陶粉作框、褐墨、一抹霧藍。',
+    story: '全站預設（2026-07-20 選定，原是空氣污染費頁的識別色）。暖陶粉作框、褐墨、一抹霧藍。',
     origin: '站內',
     vars: { paper: '#fdfaf9', surface: '#f5eceb', ink: '#5a4b48', inkMuted: '#8a7a78', inkFaint: '#c5b4b2', line: '#e8d3d1', accent: '#b08060', accent2: '#4a6880' },
   },
@@ -59,7 +59,7 @@ export const PALETTES = [
   {
     id: 'neutral-interim',
     name: '過渡中性',
-    story: '選定前的安全牌：冷白、近黑、壓灰的深藍。',
+    story: '2026-07 陶土粉選定前的預設票，留著當冷色對照：冷白、近黑、壓灰的深藍。',
     origin: '站內',
     vars: { paper: '#fdfdfc', surface: '#f6f7f8', ink: '#1f2328', inkMuted: '#57606a', inkFaint: '#848d97', line: '#d1d9e0', accent: '#3d5a80', accent2: '#4a6d8c' },
   },
@@ -214,7 +214,12 @@ export const TEXTURES = [
   },
 ];
 
-export const DEFAULT_PALETTE_ID = 'neutral-interim';
+/*
+ * 預設票＝tokens.css 裡烘死的那一套（陶土粉）。這兩處必須同時改：applySitePalette()
+ * 對預設票的做法是「把 inline 覆寫全部移除、讓 tokens.css 露出來」，兩邊值不一致
+ * 的話，選回預設票會變成另一個顏色。
+ */
+export const DEFAULT_PALETTE_ID = 'terracotta';
 export const DEFAULT_TEXTURE_ID = 'none';
 const STORAGE_KEY = 'canvaslab:palette';
 const TEXTURE_KEY = 'canvaslab:texture';
