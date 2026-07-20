@@ -20,30 +20,15 @@ const DEFAULT_INTEREST = {
 const INTEREST_LABEL = { interested: '感興趣', maybe: '可能', excluded: '排除' };
 const INTEREST_TONE = { interested: 'success', maybe: 'warning', excluded: 'neutral' };
 
-// My curated picks for the 2026 edition — the personal half of the record.
+// The films I actually went to. Nothing aspirational lives here — the full
+// 108-program catalogue is one tab over, and that is where unwatched films belong.
 const WATCHLIST = [
-  { id: '2059851638187614208', title: '左撇子女孩', priority: 4, lane: '台灣新片', creators: '鄒時擎', why: '平日日場，台灣家庭與女性視角。' },
-  { id: '2059847212707586048', title: '女孩', priority: 5, lane: '台灣新片', creators: '舒淇', why: '舒淇導演作品，主創與國際影展路徑明確。' },
-  { id: '2059595864451817473', title: '大濛', priority: 6, lane: '台灣新片', creators: '陳玉勳', why: '今年台灣片重點，白色恐怖題材。' },
-  { id: '2056645779652419585', title: '鯽魚', priority: 8, lane: '台灣新片', creators: '張哲龍', why: '台灣民俗、觀落陰與舞台劇改編。' },
-  { id: '2059588448597958657', title: '深度安靜', priority: 10, lane: '台灣新片', creators: '沈可尚', why: '沈可尚新作，親密關係與家庭創傷。' },
-  { id: '2059947847980015617', title: '陽光女子合唱團', priority: 13, lane: '台灣新片', why: '7/7 映後場一般席已售罄；僅保留查核。' },
-  { id: '2057384480759422977', title: '不受待見的我們', priority: 3, lane: '焦點影人', creators: '內山拓也', why: '內山拓也焦點影人片，7/2 是可執行場次。' },
-  { id: '2059586376272044033', title: '死亡賭局', priority: 7, lane: '國際作者', why: '地下放映、審查與影展語境高度相關。' },
-  { id: '2058811111880777729', title: '枯葉', priority: 16, lane: '國際作者', why: '形式實驗強，片長很吃狀態。' },
-  { id: '2057033100324970497', title: '房屋是黑的＋磚與鏡', priority: 14, lane: '德黑蘭', why: '伊朗電影史入口，適合電影史補課。' },
-  { id: '2057026451564601345', title: '茉莉人生', priority: 15, lane: '德黑蘭', why: '伊朗革命、流亡與成長，深夜補片。' },
-  { id: '2058878775014318081', title: '籠民', priority: 9, lane: '經典修復', why: '香港社會寫實經典，適合補電影史。' },
-  { id: '2054201327492128769', title: '我的棋王爺爺', priority: 20, lane: '閉幕片', creators: '陳怡蓉', why: '閉幕片；世界首映，OpenTix 6/30 查核售罄。' },
-  { id: '2058792162612088833', title: '極樂', priority: 30, lane: '已看', why: '6/30 已看；保留作紀錄。' },
-  { id: '2059553080492548097', title: '順流逆流', priority: 70, lane: '動作補片', creators: '徐克', why: '動作片已降優先；只作電影史補片。' },
-  { id: '2059559733464535040', title: '鬼打鬼', priority: 80, lane: '動作補片', creators: '洪金寶', why: '動作片已降優先；除非想補香港類型史。' },
-  { id: '2059545798841065472', title: '失序男孩', priority: 81, lane: '動作補片', why: '動作片已降優先；只在對青年暴力主題有興趣時看。' },
+  { id: '2058792162612088833', title: '極樂', creators: '凱文．蓋格、劉育樹、邱立偉等', watched: '6/30', why: '台灣動畫長片，六組導演共作。' },
+  { id: '2059847212707586048', title: '女孩', creators: '舒淇', watched: '7/3 中山堂映後場', why: '舒淇的導演首作。' },
+  { id: '2059595864451817473', title: '大濛', creators: '陳玉勳', watched: '7/3 中山堂映後場，接在《女孩》之後', why: '白色恐怖題材，今年台灣片重點。' },
+  { id: '2056705720054296577', title: '一個夜晚與三個夏天', creators: '崗珍', watched: '7/7 光點 1', why: '拉薩，一部關於拍自己童年的電影。' },
 ];
 const WATCHLIST_BY_ID = new Map(WATCHLIST.map((item) => [item.id, item]));
-
-// Lane display order for the picks view (curated intent first, 補片 last).
-const LANE_ORDER = ['台灣新片', '焦點影人', '國際作者', '德黑蘭', '經典修復', '閉幕片', '已看', '動作補片'];
 
 function localTs(iso) {
   return Math.floor(new Date(`${iso}+08:00`).getTime() / 1000);
@@ -55,8 +40,10 @@ const ACTIVITIES = [
   { id: 'action-wire', title: '動作論壇：威牙之下、軟墊之上', creators: '董瑋、黃泰維；主持塗翔文', group: '論壇', start: localTs('2026-07-07T18:30:00'), venue: '中山堂 2F 光復廳', why: '香港動作傳統與台灣新世代動作設計對話。' },
   { id: 'action-kungfu', title: '動作論壇：打出一部《功夫》', creators: '九把刀、張材旭、洪昰顥；主持百白', group: '論壇', start: localTs('2026-07-08T18:30:00'), venue: '中山堂 2F 光復廳', why: '台韓動作組合作與商業類型片工業流程。' },
   { id: 'spotlight-contribution', title: '卓越貢獻獎講座', creators: '陳伯任；與談塗翔文', group: '講座', start: localTs('2026-06-28T19:00:00'), venue: '光點華山 1 廳', why: '隨映後講堂。' },
-  { id: 'spotlight-uchiyama', title: '焦點影人講堂：內山拓也', creators: '內山拓也', group: '講座', start: localTs('2026-06-30T19:30:00'), venue: '光點華山 1 廳', why: '隨《不受待見的我們》映後。', attended: true },
+  { id: 'spotlight-uchiyama', title: '焦點影人講堂：內山拓也', creators: '內山拓也', group: '講座', start: localTs('2026-06-30T19:30:00'), venue: '光點華山 1 廳', why: '隨《不受待見的我們》映後。' },
 ];
+
+const ATTENDED_ACTIVITIES = ACTIVITIES.filter((item) => item.attended);
 
 const REFERENCE_ITEMS = [
   { title: '開幕片：怎麼可能我家的祖先是你家的鬼', meta: '6/26 19:00 中山堂｜開幕片' },
@@ -152,7 +139,7 @@ function FilmRow({ program, interest }) {
             {program.title}
           </a>
           {program.englishTitle ? <span className="text-token-sm text-ink-faint">{program.englishTitle}</span> : null}
-          {pick ? <Badge tone="cat-5">我的片單 · {pick.lane}</Badge> : null}
+          {pick ? <Badge tone="cat-5">我看了</Badge> : null}
           {interest ? <Badge tone={INTEREST_TONE[interest]}>{INTEREST_LABEL[interest]}</Badge> : null}
         </div>
         <div className="mt-1 flex flex-wrap gap-x-3 gap-y-0.5 text-token-sm text-ink-muted">
@@ -184,6 +171,7 @@ function PickRow({ item }) {
             <span className="font-display text-token-lg leading-snug text-ink">{item.title}</span>
           )}
           {item.creators ? <span className="text-token-sm text-ink-faint">{item.creators}</span> : null}
+          {item.watched ? <Badge tone="success">已看</Badge> : null}
         </div>
         {(program?.production || program?.rating) ? (
           <div className="mt-1 flex flex-wrap gap-x-3 text-token-sm text-ink-muted">
@@ -192,6 +180,7 @@ function PickRow({ item }) {
           </div>
         ) : null}
         <p className="mt-1 text-token-sm leading-relaxed text-ink-muted">{item.why}</p>
+        {item.watched ? <p className="mt-0.5 text-token-sm text-ink-faint">看的場次：{item.watched}</p> : null}
       </div>
     </div>
   );
@@ -248,15 +237,6 @@ export default function TaipeiFilmFestival() {
     });
   }, [query, activeCat, onlyMarked, interestMap]);
 
-  const picksByLane = useMemo(() => {
-    const groups = new Map();
-    WATCHLIST.forEach((item) => {
-      if (!groups.has(item.lane)) groups.set(item.lane, []);
-      groups.get(item.lane).push(item);
-    });
-    groups.forEach((list) => list.sort((a, b) => a.priority - b.priority));
-    return LANE_ORDER.filter((lane) => groups.has(lane)).map((lane) => [lane, groups.get(lane)]);
-  }, []);
 
   const screeningsByDay = useMemo(() => {
     const rows = CATALOG.flatMap((program) => (program.screenings ?? []).map((s) => ({
@@ -273,7 +253,7 @@ export default function TaipeiFilmFestival() {
 
   const tabs = [
     { id: 'films', label: '片單', count: CATALOG.length },
-    { id: 'picks', label: '我的片單', count: WATCHLIST.length },
+    { id: 'picks', label: '我看的', count: WATCHLIST.length + ATTENDED_ACTIVITIES.length },
     { id: 'schedule', label: '場次表', count: screeningsByDay.reduce((n, [, r]) => n + r.length, 0) },
     { id: 'about', label: '關於這份資料' },
   ];
@@ -287,7 +267,7 @@ export default function TaipeiFilmFestival() {
       controls={<FontSizeControl scale={scale} onChange={setScale} />}
     >
       <p className="max-w-2xl text-token-body leading-relaxed text-ink-muted">
-        2026 台北電影節已於 7 月 7 日閉幕。這裡把當時的售票片單、我的觀影名單與參加過的講座論壇留成一份回顧——票務狀態不再更新，標記也不再改動。
+        2026 台北電影節已於 7 月 7 日閉幕。這裡把當時的售票片單、我實際看的四部片與參加過的論壇留成一份回顧——票務狀態不再更新，標記也不再改動。
       </p>
 
       <div className="mt-6">
@@ -340,15 +320,13 @@ export default function TaipeiFilmFestival() {
 
       {tab === 'picks' ? (
         <section className="mt-6 space-y-8">
-          {picksByLane.map(([lane, items]) => (
-            <div key={lane}>
-              <h2 className="mb-1 font-display text-token-xl text-ink">{lane}</h2>
-              <div>{items.map((item) => <PickRow key={item.id} item={item} />)}</div>
-            </div>
-          ))}
+          <div>
+            <h2 className="mb-1 font-display text-token-xl text-ink">看的片</h2>
+            <div>{WATCHLIST.map((item) => <PickRow key={item.id} item={item} />)}</div>
+          </div>
           <div>
             <h2 className="mb-1 font-display text-token-xl text-ink">講座與論壇</h2>
-            <div>{ACTIVITIES.map((item) => <ActivityRow key={item.id} item={item} />)}</div>
+            <div>{ATTENDED_ACTIVITIES.map((item) => <ActivityRow key={item.id} item={item} />)}</div>
           </div>
         </section>
       ) : null}
