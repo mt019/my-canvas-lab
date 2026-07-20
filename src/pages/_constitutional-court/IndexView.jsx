@@ -15,46 +15,53 @@ function railBand(d) {
 }
 const RAIL_TONE = { 大理院: ERA_TONE.大理院, 最高法院: ERA_TONE.最高法院, 司法院: ERA_TONE.司法院, 大法官: ERA_TONE.釋字, 憲法法庭: ERA_TONE.憲判 };
 
-// 篩選列滾動自動收合：往下捲藏、往上「持續捲一段」才顯示。三道門檻：
-// (1) 只在黏著列真正「卡住」（sticky 貼齊頂端、其原始流內空間已捲離視窗）時才收——否則列還在
-//     正常流內，用 transform 上移會留下它原本佔的版面高度（＝那塊大空白）。用列前的 0 高標記元素
-//     判斷：標記元素.top ≤ 貼齊偏移即代表列已貼齊頂端。
-// (2) 卡住後還要「再往下捲過 armPx 安全距離」才啟用自動收合，避免剛卡住就一觸即收的突兀。
-// (3) 顯示要「累積往上捲 ≥ REVEAL_UP px」才觸發，一往下就重置累積。這樣觸控板的微小抖動、
-//     或滑鼠移動時混進來的 1、2 px 反向捲動，都不會把列叫出來——只有明確、持續往上捲才顯示。
-//     頁面靜止不動＝沒有 scroll 事件＝列維持現狀，不會無故跳出。
-// 回傳 [markRef, hidden]。
-const REVEAL_UP = 90; // 需累積往上捲這麼多 px 才顯示篩選列
-function useHideOnScrollDown(stickyOffset = 49, armPx = 160) {
+// 篩選列滾動收合：位移量直接跟著捲動距離走，不是「收起／展開」兩態切換。
+// 前一版是離散的——貼齊後先釘住一段安全距離，跨過門檻才整條一次彈掉——捲多少和列在哪毫無關係，
+// 讀起來就是「卡住不動，然後突然抽走」。改成連續位移後，列退多少永遠等於你捲了多少。
+// (1) 只在列真正貼齊頂端後才開始位移。還在正常流內就上移，會留下它原本佔的版面高度（那塊大空白）。
+//     用列前的 0 高標記元素判斷：標記.top ≤ 貼齊偏移即代表已貼齊。
+// (2) 往下捲 1:1 跟手退，最多退一個列高（退完即完全收起）。
+// (3) 往上捲用 REVEAL_GAIN 倍速露出——讀到深處想回頭用篩選時，不必反捲一整個列高才看得到它。
+//     連續位移對觸控板抖動天生免疫：抖幾 px 就位移幾 px，不會像兩態切換那樣整條跳出來。
+// 直接寫 style.transform 而不走 state：這頁掛著數百張案件卡，每個 scroll 事件都 re-render 會掉幀。
+// 回傳 [markRef, barRef]。
+const REVEAL_GAIN = 2.2; // 往上捲時的露出倍速（往下收起為 1:1）
+function useScrollLinkedToolbar(stickyOffset = 49) {
   const markRef = useRef(null);
-  const [hidden, setHidden] = useState(false);
+  const barRef = useRef(null);
   useEffect(() => {
     let last = window.scrollY;
-    let upAccum = 0;   // 連續往上捲的累積距離；一往下就歸零
+    let offset = 0;    // 目前上移量（px），0＝完全顯示，barH＝完全收起
     let ticking = false;
+    const apply = () => {
+      const bar = barRef.current;
+      if (bar) bar.style.transform = offset > 0 ? `translate3d(0,${-offset}px,0)` : '';
+    };
     const onScroll = () => {
       if (ticking) return;
       ticking = true;
       requestAnimationFrame(() => {
+        ticking = false;
         const y = window.scrollY;
         const m = markRef.current;
-        // pastPin＝已捲過貼齊點的距離（px）；越大代表讀得越深。無標記元素時退回用捲動量估。
+        const bar = barRef.current;
+        // pastPin＝已捲過貼齊點的距離；≤0 代表列還在正常流內，此時一律完全顯示。
         const pastPin = m ? stickyOffset - m.getBoundingClientRect().top : y - 400;
-        const enabled = pastPin >= armPx;        // 卡住後再捲過 armPx 才啟用自動收合
-        if (!enabled) { setHidden(false); upAccum = 0; }      // 頂端定位＝不收，隨頁自然捲動
-        else if (y > last + 2) { setHidden(true); upAccum = 0; } // 往下捲：收，並重置往上累積
-        else if (y < last - 2) {                                 // 往上捲：累積，夠多才顯示
-          upAccum += last - y;
-          if (upAccum >= REVEAL_UP) setHidden(false);
-        }
+        const dy = y - last;
         last = y;
-        ticking = false;
+        if (pastPin <= 0) { offset = 0; apply(); return; }
+        const barH = bar ? bar.offsetHeight : 0;
+        offset += dy > 0 ? dy : dy * REVEAL_GAIN;
+        offset = Math.max(0, Math.min(barH, offset));
+        // 剛貼齊時位移不能超過已捲過貼齊點的距離，否則列會跑得比頁面快，看起來像被抽走。
+        offset = Math.min(offset, pastPin);
+        apply();
       });
     };
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
-  }, [stickyOffset, armPx]);
-  return [markRef, hidden];
+  }, [stickyOffset]);
+  return [markRef, barRef];
 }
 // 機關維度（行憲前後切分）：預設只顯示行憲後（大法官＋憲法法庭），行憲前 6,354 件 opt-in，
 // 避免舊號淹沒 874 新號。順序＝解釋權沿革時序。
@@ -153,7 +160,7 @@ export default function IndexView({ initialQ = '', onOpenDoc }) {
   // 「在索引中檢視」由 URL ?q= 帶入字號預搜；此頁已掛載時亦同步（初次掛載為 no-op）。
   useEffect(() => { setQ(initialQ); }, [initialQ]);
   const [limit, setLimit] = useState(INDEX_PAGE);
-  const [toolbarMark, toolbarHidden] = useHideOnScrollDown();
+  const [toolbarMark, toolbarRef] = useScrollLinkedToolbar();
   const loadMoreRef = useRef(null);
   const [sortDir, setSortDir] = useState('desc');
   const [reasoningDefault, setReasoningDefault] = usePref('ccReasoningDefault', false);
@@ -197,7 +204,7 @@ export default function IndexView({ initialQ = '', onOpenDoc }) {
   const subtopicOptions = subtopicsByTopic.get(topic);
 
   const { outcomeCounts, standardCounts } = useMemo(() => {
-    const oc = { '違憲（含定期失效）': 0, 合憲: 0, 法令解釋: 0, 補充前解釋: 0, 變更前解釋: 0, '其他/待人工': 0 };
+    const oc = { '違憲（含定期失效）': 0, 合憲: 0, 法令解釋: 0, 補充前解釋: 0, 變更前解釋: 0, 其他: 0 };
     const sc = new Map();
     for (const d of scoped) {
       const o = d.審查結論?.結論 ?? '未分類';
@@ -206,7 +213,7 @@ export default function IndexView({ initialQ = '', onOpenDoc }) {
       else if (o === '法令解釋') oc.法令解釋 += 1;
       else if (o === '補充前解釋') oc.補充前解釋 += 1;
       else if (o === '變更前解釋') oc.變更前解釋 += 1;
-      else oc['其他/待人工'] += 1;
+      else oc.其他 += 1;
       const s = d.審查基準?.基準;
       if (s) sc.set(s, (sc.get(s) ?? 0) + 1);
     }
@@ -359,7 +366,8 @@ export default function IndexView({ initialQ = '', onOpenDoc }) {
     <div className={showRail ? 'lg:grid lg:grid-cols-[minmax(0,1fr)_3.75rem] lg:gap-2 xl:gap-3' : ''}>
       <div className="min-w-0">
       <div ref={toolbarMark} aria-hidden className="h-0" />
-      <div className={`sticky top-[49px] z-10 -mx-4 border-b border-[var(--cc-line)] bg-[var(--cc-bg)]/95 px-4 py-3 backdrop-blur transition-transform duration-200 ease-out sm:-mx-6 sm:px-6 lg:mr-0 ${toolbarHidden ? '-translate-y-full' : 'translate-y-0'}`}>
+      {/* 無 transition：位移由捲動事件逐幀寫入，補一層過渡只會讓它落後手指。 */}
+      <div ref={toolbarRef} className="sticky top-[49px] z-10 -mx-4 border-b border-[var(--cc-line)] bg-[var(--cc-bg)]/95 px-4 py-3 backdrop-blur will-change-transform sm:-mx-6 sm:px-6 lg:mr-0">
         {/* 頂部大分段鈕：行憲前後明確切開（預設行憲後）。行憲前另給機關子篩選。 */}
         <div className="mb-2.5 flex flex-wrap items-center gap-2">
           <SegControl
@@ -400,9 +408,9 @@ export default function IndexView({ initialQ = '', onOpenDoc }) {
           {subtopicOptions && !isPre ? (
             <Select label="細分" value={subtopic} onChange={(v) => { setSubtopic(v); setLimit(INDEX_PAGE); }} options={[['全部', '全部'], ...subtopicOptions.map(([s, n]) => [s, `${s}（${n}）`])]} />
           ) : null}
-          <Select label="結論" value={outcome} onChange={(v) => { setOutcome(v); setLimit(INDEX_PAGE); }} options={[['全部', '全部'], ['違憲（含定期失效）', `違憲（含定期失效）（${outcomeCounts['違憲（含定期失效）']}）`], ['合憲', `合憲（${outcomeCounts.合憲}）`], ['法令解釋', `法令解釋（${outcomeCounts.法令解釋}）`], ['補充前解釋', `補充前解釋（${outcomeCounts.補充前解釋}）`], ['變更前解釋', `變更前解釋（${outcomeCounts.變更前解釋}）`], ['其他/待人工', `待人工判讀（${outcomeCounts['其他/待人工']}）`]]} />
+          <Select label="結論" value={outcome} onChange={(v) => { setOutcome(v); setLimit(INDEX_PAGE); }} options={[['全部', '全部'], ['違憲（含定期失效）', `違憲（含定期失效）（${outcomeCounts['違憲（含定期失效）']}）`], ['合憲', `合憲（${outcomeCounts.合憲}）`], ['法令解釋', `法令解釋（${outcomeCounts.法令解釋}）`], ['補充前解釋', `補充前解釋（${outcomeCounts.補充前解釋}）`], ['變更前解釋', `變更前解釋（${outcomeCounts.變更前解釋}）`], ['其他', `其他（${outcomeCounts.其他}）`]]} />
           {!isPre ? (
-            <Select label="審查基準" value={standard} onChange={(v) => { setStandard(v); setLimit(INDEX_PAGE); }} options={[['全部', '全部'], ['嚴格', `嚴格（${standardCounts.get('嚴格') ?? 0}）`], ['中度', `中度（${standardCounts.get('中度') ?? 0}）`], ['寬鬆', `寬鬆（${standardCounts.get('寬鬆') ?? 0}）`], ['多重（待人工）', `多重（待人工）（${standardCounts.get('多重（待人工）') ?? 0}）`], ['未明示', `未明示（${standardCounts.get('未明示') ?? 0}）`]]} />
+            <Select label="審查基準" value={standard} onChange={(v) => { setStandard(v); setLimit(INDEX_PAGE); }} options={[['全部', '全部'], ['嚴格', `嚴格（${standardCounts.get('嚴格') ?? 0}）`], ['中度', `中度（${standardCounts.get('中度') ?? 0}）`], ['寬鬆', `寬鬆（${standardCounts.get('寬鬆') ?? 0}）`], ['多重', `多重基準（${standardCounts.get('多重') ?? 0}）`], ['未明示', `未明示（${standardCounts.get('未明示') ?? 0}）`]]} />
           ) : null}
           <Select label="年代" value={decade} onChange={(v) => { setDecade(v); setLimit(INDEX_PAGE); }} options={[['全部', '全部'], ...decades.map((d) => [d, `${d} 年代`])]} />
         </div>
@@ -440,7 +448,7 @@ export default function IndexView({ initialQ = '', onOpenDoc }) {
                   ) : null}
                 </div>
                 <p className="mt-1.5 max-w-3xl text-[11.5px] leading-relaxed text-[var(--cc-ink-soft)]">
-                  6 軸類型學目前僅涵蓋粗軸判不出的「待人工」殘餘 {typedN} 件（均逐件雙盲覆核）；已由粗軸分好的合憲／違憲等件尚未套細軸，故選任一軸值時只會列出已類型化件。軸別：A 處分模式・B 違憲處分技術・C 標的類型・D 對前解釋關係・E 救濟與後續・F 解釋權能。
+                  6 軸類型學涵蓋全部 {typedN} 件行憲後案件（釋字＋憲判）。軸別：A 處分模式・B 違憲處分技術・C 標的類型・D 對前解釋關係・E 救濟與後續・F 解釋權能。
                 </p>
               </>
             ) : null}

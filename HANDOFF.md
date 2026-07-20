@@ -515,10 +515,9 @@ warning 擋住 build，然後被關掉——那比現在更糟，因為會以為
   **開關**：工具列動作區加 `時間軸開/關` 鈕（`usePref('ccShowRail', true)`）；關閉時版型從二欄塌回單欄、內文滿寬。
   **z 疊層**：右欄容器 `z-30`，讓往左溢出的年份浮標疊在工具列（z-10）與分頁列（z-20）之上，不被壓住。
   版型：`IndexView` root 改 `lg:grid grid-cols-[minmax(0,1fr)_3.75rem]`（開關開時），右欄 `<aside>` sticky `top-[57px]`。
-  **同輪一併修 `useHideOnScrollDown`**（工具列自動收合 hook，就在 `IndexView.jsx` 上方）：
-  (a) sentinel/哨兵 用語全改直白 `mark`/標記（plain-naming 全局禁令，hook 會糾）——**hook 現回傳 `[markRef, hidden]`**（舊筆記寫 `[sentinelRef, hidden]`，已過時）。
-  (b) 保留「只在 pin 後再捲過 `armPx=160` 才啟用收合」的防上跳門檻。
-  (c) **顯示改「累積往上捲 ≥ `REVEAL_UP=90px` 才觸發、一往下就歸零」**——修使用者回報「靜止時滑鼠一動、觸控板微抖就把工具列叫出來」；現在只有明確持續往上捲才顯示，頁面靜止＝無 scroll 事件＝不動。
+  **同輪一併修工具列自動收合 hook**（就在 `IndexView.jsx` 上方）：sentinel/哨兵 用語全改直白
+  `mark`/標記（plain-naming 全局禁令，hook 會糾）。當時的兩態版已於 2026-07-20 整支換掉，
+  見下方「工具列收合＝捲動連動位移」。
   **切換母體回分頁列位置**：SegControl 與機關下拉的 onChange 加 `scrollToTabs()`——捲到讓大表頭捲離、分頁列貼齊頂端（**不是**整頁最上方）。基準用非 sticky 的 `toolbarMark` 絕對座標 `-49`（用 `<nav>` 會因 sticky pin 讀到 0，不可靠）。
   **工具列動作區改兩列**：第一列件數＋檢視控制（排序／理由書／時間軸／PDF）＋右端探索鈕（隨機一則／今日同日期）；
   第二列專放匯出（CSV/JSON/BibTeX/引註/批次下載）。修「隨機一則＋今日兩顆單獨落在最底一排」的醜。
@@ -568,8 +567,9 @@ warning 擋住 build，然後被關掉——那比現在更糟，因為會以為
   一版）**：初版用固定 `scrollY>150` 門檻決定收合，但本頁 header 高（工具列自然位 ~313px），
   於是 scrollY 150–313 時工具列**還在正常流內**，transform 上移會留下它原本佔的版面高度＝一大塊
   空白（nav 與首張卡片間）。正解＝**只在列真正「卡住」(sticky pin) 後才收**：列前放一個 0 高
-  sentinel（`useRef`），`sentinel.getBoundingClientRect().top ≤ 49` 才代表已 pin、其流內空間已捲
-  離、此時上移只露出底下滾動的卡片、不留白。hook 回傳 `[sentinelRef, hidden]`（Playwright
+  標記元素（`useRef`），`標記.getBoundingClientRect().top ≤ 49` 才代表已 pin、其流內空間已捲
+  離、此時上移只露出底下滾動的卡片、不留白。**這條「貼齊後才動」的前提至今仍成立**，其餘的
+  兩態收合已於 2026-07-20 換成捲動連動位移（見下）。（Playwright
   G1–G5 驗證：未卡住不收、卡住往下捲收、收合時首卡貼齊 nav 無空白、往上捲還原）。新 import
   `Shuffle`/`X`/`useRef`。注意字型陷阱：U+86CB（egg 字，曾用於「easter-egg」的中譯詞）不在子集，
   `validate:fonts` 連註解都掃，故程式碼註解一律避開該字（已改用「隨機挑件」措辭）——本檔亦同，
@@ -591,7 +591,7 @@ warning 擋住 build，然後被關掉——那比現在更糟，因為會以為
   `[active, justiceName]`，不含 focusDoc）——修「索引捲到底點大法官、新頁也停在底」的捲動聯動；
   (3) 理由書全域「預設展開/收合」鈕改用 effect 同步 `showReason`，即時驅動**所有已載卡片**
   （原只影響新卡）；(4) **無限捲動**取代「顯示更多」：`INDEX_PAGE=40` 初始／重置、
-  底部 sentinel＋IntersectionObserver（rootMargin 800px 預取，deps 含 limit 連續補到底）；
+  底部標記元素＋IntersectionObserver（rootMargin 800px 預取，deps 含 limit 連續補到底）；
   (5) 理由書展開區塊 `onDoubleClick` 收合；(6) 逐人統計頁尾統計基礎母數 7228→行憲後 874
   （行憲前無大法官具名意見書、不計入）；(7) `NomineeDossiers` 從通用 `CaseCard` 移到
   `Case1Analysis`（114憲判1 專屬分頁）——被提名人簡歷不該出現在每次案件預覽；(8) 卡片加
@@ -1091,7 +1091,10 @@ never on the full-width `<main>`. Because the max-width column and outer gutter
 sit outside the zoom, enlarging type reflows the content but the margins never
 move (Substack/Kindle-style in-page control, not browser Cmd+). Wired into
 PageShell, ArticleLayout, DashboardLayout, and the two bespoke pages
-(Glossary, ECFAResearch). Navigation rails + toolbar stay unscaled.
+(Glossary, ECFAResearch). The toolbar and DashboardLayout's right-rail TOC
+stay unscaled; DashboardLayout's sticky tab bar (2026-07-20) now scales with
+the rest — it is the primary way to move through the page, not toolbar chrome,
+so leaving it fixed size while the title/body grew read as broken (see below).
 Paper textures (`--paper-texture` + `.reading-grain`) are painted on a
 `position: fixed` `::before` sibling layer (index.css), *not* as an ancestor
 background: a `zoom`ed descendant makes Chrome re-rasterize its ancestor's
@@ -1269,6 +1272,52 @@ commit. Both repos' "expose local research folder" UI panels were
 removed entirely, not just the path string. **Do not try to "restore"
 old commits** — they contained the leak by design of the fix.
 
+## 憲法法庭索引頁：工具列收合＝捲動連動位移 (2026-07-20)
+
+`IndexView.jsx` 的 `useScrollLinkedToolbar`，取代原本的 `useHideOnScrollDown`。
+
+**原本壞在哪**：舊版是兩態開關。工具列 sticky 貼齊後，先釘住 `armPx=160` 不動，
+跨過門檻才用 `-translate-y-full` 加 200ms 過渡整條一次彈掉。列在哪跟你捲了多少
+完全脫鉤，使用者的描述是「卡住了就卡住了，然後突然往上縮，有時候縮有時候不縮」。
+`REVEAL_UP=90` 的累積門檻是為了掩蓋同一個缺陷——因為是兩態，微小抖動才會讓整條跳出來。
+
+**現在**：位移量直接綁捲動距離。
+
+- 貼齊前（`pastPin ≤ 0`）位移恆為 0。這條前提沒變：還在正常流內就上移會留下
+  它原本佔的版面高度，那塊大空白是 2026-07-13 踩過的。
+- 往下捲 1:1 跟手退，上限一個列高（實測 229px），退滿即完全收起。
+- 往上捲 `REVEAL_GAIN=2.2` 倍速露出——讀到深處想回頭用篩選時，不必反捲一整個
+  列高才看得到它。
+- `offset` 另外 clamp 到 `pastPin`，否則剛貼齊那幾幀列會跑得比頁面快，像被抽走。
+- 直接寫 `style.transform`，不走 React state：這頁掛著數百張案件卡，每個 scroll
+  事件都 re-render 會掉幀。**元素上不要加 transition**——位移逐幀寫入，再補一層
+  過渡只會讓它落後手指。
+
+連續位移對觸控板抖動天生免疫（抖幾 px 就位移幾 px），所以累積門檻整個拿掉了。
+
+Playwright 實測：貼齊前 0；往下 20/40/60/80 → 上移 20/40/60/80；往下 289 → 229
+（clamp）；往上 10 → 退 22；往上 30 → 退 66；深處往上 40 → 229 降到 141。
+
+## Running `npm run build` (2026-07-20 — 一次自己製造的事故)
+
+`npm run build` 是一條長鏈：五支 validate 腳本 → `vite build` → `prerender.mjs`
+寫 459 頁 → sitemap。整條在這台機器上要跑好幾分鐘，**常常超過 agent harness 的
+單次命令逾時而被移到背景**。
+
+被移到背景不代表它停了，它還在跑，而且 `prerender.mjs` 全程都在寫 `dist/`。
+所以：
+
+- **重跑之前先確認舊的已結束**：`ps aux | grep '[n]pm run build'`，或
+  `while ps -p <pid> >/dev/null 2>&1; do sleep 5; done` 等它。
+- **不要在 build 可能還在跑的時候 `rm -rf dist`。** 兩邊互踩的症狀是
+  `rm: dist: Directory not empty` 加上 `ENOENT: dist/index.html`，而且症狀
+  出現在後跑的那個 build 身上，看起來像原始碼壞了。
+- **`dist/` 憑空缺檔就去 `ps`，不要對症狀猜因。**
+- **不要用 `pkill -f` 配廣泛 pattern 清場**：`node.*bin/vite` 會匹配 build 自己
+  啟動的 `vite build`。先 `ps aux | grep` 看清楚完整命令列，再針對 PID `kill`。
+
+驗證前端改動時，一次乾淨的 build 就夠了；連續開好幾次只會製造上面這些症狀。
+
 ## Where reusable skills live
 
 `~/.claude/skills/` (user-level — reusable across all projects, not
@@ -1288,6 +1337,41 @@ project-scoped):
   combination; reapply by name rather than re-deriving.
 - `README.md` — index of all installed skills, with Codex cross
   references and a portability note.
+
+## Session state: `.claude/CHECKPOINT.*` and `.claude/history/` (2026-07-20)
+
+This repo is the hub every session opens from, so all lines' resume
+state lives here even though each research line has its own data repo.
+Two layers, split on purpose:
+
+- `.claude/CHECKPOINT.<slug>.md` — **current state only, overwritten in
+  place, hard cap 120 lines.** Sub-lines are `## 子線：X` sections inside
+  the one file; each carries its own `updated`. Never stack new sections
+  on top. Frontmatter `status:` is `active` (has a concrete next step) /
+  `paused` (waiting on the user, or only optional backlog left) / `done`.
+  A sub-project gets its own file only when two sessions would write the
+  same file concurrently — then it carries `parent: <slug>`.
+- `.claude/history/` — milestone history, one `HISTORY.<slug>.md` per
+  line, newest first. Sessions don't read it; grep it when you need to
+  dig. **It is not committed to this repo — origin is public and the
+  history carries unpublished numbers and absolute paths.** The
+  directory holds its own local-only git repo for recovery, and
+  `.gitignore` excludes the whole thing. Check
+  `gh repo view --json visibility` before ever version-controlling
+  session state.
+
+Both layers are enforced mechanically, not by convention:
+`~/.claude/hooks/checkpoint-nudge.sh` (SessionStart) lists active/paused
+and flags any checkpoint over the cap or idle over 7 days;
+`~/.claude/hooks/checkpoint-guard.sh` (PostToolUse) checks the cap at
+write time, snapshots every checkpoint into the local history repo on
+each write, and — when a checkpoint loses more than 30% of its lines —
+prints the exact pinned-hash command to recover the previous version.
+
+Authoritative definition: `~/.claude/rules/斷點續作.md`. `/bp` and
+`/斷點` follow it; `/cc-resume` loads the constitutional-court checkpoint
+in full (it is small enough to read whole, so it no longer slices out
+"the first section").
 
 ## Division of labor (Codex ↔ Claude Code)
 

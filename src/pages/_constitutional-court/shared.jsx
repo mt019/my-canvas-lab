@@ -168,16 +168,15 @@ const OUTCOME_TONE = {
   法令解釋: 'teal',
   補充前解釋: 'teal',
   變更前解釋: 'teal',
-  '其他/待人工': 'slate',
+  其他: 'slate',
   未分類: 'slate',
 };
-const STANDARD_TONE = { 嚴格: 'red', 中度: 'gold', 寬鬆: 'green', '多重（待人工）': 'slate' };
+const STANDARD_TONE = { 嚴格: 'red', 中度: 'gold', 寬鬆: 'green', 多重: 'slate' };
 // ── 審查結論類型學（6 軸，draft-3）─────────────────────────────────────────
 // 來源：constitutional-court-research-data/data/materials/審查結論類型學.json（編碼本）＋
-// data/processed/審查結論類型.json（逐件貼標）。快照每件的 `結論類型` 欄只涵蓋「大法官釋字＋憲法法庭
-// 憲判」中粗軸判不出的『待人工』殘餘（196 件，均 agent 逐件雙盲覆核）；其餘已由粗軸分好的行憲後案件
-// 沒有細軸值。本頁對後者以粗軸換算 A 軸（resolveA 的 bridge 分支），換算件與 agent 覆核件明確以來源
-// 標記區分；C／E／完整 B／D 只有 agent 覆核件才有。
+// data/processed/審查結論類型.json（逐件貼標）。全部 874 件行憲後案件（大法官釋字＋憲法法庭憲判）
+// 皆有 `結論類型` 欄、逐件編碼（標註方式 860 agent覆核／9 三票多數／5 人工），不存在「機標補洞／粗軸
+// 換算」的件。行憲前 6,354 件統一解釋無此欄（不同解釋機制，不做合憲性類型學）。
 export const TYPO_AXES = [
   { id: 'A', name: '處分模式', multi: false },
   { id: 'B', name: '違憲處分技術', multi: true },
@@ -434,28 +433,30 @@ export function CaseCard({ d, q, reasoningDefault, pdfMode }) {
   }, [d.字號]);
   return (
     <article className="border-t border-[var(--cc-line)] py-5">
-      <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+      {/* 徽章整列 select-none：拖選整筆案件時，本站自訂的分類標記不會混進剪貼簿。
+          字號與日期是官方書目資訊、引用時用得上，個別選回 select-text。 */}
+      <div className="flex select-none flex-wrap items-baseline gap-x-3 gap-y-1">
         <a
           href={d.官方頁}
           target="_blank"
           rel="noreferrer"
-          className="text-[17px] font-bold text-[var(--cc-ink)] underline decoration-[var(--cc-link-underline)] underline-offset-4 hover:text-[var(--cc-accent)]"
+          className="select-text text-[17px] font-bold text-[var(--cc-ink)] underline decoration-[var(--cc-link-underline)] underline-offset-4 hover:text-[var(--cc-accent)]"
         >
           {hl(d.字號, q)}
         </a>
-        <span className="text-[13px] text-[var(--cc-figure-note)]">{formatDate(d.日期)}</span>
+        <span className="select-text text-[13px] text-[var(--cc-figure-note)]">{formatDate(d.日期)}</span>
         <span className="inline-flex h-2.5 w-2.5 rounded-sm" style={{ background: typeInk(d.類型) }} aria-hidden />
         <Badge tone="plum">{d.類型}{d.子類 ? `・${d.子類}` : ''}</Badge>
         {d.結論類型?.A ? (
           <Badge tone={A_TONE[d.結論類型.A] ?? 'slate'}>{typoLabel(d.結論類型.A)}</Badge>
         ) : d.審查結論?.結論 && d.審查結論.結論 !== '未分類' ? (
           <Badge tone={OUTCOME_TONE[d.審查結論.結論] ?? 'slate'}>
-            {d.審查結論.結論 === '其他/待人工' ? '結論待人工判讀' : d.審查結論.結論}
+            {d.審查結論.結論}
           </Badge>
         ) : null}
         {d.審查基準 && d.審查基準.基準 !== '未明示' ? (
           <Badge tone={STANDARD_TONE[d.審查基準.基準] ?? 'slate'}>
-            {d.審查基準.基準 === '多重（待人工）' ? '審查基準待人工' : `${d.審查基準.基準}審查`}
+            {`${d.審查基準.基準}審查`}
           </Badge>
         ) : null}
         {d.主題.map((t) => (
@@ -466,27 +467,34 @@ export function CaseCard({ d, q, reasoningDefault, pdfMode }) {
         ))}
       </div>
 
-      {/* 案名：憲判官方字號後的【…】案名（如「刑事訴訟上訴不可分原則適用範圍案」）。釋字無此欄。
-          自成一行的短標題，不擠進上方已滿的字號＋徽章列。 */}
-      {d.案名 ? (
-        <p className="mt-1 text-[14px] font-bold leading-snug text-[var(--cc-ink-strong)]">{hl(d.案名, q)}</p>
-      ) : null}
-
+      {/* B–G 軸緊接上方的字號＋徽章列，與同屬類型學的 A 軸徽章不分家；全部類型學都留在細線以上，
+          細線以下只剩標題層與正文，讓「標題＋主文」是一段連續可選取的文字。 */}
       {d.結論類型 && typoValues(d).some((v) => v.axis !== 'A') ? (
-        <div className="mt-1.5 flex flex-wrap items-center gap-1.5" title={d.結論類型.依據 || undefined}>
+        <div className="mt-1.5 flex select-none flex-wrap items-center gap-1.5" title={d.結論類型.依據 || undefined}>
           {typoValues(d).filter((v) => v.axis !== 'A').map((v) => (
             <span key={v.axis + v.code} className="inline-flex items-center gap-1 rounded border border-[var(--cc-border)] bg-[var(--cc-hover-bg)] px-1.5 py-0.5 text-[10.5px] text-[var(--cc-ink-mid)]">
               <span className="font-bold text-[var(--cc-eyebrow)]">{v.axis}</span>{typoLabel(v.code)}
             </span>
           ))}
-          {d.結論類型.標註方式 ? (
-            <span className="text-[10px] text-[var(--cc-ink-soft)]">類型學・{d.結論類型.標註方式}{d.結論類型.信心 ? `／${d.結論類型.信心}` : ''}</span>
-          ) : null}
         </div>
       ) : null}
 
+      {/* 與卡片之間的 border-t 同色，靠寬度分層級：這條只到正文寬（max-w-4xl），卡片邊界是滿寬。
+          再淺一階（--cc-track）在 --cc-bg 上幾乎看不見，試過了。 */}
+      <div className="mt-2.5 mb-2.5 h-px max-w-4xl bg-[var(--cc-line)]" aria-hidden />
+
+      {/* 標題層。憲判有官方案名（【…】內的短名，如「刑事訴訟上訴不可分原則適用範圍案」），釋字無此欄，
+          813 件全空，標題位由爭點頂上——所以爭點的字級隨有無案名而變：有案名時它是副題，沒有時它就是標題。 */}
+      {d.案名 ? (
+        <p className="max-w-4xl text-[15px] font-bold leading-snug text-[var(--cc-ink-strong)]">{hl(d.案名, q)}</p>
+      ) : null}
+
       {d.爭點 ? (
-        <p className="mt-2 max-w-4xl text-[14px] font-bold leading-relaxed text-[var(--cc-ink-heavy)]">{hl(d.爭點, q)}</p>
+        <p className={
+          d.案名
+            ? 'mt-1 max-w-4xl text-[13.5px] leading-relaxed text-[var(--cc-ink-mid)]'
+            : 'max-w-4xl text-[15px] font-bold leading-snug text-[var(--cc-ink-strong)]'
+        }>{hl(d.爭點, q)}</p>
       ) : null}
       {d.系列 ? (
         <>
