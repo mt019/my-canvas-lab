@@ -12,7 +12,8 @@ function splitDate(text) {
 }
 
 export default function CollationView() {
-  const page = collation.樣本[0];
+  const [pageIndex, setPageIndex] = useState(0);
+  const page = collation.樣本[pageIndex];
   const [zoom, setZoom] = useState(0.3);
   const [enhanced, setEnhanced] = useState(true);
   const zoomRef = useRef(0.3);
@@ -27,6 +28,17 @@ export default function CollationView() {
     const value = clampZoom(next);
     zoomRef.current = value;
     setZoom(value);
+  };
+
+  const selectPage = (index) => {
+    setPageIndex(index);
+    setEnhanced(true);
+    setCardWidthOverrides({});
+    if (imageViewportRef.current) {
+      imageViewportRef.current.scrollTop = 0;
+      imageViewportRef.current.scrollLeft = 0;
+    }
+    if (comparisonViewportRef.current) comparisonViewportRef.current.scrollLeft = 0;
   };
 
   useEffect(() => {
@@ -87,6 +99,16 @@ export default function CollationView() {
         <span className="rounded-full border border-[var(--cc-line)] bg-white px-3 py-1 text-[12px] font-bold text-[var(--cc-accent)]">{collation.狀態}</span>
       </div>
 
+      <nav aria-label="紙本樣頁" className="mb-3 flex gap-1.5 overflow-x-auto pb-1">
+        {collation.樣本.map((sample, index) => <button
+          key={sample.樣本ID}
+          type="button"
+          aria-current={index === pageIndex ? 'page' : undefined}
+          onClick={() => selectPage(index)}
+          className={`shrink-0 rounded-full border px-3 py-1.5 text-[11.5px] font-bold transition-colors ${index === pageIndex ? 'border-[var(--cc-accent)] bg-[var(--cc-accent)] text-white' : 'border-[var(--cc-line)] bg-white text-[var(--cc-ink-mid)] hover:bg-[var(--cc-hover-bg)]'}`}
+        >第 {sample.冊} 冊・紙本 {sample.紙本頁}</button>)}
+      </nav>
+
       <div className="grid items-start gap-4 pb-3 min-[680px]:grid-cols-[minmax(320px,370px)_minmax(0,1fr)]">
         <aside className="w-full min-[680px]:sticky min-[680px]:top-16">
           <div className="mb-2 flex items-end justify-between gap-2">
@@ -104,7 +126,7 @@ export default function CollationView() {
               <a href={page.影像} target="_blank" rel="noreferrer" className="ml-auto rounded p-1.5 text-[var(--cc-accent)] hover:bg-[var(--cc-hover-bg)]" aria-label="另開紙本影像"><ExternalLink size={13} /></a>
             </div>
             <div ref={imageViewportRef} className="h-[560px] overflow-auto overscroll-contain bg-white">
-              <img src={enhanced ? page.影像 : page.原掃描影像} alt="大理院解釋例全文第一冊紙本第二頁" className="block max-w-none" style={{ width: `${1177 * zoom}px`, height: 'auto' }} />
+              <img src={enhanced ? page.影像 : page.原掃描影像} alt={`大理院解釋例全文第 ${page.冊} 冊紙本第 ${page.紙本頁} 頁`} className="block max-w-none" style={{ width: `${(page.影像寬度 ?? 1177) * zoom}px`, height: 'auto' }} />
             </div>
           </div>
           <p className="mt-1.5 text-[11px] text-[var(--cc-ink-soft)]">預設 30% 清晰閱讀；雙指滑動平移，觸控板捏合可連續縮放。疑似筆畫請切回原掃描核證。</p>
