@@ -629,9 +629,14 @@ function LectureMarkRow({ record, today, state, going, went }) {
         {when}
         {date ? <div className="text-ink-muted">{inDays(dayDiff(today, date))}</div> : null}
       </div>
-      <div className="flex h-[72px] w-24 items-center justify-center overflow-hidden rounded-token-sm border border-line-soft bg-surface">
+      <div className={`flex w-24 items-center justify-center overflow-hidden rounded-token-sm border border-line-soft bg-surface ${poster ? '' : 'min-h-[72px]'}`}>
         {poster ? (
-          <img src={poster} alt="" loading="lazy" className="h-full w-full object-cover" />
+          <img
+            src={poster}
+            alt={`${title}活動海報`}
+            loading="lazy"
+            className="block h-auto w-full"
+          />
         ) : (
           posterSourceUrl ? (
             <a href={posterSourceUrl} target="_blank" rel="noreferrer" className="px-2 text-center font-accent text-token-xs leading-relaxed tracking-[0.08em] text-accent">
