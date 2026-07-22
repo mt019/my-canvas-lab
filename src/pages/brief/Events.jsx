@@ -445,8 +445,7 @@ export default function Events() {
         countOf={(id) => events.filter((e) => e.source === id).length}
       />
       <p className="mb-5 mt-3 leading-relaxed text-ink-faint">
-        預設不含{eventSources.filter((s) => !s.inDefaultView).map((s) => s.label).join('、')}
-        ——它一個來源就比其他全部加起來多，混進來會把別的沖掉。
+        預設不含{eventSources.filter((s) => !s.inDefaultView).map((s) => s.label).join('、')}；可在來源篩選中開啟。
       </p>
 
       {hostSwitchApplies ? (
@@ -499,7 +498,7 @@ export default function Events() {
       ) : null}
 
       <p className="leading-relaxed text-ink-faint">
-        篩選只是換個看法，不是把東西刪掉。沒列出來的都還在——把來源或主辦單位切成全部就找得到。
+        篩選不會刪除資料。切換至全部來源或主辦單位即可查看未顯示的場次。
       </p>
     </nav>
   );
@@ -548,7 +547,7 @@ export default function Events() {
           {shown.length === 0 ? (
             <p className="py-6 text-token-sm text-ink-muted">
               {query ? `「${query}」在這個篩選底下沒有場次。` : '這個篩選底下沒有場次。'}
-              　東西都還在——把來源或主辦單位切成全部再找一次。
+              可切換至全部來源或主辦單位重新查找。
             </p>
           ) : mode === 'calendar' ? (
             <CalendarView events={shown} today={today} />
@@ -622,9 +621,9 @@ export default function Events() {
 /* 每一種狀態底下那句灰字。差別由字承擔，不由顏色承擔——「查過＝自由入座」與「還沒查＝
    不知道」畫成一樣就是說謊，但那個區別不該靠五種顏色去喊。 */
 const ENTRY_NOTE = {
-  deadline: '有公告的截止日，倒數看得見。標「可能更早」的是額滿會提前關。',
-  untilFull: '要報名、有報名表，一個日期都沒公告。額滿就關，沒有任何一天可以倒數——這種比有截止日的更急。',
-  open: '查過了，不用報名也不用買票。可以放心。',
-  ticketed: '要買票，有票價與售票期間。剩幾張票這裡不存，那種數字幾小時就過期。',
-  unknown: '這場要不要報名、買不買票，還沒查到——不是「不用」，是還沒查證，得自己去問。',
+  deadline: '主辦單位已公告截止日；「可能更早」表示額滿後會提前停止報名。',
+  untilFull: '需要報名，但主辦單位未公告截止日，額滿後停止受理。',
+  open: '已確認不需報名或購票。',
+  ticketed: '需要購票；本站記錄票價與售票期間，不顯示即時餘票。',
+  unknown: '尚未確認是否需要報名或購票，請洽主辦單位。',
 };

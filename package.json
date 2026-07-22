@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "npm run validate:fonts && npm run validate:tokens && npm run validate:colors && npm run validate:math && npm run validate:cases && vite build && npm run prerender && npm run sitemap",
+    "build": "npm run validate:fonts && npm run validate:tokens && npm run validate:colors && npm run validate:copy && npm run validate:math && npm run validate:cases && vite build && npm run prerender && npm run sitemap",
     "preprerender": "playwright install chromium",
     "prerender": "node scripts/prerender.mjs",
     "sitemap": "node scripts/generate-sitemap.mjs",
@@ -15,6 +15,7 @@
     "fonts:rebuild": "node scripts/rebuild-font-subsets.mjs",
     "validate:tokens": "node scripts/validate-design-tokens.mjs",
     "validate:colors": "node scripts/validate-color-system.mjs",
+    "validate:copy": "node scripts/validate-ui-copy.mjs",
     "lint": "eslint .",
     "preview": "vite preview",
     "validate:math": "node scripts/validate-math-notation.mjs",

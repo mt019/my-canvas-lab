@@ -221,13 +221,12 @@ function ClosingSoon({ today }) {
         <span className="ml-2 text-token-sm tabular-nums text-ink-faint">{rows.length} 件</span>
       </h2>
       <p className="mb-4 mt-1 text-token-sm leading-relaxed text-ink-muted">
-        活動日還很遠，門這幾天就關。讓人錯過的從來不是活動日，是報名截止日。
+        以下活動將在 {URGENT_WINDOW} 天內截止報名或售票。
       </p>
 
       {rows.length === 0 ? (
         <p className="text-token-sm leading-relaxed text-ink-muted">
-          查得到的場次裡，這 {URGENT_WINDOW} 天沒有要關的門。這只涵蓋進場方式查清楚的那些，
-          不是全部——見下面「這裡看不到什麼」。
+          已查明進場方式的場次中，未來 {URGENT_WINDOW} 天沒有截止項目。未查明的項目列在「這裡看不到什麼」。
         </p>
       ) : (
         rows.map(({ e, left }) => (
@@ -720,7 +719,7 @@ function TodayEvents({ today, day, onDayChange, going, went }) {
   return (
     <section className="mt-4">
       <p className="max-w-2xl text-token-sm leading-relaxed text-ink">
-        不用翻週報找今天。這裡只回答一件事：接下來三天，哪一天有哪些實體活動。
+        未來三天的實體活動，按日期列出。
       </p>
       <Tabs
         variant="underline"
@@ -932,8 +931,7 @@ export default function Brief() {
             href="#closing"
             className="mb-4 flex items-baseline gap-1.5 border-l-2 border-warn pl-3 text-token-xs leading-snug text-ink-muted transition-colors duration-fast hover:text-ink"
           >
-            <span className="text-warn">⚠</span>
-            <span>這 {URGENT_WINDOW} 天關門的 · {closingCount} 件</span>
+            <span>即將截止 · {closingCount} 件</span>
           </a>
         ) : null
       }
@@ -950,8 +948,7 @@ export default function Brief() {
           onClick={() => setTabs({ view: 'daily' }, { scroll: 'top' })}
           className="flex w-full items-baseline gap-2 border-l-2 border-warn pl-3 text-left text-token-sm leading-snug text-ink-muted transition-colors duration-fast hover:text-ink"
         >
-          <span className="text-warn">⚠</span>
-          <span>這 {URGENT_WINDOW} 天有 {closingCount} 件要關門，別被分頁藏住——回日報看細節。</span>
+          <span>未來 {URGENT_WINDOW} 天截止 · {closingCount} 件。查看日報。</span>
         </button>
       ) : null}
 
@@ -962,8 +959,7 @@ export default function Brief() {
             最近 {WINDOWS.find((w) => w.id === view).days} 天出的 {pool.items.length} 篇，
             加上接下來 {WINDOWS.find((w) => w.id === view).days} 天裡的{' '}
             {pool.events.filter(inDefaultView).length} 場活動。
-            同一個天數，兩個方向——讀的東西的日期是「它什麼時候出來的」，活動的日期是「你什麼時候
-            得到場」。每個來源這裡只出前 {PREVIEW_PER_SOURCE} 件。
+            文章向前回溯，活動向後預覽。每個來源列出前 {PREVIEW_PER_SOURCE} 件。
           </p>
         ) : null}
 
@@ -998,10 +994,10 @@ export default function Brief() {
             {pool.items.length === 0 && pool.events.length === 0 ? (
               <p className="text-token-sm leading-relaxed text-ink-muted">
                 {view === 'daily'
-                  ? '這一批你都看過了。東西沒有不見——切到週報或月報就找得回來，或者到「讀的東西」把全部 ' +
+                  ? '這一批已全部標為已讀。週報、月報與「讀的東西」仍保留全部 ' +
                     items.length +
-                    ' 篇攤開。'
-                  : '這個窗口裡沒有東西。'}
+                    ' 篇。'
+                  : '這段期間沒有資料。'}
               </p>
             ) : null}
           </>
@@ -1026,9 +1022,8 @@ function DailyHead({ pool, onMarkSeen }) {
   return (
     <div className="mt-4 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2">
       <p className="min-w-0 flex-1 text-token-sm leading-relaxed text-ink-muted">
-        你還沒看過的：{n} 篇讀的東西{e > 0 ? `、${e} 場活動` : ''}。
-        這裡不看日期——只講得出月份的來源（NBER、IMF）日期一律記成該月 1 號，那個日子是湊的，
-        拿它算「今天新的」會說謊。看過就是看過。
+        尚未標為已讀：{n} 篇{e > 0 ? `、${e} 場活動` : ''}。
+        NBER、IMF 僅提供月份，因此不以補記的每月 1 日判定每日新增。
       </p>
       <button
         type="button"

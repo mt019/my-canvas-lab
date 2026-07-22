@@ -157,7 +157,7 @@ try {
   await page.locator('button', { hasText: '標為已讀' }).first().click();
   await page.waitForTimeout(200);
   const afterMark = (await page.locator('main').innerText()).replace(/\n/g, ' ');
-  check('標為已讀之後日報歸零', /日報\s*0/.test(afterMark) && afterMark.includes('這一批你都看過了'));
+  check('標為已讀之後日報歸零', /日報\s*0/.test(afterMark) && afterMark.includes('這一批已全部標為已讀'));
   await page.goto(`${BASE}/brief?view=week`, { waitUntil: 'networkidle' });
   check('標為已讀不會把東西弄丟：週報照樣在', (await page.locator('main').innerText()).includes('最近 7 天出的'));
   await page.evaluate(() => localStorage.clear());
@@ -301,7 +301,7 @@ try {
 
   // 摘要是 null 的那些照實空著，不拿別的欄位湊
   const noSummary = data.items.filter((i) => !i.summary);
-  check(`${noSummary.length} 篇沒有摘要，頁面照實講出這件事`, new RegExp(`其中 ${noSummary.length} 篇沒有摘要`).test(reading));
+  check(`${noSummary.length} 篇沒有摘要，頁面列出來源狀態`, new RegExp(`其中 ${noSummary.length} 篇的來源未提供摘要`).test(reading));
 
   // 來源按鈕帶 data-source-id（SourceFilter 元件），控制列的全選/反選/單選不算在內
   check('來源逐個可切', (await page.locator('nav button[data-source-id]').count()) === itemSources.length);

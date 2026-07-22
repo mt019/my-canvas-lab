@@ -181,7 +181,7 @@ export default function Reading() {
       />
 
       <p className="mt-3 leading-relaxed text-ink-faint">
-        篩選只是換個看法，不是把東西丟掉。沒列出來的都還在——每個來源各留幾篇、涵蓋到哪裡，在
+        篩選不會刪除資料。各來源的保留篇數與涵蓋範圍見
         <Link to="/brief?view=sources" className="text-accent underline underline-offset-2">
           資料來自哪裡
         </Link>
@@ -213,7 +213,7 @@ export default function Reading() {
             {/* 名字與數字從同一個集合算。這一行的每個數字都是 shown 自己數出來的，不是從
                 coverage 搬來的——coverage 是整份資料的，跟畫面上這一批不是同一個集合。 */}
             {noSummary > 0
-              ? `其中 ${noSummary} 篇沒有摘要——那是來源本來就沒附（ECB 與 OECD 就是沒給摘要，Reddit 轉貼連結的貼文沒有內文），不是漏掉，也不拿別的東西去湊。`
+              ? `其中 ${noSummary} 篇的來源未提供摘要（ECB、OECD，以及沒有貼文內文的 Reddit 連結）。`
               : ''}
           </p>
         </section>
@@ -221,7 +221,7 @@ export default function Reading() {
         {shown.length === 0 ? (
           <p className="py-6 text-token-sm text-ink-muted">
             {query ? `「${query}」在這個篩選底下沒有東西。` : '這個篩選底下沒有東西。'}
-            　東西都還在——把來源切回全部再找一次。
+            可切換至全部來源重新查找。
           </p>
         ) : (
           blocks.map(({ sec, groups }) => (
