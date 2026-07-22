@@ -84,7 +84,7 @@ function ItemRow({ item, today, kept }) {
           <MarkButton on={kept.has(item.id)} onToggle={() => kept.toggle(snapshotItem(item))} label="留著" />
         </div>
         {item.summary ? (
-          <p className="mt-1 text-token-xs leading-relaxed text-ink-muted">{item.summary}</p>
+          <p className="mt-1 text-token-xs leading-relaxed text-ink">{item.summary}</p>
         ) : null}
       </div>
     </div>
@@ -111,7 +111,10 @@ export default function Reading() {
   // 空集合是合法狀態（全不選）：內容區有它自己的空狀態，不再擋。
   const write = (ids) => {
     const ordered = itemSources.filter((s) => ids.includes(s.id)).map((s) => s.id);
-    setTabs({ sources: ordered.length === 0 ? 'none' : ordered.length === itemSources.length ? 'all' : ordered.join(',') });
+    setTabs(
+      { sources: ordered.length === 0 ? 'none' : ordered.length === itemSources.length ? 'all' : ordered.join(',') },
+      { scroll: 'preserve' },
+    );
   };
 
   /* 篩選只決定先看到什麼，不決定存了什麼。關鍵字掃標題、作者與摘要——摘要是 null 的那些
@@ -203,7 +206,7 @@ export default function Reading() {
             這一批
             <span className="ml-2 text-token-sm tabular-nums text-ink-faint">{shown.length} 篇</span>
           </h2>
-          <p className="mt-1 text-token-sm leading-relaxed text-ink-muted">
+          <p className="mt-1 text-token-sm leading-relaxed text-ink">
             {blocks.length > 0
               ? `${blocks.length} 類、${blocks.reduce((n, b) => n + b.groups.length, 0)} 個來源。`
               : ''}
@@ -229,7 +232,7 @@ export default function Reading() {
                   {groups.reduce((n, g) => n + g.rows.length, 0)} 篇
                 </span>
               </h2>
-              <p className="mb-4 mt-1 text-token-sm leading-relaxed text-ink-muted">
+              <p className="mb-4 mt-1 text-token-sm leading-relaxed text-ink">
                 {groups.map((g) => `${g.source.label} ${g.rows.length} 篇`).join('、')}
               </p>
               {groups.map(({ source, rows }) => (
@@ -239,7 +242,7 @@ export default function Reading() {
                   {groups.length === 1 ? (
                     <span id={`s-${source.id}`} />
                   ) : (
-                    <h3 id={`s-${source.id}`} className="font-display text-token-base text-ink-muted">
+                    <h3 id={`s-${source.id}`} className="font-display text-token-base text-ink">
                       {source.label}
                       <span className="ml-2 text-token-xs tabular-nums text-ink-faint">{rows.length} 篇</span>
                     </h3>
@@ -258,7 +261,7 @@ export default function Reading() {
           <h2 id="blind-spots" className="font-display text-token-lg text-ink">
             這裡看不到什麼
           </h2>
-          <p className="mt-1 text-token-sm leading-relaxed text-ink-muted">
+          <p className="mt-1 text-token-sm leading-relaxed text-ink">
             有缺口就講出來。一份看起來完整的清單，比一份說得出自己漏了什麼的清單危險。
             每個來源涵蓋到哪裡、各留幾篇，在
             <Link to="/brief?view=sources" className="text-accent underline underline-offset-2">

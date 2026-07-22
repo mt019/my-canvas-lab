@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import data from '../../data/brief-events.json';
+import { queuePersonalMutation, watchPersonalState } from '../../personal-state/sync';
 import { sourceLabel } from './data';
 
 /*
@@ -75,6 +76,14 @@ export function snapshot(x, kind) {
     title: x.title,
     url: kind === 'event' ? (x.detailUrl ?? x.eventUrl ?? null) : (x.url ?? null),
     date: kind === 'event' ? x.date : x.publishedAt,
+    endDate: kind === 'event' ? (x.endDate ?? null) : null,
+    time: kind === 'event' ? (x.time ?? null) : null,
+    venue: kind === 'event' ? (x.venue ?? null) : null,
+    speaker: kind === 'event' ? (x.speaker ?? null) : null,
+    host: kind === 'event' ? (x.host ?? null) : null,
+    poster: kind === 'event' ? (x.poster ?? null) : null,
+    posterSourceUrl: kind === 'event' ? (x.posterSourceUrl ?? null) : null,
+    description: kind === 'event' ? (x.description ?? null) : null,
     source: x.source,
     sourceLabel: sourceLabel(x.source),
     markedAt: new Date().toISOString(),
@@ -126,7 +135,13 @@ function useStorageSync(key, reload) {
       if (e.key === key) reload();
     };
     window.addEventListener('storage', onStorage);
-    return () => window.removeEventListener('storage', onStorage);
+    const unwatch = watchPersonalState((changedKey) => {
+      if (changedKey === key) reload();
+    });
+    return () => {
+      window.removeEventListener('storage', onStorage);
+      unwatch();
+    };
   }, [key, reload]);
 }
 
@@ -145,16 +160,22 @@ export function useSeen() {
     setMarks((prev) => {
       const next = new Set([...prev, ...ids]);
       write(KEYS.seen, next);
+      ids.forEach((id) => queuePersonalMutation({
+        state: 'seen', entityType: 'brief', entityId: id, active: true,
+      }));
       return next;
     });
   }, []);
 
   const clear = useCallback(() => {
     setMarks(() => {
+      marks.forEach((id) => queuePersonalMutation({
+        state: 'seen', entityType: 'brief', entityId: id, active: false,
+      }));
       write(KEYS.seen, new Set());
       return new Set();
     });
-  }, []);
+  }, [marks]);
 
   return { marks, has, add, clear };
 }
@@ -166,7 +187,7 @@ export function useSeen() {
  * 要畫「留著的」那一頁時才想去查它是什麼，資料可能已經輪替走了，那時候手上只剩一個 id，
  * 什麼都畫不出來。
  */
-function useRecords(key) {
+function useRecords(key, state, entityType) {
   const [marks, setMarks] = useState(() => readRecords(key));
   useStorageSync(key, useCallback(() => setMarks(readRecords(key)), [key]));
 
@@ -176,13 +197,15 @@ function useRecords(key) {
     (record) => {
       setMarks((prev) => {
         const next = new Map(prev);
-        if (next.has(record.id)) next.delete(record.id);
+        const active = !next.has(record.id);
+        if (!active) next.delete(record.id);
         else next.set(record.id, record);
         write(key, next);
+        queuePersonalMutation({ state, entityType, entityId: record.id, active, metadata: record });
         return next;
       });
     },
-    [key],
+    [key, state, entityType],
   );
 
   const remove = useCallback(
@@ -191,10 +214,11 @@ function useRecords(key) {
         const next = new Map(prev);
         next.delete(id);
         write(key, next);
+        queuePersonalMutation({ state, entityType, entityId: id, active: false });
         return next;
       });
     },
-    [key],
+    [key, state, entityType],
   );
 
   /* 最近標的在前面。這是這一份清單唯一的排序，而且是它自己的時間軸——不照東西本身的
@@ -207,8 +231,8 @@ function useRecords(key) {
   return { marks, has, toggle, remove, list, size: marks.size };
 }
 
-export const useKept = () => useRecords(KEYS.kept);
-export const useGoing = () => useRecords(KEYS.going);
+export const useKept = () => useRecords(KEYS.kept, 'kept', 'item');
+export const useGoing = () => useRecords(KEYS.going, 'going', 'event');
 /* 我去了：與我要去各自獨立的一份。沒先標「我要去」也能直接按「我去了」（臨時去的），
    兩份互不牽動——同一份實作，只差存哪個鍵。 */
-export const useWent = () => useRecords(KEYS.went);
+export const useWent = () => useRecords(KEYS.went, 'went', 'event');

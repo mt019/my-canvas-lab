@@ -2,6 +2,8 @@
 
 一個互動實驗場：音樂工具、法律與財稅政策的研究地圖、教學用的統計模擬，收在同一個 React canvas 裡。線上版在 <https://my-canvas-lab.vercel.app>。
 
+帳號與私人標記採可選登入：公共頁面不要求登入，GitHub 只驗證身分，個人狀態由 Supabase/PostgreSQL 保存。設定、資料邊界與備份方式見 [`docs/PERSONAL_STATE.md`](docs/PERSONAL_STATE.md)。
+
 ## 內容
 
 首頁本身就是完整目錄，分五區：

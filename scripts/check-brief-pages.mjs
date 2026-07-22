@@ -40,6 +40,12 @@ const inDefaultView = (e) => {
 const today = new Date(Date.now() + 8 * 3600 * 1000).toISOString().slice(0, 10);
 const dayDiff = (from, to) => Math.round((new Date(`${to}T00:00:00Z`) - new Date(`${from}T00:00:00Z`)) / 864e5);
 const isOngoing = (e) => Boolean(e.endDate) && e.date < today && e.endDate >= today;
+const addDays = (date, days) => {
+  const d = new Date(`${date}T00:00:00Z`);
+  d.setUTCDate(d.getUTCDate() + days);
+  return d.toISOString().slice(0, 10);
+};
+const occursOn = (e, date) => e.date <= date && (e.endDate ?? e.date) >= date;
 
 const kindsOf = (collection) => [...new Set(data.sources.filter((s) => s.collection === collection).map((s) => s.kind))];
 const itemSources = data.sources.filter((s) => s.collection === 'items');
@@ -67,7 +73,7 @@ try {
   //      一行 banner，兩者都掛 id="closing"）；沒有要關的門時不強制。
   const pinned = [];
   let urgentN = 0;
-  for (const view of ['daily', 'week', 'month', 'sources']) {
+  for (const view of ['daily', 'week', 'month', 'today-events', 'sources']) {
     await page.goto(`${BASE}/brief?view=${view}`, { waitUntil: 'networkidle' });
     const has = (await page.locator('#closing').count()) === 1;
     if (view === 'daily') {
@@ -173,6 +179,25 @@ try {
     check(`${label}：活動往前看 ${days} 天＝${fwd} 場`, new RegExp(`接下來 ${days} 天裡的 ${fwd} 場活動`).test(txt));
   }
 
+  // ---- 今日活動門戶：第一層只數今天，裡面用標籤切今／明／後；跨日活動每一天都算。
+  await page.goto(`${BASE}/brief?view=today-events`, { waitUntil: 'networkidle' });
+  for (const [id, label, offset] of [['today', '今天', 0], ['tomorrow', '明天', 1], ['after', '後天', 2]]) {
+    const date = addDays(today, offset);
+    const n = data.events.filter((e) => inDefaultView(e) && occursOn(e, date)).length;
+    if (id !== 'today') await page.goto(`${BASE}/brief?view=today-events&activityDay=${id}`, { waitUntil: 'networkidle' });
+    const text = (await page.locator('main').innerText()).replace(/\s/g, '');
+    check(`今日活動門戶的「${label}」＝${n} 場`, text.includes(`${label}的活動${n}場`));
+  }
+  await page.setViewportSize({ width: 1440, height: 360 });
+  await page.goto(`${BASE}/brief?view=today-events`, { waitUntil: 'networkidle' });
+  await page.evaluate(() => window.scrollTo(0, 280));
+  const beforeSubTabScroll = await page.evaluate(() => window.scrollY);
+  await page.getByRole('tab', { name: /明天/ }).click();
+  await page.waitForURL(/activityDay=tomorrow/);
+  const afterSubTabScroll = await page.evaluate(() => window.scrollY);
+  check('區內分頁保持目前捲動位置', beforeSubTabScroll > 0 && Math.abs(afterSubTabScroll - beforeSubTabScroll) <= 1);
+  await page.setViewportSize({ width: 1440, height: 1000 });
+
   /* ---- 標記層：留著／我要去
    *
    * 這幾項要咬的是同一件事：**「留著」是不是真的留得住。** 資料倉每個來源只送最新 12 篇
@@ -185,7 +210,7 @@ try {
    */
   await page.evaluate(() => localStorage.clear());
   await page.goto(`${BASE}/brief?view=kept`, { waitUntil: 'networkidle' });
-  check('沒標過東西時，「留著的」講得出它是什麼', (await page.locator('main').innerText()).includes('還沒有標記過東西'));
+  check('沒標過東西時，「要讀的」講得出它是什麼', (await page.locator('main').innerText()).includes('還沒有要讀的文章'));
 
   const GONE = { id: 'gone:already-rotated-out', title: '這筆已經被新的擠出投影了' };
   await page.evaluate((gone) => {
@@ -216,23 +241,37 @@ try {
   await page.locator('[data-mark="留著"]').first().click();
   await page.waitForTimeout(100);
   const afterKeep = (await page.locator('main').innerText()).replace(/\n/g, ' ');
-  check('按了留著，分頁上就有 1 件', /留著的\s*1/.test(afterKeep));
+  check('按了留著，「要讀的」分頁就有 1 件', /要讀的\s*1/.test(afterKeep));
   check('留著不等於看過：日報沒有因此少一件', new RegExp(`日報\\s*${unreadCount}`).test(afterKeep));
 
   await page.reload({ waitUntil: 'networkidle' });
-  check('留著撐得過重新整理', /留著的\s*1/.test((await page.locator('main').innerText()).replace(/\n/g, ' ')));
+  check('留著撐得過重新整理', /要讀的\s*1/.test((await page.locator('main').innerText()).replace(/\n/g, ' ')));
 
   await page.goto(`${BASE}/brief?view=kept`, { waitUntil: 'networkidle' });
-  check('「留著的」列得出剛才那一件', (await page.locator('main').innerText()).replace(/\s/g, '').includes('留著1篇'));
+  check('「要讀的」列得出剛才那一件', (await page.locator('main').innerText()).replace(/\s/g, '').includes('要讀的1篇'));
 
-  // 我要去：活動曆按下去，門口的「留著的」看得到——兩頁同一份標記
+  // 我要去：活動曆按下去，門口的「我的講座」看得到——兩頁同一份標記
   await page.evaluate(() => localStorage.clear());
-  await page.goto(`${BASE}/brief/events`, { waitUntil: 'networkidle' });
+  await page.goto(`${BASE}/brief/events?sources=sinica&hosts=all`, { waitUntil: 'networkidle' });
   await page.locator('[data-mark="我要去"]').first().click();
   await page.waitForTimeout(100);
-  await page.goto(`${BASE}/brief?view=kept`, { waitUntil: 'networkidle' });
+  await page.goto(`${BASE}/brief?view=lectures`, { waitUntil: 'networkidle' });
   const goingText = (await page.locator('main').innerText()).replace(/\s/g, '');
-  check('活動曆按的「我要去」，門口的「留著的」看得到（兩頁同一份標記）', goingText.includes('我要去1場'));
+  check('活動曆按的「我要去」，「我的講座」看得到（兩頁同一份標記）', goingText.includes('接下來要去1場'));
+  check('我的講座會畫來源提供的活動主視覺', (await page.locator('main img[src]').count()) === 1);
+  check('未知進場方式不會洩漏成講座卡文案', !goingText.includes('進場方式還沒查到'));
+
+  // 要去／去過是狀態，不是兩個可同時打開的開關。
+  await page.locator('[data-mark="我去了"]').click();
+  await page.waitForTimeout(100);
+  const lectureState = await page.evaluate(() => ({
+    going: JSON.parse(localStorage.getItem('canvaslab:brief:going') ?? '[]').length,
+    went: JSON.parse(localStorage.getItem('canvaslab:brief:went') ?? '[]').length,
+  }));
+  check('按「我去了」會從要去移到去過', lectureState.going === 0 && lectureState.went === 1);
+  await page.goto(`${BASE}/brief?view=lectures&lectures=went`, { waitUntil: 'networkidle' });
+  const wentText = await page.locator('main').innerText();
+  check('去過分頁列得出轉移後的講座', wentText.includes('我去過的') && wentText.includes('1 場'));
   await page.evaluate(() => localStorage.clear());
 
   const defaultEventCount = data.events.filter((e) => inDefaultView(e)).length;

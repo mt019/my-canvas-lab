@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import LangSwitch from './LangSwitch';
 import FontSizeControl from './FontSizeControl';
 import AppearanceMenu from './AppearanceMenu';
+import AccountControl from './AccountControl';
 
 const WIDTHS = {
   article: 'max-w-[86rem]', // matches ArticleLayout's three-column grid
@@ -47,6 +48,7 @@ export default function SiteHeader({ back, width = 'article', lang, onLangChange
           {onLangChange ? <LangSwitch lang={lang} onChange={onLangChange} /> : null}
           <FontSizeControl scale={scale} onChange={onScaleChange} />
           <AppearanceMenu lang={lang} />
+          <AccountControl />
         </div>
       </div>
     </div>

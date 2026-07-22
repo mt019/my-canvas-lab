@@ -170,8 +170,8 @@ export default function GovernmentDebt() {
   // One hook for both dimensions: picking a main tab also resets the sub-tab, and
   // the two values have to reach the URL in a single write (see useTabParams).
   const [{ tab: mainTab, sub: subTab }, setTabs] = useTabParams({ tab: 'overview', sub: 'rank' });
-  const setSubTab = (sub) => setTabs({ sub });
-  const handleMainTab = (tab) => setTabs({ tab, sub: DEFAULT_SUBTABS[tab] });
+  const setSubTab = (sub) => setTabs({ sub }, { scroll: 'preserve' });
+  const handleMainTab = (tab) => setTabs({ tab, sub: DEFAULT_SUBTABS[tab] }, { scroll: 'top' });
   const layerAcc = useExpandedSet(RESEARCH_LAYERS.map(l => l.id));
   const timelineAcc = useExpandedSet(CHINA_TIMELINE.map((_, i) => i));
   const glossaryAcc = useExpandedSet(GLOSSARY.map((_, i) => i));

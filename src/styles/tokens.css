@@ -21,9 +21,9 @@
   --c-paper: #fdfaf9;          /* main body background — the only allowed prose backdrop */
   --c-surface: #f5eceb;        /* cards, sidebars, quiet panels */
   --c-surface-raised: #ffffff; /* elevated cards, popovers */
-  --c-ink: #5a4b48;            /* primary text */
-  --c-ink-muted: #8a7a78;      /* secondary text */
-  --c-ink-faint: #c5b4b2;      /* tertiary text, captions */
+  --c-ink: #493b38;            /* primary text — dark enough for sustained reading */
+  --c-ink-muted: #695956;      /* secondary text — subdued, never washed out */
+  --c-ink-faint: #8a7a78;      /* tertiary text — reserve for truly incidental UI */
   --c-line: #e8d3d1;           /* borders, dividers */
   --c-line-soft: #f5eceb;      /* hairlines, table grids — surface stands in (see ROLE_TO_TOKEN) */
   --c-accent: #b08060;         /* warm terracotta */

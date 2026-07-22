@@ -83,10 +83,10 @@ function EventLine({ event, today, showSource, going, went }) {
   const entry = entryText(event, today);
   const facts = eventFacts(event);
   const d = dateSegments(event);
-  const showEntry = entryOf(event) !== 'unknown';
+  const showEntry = Boolean(entry.text);
   return (
     <div className="grid grid-cols-1 gap-x-4 border-b border-line-soft py-2 sm:grid-cols-[minmax(0,1fr)_minmax(0,4fr)]">
-      <div className="text-token-xs leading-relaxed tabular-nums text-ink-muted">
+      <div className="text-token-xs leading-relaxed tabular-nums text-ink">
         <span className="whitespace-nowrap">{d.start}</span>
         {d.end ? <>–<span className="whitespace-nowrap">{d.end}</span></> : null}
         {d.time ? <span className="whitespace-nowrap"> {d.time}</span> : null}{' '}
@@ -121,10 +121,24 @@ function EventLine({ event, today, showSource, going, went }) {
               </a>
             ) : null}
             {going ? (
-              <MarkButton on={going.has(event.id)} onToggle={() => going.toggle(snapshotEvent(event))} label="我要去" />
+              <MarkButton
+                on={going.has(event.id)}
+                onToggle={() => {
+                  if (!going.has(event.id)) went.remove(event.id);
+                  going.toggle(snapshotEvent(event));
+                }}
+                label="我要去"
+              />
             ) : null}
             {went ? (
-              <MarkButton on={went.has(event.id)} onToggle={() => went.toggle(snapshotEvent(event))} label="我去了" />
+              <MarkButton
+                on={went.has(event.id)}
+                onToggle={() => {
+                  if (!went.has(event.id)) going.remove(event.id);
+                  went.toggle(snapshotEvent(event));
+                }}
+                label="我去了"
+              />
             ) : null}
           </div>
         ) : null}
@@ -167,7 +181,7 @@ function CalendarView({ events: shown, today }) {
         const cells = [...Array(lead).fill(null), ...Array.from({ length: total }, (_, i) => i + 1)];
         return (
           <div key={key} className="mb-8">
-            <h3 id={`m-${key}`} className="mb-2 font-display text-token-base text-ink-muted">
+            <h3 id={`m-${key}`} className="mb-2 font-display text-token-base text-ink">
               {monthLabel(key)}
               <span className="ml-2 text-token-xs text-ink-faint">{inMonth.length} 場</span>
             </h3>
@@ -334,7 +348,7 @@ function PivotView({ events: shown, today, rows, cols, onPick, picked, going, we
 
       {picked ? (
         <div className="mt-6">
-          <h3 className="mb-1 font-display text-token-base text-ink-muted">
+          <h3 className="mb-1 font-display text-token-base text-ink">
             {picked.split(' ')[0]} · {colAxis.label_(picked.split(' ')[1])}
             <span className="ml-2 text-token-xs text-ink-faint">{pickedEvents.length} 場</span>
           </h3>
@@ -376,7 +390,7 @@ export default function Events() {
     const ordered = eventSources.filter((s) => ids.includes(s.id)).map((s) => s.id);
     setTabs({
       sources: ordered.length === 0 ? 'none' : ordered.length === eventSources.length ? 'all' : ordered.join(','),
-    });
+    }, { scroll: 'preserve' });
     setPicked(null);
   };
 
@@ -442,7 +456,7 @@ export default function Events() {
             variant="quiet"
             label="主辦單位（中研院）"
             value={hosts}
-            onChange={(v) => { setTabs({ hosts: v }); setPicked(null); }}
+            onChange={(v) => { setTabs({ hosts: v }, { scroll: 'preserve' }); setPicked(null); }}
             className="mb-5 !flex-col !items-start gap-0.5"
             items={[
               { id: 'followed', label: `精選 ${followed.length} 個` },
@@ -468,7 +482,7 @@ export default function Events() {
             variant="quiet"
             label="列軸"
             value={rows}
-            onChange={(v) => { setTabs({ rows: v }); setPicked(null); }}
+            onChange={(v) => { setTabs({ rows: v }, { scroll: 'preserve' }); setPicked(null); }}
             className="mb-4 !flex-col !items-start gap-0.5"
             items={ROW_AXES.map((a) => ({ id: a.id, label: a.label }))}
           />
@@ -477,7 +491,7 @@ export default function Events() {
             variant="quiet"
             label="欄軸"
             value={cols}
-            onChange={(v) => { setTabs({ cols: v }); setPicked(null); }}
+            onChange={(v) => { setTabs({ cols: v }, { scroll: 'preserve' }); setPicked(null); }}
             className="mb-5 !flex-col !items-start gap-0.5"
             items={COL_AXES.map((a) => ({ id: a.id, label: a.label }))}
           />
@@ -506,7 +520,7 @@ export default function Events() {
             場次
             <span className="ml-2 text-token-sm text-ink-faint">{shown.length} 場</span>
           </h2>
-          <p className="mt-1 text-token-sm leading-relaxed text-ink-muted">
+          <p className="mt-1 text-token-sm leading-relaxed text-ink">
             {perSource.map((x) => `${x.label} ${x.n} 場`).join('、') || '這個篩選底下沒有場次'}
             {closingCount > 0 ? `。其中 ${closingCount} 場的門這 ${URGENT_WINDOW} 天要關，或是額滿為止——` : '。'}
             {closingCount > 0 ? (
@@ -522,7 +536,7 @@ export default function Events() {
               variant="underline"
               label="看法"
               value={mode}
-              onChange={(v) => { setTabs({ mode: v }); setPicked(null); }}
+              onChange={(v) => { setTabs({ mode: v }, { scroll: 'preserve' }); setPicked(null); }}
               items={[
                 { id: 'list', label: '條列' },
                 { id: 'calendar', label: '月曆' },
@@ -543,7 +557,7 @@ export default function Events() {
           ) : (
             byMonth.map(({ key, events: inMonth }) => (
               <div key={key} className="mt-6">
-                <h3 id={`m-${key}`} className="mb-1 font-display text-token-base text-ink-muted">
+                <h3 id={`m-${key}`} className="mb-1 font-display text-token-base text-ink">
                   {monthLabel(key)}
                   <span className="ml-2 text-token-xs text-ink-faint">{inMonth.length} 場</span>
                 </h3>
@@ -559,7 +573,7 @@ export default function Events() {
           <h2 id="entry" className="font-display text-token-lg text-ink">
             右邊那一欄在講什麼
           </h2>
-          <p className="mt-1 text-token-sm leading-relaxed text-ink-muted">
+          <p className="mt-1 text-token-sm leading-relaxed text-ink">
             進場的方式不只報名一種，而「還沒查到」跟「不用」是兩件不同的事。這幾種狀態底下各有幾場，
             是這個篩選自己數的。
           </p>
@@ -584,7 +598,7 @@ export default function Events() {
           <h2 id="blind-spots" className="font-display text-token-lg text-ink">
             這裡看不到什麼
           </h2>
-          <p className="mt-1 text-token-sm leading-relaxed text-ink-muted">
+          <p className="mt-1 text-token-sm leading-relaxed text-ink">
             有缺口就講出來。一份看起來完整的清單，比一份說得出自己漏了什麼的清單危險。
             每個來源的涵蓋範圍在
             <a href="/brief#sources" className="text-accent underline underline-offset-2">

@@ -179,7 +179,7 @@ export default function XiaohongshuRisk() {
       tabs={{
         label: '看哪一段',
         value: tab,
-        onChange: (v) => setTabs({ tab: v }),
+        onChange: (v) => setTabs({ tab: v }, { scroll: 'top' }),
         items: [
           { id: 'question', label: '問題意識' },
           { id: 'context', label: '當時發生了什麼' },

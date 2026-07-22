@@ -1,8 +1,10 @@
 import React, { Suspense, lazy, useMemo } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useParams, Navigate } from 'react-router-dom';
-import { ArrowRight, BookMarked, CalendarDays, Droplets, FileSearch, Film, Gavel, Globe2, GraduationCap, Landmark, Languages, Mic, Music, Music2, Palette, Piano, Scale, ScrollText, ShieldAlert, Sigma, Wind } from 'lucide-react';
+import { ArrowRight, BookMarked, CalendarDays, Droplets, FileSearch, Film, Gavel, Globe2, GraduationCap, Landmark, Languages, Mic, Music, Music2, Palette, Piano, Receipt, Scale, ScrollText, ShieldAlert, Sigma, Wind } from 'lucide-react';
 import SeoHead from './components/SeoHead';
 import ScrollToTop from './components/ScrollToTop';
+import AccountControl from './components/AccountControl';
+import { AuthProvider } from './personal-state/AuthProvider';
 import { CC_BASE_SEO, CC_TABS_SEO, ccDataset } from './pages/_constitutional-court/seo';
 
 // A single justice's / single case's indexable page. Lazy-loaded so the
@@ -280,6 +282,14 @@ const PAGE_META = { // token-exempt: per-page identity chip colors (data, not st
     accentText: '#246b8f',
     group: 'research',
   },
+  TaxLitigation: {
+    name: '稅務訴訟計量研究',
+    desc: '逐件讀司法院公開稅務判決：租稅協定被援引時法院怎麼判、撤銷判決撤的是原核定還是復查決定',
+    Icon: Receipt,
+    accent: '#dde3ec',
+    accentText: '#3c5470',
+    group: 'research',
+  },
   ECFAResearch: {
     name: 'ECFA 研究地圖',
     desc: 'ECFA 前史、官方文本、早收產品與 2024 中止優惠範圍',
@@ -350,15 +360,15 @@ const HOME_VARS = { // token-exempt
   '--home-foot': '#b8a3ab',
 };
 
-/* 順序＝首頁區塊的先後（研究地圖在最前＝主線工作，工具與生活雷達收在後面）。版面是
+/* 順序＝首頁區塊的先後（研究地圖在最前＝主線工作；每天會打開的 Brief 所在生活雷達緊接在後）。版面是
    CSS 多欄，區塊照這個順序在兩欄裡按高度均分填入，不再是舊的 row grid 把 1 項的
    「教學實驗室」和 8 項的「研究地圖」硬排在同一列、底下留一大片空。 */
 const GROUPS = [
   { key: 'research', label: '研究地圖', desc: '資料層分離、可延伸成長期研究的小型工作台' },
+  { key: 'life', label: '生活雷達', desc: '活動、餘額、行程與日常決策輔助' },
   { key: 'doctrine', label: '法政解析', desc: '法律、財稅、投資與制度案例的結構化拆解' },
   { key: 'learn', label: '教學實驗室', desc: '方法本身的來歷與限制，配上可以親手轉動的模擬' },
   { key: 'tool', label: '即用工具', desc: '可直接操作的工具：音樂、聲音與設計' },
-  { key: 'life', label: '生活雷達', desc: '活動、餘額、行程與日常決策輔助' },
 ];
 
 export default function App() {
@@ -377,9 +387,10 @@ export default function App() {
   }, []);
 
   return (
-    <Router>
-      <ScrollToTop />
-      <Suspense fallback={
+    <AuthProvider>
+      <Router>
+        <ScrollToTop />
+        <Suspense fallback={
         <div className="min-h-screen bg-paper flex items-center justify-center">
           <div className="w-10 h-10 border-[3px] border-line-soft border-t-ink-faint rounded-full animate-spin" />
         </div>
@@ -399,8 +410,9 @@ export default function App() {
               query deep links still resolve on the base route above. */}
           <Route path="/constitutionalcourt/:tab" element={<CCTabRoute routes={routes} />} />
         </Routes>
-      </Suspense>
-    </Router>
+        </Suspense>
+      </Router>
+    </AuthProvider>
   );
 }
 
@@ -488,6 +500,9 @@ function HomePage({ routes }) {
       <div className="mx-auto w-full max-w-5xl">
 
         <header className="mb-8 border-b border-[var(--home-line)] pb-7">
+          <div className="mb-4 flex justify-end">
+            <AccountControl />
+          </div>
           <p className="mb-4 font-accent text-[10px] font-bold uppercase tracking-[0.28em] text-[var(--home-accent)]">
             Phenom&nbsp;&nbsp;·&nbsp;&nbsp;Canvas Lab
           </p>

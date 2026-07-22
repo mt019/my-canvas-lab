@@ -17,7 +17,7 @@ export default function MarkButton({ on, onToggle, label }) {
       aria-pressed={on}
       data-mark={label}
       className={`shrink-0 text-token-xs tabular-nums transition-colors duration-fast hover:text-accent ${
-        on ? 'text-ink-muted' : 'text-ink-faint'
+        on ? 'text-ink' : 'text-ink-muted'
       }`}
     >
       <span className="mr-1">{on ? '■' : '□'}</span>

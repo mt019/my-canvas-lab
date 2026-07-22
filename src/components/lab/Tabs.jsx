@@ -14,7 +14,9 @@ import { useSearchParams } from 'react-router-dom';
  */
 export function useTabParam(key = 'tab', fallback = 'index') {
   const [values, setValues] = useTabParams({ [key]: fallback });
-  const setValue = useCallback((next) => setValues({ [key]: next }), [key, setValues]);
+  // 單軸 tab 通常就是頁面的主分頁；保持既有的「新內容從頂端開始」語意。若它其實是區內
+  // tab，呼叫端仍可傳 { scroll: 'preserve' }。
+  const setValue = useCallback((next, options = { scroll: 'top' }) => setValues({ [key]: next }, options), [key, setValues]);
   return [values[key], setValue];
 }
 
@@ -35,7 +37,7 @@ export function useTabParams(defaults) {
     Object.entries(defaults).map(([key, fallback]) => [key, params.get(key) ?? fallback]),
   );
 
-  const setValues = useCallback((patch) => {
+  const setValues = useCallback((patch, { scroll = 'preserve' } = {}) => {
     setParams((prev) => {
       const out = new URLSearchParams(prev);
       for (const [key, next] of Object.entries(patch)) {
@@ -44,7 +46,10 @@ export function useTabParams(defaults) {
       }
       return out;
     });
-    window.scrollTo({ top: 0 });
+    // 主分頁換的是整批內容，回頂端有助重新定位；區內分頁、篩選與排序只是在原地換看法，
+    // 強迫回頂端會把使用者從正在看的位置拔走。呼叫端必須依互動語意選 preserve，而不是
+    // 每一頁各自記住／恢復 scrollY。
+    if (scroll === 'top') window.scrollTo({ top: 0 });
     // defaults is a literal at the call site; compare by content, not identity.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setParams, JSON.stringify(defaults)]);
@@ -83,6 +88,21 @@ const VARIANTS = {
     on: 'border-accent bg-accent text-paper',
     off: 'border-line bg-surface-raised text-ink-muted hover:border-accent hover:text-accent',
   },
+  // Dashboard: the primary sticky nav for a whole page's sections (each button
+  // is a research line, not a content-kind bucket) — a segmented-control track
+  // (bg-surface capsule, my-2 so it doesn't touch the sticky bar's own edges)
+  // holding solid pill buttons with a filled active state. `underline`'s thin
+  // border-bottom and faint inactive color read as weak for this job.
+  // `inline-flex` (not `flex`) is deliberate: with few tabs, a full-width flex
+  // row leaves the button group stranded on the left with a bare void to the
+  // right of it under a full-width border — inline-flex sizes the track to its
+  // buttons, so it reads as one self-contained control regardless of tab count.
+  dashboard: {
+    list: 'inline-flex max-w-full gap-1 overflow-x-auto rounded-token-lg bg-surface p-1 my-2',
+    item: 'shrink-0 rounded-token-md px-3 py-2 text-token-sm font-semibold transition-colors duration-fast',
+    on: 'bg-accent text-paper',
+    off: 'text-ink-muted hover:bg-surface-raised hover:text-ink',
+  },
 };
 
 export default function Tabs({ items, value, onChange, variant = 'underline', className = '', style, label }) {
@@ -103,7 +123,11 @@ export default function Tabs({ items, value, onChange, variant = 'underline', cl
             className={`${v.item} ${active ? v.on : v.off}`}
           >
             {text}
-            {count != null ? <span className="ml-1.5 text-ink-faint">{count}</span> : null}
+            {count != null ? (
+              <span className={`ml-1.5 ${active && ['dashboard', 'pill', 'bar'].includes(variant) ? 'text-paper/80' : 'text-ink-muted'}`}>
+                {count}
+              </span>
+            ) : null}
           </button>
         );
       })}

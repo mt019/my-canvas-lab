@@ -12,6 +12,7 @@
 | `1142/constitutional-court-research-data` | `src/data/constitutionalCourt.json`（憲法法庭案例庫頁） | 2026-07-10：`結論類型` 6 軸 **503 件**（217 待人工＋286 行憲後違憲；follow-up ② 完成違憲範圍）。快照為**只覆寫 `結論類型` 欄的局部更新**＝非正規 build 產物 | **中——待正規化**：因並行 Codex 立場表 W2 未 commit，未跑完整 `app-json→sync`；Codex commit 後補跑一次乾淨 sync 即正規化（結果同 503）。人工佇列 23 件見資料 repo `docs/類型學-人工佇列.md` |
 | `1142/statistics-lab-data` | `src/data/statistics.json`（統計學實驗室 hub）、`src/data/statistics-null-hypothesis.json`（文章資料）、`src/content/statistics/null-hypothesis.mdx`（文章正文） | 2026-07-13（新建，`npm run sync` 一次投影三個檔） | 低——資料倉有 `validate` 與 `verify:sim` 兩道閘門；**唯一一個把 .mdx 正文也同步過來的來源**，正文改動一律在資料倉改再 sync |
 | `1142/ntu-coursemap-research-data` | `src/data/germanLawCourseTimeline.json`（德國法課程時間軸頁） | 2026-07-06（來源 `data/teacher_timeline.json` 最後 commit 2026-07-06 14:42:10；快照 mtime 14:47:22，大小與來源一致，均為 102492 bytes） | 低——雙方皆已 commit，但無 `sync-to-canvas.mjs` 這類自動化腳本，靠 `scripts/generate_teacher_timeline.py` 產出後手動複製（見該倉庫 AGENTS.md），忘記重跑不會有任何自動提示 |
+| `1142/brief-data` | `src/data/brief-events.json`（簡報、活動曆、我的講座與要讀的） | 2026-07-22（由資料倉 `npm run sync` 重建） | 中——公開投影由資料倉白名單控制；活動詳情含可得的海報與截短正文，個人標記只存在瀏覽器 localStorage |
 
 ## 使用說明
 
