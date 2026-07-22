@@ -38,12 +38,12 @@ const tabs = [
   { id: 'about', label: '資料說明', icon: Info },
 ];
 
-// 原典校勘要長時間逐字閱讀：底色退到近白、文字回到中性黑，避免案例庫的梅色
-// 在大面積閱讀時搶過紙本與字形本身。連結與狀態仍沿用既有 accent，保留操作辨識。
+// 原典校勘要長時間逐字閱讀：內容區紙面只比白色略暖，不做黃褐「仿古」；大標題區
+// 維持原白底，文字卡與影像框也留純白，細微纖維只襯在校勘工作區外圍。
 const COLLATION_READING_VARS = { // token-exempt
-  '--cc-bg': '#f7f3ea',
-  '--cc-line': '#e5dfd4',
-  '--cc-border': '#ddd5c8',
+  '--cc-bg': '#fbfaf7',
+  '--cc-line': '#ebe8e2',
+  '--cc-border': '#e2ded7',
   '--cc-row-border': '#f0f0f0',
   '--cc-ink': '#171717',
   '--cc-ink-soft': '#4b4b49',
@@ -53,9 +53,9 @@ const COLLATION_READING_VARS = { // token-exempt
   '--cc-title-ink': '#111111',
   '--cc-heading': '#111111',
   '--cc-body-text': '#292927',
-  '--cc-hover-bg': '#f1ece3',
+  '--cc-hover-bg': '#f4f2ed',
   // 只在卡片外的頁面底層呈現極淡紙纖維；辨字卡與影像框仍是不帶紋理的白底。
-  '--paper-texture': `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23g)' opacity='.022'/%3E%3C/svg%3E")`,
+  '--paper-texture': `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.15' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23g)' opacity='.026'/%3E%3C/svg%3E")`,
   '--paper-texture-size': '140px 140px',
 };
 
