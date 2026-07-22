@@ -257,8 +257,12 @@ try {
   await page.waitForTimeout(100);
   await page.goto(`${BASE}/brief?view=lectures`, { waitUntil: 'networkidle' });
   const goingText = (await page.locator('main').innerText()).replace(/\s/g, '');
-  check('活動曆按的「我要去」，「我的講座」看得到（兩頁同一份標記）', goingText.includes('接下來要去1場'));
+  check(
+    '活動曆按的「我要去」，「我的講座」看得到（兩頁同一份標記）',
+    goingText.includes('我的講座1') && (await page.locator('[data-mark="我要去"], [data-mark="待確認"]').count()) === 1,
+  );
   check('我的講座會畫來源提供的活動主視覺', (await page.locator('main img[src]').count()) === 1);
+  check('講座海報可在新分頁開原始大圖', (await page.locator('main a[title="在新分頁開啟海報大圖"][target="_blank"]').count()) === 1);
   check('未知進場方式不會洩漏成講座卡文案', !goingText.includes('進場方式還沒查到'));
 
   // 要去／去過是狀態，不是兩個可同時打開的開關。
@@ -269,9 +273,9 @@ try {
     went: JSON.parse(localStorage.getItem('canvaslab:brief:went') ?? '[]').length,
   }));
   check('按「我去了」會從要去移到去過', lectureState.going === 0 && lectureState.went === 1);
-  await page.goto(`${BASE}/brief?view=lectures&lectures=went`, { waitUntil: 'networkidle' });
+  await page.goto(`${BASE}/brief?view=lectures`, { waitUntil: 'networkidle' });
   const wentText = await page.locator('main').innerText();
-  check('去過分頁列得出轉移後的講座', wentText.includes('我去過的') && wentText.includes('1 場'));
+  check('同一條時間軸列得出轉移後的講座', wentText.includes('已結束') && wentText.includes('我去了'));
   await page.evaluate(() => localStorage.clear());
 
   const defaultEventCount = data.events.filter((e) => inDefaultView(e)).length;

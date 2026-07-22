@@ -599,8 +599,7 @@ export default function Events() {
             這裡看不到什麼
           </h2>
           <p className="mt-1 text-token-sm leading-relaxed text-ink">
-            有缺口就講出來。一份看起來完整的清單，比一份說得出自己漏了什麼的清單危險。
-            每個來源的涵蓋範圍在
+            下列來源或內容目前沒有收錄。每個來源的涵蓋範圍在
             <a href="/brief#sources" className="text-accent underline underline-offset-2">
               門口的「資料來自哪裡」
             </a>

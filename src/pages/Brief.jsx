@@ -530,82 +530,81 @@ function MarkRow({ record, today, marks, label }) {
  * 它不屬於任何一期，所以它不照日期收——**這一區的時間軸是「我什麼時候按的」**，不是東西
  * 本身的日期。你上禮拜留的那篇 2019 年的論文，是上禮拜的事。
  *
- * 我要去的分成還沒到的與已經過去的兩塊。過去的不刪：一場你標了要去的活動辦完了，把它
- * 從清單上抹掉是替你決定那件事不再存在——它是你今年去過哪些地方的紀錄。但它也不能跟
- * 還沒到的混在一起，那樣「我接下來要去哪」這個問題就沒人回答了。
- *
- * 「我去了」與「我要去」各自獨立：一場你可以只按「我去了」（臨時去的、沒先說要去），也可以
- * 兩個都按。所以它不是「我要去」的續集，是另一份清單——你今年實際去過哪些地方。
+ * 我的講座只有一條按活動日期排列的時間軸。狀態不是導航：把「要去／去過」切成分頁，會把
+ * 同一段生活拆成兩份清單，還會誘使兩邊採不同排序。未結束的由近到遠；一道「已結束」分隔線
+ * 以下由新到舊。已結束但仍標「要去」的是待確認，不自動猜使用者到底有沒有到場。
  */
-function LectureMarks({ today, going, went, tab, onTabChange }) {
-  const [upcoming, past] = useMemo(() => {
-    const rows = going.list;
+function LectureMarks({ today, going, went }) {
+  const [upcoming, completed] = useMemo(() => {
+    const nowTime = new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'Asia/Taipei',
+      hour: '2-digit',
+      minute: '2-digit',
+      hourCycle: 'h23',
+    }).format(new Date());
+    const rows = [
+      ...going.list.map((record) => ({ record, state: 'going' })),
+      ...went.list.map((record) => ({ record, state: 'went' })),
+    ].map((row) => {
+      const live = liveOf(row.record.id);
+      return {
+        ...row,
+        date: live?.date ?? row.record.date ?? '',
+        time: live?.time ?? row.record.time ?? '99:99',
+        endDate: live?.endDate ?? row.record.endDate ?? live?.date ?? row.record.date ?? '',
+        endTime: live?.endTime ?? row.record.endTime ?? live?.time ?? row.record.time ?? '99:99',
+      };
+    }).map((row) => ({
+      ...row,
+      ended: row.endDate < today || (row.endDate === today && row.endTime && row.endTime <= nowTime),
+    }));
     return [
-      rows.filter((r) => (r.endDate ?? r.date ?? '') >= today),
-      rows.filter((r) => (r.endDate ?? r.date ?? '') < today),
+      rows.filter((row) => !row.ended).sort((a, b) =>
+        `${a.date}T${a.time}`.localeCompare(`${b.date}T${b.time}`)),
+      rows.filter((row) => row.ended).sort((a, b) =>
+        `${b.endDate}T${b.endTime}`.localeCompare(`${a.endDate}T${a.endTime}`)),
     ];
-  }, [going.list, today]);
+  }, [going.list, went.list, today]);
 
   return (
     <section className="mt-4">
       <p className="max-w-2xl text-token-sm leading-relaxed text-ink">
-        把實體講座的安排與足跡放在一起。標記只存在這台瀏覽器，不會上傳；同一場只會出現在一種狀態。
+        一條時間軸放你的講座安排與足跡。未登入時存在這台瀏覽器；登入後同步到私人帳號。
       </p>
-      <Tabs
-        variant="underline"
-        label="我的講座"
-        value={tab}
-        onChange={onTabChange}
-        className="mt-5"
-        items={[
-          { id: 'going', label: '要去', count: going.size },
-          { id: 'went', label: '去過', count: went.size },
-        ]}
-      />
+      <div className="mt-6">
+        <h2 id="upcoming-lectures" className="font-display text-token-lg text-ink">
+          接下來
+          <span className="ml-2 text-token-sm tabular-nums text-ink-faint">{upcoming.length} 場</span>
+        </h2>
+        <p className="mb-4 mt-1 text-token-sm leading-relaxed text-ink-muted">最近的活動排在最前面。</p>
+        {upcoming.length > 0 ? upcoming.map(({ record, state }) => (
+          <LectureMarkRow key={record.id} record={record} today={today} state={state} going={going} went={went} />
+        )) : (
+          <p className="py-6 text-token-sm text-ink-muted">還沒有接下來的講座。到日報或活動曆按「我要去」，就會收進這裡。</p>
+        )}
+      </div>
 
-      {tab === 'going' ? (
-        <div className="mt-6">
-          <h2 id="going" className="font-display text-token-lg text-ink">
-            接下來要去
-            <span className="ml-2 text-token-sm tabular-nums text-ink-faint">{upcoming.length} 場</span>
-          </h2>
-          <p className="mb-4 mt-1 text-token-sm leading-relaxed text-ink-muted">
-            依活動日期整理你已經排進行程的講座。
-          </p>
-          {upcoming.length > 0 ? upcoming.map((r) => (
-            <LectureMarkRow key={r.id} record={r} today={today} state="going" going={going} went={went} />
-          )) : (
-            <p className="py-6 text-token-sm text-ink-muted">還沒有安排講座。到日報或活動曆按「我要去」，就會收進這裡。</p>
-          )}
-          {past.length > 0 ? (
-            <div className="mt-10 border-t border-line pt-6">
-              <h3 className="font-display text-token-base text-ink">
-                待確認
-                <span className="ml-2 text-token-xs tabular-nums text-ink-faint">{past.length} 場</span>
-              </h3>
-              <p className="mb-2 text-token-xs leading-relaxed text-ink-muted">
-                日期已經過去，但還沒有確認是否到場。去過就移到「去過」，沒去則取消安排。
-              </p>
-              {past.map((r) => (
-                <LectureMarkRow key={r.id} record={r} today={today} state="going" going={going} went={went} />
-              ))}
-            </div>
-          ) : null}
-        </div>
-      ) : (
-        <div className="mt-6">
-          <h2 id="went" className="font-display text-token-lg text-ink">
-            我去過的
-            <span className="ml-2 text-token-sm tabular-nums text-ink-faint">{went.size} 場</span>
-          </h2>
-          <p className="mb-4 mt-1 text-token-sm leading-relaxed text-ink-muted">你的實體講座足跡，最近標記的排在前面。</p>
-          {went.size > 0 ? went.list.map((r) => (
-            <LectureMarkRow key={r.id} record={r} today={today} state="went" going={going} went={went} />
-          )) : (
-            <p className="py-6 text-token-sm text-ink-muted">還沒有去過的講座紀錄。臨時參加的，也可以直接在活動列按「我去了」。</p>
-          )}
-        </div>
-      )}
+      <div className="mt-10 border-t border-line pt-6">
+        <h2 id="completed-lectures" className="font-display text-token-lg text-ink">
+          已結束
+          <span className="ml-2 text-token-sm tabular-nums text-ink-faint">{completed.length} 場</span>
+        </h2>
+        <p className="mb-4 mt-1 text-token-sm leading-relaxed text-ink-muted">
+          最近結束的排在前面；「待確認」表示原本安排要去，但尚未確認是否到場。
+        </p>
+        {completed.length > 0 ? completed.map(({ record, state }) => (
+          <LectureMarkRow
+            key={record.id}
+            record={record}
+            today={today}
+            state={state === 'going' ? 'pending' : state}
+            going={going}
+            went={went}
+          />
+        )) : (
+          <p className="py-6 text-token-sm text-ink-muted">還沒有已結束的講座紀錄。</p>
+        )}
+      </div>
     </section>
   );
 }
@@ -631,12 +630,20 @@ function LectureMarkRow({ record, today, state, going, went }) {
       </div>
       <div className={`flex w-24 items-center justify-center overflow-hidden rounded-token-sm border border-line-soft bg-surface ${poster ? '' : 'min-h-[72px]'}`}>
         {poster ? (
-          <img
-            src={poster}
-            alt={`${title}活動海報`}
-            loading="lazy"
-            className="block h-auto w-full"
-          />
+          <a
+            href={poster}
+            target="_blank"
+            rel="noreferrer"
+            title="在新分頁開啟海報大圖"
+            className="group block w-full cursor-zoom-in"
+          >
+            <img
+              src={poster}
+              alt={`${title}活動海報`}
+              loading="lazy"
+              className="block h-auto w-full transition-opacity duration-fast group-hover:opacity-80"
+            />
+          </a>
         ) : (
           posterSourceUrl ? (
             <a href={posterSourceUrl} target="_blank" rel="noreferrer" className="px-2 text-center font-accent text-token-xs leading-relaxed tracking-[0.08em] text-accent">
@@ -653,9 +660,9 @@ function LectureMarkRow({ record, today, state, going, went }) {
         {description ? <p className="mt-1 line-clamp-2 text-token-xs leading-relaxed text-ink-muted">{description}</p> : null}
       </div>
       <div className="mt-1 flex flex-wrap gap-x-3 sm:mt-0 sm:justify-end">
-        {state === 'going' ? (
+        {state === 'going' || state === 'pending' ? (
           <>
-            <MarkButton on onToggle={() => going.remove(record.id)} label="我要去" />
+            <MarkButton on onToggle={() => going.remove(record.id)} label={state === 'pending' ? '待確認' : '我要去'} />
             <MarkButton
               on={false}
               onToggle={() => {
@@ -792,7 +799,7 @@ function Provenance() {
           這裡看不到什麼
         </h2>
         <p className="mt-1 text-token-sm leading-relaxed text-ink-muted">
-          有缺口就講出來。一份看起來完整的清單，比一份說得出自己漏了什麼的清單危險。
+          下列來源或內容目前沒有收錄。
         </p>
         <dl className="mt-4">
           {blindSpots.map((s) => (
@@ -832,7 +839,7 @@ const KEPT_VIEW = 'kept';
 
 export default function Brief() {
   const [scale, setScale] = useFontScale();
-  const [{ view, lectures, activityDay }, setTabs] = useTabParams({ view: 'daily', lectures: 'going', activityDay: 'today' });
+  const [{ view, activityDay }, setTabs] = useTabParams({ view: 'daily', activityDay: 'today' });
   const { marks: seen, add: markSeen } = useSeen();
   const kept = useKept();
   const going = useGoing();
@@ -905,7 +912,7 @@ export default function Brief() {
       }
       eyebrow="Brief"
       title="簡報"
-      summary="每天替你收進值得看的內容與台北實體活動。日報、週報、月報負責發現；我的講座與要讀的，留下你真正選中的東西。"
+      summary="收集值得看的內容與台北實體活動。日報、週報、月報列出近期資料；我的講座與要讀的保存個人標記。"
       tabs={{
         label: '簡報分頁',
         value: view,
@@ -975,8 +982,6 @@ export default function Brief() {
             today={today}
             going={going}
             went={went}
-            tab={lectures}
-            onTabChange={(next) => setTabs({ lectures: next }, { scroll: 'preserve' })}
           />
         ) : view === KEPT_VIEW ? (
           <KeptMarks today={today} kept={kept} />

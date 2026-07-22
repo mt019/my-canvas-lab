@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-22T04:27:41.064Z",
+  "generatedAt": "2026-07-22T06:12:20.272Z",
   "sources": [
     {
       "id": "sinica",
@@ -1275,8 +1275,8 @@
       "sessionCount": null,
       "continuousRun": null,
       "scheduleNote": null,
-      "poster": null,
-      "posterSourceUrl": null,
+      "poster": "/brief/posters/7256.jpg",
+      "posterSourceUrl": "https://www.mh.sinica.edu.tw/UcEvent00_Detail.aspx?eventID=2589&tableName=Event&tmid=21&mid=57",
       "description": null
     },
     {

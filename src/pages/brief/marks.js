@@ -78,6 +78,7 @@ export function snapshot(x, kind) {
     date: kind === 'event' ? x.date : x.publishedAt,
     endDate: kind === 'event' ? (x.endDate ?? null) : null,
     time: kind === 'event' ? (x.time ?? null) : null,
+    endTime: kind === 'event' ? (x.endTime ?? null) : null,
     venue: kind === 'event' ? (x.venue ?? null) : null,
     speaker: kind === 'event' ? (x.speaker ?? null) : null,
     host: kind === 'event' ? (x.host ?? null) : null,
