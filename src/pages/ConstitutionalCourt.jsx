@@ -24,6 +24,7 @@ import ResearchProblem from './_constitutional-court/ResearchProblem';
 import HistoryView from './_constitutional-court/HistoryView';
 import TypologyReportView from './_constitutional-court/TypologyReportView';
 import AboutView, { Case1Analysis } from './_constitutional-court/AboutView';
+import CollationView from './_constitutional-court/CollationView';
 
 const tabs = [
   { id: 'index', label: '案件索引', icon: Search },
@@ -36,6 +37,25 @@ const tabs = [
   { id: 'history', label: '沿革', icon: Landmark },
   { id: 'about', label: '資料說明', icon: Info },
 ];
+
+// 原典校勘要長時間逐字閱讀：底色退到近白、文字回到中性黑，避免案例庫的梅色
+// 在大面積閱讀時搶過紙本與字形本身。連結與狀態仍沿用既有 accent，保留操作辨識。
+const COLLATION_READING_VARS = { // token-exempt
+  '--cc-bg': '#ffffff',
+  '--cc-line': '#ececec',
+  '--cc-border': '#e8e8e8',
+  '--cc-row-border': '#f0f0f0',
+  '--cc-ink': '#171717',
+  '--cc-ink-soft': '#4b4b49',
+  '--cc-ink-strong': '#171717',
+  '--cc-ink-heavy': '#111111',
+  '--cc-ink-mid': '#292927',
+  '--cc-title-ink': '#111111',
+  '--cc-heading': '#111111',
+  '--cc-body-text': '#292927',
+  '--cc-hover-bg': '#f6f6f6',
+  '--paper-texture': 'none',
+};
 
 export default function ConstitutionalCourt() {
   const [params, setParams] = useSearchParams();
@@ -78,7 +98,7 @@ export default function ConstitutionalCourt() {
   const caseDoc = routeCase ? docs.find((x) => x.字號 === routeCase) : null;
 
   return (
-    <div className="min-h-screen paper-texture bg-[var(--cc-bg)] font-sans text-[var(--cc-ink)]" style={{ ...CC_VARS, paddingBottom: 60, overflowX: 'clip' }}>
+    <div className="min-h-screen paper-texture bg-[var(--cc-bg)] font-sans text-[var(--cc-ink)]" style={{ ...CC_VARS, ...(active === 'collation' ? COLLATION_READING_VARS : {}), paddingBottom: 60, overflowX: 'clip' }}>
       <header className="border-b border-[var(--cc-line)] bg-white">
         <div className="mx-auto max-w-6xl px-4 py-7 sm:px-6">
           <div className="mb-3 inline-flex items-center gap-2 font-accent text-[12px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow-header)]">
@@ -91,7 +111,7 @@ export default function ConstitutionalCourt() {
           </h1>
           <p className="mt-3 max-w-3xl text-base leading-relaxed text-[var(--cc-body-text)]">
             把中華民國司法解釋沿革——行憲後 {data.統計.行憲後} 件（大法官釋字・憲法法庭裁判，取自憲法法庭官網）與
-            行憲前 {data.統計.行憲前} 件（大理院／最高法院／司法院統一解釋，取自維基文庫）——做成可檢索的研究工作台：
+            行憲前 {data.統計.行憲前} 件（大理院／最高法院／司法院統一解釋；現有底稿取自維基文庫，正以紙本重校）——做成可檢索的研究工作台：
             主題與年代篩選、意見書作者與立場、共同具名網絡、引用統計，以及可直接進論文的引註與 BibTeX 匯出。
           </p>
           <div className="mt-4 flex flex-wrap items-baseline gap-x-8 gap-y-2">
@@ -158,6 +178,7 @@ export default function ConstitutionalCourt() {
         {active === 'case1' ? <Case1Analysis /> : null}
         {active === 'history' ? <HistoryView onOpenIndex={(機關) => navigate(機關 && 機關 !== '行憲後' ? `/constitutionalcourt?機關=${encodeURIComponent(機關)}` : '/constitutionalcourt')} /> : null}
         {active === 'about' ? <AboutView /> : null}
+        {active === 'collation' ? <CollationView /> : null}
         {active === 'typology-report' ? <TypologyReportView /> : null}
       </main>
 

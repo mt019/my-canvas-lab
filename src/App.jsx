@@ -430,7 +430,7 @@ function CCTabRoute({ routes }) {
     description: seo.description,
     type: seo.type,
     keywords: seo.keywords,
-    indexable: true,
+    indexable: seo.indexable !== false,
     parent: { name: '憲法法庭案例庫', path: '/constitutionalcourt' },
   };
   const Page = cc.component;

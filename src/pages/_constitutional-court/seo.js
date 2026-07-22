@@ -85,6 +85,13 @@ export const CC_TABS_SEO = [
     description: '案例庫的資料來源、涵蓋範圍、意見書編碼方式與已知限制，以及引註與 BibTeX 匯出的使用說明。',
     keywords: '憲法法庭 資料, 釋字 資料來源, 大法官 意見書 編碼, 引註 匯出',
   },
+  {
+    slug: 'collation', tab: 'collation', name: '大理院原典校勘', type: 'WebPage',
+    title: '大理院原典校勘｜憲法法庭案例庫',
+    description: '國家圖書館《大理院解釋例全文》紙本掃描、電腦辨識稿與維基文庫轉錄的逐頁校勘。',
+    keywords: '大理院, 統字, OCR, 竪排, 維基文庫, 原典校勘',
+    indexable: false,
+  },
 ];
 
 export const CC_TAB_SLUGS = CC_TABS_SEO.map((t) => t.slug);

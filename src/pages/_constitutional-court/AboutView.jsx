@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { ExternalLink, FileText } from 'lucide-react';
 import data from '../../data/constitutionalCourt.json';
 import { formatDate } from '../../utils/date';
@@ -46,13 +47,18 @@ export default function AboutView() {
     <div className="max-w-3xl">
       <section className="border-t border-[var(--cc-line)] py-5">
         <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">資料來源</p>
-        <h2 className="text-base sm:text-lg font-bold text-[var(--cc-title-ink)]">行憲後取自憲法法庭官網，行憲前取自維基文庫（公有領域）</h2>
+        <h2 className="text-base sm:text-lg font-bold text-[var(--cc-title-ink)]">行憲後取自憲法法庭官網；行憲前底稿正回到紙本重校</h2>
         <div className="mt-2 space-y-2 text-[13.5px] leading-relaxed text-[var(--cc-ink-mid)]">
           <p>
             <strong className="text-[var(--cc-accent)]">行憲後</strong>：司法院大法官解釋 {data.統計.機關?.大法官 ?? 0} 件（釋字第 1–813 號，1949–2021）、憲法法庭判決 {data.統計.判決} 件（2022 年憲法訴訟法施行起）、實體裁定 {data.統計.實體裁定} 件（含暫時處分），取自憲法法庭官網。程序性不受理裁定未收錄。
           </p>
           <p>
-            <strong className="text-[var(--cc-accent)]">行憲前</strong>：統一解釋 {data.統計.行憲前} 件——大理院統字 {data.統計.機關?.大理院}（1913–1927）、最高法院解字 {data.統計.機關?.最高法院}（1927–1928）、司法院院字／院解字 {data.統計.機關?.司法院}（1929–1948），取自維基文庫（轉錄自司法院法學資料檢索系統與《司法院解釋彙編》，公有領域）。此係統一解釋法令，非大法官憲法解釋，與釋字分計；統字多無逐號日期（源頭即缺），院字／院解字帶完整年月日與彙編冊頁。
+            <strong className="text-[var(--cc-accent)]">行憲前</strong>：統一解釋 {data.統計.行憲前} 件——大理院統字 {data.統計.機關?.大理院}（1913–1927）、最高法院解字 {data.統計.機關?.最高法院}（1927–1928）、司法院院字／院解字 {data.統計.機關?.司法院}（1929–1948）。現有全文底稿取自維基文庫，但維基轉錄可能有錯字、省略與缺日期，故僅列為待校來源；大理院部分正以國家圖書館《大理院解釋例全文》十冊掃描本逐頁重校。此係統一解釋法令，非大法官憲法解釋，與釋字分計。
+          </p>
+          <p>
+            大理院統字正以國家圖書館十冊掃描本重新逐頁校勘；維基文庫只作待校來源，不作正解。工程中的紙本與多來源對讀可從
+            <Link to="/constitutionalcourt/collation" className="mx-1 font-bold text-[var(--cc-accent)] underline decoration-[var(--cc-link-underline)] underline-offset-2">原典校勘</Link>
+            進入；未經兩次核校的文字不會回填正式案例庫。
           </p>
           <p>
             每件案件的爭點、主文、相關法令、意見書清單與立場表連結均解析自官方頁面；文件下載一律連回官方網站，本站不代管任何檔案副本。
