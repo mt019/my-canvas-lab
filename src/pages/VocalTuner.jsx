@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Mic, MicOff } from 'lucide-react';
+import { Mic, MicOff, X } from 'lucide-react';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 const VOLUME_THRESHOLD = 0.001;
@@ -123,7 +123,7 @@ function getMicError(err) {
 
 // ─── Piano Roll + Vertical Keys Renderer ─────────────────────────────────────
 // cssW / cssH are display (CSS) pixel dimensions, independent of devicePixelRatio
-function drawPianoRoll(canvas, cssW, cssH, trail, viewCenter, targetMidi, detectedMidi, rollSemitones) {
+function drawPianoRoll(canvas, cssW, cssH, trail, viewCenter, targetNotes, detectedMidi, rollSemitones) {
   const ctx = canvas.getContext('2d');
   const plotW = cssW - KEY_W;
   const rowH = cssH / rollSemitones;
@@ -173,18 +173,23 @@ function drawPianoRoll(canvas, cssW, cssH, trail, viewCenter, targetMidi, detect
     ctx.setLineDash([]);
   }
 
-  // ── Target band ──
-  if (targetMidi !== null) {
-    const ty = midiToY(targetMidi);
-    const bandH = (PERFECT_CENTS / 100) * rowH * 3;
-    ctx.fillStyle = 'rgba(141,158,140,0.22)';
+  // ── Target guide lines (one per selected note; thin and restrained so a
+  //    whole melody's worth of lines stays calm). Each carries a small name. ──
+  for (const t of targetNotes) {
+    const ty = midiToY(t.midi);
+    const bandH = (PERFECT_CENTS / 100) * rowH * 2;
+    ctx.fillStyle = 'rgba(141,158,140,0.12)';
     ctx.fillRect(KEY_W, ty - bandH / 2, plotW, bandH);
-    ctx.strokeStyle = '#8d9e8c';
-    ctx.lineWidth = 1.5;
+    ctx.strokeStyle = 'rgba(141,158,140,0.9)';
+    ctx.lineWidth = 1;
     ctx.beginPath();
     ctx.moveTo(KEY_W, ty);
     ctx.lineTo(cssW, ty);
     ctx.stroke();
+    ctx.fillStyle = 'rgba(93,142,124,0.95)';
+    ctx.font = 'bold 8px system-ui,sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText(`${t.name}${t.octave}`, KEY_W + 4, ty - 3);
   }
 
   // ── "Now" cursor line at CURSOR_X position ──
@@ -274,7 +279,7 @@ function drawPianoRoll(canvas, cssW, cssH, trail, viewCenter, targetMidi, detect
     const octave = Math.floor(m / 12) - 1;
     const centerY = midiToY(m);
     const topY = centerY - rowH / 2;
-    const isTarget = targetMidi !== null && Math.round(targetMidi) === m;
+    const isTarget = targetNotes.some((t) => Math.round(t.midi) === m);
     const isDetected = detectedMidi !== null && detectedMidi === m;
 
     if (isBlack) {
@@ -329,7 +334,8 @@ export default function VocalTuner() {
   const [detectedFreq, setDetectedFreq] = useState(0);
   const [isTooQuiet, setIsTooQuiet] = useState(true);
   const [inputLevel, setInputLevel] = useState(0);
-  const [targetNote, setTargetNote] = useState(null);
+  const [targetNotes, setTargetNotes] = useState([]); // guide lines: array of {midi,name,octave,freq}
+  const [mode, setMode] = useState('single');          // 'single' (radio) | 'multi' (melody)
   const [keyOctave, setKeyOctave] = useState(4); // for keyboard shortcut reference
   const [error, setError] = useState('');
 
@@ -346,20 +352,23 @@ export default function VocalTuner() {
   const stableMatchRef = useRef({ midi: null, frames: 0, cents: 0 });
   const midiTrailRef = useRef(new Array(TRAIL_FRAMES).fill(null));
   const viewCenterRef = useRef(67); // G4 — puts F3 at bottom edge of default 28-semitone view
-  const targetNoteRef = useRef(null);
+  const targetNotesRef = useRef([]);
+  const modeRef = useRef('single');
+  const keyOctaveRef = useRef(4);
   const detectedMidiRef = useRef(null);
   const pianoGainRef = useRef(null);
   const pianoOscRef = useRef(null);
   const rollSemitonesRef = useRef(ROLL_SEMITONES_DEFAULT);
   const dragRef = useRef(null); // { startY, startCenter, moved }
 
-  useEffect(() => { targetNoteRef.current = targetNote; }, [targetNote]);
+  useEffect(() => { targetNotesRef.current = targetNotes; }, [targetNotes]);
+  useEffect(() => { keyOctaveRef.current = keyOctave; }, [keyOctave]);
 
   const redrawCanvas = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const { cssW, cssH } = getCanvasCSS(canvas);
-    drawPianoRoll(canvas, cssW, cssH, midiTrailRef.current, viewCenterRef.current, targetNoteRef.current?.midi ?? null, detectedMidiRef.current, rollSemitonesRef.current);
+    drawPianoRoll(canvas, cssW, cssH, midiTrailRef.current, viewCenterRef.current, targetNotesRef.current, detectedMidiRef.current, rollSemitonesRef.current);
   }, []);
 
   // Resets pitch detection state only — never clears trail history
@@ -449,10 +458,46 @@ export default function VocalTuner() {
     const octave = Math.floor(midi / 12) - 1;
     const name = NOTE_NAMES[((midi % 12) + 12) % 12];
     const note = { midi, name, octave, freq: midiToFreq(midi) };
-    setTargetNote(note);
-    targetNoteRef.current = note;
+    // Ref is the source of truth so this callback stays stable (no re-subscribe
+    // of the keyboard listener). single = replace; multi = toggle this note.
+    const prev = targetNotesRef.current;
+    let next;
+    if (modeRef.current === 'multi') {
+      // add-only (dedup); re-pressing a note just re-plays it. Removal is by
+      // clicking the guide line, or the clear-all button.
+      next = prev.some((t) => t.midi === midi) ? prev : [...prev, note].sort((a, b) => a.midi - b.midi);
+    } else {
+      next = [note];
+    }
+    targetNotesRef.current = next;
+    setTargetNotes(next);
     redrawCanvas();
   }, [playPianoNote, redrawCanvas]);
+
+  const clearTargets = useCallback(() => {
+    targetNotesRef.current = [];
+    setTargetNotes([]);
+    redrawCanvas();
+  }, [redrawCanvas]);
+
+  const removeTarget = useCallback((midi) => {
+    const next = targetNotesRef.current.filter((t) => t.midi !== midi);
+    targetNotesRef.current = next;
+    setTargetNotes(next);
+    redrawCanvas();
+  }, [redrawCanvas]);
+
+  // Switching to single keeps only the most recent guide line.
+  const changeMode = useCallback((m) => {
+    modeRef.current = m;
+    setMode(m);
+    if (m === 'single' && targetNotesRef.current.length > 1) {
+      const next = targetNotesRef.current.slice(-1);
+      targetNotesRef.current = next;
+      setTargetNotes(next);
+    }
+    redrawCanvas();
+  }, [redrawCanvas]);
 
   // Canvas click → play key
   const handleCanvasPointer = useCallback((clientX, clientY) => {
@@ -461,12 +506,19 @@ export default function VocalTuner() {
     const rect = canvas.getBoundingClientRect();
     const x = clientX - rect.left;
     const y = clientY - rect.top;
-    if (x > KEY_W) return;
     const rs = rollSemitonesRef.current;
     const topMidi = viewCenterRef.current + rs / 2;
+    if (x > KEY_W) {
+      // Tapping a guide line in the roll removes just that line.
+      const clickedMidi = topMidi - (y / rect.height) * rs;
+      const hit = targetNotesRef.current.find((t) => Math.abs(t.midi - clickedMidi) < 0.5);
+      if (hit) removeTarget(hit.midi);
+      return;
+    }
+    // Tapping the piano keys (left column) adds / selects a note.
     const midi = Math.round(topMidi - (y / rect.height) * rs);
     handlePianoPress(midi);
-  }, [handlePianoPress]);
+  }, [handlePianoPress, removeTarget]);
 
   const updateLoop = useCallback(() => {
     const analyser = analyserRef.current;
@@ -593,7 +645,7 @@ export default function VocalTuner() {
       ctx2d.scale(dpr, dpr);
       const dynamicSemitones = Math.max(9, Math.min(MAX_ROLL_SEMITONES, Math.floor(cssH / MIN_ROW_H)));
       rollSemitonesRef.current = dynamicSemitones;
-      drawPianoRoll(canvas, cssW, cssH, midiTrailRef.current, viewCenterRef.current, targetNoteRef.current?.midi ?? null, detectedMidiRef.current, dynamicSemitones);
+      drawPianoRoll(canvas, cssW, cssH, midiTrailRef.current, viewCenterRef.current, targetNotesRef.current, detectedMidiRef.current, dynamicSemitones);
     });
     ro.observe(canvas.parentElement);
     return () => ro.disconnect();
@@ -610,10 +662,7 @@ export default function VocalTuner() {
       if (key === 'z') { setKeyOctave(o => Math.max(2, o - 1)); return; }
       if (key === 'x') { setKeyOctave(o => Math.min(5, o + 1)); return; }
       if (key in KEY_TO_SEMITONE) {
-        setKeyOctave(oct => {
-          handlePianoPress((oct + 1) * 12 + KEY_TO_SEMITONE[key]);
-          return oct;
-        });
+        handlePianoPress((keyOctaveRef.current + 1) * 12 + KEY_TO_SEMITONE[key]);
       }
     };
     const up = (e) => pressed.delete(e.key.toLowerCase());
@@ -644,10 +693,13 @@ export default function VocalTuner() {
     };
   }, [resumeCtx, stopAll]);
 
-  // Derived display values
-  const targetCentsOff = targetNote && detectedNote && !isTooQuiet && detectedFreq
-    ? (freqToMidi(detectedFreq) - freqToMidi(targetNote.freq)) * 100
+  // Derived display values. Cents feedback is measured against the nearest guide
+  // line, so it works the same in single mode and in melody mode.
+  const detMidiExact = detectedNote && !isTooQuiet && detectedFreq ? freqToMidi(detectedFreq) : null;
+  const nearestTarget = detMidiExact !== null && targetNotes.length
+    ? targetNotes.reduce((best, t) => (Math.abs(t.midi - detMidiExact) < Math.abs(best.midi - detMidiExact) ? t : best))
     : null;
+  const targetCentsOff = nearestTarget ? (detMidiExact - freqToMidi(nearestTarget.freq)) * 100 : null;
   const activeCents = targetCentsOff ?? (detectedNote?.cents ?? 0);
   const isPerfect = !isTooQuiet && detectedNote && Math.abs(activeCents) < PERFECT_CENTS;
 
@@ -656,17 +708,26 @@ export default function VocalTuner() {
       <div className="w-full max-w-md sm:max-w-xl lg:max-w-3xl xl:max-w-4xl flex flex-col h-full sm:h-[calc(100vh-2rem)] sm:my-4 sm:rounded-[2.5rem] border-0 sm:border border-[#e8d3d1] bg-white/70 shadow-2xl shadow-rose-200/50 backdrop-blur-xl overflow-hidden">
 
         {/* Compact header strip */}
-        <div className="flex items-center justify-between px-5 pt-3 pb-1 shrink-0">
-          <div className="flex items-center gap-3">
-            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#8a7a78]">VOCAL TUNER</span>
-            <span className={`h-1.5 w-1.5 rounded-full transition-all ${inputLevel > 0.08 ? 'bg-[#8d9e8c] shadow-[0_0_0_3px_rgba(141,158,140,0.22)]' : 'bg-[#d8c9c7]'}`} />
+        <div className="flex items-center justify-between gap-2 px-5 pt-3 pb-1 shrink-0">
+          <div className="flex min-w-0 items-center gap-2.5">
+            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#8a7a78] shrink-0">VOCAL TUNER</span>
+            <span className={`h-1.5 w-1.5 rounded-full shrink-0 transition-all ${inputLevel > 0.08 ? 'bg-[#8d9e8c] shadow-[0_0_0_3px_rgba(141,158,140,0.22)]' : 'bg-[#d8c9c7]'}`} />
+            {/* mode: 單音 (radio) / 旋律 (multi) */}
+            <div className="flex shrink-0 overflow-hidden rounded-full border border-[#eadad8]">
+              {[['single', '單音'], ['multi', '旋律']].map(([m, label]) => (
+                <button
+                  key={m}
+                  onClick={() => changeMode(m)}
+                  className={`px-2 py-0.5 text-[9px] font-black tracking-wide transition-colors ${mode === m ? 'bg-[#b09e9c] text-white' : 'text-[#b09e9c] hover:bg-[#faf4f3]'}`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
           </div>
-          <div className="flex items-center gap-3">
-            {targetNote && (
-              <div className="flex items-center gap-1.5">
-                <span className="text-[9px] font-black text-[#8d9e8c] uppercase">▶ {targetNote.name}{targetNote.octave}</span>
-                <button onClick={() => { setTargetNote(null); targetNoteRef.current = null; redrawCanvas(); }} className="text-[8px] font-black text-[#c5b4b2] hover:text-[#8a7a78]">✕</button>
-              </div>
+          <div className="flex items-center gap-3 shrink-0">
+            {targetNotes.length > 0 && (
+              <span className="text-[9px] font-black text-[#8d9e8c] uppercase whitespace-nowrap">▶ {mode === 'single' ? `${targetNotes[0].name}${targetNotes[0].octave}` : `${targetNotes.length} 音`}</span>
             )}
             <div className="flex items-center gap-1">
               <button onClick={() => setKeyOctave(o => Math.max(2, o - 1))} className="w-5 h-5 rounded-full border border-[#eadad8] text-[#b09e9c] text-xs flex items-center justify-center hover:bg-[#faf4f3]">‹</button>
@@ -720,6 +781,19 @@ export default function VocalTuner() {
               </div>
             )}
           </div>
+
+          {/* Clear-all: a quiet circle, shown only while guide lines exist. */}
+          {targetNotes.length > 0 && (
+            <button
+              onClick={clearTargets}
+              onPointerDown={(e) => e.stopPropagation()}
+              title="清空引導線"
+              aria-label="清空引導線"
+              className="absolute bottom-3 right-3 flex h-8 w-8 items-center justify-center rounded-full border border-[#e8d3d1] bg-white/70 text-[#b09e9c] shadow-sm backdrop-blur-md transition-colors hover:bg-white hover:text-[#8a7a78]"
+            >
+              <X size={14} strokeWidth={2.5} />
+            </button>
+          )}
         </div>
 
         {/* Compact bottom strip */}
