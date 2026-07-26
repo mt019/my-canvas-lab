@@ -34,6 +34,7 @@ export default function DashboardLayout({
   tabs,
   leftRailTop,
   tocLabel = '本頁區塊',
+  hideToc = false, // 頁面沒有 h2/h3 區塊（如單張圖表）時關掉右欄目次，內容占滿寬度
   refreshKey,
   children,
 }) {
@@ -92,16 +93,23 @@ export default function DashboardLayout({
         </div>
       </div>
 
-      {/* 寬內容欄＋右欄本頁大綱（h2+h3，跟著捲動高亮）。右欄在 lg 以下收起。 */}
-      <div className="mx-auto grid max-w-7xl gap-8 px-4 py-8 sm:px-6 lg:grid-cols-[minmax(0,1fr)_13rem] lg:gap-10">
+      {/* 寬內容欄＋右欄本頁大綱（h2+h3，跟著捲動高亮）。右欄在 lg 以下收起。
+          hideToc：頁面本就沒有區塊標題可列（單張圖表頁），關掉右欄、內容占滿。 */}
+      <div
+        className={`mx-auto grid max-w-7xl gap-8 px-4 py-8 sm:px-6 lg:gap-10 ${
+          hideToc ? '' : 'lg:grid-cols-[minmax(0,1fr)_13rem]'
+        }`}
+      >
         <div ref={bodyRef} className="reader-scale min-w-0">{children}</div>
 
-        <aside className="hidden lg:block">
-          <div className="sticky top-20 max-h-[calc(100vh-5.5rem)] overflow-y-auto border-l border-line-soft pb-10 pl-5">
-            {leftRailTop}
-            <TableOfContents containerRef={bodyRef} label={tocLabel} refreshKey={refreshKey} />
-          </div>
-        </aside>
+        {hideToc ? null : (
+          <aside className="hidden lg:block">
+            <div className="sticky top-20 max-h-[calc(100vh-5.5rem)] overflow-y-auto border-l border-line-soft pb-10 pl-5">
+              {leftRailTop}
+              <TableOfContents containerRef={bodyRef} label={tocLabel} refreshKey={refreshKey} />
+            </div>
+          </aside>
+        )}
       </div>
     </main>
   );

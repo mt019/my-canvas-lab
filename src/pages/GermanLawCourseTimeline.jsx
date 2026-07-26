@@ -64,7 +64,6 @@ export default function GermanLawCourseTimeline() {
   return (
     <DashboardLayout
       scale={scale}
-      back={{ href: '/', label: 'Canvas Lab' }}
       headerRight={
         <>
           <FontSizeControl scale={scale} onChange={setScale} />
@@ -81,6 +80,7 @@ export default function GermanLawCourseTimeline() {
         items: LANGUAGES.map((l) => ({ id: l.id, label: l.label })),
       }}
       refreshKey={active.id}
+      hideToc
     >
       <CourseTimeline rows={active.rows} domainOrder={active.domainOrder} intro={active.intro} />
     </DashboardLayout>

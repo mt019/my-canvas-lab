@@ -51,7 +51,7 @@ function mostCommon(list) {
 }
 
 function buildLayout(rows, slotOf) {
-  const colorFor = (domain) => `var(--cat-${slotOf.get(domain) ?? FALLBACK_SLOT}-tx)`;
+  const slotFor = (domain) => slotOf.get(domain) ?? FALLBACK_SLOT;
 
   // 學期：數值升序，早的在上。
   const semesters = [...new Set(rows.map((r) => String(r.semester)))].sort((a, b) =>
@@ -101,7 +101,8 @@ function buildLayout(rows, slotOf) {
       key: `${sem}-${teacher}-${idx}`,
       x,
       y,
-      color: colorFor(domain),
+      domain,
+      slot: slotFor(domain),
       href: row.href || '',
       row,
       domainsJoined,
@@ -159,30 +160,51 @@ export default function CourseTimeline({ rows, domainOrder, intro }) {
   const layout = useMemo(() => buildLayout(rows, slotOf), [rows, slotOf]);
   const wrapRef = useRef(null);
   const [tooltip, setTooltip] = useState(null);
+  // 無標籤密集點的補辨識（DESIGN.md「無標籤圖表」）：hover 圖例或點，同領域的點
+  // 亮起、其餘淡出。這樣「哪些是同一類」隨時可辨，不必靠同明度和諧盤硬把色相拉開。
+  const [activeDomain, setActiveDomain] = useState(null);
 
   const track = (dot) => (event) => {
     const rect = wrapRef.current?.getBoundingClientRect();
     if (!rect) return;
     setTooltip({ x: event.clientX - rect.left, y: event.clientY - rect.top, dot });
+    setActiveDomain(dot.domain);
   };
-  const hide = () => setTooltip(null);
+  const hide = () => {
+    setTooltip(null);
+    setActiveDomain(null);
+  };
 
   return (
     <div className="text-token-base leading-relaxed text-ink" style={{ fontFamily: BODY_FONT }}>
       {intro}
 
-      {/* 圖例：橫排放在圖上方，領域名帶校準過的分類色墨點。 */}
+      {/* 圖例：橫排放在圖上方，領域名帶校準過的分類色墨點。hover 某類→圖上同類點亮起。 */}
       <ul className="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-token-sm text-ink-muted">
-        {domainOrder.map((d) => (
-          <li key={d.domain} className="flex items-center gap-2">
-            <span
-              aria-hidden
-              className="inline-block h-2.5 w-2.5 rounded-full"
-              style={{ background: `var(--cat-${d.slot}-tx)` }}
-            />
-            {d.domain}
-          </li>
-        ))}
+        {domainOrder.map((d) => {
+          const active = activeDomain === d.domain;
+          const dimmed = activeDomain && !active;
+          return (
+            <li
+              key={d.domain}
+              onMouseEnter={() => setActiveDomain(d.domain)}
+              onMouseLeave={() => setActiveDomain(null)}
+              className={`flex cursor-default items-center gap-2 transition-opacity duration-fast ${
+                active ? 'font-semibold text-ink' : ''
+              } ${dimmed ? 'opacity-40' : ''}`}
+            >
+              <span
+                aria-hidden
+                className="inline-block h-3 w-3 rounded-full border"
+                style={{
+                  background: `var(--cat-${d.slot}-bg)`,
+                  borderColor: `var(--cat-${d.slot}-tx)`,
+                }}
+              />
+              {d.domain}
+            </li>
+          );
+        })}
       </ul>
 
       {/* 縱向點陣圖。SVG 固定寬（~720px），桌面內容欄放得下、不橫拉；更窄時容器橫向捲動兜底。 */}
@@ -245,17 +267,22 @@ export default function CourseTimeline({ rows, domainOrder, intro }) {
             </g>
           ))}
 
-          {/* 班次點：小面積鉻件，依 DESIGN.md 可用 ink 實色（校準過的 --cat-N-tx） */}
+          {/* 班次點：小面積鉻件，依 DESIGN.md 可用 ink 實色（校準過的 --cat-N-tx）。
+              有領域被 hover 時，非同類的點淡出，讓同一類在稀疏點陣裡一眼認得出。 */}
           {layout.dots.map((dot) => {
+            const dimmed = activeDomain && dot.domain !== activeDomain;
+            // 資料標記＝近白淡底 -bg 填色 ＋ 同色相 ink -tx 的細框（keyline），
+            // 依 DESIGN.md 色彩哲學第 0、1 條（ink 實色只留給圖例點）。
             const circle = (
               <circle
                 cx={dot.x}
                 cy={dot.y}
                 r={DOT_R}
-                fill={dot.color}
-                stroke="var(--c-surface-raised)"
+                fill={`var(--cat-${dot.slot}-bg)`}
+                stroke={`var(--cat-${dot.slot}-tx)`}
                 strokeWidth={1.5}
-                style={{ cursor: 'pointer' }}
+                opacity={dimmed ? 0.14 : 1}
+                style={{ cursor: 'pointer', transition: 'opacity var(--dur-fast) var(--ease-out)' }}
                 onMouseEnter={track(dot)}
                 onMouseMove={track(dot)}
                 onMouseLeave={hide}
@@ -310,7 +337,7 @@ export default function CourseTimeline({ rows, domainOrder, intro }) {
                 <td className="whitespace-nowrap border-b border-line-soft px-3 py-2 text-ink">{r.teacher}</td>
                 <td className="border-b border-line-soft px-3 py-2 tabular-nums text-ink-muted">{r.count}</td>
                 <td className="border-b border-line-soft px-3 py-2 text-ink-muted">{r.semestersText}</td>
-                <td className="border-b border-line-soft px-3 py-2 text-ink-muted">{r.domainText}</td>
+                <td className="whitespace-nowrap border-b border-line-soft px-3 py-2 text-ink-muted">{r.domainText}</td>
               </tr>
             ))}
           </tbody>

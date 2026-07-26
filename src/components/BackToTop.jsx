@@ -42,7 +42,7 @@ export default function BackToTop() {
       aria-hidden={!visible}
       tabIndex={visible ? 0 : -1}
       title="回到頁首"
-      className={`fixed bottom-[max(1rem,env(safe-area-inset-bottom))] left-4 z-30 inline-flex h-9 w-9 items-center justify-center rounded-full border border-line bg-paper/90 text-ink-faint shadow-sm backdrop-blur-sm transition-[opacity,transform,color,border-color,box-shadow] duration-200 hover:-translate-y-0.5 hover:border-accent hover:text-accent hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent sm:bottom-[max(1.5rem,env(safe-area-inset-bottom))] sm:left-6 ${
+      className={`fixed bottom-[max(1rem,env(safe-area-inset-bottom))] right-4 z-30 inline-flex h-9 w-9 items-center justify-center rounded-full border border-line bg-paper/90 text-ink-faint shadow-sm backdrop-blur-sm transition-[opacity,transform,color,border-color,box-shadow] duration-200 hover:-translate-y-0.5 hover:border-accent hover:text-accent hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent sm:bottom-[max(1.5rem,env(safe-area-inset-bottom))] sm:right-6 ${
         visible
           ? 'translate-y-0 opacity-100'
           : 'pointer-events-none translate-y-2 opacity-0'
