@@ -214,6 +214,14 @@ const PAGE_META = { // token-exempt: per-page identity chip colors (data, not st
     accentText: '#305878',
     group: 'research',
   },
+  ChenYinke: {
+    name: '陳寅恪文集',
+    desc: '從《柳如是別傳》進入明清之際的人物、詩文與政治世界',
+    Icon: BookMarked,
+    accent: '#eae4d6',
+    accentText: '#8a6d3b',
+    group: 'research',
+  },
   ZhuJiahua: {
     name: '朱家驊研究室',
     title: ZJH_BASE_SEO.title,
