@@ -79,19 +79,23 @@ export default function DashboardLayout({
           `mx-auto max-w-7xl px-4` 那層本身，結果 `zoom` 連 auto-margin 置中的計算都一起
           縮放，字級放大時整條分頁列的位置跟著往左漂移、跟 header 對不上——100% 時因為沒有
           縮放差異看不出來，字級調高後才會顯形，好幾輪才抓到（見 HISTORY）。 */}
-      <div className="sticky top-0 z-20 border-b border-line-soft bg-paper">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6">
-          <div className="reader-scale flex">
-            <Tabs
-              variant="dashboard"
-              label={tabs.label}
-              value={tabs.value}
-              onChange={tabs.onChange}
-              items={tabs.items}
-            />
+      {/* 只有一個分頁（如單語言的法學名著時序）時不傳 tabs，整條吸頂列收起——
+          一顆孤零零的藥丸鈕比沒有分頁列更空。 */}
+      {tabs ? (
+        <div className="sticky top-0 z-20 border-b border-line-soft bg-paper">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6">
+            <div className="reader-scale flex">
+              <Tabs
+                variant="dashboard"
+                label={tabs.label}
+                value={tabs.value}
+                onChange={tabs.onChange}
+                items={tabs.items}
+              />
+            </div>
           </div>
         </div>
-      </div>
+      ) : null}
 
       {/* 寬內容欄＋右欄本頁大綱（h2+h3，跟著捲動高亮）。右欄在 lg 以下收起。
           hideToc：頁面本就沒有區塊標題可列（單張圖表頁），關掉右欄、內容占滿。 */}

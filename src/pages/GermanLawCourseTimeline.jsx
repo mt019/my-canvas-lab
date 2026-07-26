@@ -74,12 +74,16 @@ export default function GermanLawCourseTimeline() {
       eyebrow="NTU Legal Classics"
       title="法學名著選讀・教師時序"
       summary="臺大「法學名著選讀」歷年開課的教師時間軸——誰在教、教了幾年、偏哪個法學領域。縱軸是二十餘年的學期，橫向列頭是教師，點的顏色是該班次的主要領域。"
-      tabs={{
-        label: '看哪個語言',
-        value: active.id,
-        onChange: (v) => setTabs({ tab: v }, { scroll: 'top' }),
-        items: LANGUAGES.map((l) => ({ id: l.id, label: l.label })),
-      }}
+      tabs={
+        LANGUAGES.length > 1
+          ? {
+              label: '看哪個語言',
+              value: active.id,
+              onChange: (v) => setTabs({ tab: v }, { scroll: 'top' }),
+              items: LANGUAGES.map((l) => ({ id: l.id, label: l.label })),
+            }
+          : undefined
+      }
       refreshKey={active.id}
       hideToc
     >
