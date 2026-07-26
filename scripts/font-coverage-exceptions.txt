@@ -118,3 +118,6 @@ U+02C7  # ˇ caron
 U+2723  # ✣ four balloon-spoked asterisk
 U+2730  # ✰ shadowed white star
 U+27B1  # ➱ notched upper-right-shadowed white arrow
+
+# 2026-07-27 JIRS 資料倉頁面新增：以下皆為來源字型（Huiwen/Chiron）確認缺字，走系統 fallback
+U+04D2  # Ӓ 西里爾大寫 A 帶分音符（資料中外文引文偶見）；Huiwen 與 Chiron Sung HK 皆無此字形

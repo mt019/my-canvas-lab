@@ -25,7 +25,7 @@ import { existsSync, writeFileSync, mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import * as fontkit from 'fontkit';
-import { extractChars, comprehensiveChars } from './font-chars.mjs';
+import { comprehensiveChars } from './font-chars.mjs';
 
 const FONT_LIBRARY_ROOT = process.env.FONT_LIBRARY_ROOT || '/Users/iw/Documents/Font_Library';
 const HUIWEN_SRC = join(FONT_LIBRARY_ROOT, 'fonts/HuiwenMincho-Improved.ttf');
@@ -40,11 +40,17 @@ if (!existsSync(HUIWEN_SRC)) {
 // Body: fixed comprehensive coverage — does not depend on the site's current text.
 const bodyChars = comprehensiveChars(HUIWEN_SRC);
 
-// Chiron fallback: exactly the codepoints the site actually renders that the
-// Huiwen source cannot draw. Small and text-driven.
-const { chars: siteChars } = extractChars();
+// Chiron fallback (2026-07-27, 一勞永逸): comprehensive, NOT text-driven — every
+// codepoint in COVERAGE_RANGES that Chiron can draw but Huiwen cannot. Fixed and
+// data-independent: once built, any dataset's rare glyphs are already covered so
+// long as either source font has them, so this subset (and index.css's Chiron
+// unicode-range) never needs rebuilding when site content changes again. Only
+// characters NEITHER font can draw, or outside COVERAGE_RANGES (Plane-2 ext-B),
+// still fall to scripts/font-coverage-exceptions.txt.
 const huiwenSource = fontkit.openSync(HUIWEN_SRC);
-const fallbackChars = siteChars.filter((c) => !huiwenSource.hasGlyphForCodePoint(c.codePointAt(0)));
+const fallbackChars = comprehensiveChars(CHIRON_SRC).filter(
+  (ch) => !huiwenSource.hasGlyphForCodePoint(ch.codePointAt(0)),
+);
 
 const SOURCES = {
   'public/fonts/HuiwenMincho-subset.woff2': { source: HUIWEN_SRC, text: bodyChars },
