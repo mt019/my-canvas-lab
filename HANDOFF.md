@@ -1241,10 +1241,36 @@ prose:
   a fixed measure, `DashboardLayout` when a dashboard wants full-width dense rows.
   `ConstitutionalCourt`'s sticky-tab shell is deliberately **not** folded in — it
   is a separate design system (`--cc-*` vars, pill tabs, no TOC rails).
-- `SubOutline` (2026-07-18) — one level deeper than the left TOC: left lists
-  sections (h2), this lists the current section's children (h3) with scroll-spy.
-  **Always lands on some section** (the first before any scroll), so the right
-  rail never blanks out inside a single-source or collapsed section.
+  **Rebuilt to two columns (2026-07-20, TaxLitigation build)**: the left h2-only
+  TOC is gone — the sticky tab row already is the "which big topic" nav, so a
+  second h2 list said the same thing twice. The right rail now runs
+  `TableOfContents` with no `levels` restriction (it already supported h2+h3 with
+  scroll-spy; the old 3-column split had artificially capped it to `levels=[2]`
+  and handed h3s to `SubOutline` instead — two components doing one job).
+  `SubOutline` is now unused by this shell (still in the tree, nothing imports
+  it — a future cleanup pass can delete it, or a page with a real use for
+  "current section's children only" could still reach for it). `leftRailTop`
+  (Brief's urgent-alert slot) renders above the outline in the right rail now;
+  the prop name is unchanged on purpose — renaming would mean touching every
+  caller for no functional gain. Tab bar switched from the `underline` variant
+  to a new `dashboard` variant (`Tabs.jsx`): solid pill buttons inside an
+  `inline-flex bg-surface` capsule, not a full-width `flex` row. A full-width
+  row with few tabs (this page has 5, StatisticsLab has 3) stranded the button
+  group on the left with a wide empty strip under a full-bleed border — looked
+  broken, not spacious. The capsule bounds itself to its buttons and sits flush
+  with the header's left edge (same column as the title/body — centering it
+  independently was tried and rejected: it reads as detached from where the
+  text starts). No `backdrop-blur` on the sticky strip: blur over that same
+  near-empty strip read as a smear, worse than a flat fill. **Zoom-in-outer-box
+  pitfall**: `reader-scale` (`zoom`) must wrap only the innermost content, with
+  an *unzoomed* `mx-auto max-w-7xl px-4` frame around it — exactly the header's
+  existing nesting. Putting `reader-scale` on the same div that also carries
+  `mx-auto`/`max-width`/padding lets `zoom` scale the auto-margin centering
+  math itself, so the box's centered position drifts left as scale increases;
+  invisible at 100%, visible by 160%. Hit this once building the tab row (fixed
+  in the same session), worth flagging since the same trap is in `DashboardLayout`
+  itself, not React state — any new zoomed region must copy the header's split
+  instead of re-deriving it.
 - `chart/` — primitives only (`linearScale`/`bandScale`/`niceTicks`,
   `ChartFrame`, `Grid`/`AxisX`/`AxisY`, `Bars`/`Line`/`Dots`/`AreaWash`/
   `RuleLine`). No chart components: two real charts had nothing in common above

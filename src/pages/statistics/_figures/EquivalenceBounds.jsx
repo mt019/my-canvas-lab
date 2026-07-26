@@ -106,7 +106,7 @@ export default function EquivalenceBounds({
           step="0.1"
           value={margin_}
           onChange={(e) => setMargin(Number(e.target.value))}
-          className="w-52 accent-[var(--c-accent)]"
+          className="canvas-range w-52"
         />
         <span className="w-20 shrink-0 whitespace-nowrap tabular-nums text-ink">{margin_.toFixed(1)} {unit}</span>
       </label>

@@ -387,7 +387,7 @@ export default function InternationalTaxOps() {
         </label>
 
         <nav className={styles.sideNav}>
-          <Link to="/"><ArrowLeft size={15} />{lang === 'zh' ? '回總入口' : 'Back to Canvas'}</Link>
+          <Link to="/all"><ArrowLeft size={15} />{lang === 'zh' ? '回總入口' : 'Back to Canvas'}</Link>
         </nav>
 
         <div className={styles.sideSection}>

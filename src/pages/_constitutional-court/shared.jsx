@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { BookOpen, CalendarClock, ChevronDown, ExternalLink, Search, Shuffle, X } from 'lucide-react';
+import { BookOpen, CalendarClock, Check, ChevronDown, Clipboard, ExternalLink, Search, Shuffle, X } from 'lucide-react';
 import data from '../../data/constitutionalCourt.json';
 import { lookupCases } from './caseQuery';
 import { formatDate, formatDateRange } from '../../utils/date';
+import OpinionText, { opinionPlainText } from './OpinionText.jsx';
 
 // ── 憲法法庭案例庫：跨分頁共用元件與工具 ──────────────────────────────────
 // 從 ConstitutionalCourt.jsx 機械拆出（見該檔頂部說明）；純搬家、零行為改變。
@@ -165,6 +166,7 @@ function JusticeRef({ name, className = '' }) {
 // 分配回到最簡：只避開使用者明令禁用的 amber(土黃)與 slate(灰)，其餘依時序取色。
 // 已知小問題：最高法院 teal(H182) 與司法院 green(H139) 在滾輪淡帶下略難分（見 TODO，未修）。
 export const ERA_TONE = { 大理院: 6, 最高法院: 5, 司法院: 3, 釋字: 7, 憲判: 2 };
+export const jurisdictionSummary = data.職權分類摘要 ?? null;
 // 年度密度堆疊條＝淡底＋ink 細線：解釋吃 釋字 色位（rose，維持頁面 rose 識別）、判決吃 憲判 色位（blue），
 // 兩者與沿革同機關階段同色；實體裁定同屬憲法法庭時期、另給 green 以在堆疊中可辨。大面積吃淡底 -bg、境界與圖例用 ink -tx。
 const TYPE_TONE = { 解釋: ERA_TONE.釋字, 判決: ERA_TONE.憲判, 實體裁定: 3 }; // 堆疊三項色相間距 63°/143°/154°、彩度 1.2 倍內
@@ -210,6 +212,19 @@ const A_TONE = {
   'A-P1': 'green', 'A-P2': 'green', 'A-P3': 'gold', 'A-P4': 'red', 'A-P9': 'plum',
   'A-P5': 'teal', 'A-P6': 'blue', 'A-P7': 'slate', 'A-P8': 'slate',
 };
+// 意見書類型固定呈現序：由「偏協同」到「偏不同」排，讓每列類型串同序、可橫向比對
+// （否則各列照物件插入序＝亂序）。未列類型排最後。
+// 複合類型保留作者自題的協同/不同詞序（協同在前＝偏協同、不同在前＝偏不同；與起手表態相關，
+// 見資料倉 parse-doc.mjs canonType 註解），故 部分協同部分不同 與 部分不同部分協同 分列協同側與不同側。
+const OPINION_TYPE_ORDER = [
+  '協同意見書', '部分協同意見書', '協同部分不同意見書', '部分協同部分不同意見書',
+  '部分不同部分協同意見書', '部分不同協同意見書', '部分不同意見書', '不同意見書',
+];
+// 一位大法官的 意見書類型 物件 → 依固定序排好的 [類型, 次數] 陣列。
+export function opinionTypeEntries(types) {
+  const rank = (k) => { const i = OPINION_TYPE_ORDER.indexOf(k); return i === -1 ? OPINION_TYPE_ORDER.length : i; };
+  return Object.entries(types ?? {}).sort((a, b) => rank(a[0]) - rank(b[0]));
+}
 // 一件的細軸值攤平成 [{axis,code}]（僅 agent 覆核件；供篩選與 chip 呈現）。
 export function typoValues(d) {
   const ty = d.結論類型;
@@ -300,15 +315,52 @@ export function toManifest(list) {
   );
 }
 
-function OpinionLine({ op, officialUrl, pdfMode }) {
+const opinionCache = new Map();
+export function loadOpinions(no) {
+  if (opinionCache.has(no)) return opinionCache.get(no);
+  // Opinion snapshots are regenerated independently from the frontend bundle.
+  // In development, bypass the browser HTTP cache so a freshly synced repair
+  // cannot be hidden behind an older response kept at the same public URL.
+  const promise = fetch(
+    `/data/constitutionalCourt-opinions/${encodeURIComponent(no)}.json`,
+    import.meta.env.DEV ? { cache: 'no-store' } : undefined,
+  )
+    .then((response) => (response.ok ? response.json() : []))
+    .catch(() => []);
+  opinionCache.set(no, promise);
+  return promise;
+}
+
+// pdftotext 的單一換行是版面換行，不是段落。顯示層合併單換行，保留空行段落；
+// docs 內全文與 opinions/*.txt 母本不動，引註與人工校對仍可回到原檔。
+function OpinionLine({ op, opinionText, onLoadText, officialUrl, pdfMode }) {
+  const [open, setOpen] = useState(false);
+  const [localText, setLocalText] = useState(opinionText ?? null);
+  const [loading, setLoading] = useState(false);
+  const [copied, setCopied] = useState(false);
+  useEffect(() => { if (opinionText) setLocalText(opinionText); }, [opinionText]);
+  const toggleText = async () => {
+    if (open) { setOpen(false); return; }
+    if (!localText) {
+      setLoading(true);
+      const text = await onLoadText?.();
+      setLocalText(text ?? null);
+      setLoading(false);
+      if (!text) return;
+    }
+    setOpen(true);
+  };
   const who =
     op.作者類別 === '大法官'
       ? `${(op.提出 ?? []).join('、')}${op.加入?.length ? `（${op.加入.join('、')}加入）` : ''}`
       : (op.文件名 ?? '').replace(/\.(pdf|doc|docx)$/i, '');
   // 內嵌記錄（早期釋字，意見書全文嵌在官方頁正文）沒有 PDF，連官方頁；PDF 依模式走預覽代理。
   const href = op.下載網址 ? pdfHref(op.下載網址, pdfMode) : (op.內嵌 ? officialUrl : undefined);
+  // 正式版只開放無獨立 PDF 的早期內嵌全文；PDF 文本暫留本機供排版除錯。
+  const canReadText = op.內嵌 || import.meta.env.DEV;
   return (
-    <div className="flex flex-wrap items-center gap-2 py-1">
+    <div className="border-t border-[var(--cc-row-border)] py-1 first:border-t-0">
+      <div className="flex flex-wrap items-center gap-2">
       <Badge tone={op.類型.includes('不同') ? 'red' : op.類型.includes('協同') ? 'blue' : 'slate'}>{op.類型}</Badge>
       {op.作者類別 !== '大法官' ? <Badge tone="slate">{op.作者類別}</Badge> : null}
       {op.作者類別 === '大法官' ? (
@@ -335,8 +387,26 @@ function OpinionLine({ op, officialUrl, pdfMode }) {
           rel="noreferrer"
           className="inline-flex items-center gap-1 text-[12px] text-[var(--cc-accent)] underline decoration-[var(--cc-link-underline)] underline-offset-2 hover:text-[var(--cc-link-hover)]"
         >
-          {op.下載網址 ? '官方 PDF' : '官方頁正文'} <ExternalLink size={11} />
+          {op.收於抄本 ? '合訂本 PDF' : op.下載網址 ? '官方 PDF' : '官方頁正文'} <ExternalLink size={11} />
         </a>
+      ) : null}
+      {canReadText && op.有全文 ? (
+        <button onClick={toggleText} className="inline-flex items-center gap-1 text-[12px] font-bold text-[var(--cc-accent)] hover:text-[var(--cc-link-hover)]">
+          <BookOpen size={11} />{loading ? '載入中…' : open ? '收合文本' : op.內嵌 ? '直接看文本' : '直接看文本（本機試驗）'}
+          <ChevronDown size={11} className={open ? 'rotate-180 transition-transform' : 'transition-transform'} />
+        </button>
+      ) : null}
+      </div>
+      {open && localText ? (
+        <div className="mt-2 rounded-md border border-[var(--cc-line)] bg-[var(--cc-bg)] px-3 py-2.5">
+          <div className="mb-1.5 flex items-center justify-between gap-3">
+            <span className="text-[11px] font-bold tracking-[0.08em] text-[var(--cc-eyebrow)]">意見書全文</span>
+            <button onClick={async () => { await navigator.clipboard.writeText(opinionPlainText(localText)); setCopied(true); setTimeout(() => setCopied(false), 1600); }} className="inline-flex items-center gap-1 text-[11.5px] font-bold text-[var(--cc-accent)] hover:text-[var(--cc-link-hover)]">
+              {copied ? <Check size={11} /> : <Clipboard size={11} />}{copied ? '已複製' : '複製全文'}
+            </button>
+          </div>
+          <OpinionText text={localText} className="max-w-4xl" />
+        </div>
       ) : null}
     </div>
   );
@@ -411,6 +481,20 @@ function hl(text, kw) {
 export function CaseCard({ d, q, reasoningDefault, pdfMode }) {
   const [full, setFull] = useState(null);
   const [loadingFull, setLoadingFull] = useState(false);
+  const [opinionTexts, setOpinionTexts] = useState(null);
+  const [loadingOpinions, setLoadingOpinions] = useState(false);
+  const loadOpinionAt = async (i) => {
+    if (opinionTexts) return opinionTexts[i];
+    if (loadingOpinions) {
+      const texts = await loadOpinions(d.字號);
+      return texts[i] ?? null;
+    }
+    setLoadingOpinions(true);
+    const texts = await loadOpinions(d.字號);
+    setOpinionTexts(texts);
+    setLoadingOpinions(false);
+    return texts[i] ?? null;
+  };
   const showFull = async () => {
     if (full || loadingFull) return;
     setLoadingFull(true);
@@ -456,6 +540,13 @@ export function CaseCard({ d, q, reasoningDefault, pdfMode }) {
         <span className="select-text text-[13px] text-[var(--cc-figure-note)]">{formatDate(d.日期)}</span>
         <span className="inline-flex h-2.5 w-2.5 rounded-sm" style={{ background: typeInk(d.類型) }} aria-hidden />
         <Badge tone="plum">{d.類型}{d.子類 ? `・${d.子類}` : ''}</Badge>
+        {d.職權分類?.主類 ? (
+          <span className="inline-flex items-center gap-1.5 text-[11.5px] text-[var(--cc-ink-soft)]" title={`${d.職權分類.判定基礎}・信度${d.職權分類.信度}`}>
+            <span className="h-1.5 w-1.5 rounded-full" style={{ background: d.職權分類.主類 === '憲法解釋' ? 'var(--cat-7-tx)' : 'var(--cat-5-tx)' }} aria-hidden />
+            {d.職權分類.主類 === '憲法解釋' ? '憲法解釋' : '統一解釋法令'}
+            <span className="text-[var(--cc-dim-text)]">／{d.職權分類.子類}</span>
+          </span>
+        ) : null}
         {d.結論類型?.A ? (
           <Badge tone={A_TONE[d.結論類型.A] ?? 'slate'}>{typoLabel(d.結論類型.A)}</Badge>
         ) : d.審查結論?.結論 && d.審查結論.結論 !== '未分類' ? (
@@ -577,7 +668,7 @@ export function CaseCard({ d, q, reasoningDefault, pdfMode }) {
         <div className="mt-3 rounded-lg bg-[var(--cc-opinion-bg)] px-3 py-2">
           <p className="mb-1 text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">意見書 {d.意見書.length} 份</p>
           {d.意見書.map((op, i) => (
-            <OpinionLine key={i} op={op} officialUrl={d.官方頁} pdfMode={pdfMode} />
+            <OpinionLine key={i} op={op} opinionText={opinionTexts?.[i]} onLoadText={() => loadOpinionAt(i)} officialUrl={d.官方頁} pdfMode={pdfMode} />
           ))}
         </div>
       ) : null}
@@ -685,19 +776,64 @@ export function DocSpotlight({ 字號, onClose, onPick, onViewIndex }) {
   );
 }
 export function Select({ label, value, onChange, options }) {
+  const [open, setOpen] = useState(false);
+  const rootRef = useRef(null);
+  const selected = options.find(([v]) => v === value)?.[1] ?? options[0]?.[1] ?? '';
+
+  useEffect(() => {
+    if (!open) return undefined;
+    const closeOutside = (event) => {
+      if (!rootRef.current?.contains(event.target)) setOpen(false);
+    };
+    const closeOnEscape = (event) => {
+      if (event.key === 'Escape') setOpen(false);
+    };
+    document.addEventListener('pointerdown', closeOutside);
+    document.addEventListener('keydown', closeOnEscape);
+    return () => {
+      document.removeEventListener('pointerdown', closeOutside);
+      document.removeEventListener('keydown', closeOnEscape);
+    };
+  }, [open]);
+
   return (
-    <label className="flex items-center gap-1.5 text-[12px] font-bold text-[var(--cc-ink-soft)]">
-      {label}
-      <select
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="rounded-md border border-[var(--cc-border)] bg-white px-2 py-1.5 text-[13px] font-bold text-[var(--cc-ink-strong)] focus:outline-none focus:ring-2 focus:ring-[var(--cc-link-underline)]"
+    <div ref={rootRef} className="relative flex items-center gap-1.5 text-[12px] font-bold text-[var(--cc-ink-soft)]">
+      <span>{label}</span>
+      <button
+        type="button"
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        onClick={() => setOpen((v) => !v)}
+        className={`inline-flex min-h-8 items-center gap-1.5 rounded-md border bg-white px-2.5 py-1.5 text-[13px] font-bold text-[var(--cc-ink-strong)] shadow-[0_1px_0_rgba(69,52,60,0.03)] transition-colors hover:bg-[var(--cc-hover-bg)] focus:outline-none focus:ring-2 focus:ring-[var(--cc-link-underline)] ${open ? 'border-[var(--cc-accent)]' : 'border-[var(--cc-border)]'}`}
       >
-        {options.map(([v, l]) => (
-          <option key={v} value={v}>{l}</option>
-        ))}
-      </select>
-    </label>
+        <span>{selected}</span>
+        <ChevronDown aria-hidden="true" size={13} strokeWidth={1.8} className={`text-[var(--cc-ink-soft)] transition-transform ${open ? 'rotate-180' : ''}`} />
+      </button>
+      {open ? (
+        <div
+          role="listbox"
+          aria-label={label}
+          className="absolute right-0 top-[calc(100%+5px)] z-50 max-h-72 w-max min-w-[11rem] max-w-[min(22rem,calc(100vw-2rem))] overflow-y-auto rounded-lg border border-[var(--cc-line)] bg-[rgba(255,252,253,0.98)] p-1.5 shadow-[0_12px_32px_rgba(69,52,60,0.14)] backdrop-blur-sm"
+        >
+          {options.filter(([v]) => v !== '').map(([v, l]) => {
+            const active = v === value;
+            return (
+              <button
+                key={v}
+                type="button"
+                role="option"
+                aria-selected={active}
+                onClick={() => { onChange(v); setOpen(false); }}
+                className={`flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-left text-[12.5px] font-bold leading-snug transition-colors ${active ? 'bg-[var(--cc-tab-active-bg)] text-[var(--cc-accent)]' : 'text-[var(--cc-ink-mid)] hover:bg-[var(--cc-hover-bg)] hover:text-[var(--cc-ink-strong)]'}`}
+              >
+                <Check aria-hidden="true" size={13} strokeWidth={2} className={active ? 'opacity-100' : 'opacity-0'} />
+                <span>{l}</span>
+              </button>
+            );
+          })}
+        </div>
+      ) : null}
+    </div>
   );
 }
 // 頂部行憲前後大分段鈕（醒目切換，非埋在下拉裡）。

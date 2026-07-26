@@ -5,11 +5,9 @@ import { useLocation } from 'react-router-dom';
 // when a fixed public URL is needed; local previews use their current origin.
 const SITE_URL = (import.meta.env.VITE_SITE_URL || window.location.origin).replace(/\/$/, '');
 
-// Site-wide sharing image (1200×630) and Organization logo. Both are static
-// assets in public/. Absolute URLs so scrapers that never run JS still resolve
-// them from the prerendered HTML.
-const OG_IMAGE = `${SITE_URL}/og-default.png`;
-const OG_IMAGE_ALT = 'Phenom Canvas Lab — 研究、法政與創作工具的互動實驗場';
+// The homepage keeps one quiet site card. Individual pages intentionally do
+// not advertise a large image: their title and description should be enough.
+const DEFAULT_OG_IMAGE = `${SITE_URL}/og-default.png`;
 const LOGO = `${SITE_URL}/phenom-ring.svg`;
 const SITE_NAME = 'Phenom Canvas Lab';
 const SITE_DESC = '研究、法政解析與創作工具的互動實驗場。';
@@ -34,6 +32,10 @@ function setMeta(attribute, key, content) {
   node.setAttribute('content', content);
 }
 
+function removeMeta(attribute, key) {
+  document.head.querySelector(`meta[${attribute}="${key}"]`)?.remove();
+}
+
 function setLink(rel, href) {
   let node = document.head.querySelector(`link[rel="${rel}"]`);
   if (!node) {
@@ -51,6 +53,7 @@ function setLink(rel, href) {
 export default function SeoHead({ page, itemList }) {
   const { pathname } = useLocation();
   const url = `${SITE_URL}${pathname === '/' ? '/' : pathname}`;
+  const ogImage = page?.image || (pathname === '/' ? DEFAULT_OG_IMAGE : null);
   const metadata = useMemo(() => ({
     title: page?.title || 'Phenom Canvas Lab｜研究、法政與創作工具',
     description: page?.description || 'Phenom Canvas Lab 集合可操作的音樂工具，以及法律、財稅、公共政策的資料研究地圖。',
@@ -73,14 +76,21 @@ export default function SeoHead({ page, itemList }) {
     setMeta('property', 'og:title', metadata.title);
     setMeta('property', 'og:description', metadata.description);
     setMeta('property', 'og:url', url);
-    setMeta('property', 'og:image', OG_IMAGE);
-    setMeta('property', 'og:image:width', '1200');
-    setMeta('property', 'og:image:height', '630');
-    setMeta('property', 'og:image:alt', OG_IMAGE_ALT);
-    setMeta('name', 'twitter:card', 'summary_large_image');
+    if (ogImage) {
+      setMeta('property', 'og:image', ogImage);
+      setMeta('property', 'og:image:type', 'image/png');
+      setMeta('property', 'og:image:width', '1200');
+      setMeta('property', 'og:image:height', '630');
+      setMeta('property', 'og:image:alt', `${metadata.name || metadata.title} — ${SITE_NAME}`);
+      setMeta('name', 'twitter:image', ogImage);
+    } else {
+      ['og:image', 'og:image:type', 'og:image:width', 'og:image:height', 'og:image:alt']
+        .forEach((key) => removeMeta('property', key));
+      removeMeta('name', 'twitter:image');
+    }
+    setMeta('name', 'twitter:card', ogImage ? 'summary_large_image' : 'summary');
     setMeta('name', 'twitter:title', metadata.title);
     setMeta('name', 'twitter:description', metadata.description);
-    setMeta('name', 'twitter:image', OG_IMAGE);
     if (metadata.keywords) setMeta('name', 'keywords', metadata.keywords);
     setLink('canonical', url);
 
@@ -93,10 +103,10 @@ export default function SeoHead({ page, itemList }) {
       description: metadata.description,
       inLanguage: 'zh-Hant-TW',
       isPartOf: { '@id': `${SITE_URL}/#website` },
-      primaryImageOfPage: OG_IMAGE,
+      ...(ogImage ? { primaryImageOfPage: ogImage } : {}),
       ...(isArticle ? {
         headline: metadata.name || metadata.title,
-        image: OG_IMAGE,
+        ...(ogImage ? { image: ogImage } : {}),
         author: { '@id': `${SITE_URL}/#org` },
         publisher: { '@id': `${SITE_URL}/#org` },
         mainEntityOfPage: url,
@@ -150,7 +160,7 @@ export default function SeoHead({ page, itemList }) {
       document.head.appendChild(script);
     }
     script.textContent = JSON.stringify({ '@context': 'https://schema.org', '@graph': graph });
-  }, [metadata, pathname, url, itemList]);
+  }, [metadata, pathname, url, ogImage, itemList]);
 
   return null;
 }

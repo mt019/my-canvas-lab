@@ -110,3 +110,11 @@ U+FE56  # ﹖ 小形問號
 U+224B  # ≋ 三重波浪號（《生而為≋人？》，兩廳院節目名的一部分，不是錯字）
 # 2026-07-18 固定全覆蓋子集改版後：來源三面皆無、走系統 fallback 的 UI 裝飾符號
 U+25B8  # ▸ 憲法法庭頁 accordion 展開箭頭（aria-hidden 裝飾；來源字型缺，系統 serif 畫三角）
+# 2026-07-22 意見書全文懶載：官方 PDF 的音標／橫線／裝飾符號，來源字型無字形，保留原文並走系統 fallback
+U+02CD  # ˍ modifier letter low macron
+U+02D9  # ˙ dot above
+U+23AF  # ⎯ horizontal line extension
+U+02C7  # ˇ caron
+U+2723  # ✣ four balloon-spoked asterisk
+U+2730  # ✰ shadowed white star
+U+27B1  # ➱ notched upper-right-shadowed white arrow

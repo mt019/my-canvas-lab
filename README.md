@@ -41,7 +41,7 @@ npm run dev
 
 **Build 期預渲染。** `scripts/prerender.mjs` 用 Playwright 起一個 headless Chromium，把 `dist/` 靜態服務起來，逐條可索引路由等 React 掛載完、`SeoHead` 寫好 `<head>` 後，抓完整 HTML 寫回 `dist/<route>/index.html`。不跑 JS 的爬蟲與答案引擎因此拿到真的內文與正確的 per-page metadata，而非空的 `#root`。路由由 `scripts/routes.mjs` 列出（與 `App.jsx` 同一套檔案路徑規則），`scripts/generate-sitemap.mjs` 用同一份清單產 `dist/sitemap.xml`。`public/robots.txt` 放行主要 AI 爬蟲（GPTBot、ClaudeBot、PerplexityBot、Google-Extended…）並指向 sitemap。Chromium 起不來時 fail-soft 跳過預渲染、保住 deploy；趕時間可 `PRERENDER=0 npm run build`。
 
-`public/og-default.png`（1200×630）由 `scripts/generate-og-image.mjs` 產，改文案或色票後重跑 `npm run og:image`，PNG 進版控。
+`public/og-default.png`（1200×630）只供首頁使用。單一研究頁、案例、分頁或大法官頁刻意不設大圖，只讓分享預覽顯示該頁標題與簡短描述。Vercel routing 必須先走 `filesystem`，才能把各頁的預渲染 HTML 交給不執行 JavaScript 的分享爬蟲。
 
 **憲法法庭案例庫：分頁、大法官、案件都有可索引網址。** 走 `?tab=` query 的頁面，爬蟲只看得到預設分頁。案例庫改成三層乾淨路由：每個分頁 `/constitutionalcourt/<tab>`、每位有實質參與的大法官 `/constitutionalcourt/justices/<姓名>`、精選長尾案件 `/constitutionalcourt/case/<字號>`，各帶鎖定關鍵字的 title／description 與結構化資料（整庫一個 schema.org `Dataset`、大法官頁 `Person`、案件頁 `Legislation`）。分頁列與大法官名都是真的 `<Link>`；`?tab=`／`?j=`／`?doc=` 舊深連結仍可用。
 

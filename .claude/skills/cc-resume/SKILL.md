@@ -7,11 +7,13 @@ disable-model-invocation: true
 
 接續憲法法庭研究專案。以下脈絡由本指令在送進你之前即時抓取，**不是寫死的舊資料**。
 
-## 斷點（`.claude/CHECKPOINT.md` 的最新一節）
+## 斷點（`.claude/CHECKPOINT.constitutional-court.md` 全文＝現況，已無歷史節）
 
-!`sed -n '/^## /,/^## /p' /Users/iw/Documents/NTU/1142/my-canvas-lab/.claude/CHECKPOINT.md | head -40`
+!`cat /Users/iw/Documents/NTU/1142/my-canvas-lab/.claude/CHECKPOINT.constitutional-court.md`
 
-完整斷點檔還有前幾輪的紀錄，需要時自己 Read `/Users/iw/Documents/NTU/1142/my-canvas-lab/.claude/CHECKPOINT.md`。
+上面是整份現況（子線各一節，**每節都要看**）。歷輪的里程碑紀錄另存
+`.claude/history/HISTORY.constitutional-court.md`，本指令不載入，要考古自己 grep。
+子專案「審查落差」另有 `.claude/CHECKPOINT.deference-gap.md`。
 
 ## 兩 repo 即時狀態
 

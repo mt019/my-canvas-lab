@@ -154,6 +154,7 @@ export default function IndexView({ initialQ = '', onOpenDoc }) {
   const [topic, setTopic] = useState('全部');
   const [subtopic, setSubtopic] = useState('全部');
   const [outcome, setOutcome] = useState('全部');
+  const [jurisdiction, setJurisdiction] = useState('全部');
   const [standard, setStandard] = useState('全部');
   const [decade, setDecade] = useState('全部');
   const [q, setQ] = useState(initialQ);
@@ -166,6 +167,8 @@ export default function IndexView({ initialQ = '', onOpenDoc }) {
   const [reasoningDefault, setReasoningDefault] = usePref('ccReasoningDefault', false);
   const [pdfMode, setPdfMode] = usePref('pdfMode', 'preview');
   const [showRail, setShowRail] = usePref('ccShowRail', true); // 右側時間軸開關（記住偏好）
+  const [compactRailOpen, setCompactRailOpen] = useState(false); // 窄畫面：右緣把手點開的 overlay 時間軸
+  const [compactRailHover, setCompactRailHover] = useState(false);
   const [typo, setTypo] = useState({});           // 類型學 6 軸篩選：{ 軸id: 代碼 }
   const [showTypo, setShowTypo] = useState(false); // 類型學篩選面板展開
 
@@ -203,8 +206,9 @@ export default function IndexView({ initialQ = '', onOpenDoc }) {
 
   const subtopicOptions = subtopicsByTopic.get(topic);
 
-  const { outcomeCounts, standardCounts } = useMemo(() => {
+  const { outcomeCounts, jurisdictionCounts, standardCounts } = useMemo(() => {
     const oc = { '違憲（含定期失效）': 0, 合憲: 0, 法令解釋: 0, 補充前解釋: 0, 變更前解釋: 0, 其他: 0 };
+    const jc = new Map();
     const sc = new Map();
     for (const d of scoped) {
       const o = d.審查結論?.結論 ?? '未分類';
@@ -214,10 +218,12 @@ export default function IndexView({ initialQ = '', onOpenDoc }) {
       else if (o === '補充前解釋') oc.補充前解釋 += 1;
       else if (o === '變更前解釋') oc.變更前解釋 += 1;
       else oc.其他 += 1;
+      const j = d.職權分類?.主類;
+      if (j) jc.set(j, (jc.get(j) ?? 0) + 1);
       const s = d.審查基準?.基準;
       if (s) sc.set(s, (sc.get(s) ?? 0) + 1);
     }
-    return { outcomeCounts: oc, standardCounts: sc };
+    return { outcomeCounts: oc, jurisdictionCounts: jc, standardCounts: sc };
   }, [scoped]);
 
   const decades = useMemo(() => {
@@ -257,6 +263,7 @@ export default function IndexView({ initialQ = '', onOpenDoc }) {
         const c = d.審查結論?.結論 ?? '未分類';
         if (outcome === '違憲（含定期失效）' ? !c.startsWith('違憲') : c !== outcome) return false;
       }
+      if (jurisdiction !== '全部' && d.職權分類?.主類 !== jurisdiction) return false;
       if (standard !== '全部' && (d.審查基準?.基準 ?? '') !== standard) return false;
       if (decade !== '全部' && d.日期?.slice(0, 3) !== decade.slice(0, 3)) return false;
       for (const { id } of TYPO_AXES) {
@@ -268,7 +275,7 @@ export default function IndexView({ initialQ = '', onOpenDoc }) {
     });
     // exactSet 目前只隨 q 變，而 q 已在下面；仍然寫進依賴，不靠這條推理鏈。哪天 exact 改成也吃
     // 別的輸入（例如跨機關搜尋開關），少了它就會拿到舊的置頂集合＝那件同時出現在下面清單裡。
-  }, [scoped, exactSet, type, topic, subtopic, outcome, standard, decade, q, typo]);
+  }, [scoped, exactSet, type, topic, subtopic, outcome, jurisdiction, standard, decade, q, typo]);
 
   // 精準命中永遠在最前面，不隨新→舊／舊→新翻動：它是「你指名的那一件」，不是排序結果之一。
   const sorted = useMemo(() => {
@@ -372,7 +379,7 @@ export default function IndexView({ initialQ = '', onOpenDoc }) {
         <div className="mb-2.5 flex flex-wrap items-center gap-2">
           <SegControl
             value={seg}
-            onChange={(v) => { set機關(v); setType('全部'); setTopic('全部'); setSubtopic('全部'); setOutcome('全部'); setStandard('全部'); setDecade('全部'); setTypo({}); setLimit(INDEX_PAGE); scrollToTabs(); }}
+            onChange={(v) => { set機關(v); setType('全部'); setTopic('全部'); setSubtopic('全部'); setOutcome('全部'); setJurisdiction('全部'); setStandard('全部'); setDecade('全部'); setTypo({}); setLimit(INDEX_PAGE); scrollToTabs(); }}
             options={[
               ['行憲後', '行憲後　釋字・憲判', 機關Counts.行憲後],
               ['行憲前', '行憲前　統一解釋', 機關Counts.行憲前],
@@ -409,6 +416,7 @@ export default function IndexView({ initialQ = '', onOpenDoc }) {
             <Select label="細分" value={subtopic} onChange={(v) => { setSubtopic(v); setLimit(INDEX_PAGE); }} options={[['全部', '全部'], ...subtopicOptions.map(([s, n]) => [s, `${s}（${n}）`])]} />
           ) : null}
           <Select label="結論" value={outcome} onChange={(v) => { setOutcome(v); setLimit(INDEX_PAGE); }} options={[['全部', '全部'], ['違憲（含定期失效）', `違憲（含定期失效）（${outcomeCounts['違憲（含定期失效）']}）`], ['合憲', `合憲（${outcomeCounts.合憲}）`], ['法令解釋', `法令解釋（${outcomeCounts.法令解釋}）`], ['補充前解釋', `補充前解釋（${outcomeCounts.補充前解釋}）`], ['變更前解釋', `變更前解釋（${outcomeCounts.變更前解釋}）`], ['其他', `其他（${outcomeCounts.其他}）`]]} />
+          <Select label="職權" value={jurisdiction} onChange={(v) => { setJurisdiction(v); setLimit(INDEX_PAGE); }} options={[['全部', '全部'], ['憲法解釋', `憲法解釋（${jurisdictionCounts.get('憲法解釋') ?? 0}）`], ['統一解釋法律及命令', `統一解釋法令（${jurisdictionCounts.get('統一解釋法律及命令') ?? 0}）`]]} />
           {!isPre ? (
             <Select label="審查基準" value={standard} onChange={(v) => { setStandard(v); setLimit(INDEX_PAGE); }} options={[['全部', '全部'], ['嚴格', `嚴格（${standardCounts.get('嚴格') ?? 0}）`], ['中度', `中度（${standardCounts.get('中度') ?? 0}）`], ['寬鬆', `寬鬆（${standardCounts.get('寬鬆') ?? 0}）`], ['多重', `多重基準（${standardCounts.get('多重') ?? 0}）`], ['未明示', `未明示（${standardCounts.get('未明示') ?? 0}）`]]} />
           ) : null}
@@ -530,7 +538,31 @@ export default function IndexView({ initialQ = '', onOpenDoc }) {
           </div>
         </aside>
       ) : null}
+
+      {/* 窄畫面不再讓時間軸消失：右緣留 10px 可發現把手，游標撞右緣或鍵盤 focus 即滑出；
+          觸控可點把手固定開關，點年份後自動收合。共用同一 TimeRail 與定位資料。 */}
+      {showRail ? (
+        <aside
+          onMouseEnter={() => setCompactRailHover(true)}
+          onMouseLeave={() => setCompactRailHover(false)}
+          className={`group fixed bottom-3 right-0 top-[57px] z-30 w-[72px] rounded-l-lg border border-r-0 border-[var(--cc-line)] bg-[var(--cc-bg)]/97 py-1 shadow-lg backdrop-blur transition-transform duration-200 lg:hidden ${compactRailOpen ? 'translate-x-0' : 'translate-x-[62px] hover:translate-x-0 focus-within:translate-x-0'}`}
+        >
+          <button
+            type="button"
+            onClick={() => setCompactRailOpen((v) => !v)}
+            className="absolute -left-5 top-1/2 flex h-14 w-5 -translate-y-1/2 items-center justify-center rounded-l-md border border-r-0 border-[var(--cc-line)] bg-[var(--cc-bg)] text-[var(--cc-accent)] shadow-sm"
+            aria-label={compactRailOpen ? '收合時間軸' : '展開時間軸'}
+            aria-expanded={compactRailOpen}
+          >
+            <PanelRight size={12} />
+          </button>
+          {/* 收起時裁掉 TimeRail 向左溢出的焦點年／件數浮標；把手留在裁切層外。
+              hover／focus 喚醒或固定展開後才允許浮標越出尺身。 */}
+          <div className={`absolute inset-0 ${compactRailOpen ? 'overflow-visible' : 'overflow-hidden group-hover:overflow-visible group-focus-within:overflow-visible'}`}>
+            <TimeRail showFocusLabel={compactRailOpen || compactRailHover} years={railYears} posByJid={railPosByJid} onJump={(year) => { railJump(year); setCompactRailOpen(false); }} />
+          </div>
+        </aside>
+      ) : null}
     </div>
   );
 }
-

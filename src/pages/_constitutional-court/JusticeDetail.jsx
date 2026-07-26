@@ -1,20 +1,27 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { Download, ExternalLink, FileText } from 'lucide-react';
 import { formatDate } from '../../utils/date';
-import { Badge, citeString, coSign, docs, downloadFile, formatTenureRange, justices, pdfHref, toBibtex, usePref } from './shared';
+import { Badge, citeString, coSign, docs, downloadFile, formatTenureRange, justices, loadOpinions, opinionTypeEntries, pdfHref, toBibtex, usePref } from './shared';
+import OpinionText from './OpinionText.jsx';
+
+const loadOpinionText = async (no, index) => {
+  return (await loadOpinions(no))?.[index] ?? null;
+};
 
 // 大法官個人頁（?tab=justices&j=姓名）：基本資料、意見書清單、參與判決、共同具名、打包匯出
 export default function JusticeDetail({ name, onBack, onOpen, onOpenDoc }) {
   const j = justices.find((x) => x.姓名 === name);
   const [pdfMode] = usePref('pdfMode', 'preview'); // 與案件頁共用同一 localStorage 偏好
+  const [openOpinion, setOpenOpinion] = useState(null);
+  const [opinionText, setOpinionText] = useState(null);
 
   const opinions = useMemo(() => {
     const ops = [];
     for (const d of docs) {
-      for (const op of d.意見書) {
+      for (const [opIndex, op] of d.意見書.entries()) {
         if (op.作者類別 !== '大法官') continue;
         const role = op.提出?.includes(name) ? '提出' : op.加入?.includes(name) ? '加入' : null;
-        if (role) ops.push({ d, op, role });
+        if (role) ops.push({ d, op, opIndex, role });
       }
     }
     return ops.sort((a, b) => (b.d.日期 ?? '').localeCompare(a.d.日期 ?? ''));
@@ -91,16 +98,13 @@ export default function JusticeDetail({ name, onBack, onOpen, onOpenDoc }) {
       <section className="py-5">
         <h2 className="text-2xl font-bold text-[var(--cc-heading)]">{j.姓名}</h2>
         <div className="mt-2 flex flex-wrap gap-x-6 gap-y-1 text-[13px] text-[var(--cc-ink-mid)]">
-          {/* 屆次推定的任期純由屆次標籤推出，兩欄重複，只留屆次一行；
-              簡歷頁/人工核定者任期有獨立資訊（多段、辭職、卒於任內、現任起日）才另列 */}
           {j.屆次?.length ? (
             <span>
               <strong className="text-[var(--cc-accent)]">屆次</strong>　{j.屆次.join('、')}
-              {j.任期來源 === '屆次推定' ? <span className="text-[11.5px] text-[var(--cc-figure-note)]">（任期依屆次推定）</span> : null}
             </span>
           ) : null}
-          {tenureText && j.任期來源 !== '屆次推定' ? (
-            <span><strong className="text-[var(--cc-accent)]">任期</strong>　{tenureText}{j.任期來源 === '人工核定' ? '（人工核定）' : ''}</span>
+          {tenureText ? (
+            <span><strong className="text-[var(--cc-accent)]">任期</strong>　{tenureText}</span>
           ) : null}
           {/* 多段任期＝兩次以上受不同總統提名（如許宗力 2003 陳水扁／2016 蔡英文再任），列出各段提名人；
               單段列 scalar。提名總統經 justices-提名批次.json 逐批核定，個別批次見 title。 */}
@@ -153,14 +157,33 @@ export default function JusticeDetail({ name, onBack, onOpen, onOpenDoc }) {
           {opinions.length ? (
             <>
               <h3 className="text-base sm:text-lg font-bold text-[var(--cc-title-ink)]">
-                意見書 {opinions.length} 份：{Object.entries(j.意見書類型 ?? {}).map(([k, v]) => `${k.replace('意見書', '')} ${v}`).join('・') || ''}
+                意見書 {opinions.length} 份：{opinionTypeEntries(j.意見書類型).map(([k, v]) => `${k.replace('意見書', '')} ${v}`).join('・') || ''}
               </h3>
               <div className="mt-2 divide-y divide-[var(--cc-row-border)]">
-                {opinions.map(({ d, op, role }, i) => (
-                  <div key={i} className="flex flex-wrap items-center gap-x-3 gap-y-1 py-1.5 text-[13px]">
+                {opinions.map(({ d, op, opIndex, role }, i) => {
+                  const key = `${d.字號}#${opIndex}`;
+                  const canRead = op.有全文 && (op.內嵌 || import.meta.env.DEV);
+                  const isOpen = openOpinion === key;
+                  return (
+                  <div key={i} className="py-1.5 text-[13px]">
+                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
                     <span className="w-[104px] whitespace-nowrap text-[12px] text-[var(--cc-figure-note)]">{formatDate(d.日期)}</span>
                     <button onClick={() => onOpenDoc(d.字號)} title="開啟案件預覽（含全部大法官意見書）" className="w-[130px] text-left font-bold text-[var(--cc-ink-strong)] underline decoration-[var(--cc-link-underline)] underline-offset-2 hover:text-[var(--cc-accent)]">{d.字號}</button>
-                    <Badge tone={op.類型.includes('不同') ? 'red' : op.類型.includes('協同') ? 'blue' : 'slate'}>{op.類型}</Badge>
+                    {canRead ? (
+                      <button
+                        type="button"
+                        aria-expanded={isOpen}
+                        title={isOpen ? '收合意見書文本' : '展開意見書文本'}
+                        onClick={async () => {
+                          if (isOpen) { setOpenOpinion(null); setOpinionText(null); return; }
+                          setOpenOpinion(key); setOpinionText(null);
+                          setOpinionText(await loadOpinionText(d.字號, opIndex));
+                        }}
+                        className="rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--cc-accent)]"
+                      >
+                        <Badge tone={op.類型.includes('不同') ? 'red' : op.類型.includes('協同') ? 'blue' : 'slate'}>{op.類型}{isOpen ? '　收合' : ''}</Badge>
+                      </button>
+                    ) : <Badge tone={op.類型.includes('不同') ? 'red' : op.類型.includes('協同') ? 'blue' : 'slate'}>{op.類型}</Badge>}
                     {role === '加入' ? <Badge tone="slate">加入</Badge> : null}
                     {d.主筆 === name ? <Badge tone="plum">主筆</Badge> : null}
                     {d.主席 === name ? <Badge tone="plum">主席</Badge> : null}
@@ -172,8 +195,15 @@ export default function JusticeDetail({ name, onBack, onOpen, onOpenDoc }) {
                     {op.下載網址 ?? (op.內嵌 ? d.官方頁 : null) ? (
                       <a href={op.下載網址 ? pdfHref(op.下載網址, pdfMode) : d.官方頁} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-[12px] text-[var(--cc-accent)] underline decoration-[var(--cc-link-underline)] underline-offset-2">{op.下載網址 ? 'PDF' : '官方頁'} <ExternalLink size={10} /></a>
                     ) : null}
+                    </div>
+                    {isOpen ? (
+                      <div className="mt-2 w-full rounded-md border border-[var(--cc-line)] bg-[var(--cc-bg)] px-3 py-2.5 sm:px-4">
+                        {opinionText ? <OpinionText text={opinionText} /> : <p className="text-[12px] text-[var(--cc-ink-soft)]">載入中…</p>}
+                      </div>
+                    ) : null}
                   </div>
-                ))}
+                  );
+                })}
               </div>
             </>
           ) : null}

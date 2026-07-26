@@ -23,7 +23,7 @@ const EASE = 0.12;     // 阻尼係數：每影格朝目標靠近的比例（小
 
 const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
 
-export default function TimeRail({ years, posByJid, onJump }) {
+export default function TimeRail({ years, posByJid, onJump, showFocusLabel = true }) {
   const wrapRef = useRef(null);
   const [railH, setRailH] = useState(0);
   const [focusF, setFocusF] = useState(0);     // 顯示中的分數焦點（阻尼後）
@@ -217,13 +217,15 @@ export default function TimeRail({ years, posByJid, onJump }) {
                 style={{ right: SPINE_RIGHT - 3.5, top: markY, width: 7, height: 7, transform: 'translateY(-50%)', background: `var(--cat-${shownYear.tone}-tx)` }}
                 aria-hidden
               />
-              <div
-                className="pointer-events-none absolute z-20 flex items-baseline gap-1.5 whitespace-nowrap rounded-md border border-[var(--cc-border)] bg-white/95 px-2 py-0.5 shadow-sm backdrop-blur"
-                style={{ right: SPINE_RIGHT + 10, top: markY, transform: 'translateY(-50%)' }}
-              >
-                <span className="text-[13px] font-bold tabular-nums text-[var(--cc-ink-strong)]">{shownYear.year}</span>
-                <span className="text-[10.5px] tabular-nums text-[var(--cc-ink-soft)]">{shownYear.count} 件</span>
-              </div>
+              {showFocusLabel ? (
+                <div
+                  className="pointer-events-none absolute z-20 flex items-baseline gap-1.5 whitespace-nowrap rounded-md border border-[var(--cc-border)] bg-white/95 px-2 py-0.5 shadow-sm backdrop-blur"
+                  style={{ right: SPINE_RIGHT + 10, top: markY, transform: 'translateY(-50%)' }}
+                >
+                  <span className="text-[13px] font-bold tabular-nums text-[var(--cc-ink-strong)]">{shownYear.year}</span>
+                  <span className="text-[10.5px] tabular-nums text-[var(--cc-ink-soft)]">{shownYear.count} 件</span>
+                </div>
+              ) : null}
             </>
           ) : null}
         </>

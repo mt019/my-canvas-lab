@@ -100,7 +100,7 @@ export default function TenureView({ onOpen }) {
             <ArrowUpDown size={11} />{asc ? '最早在上' : '最新在上'}
           </button>
           <label className="flex items-center gap-1.5 text-[12px] font-bold text-[var(--cc-ink-soft)]">
-            <input type="checkbox" checked={onlyAuthors} onChange={(e) => setOnlyAuthors(e.target.checked)} />
+            <input type="checkbox" checked={onlyAuthors} onChange={(e) => setOnlyAuthors(e.target.checked)} className="canvas-check" />
             僅顯示有具名意見書者
           </label>
         </div>
@@ -137,7 +137,6 @@ export default function TenureView({ onOpen }) {
             {hover.提出意見書 + hover.加入意見書 > 0
               ? <span><span className="text-[var(--cc-ink-soft)]">意見書</span> 提出 {hover.提出意見書}／加入 {hover.加入意見書}</span>
               : null}
-            {hover.任期來源 !== '簡歷頁' ? <span className="text-[var(--cc-ink-soft)]">（任期{hover.任期來源}）</span> : null}
           </div>
         ) : (
           <span className="text-[var(--cc-ink-soft)]">游標移到列上看任期細節；點姓名開個人頁（意見書清單、參與裁判與打包下載）。</span>

@@ -4,10 +4,10 @@
 
 ### 統計學實驗室（下一輪，兩件都未動工）
 - [ ] **教材語料建置**：資料倉 `docs/教科書與參考書單.md` 已有六領域、14 個實測可取用的免費全文。`engineering/scripts/fetch-books.mjs` 已寫好未跑。要做：由書單生 `data/materials/booklist.json` → 跑 fetch → 新增 `index-books.mjs`（pdftotext 抽文字、產 `docs/教材索引.md`）→ 運維三件套（gitignore 擋 PDF、validate 檢查 manifest、LOG、負向測試）。
-- [ ] **全站 SEO／AEO**：JSON-LD（Article／FAQPage／BreadcrumbList）、語言進網址 `?lang=en` ＋hreflang（現在語言只存 localStorage，爬蟲看不到英文版）、sitemap.xml／robots.txt 隨 build 產生、可索引頁面 build 後預渲染靜態 HTML。
+- [x] ~~**全站 SEO／AEO**~~（2026-07-18 上線 b86cc23，見 `.claude/CHECKPOINT.seo.md`）：JSON-LD（Article／FAQPage／BreadcrumbList）、語言進網址 `?lang=en` ＋hreflang（現在語言只存 localStorage，爬蟲看不到英文版）、sitemap.xml／robots.txt 隨 build 產生、可索引頁面 build 後預渲染靜態 HTML。
 - [ ] 正文兩處仍偏抽象待補具體例子：p 值均勻分佈、Neyman-Pearson 的長期錯誤率。
 
-- [ ] **eslint 根本沒在檢查 `.jsx`**：`eslint.config.js` 的 files 只有 `**/*.{ts,tsx}`，所以 17 個 `.jsx` 頁面與 `src/components/lab/` 全部逃過 lint，`npm run lint` 的綠燈是假訊號。加上 jsx 支援會一次噴出既有錯誤，要排一輪處理。
+- [ ] `npm run lint` 目前有 1 個既有錯誤未清：`src/pages/statistics/_figures/BayesIdealPoints.jsx:2` 匯入了沒用到的 `ChartFrame`。（本條前身「eslint 沒在檢查 .jsx」已過期——`eslint.config.js:39` 自 2026-07-17 起涵蓋 `**/*.{js,jsx,mjs}`。）
 - [ ] **共用層下一個該抽的東西**：點標籤／註記標註（帶避讓）。GovernmentDebt 的折線末端國名與 ECFA `ThesisTimeline` 的事件標註各自手刻同一套避讓邏輯——兩個真實用例已到齊。順帶：`AreaWash` 缺漸層、`Dots` 只有單一半徑。
 - [ ] **比喻黑話殘留（僅剩程式識別字）**：文件散文中的舊比喻（咬／哨兵／棘輪／死法／地基…）已於 2026-07-18 全部改直白。**剩下的是程式識別字** `sentinel`／`sentinelRef`（`useHideOnScrollDown` 的 IntersectionObserver 觀測基準元素，HANDOFF:489/490/512、TODO:44）與資料倉腳本裡的對應命名。改名要跨 repo 動變數名＋重跑相關測試，排一輪專門處理。
 
@@ -15,8 +15,9 @@
 
 ### AirPollutionFee 空氣污染防制費
 - [x] ~~安裝 KaTeX~~（2026-07-13 已裝，隨統計站進場）；費額公式 `Σ(Qᵢ · rᵢ) × D × E` 與 D/E 係數式仍待改用 `<Math tex="…" />` 渲染（注意：本頁不在 `validate:math` 範圍內，但公式一律 LaTeX 的規則同樣適用）
-- [ ] 稽徵程序：將 `QUARTERLY_DEADLINES` 渲染成季申報截止日速查卡（日曆式表格）
-- [ ] 費率查詢：補入重金屬（Pb/Cd/Hg/As/Cr⁶⁺）與戴奧辛費率表
+- [x] ~~改用共用儀表板殼~~（2026-07-20）：`DashboardLayout`＋吸頂分頁，內容拆進 `src/pages/_air-pollution-fee/`（`data.js` 純資料＋六個 View）；費率查詢從「點開才看得到的按鈕」升成獨立分頁；自帶的 40 個 `--apf-*` 色變數與四個複製版 `Accordion`／`InfoBox`／`BulletList`／`Tag` 全部移除，改吃全域 token 與 `components/lab/`
+- [x] ~~稽徵程序：季申報截止日~~（2026-07-20）：原條目前提有誤——`QUARTERLY_DEADLINES` 這個常數從來不存在於本頁。四個截止日現以散文寫在 `ProcedureView` 的「申報截止日」一節
+- [ ] 費率查詢：補入重金屬（Pb/Cd/Hg/As/Cr⁶⁺）與戴奧辛費率表（`data.js` 的 `POLLUTANTS` 加兩筆即可；`ELEMENTS_DATA` 的課徵客體已提到這兩類，但沒有費率表）
 - [ ] 逃漏：補充具體裁判案例或行政裁處實例（目前僅有條文，缺乏實務例證）
 
 ### GovernmentDebt 政府債務研究
@@ -62,9 +63,14 @@
 - [x] M5 Phase B 行憲前司法解釋入庫＋前端（2026-07-08 完成上線）：大理院統字（2012）＋最高法院解字（245）＋司法院院字／院解字（4097）共 **6,354 件**維基文庫全文入庫（資料 repo `crawl-wikisource.mjs`，MediaWiki API），與釋字／憲判同進 `文件` 集合、加「機關」維度區分。前端（`ConstitutionalCourt.jsx`）：索引頁**頂部大分段鈕**（行憲後 釋字・憲判 874／行憲前 統一解釋 6354／全部 7228，預設行憲後）取代埋藏下拉，行憲前另給機關子篩選；行憲前檢視隱藏大法官時代篩選（類型／主題／審查基準）。首頁「大法官解釋」改讀 `統計.機關.大法官`（813，不再被行憲前污染成 7167），行憲前另列一行分隔顯示。排序改 **系列＋號次**（統字多無日期，原退回檔名字母序而亂序）。行憲前全文走**懶載檔** `constitutionalCourt-pre1947-fulltext.json`（Vite 動態 import 分塊、只抓一次），`CaseCard` 進行憲前檢視**自動展開全文**（不用逐張點）。沿革四段卡加「檢視這 N 件案件」深連（`?機關=…`）。TimelineView／TopicHeatmaps 排除行憲前。字型子集重建吸收古典字、27 個來源缺字入 exceptions（系統 serif fallback）；統字日期源頭幾近全缺（僅統字500 有 1916 年）。決策與探勘見資料 repo `docs/司法解釋沿革設計.md`、`docs/行憲前來源探勘.md`、`docs/data-contract.md`。build（字型＋token＋色彩＋vite）全綠、零新色、Playwright 實機驗證（分段鈕／排序／自動展開全文）。
 
 ### 全局
+- [ ] **把 18 對分類色候選重新校準後升進 Layer-0**（2026-07-20）：`src/styles/tone-candidates.js` 收著空污費頁原本那 18 對「淡底＋深墨」，實算證明它們同色相配對、墨色明度齊一、色相鋪滿色環（分析寫在該檔檔頭與 `docs/DESIGN.md`）。tokens.css 現在只有 8 對而單頁就要 7 槽，遲早不夠。要做：保留色相（色相是身分），把明度與彩度收進 validator 帶內——已知四處超標：墨色明度極差 0.136（限 0.10）、VOCs 墨色 `#50388a` 彩度 0.1309（限 0.13）、四個污染物底色 L 0.760–0.826（-bg 帶要 0.90–0.97）、底色彩度最高 0.064（限 0.035）。校準後跑 `validate:colors` 必須綠
+- [ ] **憲法法庭 ERA_TONE：最高法院 teal 與司法院 green 略難分**（2026-07-20，使用者提，未修）：teal(H182)、green(H139) 差 43°，在右欄滾輪的淡時代帶下難分。最高法院段極短（1927–28，密度圖幾乎不可見），影響有限；但滾輪時代帶上兩段相鄰。修的難處：扣掉禁用的 amber/slate，cat 槽色相不夠 5 段鋪開（見下條）。真正的解是先擴充色槽
+- [ ] **手刻長條圖沒吃共用 marks 元件**（2026-07-20 發現，只修了一張）：`components/lab/chart/marks.jsx` 的 `Bars` 註解早就寫明「近白填色＋細框的線框版只在小尺寸成立，長到 200px 就讀成空的佔位框」，並實作成 `fill = ink @ 22%`。全站九張圖吃這個元件，但憲法法庭年度密度圖（`TimelineView.jsx`）是手刻的，畫成線框版＋約 100 根 8px 細條，整張讀成柵欄——已就地改成填色無框。**要做**：盤點其他手刻 `<rect>` 的圖（`XiaohongshuRisk`／`IiasPublications`／`ECFAResearch`／`TenureView`／statistics 的 `_figures` 若干）有沒有同樣毛病，能遷到 `Bars` 的就遷；遷不動的（對數軸、分段著色）至少統一填色語言。順帶考慮加一條檢查：`src/` 裡的 `<rect>` 同時出現 `-bg` 填色與 `-tx` 框線就報警
+- [ ] **色票角色沒有任何檢查在驗**（2026-07-20 發現）：`validate-color-system.mjs` 只驗 Layer-0 的 `--tone-*` 八對，完全沒碰色票的 `--c-*` 角色。陶土粉今天升成全站預設之後，這個缺口從一頁的事變成全站的事。要加的三條：明度階梯（paper→surface→line→inkFaint→inkMuted→ink 必須單調遞減）、框架色彩度上限、accent 若落在危險色相帶 H50–140 則彩度須低於門檻
+- [ ] **DESIGN.md 要補一條 accent 的使用邊界**（2026-07-20）：陶土粉的 accent `#b08060` 實測 OKLCH H55、C=0.075，正落在色彩哲學第 2 條點名的 H50–140 危險帶，且彩度超過該條給大面積填色設的 C≥0.04 門檻。它現在讀成陶土不是芥末，靠的是彩度剛好夠低——所以這個 accent 只准用在細框、連結、小鉻件，不得鋪大面積。此限制目前沒有寫下來
 - [x] 全站色彩哲學稽核（2026-07-07 完成）：使用者裁定「整體 canvas 不允許違反色彩設計哲學」。逐頁用 OKLCH 計算篩出色相 50°–140°、彩度 ≥0.08 的土黃/土綠風險色（不憑眼睛猜），全站 618 個 distinct hex 掃過，修掉 ConstitutionalCourt（PRES_COLOR 嚴家淦/蔣經國、TENURE_*檢察官/其他銅棕交叉污染）、ManusMeta（MMA_VARS 11 處＋事實查核狀態色）、FiscalEnforcementRisk（amber 徽章）、GermanLawCourseTimeline（7 色領域圖例＋首頁卡片文字色）、AutoTuner/UkuleleTuner/VocalTuner（調音指針）共約 20+ 處違規，一律換成 `palettes.js` 真實色票色碼、多分類色重過 CVD 驗證。剩餘 12 個在 `palettes.js` 候選展示色票內（水果/名畫主題色票的個別 accent/pop）＋GOLD_FOIL，屬使用者刻意保留的瀏覽候選，只標記不動。色彩哲學三規則已入 `docs/DESIGN.md`。獨立 agent 重掃＋8 頁 Playwright 實機驗證通過
-- [ ] 各頁加入 Open Graph / meta description，使分享連結有標題與預覽摘要
-- [ ] PaletteLab 金箔按鈕修正（派：sonnet）：`PaletteLab.jsx:211-215` 整顆 `.foil` 填滿的按鈕退場，改文字版 `.foil-text`＋一般底色；使用規則已入 `docs/DESIGN.md` 禁止事項（2026-07-07 使用者裁定：金箔做字好看，整顆按鈕醜）
+- [x] ~~各頁加入 Open Graph / meta description~~（隨全站 SEO 那輪完成，`src/components/SeoHead.jsx`）
+- [x] ~~PaletteLab 金箔按鈕修正~~（早已完成，2026-07-20 核對：`PaletteLab.jsx:613-614` 用的是 `.foil-text`，整顆 `.foil` 按鈕全站無使用處）
 - [ ] 字體上游評估（派：sonnet 研究；產出評估報告交使用者裁定，實作前過 font-clearance skill——`DESIGN.md`「不新增字體、不改 @font-face」禁令在使用者裁定前有效）：(1) bosswnx/huiwenmincho-improved 可否替換現行 HuiwenMincho subset 上游——重點：`index.css:26-32` 那 19 個 Chiron Sung HK fallback 缺字可否消掉、license 為何、與 zhuanlan.zhihu.com/p/344103391 介紹文比對來歷；(2) Fitzgerald-Porthmouth-Koenigsegg/Planschrift_Project 是什麼字體、license、對本站有無用處
 - [ ] 首頁頁尾字體出處聲明（派：sonnet）：`App.jsx:304-311` 頁尾加一行字體 credit（Huiwen Mincho 公有領域等，連到 `/fonts/LICENSES.md`）；Erikas Farbband／Radio Newsman 上游條款未明（見 HANDOFF Font system），措辭比照 LICENSES.md 現況陳述，不誇大授權
 

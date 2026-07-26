@@ -334,7 +334,7 @@ export default function IiasPublications() {
         </label>
 
         <nav className={styles.sideNav}>
-          <Link to="/"><ArrowLeft size={15} />回總入口</Link>
+          <Link to="/all"><ArrowLeft size={15} />回總入口</Link>
         </nav>
 
         <div className={styles.sideSection}>

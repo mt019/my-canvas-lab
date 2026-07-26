@@ -322,7 +322,7 @@ export default function GraphView() {
         <Select label="關係" value={mode} onChange={setMode} options={GRAPH_MODES} />
         <Select label="門檻" value={String(minEdge)} onChange={(v) => setMinEdge(Number(v))} options={[['1', '≥1 次'], ['2', '≥2 次'], ['3', '≥3 次']]} />
         <label className="flex items-center gap-1.5 text-[12px] font-bold text-[var(--cc-ink-soft)]">
-          <input type="checkbox" checked={colorByPres} onChange={(e) => setColorByPres(e.target.checked)} />
+          <input type="checkbox" checked={colorByPres} onChange={(e) => setColorByPres(e.target.checked)} className="canvas-check" />
           依提名總統為姓名上色
         </label>
       </div>

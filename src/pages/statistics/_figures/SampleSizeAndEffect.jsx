@@ -87,7 +87,7 @@ export default function SampleSizeAndEffect({ d = 0.15, seed = 991, nDefault = 8
           step="10"
           value={n}
           onChange={(e) => setN(Number(e.target.value))}
-          className="w-52 accent-[var(--c-accent)]"
+          className="canvas-range w-52"
         />
         <span className="w-14 tabular-nums text-ink">{n}</span>
         <span>{c.fixed(d)}</span>

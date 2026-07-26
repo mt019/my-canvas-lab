@@ -65,7 +65,7 @@ export default function PositivePredictiveValue({ priorOdds = 0.1, power = 0.8, 
               step={f.step}
               value={v[f.key]}
               onChange={(e) => setV((prev) => ({ ...prev, [f.key]: Number(e.target.value) }))}
-              className="mt-1 w-full accent-[var(--c-accent)]"
+              className="canvas-range mt-1 w-full"
             />
             <span className="tabular-nums text-ink">{f.format(v[f.key])}</span>
           </label>

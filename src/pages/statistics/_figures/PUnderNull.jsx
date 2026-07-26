@@ -82,7 +82,7 @@ export default function PUnderNull({ n = 30, runs = 2000, seed = 20260713, delta
             step="0.05"
             value={delta}
             onChange={(e) => setDelta(Number(e.target.value))}
-            className="w-40 accent-[var(--c-accent)]"
+            className="canvas-range w-40"
           />
           <span className="w-10 tabular-nums text-ink">{delta.toFixed(2)}</span>
         </label>

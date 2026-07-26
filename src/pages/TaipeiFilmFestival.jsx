@@ -304,7 +304,7 @@ export default function TaipeiFilmFestival() {
           <div className="mt-3 flex items-center justify-between text-token-sm text-ink-faint">
             <span>顯示 {filteredFilms.length} 部 / 售票片單 {CATALOG.length} 部</span>
             <label className="inline-flex cursor-pointer items-center gap-1.5">
-              <input type="checkbox" checked={onlyMarked} onChange={(event) => setOnlyMarked(event.target.checked)} className="accent-[var(--c-accent)]" />
+              <input type="checkbox" checked={onlyMarked} onChange={(event) => setOnlyMarked(event.target.checked)} className="canvas-check" />
               只看我標記過的
             </label>
           </div>

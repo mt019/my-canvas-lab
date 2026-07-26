@@ -25,4 +25,8 @@ dist-ssr
 src/data/intlTaxOps/.sync-manifest.json
 
 # 斷點續作機制的 transient session 狀態（見 ~/.claude/rules/斷點續作.md）
-.claude/CHECKPOINT.md
+# 2026-07-18 起按專案拆成 CHECKPOINT.<slug>.md；星號一併蓋掉舊單檔與所有 per-project 檔
+.claude/CHECKPOINT*.md
+# 工程歷史（2026-07-20 起）。本 repo 是公開的，歷史檔含未發表研究數字、PhD 申請策略與絕對路徑，
+# 一律不上 origin。該目錄自帶一個只在本機的 git repo 提供版本還原，勿在此加白名單。
+.claude/history/

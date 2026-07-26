@@ -3,7 +3,7 @@ import { useExpandedSet } from '../../components/lab/Accordion';
 import { ChevronDown, ExternalLink } from 'lucide-react';
 import data from '../../data/constitutionalCourt.json';
 import { formatDateRange } from '../../utils/date';
-import { ERA_TONE } from './shared';
+import { ERA_TONE, jurisdictionSummary } from './shared';
 
 // ── 沿革（制度沿革）：司法解釋四階段機關軸＋憲政時期軸 ──────────────
 // 文字經使用者核可定稿（2026-07-07），逐字見資料 repo docs/沿革摘要草稿.md；
@@ -197,6 +197,23 @@ export default function HistoryView({ onOpenIndex }) {
           橫條長度＝該機關行使統一解釋權的實際期間（等比）；點任一階段跳至其說明。憲判件數取自本頁快照，隨資料更新自動變動。
         </p>
       </section>
+
+      {jurisdictionSummary?.沿革?.length ? (
+        <section className="border-t border-[var(--cc-line)] py-5">
+          <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow)]">如何理解這段承接</p>
+          <h2 className="text-base sm:text-lg font-bold text-[var(--cc-title-ink)]">{jurisdictionSummary.標題}</h2>
+          <p className="mt-1 max-w-3xl text-[13px] leading-relaxed text-[var(--cc-ink-soft)]">{jurisdictionSummary.導言}</p>
+          <div className="mt-4 grid max-w-3xl gap-4 border-l border-[var(--cc-line)] pl-4 sm:grid-cols-2 sm:border-l-0 sm:pl-0">
+            {jurisdictionSummary.沿革.map((x) => (
+              <div key={x.期間} className="sm:border-l sm:border-[var(--cc-line)] sm:pl-4">
+                <p className="text-[11px] tabular-nums text-[var(--cc-eyebrow)]">{x.期間}</p>
+                <p className="mt-0.5 text-[13.5px] font-bold text-[var(--cc-ink-strong)]">{x.標籤}</p>
+                <p className="mt-1 text-[12.5px] leading-relaxed text-[var(--cc-ink-soft)]">{x.說明}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      ) : null}
 
       {PROV_STAGES.map((s) => {
         const cardOpen = isOpen(s.key);

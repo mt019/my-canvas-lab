@@ -572,7 +572,7 @@ export default function PaletteLab() {
       style={{ ...style, background: 'var(--pl-paper)', color: 'var(--pl-ink)' }}
     >
       <div className="mx-auto max-w-6xl">
-        <a href="/" className="text-[13px]" style={{ color: 'var(--pl-ink-faint)' }}>← Canvas Lab</a>
+        <a href="/all" className="text-[13px]" style={{ color: 'var(--pl-ink-faint)' }}>← Canvas Lab</a>
         <div className="mb-1 mt-3 flex items-center gap-2 font-accent text-[11px] font-bold uppercase tracking-[0.22em]" style={{ color: 'var(--pl-accent)' }}>
           <Palette size={13} /> Palette Lab
         </div>

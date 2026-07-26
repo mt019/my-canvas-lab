@@ -182,7 +182,7 @@ export default function Coverage({
             step="1"
             value={n}
             onChange={(e) => setN(Number(e.target.value))}
-            className="w-40 accent-[var(--c-accent)]"
+            className="canvas-range w-40"
           />
           <span className="w-8 shrink-0 whitespace-nowrap tabular-nums text-ink">{n}</span>
         </label>
@@ -192,7 +192,7 @@ export default function Coverage({
             type="checkbox"
             checked={sortByWidth}
             onChange={(e) => setSortByWidth(e.target.checked)}
-            className="accent-[var(--c-accent)]"
+            className="canvas-check"
           />
           <span className="whitespace-nowrap">{c.sortByWidth}</span>
         </label>

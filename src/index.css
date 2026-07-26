@@ -2,6 +2,100 @@
 @tailwind components;
 @tailwind utilities;
 
+/* 站內數值滑桿：避免瀏覽器／作業系統原生 thumb 跳離 Canvas 控制項語彙。 */
+.canvas-range {
+  height: 1.25rem;
+  cursor: pointer;
+  appearance: none;
+  background: transparent;
+}
+
+.canvas-range::-webkit-slider-runnable-track {
+  height: 0.25rem;
+  border-radius: 999px;
+  background: var(--c-line-soft, #e5dfe1);
+}
+
+.canvas-range::-webkit-slider-thumb {
+  width: 0.875rem;
+  height: 0.875rem;
+  margin-top: -0.3125rem;
+  appearance: none;
+  border: 2px solid white;
+  border-radius: 999px;
+  background: var(--c-accent);
+  box-shadow: 0 1px 4px rgb(50 35 42 / 18%);
+}
+
+.canvas-range::-moz-range-track {
+  height: 0.25rem;
+  border: 0;
+  border-radius: 999px;
+  background: var(--c-line-soft, #e5dfe1);
+}
+
+.canvas-range::-moz-range-thumb {
+  width: 0.75rem;
+  height: 0.75rem;
+  border: 2px solid white;
+  border-radius: 999px;
+  background: var(--c-accent);
+  box-shadow: 0 1px 4px rgb(50 35 42 / 18%);
+}
+
+.canvas-range:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--c-accent) 35%, transparent);
+  outline-offset: 2px;
+  border-radius: 999px;
+}
+
+.canvas-check {
+  width: 0.9rem;
+  height: 0.9rem;
+  flex: 0 0 auto;
+  cursor: pointer;
+  appearance: none;
+  border: 1px solid var(--cc-border, var(--c-line, #cfc3c7));
+  border-radius: 0.25rem;
+  background-color: white;
+  transition: border-color 120ms ease, background-color 120ms ease, box-shadow 120ms ease;
+}
+
+.canvas-check:checked {
+  border-color: var(--cc-accent, var(--c-accent));
+  background-color: var(--cc-accent, var(--c-accent));
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='m2.2 6.1 2.3 2.3 5.3-5.3' fill='none' stroke='white' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 0.72rem;
+}
+
+.canvas-check:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--cc-accent, var(--c-accent)) 22%, transparent);
+}
+
+/*
+ * Focus rings. The browser default is a blue glow (Safari) / ring (Chrome) that
+ * shows on plain :focus — including after a mouse click, which leaves an ugly
+ * stray blue outline sitting on a button (most visible on the music tools when
+ * the page is otherwise idle). Suppress it for pointer/programmatic focus; keep
+ * a tasteful, palette-coloured ring only for genuine keyboard navigation, so
+ * accessibility is preserved. :where() keeps specificity at 0 so component focus
+ * styles (.canvas-range, .canvas-check above) still win.
+ */
+:where(a, button, [role="button"], input, select, textarea, summary, [tabindex]):focus {
+  outline: none;
+}
+:where(a, button, [role="button"], input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--c-accent) 45%, transparent);
+  outline-offset: 2px;
+}
+/* No blue tap flash on iOS/Safari touch. */
+:where(a, button, [role="button"], input, select, textarea, summary, [tabindex]) {
+  -webkit-tap-highlight-color: transparent;
+}
+
 /*
  * Site-wide type system.
  * CJK: Huiwen-mincho (body AND display headings, CC0/public domain). Its subset
@@ -183,4 +277,3 @@ h1, h2, h3 {
   background-clip: text;
   color: transparent;
 }
-

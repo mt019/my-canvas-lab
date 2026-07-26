@@ -92,7 +92,7 @@ export default function CompatibilityInterval({
           step="0.1"
           value={delta}
           onChange={(e) => setDelta(Number(e.target.value))}
-          className="w-52 accent-[var(--c-accent)]"
+          className="canvas-range w-52"
         />
         <span className="w-20 shrink-0 whitespace-nowrap tabular-nums text-ink">{delta.toFixed(1)} {unit}</span>
       </label>

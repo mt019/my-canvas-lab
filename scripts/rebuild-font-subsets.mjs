@@ -16,23 +16,24 @@
 // GenWanMin2 was removed: it was loaded but unreferenced by any font stack (all
 // CJK renders in Huiwen), so it was ~1.8MB of dead weight.
 //
-// Requires: pyftsubset (fonttools) and the source fonts in ~/Library/Fonts.
+// Requires: pyftsubset (fonttools) and the source fonts in Font_Library.
 // Run it with `npm run fonts:rebuild` only when validate:fonts reports a glyph
 // the committed subsets cannot draw (rare — an exotic character outside common
 // CJK). It prints the Chiron unicode-range to paste into src/index.css.
 import { execFileSync } from 'node:child_process';
 import { existsSync, writeFileSync, mkdtempSync, rmSync } from 'node:fs';
-import { homedir, tmpdir } from 'node:os';
+import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import * as fontkit from 'fontkit';
 import { extractChars, comprehensiveChars } from './font-chars.mjs';
 
-const HUIWEN_SRC = join(homedir(), 'Library/Fonts/SCUQuoteCards-HuiwenMincho-Improved.ttf');
-const CHIRON_SRC = join(homedir(), 'Library/Fonts/SCUQuoteCards-ChironSungHK-Text-R.ttf');
+const FONT_LIBRARY_ROOT = process.env.FONT_LIBRARY_ROOT || '/Users/iw/Documents/Font_Library';
+const HUIWEN_SRC = join(FONT_LIBRARY_ROOT, 'fonts/HuiwenMincho-Improved.ttf');
+const CHIRON_SRC = join(FONT_LIBRARY_ROOT, 'fonts/ChironSungHK-Text-R.ttf');
 
 if (!existsSync(HUIWEN_SRC)) {
   console.error(`source font missing: ${HUIWEN_SRC}`);
-  console.error('The source fonts live only on a machine that has them (not CI). Run this there.');
+  console.error('Set FONT_LIBRARY_ROOT to the managed font library, then rerun this script locally.');
   process.exit(1);
 }
 

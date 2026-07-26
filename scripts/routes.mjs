@@ -79,7 +79,8 @@ function caseRoutes() {
 }
 
 export function collectRoutes() {
-  const routes = new Set(['/']);
+  // '/' is the glitch front door; '/all' is the project index it hides behind.
+  const routes = new Set(['/', '/all']);
   for (const rel of walkPages(PAGES)) {
     const name = rel.replace(/\.(jsx|tsx)$/, '').split('/').pop();
     if (NOINDEX.has(name)) continue;

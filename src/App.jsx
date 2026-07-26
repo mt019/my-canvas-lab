@@ -3,6 +3,8 @@ import { BrowserRouter as Router, Routes, Route, Link, useParams, Navigate } fro
 import { ArrowRight, BookMarked, CalendarDays, Droplets, FileSearch, Film, Gavel, Globe2, GraduationCap, Landmark, Languages, Mic, Music, Music2, Palette, Piano, Receipt, Scale, ScrollText, ShieldAlert, Sigma, Wind } from 'lucide-react';
 import SeoHead from './components/SeoHead';
 import ScrollToTop from './components/ScrollToTop';
+import BackToTop from './components/BackToTop';
+import FrontDoor from './components/FrontDoor';
 import AccountControl from './components/AccountControl';
 import { AuthProvider } from './personal-state/AuthProvider';
 import { CC_BASE_SEO, CC_TABS_SEO, ccDataset } from './pages/_constitutional-court/seo';
@@ -360,12 +362,12 @@ const HOME_VARS = { // token-exempt
   '--home-foot': '#b8a3ab',
 };
 
-/* 順序＝首頁區塊的先後（研究地圖在最前＝主線工作；每天會打開的 Brief 所在生活雷達緊接在後）。版面是
+/* 順序＝首頁區塊的先後（每天會打開的 Brief 所在生活雷達放最前，主線的研究地圖緊接在後）。版面是
    CSS 多欄，區塊照這個順序在兩欄裡按高度均分填入，不再是舊的 row grid 把 1 項的
    「教學實驗室」和 8 項的「研究地圖」硬排在同一列、底下留一大片空。 */
 const GROUPS = [
-  { key: 'research', label: '研究地圖', desc: '資料層分離、可延伸成長期研究的小型工作台' },
   { key: 'life', label: '生活雷達', desc: '活動、餘額、行程與日常決策輔助' },
+  { key: 'research', label: '研究地圖', desc: '資料層分離、可延伸成長期研究的小型工作台' },
   { key: 'doctrine', label: '法政解析', desc: '法律、財稅、投資與制度案例的結構化拆解' },
   { key: 'learn', label: '教學實驗室', desc: '方法本身的來歷與限制，配上可以親手轉動的模擬' },
   { key: 'tool', label: '即用工具', desc: '可直接操作的工具：音樂、聲音與設計' },
@@ -391,12 +393,25 @@ export default function App() {
       <Router>
         <ScrollToTop />
         <Suspense fallback={
-        <div className="min-h-screen bg-paper flex items-center justify-center">
-          <div className="w-10 h-10 border-[3px] border-line-soft border-t-ink-faint rounded-full animate-spin" />
+        <div className="min-h-screen flex items-center justify-center" style={{ background: '#fbf8f9' }}>
+          {/* A soft breathing light, not a spinner — the same motif as the front
+              door, so a route load reads as the light carrying you in. */}
+          <div
+            style={{
+              width: 10,
+              height: 10,
+              borderRadius: '50%',
+              background: '#f6f0f2',
+              boxShadow: '0 0 26px 8px rgba(201,169,180,.55)',
+              animation: 'fdBreathe 1.8s ease-in-out infinite',
+            }}
+          />
+          <style>{'@keyframes fdBreathe{0%,100%{opacity:.35;transform:scale(.82)}50%{opacity:1;transform:scale(1.12)}}'}</style>
         </div>
       }>
         <Routes>
-          <Route path="/" element={<HomePage routes={routes} />} />
+          <Route path="/" element={<FrontDoor />} />
+          <Route path="/all" element={<HomePage routes={routes} />} />
           {routes.map((route) => (
             <Route key={route.path} path={route.path} element={<PageRoute route={route} />} />
           ))}
@@ -411,6 +426,7 @@ export default function App() {
           <Route path="/constitutionalcourt/:tab" element={<CCTabRoute routes={routes} />} />
         </Routes>
         </Suspense>
+        <BackToTop />
       </Router>
     </AuthProvider>
   );
@@ -504,13 +520,17 @@ function HomePage({ routes }) {
             <AccountControl />
           </div>
           <p className="mb-4 font-accent text-[10px] font-bold uppercase tracking-[0.28em] text-[var(--home-accent)]">
-            Phenom&nbsp;&nbsp;·&nbsp;&nbsp;Canvas Lab
+            <span className="inline-flex items-center gap-[0.9em] align-middle">
+              <span>Phenom</span>
+              <span className="h-[3px] w-[3px] shrink-0 rounded-full bg-current opacity-60" />
+              <span className="inline-flex gap-[0.5em]"><span>Canvas</span><span>Lab</span></span>
+            </span>
           </p>
           <h1 className="font-display text-3xl font-semibold leading-tight text-[var(--home-ink-strong)] sm:text-4xl">
             專案索引
           </h1>
           <p className="mt-3 max-w-2xl text-token-sm leading-relaxed text-[var(--home-ink-soft)]">
-            把頁面按用途分開：長期研究放在研究地圖，制度與案例放在法政解析，能直接操作的留在工具區。
+            陸續做的一些小站，分了幾區，方便找。
           </p>
         </header>
 
@@ -570,7 +590,11 @@ function HomePage({ routes }) {
 
         <div className="mt-12 border-t border-[var(--home-line)] pt-5">
           <p className="font-accent text-[10px] font-bold uppercase tracking-[0.28em] text-[var(--home-accent)]">
-            Phenom&nbsp;&nbsp;·&nbsp;&nbsp;Canvas Lab
+            <span className="inline-flex items-center gap-[0.9em] align-middle">
+              <span>Phenom</span>
+              <span className="h-[3px] w-[3px] shrink-0 rounded-full bg-current opacity-60" />
+              <span className="inline-flex gap-[0.5em]"><span>Canvas</span><span>Lab</span></span>
+            </span>
           </p>
           <p className="mt-1 text-[10px] font-medium tracking-wide text-[var(--home-foot)]">
             音樂 · 研究 · 實驗

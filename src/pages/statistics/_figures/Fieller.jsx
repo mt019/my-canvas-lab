@@ -106,7 +106,7 @@ export default function Fieller({
           step="0.05"
           value={snr}
           onChange={(e) => setSnr(Number(e.target.value))}
-          className="w-52 accent-[var(--c-accent)]"
+          className="canvas-range w-52"
         />
         <span className="w-12 shrink-0 whitespace-nowrap tabular-nums text-ink">{snr.toFixed(2)}</span>
       </label>

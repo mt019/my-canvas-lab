@@ -1,5 +1,6 @@
-import { useMemo, useState } from 'react';
-import { ERA_TONE, citeEdges, docs, timelineGaps } from './shared';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { Info } from 'lucide-react';
+import { ERA_TONE, citeEdges, docs, jurisdictionSummary, timelineGaps } from './shared';
 import TopicHeatmaps from './TopicHeatmaps';
 
 // 合併案件時間軸的四條「解釋機制」色帶（沿革同色，時間上前後相接、幾乎不重疊）：
@@ -51,6 +52,23 @@ const WHY_CITED = {
 };
 export default function TimelineView() {
   const [hover, setHover] = useState(null);
+  const [showJurisdictionInfo, setShowJurisdictionInfo] = useState(false);
+  const jurisdictionInfoRef = useRef(null);
+  useEffect(() => {
+    if (!showJurisdictionInfo) return undefined;
+    const closeOutside = (event) => {
+      if (!jurisdictionInfoRef.current?.contains(event.target)) setShowJurisdictionInfo(false);
+    };
+    const closeOnEscape = (event) => {
+      if (event.key === 'Escape') setShowJurisdictionInfo(false);
+    };
+    document.addEventListener('pointerdown', closeOutside);
+    document.addEventListener('keydown', closeOnEscape);
+    return () => {
+      document.removeEventListener('pointerdown', closeOutside);
+      document.removeEventListener('keydown', closeOnEscape);
+    };
+  }, [showJurisdictionInfo]);
   // 合併時間軸：四種解釋機制沿革相接（最高法院解字→司法院院字/院解字→大法官釋字→憲法法庭憲判/裁定）。
   // 各年幾乎只落在單一機制，故一年一柱、依色帶著色；年別件數跨兩量級，y 軸取對數。大理院統字無日期，不入軸。
   const { byYear, span, y0, y1, maxTotal } = useMemo(() => {
@@ -80,7 +98,7 @@ export default function TimelineView() {
   const H = 200;
   const PAD_L = 30;
   const PAD_T = 6;
-  const PAD_B = 22;
+  const PAD_B = 30;
   const chartW = span.length * W;
   // 對數 y 軸：count=1 落在略高於軸底處仍可見；每格 ×10。
   const LMIN = Math.log10(0.72);
@@ -190,25 +208,67 @@ export default function TimelineView() {
                 </g>
               );
             })}
+            {/* 與年份一一對齊的職權短刻度。每年是一枚留縫、圓角的淡彩色塊，依當年憲法解釋占比在
+                法令功能 teal（0%）與釋字 rose（100%）間混色。分類色的 -tx 是為文字／細線校準的深色，
+                直接鋪成連續實心帶會顯得濁重；先各自以 30% -tx＋70% -bg 提亮。外層採 OKLCH 色相插值，
+                保住中段彩度，避免青綠與玫瑰在 OKLab 直線混合時抵銷成沒有制度意義的泥灰。 */}
+            {(jurisdictionSummary?.全期逐年 ?? []).map((r) => {
+              const i = idxOf(r.年);
+              const total = r.憲法解釋 + r.統一解釋法律及命令;
+              if (i < 0 || !total) return null;
+              const pct = r.憲法解釋 / total * 100;
+              return (
+                <g key={`jur-${r.年}`} transform={`translate(${PAD_L + i * W}, 0)`}
+                  onMouseEnter={() => setHover({ y: r.年, jurisdiction: true, total, constitutional: r.憲法解釋, unified: r.統一解釋法律及命令 })}
+                  onMouseLeave={() => setHover(null)}>
+                  <rect x={0.8} y={PAD_T + H + 19} width={Math.max(1, W - 1.6)} height={5} rx={2.5}
+                    fill={`color-mix(in oklch shorter hue, color-mix(in oklab, var(--cat-5-tx) 30%, var(--cat-5-bg)) ${100 - pct}%, color-mix(in oklab, var(--cat-7-tx) 30%, var(--cat-7-bg)) ${pct}%)`} />
+                </g>
+              );
+            })}
           </svg>
           {hover ? (
             // 標籤固定在圖表頂部正中（left-1/2 + -translate-x-1/2），不跟游標移動。理由：圖的頂部
             // 中段（1960–2010 釋字期都是個位到十餘件的矮條）恆是留白，標籤置中就落在這片空白上、
             // 不壓任何條；而舊版寫死在左上角（left-8）會永遠擋住左邊司法院那片上百件的高條。
             // 曾試「跟著 hover 的條走」，被否——跟隨反而把標籤帶到當前那根條頭上。top-1＝貼圖頂。
-            // 空窗年的說明句較長，改用固定寬度換行（max-w＋居中對齊）；件數標籤仍維持不換行單行。
-            <div className={`pointer-events-none absolute left-1/2 top-1 -translate-x-1/2 rounded-md border border-[var(--cc-border)] bg-white px-3 py-1.5 text-[12px] shadow-sm ${hover.empty ? 'max-w-[280px] text-center leading-relaxed' : 'whitespace-nowrap'}`}>
+            // 空窗年的說明句較長，改用固定寬度換行（max-w＋標題置中、內文靠左）；件數標籤仍維持不換行單行。
+            <div className={`pointer-events-none absolute left-1/2 top-1 -translate-x-1/2 rounded-md border border-[var(--cc-border)] bg-white px-3 py-1.5 text-[12px] shadow-sm ${hover.empty ? 'max-w-[280px] text-left leading-relaxed' : 'whitespace-nowrap'}`}>
               {hover.empty ? (
                 <>
-                  <strong className="text-[var(--cc-ink-strong)]">{hover.y} 年 · 無解釋</strong>
+                  <strong className="block text-center text-[var(--cc-ink-strong)]">{hover.y} 年 · 無解釋</strong>
                   <span className="mt-0.5 block text-[var(--cc-ink-soft)]">{hover.說明}</span>
                 </>
+              ) : hover.jurisdiction ? (
+                <><strong className="text-[var(--cc-ink-strong)]">{hover.y} 年職權構成</strong>　憲法解釋 {hover.constitutional}　統一解釋法令 {hover.unified}</>
               ) : (
                 <>
                   <strong className="text-[var(--cc-ink-strong)]">{hover.y} 年</strong>　共 {hover.total} 件
                   {Object.entries(hover.detail).map(([k, n]) => `　${k} ${n}`).join('')}
                 </>
               )}
+            </div>
+          ) : null}
+        </div>
+        <div ref={jurisdictionInfoRef} className="relative mt-0.5 inline-flex">
+          <button
+            type="button"
+            onClick={() => setShowJurisdictionInfo((v) => !v)}
+            aria-label="說明下緣職權色帶"
+            aria-expanded={showJurisdictionInfo}
+            className="inline-flex h-5 w-5 items-center justify-center rounded-full text-[var(--cc-eyebrow)] hover:bg-[var(--cc-hover-bg)] hover:text-[var(--cc-accent)] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--cc-accent)]"
+          >
+            <Info size={12} />
+          </button>
+          {showJurisdictionInfo ? (
+            <div className="absolute left-0 top-full z-20 mt-1.5 w-60 max-w-[calc(100vw-2rem)] rounded-md border border-[var(--cc-border)] bg-white px-3 py-2.5 text-[11.5px] leading-relaxed text-[var(--cc-ink-soft)] shadow-sm">
+              <p className="font-bold text-[var(--cc-ink-strong)]">下緣職權色帶</p>
+              <div className="mt-1.5 flex items-center gap-2">
+                <span>統一解釋法令</span>
+                <span className="h-1 w-14 rounded-full" style={{ background: 'linear-gradient(90deg, color-mix(in oklab, var(--cat-5-tx) 30%, var(--cat-5-bg)), var(--cat-2-bg), color-mix(in oklab, var(--cat-7-tx) 30%, var(--cat-7-bg)))' }} aria-hidden />
+                <span>憲法解釋</span>
+              </div>
+              <p className="mt-1.5">每年依兩類案件比例混色；<br />滑過色帶可看該年件數。</p>
             </div>
           ) : null}
         </div>
