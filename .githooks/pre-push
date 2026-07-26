@@ -1,5 +1,9 @@
 #!/bin/sh
 set -eu
 
-echo "pre-push: running the production build and UI policy gates..."
+# Fast gate only: UI policy validators + a compile check to a throwaway outDir.
+# The full 467-page prerender is Vercel's job on deploy — running it here made
+# every push take minutes, and an interrupted push orphaned its headless-Chrome
+# pool, which then raced the next build over the shared dist/.
+echo "pre-push: UI policy gates + compile check (prerender runs on Vercel)..."
 npm run verify:push
