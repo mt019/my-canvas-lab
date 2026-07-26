@@ -1,0 +1,5 @@
+#!/bin/sh
+set -eu
+
+echo "pre-push: running the production build and UI policy gates..."
+npm run verify:push

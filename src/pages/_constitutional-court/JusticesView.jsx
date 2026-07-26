@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowDown, Info } from 'lucide-react';
+import HoverCard from '../../components/lab/HoverCard';
 import data from '../../data/constitutionalCourt.json';
 import { ccJusticePath } from './seo';
 import { docs, Select, justices, opinionTypeEntries } from './shared';
@@ -41,14 +42,15 @@ const DIRECTION_COLORS = {
 
 function MetricInfo({ label }) {
   return (
-    <span className="group relative ml-1 inline-flex align-middle text-[var(--cc-ink-soft)]">
-      <button type="button" className="inline-flex rounded-full opacity-55 transition-opacity hover:opacity-100 focus:opacity-100 focus:outline-none" aria-label={label}>
+    <HoverCard
+      interactive={false}
+      width={280}
+      label={label}
+      className="ml-1 inline-flex cursor-help rounded-full align-middle text-[var(--cc-ink-soft)] opacity-55 transition-opacity hover:opacity-100 focus:opacity-100 focus:outline-none focus-visible:ring-1 focus-visible:ring-[var(--cc-accent)]"
+      card={<p className="text-[11.5px] font-normal leading-relaxed text-[var(--cc-ink-mid)]">{label}</p>}
+    >
       <Info aria-hidden="true" size={11} strokeWidth={1.8} />
-      </button>
-      <span role="tooltip" className="pointer-events-none absolute right-0 top-[calc(100%+6px)] z-30 hidden w-60 whitespace-normal rounded-md border border-[var(--cc-line)] bg-white px-2.5 py-2 text-left text-[11px] font-normal leading-relaxed text-[var(--cc-ink-mid)] shadow-md group-hover:block group-focus-within:block">
-        {label}
-      </span>
-    </span>
+    </HoverCard>
   );
 }
 

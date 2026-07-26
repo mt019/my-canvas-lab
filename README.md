@@ -33,6 +33,10 @@ npm run dev
 
 `npm run build` 會依序跑資料驗證（字體覆蓋、design token、色彩、數學標記、案件查詢）、`vite build`、預渲染與 sitemap。
 
+`npm install` 會把版本庫內的 `.githooks` 設為 Git hooks 來源。每次 `git push`
+前會自動執行完整 production build；任一 UI policy gate、bundle、預渲染或
+sitemap 失敗都會阻止推送。不得用 `--no-verify` 略過。
+
 ## 搜尋與答案引擎（SEO / AEO）
 
 `src/components/SeoHead.jsx` 統一產生每條路由的 title、description、canonical、Open Graph／Twitter 卡片與 JSON-LD（Organization、WebSite、WebPage／Article、breadcrumb）。首頁另帶一份 `ItemList`，內容就是畫面上實際列出的目錄。描述只寫頁面真的有的東西——不為了 rich result 捏造問答或評分。

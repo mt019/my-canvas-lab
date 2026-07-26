@@ -5,6 +5,7 @@ import data from '../../data/constitutionalCourt.json';
 import { lookupCases } from './caseQuery';
 import { formatDate, formatDateRange } from '../../utils/date';
 import OpinionText, { opinionPlainText } from './OpinionText.jsx';
+import HoverCard from '../../components/lab/HoverCard';
 
 // ── 憲法法庭案例庫：跨分頁共用元件與工具 ──────────────────────────────────
 // 從 ConstitutionalCourt.jsx 機械拆出（見該檔頂部說明）；純搬家、零行為改變。
@@ -131,18 +132,14 @@ function JusticeRef({ name, className = '' }) {
     : (j.任期?.length ? j.任期.map(formatTenureRange).join('；') : '');
   const ops = (j.提出意見書 ?? 0) + (j.加入意見書 ?? 0);
   return (
-    <span className="relative inline-block group/j">
-      <button
-        onClick={go}
-        className={`underline decoration-[var(--cc-link-underline)] underline-offset-2 hover:text-[var(--cc-accent)] ${className}`}
-      >
-        {name}
-      </button>
-      <span className="pointer-events-none absolute left-0 top-full z-30 mt-1 hidden w-max max-w-[260px] group-hover/j:block">
-        <button
-          onClick={go}
-          className="pointer-events-auto block rounded-lg border border-[var(--cc-border)] bg-white px-3 py-2 text-left shadow-lg"
-        >
+    <HoverCard
+      interactive
+      pinnable={false}
+      focusable={false}
+      width={260}
+      className="relative inline-block"
+      card={(
+        <button onClick={go} className="block w-full text-left">
           <span className="block text-[13px] font-bold text-[var(--cc-ink-strong)]">{name}</span>
           {tenure ? <span className="mt-0.5 block text-[11.5px] text-[var(--cc-ink-mid)]">{tenure}</span> : null}
           <span className="mt-0.5 block text-[11.5px] text-[var(--cc-ink-soft)]">
@@ -152,8 +149,15 @@ function JusticeRef({ name, className = '' }) {
           </span>
           <span className="mt-1 block text-[11px] font-bold text-[var(--cc-accent)]">開啟大法官主頁 →</span>
         </button>
-      </span>
-    </span>
+      )}
+    >
+      <button
+        onClick={go}
+        className={`underline decoration-[var(--cc-link-underline)] underline-offset-2 hover:text-[var(--cc-accent)] ${className}`}
+      >
+        {name}
+      </button>
+    </HoverCard>
   );
 }
 // 釋憲文件類型 ↔ 制度沿革機關階段 的單一對應表：同一機關作成的文件與其沿革階段共用 --cat-* 分類色位，

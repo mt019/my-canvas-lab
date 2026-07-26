@@ -269,8 +269,8 @@ const PAGE_META = { // token-exempt: per-page identity chip colors (data, not st
     group: 'research',
   },
   GermanLawCourseTimeline: {
-    name: '德文法學課程時序',
-    desc: '德文法學名著選讀一的歷年教師開課時間軸，領域著色與課綱摘要',
+    name: '法學名著選讀時序',
+    desc: '臺大法學名著選讀歷年教師時間軸：誰在教、教了幾年、偏哪個法學領域。縱向時間軸、領域著色、直達課綱來源（目前為德文，同一模式將擴及其他語言）',
     Icon: GraduationCap,
     accent: '#ece5d5',
     accentText: '#7c5a43',
@@ -359,6 +359,7 @@ const HOME_VARS = { // token-exempt
   '--home-arrow': '#c9a9b4',
   '--home-arrow-hover': '#8f6071',
   '--home-hover': '#fffafb',
+  '--home-glow-core': '#f6f0f2',
   '--home-foot': '#b8a3ab',
 };
 
@@ -393,7 +394,10 @@ export default function App() {
       <Router>
         <ScrollToTop />
         <Suspense fallback={
-        <div className="min-h-screen flex items-center justify-center" style={{ background: '#fbf8f9' }}>
+        <div
+          className="min-h-screen flex items-center justify-center"
+          style={{ ...HOME_VARS, background: 'var(--home-bg)' }}
+        >
           {/* A soft breathing light, not a spinner — the same motif as the front
               door, so a route load reads as the light carrying you in. */}
           <div
@@ -401,7 +405,7 @@ export default function App() {
               width: 10,
               height: 10,
               borderRadius: '50%',
-              background: '#f6f0f2',
+              background: 'var(--home-glow-core)',
               boxShadow: '0 0 26px 8px rgba(201,169,180,.55)',
               animation: 'fdBreathe 1.8s ease-in-out infinite',
             }}

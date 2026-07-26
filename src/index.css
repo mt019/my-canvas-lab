@@ -13,7 +13,7 @@
 .canvas-range::-webkit-slider-runnable-track {
   height: 0.25rem;
   border-radius: 999px;
-  background: var(--c-line-soft, #e5dfe1);
+  background: var(--c-line-soft);
 }
 
 .canvas-range::-webkit-slider-thumb {
@@ -31,7 +31,7 @@
   height: 0.25rem;
   border: 0;
   border-radius: 999px;
-  background: var(--c-line-soft, #e5dfe1);
+  background: var(--c-line-soft);
 }
 
 .canvas-range::-moz-range-thumb {
@@ -55,7 +55,7 @@
   flex: 0 0 auto;
   cursor: pointer;
   appearance: none;
-  border: 1px solid var(--cc-border, var(--c-line, #cfc3c7));
+  border: 1px solid var(--cc-border, var(--c-line));
   border-radius: 0.25rem;
   background-color: white;
   transition: border-color 120ms ease, background-color 120ms ease, box-shadow 120ms ease;

@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import HoverCard from '../../components/lab/HoverCard';
 import data from '../../data/constitutionalCourt.json';
 import { Badge, PRES_COLOR, heatFill, inkToFill } from './shared';
 import { renderInline } from './TypologyReportView';
@@ -268,17 +269,24 @@ function Cite({ rkey, disp }) {
   const link = ref?.url;
   const label = <span className="underline decoration-dotted decoration-[var(--cc-link-underline)] underline-offset-2">{disp}</span>;
   return (
-    <span className="group relative">
+    <HoverCard
+      interactive={false}
+      focusable={false}
+      width={272}
+      className="relative"
+      card={(
+        <div className="text-[11.5px] font-normal leading-snug text-[var(--cc-ink-mid)]">
+          {full}
+          {link
+            ? <span className="mt-1 block text-[var(--cc-eyebrow)]">↗ 開啟公開來源</span>
+            : <span className="mt-1 block text-[var(--cc-ink-soft)]">· 需館藏／付費取得</span>}
+        </div>
+      )}
+    >
       {link
         ? <a href={link} target="_blank" rel="noopener noreferrer" className="hover:text-[var(--cc-link-hover)]">{label}</a>
         : <span className="cursor-help">{label}</span>}
-      <span className="pointer-events-none absolute bottom-full left-1/2 z-30 mb-1 hidden w-[17rem] max-w-[80vw] -translate-x-1/2 rounded-md border border-[var(--cc-line)] bg-[var(--cc-bg)] px-2.5 py-1.5 text-[11.5px] font-normal leading-snug text-[var(--cc-ink-mid)] shadow-md group-hover:block">
-        {full}
-        {link
-          ? <span className="mt-0.5 block text-[var(--cc-eyebrow)]">↗ 開啟公開來源</span>
-          : <span className="mt-0.5 block text-[var(--cc-ink-soft)]">· 需館藏／付費取得</span>}
-      </span>
-    </span>
+    </HoverCard>
   );
 }
 
@@ -540,4 +548,3 @@ export default function ResearchProblem() {
     </section>
   );
 }
-

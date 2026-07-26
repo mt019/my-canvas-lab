@@ -26,7 +26,7 @@ const OPEN_DELAY = 70;
 const CLOSE_DELAY = 140;
 let closeActiveCard = null;
 
-export default function HoverCard({ children, card, className, interactive = true }) {
+export default function HoverCard({ children, card, className, interactive = true, pinnable = interactive, width = CARD_W, label, focusable = true }) {
   const [open, setOpen] = useState(false);
   const [pinned, setPinned] = useState(false);
   const [pos, setPos] = useState(null);
@@ -46,7 +46,7 @@ export default function HoverCard({ children, card, className, interactive = tru
   const place = useCallback(() => {
     const m = markerRef.current?.getBoundingClientRect();
     if (!m) return;
-    const cardW = cardRef.current?.offsetWidth ?? Math.min(CARD_W, window.innerWidth - GAP * 2);
+    const cardW = cardRef.current?.offsetWidth ?? Math.min(width, window.innerWidth - GAP * 2);
     const cardH = cardRef.current?.offsetHeight ?? 140;
     const above = m.top > cardH + GAP + 8;
     const left = Math.min(
@@ -56,7 +56,7 @@ export default function HoverCard({ children, card, className, interactive = tru
     const wanted = above ? m.top - cardH - GAP : m.bottom + GAP;
     const top = Math.min(Math.max(GAP, wanted), window.innerHeight - cardH - GAP);
     setPos({ left, top });
-  }, []);
+  }, [width]);
 
   useLayoutEffect(() => {
     if (!open) return undefined;
@@ -119,17 +119,18 @@ export default function HoverCard({ children, card, className, interactive = tru
     <>
       <span
         ref={markerRef}
-        role={interactive ? 'button' : undefined}
-        tabIndex={0}
+        role={pinnable ? 'button' : undefined}
+        tabIndex={focusable ? 0 : undefined}
+        aria-label={label}
         aria-expanded={open}
         aria-describedby={open ? id : undefined}
         onMouseEnter={() => show(false)}
         onMouseLeave={hide}
         onFocus={() => show(true)}
         onBlur={hide}
-        onClick={interactive ? () => { show(true); setPinned((p) => !p); } : undefined}
+        onClick={pinnable ? () => { show(true); setPinned((p) => !p); } : undefined}
         onKeyDown={(e) => {
-          if (interactive && (e.key === 'Enter' || e.key === ' ')) {
+          if (pinnable && (e.key === 'Enter' || e.key === ' ')) {
             e.preventDefault();
             show(true);
             setPinned((p) => !p);
@@ -150,7 +151,7 @@ export default function HoverCard({ children, card, className, interactive = tru
             id={id}
             onMouseEnter={interactive ? () => show(true) : undefined}
             onMouseLeave={interactive ? hide : undefined}
-            style={{ position: 'fixed', left: pos.left, top: pos.top, width: CARD_W, maxWidth: `calc(100vw - ${GAP * 2}px)`, maxHeight: '45vh', overflowY: 'auto' }}
+            style={{ position: 'fixed', left: pos.left, top: pos.top, width, maxWidth: `calc(100vw - ${GAP * 2}px)`, maxHeight: '45vh', overflowY: 'auto' }}
             className={`z-30 rounded-token-md border border-line bg-surface-raised px-3.5 py-3 text-left text-token-xs leading-relaxed shadow-token-md ${interactive ? '' : 'pointer-events-none'}`}
           >
             {card}

@@ -322,3 +322,6 @@ arXiv 與 BIS（文章）之後，**沒有一條成立**：
 - 已遷移：App.jsx（首頁）、ECFAResearch（含 FontSizeControl 示範）、批 B 各頁、共用元件。
 - 例外清單裡剩下的：見 `scripts/design-token-exceptions.txt`（批 C 的注入式 CSS 頁因 validator 豁免機制限制暫留清單；批 D 調音器頁機會性遷移）。
 - 下一步（輻射）：tokens.css 複製進兩個 MkDocs 課程站的 extra.css，對齊變數名。
+### 浮層行為
+
+文字註解、表頭說明與可移入資訊卡統一使用 `src/components/lab/HoverCard.jsx`，不得在表格或段落內另寫 `absolute + group-hover` 浮框。共分三種重量：小型 tooltip 離開觸發點即收；含連結的資訊卡容許游標跨入但不固定；長篇腳註卡可點擊固定。共同行為為單次只開一張、`Esc`／點外關閉、portal 脫離裁切層、依 viewport 自動上下定位與左右夾限、窄螢幕不超出 8px 安全邊界。
