@@ -4,9 +4,7 @@ import { Background, Controls, ReactFlow, useNodesState, useEdgesState } from '@
 import dagre from '@dagrejs/dagre';
 import '@xyflow/react/dist/style.css';
 import {
-  Activity,
-  ArrowLeft,
-  ArrowUpRight,
+  Activity,  ArrowUpRight,
   BookMarked,
   BookOpen,
   CheckCircle2,
@@ -34,7 +32,7 @@ import styles from './InternationalTaxOps.module.css';
 
 const ui = {
   zh: {
-    app: '國際稅法研究桌',
+    app: '國際稅法前沿',
     subtitle: '從規範文本、制度設計與實務材料提出可追問的國際稅法問題',
     lang: 'English',
     sources: '來源',
@@ -198,7 +196,7 @@ function verificationLabel(value, lang) {
 
 export default function InternationalTaxOps() {
   useEffect(() => {
-    document.title = '國際稅法研究桌 · Canvas Lab';
+    document.title = '國際稅法前沿 · Canvas Lab';
   }, []);
 
   const [lang, setLang] = useState('zh');
@@ -385,10 +383,6 @@ export default function InternationalTaxOps() {
             placeholder={lang === 'zh' ? '搜尋來源、命題、學者' : 'Search sources, claims, actors'}
           />
         </label>
-
-        <nav className={styles.sideNav}>
-          <Link to="/all"><ArrowLeft size={15} />{lang === 'zh' ? '回總入口' : 'Back to Canvas'}</Link>
-        </nav>
 
         <div className={styles.sideSection}>
           <div className={styles.filterHeader}>

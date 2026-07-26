@@ -52,7 +52,7 @@ export const PALETTES = [
   {
     id: 'cool-teal',
     name: '冷灰茶青',
-    story: '國際稅法研究桌現用。冷白工作台、淡淡的灰綠。',
+    story: '國際稅法前沿現用。冷白工作台、淡淡的灰綠。',
     origin: '站內',
     vars: { paper: '#fbfcfd', surface: '#f0f4f5', ink: '#23262b', inkMuted: '#66707b', inkFaint: '#9aa3ad', line: '#e2e7eb', accent: '#4c7971', accent2: '#61799d' },
   },

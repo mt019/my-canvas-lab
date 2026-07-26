@@ -178,7 +178,7 @@ export default function GovernmentDebt() {
   const caseAcc = useExpandedSet(CASE_STUDIES.map((_, i) => i));
   const [litFilters, setLitFilters] = useState({ type: 'all', topic: 'all' });
 
-  useEffect(() => { document.title = '政府債務研究 — Canvas Lab'; }, []);
+  useEffect(() => { document.title = '政府債務地圖 — Canvas Lab'; }, []);
 
   const maxDebt = Math.max(...COUNTRY_DEBT.map(d => d.debt));
 

@@ -816,7 +816,7 @@ export default function ECFAResearch() {
   const [fontScale, setFontScale] = useFontScale();
 
   useEffect(() => {
-    document.title = 'ECFA 研究地圖';
+    document.title = 'ECFA 地圖';
   }, []);
 
   return (

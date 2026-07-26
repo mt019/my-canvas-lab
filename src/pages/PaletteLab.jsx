@@ -232,8 +232,8 @@ const ORIGIN_ORDER = ['站內', '名畫', '器物', '水果', '中國色'];
 
 const DEMO_ROWS = [
   { title: '憲法法庭案例庫', desc: '813 件釋字與裁判的主題檢索、意見書網絡', tag: '研究' },
-  { title: 'ECFA 研究地圖', desc: '前史、官方文本、早收產品與 2024 中止範圍', tag: '研究' },
-  { title: '國際稅法研究桌', desc: 'OECD、UN、洛桑稅法圈與前沿監測', tag: '研究' },
+  { title: 'ECFA 地圖', desc: '前史、官方文本、早收產品與 2024 中止範圍', tag: '議題' },
+  { title: '國際稅法前沿', desc: 'OECD、UN、洛桑稅法圈與前沿監測', tag: '議題' },
   { title: '翻譯工程總覽', desc: '判決、文學、書籍與法規的進度與公版全文', tag: '翻譯' },
 ];
 
@@ -572,7 +572,6 @@ export default function PaletteLab() {
       style={{ ...style, background: 'var(--pl-paper)', color: 'var(--pl-ink)' }}
     >
       <div className="mx-auto max-w-6xl">
-        <a href="/all" className="text-[13px]" style={{ color: 'var(--pl-ink-faint)' }}>← Canvas Lab</a>
         <div className="mb-1 mt-3 flex items-center gap-2 font-accent text-[11px] font-bold uppercase tracking-[0.22em]" style={{ color: 'var(--pl-accent)' }}>
           <Palette size={13} /> Palette Lab
         </div>

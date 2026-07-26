@@ -196,7 +196,7 @@ const PAGE_META = { // token-exempt: per-page identity chip colors (data, not st
     Icon: Wind,
     accent: '#d0dce8',
     accentText: '#3a5878',
-    group: 'doctrine',
+    group: 'analysis',
   },
   FuelTaxBreakdown: {
     name: '日本油稅分析',
@@ -204,15 +204,15 @@ const PAGE_META = { // token-exempt: per-page identity chip colors (data, not st
     Icon: Droplets,
     accent: '#f0e8d8',
     accentText: '#9a7e5a',
-    group: 'doctrine',
+    group: 'analysis',
   },
   GovernmentDebt: {
-    name: '政府債務研究',
+    name: '政府債務地圖',
     desc: '主權債務、地方融資平台與國際比較研究地圖',
     Icon: Landmark,
     accent: '#c8d8e8',
     accentText: '#305878',
-    group: 'research',
+    group: 'analysis',
   },
   ChenYinke: {
     name: '陳寅恪文集',
@@ -220,7 +220,7 @@ const PAGE_META = { // token-exempt: per-page identity chip colors (data, not st
     Icon: BookMarked,
     accent: '#eae4d6',
     accentText: '#8a6d3b',
-    group: 'research',
+    group: 'humanities',
   },
   ZhuJiahua: {
     name: '朱家驊研究室',
@@ -229,7 +229,7 @@ const PAGE_META = { // token-exempt: per-page identity chip colors (data, not st
     Icon: ScrollText,
     accent: '#e3edeb',
     accentText: '#4c7971',
-    group: 'research',
+    group: 'humanities',
     keywords: ZJH_BASE_SEO.keywords,
     type: ZJH_BASE_SEO.type,
     buildSchema: ZJH_BASE_SEO.buildSchema,
@@ -240,17 +240,17 @@ const PAGE_META = { // token-exempt: per-page identity chip colors (data, not st
     Icon: Scale,
     accent: '#d8dff0',
     accentText: '#3b4f78',
-    // 研究而非法政解析：吃 intlTaxOps/manusCase.json，跟「國際稅法研究桌」同一個資料域，
-    // 是有資料層的 IEL 研究案例（見 memory project_manus_research），不是靜態制度解析。
-    group: 'research',
+    // 實證研究而非議題解析：吃 intlTaxOps/manusCase.json，有分離資料層、可延伸的 IEL 研究案例
+    // （見 memory project_manus_research），不是靜態制度拆解。
+    group: 'empirical',
   },
   InternationalTaxOps: {
-    name: '國際稅法研究桌',
+    name: '國際稅法前沿',
     desc: 'OECD、UN、洛桑稅法圈與跨境稅制前沿監測',
     Icon: Globe2,
     accent: '#d7e7e5',
     accentText: '#1f6f69',
-    group: 'research',
+    group: 'analysis',
   },
   FiscalEnforcementRisk: {
     name: '地方財政與遠洋捕撈',
@@ -258,7 +258,7 @@ const PAGE_META = { // token-exempt: per-page identity chip colors (data, not st
     Icon: FileSearch,
     accent: '#dfe8dc',
     accentText: '#315f4d',
-    group: 'research',
+    group: 'empirical',
   },
   XiaohongshuRisk: {
     name: '小紅書資料集查核',
@@ -267,7 +267,7 @@ const PAGE_META = { // token-exempt: per-page identity chip colors (data, not st
     Icon: ShieldAlert,
     accent: '#f2e4dd',
     accentText: '#9b5f4c',
-    group: 'research',
+    group: 'empirical',
   },
   ConstitutionalCourt: {
     name: '憲法法庭案例庫',
@@ -275,7 +275,7 @@ const PAGE_META = { // token-exempt: per-page identity chip colors (data, not st
     Icon: Gavel,
     accent: '#e8dae0',
     accentText: '#8f6071',
-    group: 'research',
+    group: 'empirical',
     // Richer SEO for the archive: keywords + CollectionPage + a Dataset node
     // (Google Dataset Search eligible). Tab sub-routes add their own below.
     keywords: CC_BASE_SEO.keywords,
@@ -288,7 +288,7 @@ const PAGE_META = { // token-exempt: per-page identity chip colors (data, not st
     Icon: BookMarked,
     accent: '#eae4d6',
     accentText: '#8a6d3b',
-    group: 'research',
+    group: 'corpus',
   },
   GermanLawCourseTimeline: {
     name: '法學名著選讀時序',
@@ -300,7 +300,7 @@ const PAGE_META = { // token-exempt: per-page identity chip colors (data, not st
     Icon: GraduationCap,
     accent: '#ece5d5',
     accentText: '#7c5a43',
-    group: 'research',
+    group: 'corpus',
   },
   TranslationAtlas: {
     name: '翻譯工程總覽',
@@ -308,7 +308,23 @@ const PAGE_META = { // token-exempt: per-page identity chip colors (data, not st
     Icon: Languages,
     accent: '#d5e0e8',
     accentText: '#246b8f',
-    group: 'research',
+    group: 'corpus',
+  },
+  JirsForeignLaw: {
+    name: '司法院外國法翻譯總覽',
+    desc: '司法院半世紀來出版的外國憲法裁判與法制中譯地圖：德國、歐洲人權、美國、日本等 39 筆官方報告、544 件全文，時間軸、分類瀏覽與頁內 PDF 閱覽',
+    Icon: Landmark,
+    accent: '#d9dfe6',
+    accentText: '#3f5a72',
+    group: 'corpus',
+  },
+  LegalGlossary: {
+    name: '德語法學譯語表',
+    desc: '德國聯邦憲法法院裁判選輯第 6–18 輯的德中法學關鍵詞索引：1,897 組雙語對照，可搜尋、按卷次篩選，標示多譯衝突（候選工作表）',
+    Icon: ScrollText,
+    accent: '#e8e1d2',
+    accentText: '#7a6440',
+    group: 'corpus',
   },
   TaxLitigation: {
     name: '稅務訴訟計量研究',
@@ -316,15 +332,15 @@ const PAGE_META = { // token-exempt: per-page identity chip colors (data, not st
     Icon: Receipt,
     accent: '#dde3ec',
     accentText: '#3c5470',
-    group: 'research',
+    group: 'empirical',
   },
   ECFAResearch: {
-    name: 'ECFA 研究地圖',
+    name: 'ECFA 地圖',
     desc: 'ECFA 前史、官方文本、早收產品與 2024 中止優惠範圍',
     Icon: ScrollText,
     accent: '#eadde2',
     accentText: '#8f6071',
-    group: 'research',
+    group: 'analysis',
   },
   PaletteLab: {
     name: '色票試穿間',
@@ -389,13 +405,16 @@ const HOME_VARS = { // token-exempt
   '--home-foot': '#b8a3ab',
 };
 
-/* 順序＝首頁區塊的先後（每天會打開的 Brief 所在生活雷達放最前，主線的研究地圖緊接在後）。版面是
-   CSS 多欄，區塊照這個順序在兩欄裡按高度均分填入，不再是舊的 row grid 把 1 項的
-   「教學實驗室」和 8 項的「研究地圖」硬排在同一列、底下留一大片空。 */
+/* 順序＝首頁區塊的先後（每天會打開的 Brief 所在生活雷達放最前，研究與資料庫的主線緊接在後，
+   工具收尾）。版面是 CSS 多欄，區塊照這個順序在兩欄裡按高度均分填入，短區塊底下不留空。
+   研究側原本擠成一個 15 件的大群，拆成三條：實證研究（有資料層的工作台）、語料・譯庫（可搜尋的
+   資料庫）、人文文庫；只做議題總覽或現況地圖的頁降級併入議題解析。 */
 const GROUPS = [
   { key: 'life', label: '生活雷達', desc: '活動、餘額、行程與日常決策輔助' },
-  { key: 'research', label: '研究地圖', desc: '資料層分離、可延伸成長期研究的小型工作台' },
-  { key: 'doctrine', label: '法政解析', desc: '法律、財稅、投資與制度案例的結構化拆解' },
+  { key: 'empirical', label: '實證研究', desc: '有分離資料層、逐件讀原始材料、可長期延伸的研究工作台' },
+  { key: 'corpus', label: '語料・譯庫', desc: '可搜尋的語料庫、譯庫與書目目錄，直達原文' },
+  { key: 'humanities', label: '人文文庫', desc: '以人物與文本為軸的重排本與文集' },
+  { key: 'analysis', label: '議題解析', desc: '法律、財稅與制度議題的結構化拆解與現況地圖' },
   { key: 'learn', label: '教學實驗室', desc: '方法本身的來歷與限制，配上可以親手轉動的模擬' },
   { key: 'tool', label: '即用工具', desc: '可直接操作的工具：音樂、聲音與設計' },
 ];
@@ -540,11 +559,13 @@ function RouteRow({ route }) {
 }
 
 const GROUP_META = {
-  learn: { note: 'interactive method teaching' },
-  research: { note: 'long-running research canvas' },
-  doctrine: { note: 'legal and policy analysis' },
-  tool: { note: 'interactive tools' },
   life: { note: 'practical decision radar' },
+  empirical: { note: 'empirical research workbench' },
+  corpus: { note: 'searchable corpora & reference' },
+  humanities: { note: 'humanities archive' },
+  analysis: { note: 'legal & policy analysis' },
+  learn: { note: 'interactive method teaching' },
+  tool: { note: 'interactive tools' },
 };
 
 function HomePage({ routes }) {
