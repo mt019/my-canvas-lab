@@ -14,8 +14,15 @@ const body = routes.map((route) => {
   // encodeURI so justice routes (Chinese names) become valid, percent-encoded
   // URLs that match the canonical the app emits; ASCII routes pass through.
   const loc = `${SITE_URL}${route === '/' ? '/' : encodeURI(route)}`;
-  const priority = route === '/' ? '1.0' : '0.7';
-  return `  <url>\n    <loc>${loc}</loc>\n    <lastmod>${today}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>${priority}</priority>\n  </url>`;
+  const priority = route === '/'
+    ? '1.0'
+    : route.startsWith('/zhujiahua/')
+      ? '0.9'
+      : route === '/zhujiahua'
+        ? '0.8'
+        : '0.7';
+  const changefreq = route.startsWith('/zhujiahua') ? 'monthly' : 'weekly';
+  return `  <url>\n    <loc>${loc}</loc>\n    <lastmod>${today}</lastmod>\n    <changefreq>${changefreq}</changefreq>\n    <priority>${priority}</priority>\n  </url>`;
 }).join('\n');
 
 const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${body}\n</urlset>\n`;

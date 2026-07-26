@@ -29,6 +29,7 @@ export default function DashboardLayout({
   headerRight,
   eyebrow,
   title,
+  titleClassName = 'font-display',
   summary,
   tabs,
   leftRailTop,
@@ -57,7 +58,7 @@ export default function DashboardLayout({
           </div>
           <div className="reader-scale">
             {eyebrow ? <Eyebrow className="mb-2">{eyebrow}</Eyebrow> : null}
-            <h1 className="font-display text-token-2xl leading-tight sm:text-token-3xl">{title}</h1>
+            <h1 className={`${titleClassName} text-token-2xl leading-tight sm:text-token-3xl`}>{title}</h1>
             {summary ? (
               <p className="mt-3 max-w-3xl text-token-sm leading-relaxed text-ink-muted">{summary}</p>
             ) : null}

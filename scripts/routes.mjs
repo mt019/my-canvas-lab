@@ -7,6 +7,7 @@ import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { ROOT } from './site-config.mjs';
 import { CC_TAB_SLUGS, ccJusticePath, justiceHasContent, ccCasePath, caseIsIndexable } from '../src/pages/_constitutional-court/seo.js';
+import { ZJH_TAB_SLUGS } from '../src/pages/_zhu-jiahua/seo.js';
 
 const PAGES = join(ROOT, 'src', 'pages');
 const kebab = (s) => s.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();
@@ -98,5 +99,6 @@ export function collectRoutes() {
   for (const slug of CC_TAB_SLUGS) routes.add(`/constitutionalcourt/${slug}`);
   for (const route of justiceRoutes()) routes.add(route);
   for (const route of caseRoutes()) routes.add(route);
+  for (const slug of ZJH_TAB_SLUGS) routes.add(`/zhujiahua/${slug}`);
   return [...routes].sort();
 }

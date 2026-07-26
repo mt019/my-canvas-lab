@@ -8,6 +8,7 @@ import FrontDoor from './components/FrontDoor';
 import AccountControl from './components/AccountControl';
 import { AuthProvider } from './personal-state/AuthProvider';
 import { CC_BASE_SEO, CC_TABS_SEO, ccDataset } from './pages/_constitutional-court/seo';
+import { ZJH_BASE_SEO, ZJH_TABS_SEO } from './pages/_zhu-jiahua/seo';
 
 // A single justice's / single case's indexable page. Lazy-loaded so the
 // Constitutional Court archive JSON they pull in never lands in the main bundle.
@@ -211,6 +212,18 @@ const PAGE_META = { // token-exempt: per-page identity chip colors (data, not st
     accent: '#c8d8e8',
     accentText: '#305878',
     group: 'research',
+  },
+  ZhuJiahua: {
+    name: '朱家驊研究室',
+    title: ZJH_BASE_SEO.title,
+    desc: ZJH_BASE_SEO.description,
+    Icon: ScrollText,
+    accent: '#e3edeb',
+    accentText: '#4c7971',
+    group: 'research',
+    keywords: ZJH_BASE_SEO.keywords,
+    type: ZJH_BASE_SEO.type,
+    buildSchema: ZJH_BASE_SEO.buildSchema,
   },
   ManusMetaAcquisition: {
     name: 'Manus–Meta 跨境收購',
@@ -428,12 +441,31 @@ export default function App() {
               (/constitutionalcourt/research …). Backward-compatible: the ?tab=
               query deep links still resolve on the base route above. */}
           <Route path="/constitutionalcourt/:tab" element={<CCTabRoute routes={routes} />} />
+          <Route path="/zhujiahua/:zhuTab" element={<ZhuJiahuaTabRoute routes={routes} />} />
         </Routes>
         </Suspense>
         <BackToTop />
       </Router>
     </AuthProvider>
   );
+}
+
+function ZhuJiahuaTabRoute({ routes }) {
+  const { zhuTab } = useParams();
+  const seo = ZJH_TABS_SEO[zhuTab];
+  const zhu = routes.find((route) => route.name === 'ZhuJiahua');
+  if (!seo || !zhu) return <Navigate to="/zhujiahua" replace />;
+  const page = {
+    name: seo.name,
+    title: seo.title,
+    description: seo.description,
+    type: seo.type,
+    keywords: seo.keywords,
+    buildSchema: seo.buildSchema,
+    parent: { name: '朱家驊研究室', path: '/zhujiahua' },
+  };
+  const Page = zhu.component;
+  return <><SeoHead page={page} /><Page forcedTab={seo.tab} /></>;
 }
 
 function PageRoute({ route }) {

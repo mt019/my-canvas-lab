@@ -14,7 +14,7 @@
 - **即用工具** — 調音器（吉他／烏克麗麗／聲音）、Klavier 合成器、色票試穿間。
 - **生活雷達** — 簡報、活動曆、台北電影節售票雷達。
 
-多數研究頁的資料主本在各自的 data repo，canvas 只 import 已同步進來的公開快照。
+多數研究頁的資料主本在各自的 data repo，canvas 只 import 已同步進來的公開資料。以「陳寅恪文集」與「朱家驊研究室」為例，`chen-yinke-research-data` 與 `zhu-jiahua-research-data` 分別管理原始書籍、解析、研究索引與資料契約；本倉庫只管理 React 頁面、路由、樣式與 `src/data/` 下的前端資料。經資料倉整理的原文可以同步進來，但資料處理腳本、OCR 流程、EPUB/PDF 原檔與本機路徑不得移入 Canvas 倉庫。
 
 ## 技術棧
 
@@ -78,7 +78,7 @@ cd ../my-canvas-lab
 npm run build
 ```
 
-同步為手動觸發，不掛進 `build`——Vercel 等部署環境不一定有 sibling private repo。凡同步進 `src/data/` 並部署出去的都視為公開前端資料；raw 素材、書籍、筆記、工程日誌留在 private data repo。頁面只呈現讀者語言，不直接顯示檔名、欄位名、狀態碼、路徑或整理狀態；這類措辭必須在 React 頁面轉成自然的繁體中文。各研究頁的視覺規範見 `docs/DESIGN.md`。
+同步為手動觸發，不掛進 `build`——Vercel 等部署環境不一定有 sibling private repo。凡同步進 `src/data/` 並部署出去的都視為公開前端資料；各資料倉可依自身契約同步原文或研究內容。原始書檔、筆記、工程日誌與本機路徑仍留在 data repo。頁面只呈現讀者語言，不直接顯示檔名、欄位名、狀態碼、路徑或整理狀態；這類措辭必須在 React 頁面轉成自然的繁體中文。各研究頁的視覺規範見 `docs/DESIGN.md`。
 
 ## 新增頁面
 
