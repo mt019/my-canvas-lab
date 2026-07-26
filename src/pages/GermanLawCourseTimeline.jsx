@@ -4,6 +4,7 @@ import FontSizeControl, { useFontScale } from '../components/FontSizeControl';
 import DashboardLayout from '../components/lab/DashboardLayout';
 import { useTabParams } from '../components/lab/Tabs';
 import CourseTimeline from './_law-classics/CourseTimeline';
+import { GLCT_TITLE } from './_law-classics/seo';
 import germanRows from '../data/germanLawCourseTimeline.json';
 
 /*
@@ -56,7 +57,7 @@ export default function GermanLawCourseTimeline() {
   const [{ tab }, setTabs] = useTabParams({ tab: LANGUAGES[0].id });
 
   useEffect(() => {
-    document.title = '法學名著選讀・教師時序｜Canvas Lab';
+    document.title = GLCT_TITLE;
   }, []);
 
   const active = LANGUAGES.find((l) => l.id === tab) ?? LANGUAGES[0];

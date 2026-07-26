@@ -9,6 +9,7 @@ import AccountControl from './components/AccountControl';
 import { AuthProvider } from './personal-state/AuthProvider';
 import { CC_BASE_SEO, CC_TABS_SEO, ccDataset } from './pages/_constitutional-court/seo';
 import { ZJH_BASE_SEO, ZJH_TABS_SEO } from './pages/_zhu-jiahua/seo';
+import { GLCT_KEYWORDS, GLCT_TITLE, GLCT_DESC, glctSchema } from './pages/_law-classics/seo';
 
 // A single justice's / single case's indexable page. Lazy-loaded so the
 // Constitutional Court archive JSON they pull in never lands in the main bundle.
@@ -283,7 +284,11 @@ const PAGE_META = { // token-exempt: per-page identity chip colors (data, not st
   },
   GermanLawCourseTimeline: {
     name: '法學名著選讀時序',
-    desc: '臺大法學名著選讀歷年教師時間軸：誰在教、教了幾年、偏哪個法學領域。縱向時間軸、領域著色、直達課綱來源（目前為德文，同一模式將擴及其他語言）',
+    title: GLCT_TITLE,
+    desc: GLCT_DESC,
+    keywords: GLCT_KEYWORDS,
+    type: 'CollectionPage',
+    buildSchema: glctSchema,
     Icon: GraduationCap,
     accent: '#ece5d5',
     accentText: '#7c5a43',
