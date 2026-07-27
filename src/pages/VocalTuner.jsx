@@ -402,15 +402,27 @@ export default function VocalTuner() {
     // overall level back up. Built once, reused for every note.
     if (!masterBusRef.current) {
       const comp = ctx.createDynamicsCompressor();
-      comp.threshold.value = -18; // start compressing 18 dB below full scale
-      comp.knee.value = 24;       // soft knee — gradual onset, no hard grab
+      comp.threshold.value = -20; // start compressing 20 dB below full scale
+      comp.knee.value = 26;       // soft knee — gradual onset, no hard grab
       comp.ratio.value = 4;       // 4:1 — firm but musical
-      comp.attack.value = 0.003;
+      comp.attack.value = 0.001;  // catch the hammer transient fast
       comp.release.value = 0.25;
       const makeup = ctx.createGain();
-      makeup.gain.value = 1.8;    // push the compressed signal back up loud
+      makeup.gain.value = 1.5;    // push the compressed signal back up loud
+      // Final safety: a tanh soft-clipper. Anything the compressor lets slip
+      // saturates smoothly here instead of hitting the hard digital ceiling —
+      // warm overdrive rather than a crackle.
+      const softClip = ctx.createWaveShaper();
+      const N = 2048, curve = new Float32Array(N), k = 2.2;
+      for (let i = 0; i < N; i++) {
+        const x = (i / (N - 1)) * 2 - 1;
+        curve[i] = Math.tanh(k * x) / Math.tanh(k);
+      }
+      softClip.curve = curve;
+      softClip.oversample = '4x';
       comp.connect(makeup);
-      makeup.connect(ctx.destination);
+      makeup.connect(softClip);
+      softClip.connect(ctx.destination);
       masterBusRef.current = comp;
     }
     return ctx;
@@ -467,6 +479,10 @@ export default function VocalTuner() {
         { mult: 3,    type: 'sine',     amp: 0.18, detune: 0 },
         { mult: 4,    type: 'triangle', amp: 0.09, detune: 0 },
       ];
+      // Normalize partial gains so the summed voice peaks near 1, not ~2.6 —
+      // this is what was overshooting into the ceiling before the compressor
+      // could react. The bus (compressor + makeup + soft-clip) carries loudness.
+      const ampSum = partials.reduce((s, p) => s + p.amp, 0);
       const oscs = [];
       for (const p of partials) {
         const o = ctx.createOscillator();
@@ -474,13 +490,13 @@ export default function VocalTuner() {
         o.frequency.value = freq * p.mult;
         o.detune.value = p.detune;
         const pg = ctx.createGain();
-        pg.gain.value = p.amp;
+        pg.gain.value = p.amp / ampSum;
         o.connect(pg); pg.connect(toneFilter);
         oscs.push(o);
       }
 
       const boost = clamp(220 / freq, 1.0, 3.2);
-      const peak = clamp(0.34 * boost, 0.34, 0.85); // driven hot; compressor tames peaks
+      const peak = clamp(0.55 * boost, 0.55, 0.9); // voice ~normalized; bus handles loudness
       gain.gain.setValueAtTime(0.0001, now);
       gain.gain.exponentialRampToValueAtTime(peak, now + 0.006);        // sharp hammer attack
       gain.gain.exponentialRampToValueAtTime(peak * 0.4, now + 0.18);   // quick initial decay
