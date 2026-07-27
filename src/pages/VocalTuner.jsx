@@ -358,6 +358,7 @@ export default function VocalTuner() {
   const detectedMidiRef = useRef(null);
   const pianoGainRef = useRef(null);
   const pianoOscRef = useRef(null);
+  const masterBusRef = useRef(null); // shared compressor → makeup-gain bus for piano notes
   const rollSemitonesRef = useRef(ROLL_SEMITONES_DEFAULT);
   const dragRef = useRef(null); // { startY, startCenter, moved }
 
@@ -394,8 +395,25 @@ export default function VocalTuner() {
     const AC = window.AudioContext || window.webkitAudioContext;
     if (!AC) throw new Error('此瀏覽器不支援 AudioContext。');
     if (!audioCtxRef.current) audioCtxRef.current = new AC({ latencyHint: 'interactive' });
-    if (audioCtxRef.current.state === 'suspended') await audioCtxRef.current.resume();
-    return audioCtxRef.current;
+    const ctx = audioCtxRef.current;
+    if (ctx.state === 'suspended') await ctx.resume();
+    // Shared output bus: a compressor tames transient peaks so notes can be
+    // driven loud without the waveform clipping, then makeup gain brings the
+    // overall level back up. Built once, reused for every note.
+    if (!masterBusRef.current) {
+      const comp = ctx.createDynamicsCompressor();
+      comp.threshold.value = -18; // start compressing 18 dB below full scale
+      comp.knee.value = 24;       // soft knee — gradual onset, no hard grab
+      comp.ratio.value = 4;       // 4:1 — firm but musical
+      comp.attack.value = 0.003;
+      comp.release.value = 0.25;
+      const makeup = ctx.createGain();
+      makeup.gain.value = 1.8;    // push the compressed signal back up loud
+      comp.connect(makeup);
+      makeup.connect(ctx.destination);
+      masterBusRef.current = comp;
+    }
+    return ctx;
   }, []);
 
   const resumeCtx = useCallback(async () => {
@@ -417,37 +435,61 @@ export default function VocalTuner() {
     try {
       const ctx = await ensureCtx();
       await resumeCtx();
+      // Fade + stop any note still ringing so retriggers don't pile up.
       if (pianoGainRef.current) {
         try { pianoGainRef.current.gain.setTargetAtTime(0.0001, ctx.currentTime, 0.02); } catch {}
       }
-      if (pianoOscRef.current) { try { pianoOscRef.current.stop(ctx.currentTime + 0.06); } catch {} }
+      if (pianoOscRef.current) {
+        for (const o of pianoOscRef.current) { try { o.stop(ctx.currentTime + 0.06); } catch {} }
+      }
 
       const freq = midiToFreq(midi);
-      const osc1 = ctx.createOscillator();
-      const osc2 = ctx.createOscillator();
+      const now = ctx.currentTime;
+      const out = masterBusRef.current || ctx.destination;
       const gain = ctx.createGain();
-      const toneFilter = ctx.createBiquadFilter();
 
-      osc1.type = 'triangle';
-      osc1.frequency.value = freq;
-      osc2.type = 'sine';
-      osc2.frequency.value = freq * 2;
+      // Filter opens on the strike then closes as the note decays — the way a
+      // struck string loses its high partials first. Voiced brighter up top.
+      const toneFilter = ctx.createBiquadFilter();
       toneFilter.type = 'lowpass';
-      toneFilter.frequency.value = Math.min(3200, freq * 7);
+      toneFilter.Q.value = 0.7;
+      const openHz = Math.min(9000, freq * 10);
+      const closeHz = Math.min(2600, freq * 4);
+      toneFilter.frequency.setValueAtTime(openHz, now);
+      toneFilter.frequency.exponentialRampToValueAtTime(closeHz, now + 0.35);
+
+      // Additive tone: fundamental + harmonic partials with a piano-like
+      // rolloff. Two slightly detuned fundamentals add warmth (chorus).
+      const partials = [
+        { mult: 1,    type: 'triangle', amp: 1.0,  detune: -3 },
+        { mult: 1,    type: 'sine',     amp: 0.9,  detune: +3 },
+        { mult: 2,    type: 'sine',     amp: 0.4,  detune: 0 },
+        { mult: 3,    type: 'sine',     amp: 0.18, detune: 0 },
+        { mult: 4,    type: 'triangle', amp: 0.09, detune: 0 },
+      ];
+      const oscs = [];
+      for (const p of partials) {
+        const o = ctx.createOscillator();
+        o.type = p.type;
+        o.frequency.value = freq * p.mult;
+        o.detune.value = p.detune;
+        const pg = ctx.createGain();
+        pg.gain.value = p.amp;
+        o.connect(pg); pg.connect(toneFilter);
+        oscs.push(o);
+      }
 
       const boost = clamp(220 / freq, 1.0, 3.2);
-      const peak = clamp(0.1 * boost, 0.1, 0.28);
-      const now = ctx.currentTime;
+      const peak = clamp(0.34 * boost, 0.34, 0.85); // driven hot; compressor tames peaks
       gain.gain.setValueAtTime(0.0001, now);
-      gain.gain.exponentialRampToValueAtTime(peak, now + 0.012);
-      gain.gain.exponentialRampToValueAtTime(peak * 0.25, now + 0.25);
-      gain.gain.exponentialRampToValueAtTime(0.0001, now + 1.4);
+      gain.gain.exponentialRampToValueAtTime(peak, now + 0.006);        // sharp hammer attack
+      gain.gain.exponentialRampToValueAtTime(peak * 0.4, now + 0.18);   // quick initial decay
+      gain.gain.exponentialRampToValueAtTime(peak * 0.12, now + 0.9);   // sustain tail
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 2.2);        // long release
 
-      osc1.connect(toneFilter); osc2.connect(toneFilter);
-      toneFilter.connect(gain); gain.connect(ctx.destination);
-      osc1.start(now); osc2.start(now);
-      osc1.stop(now + 1.5); osc2.stop(now + 1.5);
-      pianoOscRef.current = osc1;
+      toneFilter.connect(gain); gain.connect(out);
+      for (const o of oscs) { o.start(now); o.stop(now + 2.3); }
+      pianoOscRef.current = oscs;
       pianoGainRef.current = gain;
     } catch {}
   }, [ensureCtx, resumeCtx]);
@@ -677,6 +719,7 @@ export default function VocalTuner() {
       mountedRef.current = false;
       stopAll();
       if (audioCtxRef.current?.state !== 'closed') audioCtxRef.current?.close().catch(() => {});
+      masterBusRef.current = null;
     };
   }, [stopAll]);
 
