@@ -82,7 +82,6 @@ export default function LegalGlossary() {
       refreshKey={tab}
       /* 這頁整欄都是密集文字列（術語表、裁決），是閱讀型而非寬表格型；在較寬視窗給抬頭／
          分頁／內文一條更往內的共同左基準線，貼著頁緣讀起來累。 */
-      padX="px-4 sm:px-6 lg:px-16 xl:px-24"
       leftRailTop={
         <div className="mb-4 border-b border-line-soft pb-4">
           <a href="/jirsforeignlaw"

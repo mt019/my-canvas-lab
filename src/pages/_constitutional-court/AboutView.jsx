@@ -131,7 +131,7 @@ export function Case1Analysis() {
   if (!da) {
     return (
       <section className="border-t border-[var(--cc-line)] py-5">
-        <p className="text-[13.5px] leading-relaxed text-[var(--cc-ink-mid)]">找不到「114 年憲判字第 1 號」的深度分析資料（資料層尚未同步）。</p>
+        <p className="text-[13.5px] leading-relaxed text-[var(--cc-ink-mid)]">目前沒有「114 年憲判字第 1 號」的深度分析。</p>
       </section>
     );
   }

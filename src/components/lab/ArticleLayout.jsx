@@ -1,4 +1,5 @@
 import { useRef } from 'react';
+import { SHELL_PAD_X_RAIL } from '../shellPadding';
 import { Link } from 'react-router-dom';
 import TableOfContents from './TableOfContents';
 
@@ -23,7 +24,7 @@ export default function ArticleLayout({ title, eyebrow, summary, meta, nav, tocL
   const bodyRef = useRef(null);
 
   return (
-    <div className="mx-auto grid max-w-[86rem] gap-10 px-4 sm:px-6 lg:grid-cols-[15rem_minmax(0,44rem)_14rem] lg:gap-12">
+    <div className={`mx-auto grid max-w-[86rem] gap-10 ${SHELL_PAD_X_RAIL} lg:grid-cols-[15rem_minmax(0,44rem)_14rem] lg:gap-12`}>
       <aside className="hidden lg:block">
         {/* Clears the sticky site bar above it (see SiteHeader) — a rail that
             slides under the toolbar loses its first item. */}

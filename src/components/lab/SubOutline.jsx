@@ -65,7 +65,7 @@ export default function SubOutline({ containerRef, refreshKey }) {
               <li key={c.id} style={{ paddingLeft: 12 }}>
                 <a
                   href={`#${c.id}`}
-                  className="-ml-px block border-l-2 py-0.5 pl-2 transition-colors duration-fast"
+                  className="-ml-px block border-l-2 py-0.5 pl-2 transition-colors duration-fast [line-break:strict] [text-wrap:pretty] line-clamp-2"
                   style={{ borderColor: on ? 'var(--c-accent)' : 'transparent', color: on ? 'var(--c-ink)' : 'var(--c-ink-faint)' }}
                 >
                   {c.text}

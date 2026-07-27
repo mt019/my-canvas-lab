@@ -1,0 +1,1637 @@
+{
+  "meta": {
+    "title": "聲樂訓練・Vaccai 練習本",
+    "subtitle": "我用的教材是 Vaccai《義大利歌唱實用法》：二十二首以 Metastasio 詩句寫成的短練習",
+    "updated": "2026-07-27",
+    "currentExercise": "ex-04",
+    "note": "資料來源與考證狀態逐首標註；未查到原始場景的一律標為未考證，不補寫。"
+  },
+  "method": {
+    "composer": {
+      "name": "Nicola Vaccai",
+      "nameZh": "尼可拉・瓦卡伊",
+      "born": "1790-03-15",
+      "bornPlace": "Tolentino（馬爾凱地區）",
+      "died": "1848-08-05",
+      "diedPlace": "Pesaro",
+      "life": "本來被家裡送去羅馬讀法律，五年後放棄，改跟 Giovanni Jannaconi 學對位，1812 年到那不勒斯師事 Paisiello。1814 年首部歌劇《I solitari di Scozia》在那不勒斯上演。歌劇一直沒真正紅起來，1820 年前後他轉去教唱，在威尼斯、的里雅斯特、維也納都教出名聲。1825 年的《Giulietta e Romeo》是他最好的一部，第三幕受歡迎到經常被拿去替換貝里尼同名歌劇《I Capuleti e i Montecchi》的第三幕，在義大利、巴黎、倫敦都這麼演過。1838 年接任米蘭音樂院院長兼作曲教授，1841 年因健康退回 Pesaro。學生裡有低音提琴家 Bottesini、指揮 Luigi Arditi 與女高音 Barbieri-Nini。",
+      "irony": "他寫了十六部歌劇想當作曲家，最後靠一本給業餘學生的練習本留了下來。"
+    },
+    "book": {
+      "titleIt": "Metodo pratico di canto italiano per camera",
+      "titleZh": "義大利室內歌唱實用法",
+      "published": "1832，倫敦",
+      "context": "1832 年 4 月《Giulietta e Romeo》在倫敦國王劇院上演，把他帶進倫敦社交圈，一下子成為搶手的聲樂教師。這本書就是為那批學生寫的：目標是短、好聽、有用，避開當時教材那種純粹的苦工。",
+      "reception": "從未絕版。追查得到的版本近百種、至少十三種語言。Rossini 稱讚過它；Callas、Fischer-Dieskau、Grace Bumbry 都用過。Ricordi 與 Edition Peters 至今仍在印。",
+      "design": "全書音域壓在十一度（高音版 c′–f″）以內。Vaccai 自己說明這不是為了遷就多數人的嗓子，而是相信初學階段不該操勞發聲器官、應該只待在中聲區；要換調隨時可以移。"
+    },
+    "prefaceQuote": {
+      "en": "I adopt, even on the simple notes of the diatonic scale, words selected from the fine poetry of Metastasio instead of just the mere names of notes or syllables conveying neither meaning nor interest… in each individual exercise I have sought to make the music illustrative of a different style of composition and of a distinct emotion, so that the pupil will learn more readily how to interpret later on the spirit of the various composers.",
+      "zh": "「即使只是自然音階上那幾個簡單的音，我也用 Metastasio 的好詩來配詞，而不是用唱名或那些既無意義也不引人的音節……每一首練習我都試著讓音樂示範一種不同的寫作風格、一種明確的情緒，好讓學生日後更容易讀出各家作曲家的精神。」",
+      "from": "Vaccai 自序（英譯本）"
+    },
+    "numbering": {
+      "problem": "同一本書有三套編號同時在用，查資料時很容易對錯首。",
+      "systems": [
+        {
+          "name": "十五課",
+          "detail": "Vaccai 自己的分法，一課可能含一到兩首練習。書名頁與多數紙本目錄用這套。"
+        },
+        {
+          "name": "二十二首",
+          "detail": "把每首練習各自編號。LiederNet 的歌詞頁、vaccai.info 的免費電子版都用這套。"
+        },
+        {
+          "name": "1a／2b 式",
+          "detail": "IMSLP 上 Free Pianist 那套伴奏音檔的命名，課號加上該課內的第幾首。「Avvezzo a vivere」在那裡叫 2b。"
+        }
+      ],
+      "alsoSeen": "現代零售頁面偶爾寫「14 課」，那是行銷文案的誤植，書裡是十五課。"
+    },
+    "placement": [
+      "它不是一本從零開始建立發聲的教科書。它假設你已經能發出堪用的聲音，然後教你怎麼把聲音接成義大利式的線條。",
+      "跟 Concone 的練聲曲（母音上的 solfeggi）不同，這裡每一首都有詞、有情緒、有一個明確的技術對象——所以它同時是義大利文咬字的入門。",
+      "音域窄、篇幅短，適合天天過一遍；難度是往後累加的，前七首處理音程與音階，中段處理裝飾音，最後三首處理連貫、宣敘與總複習。"
+    ],
+    "sources": [
+      {
+        "label": "LiederNet：Metodo pratico di Canto Italiano 全部歌詞與出處",
+        "url": "https://www.lieder.net/lieder/assemble_texts.html?SongCycleId=910"
+      },
+      {
+        "label": "IMSLP：Metodo pratico de canto（樂譜、免費伴奏音檔）",
+        "url": "https://imslp.org/wiki/Metodo_pratico_de_canto_(Vaccai,_Nicola)"
+      },
+      {
+        "label": "vaccai.info 免費電子版（含 Vaccai 自序英譯、課號對照表、各課原始教學註）",
+        "url": "http://vaccai.info/index.html"
+      },
+      {
+        "label": "Teatro Nuovo：Vaccai 生平與《實用法》來歷",
+        "url": "https://www.teatronuovo.org/vaccai"
+      },
+      {
+        "label": "義大利文 Wikisource：Metastasio 劇本原文",
+        "url": "https://it.wikisource.org/wiki/Autore:Pietro_Metastasio"
+      }
+    ]
+  },
+  "families": [
+    {
+      "id": "interval",
+      "label": "音程",
+      "desc": "從音階到八度，逐級加大跳進"
+    },
+    {
+      "id": "rhythm",
+      "label": "半音與節奏",
+      "desc": "半音的音準、切分的重音位置"
+    },
+    {
+      "id": "ornament",
+      "label": "裝飾音",
+      "desc": "倚音、短倚音、漣音、迴音、顫音"
+    },
+    {
+      "id": "line",
+      "label": "音型與連貫",
+      "desc": "快速音群、聲音的攜帶"
+    },
+    {
+      "id": "declamation",
+      "label": "宣敘與總複習",
+      "desc": "說話式的樂句、全書規則的合併"
+    }
+  ],
+  "lessons": [
+    {
+      "no": 1,
+      "roman": "I",
+      "topic": "音階與三度",
+      "exercises": [
+        "ex-01",
+        "ex-02"
+      ]
+    },
+    {
+      "no": 2,
+      "roman": "II",
+      "topic": "四度與五度",
+      "exercises": [
+        "ex-03",
+        "ex-04"
+      ]
+    },
+    {
+      "no": 3,
+      "roman": "III",
+      "topic": "六度",
+      "exercises": [
+        "ex-05"
+      ]
+    },
+    {
+      "no": 4,
+      "roman": "IV",
+      "topic": "七度與八度",
+      "exercises": [
+        "ex-06",
+        "ex-07"
+      ]
+    },
+    {
+      "no": 5,
+      "roman": "V",
+      "topic": "半音",
+      "exercises": [
+        "ex-08"
+      ]
+    },
+    {
+      "no": 6,
+      "roman": "VI",
+      "topic": "切分",
+      "exercises": [
+        "ex-09"
+      ]
+    },
+    {
+      "no": 7,
+      "roman": "VII",
+      "topic": "快速音群入門",
+      "exercises": [
+        "ex-10"
+      ]
+    },
+    {
+      "no": 8,
+      "roman": "VIII",
+      "topic": "倚音與短倚音",
+      "exercises": [
+        "ex-11",
+        "ex-12"
+      ]
+    },
+    {
+      "no": 9,
+      "roman": "IX",
+      "topic": "漣音",
+      "exercises": [
+        "ex-13",
+        "ex-14"
+      ]
+    },
+    {
+      "no": 10,
+      "roman": "X",
+      "topic": "迴音",
+      "exercises": [
+        "ex-15",
+        "ex-16"
+      ]
+    },
+    {
+      "no": 11,
+      "roman": "XI",
+      "topic": "顫音",
+      "exercises": [
+        "ex-17"
+      ]
+    },
+    {
+      "no": 12,
+      "roman": "XII",
+      "topic": "快速音群",
+      "exercises": [
+        "ex-18"
+      ]
+    },
+    {
+      "no": 13,
+      "roman": "XIII",
+      "topic": "聲音的攜帶",
+      "exercises": [
+        "ex-19",
+        "ex-20"
+      ]
+    },
+    {
+      "no": 14,
+      "roman": "XIV",
+      "topic": "宣敘調",
+      "exercises": [
+        "ex-21"
+      ]
+    },
+    {
+      "no": 15,
+      "roman": "XV",
+      "topic": "總複習",
+      "exercises": [
+        "ex-22"
+      ]
+    }
+  ],
+  "exercises": [
+    {
+      "id": "ex-01",
+      "no": 1,
+      "lesson": 1,
+      "family": "interval",
+      "titleIt": "La scala",
+      "titleZh": "音階",
+      "incipit": "Manca sollecita",
+      "focus": "自然音階上下行。整本書最根本的一課：母音撐滿音符的全部時值，子音在最後一瞬才發，立刻接上下一個音節。",
+      "textIt": [
+        "Manca sollecita",
+        "più dell'usato,",
+        "ancor che s'agiti",
+        "con lieve fiato,",
+        "face che palpita",
+        "presso al morir."
+      ],
+      "textZh": [
+        "它消逝得急促，",
+        "比平常更快，",
+        "即使只是被",
+        "一口輕輕的氣息拂動——",
+        "那盞搖曳的燈焰，",
+        "在快要死去的時候。"
+      ],
+      "textZhFlat": "將盡的燈焰，就算只被一口輕氣拂動，也熄得比平常更快。",
+      "source": {
+        "work": "Demetrio",
+        "workZh": "德梅特里歐",
+        "year": 1731,
+        "place": "第二幕第十三場",
+        "speaker": "Cleonice",
+        "addressee": "Fenicio 與 Barsene",
+        "situation": "女王 Cleonice 剛親手斷絕了自己和 Alceste 的關係，兩個人一個責備她殘忍、一個誇她堅貞，兩邊都在勸。她說：我的心同樣厭惡病痛與解藥，來救我的人反而讓我死得更快——接著就是這四行。",
+        "verified": true,
+        "url": "https://it.wikisource.org/wiki/Demetrio/Atto_secondo",
+        "excerpt": "只取原詠嘆調的第一節。"
+      },
+      "bookNote": {
+        "en": "In this Lesson, Signor Vaccai has not grouped the letters of the Italian syllables according to the correct rules of spelling, but in such a fashion that the pupil may perceive, at the very first glance, how his voice should dwell on the vowels, exclusively, to the extreme value of the note or notes they influence, and how with a swift and immediate articulation of the consonants he should attack the following syllable. This will greatly facilitate him in acquiring what the Italians call the Canto legato.",
+        "zh": "本課裡 Vaccai 刻意不照正確的拼寫規則分音節，而是照著唱的方式分，好讓學生一眼就看出：聲音應該完全停在母音上，佔滿那個音符的全部時值；子音要又快又即時地發出來，然後馬上進入下一個音節。這是取得義大利人所謂 canto legato 的捷徑。"
+      },
+      "context": [
+        {
+          "label": "唱這首之前的宣敘調",
+          "it": [
+            "E m'uccidete intanto.",
+            "Egualmente il mio core",
+            "il proprio male ed il rimedio abborre;",
+            "e m'affretta il morir chi mi soccorre."
+          ],
+          "zh": [
+            "你們這樣是在殺我。",
+            "我的心同樣厭惡",
+            "自己的病痛與那帖解藥；",
+            "來救我的人，反而催我死得更快。"
+          ]
+        },
+        {
+          "label": "同一首詠嘆調的第二節，Vaccai 沒有收",
+          "it": [
+            "Se consolarmi",
+            "voi non potete,",
+            "perché turbarmi,",
+            "perché volete",
+            "la forza accrescere",
+            "del mio martir?"
+          ],
+          "zh": [
+            "既然你們",
+            "安慰不了我，",
+            "為什麼還要來擾亂我，",
+            "為什麼一定要",
+            "把我這份折磨",
+            "加得更重？"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ex-02",
+      "no": 2,
+      "lesson": 1,
+      "family": "interval",
+      "titleIt": "Intervalli di terza",
+      "titleZh": "三度音程",
+      "incipit": "Semplicetta tortorella",
+      "focus": "三度跳進。兩個音之間不留滑痕，音準靠聽不靠推。",
+      "textIt": [
+        "Semplicetta tortorella,",
+        "che non vede il suo periglio,",
+        "per fuggir da crudo artiglio,",
+        "vola in grembo al cacciator."
+      ],
+      "textZh": [
+        "天真的小斑鳩，",
+        "看不見自己的危險，",
+        "為了逃開殘忍的利爪，",
+        "飛進了獵人的懷裡。"
+      ],
+      "textZhFlat": "天真的小斑鳩看不見危險，為了躲開利爪，反而飛進獵人懷裡。",
+      "note": "逃開利爪＝逃開沉默的痛苦，飛進獵人懷裡＝撞上拒絕的羞辱。比喻的答案在第二節，而 Vaccai 只收了第一節。",
+      "source": {
+        "work": "Demetrio",
+        "workZh": "德梅特里歐",
+        "year": 1731,
+        "place": "第三幕第十一場",
+        "speaker": "Barsene",
+        "addressee": "獨白",
+        "situation": "Barsene 剛向 Alceste 表白，被當場拒絕。唱這首之前的宣敘調她說：本來不如不講。我至少還盼著，說出口這一次，Alceste 會接下我的愛；這一點小小的希望現在整個落空了——Alceste 知道我愛他，而且拒絕了。這隻斑鳩就是她自己。",
+        "verified": true,
+        "url": "https://it.wikisource.org/wiki/Demetrio/Atto_terzo",
+        "excerpt": "只取原詠嘆調的第一節。"
+      },
+      "context": [
+        {
+          "label": "唱這首之前的宣敘調",
+          "it": [
+            "Era meglio tacer: speravo almeno",
+            "che, parlando una volta,",
+            "avrebbe la mia fiamma Alceste accolta.",
+            "Questa picciola speme",
+            "or del tutto è delusa:",
+            "sa la mia fiamma Alceste, e la ricusa."
+          ],
+          "zh": [
+            "本來不如不講。我至少還盼著，",
+            "說出口這一次，",
+            "Alceste 會接下我的愛。",
+            "這一點小小的希望",
+            "現在整個落空了：",
+            "Alceste 知道我愛他，而且拒絕了。"
+          ]
+        },
+        {
+          "label": "同一首詠嘆調的第二節，Vaccai 沒有收",
+          "it": [
+            "Voglio anch'io fuggir la pena",
+            "d'un amor finor taciuto,",
+            "e m'espongo d'un rifiuto",
+            "all'oltraggio ed al rossor."
+          ],
+          "zh": [
+            "我也想逃開一份",
+            "至今沒說出口的愛所帶來的痛苦，",
+            "結果把自己送到一次拒絕的",
+            "冒犯與臉紅面前。"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ex-03",
+      "no": 3,
+      "lesson": 2,
+      "family": "interval",
+      "titleIt": "Intervalli di quarta",
+      "titleZh": "四度音程",
+      "incipit": "Lascia il lido",
+      "focus": "四度跳進，上下行都有。跳得準，但不要為了準而把每個音都重新起動。",
+      "textIt": [
+        "Lascia il lido, e il mare infido",
+        "a solcar torna il nocchiero,",
+        "e pur sa che menzognero",
+        "altre volte l'ingannò."
+      ],
+      "textZh": [
+        "舵手離開岸邊，",
+        "又回到那片不可信的海上破浪，",
+        "儘管他清楚這片海會說謊，",
+        "從前不只騙過他一次。"
+      ],
+      "textZhFlat": "舵手明知這片海騙過他，還是離岸出航。",
+      "source": {
+        "work": "Siface, re di Numidia",
+        "workZh": "努米底亞王西法切",
+        "year": null,
+        "place": null,
+        "speaker": null,
+        "addressee": null,
+        "situation": null,
+        "verified": false,
+        "url": "https://www.lieder.net/lieder/assemble_texts.html?SongCycleId=910",
+        "excerpt": "出處劇目依 LiederNet；義大利文 Wikisource 未收此劇，原始場景待查。"
+      }
+    },
+    {
+      "id": "ex-04",
+      "no": 4,
+      "lesson": 2,
+      "family": "interval",
+      "titleIt": "Intervalli di quinta",
+      "titleZh": "五度音程",
+      "incipit": "Avvezzo a vivere",
+      "focus": "五度跳進。四行短句，每行一個氣口，聲音要在跳進的兩端保持同一種音色。",
+      "textIt": [
+        "Avvezzo a vivere",
+        "senza conforto,",
+        "in mezzo al porto",
+        "pavento il mar."
+      ],
+      "textZh": [
+        "習慣了活著",
+        "而沒有慰藉，",
+        "人已經在港口中間，",
+        "我還是怕海。"
+      ],
+      "textZhFlat": "習慣了沒有慰藉地活著，人明明已經在港裡，我還是怕海。",
+      "source": {
+        "work": "Demetrio",
+        "workZh": "德梅特里歐",
+        "year": 1731,
+        "place": "第三幕第九場",
+        "speaker": "Mitrane",
+        "addressee": "Alceste",
+        "situation": "牧羊人 Alceste 剛得知自己其實是 Seleucia 的王位繼承人 Demetrio，愣在原地說「我在作夢嗎？別跟我說話，讓我靜一下，我還在懷疑。」侍臣 Mitrane 唱這首勸他：把心裡的畫面換成明亮一點的，命運已經把額前那綹頭髮遞到你手上了，總算可以喘口氣。下一場 Alceste 獨自說：同一天之內，我是君主也是牧人、是流亡者也是新郎。",
+        "verified": true,
+        "url": "https://it.wikisource.org/wiki/Demetrio/Atto_terzo",
+        "excerpt": "只取原詠嘆調的第二節；第一節是「Più liete immagini nell'alma aduna…」。"
+      },
+      "variant": {
+        "originalIt": [
+          "ancor nel porto",
+          "paventi il mar."
+        ],
+        "vaccaiIt": [
+          "in mezzo al porto",
+          "pavento il mar."
+        ],
+        "zh": "Metastasio 的原句是第二人稱：「你到了港裡還怕海」——那是 Mitrane 在講 Alceste。Vaccai 版改成第一人稱：「我怕海」。一句勸慰因此變成一句自白，唱的人從被安慰的對象變成說話的人本身。",
+        "why": "改動出現在 Vaccai 的樂譜與後來所有據以翻印的版本，也出現在 LiederNet 的歌詞頁；原文則見義大利文 Wikisource 的《Demetrio》第三幕。"
+      },
+      "echo": "Mitrane 的第一節說「fortuna ti porge il crine」（命運把額髮遞給你），用的是機運女神只有前額有髮、錯過就抓不住的老比喻。同一句話會在第八首〈Delira dubbiosa〉的《西庇阿之夢》裡再出現一次，那裡是 Fortuna 自己說的：「Ti porgo il crine，你卻不投向我？」",
+      "context": [
+        {
+          "label": "同一首詠嘆調的第一節，Vaccai 沒有收",
+          "it": [
+            "Più liete immagini",
+            "nell'alma aduna:",
+            "già la fortuna",
+            "ti porge il crine;",
+            "è tempo alfine",
+            "di respirar."
+          ],
+          "zh": [
+            "把明亮一點的畫面",
+            "聚到心裡來：",
+            "命運已經",
+            "把額前那綹頭髮遞給你了；",
+            "總算到了",
+            "可以喘口氣的時候。"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ex-05",
+      "no": 5,
+      "lesson": 3,
+      "family": "interval",
+      "titleIt": "Intervalli di sesta",
+      "titleZh": "六度音程",
+      "incipit": "Bella prova è d'alma forte",
+      "focus": "六度跳進。到這裡跳幅已經跨過換聲區，兩端的共鳴位置要能對上。",
+      "textIt": [
+        "Bella prova è d'alma forte",
+        "l'esser placida e serena",
+        "nel soffrir l'ingiusta pena",
+        "d'una colpa che non ha."
+      ],
+      "textZh": [
+        "堅強的靈魂最好的證明，",
+        "是在承受一樁不義的刑罰時",
+        "仍然平靜安詳——",
+        "而那樁罪並不是他犯的。"
+      ],
+      "textZhFlat": "承受一樁自己沒犯的罪帶來的不義刑罰而依然平靜，這是靈魂堅強最好的證明。",
+      "source": {
+        "work": "Ezio",
+        "workZh": "埃齊歐",
+        "year": null,
+        "place": "第三幕第一場",
+        "speaker": "Ezio",
+        "addressee": "獨白，唱完就在衛兵押送下走回牢裡",
+        "situation": "統帥 Ezio 被誣陷謀反下獄。他先說：不管在牢裡還是在戰場上，我都會教別人怎麼赴死；先看看我額上有沒有寫著罪，再說我的處境該被羨慕還是被同情。",
+        "verified": true,
+        "url": "https://it.wikisource.org/wiki/Ezio/Atto_terzo",
+        "excerpt": "只取原詠嘆調的第二節。"
+      },
+      "context": [
+        {
+          "label": "唱這首之前的宣敘調",
+          "it": [
+            "O in carcere o fra l'armi,",
+            "ad altri insegnerò come si mora.",
+            "Farò invidiarmi in questo stato ancora."
+          ],
+          "zh": [
+            "不管是在牢裡還是在戰場上，",
+            "我都會教別人怎麼赴死。",
+            "就算落到這個地步，我照樣讓人羨慕。"
+          ]
+        },
+        {
+          "label": "同一首詠嘆調的第一節，Vaccai 沒有收",
+          "it": [
+            "Guarda pria se in questa fronte",
+            "trovi scritto alcun delitto,",
+            "e dirai che la mia sorte",
+            "desta invidia e non pietà."
+          ],
+          "zh": [
+            "先看看我這張臉上",
+            "有沒有寫著任何罪，",
+            "看完你就會說：我的處境",
+            "該被羨慕，不該被同情。"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ex-06",
+      "no": 6,
+      "lesson": 4,
+      "family": "interval",
+      "titleIt": "Intervalli di settima",
+      "titleZh": "七度音程",
+      "incipit": "Fra l'ombre un lampo solo",
+      "focus": "七度跳進。跳到這個幅度時，下方那個音容易被壓垮，上方那個音容易被撞開。",
+      "textIt": [
+        "Fra l'ombre un lampo solo",
+        "basta al nocchier sagace",
+        "che già ritrova il polo,",
+        "che riconosce il mar."
+      ],
+      "textZh": [
+        "黑暗中只要一道閃電，",
+        "精明的舵手就夠了：",
+        "他立刻重新找到北極星，",
+        "認出這片海。"
+      ],
+      "textZhFlat": "黑暗裡一道閃電就夠了，精明的舵手立刻找回北極星、認出這片海。",
+      "source": {
+        "work": "Achille in Sciro",
+        "workZh": "斯基羅島上的阿基里斯",
+        "year": 1737,
+        "place": "第一幕第六場",
+        "speaker": "Ulisse",
+        "addressee": "獨白",
+        "situation": "Ulisse 正在找被藏起來、扮成女孩的 Achille。他從剛才那場對話裡的閃爍口氣和遲疑神色嗅出線索，說：這對別人也許算不上什麼，對 Ulisse 已經很多了。下一節接著說：朝聖者往往只要一個腳印，就不會走錯路。",
+        "verified": true,
+        "url": "https://it.wikisource.org/wiki/Achille_in_Sciro/Atto_primo",
+        "excerpt": "只取原詠嘆調的第一節。年份依 LiederNet 標註。"
+      },
+      "context": [
+        {
+          "label": "唱這首之前的獨白",
+          "it": [
+            "Già con prospero vento",
+            "comincio a navigar. Per altri forse",
+            "quest'incontro felice,",
+            "quel confuso parlar, quel dubbio volto",
+            "poco saria; ma per Ulisse è molto."
+          ],
+          "zh": [
+            "風向已經順了，",
+            "我開始航行。換作別人，",
+            "這場湊巧的相遇、",
+            "那段慌亂的談話、那張遲疑的臉，",
+            "也許算不上什麼；對 Ulisse 已經很多。"
+          ]
+        },
+        {
+          "label": "同一首詠嘆調的第二節，Vaccai 沒有收",
+          "it": [
+            "Al pellegrin ben spesso",
+            "basta un vestigio impresso,",
+            "perché la via fallace",
+            "non l'abbia ad ingannar."
+          ],
+          "zh": [
+            "對旅人來說往往",
+            "地上一個印下的腳印就夠了，",
+            "那條會騙人的路",
+            "就再也騙不了他。"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ex-07",
+      "no": 7,
+      "lesson": 4,
+      "family": "interval",
+      "titleIt": "Intervalli di ottava",
+      "titleZh": "八度音程",
+      "incipit": "Quell'onda che ruina",
+      "focus": "八度跳進，全書音程練習的終點。八度之後接的是半音，難度從距離換成精度。",
+      "textIt": [
+        "Quell'onda che ruina",
+        "balza, si frange e mormora,",
+        "ma limpida si fa."
+      ],
+      "textZh": [
+        "那道崩落的浪，",
+        "跳起、碎開、低聲作響，",
+        "卻也因此變得清澈。"
+      ],
+      "textZhFlat": "崩落的浪跳起、碎開、低鳴，卻也因此變清澈。",
+      "source": {
+        "work": "Alcide al bivio",
+        "workZh": "岔路口的阿爾奇德",
+        "year": null,
+        "place": null,
+        "speaker": null,
+        "addressee": null,
+        "situation": null,
+        "verified": false,
+        "url": "https://www.lieder.net/lieder/assemble_texts.html?SongCycleId=910",
+        "excerpt": "出處劇目依 LiederNet，取原文第 1、3、4 行；義大利文 Wikisource 未收此劇，原始場景待查。"
+      }
+    },
+    {
+      "id": "ex-08",
+      "no": 8,
+      "lesson": 5,
+      "family": "rhythm",
+      "titleIt": "I semitoni",
+      "titleZh": "半音",
+      "incipit": "Delira dubbiosa",
+      "focus": "半音進行。距離變小，音準的容錯也跟著變小；聲音要能在極近的兩個音之間換位置而不換音色。",
+      "textIt": [
+        "Delira dubbiosa,",
+        "incerta vaneggia",
+        "ogni alma che ondeggia",
+        "fra i moti del cor."
+      ],
+      "textZh": [
+        "疑懼地譫妄，",
+        "遲疑地恍惚——",
+        "凡是在心的擺盪之間",
+        "搖晃的靈魂都是這樣。"
+      ],
+      "textZhFlat": "在心的擺盪之間搖晃的靈魂，都會這樣疑懼譫妄、遲疑恍惚。",
+      "source": {
+        "work": "Il sogno di Scipione",
+        "workZh": "西庇阿之夢",
+        "year": 1735,
+        "place": "序幕場景",
+        "speaker": "Scipione",
+        "addressee": "Costanza 與 Fortuna",
+        "situation": "西庇阿在夢裡醒來，恆常女神與機運女神各站一邊，要他當場選一個當人生的同伴。兩位神輪流催他決定，Fortuna 說「我把額髮遞給你，你卻不投向我？」他說：要我開口、要我決定，先讓靈魂有時間喘口氣、有空間認出自己吧。",
+        "verified": true,
+        "url": "https://it.wikisource.org/wiki/Il_sogno_di_Scipione/Il_sogno_di_Scipione",
+        "excerpt": "只取原詠嘆調的第二節。"
+      },
+      "context": [
+        {
+          "label": "唱這首之前的宣敘調",
+          "it": [
+            "Se volete ch'io parli,",
+            "se risolver degg'io, lasciate all'alma",
+            "tempo da respirar, spazio onde possa",
+            "riconoscer se stessa.",
+            "Ditemi, dove son, chi qua mi trasse,",
+            "se vero è quel ch'io veggio,",
+            "se sogno, se son desto, o se vaneggio."
+          ],
+          "zh": [
+            "要我開口、",
+            "要我做決定，先給我的靈魂",
+            "一點喘息的時間、一點空間，讓它",
+            "認得出自己。",
+            "告訴我：我在哪裡？是誰把我帶來的？",
+            "我看見的是真的嗎？",
+            "我在作夢、醒著，還是在說胡話？"
+          ]
+        },
+        {
+          "label": "同一首詠嘆調的第一節，Vaccai 沒有收",
+          "it": [
+            "Risolver non osa",
+            "confusa la mente,",
+            "che oppressa si sente",
+            "da tanto stupor."
+          ],
+          "zh": [
+            "混亂的心",
+            "不敢決定，",
+            "它覺得自己被",
+            "這麼大的驚愕壓住了。"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ex-09",
+      "no": 9,
+      "lesson": 6,
+      "family": "rhythm",
+      "titleIt": "Modo sincopato",
+      "titleZh": "切分",
+      "incipit": "Nel contrasto amor s'accende",
+      "focus": "切分。重音落在拍子的空檔上，靠的是氣的推力而不是喉頭的敲擊。",
+      "textIt": [
+        "Nel contrasto amor s'accende,",
+        "con chi cede o chi s'arrende",
+        "mai sì barbaro non è."
+      ],
+      "textZh": [
+        "愛在對抗裡燒起來；",
+        "對讓步的人、對投降的人，",
+        "它從來沒有那麼殘忍。"
+      ],
+      "textZhFlat": "愛在對抗中燃起；面對讓步或投降的人，它從來不會那麼殘忍。",
+      "source": {
+        "work": null,
+        "workZh": null,
+        "year": null,
+        "place": null,
+        "speaker": null,
+        "addressee": null,
+        "situation": null,
+        "verified": false,
+        "url": "https://www.lieder.net/lieder/assemble_texts.html?SongCycleId=910",
+        "excerpt": "LiederNet 只註明作者是 Metastasio，未指出劇目；全書二十二首裡唯一連出處作品都未定的一首。"
+      }
+    },
+    {
+      "id": "ex-10",
+      "no": 10,
+      "lesson": 7,
+      "family": "line",
+      "titleIt": "Introduzione alle volate",
+      "titleZh": "快速音群・入門",
+      "incipit": "Come il candore",
+      "focus": "快速音群的第一課。原書註明：先慢慢唱，練熟了再逐步推到快板；音要滑順均勻，但每一個都要清楚，不准頓、也不准糊成一片。",
+      "textIt": [
+        "Come il candore",
+        "d'intatta neve",
+        "è d'un bel core",
+        "la fedeltà.",
+        "Un'orma sola",
+        "che in sé riceve",
+        "tutta ne invola",
+        "la sua beltà."
+      ],
+      "textZh": [
+        "就像未經踐踏的雪",
+        "那樣的潔白，",
+        "忠誠之於一顆美好的心",
+        "也是如此。",
+        "只要落下一個腳印，",
+        "雪把它收在身上，",
+        "全部的美",
+        "就被奪走了。"
+      ],
+      "textZhFlat": "忠誠之於美好的心，像未踏過的雪的潔白：落上一個腳印，全部的美就沒了。",
+      "source": {
+        "work": "Alessandro nell'Indie",
+        "workZh": "亞歷山大在印度",
+        "year": 1730,
+        "place": "第三幕",
+        "speaker": "Erissena",
+        "addressee": "Alessandro",
+        "situation": "Erissena 被亞歷山大懷疑不忠。他說「別難過成這樣，一個疑心又不等於定論」，她回答：對那些以榮譽為食、被光榮點燃的靈魂來說，光是被懷疑背叛就已經是冒犯了——接著唱這一段。",
+        "verified": true,
+        "url": "https://it.wikisource.org/wiki/Alessandro_nell%27Indie",
+        "excerpt": "查得的版本在 Wikisource 的「異文」頁，該處末句作 tutta le invola。"
+      },
+      "bookNote": {
+        "en": "At first, the pupil should take the time of this exercise quite slowly. After study, he may work up to a sharp Allegro, progressively, as his capacity allows him. Scales should be sung with extreme smoothness, even and flowingly; but with each note clear and distinct. All jerking and slurring are equally to be avoided.",
+        "zh": "一開始速度要放得很慢，練過之後再照自己的能力逐步推到俐落的快板。音階要唱得極其滑順、均勻、流動，但每個音都要清楚分明。頓挫和含糊帶過同樣要避免。"
+      }
+    },
+    {
+      "id": "ex-11",
+      "no": 11,
+      "lesson": 8,
+      "family": "ornament",
+      "titleIt": "Le appoggiature sopra e sotto",
+      "titleZh": "倚音（上方與下方）",
+      "incipit": "Senza l'amabile",
+      "focus": "倚音。原書註明：它是所有裝飾裡最有表情的一個，時值向後面那個音借，可以稍微拉長，絕不能縮短。",
+      "textIt": [
+        "Senza l'amabile",
+        "Dio di Citera",
+        "i dì non tornano",
+        "di primavera,",
+        "non spira un zeffiro,",
+        "non spunta un fior.",
+        "L'erbe sul margine",
+        "del fonte amico,",
+        "le piante vedove",
+        "sul colle aprico",
+        "per lui rivestono",
+        "l'antico onor."
+      ],
+      "textZh": [
+        "沒有那位可親的",
+        "庫忒拉之神，",
+        "春天的日子",
+        "就不會回來，",
+        "沒有一陣和風吹起，",
+        "沒有一朵花冒出頭。",
+        "溪邊的青草、",
+        "那條友善的泉水旁，",
+        "向陽山坡上",
+        "守寡的樹，",
+        "都是為了他",
+        "才重新披上舊日的光彩。"
+      ],
+      "textZhFlat": "沒有愛神，春天不會回來，風不吹、花不開；溪畔的草與向陽坡上的樹，都是為了他才重新披上舊日的光彩。",
+      "note": "庫忒拉（Citera）是愛神維納斯的島，「庫忒拉之神」即愛神。",
+      "source": {
+        "work": "L'asilo d'Amore",
+        "workZh": "愛神的庇護所",
+        "year": 1732,
+        "place": null,
+        "speaker": null,
+        "addressee": null,
+        "situation": null,
+        "verified": false,
+        "url": "https://www.lieder.net/lieder/assemble_texts.html?SongCycleId=910",
+        "excerpt": "出處作品依 LiederNet；Wikisource 收的〈Asilo d'Amore〉頁面未含這一段，原始場景待查。"
+      },
+      "bookNote": {
+        "en": "The Appoggiatura (or leaning note) is the most expressive of all the musical adornments. The effect is gained by borrowing the full value indicated from the note that follows. On some occasions, the singer may slightly lengthen the time; but never, in any case, abbreviate it.",
+        "zh": "倚音是所有音樂裝飾裡最有表情的一個。效果來自向後面那個音借走它標示的全部時值。有時候可以把時間稍微拉長，但無論如何都不可以縮短。"
+      }
+    },
+    {
+      "id": "ex-12",
+      "no": 12,
+      "lesson": 8,
+      "family": "ornament",
+      "titleIt": "L'acciaccatura",
+      "titleZh": "短倚音",
+      "incipit": "Benché di senso privo",
+      "focus": "短倚音。原書註明：它和倚音不同，不向後面的音借時值，只是稍微加強那個音的重音；要極輕、極快，從前面偷走的時間要少到幾乎察覺不到。",
+      "textIt": [
+        "Benché di senso privo",
+        "fin l'arboscello è grato",
+        "a quell'amico rivo",
+        "da cui riceve umor:",
+        "per lui di fronde ornato",
+        "bella mercé gli rende",
+        "dal sol quando difende",
+        "il suo benefattor."
+      ],
+      "textZh": [
+        "即使沒有知覺，",
+        "連小樹也懂得感激",
+        "那條友善的溪流——",
+        "它從那裡得到水分。",
+        "靠它才長滿了枝葉，",
+        "小樹回報得漂亮：",
+        "在烈日下替恩人",
+        "遮出一片蔭。"
+      ],
+      "textZhFlat": "連沒有知覺的小樹也懂得感激給它水分的溪流：靠溪水長滿枝葉之後，它就替恩人擋住烈日。",
+      "source": {
+        "work": "L'isola disabitata",
+        "workZh": "無人島",
+        "year": null,
+        "place": null,
+        "speaker": null,
+        "addressee": null,
+        "situation": null,
+        "verified": false,
+        "url": "https://www.lieder.net/lieder/assemble_texts.html?SongCycleId=910",
+        "excerpt": "出處作品依 LiederNet；義大利文 Wikisource 未收此劇，原始場景待查。"
+      },
+      "bookNote": {
+        "en": "The Acciaccatura (or grace note) differs from the Appoggiatura in borrowing nothing from the value of the note that follows, though it may slightly intensify its accent. It should be sung with extreme lightness and ease, swiftly, and with the least appreciable time stolen from whatever precedes it.",
+        "zh": "短倚音與倚音的差別在於：它不向後面那個音借任何時值，只是可能稍微加強它的重音。唱的時候要極輕鬆、極輕巧、極快，從前面那個音偷走的時間要少到幾乎察覺不出來。"
+      }
+    },
+    {
+      "id": "ex-13",
+      "no": 13,
+      "lesson": 9,
+      "family": "ornament",
+      "titleIt": "Introduzione al mordente",
+      "titleZh": "漣音・入門",
+      "incipit": "La gioia verace",
+      "focus": "漣音。兩個音之間快速的一次來回，重量放在主音上，裝飾音本身不承重。",
+      "textIt": [
+        "La gioia verace",
+        "per farsi palese",
+        "d'un labbro loquace",
+        "bisogno non ha."
+      ],
+      "textZh": [
+        "真正的喜悅",
+        "要顯露出來，",
+        "並不需要",
+        "一張多話的嘴。"
+      ],
+      "textZhFlat": "真正的喜悅要讓人看見，並不需要一張多話的嘴。",
+      "source": {
+        "work": "Giuseppe riconosciuto",
+        "workZh": "約瑟相認",
+        "year": 1733,
+        "place": "第二部",
+        "speaker": null,
+        "addressee": null,
+        "situation": null,
+        "verified": true,
+        "url": "https://it.wikisource.org/wiki/Chi_l%27ha_detto%3F/Parte_prima/56",
+        "excerpt": "只取原詠嘆調的第二節。出處經《Chi l'ha detto?》引用核對到「Metastasio, Giuseppe riconosciuto, parte II，巴黎 1780 年版第七卷頁 297」；場中是誰唱的待查。"
+      }
+    },
+    {
+      "id": "ex-14",
+      "no": 14,
+      "lesson": 9,
+      "family": "ornament",
+      "titleIt": "Lo stesso in diversi modi",
+      "titleZh": "同一個漣音的不同寫法",
+      "incipit": "L'augelletto in lacci stretto",
+      "focus": "同一個漣音換幾種寫法與位置。目的是讓手上的裝飾脫離某一個固定樣板。",
+      "textIt": [
+        "L'augelletto in lacci stretto",
+        "perché mai cantar s'ascolta?",
+        "Perché spera un'altra volta",
+        "di tornare in libertà."
+      ],
+      "textZh": [
+        "被網子緊緊縛住的小鳥，",
+        "為什麼還聽得見牠在唱？",
+        "因為牠還盼著有一天",
+        "重新回到自由裡。"
+      ],
+      "textZhFlat": "被網縛住的小鳥為什麼還在唱？因為牠還盼著重獲自由。",
+      "source": {
+        "work": "Didone abbandonata",
+        "workZh": "被遺棄的狄多",
+        "year": null,
+        "place": "第二幕",
+        "speaker": "Araspe",
+        "addressee": "獨白",
+        "situation": "Araspe 剛被告知不必再抱希望。他說：你是叫我別再指望，可是你講得還不夠徹底——最後失去的才是希望。接著唱這隻籠中鳥。",
+        "verified": true,
+        "url": "https://it.wikisource.org/wiki/Didone_abbandonata",
+        "excerpt": "只取原詠嘆調的第一節。查得的版本在 Wikisource 的「異文」頁。"
+      },
+      "context": [
+        {
+          "label": "唱這首之前的獨白",
+          "it": [
+            "Tu dici ch'io non speri,",
+            "ma nol dici abbastanza.",
+            "L'ultima che si perde è la speranza."
+          ],
+          "zh": [
+            "你叫我別再指望，",
+            "可是你講得還不夠徹底：",
+            "最後失去的才是希望。"
+          ]
+        },
+        {
+          "label": "同一首詠嘆調的第二節，Vaccai 沒有收",
+          "it": [
+            "Nel conflitto sanguinoso",
+            "quel guerrier perché non geme?",
+            "Perché gode con la speme",
+            "quel riposo che non ha."
+          ],
+          "zh": [
+            "在血腥的戰鬥裡",
+            "那名戰士為什麼不呻吟？",
+            "因為他靠著盼望，先嘗到了",
+            "他其實還沒得到的安寧。"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ex-15",
+      "no": 15,
+      "lesson": 10,
+      "family": "ornament",
+      "titleIt": "Introduzione al gruppetto",
+      "titleZh": "迴音・入門",
+      "incipit": "Quando accende un nobil petto",
+      "focus": "迴音。三、四個音繞主音一圈，要繞得像沒有用力。",
+      "textIt": [
+        "Quando accende un nobil petto",
+        "è innocente e puro affetto,",
+        "debolezza amor non è."
+      ],
+      "textZh": [
+        "當愛點燃的是一顆高貴的胸懷，",
+        "它就是無辜而純粹的情感；",
+        "愛並不是軟弱。"
+      ],
+      "textZhFlat": "愛若點燃的是高貴的心，它就是無辜純粹的情感，並不是軟弱。",
+      "source": {
+        "work": "Il trionfo di Clelia",
+        "workZh": "克莉莉亞的凱旋",
+        "year": null,
+        "place": null,
+        "speaker": null,
+        "addressee": null,
+        "situation": null,
+        "verified": false,
+        "url": "https://www.lieder.net/lieder/assemble_texts.html?SongCycleId=910",
+        "excerpt": "出處劇目依 LiederNet，取原文第八節；義大利文 Wikisource 未收此劇，原始場景待查。"
+      }
+    },
+    {
+      "id": "ex-16",
+      "no": 16,
+      "lesson": 10,
+      "family": "ornament",
+      "titleIt": "Il gruppetto",
+      "titleZh": "迴音",
+      "incipit": "Più non si trovano",
+      "focus": "迴音的正式一課。原書對這個裝飾的態度最嚴：它是唯一容許歌者自行斟酌的自由，一旦聽得出用力或事先安排就完了。",
+      "textIt": [
+        "Più non si trovano",
+        "tra mille amanti",
+        "sol due bell'anime",
+        "che sian costanti,",
+        "e tutti parlano",
+        "di fedeltà."
+      ],
+      "textZh": [
+        "再也找不到了——",
+        "一千個情人裡",
+        "連兩顆美好而堅定的靈魂",
+        "都湊不出來，",
+        "而每一個人",
+        "都在談忠貞。"
+      ],
+      "textZhFlat": "一千個情人裡再也找不出兩顆堅定的靈魂，偏偏每個人都在談忠貞。",
+      "source": {
+        "work": "L'olimpiade",
+        "workZh": "奧林匹亞競技",
+        "year": null,
+        "place": "第一幕第七場",
+        "speaker": "Argene",
+        "addressee": "獨白",
+        "situation": "Argene 剛發現 Licida 已經把她忘了。她對著空無一人的舞台說：沒經驗的姑娘們，學著點，這就是甜言蜜語的情人的手法——每個人都叫你我的寶貝、我的命、我的珍寶，每個人都發誓想你想到白天恍惚、夜裡不睡；他們有本事流淚、有本事臉色發白，有時候看起來簡直要死在你眼前。提防他們，全是騙術。",
+        "verified": true,
+        "url": "https://it.wikisource.org/wiki/Olimpiade/Atto_primo",
+        "excerpt": "只取原詠嘆調的第一節。"
+      },
+      "bookNote": {
+        "en": "Of all the musical graces or embellishments the Gruppetto (or Turn) is, at once, the most varied and the most difficult, from the apparent ease and lightness with which it must be executed… It is, therefore, the only licence that the singer may occasionally take on his own responsibility. The slightest appearance of effort or premeditation is fatal.",
+        "zh": "所有裝飾音裡，迴音同時是變化最多、也最難的一個，因為它必須做得看起來毫不費力、毫無重量。它能給歌唱帶來很大的魅力，又不影響個別樂句該有的情緒和作曲家的整體意圖——所以它是歌者唯一可以偶爾自行負責決定的自由。只要露出一點點用力或事先安排的痕跡，就全毀了。"
+      },
+      "context": [
+        {
+          "label": "唱這首之前的宣敘調（節錄）",
+          "it": [
+            "Imparate, imparate,",
+            "inesperte donzelle. Ecco lo stile",
+            "de' lusinghieri amanti. Ognun vi chiama",
+            "suo ben, sua vita e suo tesoro: ognuno",
+            "giura che, a voi pensando,",
+            "vaneggia il dì, veglia le notti. Han l'arte",
+            "di lagrimar, d'impallidir."
+          ],
+          "zh": [
+            "學著點吧，學著點，",
+            "沒經驗的姑娘們。這就是那些",
+            "甜言蜜語的情人的手法。每個人都叫你",
+            "我的寶貝、我的命、我的珍寶；每個人都",
+            "發誓說，一想到你，",
+            "白天恍惚、整夜不睡。他們有本事",
+            "流眼淚、有本事讓自己臉色發白。"
+          ]
+        },
+        {
+          "label": "同一首詠嘆調的第二節，Vaccai 沒有收",
+          "it": [
+            "E il reo costume",
+            "tanto s'avanza,",
+            "che la costanza",
+            "di chi ben ama",
+            "ormai si chiama",
+            "semplicità."
+          ],
+          "zh": [
+            "而這股壞風氣",
+            "走得這麼遠，",
+            "真心愛人的人",
+            "那份堅定，",
+            "如今被叫做",
+            "傻。"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ex-17",
+      "no": 17,
+      "lesson": 11,
+      "family": "ornament",
+      "titleIt": "Introduzione al trillo",
+      "titleZh": "顫音・入門",
+      "incipit": "Se povero il ruscello",
+      "focus": "顫音。兩個音的快速交替，速度來自放鬆而不是抖動。",
+      "textIt": [
+        "Se povero il ruscello",
+        "mormora lento e basso,",
+        "un ramoscello, un sasso",
+        "quasi arrestar lo fa."
+      ],
+      "textZh": [
+        "溪水少的時候，",
+        "它低低地、慢慢地流，",
+        "一根小樹枝、一塊石頭，",
+        "就幾乎能把它攔下來。"
+      ],
+      "textZhFlat": "溪水少時流得又低又慢，一根樹枝、一塊石頭就幾乎能攔住它。",
+      "source": {
+        "work": "Ezio",
+        "workZh": "埃齊歐",
+        "year": null,
+        "place": "第一幕第八場",
+        "speaker": "Massimo",
+        "addressee": "皇帝 Valentiniano",
+        "situation": "Massimo 表面上勸諫皇帝：民心浮動要趁危險還小的時候擋。他用的比喻是溪水——後面那半段說，等水漲滿了溢過堤岸，再多的堤防也擋不住，它就混濁地奔向大海。",
+        "verified": true,
+        "url": "https://it.wikisource.org/wiki/Ezio/Atto_primo",
+        "excerpt": "只取原詠嘆調的第一節。"
+      },
+      "context": [
+        {
+          "label": "唱這首之前的宣敘調",
+          "it": [
+            "Signor, meglio d'ogni altro",
+            "sai l'arte di regnare. Hanno i monarchi",
+            "un lume ignoto a noi. Parlai finora",
+            "per zelo sol del tuo riposo, e volli",
+            "rammentar che si deve",
+            "ad un periglio opporsi infin che è lieve."
+          ],
+          "zh": [
+            "陛下，統治這門手藝",
+            "你比誰都懂。君王有一種",
+            "我們看不見的光。我方才說的那些，",
+            "只是關心你的安寧；我想",
+            "提醒一件事：危險",
+            "要趁它還小的時候擋。"
+          ]
+        },
+        {
+          "label": "同一首詠嘆調的第二節，Vaccai 沒有收",
+          "it": [
+            "Ma se alle sponde poi",
+            "gonfio d'umor sovrasta,",
+            "argine oppor non basta,",
+            "e co' ripari suoi",
+            "torbido al mar sen va."
+          ],
+          "zh": [
+            "可是等它漲滿了水",
+            "高過兩岸，",
+            "築堤也擋不住，",
+            "它會連著人築的防線一起",
+            "混濁地奔向大海。"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ex-18",
+      "no": 18,
+      "lesson": 12,
+      "family": "line",
+      "titleIt": "Le volate",
+      "titleZh": "快速音群",
+      "incipit": "Siam navi all'onde algenti",
+      "focus": "快速音群的正式一課。速度到位之後，每個音仍要有自己的位置；原書那句「頓挫與含糊同樣要避免」在這裡才真正吃力。",
+      "textIt": [
+        "Siam navi all'onde algenti",
+        "lasciate in abbandono,",
+        "impetuosi venti",
+        "i nostri affetti sono,",
+        "ogni diletto è scoglio,",
+        "tutta la vita è un mar."
+      ],
+      "textZh": [
+        "我們是冰冷波浪裡的船，",
+        "被丟著沒人管；",
+        "我們的情感",
+        "是狂暴的風；",
+        "每一種歡愉都是暗礁，",
+        "整個人生就是一片海。"
+      ],
+      "textZhFlat": "我們是被丟在冰冷浪裡無人看管的船，情感是狂風，每種歡愉都是暗礁，整個人生就是一片海。",
+      "source": {
+        "work": "L'olimpiade",
+        "workZh": "奧林匹亞競技",
+        "year": null,
+        "place": "第二幕第五場",
+        "speaker": "Aminta",
+        "addressee": "獨白",
+        "situation": "老教僕 Aminta 先笑年輕人被愛情推來推去：從岸上看人快要翻船，是件愉快的事——不是幸災樂禍，只是自己不必受的苦看起來總是好看。然後他反問自己：白髮的年紀就沒有自己的風暴嗎？有的，而且照樣沒有從對別人的恐懼裡脫身。愚蠢的種類不同，但每個人都愚蠢。",
+        "verified": true,
+        "url": "https://it.wikisource.org/wiki/Olimpiade/Atto_secondo",
+        "excerpt": "只取原詠嘆調的第一節。"
+      },
+      "context": [
+        {
+          "label": "唱這首之前的獨白",
+          "it": [
+            "Ma che! l'età canuta",
+            "non ha le sue tempeste? Ah! che purtroppo",
+            "ha le sue proprie, e dal timor dell'altre",
+            "sciolta non è. Son le follie diverse,",
+            "ma folle è ognuno; e a suo piacer ne aggira",
+            "l'odio o l'amor, la cupidigia o l'ira."
+          ],
+          "zh": [
+            "可是——白髮的年紀",
+            "就沒有自己的風暴嗎？可惜，",
+            "它有它自己的，而且照樣沒能從",
+            "對別人那些風暴的恐懼裡脫身。愚蠢的種類不同，",
+            "但每個人都愚蠢；恨或愛、貪或怒，",
+            "想怎麼擺弄我們就怎麼擺弄。"
+          ]
+        },
+        {
+          "label": "同一首詠嘆調的第二節，Vaccai 沒有收",
+          "it": [
+            "Ben, qual nocchiero, in noi",
+            "veglia ragion; ma poi",
+            "pur dall'ondoso orgoglio",
+            "si lascia trasportar."
+          ],
+          "zh": [
+            "理智確實像個舵手，",
+            "在我們心裡守著；可是到頭來",
+            "它照樣被那片高傲的浪",
+            "捲著走。"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ex-19",
+      "no": 19,
+      "lesson": 13,
+      "family": "line",
+      "titleIt": "Modo per portare la voce",
+      "titleZh": "聲音的攜帶（第一種）",
+      "incipit": "Vorrei spiegar l'affanno",
+      "focus": "portamento 的第一種：預先起動。用前一個音節的母音去承接下一個音的時值。原書警告：這一招很有效，正因為有效，要用得非常省。",
+      "textIt": [
+        "Vorrei spiegar l'affanno,",
+        "nasconderlo vorrei,",
+        "e mentre i dubbi miei",
+        "così crescendo vanno,",
+        "tutto spiegar non oso,",
+        "tutto non so tacer.",
+        "Sollecito, dubbioso,",
+        "penso, rammento e vedo,",
+        "e agli occhi miei non credo,",
+        "non credo al mio pensier."
+      ],
+      "textZh": [
+        "我想把這份苦說清楚，",
+        "又想把它藏起來；",
+        "而當我的疑慮",
+        "就這樣一路長大，",
+        "我不敢全部說出來，",
+        "也沒辦法全部不說。",
+        "焦急、遲疑，",
+        "我想著、回憶著、看著，",
+        "卻不相信自己的眼睛，",
+        "也不相信自己的念頭。"
+      ],
+      "textZhFlat": "想說又想藏；疑慮一路長大，全說不敢，全不說也做不到——我想、我回憶、我看見，卻既不信自己的眼睛，也不信自己的念頭。",
+      "source": {
+        "work": "Semiramide riconosciuta",
+        "workZh": "塞彌拉彌斯相認",
+        "year": null,
+        "place": "第一幕第四場",
+        "speaker": "Scitalce",
+        "addressee": "Tamiri",
+        "situation": "Scitalce 剛認出眼前的人是 Semiramide——他以為自己親手殺了她。他心裡在想「她還活著？可是不是我自己殺的嗎？當時在作夢，還是現在在作夢？」Tamiri 追問他到底愛不愛她，他只能回答：我要是說了，只會讓你更混亂。",
+        "verified": true,
+        "url": "https://it.wikisource.org/wiki/Semiramide/Atto_primo",
+        "excerpt": "取原詠嘆調全文。"
+      },
+      "bookNote": {
+        "en": "In order to acquire an effective Portamento, the pupil must be careful not to slur one note into the other with that sort of quavering that one hears too frequently in ill-trained voices. On the contrary, he must blend the different registers and so bind the notes so that they seem to flow into one even tone… the Portamento can be taken \"by Anticipation\" or \"by Posticipation\". By the first of these methods, the singer attacks the value of the following note with the vowel of the preceding syllable… In certain phrases, where a great deal of sentiment has to be expressed, this manner is highly effective. For this very reason it must be used very sparingly, as in abuse it sounds affected, and the music grows languishing and monotonous.",
+        "zh": "要練出有效的 portamento，首先不能用那種在訓練不良的嗓子上常聽到的顫抖把一個音滑進另一個音。相反地，要把不同的聲區調和起來、把音接住，讓它們像流進同一個均勻的音裡。第一課那套樂句法真的掌握之後，portamento 不會太難，但這裡比任何地方都更需要老師或內行人當場示範。做法有兩種：預先起動與延後起動。前者是用前一個音節的母音去承接後一個音的時值；在那些要表達大量情感的樂句上非常有效，也正因為有效，必須用得非常省——濫用起來就顯得矯情，音樂會變得軟綿而單調。後者比較少見，是幾乎察覺不到地用前一個音節的時值去起動後面那個音節。"
+      },
+      "context": [
+        {
+          "label": "唱這首之前 Scitalce 說的話（中間 Tamiri 的追問未錄）",
+          "it": [
+            "(Che vidi! che ascoltai!",
+            "Semiramide vive!",
+            "Ma non l'uccisi io stesso?",
+            "O sognavo in quel punto, o sogno adesso.)",
+            "Perdonami, o Tamiri.",
+            "Se tu sapessi... Oh Dio!",
+            "Se parlo,",
+            "più confusa ti rendo."
+          ],
+          "zh": [
+            "（我看見了什麼！我聽見了什麼！",
+            "Semiramide 還活著！",
+            "可是不是我親手殺了她嗎？",
+            "不是那時候在作夢，就是現在在作夢。）",
+            "原諒我，Tamiri。",
+            "你要是知道……天啊！",
+            "我要是說了，",
+            "只會讓你更混亂。"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ex-20",
+      "no": 20,
+      "lesson": 13,
+      "family": "line",
+      "titleIt": "L'altro modo",
+      "titleZh": "聲音的攜帶（第二種）",
+      "incipit": "O placido il mare",
+      "focus": "portamento 的第二種：延後起動。用前一個音節的時值幾乎察覺不到地帶出後一個音節。",
+      "textIt": [
+        "O placido il mare",
+        "lusinghi la sponda,",
+        "o porti con l'onda",
+        "terrore e spavento:",
+        "è colpa del vento,",
+        "sua colpa non è."
+      ],
+      "textZh": [
+        "不論大海平靜地",
+        "輕撫著岸，",
+        "還是隨著浪",
+        "帶來恐懼與驚駭：",
+        "那是風的錯，",
+        "不是它的錯。"
+      ],
+      "textZhFlat": "海不論是平靜輕撫著岸，還是隨浪帶來恐懼，那都是風的錯，不是海的錯。",
+      "source": {
+        "work": "Siroe, re di Persia",
+        "workZh": "波斯王西羅埃",
+        "year": 1726,
+        "place": "第一幕第八場",
+        "speaker": "Laodice",
+        "addressee": "Arasse",
+        "situation": "Laodice 態度一夜之間反轉，Arasse 問她怎麼變成這樣，又說大家都會責備她善變輕浮。她回答：改變想法往往才是堅定。接著唱這一段——把責任推給風的，正是她自己。下一節說：如果我隨命運換一副樣子，那麼善變對我來說就成了美德。",
+        "verified": true,
+        "url": "https://it.wikisource.org/wiki/Siroe/Atto_primo",
+        "excerpt": "只取原詠嘆調的第一節。"
+      },
+      "context": [
+        {
+          "label": "唱這首之前的對話",
+          "it": [
+            "Arasse: Condannerà ciascuno",
+            "il tuo genio volubile e leggiero.",
+            "Laodice: Costanza è spesso il variar pensiero."
+          ],
+          "zh": [
+            "Arasse：人人都會責備",
+            "你這善變輕浮的性子。",
+            "Laodice：改變想法，往往才是堅定。"
+          ]
+        },
+        {
+          "label": "同一首詠嘆調的第二節，Vaccai 沒有收",
+          "it": [
+            "S'io vo con la sorte",
+            "cangiando sembianza,",
+            "virtù l'incostanza",
+            "diventa per me."
+          ],
+          "zh": [
+            "如果我跟著命運",
+            "換一副樣子，",
+            "那麼善變對我來說",
+            "就成了美德。"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ex-21",
+      "no": 21,
+      "lesson": 14,
+      "family": "declamation",
+      "titleIt": "Il recitativo",
+      "titleZh": "宣敘調",
+      "incipit": "La Patria è un tutto",
+      "focus": "宣敘調。原書註明：沒有一個地方比宣敘調更需要每個字每個音節都清楚；樂句末尾出現兩個同音、或句中連著幾個同音時，落在重音上的那個音要整個轉成後一個音的倚音。",
+      "textIt": [
+        "La Patria è un tutto",
+        "di cui siam parti,",
+        "al cittadino è fallo",
+        "considerar se stesso",
+        "separato da lei:",
+        "l'utile o il danno",
+        "ch'ei conoscer dee solo",
+        "è ciò che giova",
+        "o nuoce alla sua patria",
+        "a cui di tutto è debitor.",
+        "Quando i sudori e il sangue",
+        "sparge per lei",
+        "nulla del proprio ei dona,",
+        "rende sol ciò che n'ebbe.",
+        "Essa il produsse,",
+        "l'educò, lo nudrì:",
+        "con le sue leggi",
+        "dagl'insulti domestici",
+        "il difende,",
+        "dagli esterni con l'armi.",
+        "Ella gli presta nome,",
+        "grado ed onor,",
+        "ne premia il merto,",
+        "ne vendica le offese,",
+        "e madre amante,",
+        "a fabbricar s'affanna",
+        "la sua felicità,",
+        "per quanto lice",
+        "al destin dei mortali",
+        "esser felice."
+      ],
+      "textZh": [
+        "祖國是一個整體，",
+        "我們是它的部分；",
+        "公民若把自己",
+        "看成",
+        "與它分離的，那就錯了。",
+        "利或害——",
+        "他唯一該認得的，",
+        "就是什麼對他的祖國有益、",
+        "什麼對它有害；",
+        "他的一切都欠這個國家。",
+        "當他為它流汗流血、",
+        "為它耗盡自己，",
+        "他並沒有給出任何屬於自己的東西，",
+        "只是把得來的還回去。",
+        "是它生下他，",
+        "教養他、餵大他；",
+        "用它的法律",
+        "擋住來自內部的侵害、",
+        "保護他，",
+        "用武力擋住外來的。",
+        "它借給他名字、",
+        "身分與榮譽，",
+        "獎賞他的功勞，",
+        "替他報復所受的冒犯；",
+        "而且像個慈愛的母親，",
+        "費盡心力替他打造",
+        "他的幸福——",
+        "在容許的範圍內，",
+        "在凡人的命運裡",
+        "盡可能地幸福。"
+      ],
+      "textZhFlat": "祖國是整體，我們是部分。公民若把自己看成與它分離的，那就錯了。",
+      "source": {
+        "work": "Attilio Regolo",
+        "workZh": "阿蒂利烏斯・雷古盧斯",
+        "year": 1740,
+        "place": "第二幕",
+        "speaker": "Regolo",
+        "addressee": "他的兒子 Publio",
+        "situation": "羅馬執政官 Regolo 遭迦太基俘虜，被放回羅馬勸和，卻立誓談不成就回去受死。兒子勸他別走，說「可是祖國並不是……」，他當場打斷，就是這段話。他前面剛說過：靠祖國受損來換回自己的自由，那自由與生命對我就是禍；用自己的血替祖國保住命運，那奴役與死亡對我就是福。",
+        "verified": true,
+        "url": "https://it.wikisource.org/wiki/Attilio_Regolo/Atto_secondo",
+        "excerpt": "Vaccai 取用時把原文的分行併過，個別字詞（nudrì／de' mortali）依版本略有出入。"
+      },
+      "bookNote": {
+        "en": "We need hardly say, that nowhere is a clear enunciation of each word and syllable of more importance than in Recitative: otherwise, it must perforce quite fail in its mission. When we come across two similar notes at the end of a phrase, or several repeated notes in the body of a phrase, the note on which the word-accent falls should be entirely converted into an appoggiatura of the following note.",
+        "zh": "不必多說，沒有任何地方比宣敘調更需要每個字、每個音節都念清楚，否則它必定完全達不到目的。樂句末尾出現兩個相同的音、或句子中間連著幾個重複的音時，落在字重音上的那個音應該整個轉成後一個音的倚音。"
+      },
+      "context": [
+        {
+          "label": "唱這首之前的宣敘調，以及引出這段話的那一句",
+          "it": [
+            "Publio, tu stimi",
+            "dunque un furore il mio? Credi ch'io solo,",
+            "fra ciò che vive, odii me stesso? Oh, quanto",
+            "t'inganni! Al par d'ogni altro,",
+            "bramo il mio ben, fuggo il mio mal. Ma questo",
+            "trovo sol nella colpa, e quello io trovo",
+            "nella sola virtù. Colpa sarebbe",
+            "della patria col danno",
+            "ricuperar la libertà smarrita;",
+            "ond'è mio mal la libertà, la vita:",
+            "virtù col proprio sangue",
+            "è della patria assicurar la sorte;",
+            "ond'è mio ben la servitù, la morte.",
+            "Publio: Pur la patria non è..."
+          ],
+          "zh": [
+            "Publio，你以為",
+            "我這是發瘋嗎？你以為所有活著的東西裡，",
+            "只有我恨我自己？你錯得",
+            "太離譜了。跟任何人一樣，",
+            "我求我的好、躲我的壞。只是我發現：",
+            "壞只在罪裡，好只在",
+            "德行裡。拿祖國受的損害",
+            "換回自己失去的自由，",
+            "那會是罪；",
+            "所以自由與生命，對我是禍。",
+            "用自己的血",
+            "替祖國保住命運，那是德行；",
+            "所以奴役與死亡，對我是福。",
+            "Publio：可是祖國並不是……"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ex-22",
+      "no": 22,
+      "lesson": 15,
+      "family": "declamation",
+      "titleIt": "Riepilogo",
+      "titleZh": "總複習",
+      "incipit": "Alla stagion de' fiori",
+      "focus": "前面所有規則的合併練習。原書標題就寫著：把先前各課給過的規則做一次總複習與綜合。",
+      "textIt": [
+        "Alla stagion de' fiori",
+        "e de' novelli amori,",
+        "è grato il molle fiato",
+        "d'un zeffiro legger.",
+        "O gema fra le fronde,",
+        "o lento increspi l'onde,",
+        "zeffiro in ogni lato",
+        "compagno è del piacer."
+      ],
+      "textZh": [
+        "在花的季節、",
+        "在新戀情的季節，",
+        "一陣輕風柔軟的呼吸",
+        "令人舒服。",
+        "不論它在枝葉間低吟，",
+        "還是慢慢吹皺水面，",
+        "微風走到哪裡",
+        "都是歡愉的同伴。"
+      ],
+      "textZhFlat": "在花季、在新戀情的季節，輕風柔軟的一口氣令人舒服；它在枝葉間低吟也好、吹皺水面也好，走到哪裡都是歡愉的同伴。",
+      "source": {
+        "work": "L'armonica",
+        "workZh": "玻璃琴",
+        "year": null,
+        "place": null,
+        "speaker": null,
+        "addressee": null,
+        "situation": null,
+        "verified": false,
+        "url": "https://www.lieder.net/lieder/assemble_texts.html?SongCycleId=910",
+        "excerpt": "依 LiederNet，出自清唱劇《L'armonica》裡的第四首〈Il quadro animato〉；義大利文 Wikisource 未收此作，原文與場景待查。"
+      }
+    }
+  ],
+  "diction": {
+    "title": "義大利歌唱咬字：這首用得到的幾條",
+    "forExercise": "ex-04",
+    "items": [
+      {
+        "point": "雙子音要真的唱成兩倍長",
+        "detail": "avvezzo 的 -vv- 與 -zz- 都要撐住。子音撐長的時間是從前一個母音那裡拿的，所以 a-vvé-zzo 的第一個 a 反而變短。唱成單子音（avezo）在義大利文裡是另一個詞的長相。"
+      },
+      {
+        "point": "zz 在這裡是清音 [ts]",
+        "detail": "avvezzo 讀作 [avˈvet.tso]，不是 [dz]。舌尖抵上齒齦，破擦一次就走，不要在上面停留。"
+      },
+      {
+        "point": "重音位置",
+        "detail": "avvézzo、confórto、pòrto、pavénto、már。四行的最後一個重音分別落在 vé、fór、pòr、má——這也是四個樂句的落點。"
+      },
+      {
+        "point": "閉母音與開母音",
+        "detail": "conforto 的 o 與 porto 的 o 在標準義語裡是開的 [ɔ]；pavento 的 e 是閉的 [e]。唱的時候不必把開母音撐得太扁，但也不要一律用同一個 o。"
+      },
+      {
+        "point": "行末的母音不要收掉",
+        "detail": "vivere 的字尾 -e、conforto 的 -o 都要唱滿時值再走。第一課那條規則（聲音停在母音上、子音在最後一瞬發）在這裡是四行都適用的。"
+      }
+    ],
+    "note": "以上是唱這首時我自己會特別注意的幾件事，不是 Vaccai 原書的內容。原書自己怎麼講咬字，見下面兩段。",
+    "seeAlso": [
+      "ex-01",
+      "ex-21"
+    ],
+    "seeAlsoLabel": "原書關於咬字的兩段話"
+  },
+  "log": [
+    {
+      "date": "2026-07-27",
+      "exercise": "ex-04",
+      "what": "第二課後半的五度音程〈Avvezzo a vivere〉，這幾天在練。",
+      "focus": "四行、四個五度落點；先確認 avvezzo 的雙子音沒有被吃掉，再處理跳進兩端的音色一致。"
+    }
+  ]
+}

@@ -26,7 +26,14 @@ export default function TableOfContents({ containerRef, label = '本頁目次', 
     // real character. CSS margin between a heading's parts (e.g. a count span with
     // ml-2) shows on the page but is invisible here, so the outline would jam the
     // parts together — put the space in the text, not in the margin.
-    setItems(headings.map((h) => ({ id: h.id, text: h.textContent, level: Number(h.tagName[1]) })));
+    // 標籤優先吃 data-toc：內容欄的標題可以寫得完整，側欄那條只有 13rem 寬，長標題在那裡
+    // 會斷成不成句的兩三行。頁面用 data-toc 給一個短標，就不必為了側欄把正文標題砍短。
+    setItems(headings.map((h) => ({
+      id: h.id,
+      text: h.dataset.toc || h.textContent,
+      full: h.textContent,
+      level: Number(h.tagName[1]),
+    })));
 
     // The section counts as current once its heading reaches the top third of the
     // window; without the bottom margin the last section could never win, since
@@ -53,9 +60,16 @@ export default function TableOfContents({ containerRef, label = '本頁目次', 
           const on = it.id === active;
           return (
             <li key={it.id} style={{ paddingLeft: it.level === 3 ? 22 : 12 }}>
+              {/*
+                * 側欄只有 13rem 寬，長標題在這裡最多折兩行，第三行起截斷（滑過去看完整標題）。
+                * line-break: strict 讓中日文的斷行避開「（」「）」「、」這些位置——沒有它，
+                * 「倚音（上方與下方）」會斷成「…（上方與下」＋「方）」，讀起來像壞掉。
+                * text-wrap: pretty 讓最後一行不會只剩一兩個字。
+                */}
               <a
                 href={`#${it.id}`}
-                className="-ml-px block border-l-2 py-0.5 pl-2 transition-colors duration-fast"
+                title={it.full}
+                className="-ml-px block border-l-2 py-0.5 pl-2 transition-colors duration-fast [line-break:strict] [text-wrap:pretty] line-clamp-2"
                 style={{
                   borderColor: on ? 'var(--c-accent)' : 'transparent',
                   color: on ? 'var(--c-ink)' : 'var(--c-ink-faint)',

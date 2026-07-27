@@ -1,6 +1,6 @@
 import React, { Suspense, lazy, useMemo } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useParams, Navigate } from 'react-router-dom';
-import { ArrowRight, BookMarked, CalendarDays, Droplets, FileSearch, Film, Gavel, Globe2, GraduationCap, Landmark, Languages, Mic, Music, Music2, Palette, Piano, Receipt, Scale, ScrollText, ShieldAlert, Sigma, Wind } from 'lucide-react';
+import { ArrowRight, AudioLines, BookMarked, CalendarDays, Droplets, FileSearch, Film, Gavel, Globe2, GraduationCap, Landmark, Languages, Mic, Music, Music2, Palette, Piano, Receipt, Scale, ScrollText, ShieldAlert, Sigma, Wind } from 'lucide-react';
 import SeoHead from './components/SeoHead';
 import ScrollToTop from './components/ScrollToTop';
 import BackToTop from './components/BackToTop';
@@ -10,6 +10,7 @@ import { AuthProvider } from './personal-state/AuthProvider';
 import { CC_BASE_SEO, CC_TABS_SEO, ccDataset } from './pages/_constitutional-court/seo';
 import { ZJH_BASE_SEO, ZJH_TABS_SEO } from './pages/_zhu-jiahua/seo';
 import { GLCT_KEYWORDS, GLCT_TITLE, GLCT_DESC, glctSchema } from './pages/_law-classics/seo';
+import { VT_KEYWORDS, VT_TITLE, VT_DESC, vtSchema } from './pages/_vocal-training/seo';
 
 // A single justice's / single case's indexable page. Lazy-loaded so the
 // Constitutional Court archive JSON they pull in never lands in the main bundle.
@@ -293,7 +294,8 @@ const PAGE_META = { // token-exempt: per-page identity chip colors (data, not st
   GermanLawCourseTimeline: {
     name: '法學名著選讀時序',
     title: GLCT_TITLE,
-    desc: GLCT_DESC,
+    desc: '臺大法學名著選讀 26 個學年、20 位教師的開課時序，每個班次標註法學領域',
+    seoDesc: GLCT_DESC,
     keywords: GLCT_KEYWORDS,
     type: 'CollectionPage',
     buildSchema: glctSchema,
@@ -312,7 +314,7 @@ const PAGE_META = { // token-exempt: per-page identity chip colors (data, not st
   },
   JirsForeignLaw: {
     name: '司法院外國法翻譯總覽',
-    desc: '司法院半世紀來出版的外國憲法裁判與法制中譯地圖：德國、歐洲人權、美國、日本等 39 筆官方報告、544 件全文，時間軸、分類瀏覽與頁內 PDF 閱覽',
+    desc: '司法院半世紀來的外國法中譯：39 筆官方報告、544 件全文，可按時間與分類瀏覽',
     Icon: Landmark,
     accent: '#d9dfe6',
     accentText: '#3f5a72',
@@ -320,7 +322,7 @@ const PAGE_META = { // token-exempt: per-page identity chip colors (data, not st
   },
   LegalGlossary: {
     name: '德語法學譯語表',
-    desc: '德國聯邦憲法法院裁判選輯第 6–18 輯的德中法學關鍵詞索引：1,897 組雙語對照，可搜尋、按卷次篩選，標示多譯衝突（候選工作表）',
+    desc: '德國聯邦憲法法院裁判選輯的德中法學詞彙索引：1,897 組雙語對照，標示多譯衝突',
     Icon: ScrollText,
     accent: '#e8e1d2',
     accentText: '#7a6440',
@@ -377,6 +379,19 @@ const PAGE_META = { // token-exempt: per-page identity chip colors (data, not st
     group: 'life',
     listed: false,
   },
+  VocalTraining: {
+    name: '聲樂訓練・Vaccai 練習本',
+    title: VT_TITLE,
+    desc: 'Vaccai 二十二首練習的歌詞、逐行中譯、技術重點與 Metastasio 出處',
+    seoDesc: VT_DESC,
+    keywords: VT_KEYWORDS,
+    type: 'CollectionPage',
+    buildSchema: vtSchema,
+    Icon: AudioLines,
+    accent: '#e6dfe8',
+    accentText: '#6f5f7a',
+    group: 'life',
+  },
   TaipeiFilmFestival: {
     name: '台北電影節・回顧',
     desc: '2026 台北電影節的售票片單、我的觀影名單與講座論壇，閉幕後留成的一份回顧',
@@ -411,7 +426,7 @@ const HOME_VARS = { // token-exempt
    資料庫）、人文文庫；只做議題總覽或現況地圖的頁降級併入議題解析。 */
 const GROUPS = [
   { key: 'life', label: '生活雷達', desc: '活動、餘額、行程與日常決策輔助' },
-  { key: 'empirical', label: '實證研究', desc: '有分離資料層、逐件讀原始材料、可長期延伸的研究工作台' },
+  { key: 'empirical', label: '實證研究', desc: '自己蒐集原始材料、逐件讀過、可長期延伸的研究工作台' },
   { key: 'corpus', label: '語料・譯庫', desc: '可搜尋的語料庫、譯庫與書目目錄，直達原文' },
   { key: 'humanities', label: '人文文庫', desc: '以人物與文本為軸的重排本與文集' },
   { key: 'analysis', label: '議題解析', desc: '法律、財稅與制度議題的結構化拆解與現況地圖' },
@@ -504,7 +519,9 @@ function PageRoute({ route }) {
   const page = route.meta ? {
     ...route.meta,
     title: route.meta.title ?? `${route.meta.name}｜Phenom Canvas Lab`,
-    description: route.meta.desc,
+    // desc 是首頁卡片上的一行文案，seoDesc 是給搜尋與答案引擎的長描述（塞得下數字與涵蓋範圍）。
+    // 兩者用途不同：卡片要一眼掃過，描述要能被整段引用。只寫 desc 時兩邊共用。
+    description: route.meta.seoDesc ?? route.meta.desc,
     type: route.meta.type ?? (route.meta.group === 'tool' ? 'SoftwareApplication' : 'WebPage'),
     indexable: !['PaletteLab', 'TaipeiFilmFestival'].includes(route.name),
   } : undefined;
