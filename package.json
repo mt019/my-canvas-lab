@@ -6,9 +6,10 @@
   "scripts": {
     "dev": "vite",
     "prepare": "node scripts/install-git-hooks.mjs",
-    "build": "npm run validate:fonts && npm run validate:tokens && npm run validate:colors && npm run validate:floating && npm run validate:copy && npm run validate:math && npm run validate:cases && vite build && npm run prerender && npm run sitemap",
-    "verify:push": "npm run verify:gates",
-    "verify:gates": "npm run validate:fonts && npm run validate:tokens && npm run validate:colors && npm run validate:floating && npm run validate:copy && npm run validate:math && npm run validate:cases && vite build --outDir node_modules/.verify-dist --emptyOutDir --logLevel warn",
+    "verify:policy": "npm run validate:fonts && npm run validate:tokens && npm run validate:colors && npm run validate:floating && npm run validate:copy && npm run validate:math && npm run validate:cases",
+    "build": "npm run verify:policy && vite build && npm run prerender && npm run sitemap",
+    "verify:push": "npm run verify:policy",
+    "verify:gates": "npm run verify:policy && vite build --outDir node_modules/.verify-dist --emptyOutDir --logLevel warn",
     "preprerender": "playwright install chromium",
     "prerender": "node scripts/prerender.mjs",
     "sitemap": "node scripts/generate-sitemap.mjs",

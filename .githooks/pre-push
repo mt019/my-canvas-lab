@@ -1,9 +1,12 @@
 #!/bin/sh
 set -eu
 
-# Fast gate only: UI policy validators + a compile check to a throwaway outDir.
-# The full 467-page prerender is Vercel's job on deploy — running it here made
-# every push take minutes, and an interrupted push orphaned its headless-Chrome
-# pool, which then raced the next build over the shared dist/.
-echo "pre-push: UI policy gates + compile check (prerender runs on Vercel)..."
+# Policy validators only (~2.5s): fonts / tokens / colors / floating / copy / math / cases.
+# No compile here — `vite build` was ~11s of every push (80% of the gate) and is fully
+# redundant: Vercel re-runs the identical validators AND vite build on deploy, and the
+# dev server (HMR) surfaces compile breaks during work. The 467-page prerender is likewise
+# Vercel's job (it once made pushes take minutes and orphaned its headless-Chrome pool
+# into a race over the shared dist/). `npm run verify:gates` still does validators+compile
+# for a manual full check.
+echo "pre-push: UI policy validators (~2.5s; compile + prerender run on Vercel)..."
 npm run verify:push
