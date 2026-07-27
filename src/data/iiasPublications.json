@@ -3,7 +3,7 @@
   "來源": "https://www.iias.sinica.edu.tw/publication/0",
   "資料截至": "2026-06-27",
   "出版品數": 87,
-  "篇章數": 797,
+  "篇章數": 795,
   "作者數": 430,
   "分類": [
    {
@@ -1273,11 +1273,6 @@
      "type": "pdf",
      "url": "https://github.com/mt019/my-canvas-lab/releases/download/iias-pdfs/90012022.pdf",
      "pdfPages": 50
-    },
-    {
-     "title": "",
-     "authors": "",
-     "section": "總目錄"
     }
    ]
   },
@@ -2241,11 +2236,6 @@
      "type": "pdf",
      "url": "https://github.com/mt019/my-canvas-lab/releases/download/iias-pdfs/01416012.pdf",
      "pdfPages": 95
-    },
-    {
-     "title": "",
-     "authors": "",
-     "section": "總目錄"
     }
    ]
   },

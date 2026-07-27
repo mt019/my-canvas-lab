@@ -1407,6 +1407,26 @@ a.trackTitle:hover { text-decoration: underline; text-underline-offset: 2px; }
 }
 .aboutNote a { color: var(--c-info); }
 
+/* 做這個站的緣由：擺在導覽與反思之間的一段小字，說明白但不搶版面 */
+.aboutWhy {
+  margin-top: 4px;
+  padding-top: 10px;
+  border-top: 1px solid var(--c-line);
+  color: var(--c-ink-faint);
+  font-size: var(--text-xs);
+  line-height: 1.75;
+}
+
+/* 反思散文裡指向官網的連結：不上色，用細底線，免得一段字裡跳出幾個藍點 */
+.aboutBody a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: var(--c-line-strong, var(--c-ink-faint));
+  text-underline-offset: 3px;
+}
+.aboutBody a:hover { text-decoration-color: var(--c-accent); }
+.aboutBody .aboutNote a { color: var(--c-info); }
+
 /* ── 篇章檢索 ─────────────────────────────────────── */
 
 .indexTable {
