@@ -497,7 +497,7 @@ function ZhuJiahuaTabRoute({ routes }) {
     parent: { name: '朱家驊研究室', path: '/zhujiahua' },
   };
   const Page = zhu.component;
-  return <><SeoHead page={page} /><Page forcedTab={seo.tab} /></>;
+  return <><SeoHead page={page} /><Page forcedTab={seo.tab} forcedText={seo.textId} /></>;
 }
 
 function PageRoute({ route }) {

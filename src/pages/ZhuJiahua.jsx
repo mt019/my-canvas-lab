@@ -28,6 +28,18 @@ const TAB_PATHS = {
   materials: '/zhujiahua?tab=materials',
 };
 
+// 六篇校訂全文各有一個可預先產生、可被搜尋引擎收錄的網址。
+// 順序即原書篇次，前後篇導覽與分頁列的「校訂原文」都吃這份清單。
+const TEXTS = [
+  { id: 'ZJH-LE-001', slug: 'original-text' },
+  { id: 'ZJH-LE-002', slug: 'text-a-view-of-legal-education' },
+  { id: 'ZJH-LE-003', slug: 'text-committee-5th' },
+  { id: 'ZJH-LE-004', slug: 'text-committee-6th' },
+  { id: 'ZJH-LE-005', slug: 'text-committee-7th' },
+  { id: 'ZJH-LE-006', slug: 'text-rule-of-law-administration' },
+];
+const TEXT_PATH = Object.fromEntries(TEXTS.map(({ id, slug }) => [id, `/zhujiahua/${slug}`]));
+
 function Overview() {
   return (
     <div>
@@ -153,7 +165,14 @@ function LegalEducation() {
                 <p>第 {item.bookPages} 頁</p>
               </div>
               <div>
-                <h3 className="font-serif text-token-lg font-bold leading-snug">{item.title}</h3>
+                <h3 className="font-serif text-token-lg font-bold leading-snug">
+                  <Link
+                    to={TEXT_PATH[item.id]}
+                    className="border-b border-transparent transition-colors duration-fast hover:border-accent hover:text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
+                  >
+                    {item.title}
+                  </Link>
+                </h3>
                 <p className="mt-2 text-token-sm leading-relaxed text-ink-muted">{item.occasion}</p>
               </div>
               <span className={`w-fit rounded-full border px-3 py-1 text-token-xs ${item.status === '全文已校訂' ? 'border-accent bg-accent-soft text-accent' : 'border-line text-ink-faint'}`}>
@@ -168,8 +187,8 @@ function LegalEducation() {
         <div className="flex items-start gap-4">
           <ScrollText className="mt-1 shrink-0 text-accent" size={24} />
           <div>
-            <h2 className="font-serif text-token-lg font-bold">〈中國之法律教育問題〉</h2>
-            <p className="mt-2 text-token-sm leading-relaxed text-ink-muted">民國三十四年，法律教育委員會第一次會議致詞。</p>
+            <h2 className="font-serif text-token-lg font-bold">六篇全文皆已逐頁校訂</h2>
+            <p className="mt-2 text-token-sm leading-relaxed text-ink-muted">點篇名讀任一篇，或從 1945 年的〈中國之法律教育問題〉依序讀起。</p>
           </div>
         </div>
         <Link
@@ -183,8 +202,11 @@ function LegalEducation() {
   );
 }
 
-function OriginalText() {
-  const text = data.verifiedTexts.find((item) => item.id === 'ZJH-LE-001');
+function OriginalText({ textId = 'ZJH-LE-001' }) {
+  const index = TEXTS.findIndex((item) => item.id === textId);
+  const text = data.verifiedTexts.find((item) => item.id === textId);
+  const previous = index > 0 ? data.legalEducation.items[index - 1] : null;
+  const next = index >= 0 && index < TEXTS.length - 1 ? data.legalEducation.items[index + 1] : null;
 
   return (
     <article className="mx-auto max-w-3xl">
@@ -209,6 +231,26 @@ function OriginalText() {
           <Quote size={18} className="mt-1 shrink-0 text-accent" />
           <p>本文依《朱家驊先生言論集》原頁校訂；保留原文用字與當時語彙。</p>
         </div>
+        <nav className="mt-8 grid gap-4 border-t border-line-soft pt-6 sm:grid-cols-2">
+          {previous ? (
+            <Link
+              to={TEXT_PATH[previous.id]}
+              className="group text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
+            >
+              <span className="text-token-xs text-ink-faint">前一篇 · {previous.dateIso.slice(0, 4)}</span>
+              <span className="mt-1 block font-serif text-token-body font-bold group-hover:text-accent">{previous.title}</span>
+            </Link>
+          ) : <span />}
+          {next ? (
+            <Link
+              to={TEXT_PATH[next.id]}
+              className="group text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent sm:text-right"
+            >
+              <span className="text-token-xs text-ink-faint">後一篇 · {next.dateIso.slice(0, 4)}</span>
+              <span className="mt-1 block font-serif text-token-body font-bold group-hover:text-accent">{next.title}</span>
+            </Link>
+          ) : null}
+        </nav>
       </footer>
     </article>
   );
@@ -288,7 +330,7 @@ function Materials() {
   );
 }
 
-export default function ZhuJiahua({ forcedTab }) {
+export default function ZhuJiahua({ forcedTab, forcedText }) {
   const [scale, setScale] = useFontScale();
   const [{ tab: queryTab }, setTabs] = useTabParams({ tab: 'overview' });
   const navigate = useNavigate();
@@ -297,15 +339,17 @@ export default function ZhuJiahua({ forcedTab }) {
     if (TAB_PATHS[value]) navigate(TAB_PATHS[value]);
     else setTabs({ tab: value }, { scroll: 'top' });
   };
+  const textId = forcedText || 'ZJH-LE-001';
+  const textMeta = data.legalEducation.items.find((item) => item.id === textId);
   const headerTitle = forcedTab === 'legal'
     ? '朱家驊的法律教育論'
     : forcedTab === 'text'
-      ? '中國之法律教育問題'
+      ? textMeta.title
       : data.project.title;
   const headerSummary = forcedTab === 'legal'
     ? '六篇言論、年代、場合與制度脈絡'
     : forcedTab === 'text'
-      ? '民國三十四年法律教育委員會致詞・人工逐頁校訂全文'
+      ? `${textMeta.date}・${textMeta.occasion}・人工逐頁校訂全文`
       : data.project.subtitle;
 
   return (
@@ -326,11 +370,11 @@ export default function ZhuJiahua({ forcedTab }) {
         onChange: changeTab,
         items: TAB_ITEMS,
       }}
-      refreshKey={tab}
+      refreshKey={tab === 'text' ? textId : tab}
     >
       {tab === 'overview' ? <Overview /> : null}
       {tab === 'legal' ? <LegalEducation /> : null}
-      {tab === 'text' ? <OriginalText /> : null}
+      {tab === 'text' ? <OriginalText textId={textId} /> : null}
       {tab === 'questions' ? <Questions /> : null}
       {tab === 'materials' ? <Materials /> : null}
     </DashboardLayout>

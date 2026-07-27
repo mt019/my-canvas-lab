@@ -6,9 +6,15 @@
 
 - `/zhujiahua`：研究室總覽。
 - `/zhujiahua/legal-education`：法律教育六篇、年代、場合與直接問答。
-- `/zhujiahua/original-text`：〈中國之法律教育問題〉校訂全文。
+- 六篇校訂全文各一個網址：
+  - `/zhujiahua/original-text`：〈中國之法律教育問題〉，1945。
+  - `/zhujiahua/text-a-view-of-legal-education`：〈法律教育的一種看法〉，1947。
+  - `/zhujiahua/text-committee-5th`：法律教育委員會第五次會議致詞，1948-02（龐德出席）。
+  - `/zhujiahua/text-committee-6th`：法律教育委員會第六次會議致詞，1948-07。
+  - `/zhujiahua/text-committee-7th`：法律教育委員會第七次會議致詞，1948-12。
+  - `/zhujiahua/text-rule-of-law-administration`：〈法治行政〉，1950 年在臺灣。
 
-舊的 `?tab=` 入口仍可使用；搜尋入口改用上述 clean URL。兩個專題網址納入 prerender 與 sitemap，讓不執行前端互動的搜尋／答案引擎也能讀到可見正文。
+舊的 `?tab=` 入口仍可使用；搜尋入口改用上述 clean URL。八個網址全部納入 prerender 與 sitemap，讓不執行前端互動的搜尋／答案引擎也能讀到可見正文。每篇全文頁底有前後篇連結，篇群索引的每個篇名也直接連到該篇全文。
 
 ## Metadata 與結構化資料
 
@@ -16,7 +22,7 @@
 
 - 研究室總覽使用 `CollectionPage`。
 - 法律教育篇群使用 `CollectionPage` 與六篇 `ItemList`。
-- 校訂全文使用 `Article`，標示作者、日期、原書頁碼與所屬言論集。
+- 六篇校訂全文各用一個 `Article`，標示作者、日期、原書頁碼、所屬言論集與該篇 about 主題；設定由 `TEXT_PAGES` 一份清單展開，避免六份手寫 metadata 漂移。
 - `Person` 與 `Book` 節點使用固定 `@id`，供各頁共同引用。
 
 結構化資料只能描述頁面實際可見且由資料倉核定的內容。不得從未校 OCR 補寫文章摘要、日期或場合。
@@ -37,4 +43,6 @@ npx eslint src/App.jsx src/pages/ZhuJiahua.jsx src/pages/_zhu-jiahua/seo.js scri
 npm run build
 ```
 
-並檢查 `dist/zhujiahua/` 三個入口的 title、description、canonical、JSON-LD、可見 H1/H2、內部連結及 sitemap 收錄。
+並檢查 `dist/zhujiahua/` 八個入口的 title、description、canonical、JSON-LD、可見 H1/H2、內部連結及 sitemap 收錄。
+
+本機閘門用 `npm run verify:gates`（不碰共用 `dist/`）；完整 prerender 交給部署流程。
