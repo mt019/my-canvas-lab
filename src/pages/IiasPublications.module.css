@@ -91,21 +91,14 @@
 
 .quickSearch input::placeholder { color: var(--c-ink-faint); }
 
-.sideNav { display: grid; gap: 3px; }
-
-.sideNav a {
-  min-height: 30px;
-  border-radius: var(--radius-sm);
+/* 分頁作用域說明：控制項收起時（總覽、期刊架），一行說明側欄為何較空 */
+.scopeNote {
+  padding: 10px 8px;
+  border-top: 1px solid var(--c-line);
   color: var(--c-ink-muted);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 0 8px;
-  font-size: 13px;
-  text-decoration: none;
+  font-size: var(--text-xs);
+  line-height: 1.6;
 }
-
-.sideNav a:hover { background: var(--c-accent-soft); }
 
 .sideSection {
   padding-top: 12px;

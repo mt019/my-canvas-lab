@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  ArrowLeft, BookMarked, ChevronRight, ExternalLink, FileText,
+  BookMarked, ChevronRight, ExternalLink, FileText,
   LayoutGrid, Library, ListTree, Newspaper, Search,
 } from 'lucide-react';
 import styles from './IiasPublications.module.css';
@@ -313,6 +313,12 @@ export default function IiasPublications() {
   const recent = pubs.slice(0, 4);
   const yearSpan = `${pubs[pubs.length - 1].date.slice(0, 4)}–${pubs[0].date.slice(0, 4)}`;
 
+  // 側欄控制只出現在它真正驅動的分頁上（見側欄註解）：
+  // 搜尋作用於三個瀏覽分頁，不作用於「總覽」（整批館藏的儀表板）；
+  // 分類篩選只作用於「完整清單」與「篇章檢索」，「期刊架」已鎖定法學期刊。
+  const showSearch = tab !== 'overview';
+  const showCategory = tab === 'catalog' || tab === 'index';
+
   return (
     <main className={styles.workspace}>
       <aside className={styles.sidebar}>
@@ -324,47 +330,54 @@ export default function IiasPublications() {
           </div>
         </div>
 
-        <label className={styles.quickSearch}>
-          <Search size={14} />
-          <input
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-            placeholder="搜尋書名、篇名、作者"
-          />
-        </label>
+        {showSearch && (
+          <label className={styles.quickSearch}>
+            <Search size={14} />
+            <input
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              placeholder="搜尋書名、篇名、作者"
+            />
+          </label>
+        )}
 
-        <nav className={styles.sideNav}>
-          <Link to="/all"><ArrowLeft size={15} />回總入口</Link>
-        </nav>
+        {showCategory && (
+          <div className={styles.sideSection}>
+            <p className={styles.filterHeader}>分類</p>
+            <button
+              type="button"
+              className={cat === 'all' ? `${styles.sideFilter} ${styles.active}` : styles.sideFilter}
+              onClick={() => setCat('all')}
+            >
+              <span className={styles.catDot} />
+              全部
+              <span className={styles.count}>{pubs.length}</span>
+            </button>
+            {CATS.map((c) => {
+              const v = catVars(c.name);
+              const n = pubs.filter((p) => p.category === c.name).length;
+              return (
+                <button
+                  type="button"
+                  key={c.name}
+                  className={cat === c.name ? `${styles.sideFilter} ${styles.active}` : styles.sideFilter}
+                  onClick={() => setCat(c.name)}
+                >
+                  <span className={styles.catDot} style={{ '--dot-tx': v.tx, '--dot-bg': v.bg }} />
+                  {c.name}
+                  <span className={styles.count}>{n}</span>
+                </button>
+              );
+            })}
+          </div>
+        )}
 
-        <div className={styles.sideSection}>
-          <p className={styles.filterHeader}>分類</p>
-          <button
-            type="button"
-            className={cat === 'all' ? `${styles.sideFilter} ${styles.active}` : styles.sideFilter}
-            onClick={() => setCat('all')}
-          >
-            <span className={styles.catDot} />
-            全部
-            <span className={styles.count}>{pubs.length}</span>
-          </button>
-          {CATS.map((c) => {
-            const v = catVars(c.name);
-            const n = pubs.filter((p) => p.category === c.name).length;
-            return (
-              <button
-                type="button"
-                key={c.name}
-                className={cat === c.name ? `${styles.sideFilter} ${styles.active}` : styles.sideFilter}
-                onClick={() => setCat(c.name)}
-              >
-                <span className={styles.catDot} style={{ '--dot-tx': v.tx, '--dot-bg': v.bg }} />
-                {c.name}
-                <span className={styles.count}>{n}</span>
-              </button>
-            );
-          })}
-        </div>
+        {tab === 'overview' && (
+          <p className={styles.scopeNote}>總覽涵蓋全部 {pubs.length} 種館藏，不隨搜尋或分類縮減。</p>
+        )}
+        {tab === 'shelf' && (
+          <p className={styles.scopeNote}>期刊架僅收《中研院法學期刊》{journals.length} 期，可用上方搜尋在期內找篇章。</p>
+        )}
 
         <div className={styles.sideFoot}>
           資料截至 {data.meta.資料截至}
