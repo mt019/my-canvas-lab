@@ -67,6 +67,48 @@ copy. When writing digest/topic prose, narrate what a *reader* learns
 
 ## Pages
 
+### `Notes`（手記・個人短文，2026-07-28 新建）
+
+`/notes` 是清單，`/notes/<slug>` 是單篇。前端三個檔：`pages/Notes.jsx`（清單）、
+`pages/_notes/PostRoute.jsx`（單篇）、`pages/_notes/seo.js`（兩條路由共用的 SEO 資料）。
+資料倉 `../notes-data`：文章正文在它的 `content/<slug>.mdx`、meta 在 `data/posts.json`，
+`npm run update` 產出 `processed/notes.json` 再同步成 canvas 的 `src/data/notes.json`
+與 `src/content/notes/*.mdx`。**新增一篇文章不必碰 canvas 的任何一個檔。**
+
+**寫作與資料規則在資料倉的 `AGENTS.md`**（正文不准出現 ASCII 的 `<`／`{`、摘要 20–120 字、
+禁用詞清單、日期格式），它的 `npm run validate` 會擋，沒過就不同步。
+
+這頁的幾個決定，改之前先知道：
+
+1. **文章路由不走檔名 glob。** `pages/_notes/` 是建構材料目錄（`_` 開頭，walkPages 會跳過），
+   路徑由 `App.jsx` 自己寫成 `/notes/:slug`。所以 `scripts/routes.mjs` **必須**自己讀
+   `src/data/notes.json` 把每篇展開（`noteRoutes()`）——漏掉的話文章永遠不會被預先渲染、
+   也不會進 sitemap，而畫面上完全看不出來（同 2026-07-28 那顆死掉的分頁按鈕）。
+2. **正文按篇分包。** `PostRoute` 的 `import.meta.glob('../../content/notes/*.mdx')`
+   **不加 `eager`**，配 `React.lazy` 按 slug 載；`App.jsx` 那條路由本身也是 `lazy()`。
+   實測（2026-07-28 丟棄式 build，當時兩篇）：清單 3.3 KB、路由 3.1 KB、正文各自成 chunk
+   （3.4 KB／10.7 KB），主 bundle 不帶任何一篇。
+3. **右欄目次收起來，但閱讀欄寬不變。** 多數手記是純段落、沒有 `##` 小標，資料倉建置時
+   用 `hasSections` 記下來，`PostRoute` 據此傳 `hideToc`。同時傳
+   `keepReadingWidth`（本輪為此在 `ArticleLayout` 新增）——沒有它，中欄會吃掉右欄那段寬度
+   變成 61rem，一行約 54 個中文字，對散文太寬；現行實測 688px、約 38 字。
+4. **返回鍵回手記首頁**，不是回素首頁：`src/backNav.js` 的 `SITE_HOMES` 加了 `/notes/`。
+5. **標籤是篩選，不是路由。** 選擇進網址 `?tag=`（`useTabParam` 配 `scroll: 'preserve'`）。
+   文章量還撐不起一標籤一頁，那會生出一堆只有一篇文章的路由。
+
+**寫作素材有本機來源時，先回那個來源核對，不要只憑通行說法。** 卡爾・克勞斯那篇的事實
+是對著 `~/Documents/NTU/1142/Translation/KarlKraus`（兩年的翻譯工程，含
+`Notizen/Kraus_多維度年表.csv` 與 `Kraus_年表待核實清單.md`）核的：該工程自己定了
+`verified_external`／`project_attested`／`needs_verification` 三級，**只有前兩級可以進敘述**。
+據此修掉初稿兩處錯誤（西多妮保存的是他寫給她的一千多封信，不是《火炬》手稿；《第三個
+瓦普吉斯之夜》1952 年出版＝他死後十六年，不是二十多年），並補上薩梅克那條線。
+譯名跟著該工程走（《人類最後的日子》、《第三個瓦普吉斯之夜》）。
+
+驗收（2026-07-28，dev 5173 ＋ 丟棄式 build 的 preview）：清單四篇、年份分節、標籤篩選
+1/2 篇且進網址；**從清單點連結**進單篇（不自組網址）→ title/description/keywords 都是
+per-post 版、`og:type=article`、JSON-LD 有 Article ＋ 合併節點；預先渲染情境（preview ＋
+networkidle）三條路由的 `#root` 都有 8–12 KB 內容；手機寬度無橫向溢出；console 無錯誤。
+
 ### `Brief` ＋ `brief/*`（個人簡報站，2026-07-17 新建，第十輪接上標記層）
 
 站的形狀：`/brief` 儀表板（`pages/Brief.jsx`）＋兩個內頁——`/brief/reading` 讀的東西
@@ -1366,6 +1408,21 @@ and land only in the statistics async chunk (verified: `dist/index.html` and the
 home chunk contain no katex).
 
 ## Font system (stable, don't re-derive)
+
+**字體平滑只給長文正文，別處維持系統預設（2026-07-28 使用者裁定）。**
+起因是「正文字體磅重太重……看得累」。先量再改：當時正文實測是字重 400、`--c-ink`（暖褐，
+不是黑）、18px／行高 1.85，用的是 Huiwen Mincho 本尊而非 fallback——都已經是最輕的一檔，
+**變重的是渲染**（`-webkit-font-smoothing` 預設 `auto`＝macOS 次像素平滑，把明體細筆畫整圈
+加厚）。第一版設在 `body` 上、全站一起變細，**使用者當場退回**：別處「會覺得看不清，好奇怪」
+（清單、儀表板、工具列字級小、要一眼掃過，細筆畫反而不利）。現行範圍是
+`.prose-body`（`Prose` 元件外層，即 `.mdx` 長文的正文區，見 `src/index.css` 那條註解），
+`.prose-body .font-accent` 再設回 `auto`——Erikas 700 的油墨網點靠筆畫邊緣的顆粒，灰階平滑
+會抹乾淨，而正文裡的行內程式碼正是這支字體。自己刻版型的閱讀面自己加這個 class，目前兩處：
+`ZhuJiahua` 的校訂全文、`_chen-yinke/LiuRushiEdition` 的 `.reading`。**不能收進 `ArticleLayout`
+自動生效**——`/brief` 的兩個清單頁用的是同一個殼。判準與現況表寫在 DESIGN.md
+「字體平滑：只有長文正文吃灰階」。**差別只在 macOS 上看得見，headless 截圖驗不出來**（截圖本來
+就走灰階）——只能請人在瀏覽器裡看；能自動驗的只有作用範圍（實測：手記文章、統計站長文、
+朱家驊全文、陳寅恪重排本正文＝`antialiased`；手記清單、`/brief`、中研院本站說明＝`auto`）。
 
 `src/index.css` defines three CSS variables:
 

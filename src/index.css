@@ -187,6 +187,32 @@ body {
   position: relative;
 }
 
+/* 字體平滑只改長文正文，別處一律維持系統預設（2026-07-28 使用者裁定）。
+
+   起因是「正文字體磅重太重……看得累」。實測正文本來就是字重 400、色用 --c-ink 的暖褐
+   （不是黑）、18px／行高 1.85，都已經是最輕的一檔——變重的是渲染：`-webkit-font-smoothing`
+   的預設值 auto 在 macOS 是次像素平滑，會把明體的細筆畫整圈加厚。
+
+   第一版把它設在 body 上，全站一起變細，使用者當場說別處「會覺得看不清，好奇怪」——
+   清單、儀表板、工具列那些字級小、要一眼掃過，細筆畫反而不利。所以範圍收到
+   `.prose-body`（`Prose` 元件的外層，也就是 .mdx 長文的正文區）：整段連續閱讀的地方
+   吃灰階平滑，其餘照舊。
+
+   `.font-accent` 再設回 auto，因為 Erikas 700 的油墨網點靠的是筆畫邊緣的顆粒，灰階平滑
+   會把它抹乾淨（見 DESIGN.md「accent 字體：紋理在字重」）；正文裡的行內程式碼走的正是
+   這支字體。
+
+   這個差別只在 macOS 上看得到，headless 截圖驗不出來（截圖本來就走灰階）。 */
+.prose-body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.prose-body .font-accent {
+  -webkit-font-smoothing: auto;
+  -moz-osx-font-smoothing: auto;
+}
+
 /* 紙面材質畫在獨立的 ::before 兄弟層（絕對定位、負 z-index），不再當作背景畫在
    容器本身上。原因：字級放大是用 zoom 縮放內容，而 zoom 的子元素會逼瀏覽器把
    「祖先的背景」一起重新取樣——紙紋那種 1px 細線一經非整數倍（如 160%）重取樣

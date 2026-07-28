@@ -57,6 +57,19 @@ function tagSlugs() {
   }
 }
 
+// One route per note. The page component lives under pages/_notes/ (a building
+// block directory, so walkPages skips it) and App.jsx names the path itself, which
+// means nothing here would find these pages on its own — without this they would
+// never be prerendered and never reach the sitemap.
+function noteRoutes() {
+  try {
+    const d = JSON.parse(readFileSync(join(ROOT, 'src', 'data', 'notes.json'), 'utf8'));
+    return (d.posts || []).map((post) => `/notes/${post.slug}`);
+  } catch {
+    return [];
+  }
+}
+
 // One route per justice who has anything to show — the same predicate the app
 // uses to decide who is indexable, so prerender, sitemap and runtime agree.
 function justiceRoutes() {
@@ -100,5 +113,6 @@ export function collectRoutes() {
   for (const route of justiceRoutes()) routes.add(route);
   for (const route of caseRoutes()) routes.add(route);
   for (const slug of ZJH_TAB_SLUGS) routes.add(`/zhujiahua/${slug}`);
+  for (const route of noteRoutes()) routes.add(route);
   return [...routes].sort();
 }

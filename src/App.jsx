@@ -1,6 +1,6 @@
 import React, { Suspense, lazy, useMemo } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useParams, Navigate } from 'react-router-dom';
-import { ArrowRight, AudioLines, BookMarked, CalendarDays, Droplets, FileSearch, Film, Gavel, Globe2, GraduationCap, Landmark, Languages, Mic, Music, Music2, Palette, Piano, Receipt, Scale, ScrollText, ShieldAlert, Sigma, Wind } from 'lucide-react';
+import { ArrowRight, AudioLines, BookMarked, CalendarDays, Droplets, FileSearch, Film, Gavel, Globe2, GraduationCap, Landmark, Languages, Mic, Music, Music2, NotebookPen, Palette, Piano, Receipt, Scale, ScrollText, ShieldAlert, Sigma, Wind } from 'lucide-react';
 import SeoHead from './components/SeoHead';
 import ScrollToTop from './components/ScrollToTop';
 import BackToTop from './components/BackToTop';
@@ -11,11 +11,16 @@ import { CC_BASE_SEO, CC_TABS_SEO, ccDataset } from './pages/_constitutional-cou
 import { ZJH_BASE_SEO, ZJH_TABS_SEO } from './pages/_zhu-jiahua/seo';
 import { GLCT_KEYWORDS, GLCT_TITLE, GLCT_DESC, glctSchema } from './pages/_law-classics/seo';
 import { VT_KEYWORDS, VT_TITLE, VT_DESC, vtSchema } from './pages/_vocal-training/seo';
+import { NOTES_KEYWORDS, NOTES_TITLE, NOTES_DESC, notesSchema } from './pages/_notes/seo';
 
 // A single justice's / single case's indexable page. Lazy-loaded so the
 // Constitutional Court archive JSON they pull in never lands in the main bundle.
 const CCJusticeRoute = lazy(() => import('./pages/_constitutional-court/JusticeRoute'));
 const CCCaseRoute = lazy(() => import('./pages/_constitutional-court/CaseRoute'));
+
+// 一篇手記。文章正文（.mdx）在這條路由底下再按 slug 分包，所以主 bundle 既不帶文章清單、
+// 也不帶任何一篇的正文。
+const NotePostRoute = lazy(() => import('./pages/_notes/PostRoute'));
 
 /*
  * Pages are routed by file path. A file directly under pages/ keeps the old flat
@@ -352,6 +357,19 @@ const PAGE_META = { // token-exempt: per-page identity chip colors (data, not st
     accentText: '#6f6455',
     group: 'tool',
   },
+  Notes: {
+    name: '手記',
+    desc: '聽講、讀書與整理資料時寫下的短文',
+    seoDesc: NOTES_DESC,
+    title: NOTES_TITLE,
+    keywords: NOTES_KEYWORDS,
+    type: 'CollectionPage',
+    buildSchema: notesSchema,
+    Icon: NotebookPen,
+    accent: '#e7e2d8',
+    accentText: '#6f6552',
+    group: 'life',
+  },
   Brief: {
     name: '簡報',
     desc: '打開就看得到的東西，每天累積：快關門的講座、接下來的活動、值得讀的論文與講辭',
@@ -482,6 +500,10 @@ export default function App() {
           {/* One clean, indexable URL per justice / per case — matched before the
               tab route since they have an extra path segment. Lazy so the archive
               JSON stays out of the main bundle. */}
+          {/* 一篇手記。檔案在 pages/_notes/ 底下（不是路由目錄），路徑在這裡指定；
+              scripts/routes.mjs 會照 src/data/notes.json 把每篇展開成一條要預先渲染、
+              也要進 sitemap 的網址。 */}
+          <Route path="/notes/:slug" element={<NotePostRoute />} />
           <Route path="/constitutionalcourt/justices/:justiceName" element={<CCJusticeRoute />} />
           <Route path="/constitutionalcourt/case/:caseNo" element={<CCCaseRoute />} />
           {/* Clean, separately-indexable URL per Constitutional Court tab

@@ -73,7 +73,9 @@ const BASE = {
 export default function Prose({ components, children }) {
   return (
     <MDXProvider components={{ ...BASE, ...components }}>
-      <div className="prose-scaled">{children}</div>
+      {/* prose-body：長文正文才吃灰階字體平滑（見 index.css 的 .prose-body）。
+          清單、儀表板那些地方維持系統預設，細筆畫在小字級上反而看不清。 */}
+      <div className="prose-scaled prose-body">{children}</div>
     </MDXProvider>
   );
 }

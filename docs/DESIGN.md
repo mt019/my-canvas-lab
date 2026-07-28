@@ -25,6 +25,36 @@
 - 舊的 `--fs`／`.prose-scaled`／`text-scaled-*` 文字級 multiplier 保留為次要機制；**不要與 reader-scale 同時掛 --fs**，會疊乘。
 - 不動 `html` 的 font-size。
 
+### 字體平滑：只有長文正文吃灰階（2026-07-28 使用者裁定，全站通則）
+
+**`-webkit-font-smoothing: antialiased` 只加在「整段連續閱讀」的那一塊，其餘一律維持系統預設。**
+
+起因是「正文字體磅重太重……看得累」。先量再改：正文當時實測是字重 400、色用 `--c-ink`
+的暖褐（不是黑）、18px／行高 1.85，用的是 Huiwen Mincho 本尊沒掉 fallback——設計上已經是最輕
+的一檔。變重的是**渲染**：`-webkit-font-smoothing` 的預設值 `auto` 在 macOS 是次像素平滑，
+它為了讓筆畫在螢幕上「站得住」會把字幹加厚一圈。明體的筆畫本來就細，18px 一整段讀下來，
+那一圈就累積成重量。
+
+第一版設在 `body` 上、全站一起變細，當場被退回：別處「會覺得看不清，好奇怪」。原因是同一個
+機制在兩種閱讀行為上的效果相反——**連續閱讀怕重，掃描式閱讀怕輕**。清單、儀表板、工具列的字
+在 12–14px、要一眼掃過，次像素平滑加的那一圈正是它們的可讀性來源，拿掉就發虛。
+
+所以判準是**閱讀行為，不是字級也不是頁面**：
+
+| 這一塊是什麼 | 平滑 | 現在誰在用 |
+|---|---|---|
+| 整段連續讀完的正文（散文、譯文、校訂全文、長文 `.mdx`） | `.prose-body`（灰階） | `Prose` 元件（手記／統計站長文／術語頁）、`ZhuJiahua` 校訂全文、`LiuRushiEdition` 重排本正文 |
+| 掃描式的一切（清單、目次、表格、徽章、工具列、側欄、說明短句） | 系統預設 | 其餘全部，含 `/brief` 兩個內頁、`IiasPublications` 的本站說明（`--text-sm`／`ink-muted`） |
+| accent 字體（Erikas 700） | 系統預設 | `.prose-body .font-accent` 明文設回 `auto`——油墨網點靠筆畫邊緣的顆粒，灰階會抹乾淨 |
+
+**這條沒辦法收進外殼自動生效。** `ArticleLayout` 同時被長文與 `/brief` 的清單頁用，掛在殼的
+內容區等於連清單一起改；`.prose-body` 因此是各自標記的一個 class，`Prose` 元件的外層預設帶上，
+自己刻版型的閱讀面自己加。實作與理由寫在 `src/index.css` 的 `.prose-body` 註解。
+
+**驗收只能靠人眼。** 差別只在 macOS 上看得見，headless 截圖本來就走灰階，截不出來；能自動驗的
+只有作用範圍（用 Playwright 讀 `getComputedStyle(el).webkitFontSmoothing`，正文該是 `antialiased`、
+清單該是 `auto`）。
+
 ## 共用元件（`src/components/`）
 
 | 元件 | 用法 |
