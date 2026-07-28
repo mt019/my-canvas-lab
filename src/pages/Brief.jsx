@@ -901,7 +901,6 @@ export default function Brief() {
   return (
     <DashboardLayout
       scale={scale}
-      back={{ href: '/', label: 'Canvas Lab' }}
       headerRight={
         <>
           <FontSizeControl scale={scale} onChange={setScale} />

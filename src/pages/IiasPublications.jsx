@@ -8,6 +8,7 @@ import PdfViewer from '../components/lab/PdfViewer';
 import StickyHeading, { useStickyTop } from '../components/lab/StickyHeading';
 import { useTabParam } from '../components/lab/Tabs';
 import data from '../data/iiasPublications.json';
+import BackLink from '../components/BackLink';
 
 // 分類 → 固定 token 槽位（順序不重排；淡底 -bg 填面、ink -tx 細框，見 docs/DESIGN.md 色彩哲學）
 const CATS = [
@@ -1032,6 +1033,7 @@ export default function IiasPublications() {
   return (
     <main className={styles.workspace}>
       <aside className={styles.sidebar}>
+        <BackLink className="px-1 text-[12px] text-[var(--c-ink-faint)] transition hover:text-[var(--c-accent)]" />
         <button
           type="button"
           className={styles.sidebarBrand}

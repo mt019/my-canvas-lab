@@ -29,6 +29,7 @@ import researchAnalyses from '../data/intlTaxOps/research_analyses.json';
 import thematicAnalyses from '../data/intlTaxOps/thematic_analyses.json';
 import glossary from '../data/intlTaxOps/glossary.json';
 import styles from './InternationalTaxOps.module.css';
+import BackLink from '../components/BackLink';
 
 const ui = {
   zh: {
@@ -367,6 +368,7 @@ export default function InternationalTaxOps() {
   return (
     <main className={styles.workspace}>
       <aside className={styles.sidebar}>
+        <BackLink className="px-1 text-[12px] text-[var(--c-ink-faint)] transition hover:text-[var(--c-accent)]" />
         <div className={styles.sidebarBrand}>
           <div className={styles.brandMark}><Globe2 size={20} /></div>
           <div>

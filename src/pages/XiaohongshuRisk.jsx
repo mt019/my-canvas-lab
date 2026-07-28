@@ -166,7 +166,6 @@ export default function XiaohongshuRisk() {
   return (
     <DashboardLayout
       scale={scale}
-      back={{ href: '/', label: 'Canvas Lab' }}
       headerRight={
         <>
           <FontSizeControl scale={scale} onChange={setScale} />

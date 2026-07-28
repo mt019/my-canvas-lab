@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import SeoHead from './SeoHead';
 
@@ -83,12 +83,14 @@ const CSS = `
 .fd-doorword{font-family:var(--font-display);text-transform:uppercase;font-weight:600;
   font-size:18px;letter-spacing:.4em;text-indent:.4em;color:var(--fd-soft);
   white-space:nowrap;
-  /* near² keeps it hidden until the cursor is genuinely close */
-  opacity:calc(var(--near,0)*var(--near,0));
+  /* near³：曲線更陡，游標要幾乎壓在上面才浮出來（原本是平方） */
+  opacity:calc(var(--near,0)*var(--near,0)*var(--near,0));
   transition:opacity .4s ease;}
 .fd-worddoor:focus-visible{outline:none;}
 .fd-worddoor:focus-visible .fd-doorword{opacity:.85;}
-@media (hover:none){.fd-doorword{opacity:.42;}}
+/* 觸控裝置沒有游標，近接顯影不成立。原本固定露出 .42，等於在手機上它一直看得見；
+   改成完全不露，改由長按（見 onPointerDown）與鍵盤兩條路進去。 */
+.fd-worddoor.is-open .fd-doorword{opacity:.85;}
 .fd-foot{position:absolute;bottom:1.4rem;left:0;right:0;z-index:1;
   display:flex;flex-direction:column;align-items:center;gap:.85rem;padding:0 1rem;}
 .fd-tag{display:flex;align-items:center;justify-content:center;gap:.9em;
@@ -107,6 +109,10 @@ export default function FrontDoor() {
   const rootRef = useRef(null);
   const nameRef = useRef(null);
   const doorRef = useRef(null);
+  // 近接顯影是給滑鼠的。這兩條是留給我自己、任何裝置都走得通的路：
+  // 按 h（herein 的 h）叫出那個字，或在頁面上長按半秒。兩者都只是讓字浮出來，
+  // 進去仍然要點它——所以它對誤觸依然是關著的。
+  const [open, setOpen] = useState(false);
 
   // Random glitch bursts on the decorative nameplate.
   useEffect(() => {
@@ -124,6 +130,38 @@ export default function FrontDoor() {
     return () => window.clearTimeout(timer);
   }, []);
 
+  // 鍵盤：按 h 切換那個字的顯影。在輸入框裡打字不算（素首頁沒有輸入框，但這條保險留著）。
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      const el = e.target;
+      if (el instanceof HTMLElement && (el.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName))) return;
+      if (e.key === 'h' || e.key === 'H') setOpen((v) => !v);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
+
+  // 觸控：頁面上長按 600ms 叫出那個字。手指一離開就取消計時，所以一般點按不會誤觸發。
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root) return;
+    let timer = 0;
+    const start = () => { timer = window.setTimeout(() => setOpen(true), 600); };
+    const cancel = () => { if (timer) { window.clearTimeout(timer); timer = 0; } };
+    root.addEventListener('pointerdown', start);
+    root.addEventListener('pointerup', cancel);
+    root.addEventListener('pointercancel', cancel);
+    root.addEventListener('pointermove', cancel);
+    return () => {
+      cancel();
+      root.removeEventListener('pointerdown', start);
+      root.removeEventListener('pointerup', cancel);
+      root.removeEventListener('pointercancel', cancel);
+      root.removeEventListener('pointermove', cancel);
+    };
+  }, []);
+
   // Proximity: the ink word surfaces as the cursor nears the hidden door.
   useEffect(() => {
     const root = rootRef.current;
@@ -131,7 +169,9 @@ export default function FrontDoor() {
     let raf = 0;
     let mx = -9999;
     let my = -9999;
-    const RADIUS = 210; // how close the cursor must come before the word shows
+    // 原本 210px，游標大略往下飄就會亮。收到 96px：要真的停在那一段空白上才顯影。
+    // 這道門是給我自己走的，不是給隨手滑過的人看的。
+    const RADIUS = 96;
     const apply = () => {
       raf = 0;
       const door = doorRef.current;
@@ -192,7 +232,7 @@ export default function FrontDoor() {
       </div>
 
       {/* The way in. An ink word, hidden until the cursor is near. */}
-      <Link to="/all" className="fd-worddoor" ref={doorRef} aria-label="進入索引">
+      <Link to="/all" className={`fd-worddoor${open ? ' is-open' : ''}`} ref={doorRef} aria-label="進入索引">
         <span className="fd-doorword" aria-hidden="true">herein</span>
       </Link>
 

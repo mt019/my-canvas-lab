@@ -36,7 +36,6 @@ export default function VocalTraining() {
   return (
     <DashboardLayout
       scale={scale}
-      back={{ href: '/', label: '回首頁' }}
       headerRight={
         <>
           <FontSizeControl scale={scale} onChange={setScale} />

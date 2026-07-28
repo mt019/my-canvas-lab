@@ -1,5 +1,7 @@
 import { useRef } from 'react';
 import Eyebrow from '../Eyebrow';
+import BackLink from '../BackLink';
+import { SHELL_PAD_X } from '../shellPadding';
 import Tabs from './Tabs';
 import TableOfContents from './TableOfContents';
 
@@ -25,6 +27,8 @@ import TableOfContents from './TableOfContents';
  */
 export default function DashboardLayout({
   scale,
+  // 返回鍵。不傳＝照全站配置（`src/backNav.js`）決定回哪裡；傳 `null`＝這頁不畫；
+  // 傳 `{ href, label }`＝這頁自己說了算（統計站內頁那種要雙語標籤的才需要）。
   back,
   headerRight,
   eyebrow,
@@ -35,6 +39,11 @@ export default function DashboardLayout({
   leftRailTop,
   tocLabel = '本頁區塊',
   hideToc = false, // 頁面沒有 h2/h3 區塊（如單張圖表）時關掉右欄目次，內容占滿寬度
+  // 水平內距。**預設就留白**（SHELL_PAD_X：手機貼邊、lg 起左右各 4rem、xl 起 6rem）——
+  // 貼著螢幕邊的正文讀起來累，而「只有補過的那幾頁才不貼邊」比兩者都糟。整欄是寬表格
+  // 的頁面才傳 SHELL_PAD_X_TIGHT 換回貼邊。三個容器（抬頭、吸頂分頁、內文）吃同一個值，
+  // 才不會出現兩條左邊界的段差。
+  padX = SHELL_PAD_X,
   refreshKey,
   children,
 }) {
@@ -46,15 +55,10 @@ export default function DashboardLayout({
           字級只放大識別那一塊（reader-scale），返回／控制項那一列固定不動；殼的
           max-w-7xl 框在 zoom 之外，所以放大字級不會動到左右邊界。 */}
       <header className="border-b border-line-soft">
-        <div className="mx-auto max-w-7xl px-4 py-7 sm:px-6">
+        <div className={`mx-auto max-w-7xl py-7 ${padX}`}>
           <div className="mb-4 flex items-center justify-between gap-4">
-            {back ? (
-              <a href={back.href} className="text-token-sm text-ink-faint transition-colors duration-fast hover:text-accent">
-                ← {back.label}
-              </a>
-            ) : (
-              <span />
-            )}
+            <BackLink back={back} />
+            <span className="flex-1" />
             {headerRight ? <div className="flex items-center gap-2">{headerRight}</div> : null}
           </div>
           <div className="reader-scale">
@@ -83,7 +87,7 @@ export default function DashboardLayout({
           一顆孤零零的藥丸鈕比沒有分頁列更空。 */}
       {tabs ? (
         <div className="sticky top-0 z-20 border-b border-line-soft bg-paper">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6">
+          <div className={`mx-auto max-w-7xl ${padX}`}>
             <div className="reader-scale flex">
               <Tabs
                 variant="dashboard"
@@ -100,7 +104,7 @@ export default function DashboardLayout({
       {/* 寬內容欄＋右欄本頁大綱（h2+h3，跟著捲動高亮）。右欄在 lg 以下收起。
           hideToc：頁面本就沒有區塊標題可列（單張圖表頁），關掉右欄、內容占滿。 */}
       <div
-        className={`mx-auto grid max-w-7xl gap-8 px-4 py-8 sm:px-6 lg:gap-10 ${
+        className={`mx-auto grid max-w-7xl gap-8 py-8 lg:gap-10 ${padX} ${
           hideToc ? '' : 'lg:grid-cols-[minmax(0,1fr)_13rem]'
         }`}
       >

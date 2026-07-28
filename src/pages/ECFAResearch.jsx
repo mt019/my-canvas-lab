@@ -15,6 +15,8 @@ import {
 } from 'lucide-react';
 import data from '../data/ecfaResearch.json';
 import FontSizeControl, { useFontScale } from '../components/FontSizeControl';
+import { SHELL_PAD_X } from '../components/shellPadding';
+import BackLink from '../components/BackLink';
 
 const ds = data.datasets;
 const thesis = ds.thesisMeta;
@@ -822,7 +824,9 @@ export default function ECFAResearch() {
   return (
     <div className="min-h-screen paper-texture bg-[var(--ecfa-bg)] font-sans text-[var(--ecfa-ink-strong)]" style={{ ...ECFA_VARS, paddingBottom: 60, '--reader-scale': fontScale }}>
       <header className="border-b border-[var(--ecfa-line)] bg-white">
-        <div className="mx-auto max-w-6xl px-4 py-7 sm:px-6">
+        <div className={`mx-auto max-w-6xl py-7 ${SHELL_PAD_X}`}>
+          {/* 這頁自己刻了殼，返回鍵走共用元件＋全站配置（src/backNav.js），不寫死落點。 */}
+          <BackLink className="mb-4 block w-fit text-[13px] text-[var(--ecfa-body-text)] transition hover:text-[var(--ecfa-heading)]" />
           <div className="flex items-start justify-between gap-3">
             <div className="reader-scale max-w-4xl">
               <div className="mb-3 inline-flex items-center gap-2 font-accent text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--ecfa-eyebrow-header)]">
@@ -843,7 +847,7 @@ export default function ECFAResearch() {
       </header>
 
       <nav className="sticky top-0 z-20 border-b border-[var(--ecfa-line)] bg-white/94 backdrop-blur">
-        <div className="mx-auto flex max-w-6xl gap-1 overflow-x-auto px-4 py-2 sm:px-6">
+        <div className={`mx-auto flex max-w-6xl gap-1 overflow-x-auto py-2 ${SHELL_PAD_X}`}>
           {tabs.map(({ id, label, icon: Icon }) => (
             <button
               key={id}
@@ -858,7 +862,7 @@ export default function ECFAResearch() {
         </div>
       </nav>
 
-      <main className="mx-auto max-w-6xl px-4 sm:px-6 prose-scaled">
+      <main className={`mx-auto max-w-6xl prose-scaled ${SHELL_PAD_X}`}>
        <div className="reader-scale">
         {active === 'core' ? <CoreView /> : null}
         {active === 'events' ? <EventTimelineView /> : null}

@@ -107,7 +107,6 @@ export default function StatisticsLab() {
   return (
     <DashboardLayout
       scale={scale}
-      back={{ href: '/', label: 'Canvas Lab' }}
       headerRight={
         <>
           <LangSwitch lang={lang} onChange={setLang} />

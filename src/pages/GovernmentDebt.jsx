@@ -12,6 +12,7 @@ import ChartFrame from '../components/lab/chart/ChartFrame';
 import { Grid, AxisX, AxisY } from '../components/lab/chart/Axis';
 import { Line, Dots } from '../components/lab/chart/marks';
 import { linearScale } from '../components/lab/chart/scale';
+import BackLink from '../components/BackLink';
 
 const GD_VARS = { // token-exempt
   '--gd-ink': '#2d3748',
@@ -197,6 +198,7 @@ export default function GovernmentDebt() {
 
   return (
     <div className="min-h-screen paper-texture font-sans" style={{ ...GD_VARS, background: 'var(--gd-bg)', paddingBottom: 60 }}>
+      <BackLink floating />
 
       {/* ── Header ── */}
       <div style={{ background: 'linear-gradient(135deg, var(--gd-nav-bg) 0%, var(--gd-nav-bg-end) 100%)', paddingTop: 48, paddingBottom: 28 }}>

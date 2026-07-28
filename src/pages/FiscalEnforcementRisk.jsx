@@ -16,6 +16,7 @@ import {
   TimerReset,
 } from 'lucide-react';
 import data from '../data/fiscalEnforcementRisk.json';
+import BackLink from '../components/BackLink';
 
 const ds = data.datasets;
 const initial = ds.initialResults;
@@ -585,6 +586,7 @@ export default function FiscalEnforcementRisk() {
     <main className="fer-page">
       <style>{styles}</style>
       <div className="fer-shell">
+        <BackLink className="mb-5 block w-fit text-token-sm text-ink-faint transition hover:text-accent" />
         <header className="fer-hero">
           <div className="fer-hero-copy">
             <div className="fer-hero-topline">
