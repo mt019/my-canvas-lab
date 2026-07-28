@@ -81,3 +81,41 @@ export function resolveBack(override, pathname) {
   if (override) return BACK_NAV_ENABLED ? override : null;
   return backFor(pathname);
 }
+
+/*
+ * 這一頁屬於哪個主題站——給眉標用的。
+ *
+ * 站的兩條回頭路是兩件不同的事，所以擺在兩個地方（2026-07-28 使用者裁定）：
+ *   左上角的箭頭  → 離開這個站，回 canvas 首頁。
+ *   眉標上的站名  → 回這個站自己的首頁（`/brief/events` 的「BRIEF」按下去回 `/brief`）。
+ * 已經在站首頁時回 null——站名不連到自己，那是一個按了沒反應的連結。
+ */
+export function siteHomeFor(pathname) {
+  const path = pathname.length > 1 ? pathname.replace(/\/+$/, '') : pathname;
+  const hit = SITE_HOMES.find(([prefix]) => path.startsWith(prefix));
+  if (!hit) return null;
+  return hit[1].href === path ? null : hit[1];
+}
+
+/*
+ * 報頭（眉標＋大標題）按下去要去哪。返回鍵管「離開這個站」，報頭管「回到這個站的原點」。
+ *
+ * 兩種原點，都是實際被問出來的：
+ *
+ * 1. **深一層的頁 → 站首頁。** `/brief/events` 的「BRIEF 簡報」回 `/brief`。
+ * 2. **同一頁但切過分頁 → 回到沒有參數的那一頁。** 這是第二次被問的那個
+ *    （2026-07-28：「這區怎麼還是沒得點回 brief 首頁？」）——當時人就站在 `/brief`，
+ *    但網址帶著 `?view=reading&activityDay=day3&sources=…`，報頭卻是純文字，因為第一版
+ *    只比路徑、不看參數。分頁與篩選都在網址裡，所以「回到原點」是一個真的動作：把它們
+ *    全部清掉。
+ *
+ * 兩者都不成立（乾淨的站首頁、或不屬於任何站又沒有參數的頁）才回 null——那時候報頭
+ * 連到自己，按了不會有任何事發生。
+ */
+export function identityHomeFor(pathname, search = '') {
+  const site = siteHomeFor(pathname);
+  if (site) return site;
+  const path = pathname.length > 1 ? pathname.replace(/\/+$/, '') : pathname;
+  if (NO_BACK.has(path)) return null;
+  return search && search !== '?' ? { href: path, label: '' } : null;
+}

@@ -4,9 +4,11 @@ import AppearanceMenu from '../components/AppearanceMenu';
 import AccountControl from '../components/AccountControl';
 import FontSizeControl, { useFontScale } from '../components/FontSizeControl';
 import Tabs, { useTabParams } from '../components/lab/Tabs';
+import SourceFilter, { usePersistedFlag } from '../components/lab/SourceFilter';
 import DashboardLayout from '../components/lab/DashboardLayout';
 import MarkButton from './brief/_MarkButton';
-import { liveOf, snapshotEvent, snapshotItem, useGoing, useKept, useSeen, useWent } from './brief/marks';
+import EventRow from './brief/_EventRow';
+import { liveOf, snapshotItem, useGoing, useKept, useSeen, useWent } from './brief/marks';
 import {
   blindSpots,
   closingIn,
@@ -14,10 +16,12 @@ import {
   dayDiff,
   entryOf,
   entryText,
-  eventFacts,
-  eventInWindow,
   eventSections,
+  eventSources,
+  defaultEventSources,
   events,
+  isFollowed,
+  pastEvents,
   followed,
   inDays,
   inDefaultView,
@@ -35,6 +39,7 @@ import {
   sourceLabel,
   sources,
   todayInTaipei,
+  weekdayOf,
   URGENT_WINDOW,
   WINDOWS,
 } from './brief/data';
@@ -113,70 +118,6 @@ function SourceHead({ source, count, unit, note, alone }) {
   );
 }
 
-function EventRow({ event, today, showSource, going, went }) {
-  const entry = entryText(event, today);
-  const facts = eventFacts(event);
-  return (
-    <div className="grid grid-cols-1 gap-x-4 border-b border-line-soft py-2 sm:grid-cols-[8.5rem_minmax(0,1fr)_10rem]">
-      <div className="text-token-xs leading-relaxed tabular-nums text-ink-muted">
-        {dateText(event)}
-        {/* 已經開始、還沒結束的東西不能標「18 天前」——那讀起來像過期的，而它今天還開著。 */}
-        <span className="ml-1 text-ink-faint">
-          {isOngoing(event, today) ? '進行中' : inDays(dayDiff(today, event.date))}
-        </span>
-      </div>
-      <div className="min-w-0">
-        <a
-          href={event.detailUrl ?? event.eventUrl ?? undefined}
-          target="_blank"
-          rel="noreferrer"
-          className="text-token-sm leading-snug text-ink transition-colors duration-fast hover:text-accent"
-        >
-          {event.title}
-        </a>
-        {event.status === '暫訂' ? <span className="ml-1.5 text-token-xs text-ink-faint">（暫訂）</span> : null}
-        <div className="text-token-xs leading-relaxed text-ink-faint">
-          {showSource ? <span className="text-ink-muted">{sourceLabel(event.source)}</span> : null}
-          {showSource && facts.length ? ' · ' : ''}
-          {facts.join(' · ')}
-        </div>
-      </div>
-      <div className={`text-token-xs leading-relaxed tabular-nums sm:text-right ${entry.loud ? 'text-ink' : 'text-ink-faint'}`}>
-        {entry.text}
-        {event.registerUrl ? (
-          <a href={event.registerUrl} target="_blank" rel="noreferrer" className="ml-1.5 text-accent underline underline-offset-2">
-            報名
-          </a>
-        ) : null}
-        {going || went ? (
-          <div className="mt-0.5 flex flex-col items-start gap-0.5 sm:items-end">
-            {going ? (
-              <MarkButton
-                on={going.has(event.id)}
-                onToggle={() => {
-                  if (!going.has(event.id)) went.remove(event.id);
-                  going.toggle(snapshotEvent(event));
-                }}
-                label="我要去"
-              />
-            ) : null}
-            {went ? (
-              <MarkButton
-                on={went.has(event.id)}
-                onToggle={() => {
-                  if (!went.has(event.id)) going.remove(event.id);
-                  went.toggle(snapshotEvent(event));
-                }}
-                label="我去了"
-              />
-            ) : null}
-          </div>
-        ) : null}
-      </div>
-    </div>
-  );
-}
-
 /*
  * 最上面那一區：門這幾天就要關的。
  *
@@ -192,7 +133,7 @@ function EventRow({ event, today, showSource, going, went }) {
  * 一件正是渡邊浩那場（8/14 開、7/20 截止）。把量大的來源跟量小的混排，就是把使用者真正在
  * 追的東西沖掉，那正是這頁存在要消滅的失敗模式。
  */
-function ClosingSoon({ today }) {
+function ClosingSoon({ today, going, went }) {
   const { core, aside, untilFull } = useMemo(() => {
     const soon = (e) => {
       const left = closingIn(e, today);
@@ -230,42 +171,7 @@ function ClosingSoon({ today }) {
         </p>
       ) : (
         rows.map(({ e, left }) => (
-          <div key={e.id} className="grid grid-cols-1 gap-x-4 border-b border-line-soft py-2.5 sm:grid-cols-[8.5rem_minmax(0,1fr)]">
-            <div className="text-token-sm leading-snug tabular-nums text-ink">
-              {left == null ? '額滿為止' : left === 0 ? '今天最後一天' : `剩 ${left} 天`}
-              <div className="text-token-xs leading-relaxed text-ink-faint">
-                {left == null
-                  ? '無公告截止日，額滿就關'
-                  : `${md(e.closesAt)} ${e.closesAtKind}${e.mayCloseWhenFull ? '，可能更早' : ''}`}
-              </div>
-            </div>
-            <div className="min-w-0">
-              <a
-                href={e.detailUrl ?? e.eventUrl ?? undefined}
-                target="_blank"
-                rel="noreferrer"
-                className="text-token-sm leading-snug text-ink transition-colors duration-fast hover:text-accent"
-              >
-                {e.title}
-              </a>
-              <div className="text-token-xs leading-relaxed text-ink-faint">
-                {[sourceLabel(e.source), ...eventFacts(e).slice(0, 2)].join(' · ')}
-              </div>
-              <div className="text-token-xs leading-relaxed text-ink-faint">
-                {dateText(e)} 開 · {inDays(dayDiff(today, e.date))}
-                {e.registerUrl ? (
-                  <a href={e.registerUrl} target="_blank" rel="noreferrer" className="ml-2 text-accent underline underline-offset-2">
-                    去報名
-                  </a>
-                ) : null}
-                {e.registerSourceUrl ? (
-                  <a href={e.registerSourceUrl} target="_blank" rel="noreferrer" className="ml-2 underline underline-offset-2">
-                    期限出處
-                  </a>
-                ) : null}
-              </div>
-            </div>
-          </div>
+          <EventRow key={e.id} event={e} today={today} showSource closesIn={left} going={going} went={went} />
         ))
       )}
 
@@ -323,10 +229,25 @@ function EventKindSection({ sec, today, first, pool, going, went }) {
       const rows = shown
         .filter((e) => e.source === s.id)
         .sort((a, b) => {
-          // 進行中的排前面：一個 6/29 開始、7/17 結束的暑期課程，照開始日排會沉到最底下
-          // 然後標「18 天前」，讀起來像過期的東西——它今天還開著。
-          const og = Number(isOngoing(b, today)) - Number(isOngoing(a, today));
-          return og || a.date.localeCompare(b.date);
+          /*
+           * 快要開始的排前面（照開始日），已經在進行的排後面（照結束日，先結束的在前）。
+           *
+           * 這一條改過一次，兩個版本都是實測逼出來的。**上一版把「進行中」一律排最前面**，
+           * 理由是一個 6/29 開始、7/17 結束的暑期課程照開始日排會沉到最底下、標成「18 天前」，
+           * 讀起來像過期的。那個理由還在，但接了展覽之後它反過來壞掉：一檔 2024 年就開展、
+           * 開到 2026 年底的特展也是「進行中」，於是週報最上面四則全是這種東西——而每個來源
+           * 只列前 4 則，真正這幾天要去的講座整個被擠掉。
+           *
+           * 所以排序的依據不是「開始了沒」，是**還剩多少時間可以動手**：還沒開始的照開始日、
+           * 已經開始的照結束日。那檔 7/17 結束的暑期課程照樣排在很前面（它三天後就結束），
+           * 開到後年的展覽自己沉下去。
+           */
+          const ao = isOngoing(a, today);
+          const bo = isOngoing(b, today);
+          if (ao !== bo) return ao ? 1 : -1;
+          return ao
+            ? (a.endDate ?? a.date).localeCompare(b.endDate ?? b.date)
+            : a.date.localeCompare(b.date);
         });
       return { source: s, rows };
     })
@@ -576,8 +497,8 @@ function LectureMarks({ today, going, went }) {
           <span className="ml-2 text-token-sm tabular-nums text-ink-faint">{upcoming.length} 場</span>
         </h2>
         <p className="mb-4 mt-1 text-token-sm leading-relaxed text-ink-muted">最近的活動排在最前面。</p>
-        {upcoming.length > 0 ? upcoming.map(({ record, state }) => (
-          <LectureMarkRow key={record.id} record={record} today={today} state={state} going={going} went={went} />
+        {upcoming.length > 0 ? upcoming.map(({ record }) => (
+          <LectureMarkRow key={record.id} record={record} today={today} going={going} went={went} />
         )) : (
           <p className="py-6 text-token-sm text-ink-muted">還沒有接下來的講座。到日報或活動曆按「我要去」，就會收進這裡。</p>
         )}
@@ -591,15 +512,8 @@ function LectureMarks({ today, going, went }) {
         <p className="mb-4 mt-1 text-token-sm leading-relaxed text-ink-muted">
           最近結束的排在前面；「待確認」表示原本安排要去，但尚未確認是否到場。
         </p>
-        {completed.length > 0 ? completed.map(({ record, state }) => (
-          <LectureMarkRow
-            key={record.id}
-            record={record}
-            today={today}
-            state={state === 'going' ? 'pending' : state}
-            going={going}
-            went={went}
-          />
+        {completed.length > 0 ? completed.map(({ record }) => (
+          <LectureMarkRow key={record.id} record={record} today={today} ended going={going} went={went} />
         )) : (
           <p className="py-6 text-token-sm text-ink-muted">還沒有已結束的講座紀錄。</p>
         )}
@@ -608,75 +522,14 @@ function LectureMarks({ today, going, went }) {
   );
 }
 
-function LectureMarkRow({ record, today, state, going, went }) {
+/*
+ * 我的講座那一列。畫的是同一個 EventRow，只是資料來源不同：**庫裡還在就畫庫裡那一筆**
+ * （摘要改過、活動圖事後補上、期限延過，快照都不會知道），輪替出去了才退回本機快照。
+ */
+function LectureMarkRow({ record, today, ended, going, went }) {
   const live = liveOf(record.id);
-  const title = live?.title ?? record.title;
-  const url = live ? (live.detailUrl ?? live.eventUrl ?? null) : record.url;
-  const date = live?.date ?? record.date;
-  const time = live?.time ?? record.time;
-  const venue = live?.venue ?? record.venue;
-  const speaker = live?.speaker ?? record.speaker;
-  const poster = live?.poster ?? record.poster;
-  const posterSourceUrl = live?.posterSourceUrl ?? record.posterSourceUrl;
-  const description = live?.description ?? record.description;
-  const when = live ? dateText(live) : [date, time].filter(Boolean).join(' ');
-
-  return (
-    <div className="grid grid-cols-1 gap-x-4 gap-y-2 border-b border-line-soft py-4 sm:grid-cols-[8.5rem_6rem_minmax(0,1fr)_8rem]">
-      <div className="text-token-xs leading-relaxed tabular-nums text-ink">
-        {when}
-        {date ? <div className="text-ink-muted">{inDays(dayDiff(today, date))}</div> : null}
-      </div>
-      <div className={`flex w-24 items-center justify-center overflow-hidden rounded-token-sm border border-line-soft bg-surface ${poster ? '' : 'min-h-[72px]'}`}>
-        {poster ? (
-          <a
-            href={poster}
-            target="_blank"
-            rel="noreferrer"
-            title="在新分頁開啟海報大圖"
-            className="group block w-full cursor-zoom-in"
-          >
-            <img
-              src={poster}
-              alt={`${title}活動海報`}
-              loading="lazy"
-              className="block h-auto w-full transition-opacity duration-fast group-hover:opacity-80"
-            />
-          </a>
-        ) : (
-          posterSourceUrl ? (
-            <a href={posterSourceUrl} target="_blank" rel="noreferrer" className="px-2 text-center font-accent text-token-xs leading-relaxed tracking-[0.08em] text-accent">
-              查看活動圖
-            </a>
-          ) : <span className="font-accent text-token-xs tracking-[0.12em] text-ink-muted">講座</span>
-        )}
-      </div>
-      <div className="min-w-0">
-        <a href={url ?? undefined} target="_blank" rel="noreferrer" className="text-token-sm leading-snug text-ink transition-colors duration-fast hover:text-accent">
-          {title}
-        </a>
-        <div className="mt-0.5 text-token-xs leading-relaxed text-ink-muted">{[speaker, venue, record.sourceLabel].filter(Boolean).join(' · ')}</div>
-        {description ? <p className="mt-1 line-clamp-2 text-token-xs leading-relaxed text-ink-muted">{description}</p> : null}
-      </div>
-      <div className="mt-1 flex flex-wrap gap-x-3 sm:mt-0 sm:justify-end">
-        {state === 'going' || state === 'pending' ? (
-          <>
-            <MarkButton on onToggle={() => going.remove(record.id)} label={state === 'pending' ? '待確認' : '我要去'} />
-            <MarkButton
-              on={false}
-              onToggle={() => {
-                going.remove(record.id);
-                went.toggle({ ...record, markedAt: new Date().toISOString() });
-              }}
-              label="我去了"
-            />
-          </>
-        ) : (
-          <MarkButton on onToggle={() => went.remove(record.id)} label="我去了" />
-        )}
-      </div>
-    </div>
-  );
+  const event = live ? { ...record, ...live } : record;
+  return <EventRow event={event} today={today} showSource going={going} went={went} ended={ended} />;
 }
 
 function KeptMarks({ kept, today }) {
@@ -704,48 +557,180 @@ const addDays = (date, days) => {
 
 const occursOn = (event, date) => event.date <= date && (event.endDate ?? event.date) >= date;
 
-function TodayEvents({ today, day, onDayChange, going, went }) {
-  const choices = [
-    { id: 'today', label: '今天', offset: 0 },
-    { id: 'tomorrow', label: '明天', offset: 1 },
-    { id: 'after', label: '後天', offset: 2 },
+/*
+ * 這一週：從今天起七天，按日期一段一段列出來。
+ *
+ * 先前這裡是「今天／明天／後天」三顆次標籤，一次只看得到一天。三天太短——中研院的講座
+ * 多半提前一兩週公告，而報名截止常常落在活動前一週，等它進到「後天」才看見，門通常已經
+ * 關了。而且把七天拆成七顆按鈕只是把同一份清單藏在七次點擊後面：這一段本來就短（一天
+ * 平均三五場），整週攤開來也就一頁多，攤開比藏起來好找。
+ *
+* **整週都開著的東西只講一次。** 展覽、暑期課程、長期調查計畫這類跨月的活動，若每天都
+ * 印一遍，七天就是同一批東西印七次——實測今天那一段 12 場裡有 9 場是它們，真正今天才發生
+ * 的講座反而被擠到最下面。所以它們獨立一區放最前面（整週都在，不必挑哪天去），底下每一段
+ * 只留「那天才開始」的場次。
+ */
+const WEEK_DAYS = 7;
+
+/* 次分頁的 id 用位移不用日期：日期每天都不一樣，把它寫進網址，昨天複製的連結明天就指到
+   別的地方去了。'ongoing' 與 'missed' 是兩端的那兩塊。 */
+const dayTabId = (i) => `day${i}`;
+
+function WeekEvents({ today, day, onDayChange, inView, going, went }) {
+  const { ongoing, days, total } = useMemo(() => {
+    const week = Array.from({ length: WEEK_DAYS }, (_, i) => addDays(today, i));
+    const inWeek = events.filter((e) => inView(e) && week.some((d) => occursOn(e, d)));
+    const byTime = (a, b) =>
+      (a.time ?? '99:99').localeCompare(b.time ?? '99:99') || a.title.localeCompare(b.title, 'zh-Hant');
+    return {
+      // 這一週之前就開始的：整週都在，不屬於某一天。
+      ongoing: inWeek.filter((e) => e.date < today).sort((a, b) => (a.endDate ?? a.date).localeCompare(b.endDate ?? b.date)),
+      days: week.map((date, i) => ({ date, id: dayTabId(i), rows: inWeek.filter((e) => e.date === date).sort(byTime) })),
+      total: inWeek.length,
+    };
+  }, [today, inView]);
+
+  const missed = useMemo(() => pastEvents.filter(inView), [inView]);
+
+  const tabs = [
+    { id: 'all', label: '本週全覽', count: total },
+    { id: 'ongoing', label: '整週都在', count: ongoing.length },
+    ...days.map(({ date, id, rows }, i) => ({
+      id,
+      label: i === 0 ? '今天' : i === 1 ? '明天' : `${md(date)}（${weekdayOf(date)}）`,
+      count: rows.length,
+    })),
+    { id: 'missed', label: '剛結束的', count: missed.length },
   ];
-  const selected = choices.find((x) => x.id === day) ?? choices[0];
-  const date = addDays(today, selected.offset);
-  const rows = events
-    .filter((e) => inDefaultView(e) && occursOn(e, date))
-    .sort((a, b) => (a.time ?? '99:99').localeCompare(b.time ?? '99:99') || a.title.localeCompare(b.title, 'zh-Hant'));
+  const selected = tabs.find((t) => t.id === day) ?? tabs[2];
+  const selectedDay = days.find((d) => d.id === selected.id);
 
   return (
     <section className="mt-4">
       <p className="max-w-2xl text-token-sm leading-relaxed text-ink">
-        未來三天的實體活動，按日期列出。
+        今天起 {WEEK_DAYS} 天的實體活動，共 {total} 場。這一週之前就開始、還沒結束的收在「整週都在」，
+        其餘按開始的那一天分。
       </p>
       <Tabs
         variant="underline"
-        label="近日活動日期"
+        label="這一週的日期"
         value={selected.id}
         onChange={onDayChange}
         className="mt-5"
-        items={choices.map((x) => ({
-          id: x.id,
-          label: x.label,
-          count: events.filter((e) => inDefaultView(e) && occursOn(e, addDays(today, x.offset))).length,
-        }))}
+        items={tabs}
       />
-      <div className="mt-6">
-        <h2 id="today-events" className="font-display text-token-lg text-ink">
-          {selected.label}的活動
-          <span className="ml-2 text-token-sm tabular-nums text-ink-muted">{rows.length} 場</span>
-        </h2>
-        <p className="mb-4 mt-1 text-token-sm text-ink-muted">{dateText({ date, allDay: true })}，依開始時間排列；跨日且仍在進行的也算。</p>
-        {rows.length > 0 ? rows.map((event) => (
-          <EventRow key={event.id} event={event} today={today} showSource going={going} went={went} />
-        )) : (
-          <p className="py-6 text-token-sm text-ink-muted">這一天目前沒有預設關注範圍內的活動。</p>
-        )}
-      </div>
+
+      {selected.id === 'all' ? (
+        <>
+          <OngoingBlock rows={ongoing} today={today} going={going} went={went} headingId="week-events" />
+          {days.map(({ date, rows }, i) => (
+            <DayBlock
+              key={date}
+              date={date}
+              rows={rows}
+              today={today}
+              relative={i === 0 ? '今天' : i === 1 ? '明天' : null}
+              going={going}
+              went={went}
+            />
+          ))}
+        </>
+      ) : selected.id === 'ongoing' ? (
+        <OngoingBlock rows={ongoing} today={today} going={going} went={went} headingId="week-events" />
+      ) : selected.id === 'missed' ? (
+        <MissedEvents today={today} rows={missed} going={going} went={went} />
+      ) : (
+        <DayBlock
+          date={selectedDay.date}
+          rows={selectedDay.rows}
+          today={today}
+          relative={selected.label === '今天' || selected.label === '明天' ? selected.label : null}
+          going={going}
+          went={went}
+          headingId="week-events"
+          withNote
+        />
+      )}
     </section>
+  );
+}
+
+/* 這一週之前就開始、還沒結束的那些。全覽與它自己那一格共用同一份寫法。 */
+function OngoingBlock({ rows, today, going, went, headingId }) {
+  return (
+    <div className="mt-8">
+      <h2 id={headingId} className="font-display text-token-lg text-ink">
+        整週都在
+        <span className="ml-2 text-token-sm tabular-nums text-ink-faint">{rows.length} 場</span>
+      </h2>
+      <p className="mb-4 mt-1 text-token-sm leading-relaxed text-ink-muted">
+        這一週之前就開始、還沒結束的展覽與長期計畫，照結束日排，先結束的在前面。
+      </p>
+      {rows.length > 0 ? (
+        rows.map((event) => <EventRow key={event.id} event={event} today={today} showSource going={going} went={went} />)
+      ) : (
+        <p className="py-6 text-token-sm text-ink-muted">這一週沒有從先前延續下來的活動。</p>
+      )}
+    </div>
+  );
+}
+
+/* 某一天開始的那些。 */
+function DayBlock({ date, rows, today, relative, going, went, headingId, withNote = false }) {
+  return (
+    <div className="mt-8">
+      <h2 id={headingId ?? `day-${date}`} className="font-display text-token-lg text-ink">
+        {dateText({ date, allDay: true })}
+        <span className="ml-2 text-token-sm tabular-nums text-ink-faint">
+          {relative ? `${relative} · ` : ''}
+          {rows.length} 場
+        </span>
+      </h2>
+      {withNote ? (
+        <p className="mb-4 mt-1 text-token-sm leading-relaxed text-ink-muted">
+          這一天開始的活動，依開始時間排列。整週都開著的收在「整週都在」，不在這裡重複一次。
+        </p>
+      ) : null}
+      {rows.length > 0 ? (
+        <div className={withNote ? '' : 'mt-3'}>
+          {rows.map((event) => (
+            <EventRow key={event.id} event={event} today={today} showSource going={going} went={went} />
+          ))}
+        </div>
+      ) : (
+        <p className="mt-2 text-token-sm text-ink-muted">這一天沒有新開始的活動。</p>
+      )}
+    </div>
+  );
+}
+
+/*
+ * 剛結束的。
+ *
+ * 一場活動一過就從站上消失，於是「那天沒去成的那場是什麼」再也查不回來——而沒去成的理由
+ * 多半是時間不湊巧，不是不想去。資料倉往回送 30 天的學術活動（見 sync-to-canvas 的
+ * pastEvents），這一塊把它們列出來，仍然按得了「我去了」，也還看得到活動圖與摘要。
+ *
+ * 它是這一週那排次分頁的最後一格：時間軸的另一端，跟「整週都在」一頭一尾。
+ */
+function MissedEvents({ today, rows, going, went }) {
+  return (
+    <div className="mt-6">
+      <h2 id="week-events" className="font-display text-token-lg text-ink">
+        剛結束的
+        <span className="ml-2 text-token-sm tabular-nums text-ink-faint">{rows.length} 場</span>
+      </h2>
+      <p className="mb-4 mt-1 text-token-sm leading-relaxed text-ink-muted">
+        過去 30 天已經辦完的學術活動。時間沒排開而錯過的，在這裡還找得到，也還能按「我去了」。
+      </p>
+      {rows.length > 0 ? (
+        rows.map((event) => (
+          <EventRow key={event.id} event={event} today={today} showSource going={going} went={went} ended />
+        ))
+      ) : (
+        <p className="py-6 text-token-sm text-ink-muted">過去 30 天沒有已結束的學術活動。</p>
+      )}
+    </div>
   );
 }
 
@@ -814,36 +799,91 @@ function Provenance() {
 }
 
 /*
- * 分頁切的是**時間**，不是類別。這一頁是一份報，不是一份目錄。
+ * 分頁：一頁只回答一個問題。
  *
- * 上一版切 collection（讀的東西／活動／資料來自哪裡），於是它回答的是「這個站有哪些東西」。
- * 使用者要的是「這段時間發生了什麼」——那是報。類別降成報裡面的欄目（區塊照樣從 sources[]
- * 長出來，見 sectionsOf），時間升上來當主軸。
+ * 上上版切 collection（讀的東西／活動／資料來自哪裡），回答的是「這個站有哪些東西」；上一版
+ * 改切時間窗（日報／週報／月報），回答的是「這段時間發生了什麼」。**兩版都有同一個毛病：
+ * 一個分頁裡裝著方向相反的兩種東西。** 文章的日期是「它什麼時候出來的」（往回看），活動的
+ * 日期是「你什麼時候得到場」（往前看）；把它們裝進同一個「週報 26」，那個數字就講不出自己
+ * 是什麼——實測那 26 是 0 篇文章加 26 場活動。而週報整個包在月報裡，兩個數字並排看起來又
+ * 像兩批不同的東西。使用者的原話：「日報週報月報到底什麼邏輯？沒看明白。」
  *
- * **日報＝我還沒看過的，不是「今天」。** 拿自然日當日報，每天早上打開都是空的：今天才過
- * 一點，只有 3 篇，而昨天那 25 篇已經掉進週報了。而且月精度的來源（NBER、IMF 共 24 篇）
- * 日期全部是該月 1 號，任何以日期為準的日報都會讓它們在 1 號噴出 24 篇、其餘 30 天掛零。
- * 改成記 id（見 marks.js）之後兩個問題一起消失：看過就是看過，跟它宣稱哪天出生無關。
- *
- * **週報月報是往兩個方向走的。** 同一個天數，讀的東西往回看（這 7 天出了什麼），活動往前看
- * （這 7 天要去哪）——因為那兩種日期的意義本來就相反。見 data.js 的 WINDOWS。
+ * 現在的切法（2026-07-28 使用者裁定）：
+ *   未讀      我還沒按過「看過」的，文章與活動都算。**這是收件匣，不是「今天」**——
+ *             拿自然日當日報，每天早上打開都是空的（今天才過一點），而月精度的來源
+ *             （NBER、IMF 共 24 篇）日期全部是該月 1 號，以日期為準的日報會讓它們在 1 號
+ *             噴出 24 篇、其餘 30 天掛零。記 id 之後兩個問題一起消失。
+ *   讀的東西  只有文章，一律往回看；次分頁切這 7 天／這 30 天。全部 247 篇在 /brief/reading。
+ *   活動      只有活動，一律往前看；次分頁切本週全覽／整週都在／每一天／剛結束的。
+ *   我的講座／要讀的  個人標記。
+ *   資料來源  這些東西從哪來、看不到什麼。
  *
  * **「這 N 天關門的」釘在分頁之上，不屬於任何一個分頁。** 錯過就沒了的東西不能藏在別的
- * 分頁後面——切到月報就看不到今天最後一天的報名，那正是這個站要消滅的失敗模式。
+ * 分頁後面——切到別頁就看不到今天最後一天的報名，那正是這個站要消滅的失敗模式。
  */
 const SOURCES_VIEW = 'sources';
-const TODAY_VIEW = 'today-events';
+const UNREAD_VIEW = 'unread';
+const READING_VIEW = 'reading';
+const WEEK_EVENTS_VIEW = 'week-events';
 const LECTURES_VIEW = 'lectures';
 const KEPT_VIEW = 'kept';
 
 export default function Brief() {
   const [scale, setScale] = useFontScale();
-  const [{ view, activityDay }, setTabs] = useTabParams({ view: 'daily', activityDay: 'today' });
+  const [{ view: viewParam, activityDay, span, sources: sourceParam, hosts }, setTabs] = useTabParams({
+    view: UNREAD_VIEW,
+    activityDay: 'day0',
+    span: 'w7',
+    sources: defaultEventSources.map((s) => s.id).join(','),
+    hosts: 'followed',
+  });
+  /* 舊網址還在流通（?view=daily|week|month）。這一輪把三個報收成兩頁，舊的三個值在這裡
+     翻成新的，貼出去的連結不會落在一個不存在的分頁上。 */
+  const view = viewParam === 'daily' ? UNREAD_VIEW : viewParam === 'week' || viewParam === 'month' ? READING_VIEW : viewParam;
+  const readingDays = viewParam === 'month' || span === 'd30' ? 30 : 7;
+
+  // 單選是介面偏好，重開頁面不該被重置；選了誰在網址裡，才貼得出去。
+  const [radio, setRadio] = usePersistedFlag('canvaslab:brief:week:radio');
   const { marks: seen, add: markSeen } = useSeen();
   const kept = useKept();
   const going = useGoing();
   const went = useWent();
   const today = todayInTaipei();
+
+  /*
+   * 這一週要看哪些來源、哪些主辦單位。**選擇放在網址裡，所以切日期那排次分頁不會把它弄丟**
+   * ——那是同一頁的兩個獨立問題（我要看誰、我要看哪一天），互相不該重設對方。
+   *
+   * 預設值就是原本寫死的那組（預設視圖的來源＋追蹤的主辦單位），所以沒有動過篩選的人
+   * 看到的東西跟以前一樣。
+   */
+  const selectedSources = useMemo(() => {
+    if (sourceParam === 'all') return eventSources.map((s) => s.id);
+    if (sourceParam === 'none') return []; // 全不選是合法狀態，內容區有它自己的空狀態
+    const ids = sourceParam.split(',').filter((id) => eventSources.some((s) => s.id === id));
+    return ids.length ? ids : defaultEventSources.map((s) => s.id);
+  }, [sourceParam]);
+
+  const writeSources = (ids) => {
+    const ordered = eventSources.filter((s) => ids.includes(s.id)).map((s) => s.id);
+    setTabs(
+      { sources: ordered.length === 0 ? 'none' : ordered.length === eventSources.length ? 'all' : ordered.join(',') },
+      { scroll: 'preserve' },
+    );
+  };
+
+  /* 「精選的主辦單位」只對有指名主辦單位的來源起作用；沒指名的來源（NCTS 只有一家）
+     不受它影響，也不會因此整個消失。 */
+  const followedSources = useMemo(() => new Set(followed.map((f) => f.source)), []);
+  const hostSwitchApplies = selectedSources.some((id) => followedSources.has(id));
+  const inView = useCallback(
+    (e) => {
+      if (!selectedSources.includes(e.source)) return false;
+      if (hosts === 'followed' && followedSources.has(e.source) && !isFollowed(e)) return false;
+      return true;
+    },
+    [selectedSources, hosts, followedSources],
+  );
 
   /* 整區預設不跳出來的沉到同一個 collection 的最後面。這是排序不是特例——今天剛好是
      文化活動，哪天資料倉改了標記，換誰在最後面就自己會變。 */
@@ -856,32 +896,34 @@ export default function Brief() {
    * 這一期報裡有什麼。**每個分頁的數字都是它自己這一批數出來的**，不是從別處搬來的——
    * 分頁標籤上的數字跟它底下的東西不是同一個集合時，讀者不會發現，他只會相信那個數字。
    */
-  const poolOf = useCallback(
-    (id) => {
-      if (id === 'daily') {
-        return {
-          items: items.filter((i) => !seen.has(i.id)),
-          events: events.filter((e) => !seen.has(e.id)),
-        };
-      }
-      const days = WINDOWS.find((w) => w.id === id)?.days;
-      return {
-        items: items.filter((i) => itemInWindow(i, today, days)),
-        events: events.filter((e) => eventInWindow(e, today, days)),
-      };
-    },
-    [seen, today],
+  const unread = useMemo(
+    () => ({
+      items: items.filter((i) => !seen.has(i.id)),
+      events: events.filter((e) => !seen.has(e.id)),
+    }),
+    [seen],
   );
 
-  const pool = useMemo(() => poolOf(view), [poolOf, view]);
+  /* 讀的東西那一頁只有文章，而且只有一個方向：往回看 N 天。活動不進來——它有自己的分頁，
+     那裡才有「還剩幾天」「怎麼進場」這些只有活動才需要的東西。 */
+  const readingPool = useMemo(
+    () => ({ items: items.filter((i) => itemInWindow(i, today, readingDays)), events: [] }),
+    [today, readingDays],
+  );
+
+  const pool = view === READING_VIEW ? readingPool : unread;
 
   /* 分頁上的數字只數預設視圖裡的活動：把 444 檔售票節目算進「週報 N」，那個數字講的就不是
      這一頁在給你看的東西。收起來的那一區自己會在區裡講它有幾檔。 */
   const countOf = (p) => p.items.length + p.events.filter(inDefaultView).length;
 
-  const full = view === 'daily';
-  const unread = poolOf('daily');
-  const todayEventCount = events.filter((e) => inDefaultView(e) && occursOn(e, today)).length;
+  const full = view === UNREAD_VIEW;
+  /* 分頁上的數字＝那一頁底下真的會列出來的場次數：今天起七天，跨日的每天都算它在，
+     所以要按天數再去重，不能直接數 events。 */
+  const weekEventCount = useMemo(() => {
+    const week = Array.from({ length: WEEK_DAYS }, (_, i) => addDays(today, i));
+    return events.filter((e) => inView(e) && week.some((d) => occursOn(e, d))).length;
+  }, [today, inView]);
   const shownIds = [...pool.items.map((i) => i.id), ...pool.events.map((e) => e.id)];
 
   useEffect(() => {
@@ -910,22 +952,52 @@ export default function Brief() {
       }
       eyebrow="Brief"
       title="簡報"
-      summary="收集值得看的內容與台北實體活動。日報、週報、月報列出近期資料；我的講座與要讀的保存個人標記。"
+      summary="收集值得看的內容與台北實體活動。未讀是還沒看過的，讀的東西往回看、活動往前看；我的講座與要讀的保存個人標記。"
       tabs={{
         label: '簡報分頁',
         value: view,
         onChange: (v) => setTabs({ view: v }, { scroll: 'top' }),
         items: [
-          { id: 'daily', label: '日報', count: countOf(unread) },
-          ...WINDOWS.map((w) => ({ id: w.id, label: w.label, count: countOf(poolOf(w.id)) })),
-          { id: TODAY_VIEW, label: '今日活動', count: todayEventCount },
+          { id: UNREAD_VIEW, label: '未讀', count: countOf(unread) },
+          { id: READING_VIEW, label: '讀的東西', count: readingPool.items.length },
+          { id: WEEK_EVENTS_VIEW, label: '活動', count: weekEventCount },
           { id: LECTURES_VIEW, label: '我的講座', count: going.size + went.size },
           { id: KEPT_VIEW, label: '要讀的', count: kept.size },
           { id: SOURCES_VIEW, label: '資料來源', count: sources.length },
         ],
       }}
       leftRailTop={
-        view === 'daily' && closingCount > 0 ? (
+        view === WEEK_EVENTS_VIEW ? (
+          <nav className="mb-6 text-token-xs">
+            <SourceFilter
+              sources={eventSources}
+              selectedIds={selectedSources}
+              onChange={writeSources}
+              radio={radio}
+              onRadioChange={setRadio}
+              countOf={(id) => events.filter((e) => e.source === id).length}
+            />
+            {hostSwitchApplies ? (
+              <>
+                <p className="mb-2 mt-4 font-accent uppercase tracking-[0.12em] text-ink-faint">主辦單位（中研院）</p>
+                <Tabs
+                  variant="quiet"
+                  label="主辦單位（中研院）"
+                  value={hosts}
+                  onChange={(v) => setTabs({ hosts: v }, { scroll: 'preserve' })}
+                  className="!flex-col !items-start gap-0.5"
+                  items={[
+                    { id: 'followed', label: `精選 ${followed.length} 個` },
+                    { id: 'all', label: '全部' },
+                  ]}
+                />
+              </>
+            ) : null}
+            <p className="mt-4 leading-relaxed text-ink-faint">
+              選了誰在網址裡，切上面的日期不會把它換掉。
+            </p>
+          </nav>
+        ) : view === UNREAD_VIEW && closingCount > 0 ? (
           <a
             href="#closing"
             className="mb-4 flex items-baseline gap-1.5 border-l-2 border-warn pl-3 text-token-xs leading-snug text-ink-muted transition-colors duration-fast hover:text-ink"
@@ -938,36 +1010,52 @@ export default function Brief() {
     >
       {/* 完整那一大塊只在日報出現（它是「現在該動手的」，屬於日報）。其餘分頁不重複整塊，
           但錯過就沒了的東西不能藏在分頁後面——所以留一行連回日報，門還是每個分頁都看得到。 */}
-      {view === 'daily' ? (
-        <ClosingSoon today={today} />
+      {view === UNREAD_VIEW ? (
+        <ClosingSoon today={today} going={going} went={went} />
       ) : closingCount > 0 ? (
         <button
           type="button"
           id="closing"
-          onClick={() => setTabs({ view: 'daily' }, { scroll: 'top' })}
+          onClick={() => setTabs({ view: UNREAD_VIEW }, { scroll: 'top' })}
           className="flex w-full items-baseline gap-2 border-l-2 border-warn pl-3 text-left text-token-sm leading-snug text-ink-muted transition-colors duration-fast hover:text-ink"
         >
-          <span>未來 {URGENT_WINDOW} 天截止 · {closingCount} 件。查看日報。</span>
+          <span>未來 {URGENT_WINDOW} 天截止 · {closingCount} 件。查看未讀。</span>
         </button>
       ) : null}
 
-      <div className={view === 'daily' ? 'mt-12 border-t border-line pt-8' : closingCount > 0 ? 'mt-8' : ''}>
-        {view === 'daily' ? <DailyHead pool={pool} onMarkSeen={() => markSeen(shownIds)} /> : null}
-        {view === 'week' || view === 'month' ? (
-          <p className="text-token-sm leading-relaxed text-ink-muted">
-            最近 {WINDOWS.find((w) => w.id === view).days} 天出的 {pool.items.length} 篇，
-            加上接下來 {WINDOWS.find((w) => w.id === view).days} 天裡的{' '}
-            {pool.events.filter(inDefaultView).length} 場活動。
-            文章向前回溯，活動向後預覽。每個來源列出前 {PREVIEW_PER_SOURCE} 件。
-          </p>
+      <div className={view === UNREAD_VIEW ? 'mt-12 border-t border-line pt-8' : closingCount > 0 ? 'mt-8' : ''}>
+        {view === UNREAD_VIEW ? <DailyHead pool={pool} onMarkSeen={() => markSeen(shownIds)} /> : null}
+        {view === READING_VIEW ? (
+          <>
+            <Tabs
+              variant="underline"
+              label="回溯多久"
+              value={readingDays === 30 ? 'd30' : 'w7'}
+              onChange={(v) => setTabs({ view: READING_VIEW, span: v }, { scroll: 'preserve' })}
+              items={WINDOWS.map((w) => ({
+                id: w.days === 30 ? 'd30' : 'w7',
+                label: `這 ${w.days} 天`,
+                count: items.filter((i) => itemInWindow(i, today, w.days)).length,
+              }))}
+            />
+            <p className="mt-5 text-token-sm leading-relaxed text-ink-muted">
+              最近 {readingDays} 天出的 {pool.items.length} 篇，照它出來的時間往回看。每個來源列出前{' '}
+              {PREVIEW_PER_SOURCE} 件；全部 {items.length} 篇（可依來源與有沒有摘要篩）在{' '}
+              <Link to="/brief/reading" className="text-accent underline underline-offset-2">
+                讀的東西
+              </Link>
+              那一頁。
+            </p>
+          </>
         ) : null}
 
         {view === SOURCES_VIEW ? (
           <Provenance />
-        ) : view === TODAY_VIEW ? (
-          <TodayEvents
+        ) : view === WEEK_EVENTS_VIEW ? (
+          <WeekEvents
             today={today}
             day={activityDay}
+            inView={inView}
             onDayChange={(next) => setTabs({ activityDay: next }, { scroll: 'preserve' })}
             going={going}
             went={went}
@@ -983,7 +1071,7 @@ export default function Brief() {
         ) : (
           <>
             {/* 活動排在讀的東西前面：活動有日期、要排行程、錯過就沒了；讀的東西不會消失，
-                所以在後面。這是這頁開頭那段排序原則講的順序（先前程式碼把它做反了）。 */}
+                所以在後面。讀的東西那一頁沒有活動（pool.events 是空的），這一段自己不會出現。 */}
             {eventBlocks.map((sec, i) => (
               <EventKindSection key={sec.kind} sec={sec} today={today} pool={pool} going={going} went={went} first={i === 0} />
             ))}
@@ -992,10 +1080,8 @@ export default function Brief() {
             ))}
             {pool.items.length === 0 && pool.events.length === 0 ? (
               <p className="text-token-sm leading-relaxed text-ink-muted">
-                {view === 'daily'
-                  ? '這一批已全部標為已讀。週報、月報與「讀的東西」仍保留全部 ' +
-                    items.length +
-                    ' 篇。'
+                {view === UNREAD_VIEW
+                  ? '這一批已全部標為已讀。「讀的東西」仍保留全部 ' + items.length + ' 篇。'
                   : '這段期間沒有資料。'}
               </p>
             ) : null}

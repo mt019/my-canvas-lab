@@ -73,6 +73,7 @@
 - [x] ~~PaletteLab 金箔按鈕修正~~（早已完成，2026-07-20 核對：`PaletteLab.jsx:613-614` 用的是 `.foil-text`，整顆 `.foil` 按鈕全站無使用處）
 - [ ] 字體上游評估（派：sonnet 研究；產出評估報告交使用者裁定，實作前過 font-clearance skill——`DESIGN.md`「不新增字體、不改 @font-face」禁令在使用者裁定前有效）：(1) bosswnx/huiwenmincho-improved 可否替換現行 HuiwenMincho subset 上游——重點：`index.css:26-32` 那 19 個 Chiron Sung HK fallback 缺字可否消掉、license 為何、與 zhuanlan.zhihu.com/p/344103391 介紹文比對來歷；(2) Fitzgerald-Porthmouth-Koenigsegg/Planschrift_Project 是什麼字體、license、對本站有無用處
 - [ ] 首頁頁尾字體出處聲明（派：sonnet）：`App.jsx:304-311` 頁尾加一行字體 credit（Huiwen Mincho 公有領域等，連到 `/fonts/LICENSES.md`）；Erikas Farbband／Radio Newsman 上游條款未明（見 HANDOFF Font system），措辭比照 LICENSES.md 現況陳述，不誇大授權
+  - 2026-07-27 註：門面 `/`（`FrontDoor.jsx`）頁尾已有一行字體 credit（列四款字體名，無 LICENSES 連結）。此 TODO 指的是 `/all` 索引頁尾（`App.jsx`）的正式出處聲明，仍未做。
 
 ## 新頁面構想
 - [ ] 新獨立 repo `review-notes`（paper/book review 專案；P2，scaffold 交 Codex/sonnet）：README＋第一篇骨架＝王兆珅《憲法解釋機制在中國的建立與展開（1906–1949）》碩論 review（同時是 ConstitutionalCourt 沿革區的素材來源）；review 正文之後由高階模型寫

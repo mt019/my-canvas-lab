@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import Eyebrow from './Eyebrow';
+import PageIdentity from './PageIdentity';
 import BackLink from './BackLink';
 import { SHELL_PAD_X_RAIL } from './shellPadding';
 
@@ -48,19 +48,14 @@ export default function PageShell({
   return (
     <main className="min-h-screen bg-paper paper-texture text-ink" style={scaleStyle}>
       <div className={`mx-auto py-10 ${PAD_X[width] ?? PAD_X.prose} ${WIDTHS[width] ?? WIDTHS.prose}`}>
-        <div className="mb-4 flex items-center justify-between gap-4">
+        <div className="group mb-4 flex items-center justify-between gap-4">
           <BackLink back={back} />
           <span className="flex-1" />
           {controls ? <div className="flex items-center gap-2">{controls}</div> : null}
         </div>
         <div className={`reader-scale ${width === 'prose' ? 'prose-scaled' : ''}`}>
           <header className="mb-8">
-            {eyebrow ? <Eyebrow className="mb-2">{eyebrow}</Eyebrow> : null}
-            {title ? (
-              <h1 className="font-display text-token-2xl leading-tight sm:text-token-3xl">
-                {title}
-              </h1>
-            ) : null}
+            <PageIdentity eyebrow={eyebrow} title={title} />
           </header>
           {children}
         </div>

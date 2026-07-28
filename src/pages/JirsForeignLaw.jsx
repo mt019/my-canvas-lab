@@ -4,16 +4,18 @@
 // 版型學中研院法研所出版品頁（IiasPublications）：左側常駐導覽欄＋主欄索引。但內容模型
 // 出自本資料自身的結構——544 個附檔裡有 444 個是「單一裁判譯文」，那才是法律研究者檢索的
 // 單位，所以主軸是「案件索引」（可搜案名／譯者、依系列篩），卷冊目錄與陽春清單保留為另一檢視。
-import { useMemo, useState, useEffect, useCallback } from 'react';
-import { ExternalLink, X, Search, BookMarked, Dices } from 'lucide-react';
-import { SHELL_PAD_X_RAIL } from '../components/shellPadding';
-import BackLink from '../components/BackLink';
+import { useMemo, useState, useCallback } from 'react';
+import { ExternalLink, BookMarked, Dices } from 'lucide-react';
 import AppearanceMenu from '../components/AppearanceMenu';
 import FontSizeControl, { useFontScale } from '../components/FontSizeControl';
 import Eyebrow from '../components/Eyebrow';
+import { SHELL_PAD_X_RAIL } from '../components/shellPadding';
+import BackLink from '../components/BackLink';
 import { useTabParam } from '../components/lab/Tabs';
 import { AccordionItem, useExpandedSet } from '../components/lab/Accordion';
 import Dropdown from '../components/lab/Dropdown';
+import PdfViewer from '../components/lab/PdfViewer';
+import SearchField from '../components/lab/SearchField';
 import data from '../data/jirsForeignLaw.json';
 
 const PDF_BASE = import.meta.env.VITE_JIRS_PDF_BASE || '/jirs';
@@ -80,68 +82,6 @@ function HBar({ value, max }) {
   );
 }
 
-function PdfViewer({ file, onClose, roll }) {
-  useEffect(() => {
-    const onKey = (e) => e.key === 'Escape' && onClose();
-    window.addEventListener('keydown', onKey);
-    document.body.style.overflow = 'hidden';
-    return () => {
-      window.removeEventListener('keydown', onKey);
-      document.body.style.overflow = '';
-    };
-  }, [onClose]);
-  const url = pdfUrl(file.相對路徑);
-  return (
-    <div className="fixed inset-0 z-50 flex flex-col bg-ink/70 p-3 sm:p-6" onClick={onClose}>
-      <div
-        className="mx-auto flex h-full w-full max-w-5xl flex-col overflow-hidden rounded-token-lg border border-line bg-paper shadow-xl"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="flex items-center gap-3 border-b border-line-soft px-4 py-1.5">
-          <div className="min-w-0 flex-1 truncate">
-            <span className="text-token-sm font-semibold text-ink">{file.顯示名}</span>
-            <span className="ml-2 text-token-xs text-ink-muted">{file.頁數 ? `${file.頁數} 頁 · ` : ''}{fmtBytes(file.位元組)}</span>
-          </div>
-          {roll?.threads?.length ? (
-            <div className="hidden shrink-0 items-center gap-2.5 text-token-xs text-ink-muted lg:flex">
-              <span className="text-ink-faint">順藤摸瓜</span>
-              {roll.threads.map((t, i) => (
-                <button key={i} type="button" onClick={t.run}
-                  className="whitespace-nowrap transition-colors duration-fast hover:text-accent">{t.label}</button>
-              ))}
-            </div>
-          ) : null}
-          <div className="flex shrink-0 items-center gap-1.5">
-            {roll ? (
-              <button type="button" onClick={roll.onReroll} title="換一篇（隨機）"
-                className="inline-flex items-center gap-1 rounded-token-md border border-line px-2 py-1 text-token-xs font-semibold text-ink-muted transition-colors duration-fast hover:border-accent hover:text-accent">
-                <Dices size={12} /> 換一篇
-              </button>
-            ) : null}
-            <a href={url} target="_blank" rel="noreferrer" title="新分頁開啟"
-              className="inline-flex items-center gap-1 rounded-token-md border border-line px-2 py-1 text-token-xs font-semibold text-ink-muted transition-colors duration-fast hover:border-accent hover:text-accent">
-              新分頁 <ExternalLink size={12} />
-            </a>
-            <button type="button" onClick={onClose} title="關閉（Esc）"
-              className="inline-flex items-center gap-1 rounded-token-md border border-line px-2 py-1 text-token-xs font-semibold text-ink-muted transition-colors duration-fast hover:border-accent hover:text-accent">
-              關閉 <X size={12} />
-            </button>
-          </div>
-        </div>
-        {roll?.threads?.length ? (
-          <div className="flex items-center gap-3 overflow-x-auto border-b border-line-soft px-4 py-1 text-token-xs text-ink-muted lg:hidden">
-            <span className="shrink-0 text-ink-faint">順藤摸瓜</span>
-            {roll.threads.map((t, i) => (
-              <button key={i} type="button" onClick={t.run}
-                className="shrink-0 whitespace-nowrap transition-colors duration-fast hover:text-accent">{t.label}</button>
-            ))}
-          </div>
-        ) : null}
-        <iframe title={file.顯示名} src={url} className="min-h-0 flex-1 bg-surface" />
-      </div>
-    </div>
-  );
-}
 
 // 卷冊裡一個附檔的一行呈現：案件顯示案名＋譯者，其餘（前置／主題節／全文）如實標示。
 // cons 官網補齊的卷走絕對連結、新分頁開啟（其 PDF 不在本倉、無法頁內 iframe）。
@@ -361,7 +301,7 @@ export default function JirsForeignLaw() {
                       <strong className="font-semibold text-ink">歐洲人權法院裁判選譯</strong>（六輯），另有美國、日本、韓國、法國資料。
                     </p>
                     <p className="text-token-base leading-relaxed text-ink-muted">
-                      官方入口把每筆報告拆成數十個附檔、只能逐一強制下載，前面還擋著一層 WAF。這裡把整批
+                      官方入口把每筆報告拆成數十個附檔、只能逐一強制下載，前面還擋著一層防自動下載的安全檢查。這裡把整批
                       <strong className="mx-1 font-semibold tabular-nums text-ink">{摘要.檔案總數}</strong>件全文收攏，其中
                       <strong className="mx-1 font-semibold tabular-nums text-ink">{摘要.案件總數}</strong>件是可逐案檢索的單一裁判譯文——
                       到<button type="button" onClick={() => setView('cases')} className="text-accent underline decoration-line hover:decoration-accent">案件索引</button>
@@ -434,12 +374,7 @@ export default function JirsForeignLaw() {
                     </p>
                   </div>
 
-                  <div className="relative max-w-md">
-                    <Search size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-faint" />
-                    <input type="search" value={q} onChange={(e) => setQ(e.target.value)}
-                      placeholder="搜尋案名、爭點或譯者…"
-                      className="w-full rounded-token-md border border-line bg-surface-raised py-2 pl-9 pr-3 text-token-sm text-ink placeholder:text-ink-faint focus:border-accent focus:outline-none" />
-                  </div>
+                  <SearchField value={q} onChange={setQ} placeholder="搜尋案名、爭點或譯者…" />
 
                   <div className="flex flex-wrap items-center gap-1.5">
                     <span className="mr-1 text-token-xs text-ink-faint">系列</span>
@@ -558,7 +493,7 @@ export default function JirsForeignLaw() {
                   <h2 className="text-token-lg font-semibold text-ink">關於這份索引</h2>
                   <p className="text-token-base leading-relaxed text-ink-muted">
                     全文為離線整理後的可讀鏡像。官方入口是 JIRS 電子出版品檢索系統，把每筆報告拆成數十個附檔、只能逐一強制下載，
-                    前面還擋著一層 F5 WAF 挑戰，Wayback 也沒有存檔。這裡把 {摘要.官方報告數} 筆報告、{摘要.檔案總數} 件附檔收攏成可檢索的地圖。
+                    前面還擋著一層防自動下載的安全檢查，網路上也找不到現成的存檔。這裡把 {摘要.官方報告數} 筆報告、{摘要.檔案總數} 件附檔收攏成可檢索的地圖。
                   </p>
                   <div>
                     <h2 className="mb-2 text-token-lg font-semibold text-ink">附檔怎麼分類</h2>
@@ -604,7 +539,10 @@ export default function JirsForeignLaw() {
       </main>
 
       {viewing ? (
-        <PdfViewer file={viewing}
+        <PdfViewer
+          src={pdfUrl(viewing.相對路徑)}
+          title={viewing.顯示名}
+          subtitle={`${viewing.頁數 ? `${viewing.頁數} 頁 · ` : ''}${fmtBytes(viewing.位元組)}`}
           onClose={() => { setViewing(null); setRollCase(null); }}
           roll={rollCase ? { onReroll: () => roll(rollPool), threads: threadsFor(rollCase) } : null} />
       ) : null}

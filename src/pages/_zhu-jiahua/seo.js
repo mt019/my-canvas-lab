@@ -1,5 +1,6 @@
 export const ZJH_TAB_SLUGS = [
   'legal-education',
+  'text-two-guang-geological-survey',
   'original-text',
   'text-a-view-of-legal-education',
   'text-committee-5th',
@@ -36,8 +37,20 @@ const legalItems = [
   ['法治行政', '1950-09-12', '325–330'],
 ];
 
-// 六篇校訂全文各自一頁。每篇的 description 只寫該篇原文講過的事，不外推。
+// 校訂全文各自一頁。每篇的 description 只寫該篇原文講過的事，不外推。
 const TEXT_PAGES = [
+  {
+    slug: 'text-two-guang-geological-survey',
+    textId: 'ZJH-001',
+    headline: '設立兩廣地質調查所意見書',
+    alternativeHeadline: '民國十六年五月於廣州',
+    datePublished: '1927-05',
+    pagination: '1',
+    title: '〈設立兩廣地質調查所意見書〉全文｜朱家驊，1927',
+    description: '朱家驊〈設立兩廣地質調查所意見書〉人工逐字校訂全文，全書首篇。1927 年 5 月於廣州：主張實行建國方略的根本在圖地測量與地質調查兩端，批評清末各省測繪詳略不一又視為軍用秘件，並指兩廣地質僅咸豐末年經一二德國學者粗加觀察。原書第 1 頁。',
+    keywords: '設立兩廣地質調查所意見書,朱家驊 全文,地質調查,土地測量,建國方略,兩廣,廣州 1927',
+    about: ['地質調查', '土地測量', '建國方略', '礦產', '公共機構'],
+  },
   {
     slug: 'text-a-view-of-legal-education',
     textId: 'ZJH-LE-002',

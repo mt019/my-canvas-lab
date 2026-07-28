@@ -44,10 +44,12 @@ const KEYS = {
   went: 'canvaslab:brief:went',
 };
 
-/* 這份投影裡現在還在的東西。 */
+/* 這份投影裡現在還在的東西。剛結束的活動也算——一場活動開完不代表關於它的資料就凍結了
+   （活動圖常常是事後才補進來的），而「我的講座」記得的正是那些已經開完的場次。 */
 const LIVE = new Map([
   ...data.items.map((i) => [i.id, i]),
   ...data.events.map((e) => [e.id, e]),
+  ...(data.pastEvents ?? []).map((e) => [e.id, e]),
 ]);
 
 export const isLive = (id) => LIVE.has(id);
@@ -93,6 +95,11 @@ export function snapshot(x, kind) {
 
 export const snapshotItem = (i) => snapshot(i, 'item');
 export const snapshotEvent = (e) => snapshot(e, 'event');
+
+/* 要存進另一份標記的那一筆。手上的東西可能是投影裡的活動，也可能已經是一份快照（「我的
+   講座」那一頁畫的就是快照）——快照再快照一次會把欄位讀錯（快照存 url，投影存 detailUrl），
+   所以已經是快照的原樣搬過去，只換按下去的時刻。 */
+export const eventRecord = (x) => (x.markedAt ? { ...x, markedAt: new Date().toISOString() } : snapshotEvent(x));
 
 /* ── 看過：一組 id ───────────────────────────────────────────────────────── */
 

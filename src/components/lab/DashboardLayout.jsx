@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import Eyebrow from '../Eyebrow';
+import PageIdentity from '../PageIdentity';
 import BackLink from '../BackLink';
 import { SHELL_PAD_X } from '../shellPadding';
 import Tabs from './Tabs';
@@ -56,17 +56,13 @@ export default function DashboardLayout({
           max-w-7xl 框在 zoom 之外，所以放大字級不會動到左右邊界。 */}
       <header className="border-b border-line-soft">
         <div className={`mx-auto max-w-7xl py-7 ${padX}`}>
-          <div className="mb-4 flex items-center justify-between gap-4">
+          <div className="group mb-4 flex items-center justify-between gap-4">
             <BackLink back={back} />
             <span className="flex-1" />
             {headerRight ? <div className="flex items-center gap-2">{headerRight}</div> : null}
           </div>
           <div className="reader-scale">
-            {eyebrow ? <Eyebrow className="mb-2">{eyebrow}</Eyebrow> : null}
-            <h1 className={`${titleClassName} text-token-2xl leading-tight sm:text-token-3xl`}>{title}</h1>
-            {summary ? (
-              <p className="mt-3 max-w-3xl text-token-sm leading-relaxed text-ink-muted">{summary}</p>
-            ) : null}
+            <PageIdentity eyebrow={eyebrow} title={title} titleClassName={titleClassName} summary={summary} />
           </div>
         </div>
       </header>

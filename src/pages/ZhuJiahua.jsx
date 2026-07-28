@@ -1,382 +1,506 @@
-import { Link, useNavigate } from 'react-router-dom';
-import {
-  ArrowRight,
-  BookOpenText,
-  CalendarDays,
-  Check,
-  LibraryBig,
-  Quote,
-  ScrollText,
-} from 'lucide-react';
-import AppearanceMenu from '../components/AppearanceMenu';
-import FontSizeControl, { useFontScale } from '../components/FontSizeControl';
-import DashboardLayout from '../components/lab/DashboardLayout';
-import { useTabParams } from '../components/lab/Tabs';
+import { useEffect, useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { ArrowRight } from 'lucide-react';
+import Eyebrow from '../components/Eyebrow';
+import { useFontScale } from '../components/FontSizeControl';
+import SiteHeader from '../components/SiteHeader';
+import ArticleLayout from '../components/lab/ArticleLayout';
+import BookTree from '../components/lab/BookTree';
+import Dropdown from '../components/lab/Dropdown';
+import SearchField from '../components/lab/SearchField';
+import Tabs, { useTabParams } from '../components/lab/Tabs';
 import data from '../data/zhuJiahua.json';
 
-const TAB_ITEMS = [
-  { id: 'overview', label: '研究起點' },
-  { id: 'legal', label: '法律教育' },
-  { id: 'text', label: '校訂原文' },
-  { id: 'materials', label: '材料狀態' },
-];
-
-const TAB_PATHS = {
-  overview: '/zhujiahua',
-  legal: '/zhujiahua/legal-education',
-  text: '/zhujiahua/original-text',
-  materials: '/zhujiahua?tab=materials',
-};
-
-// 六篇校訂全文各有一個可預先產生、可被搜尋引擎收錄的網址。
-// 順序即原書篇次，前後篇導覽與分頁列的「校訂原文」都吃這份清單。
+/* 已校訂全文各有一個可預先產生的網址。順序即原書篇次，前後篇導覽吃這份清單。
+   tocId 是全書篇目裡的編號，id 是校訂全文自己的編號——法律教育六篇兩者不同號。 */
 const TEXTS = [
-  { id: 'ZJH-LE-001', slug: 'original-text' },
-  { id: 'ZJH-LE-002', slug: 'text-a-view-of-legal-education' },
-  { id: 'ZJH-LE-003', slug: 'text-committee-5th' },
-  { id: 'ZJH-LE-004', slug: 'text-committee-6th' },
-  { id: 'ZJH-LE-005', slug: 'text-committee-7th' },
-  { id: 'ZJH-LE-006', slug: 'text-rule-of-law-administration' },
+  { id: 'ZJH-001', tocId: 'ZJH-001', slug: 'text-two-guang-geological-survey' },
+  { id: 'ZJH-LE-001', tocId: 'ZJH-074', slug: 'original-text' },
+  { id: 'ZJH-LE-002', tocId: 'ZJH-075', slug: 'text-a-view-of-legal-education' },
+  { id: 'ZJH-LE-003', tocId: 'ZJH-076', slug: 'text-committee-5th' },
+  { id: 'ZJH-LE-004', tocId: 'ZJH-077', slug: 'text-committee-6th' },
+  { id: 'ZJH-LE-005', tocId: 'ZJH-078', slug: 'text-committee-7th' },
+  { id: 'ZJH-LE-006', tocId: 'ZJH-079', slug: 'text-rule-of-law-administration' },
 ];
 const TEXT_PATH = Object.fromEntries(TEXTS.map(({ id, slug }) => [id, `/zhujiahua/${slug}`]));
+const TEXT_BY_ID = Object.fromEntries(data.verifiedTexts.map((text) => [text.id, text]));
+const ITEM_BY_ID = Object.fromEntries(data.legalEducation.items.map((item) => [item.id, item]));
 
-function Overview() {
+const TOC = data.tableOfContents;
+const TOC_ITEM_BY_ID = Object.fromEntries(TOC.items.map((item) => [item.id, item]));
+
+const LINK = 'border-b border-transparent transition-colors duration-fast hover:border-accent hover:text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent';
+
+/* 區塊抬頭。h2 帶 id 才進得了右欄目次；標題寫完整、側欄那條 13rem 讀 data-toc 的短標。 */
+function SectionHead({ id, toc, kicker, children, className = '' }) {
+  return (
+    <div className={className}>
+      {kicker ? <Eyebrow>{kicker}</Eyebrow> : null}
+      <h2 id={id} data-toc={toc} className={`font-serif text-token-xl font-bold leading-snug ${kicker ? 'mt-2' : ''}`}>
+        {children}
+      </h2>
+    </div>
+  );
+}
+
+/* 左欄目次樹與這份清單裡每一片葉子的去處。已校訂的 7 篇有自己的網址（可預先產生、
+   進 sitemap）；其餘 191 篇走 ?item=——它們沒有正文可讓搜尋引擎收，鑄兩百個薄頁面只會
+   稀釋整站，而查詢字串照樣貼得出去、上一頁回得來。哪篇校訂完成，它就升格成真網址。 */
+const hrefOf = (item) => item.textPath ?? `/zhujiahua?item=${item.id}`;
+
+/* 左欄那棵樹吃的是 BookTree 的通用形狀，不是這本書的欄位名——攤平一次，模組載入時算完。
+   部次是最上層分組；分節與再分節（「（一）國立中山大學」這層）併成一個標籤層，
+   樹才不會深到讀不動。 */
+const TREE_ITEMS = TOC.items.map((item) => ({
+  id: item.id,
+  title: item.title,
+  href: hrefOf(item),
+  group: item.part,
+  subgroup: [item.section, item.subsection].filter(Boolean).join('／') || null,
+  lead: item.bookStartPage,
+  badge: item.textPath ? '全文' : null,
+  hint: item.date,
+}));
+
+const NAV_LINK = (on) => `block transition-colors duration-fast hover:text-accent ${
+  on ? 'font-bold text-accent' : 'text-ink-muted'
+}`;
+
+/* 一列＝一篇。起頁與年份靠 tabular-nums 對齊。每篇都點得進去（未校訂的進篇目頁）——
+   左欄目次樹在 lg 以下收起，窄螢幕就靠這份清單導覽。
+   「已校訂全文」在 198 篇裡只有 7 篇，屬少數狀態，才掛得起標記（DESIGN.md「資料頁的形狀」）。 */
+function CatalogRow({ item, showPart }) {
+  return (
+    <li className={`grid gap-x-5 gap-y-1 border-b border-line-soft py-3 sm:items-baseline ${CATALOG_GRID}`}>
+      <span className="text-token-sm tabular-nums text-ink-faint">{item.bookStartPage}</span>
+      <div>
+        <h4 className="font-serif text-token-body leading-snug">
+          <Link to={hrefOf(item)} className={item.textPath ? `font-bold ${LINK}` : LINK}>{item.title}</Link>
+          {item.textPath ? <span className="ml-2 align-middle text-token-xs text-accent">全文</span> : null}
+        </h4>
+        {showPart ? (
+          <p className="mt-0.5 text-token-xs text-ink-faint">{item.part}{item.section ? `／${item.section}` : ''}</p>
+        ) : null}
+        {item.note ? <p className="mt-0.5 text-token-xs leading-relaxed text-ink-faint">{item.note}</p> : null}
+      </div>
+      {/* 最長的值是「民國二十七年十二月二十三日」十三個字：欄寬照它預留並鎖不換行，
+          否則長日期折成兩行、每一列高度都不一樣（DESIGN.md「會動的值要預留寬度」）。 */}
+      <span className="whitespace-nowrap text-token-sm tabular-nums text-ink-muted sm:text-right">{item.date || '—'}</span>
+    </li>
+  );
+}
+
+/* 起頁／篇名／日期三欄的欄寬只定義一次，表頭與每一列共用——分開寫遲早對不齊。 */
+const CATALOG_GRID = 'sm:grid-cols-[3.5rem_1fr_13.5rem]';
+
+function CatalogHeader() {
+  return (
+    <div className={`hidden gap-x-5 border-b border-line pb-2 text-token-xs text-ink-faint sm:grid ${CATALOG_GRID}`}>
+      <span>原書起頁</span>
+      <span>篇名</span>
+      <span className="text-right">原文日期</span>
+    </div>
+  );
+}
+
+function Catalog() {
+  // 篩選進網址（貼得出去、上一頁可回）；搜尋字串留在本地 state——逐字進網址會塞爆上一頁。
+  const [{ part, only }, setFilter] = useTabParams({ part: 'all', only: 'no' });
+  const [query, setQuery] = useState('');
+
+  const partOptions = useMemo(() => [
+    { value: 'all', label: '全部部次', hint: String(TOC.itemCount) },
+    ...TOC.parts.map((p) => ({ value: p.name, label: p.name, hint: String(p.count) })),
+  ], []);
+
+  const shown = useMemo(() => {
+    const q = query.trim();
+    return TOC.items.filter((item) => {
+      if (part !== 'all' && item.part !== part) return false;
+      if (only === 'yes' && !item.textPath) return false;
+      if (q && !item.title.includes(q)) return false;
+      return true;
+    });
+  }, [part, only, query]);
+
+  const searching = query.trim().length > 0;
+  // 搜尋時攤平成一條清單（結果散在各部次，再分組只會剩一堆單筆的標題）
+  const grouped = useMemo(() => {
+    if (searching) return [];
+    const out = [];
+    for (const item of shown) {
+      const last = out[out.length - 1];
+      if (!last || last.name !== item.part) out.push({ name: item.part, items: [item] });
+      else last.items.push(item);
+    }
+    return out;
+  }, [shown, searching]);
+
   return (
     <div>
       <section>
-        <p className="text-token-xs font-bold tracking-[.12em] text-accent">研究起點</p>
-        <h2 className="mt-2 font-serif text-token-xl font-bold leading-snug">從法律教育，讀一套民主與法治的制度構想</h2>
-        <p className="mt-5 max-w-3xl text-token-body leading-[1.95] text-ink-muted">{data.project.focus}</p>
-        <Link
-          to="/zhujiahua/legal-education"
-          className="mt-6 inline-flex items-center gap-2 border-b border-accent pb-1 text-token-sm font-bold text-accent transition-transform duration-fast hover:translate-x-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
-        >
-          進入法律教育專題 <ArrowRight size={16} />
-        </Link>
+        <SectionHead id="catalog" toc="全書篇目" kicker="朱家驊先生言論集">
+          全書 {TOC.itemCount} 篇，依原書篇次
+        </SectionHead>
+        <p className="mt-4 max-w-3xl text-token-body leading-[1.9] text-ink-muted">
+          篇名、日期與起頁依原書目次逐欄核對。{TOC.readableCount} 篇已完成逐頁人工校訂，篇名可點進全文；其餘只列篇目。{TOC.pageNote}
+        </p>
       </section>
 
-      <section className="mt-12 border-t border-line pt-8">
-        <h2 className="font-serif text-token-lg font-bold">目前掌握的材料</h2>
-        <dl className="mt-5 divide-y divide-line-soft border-y border-line">
-          <div className="grid grid-cols-[7rem_1fr] gap-4 py-4 sm:grid-cols-[10rem_1fr]">
-            <dt className="text-token-sm text-ink-faint">篇幅</dt>
-            <dd className="text-token-body tabular-nums">全書 {data.materialCoverage.physicalPages} 頁</dd>
-          </div>
-          <div className="grid grid-cols-[7rem_1fr] gap-4 py-4 sm:grid-cols-[10rem_1fr]">
-            <dt className="text-token-sm text-ink-faint">目錄</dt>
-            <dd className="text-token-body">十四頁目錄已完整定位；法律教育六篇已核定</dd>
-          </div>
-          <div className="grid grid-cols-[7rem_1fr] gap-4 py-4 sm:grid-cols-[10rem_1fr]">
-            <dt className="text-token-sm text-ink-faint">正文起點</dt>
-            <dd className="text-token-body">法律教育篇群涵蓋原書第 303 至 330 頁</dd>
-          </div>
-          <div className="grid grid-cols-[7rem_1fr] gap-4 py-4 sm:grid-cols-[10rem_1fr]">
-            <dt className="text-token-sm text-ink-faint">公開範圍</dt>
-            <dd className="text-token-body">公開已核篇目；完成校訂的篇章提供全文閱讀</dd>
-          </div>
-        </dl>
-      </section>
+      <section className="mt-8">
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-3 border-y border-line py-3">
+          <SearchField
+            value={query}
+            onChange={setQuery}
+            placeholder="搜尋篇名…"
+            className="min-w-[14rem] flex-1 sm:max-w-md"
+          />
 
-      <section className="mt-12 border-l-2 border-accent pl-5">
-        <div className="flex items-start gap-3">
-          <LibraryBig className="mt-1 shrink-0 text-accent" size={20} />
-          <div>
-            <h2 className="font-serif text-token-lg font-bold">先從一篇完整原文開始</h2>
-            <p className="mt-2 max-w-3xl text-token-body leading-[1.85] text-ink-muted">
-              〈中國之法律教育問題〉已逐頁校訂完成。其餘五篇先呈現篇名、年代與場合，全文會依校讀進度陸續加入。
-            </p>
-          </div>
+          <Dropdown
+            value={part}
+            onChange={(value) => setFilter({ part: value })}
+            options={partOptions}
+            panelWidth="w-64"
+          />
+
+          <button
+            type="button"
+            onClick={() => setFilter({ only: only === 'yes' ? 'no' : 'yes' })}
+            aria-pressed={only === 'yes'}
+            className={`whitespace-nowrap border-b pb-0.5 text-token-sm transition-colors duration-fast focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent ${
+              only === 'yes' ? 'border-accent font-bold text-accent' : 'border-transparent text-ink-muted hover:text-accent'
+            }`}
+          >
+            只看已校訂全文（{TOC.readableCount}）
+          </button>
         </div>
+
+        <p className="mt-3 text-token-sm tabular-nums text-ink-faint">
+          列出 {shown.length} 篇{shown.length !== TOC.itemCount ? `，全書共 ${TOC.itemCount} 篇` : ''}
+        </p>
+
+        {shown.length === 0 ? (
+          <p className="mt-8 text-token-body text-ink-muted">沒有符合的篇目。改用較短的關鍵字，或把部次改回全部。</p>
+        ) : null}
+
+        {searching ? (
+          <div className="mt-6">
+            <CatalogHeader />
+            <ol>
+              {shown.map((item) => <CatalogRow key={item.id} item={item} showPart />)}
+            </ol>
+          </div>
+        ) : (
+          grouped.map((group, groupIndex) => (
+            <section key={group.name} className="mt-10">
+              <h3
+                id={`part-${groupIndex + 1}`}
+                data-toc={group.name}
+                className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border-b border-line pb-2 font-serif text-token-lg font-bold"
+              >
+                {group.name}
+                <span className="text-token-sm font-normal tabular-nums text-ink-faint">{group.items.length} 篇</span>
+              </h3>
+              <CatalogHeader />
+              <ol>
+                {group.items.map((item) => <CatalogRow key={item.id} item={item} />)}
+              </ol>
+            </section>
+          ))
+        )}
       </section>
+    </div>
+  );
+}
+
+/* 篇目時序：一篇一列，年份與頁碼靠 tabular-nums 對齊。
+   六篇的校訂狀態現在完全相同，所以不掛狀態籤——在某一欄上佔多數的值掛籤，
+   等於整欄喊同一句話，把真正的差別蓋掉（DESIGN.md「資料頁的形狀」）。 */
+function TimelineView() {
+  return (
+    <ol className="border-t border-line">
+      {data.legalEducation.items.map((item, index) => (
+        <li key={item.id} className="grid gap-x-5 gap-y-2 border-b border-line-soft py-6 sm:grid-cols-[3rem_7rem_1fr] sm:items-baseline">
+          <span className="font-accent text-token-lg tabular-nums text-ink-faint">{String(index + 1).padStart(2, '0')}</span>
+          <p className="text-token-sm leading-relaxed tabular-nums text-ink-muted">
+            {item.dateIso.slice(0, 4)}
+            <span className="block text-ink-faint">第 {item.bookPages} 頁</span>
+          </p>
+          <div>
+            <h3 className="font-serif text-token-lg font-bold leading-snug">
+              <Link to={TEXT_PATH[item.id]} className={LINK}>{item.title}</Link>
+            </h3>
+            <p className="mt-1.5 text-token-sm leading-relaxed text-ink-muted">{item.date}・{item.occasion}</p>
+          </div>
+        </li>
+      ))}
+    </ol>
+  );
+}
+
+/* 議題交叉：同一批言論換一個軸看——不是按時間排，而是按「同一條線在哪幾篇出現」排。 */
+function ThemeView() {
+  return (
+    <div className="border-t border-line">
+      {data.legalEducation.themes.map((theme) => (
+        <article key={theme.id} className="grid gap-x-6 gap-y-3 border-b border-line-soft py-6 sm:grid-cols-[13rem_1fr]">
+          <div>
+            <h3 className="font-serif text-token-body font-bold leading-snug">{theme.label}</h3>
+            <p className="mt-1.5 text-token-sm leading-relaxed text-ink-muted">{theme.summary}</p>
+          </div>
+          <ul className="space-y-3">
+            {theme.appearances.map((appearance) => {
+              const item = ITEM_BY_ID[appearance.id];
+              return (
+                <li key={appearance.id} className="grid gap-x-4 gap-y-1 sm:grid-cols-[8.5rem_1fr]">
+                  <Link to={TEXT_PATH[appearance.id]} className={`w-fit whitespace-nowrap text-token-sm tabular-nums ${LINK}`}>
+                    <span className="text-ink-faint">{item.dateIso.slice(0, 4)}</span>　{item.shortTitle}
+                  </Link>
+                  <p className="text-token-sm leading-[1.8] text-ink-muted">{appearance.note}</p>
+                </li>
+              );
+            })}
+          </ul>
+        </article>
+      ))}
     </div>
   );
 }
 
 function LegalEducation() {
   const section = data.legalEducation;
+  // 區內看法切換：進網址（貼得出去、上一頁可回），但不回捲——讀者是在原地換一個軸看
+  // 同一批東西，不是進入另一個章節（DESIGN.md「分頁與捲動位置」）。
+  const [{ view }, setView] = useTabParams({ view: 'timeline' });
 
   return (
     <div>
-      <section className="border-b border-line pb-10">
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-token-sm text-ink-faint">
-          <span className="inline-flex items-center gap-2"><CalendarDays size={16} />{section.period}</span>
+      <section>
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-token-sm tabular-nums text-ink-faint">
+          <span>{section.period}</span>
           <span>六篇言論</span>
           <span>原書第 303–330 頁</span>
+          <span>全文皆已逐頁校訂</span>
         </div>
-        <h2 className="mt-4 max-w-3xl font-serif text-token-2xl font-bold leading-tight">法律教育如何成為民主政治的基礎</h2>
+        <SectionHead id="topic" toc="專題總覽" className="mt-4">法律教育如何成為民主政治的基礎</SectionHead>
         <p className="mt-5 max-w-3xl text-token-body leading-[1.95] text-ink-muted">{section.introduction}</p>
       </section>
 
-      <section className="mt-10 grid gap-px overflow-hidden rounded-token-lg border border-line bg-line md:grid-cols-3">
-        {section.readingGuide.map((item, index) => (
-          <article key={item.title} className="bg-paper p-6">
-            <span className="font-accent text-token-sm tabular-nums text-accent">0{index + 1}</span>
-            <h3 className="mt-5 font-serif text-token-lg font-bold">{item.title}</h3>
-            <p className="mt-3 text-token-sm leading-[1.85] text-ink-muted">{item.detail}</p>
-          </article>
-        ))}
-      </section>
-
-      <section className="mt-12 border-y border-line py-8">
-        <p className="text-token-xs font-bold tracking-[.12em] text-accent">先讀答案</p>
-        <h2 className="mt-2 font-serif text-token-xl font-bold">朱家驊如何理解法律教育？</h2>
-        <dl className="mt-7 grid gap-7 md:grid-cols-2">
-          <div>
-            <dt className="font-serif text-token-body font-bold">法律教育為何與民主政治有關？</dt>
-            <dd className="mt-2 text-token-sm leading-[1.85] text-ink-muted">
-              因為民主制度不只需要法律條文，也需要人民具有法的觀念、守法的道德與行法的能力；法律教育負責培養能把這些條件帶入社會的法學人才。
-            </dd>
-          </div>
-          <div>
-            <dt className="font-serif text-token-body font-bold">他認為當時最大的問題是什麼？</dt>
-            <dd className="mt-2 text-token-sm leading-[1.85] text-ink-muted">
-              問題不只在人數不足，還包括專業水準、師資、課程與地域失衡。朱家驊因此用「質、量、分佈」三面安排改革次序。
-            </dd>
-          </div>
-          <div>
-            <dt className="font-serif text-token-body font-bold">法學人才應具備哪些能力？</dt>
-            <dd className="mt-2 text-token-sm leading-[1.85] text-ink-muted">
-              除基本法學知識外，還要依司法、行政或外交等職務掌握特種法學，並理解相關學科、社會習慣與實際人情。
-            </dd>
-          </div>
-          <div>
-            <dt className="font-serif text-token-body font-bold">六篇言論涵蓋哪段時間？</dt>
-            <dd className="mt-2 text-token-sm leading-[1.85] text-ink-muted">
-              從 1945 年法律教育委員會第一次會議，到 1950 年在臺灣所講的〈法治行政〉，跨越戰後復員與政府遷臺前後。
-            </dd>
-          </div>
+      <section className="mt-10 border-t border-line pt-8">
+        <SectionHead id="threads" toc="五條閱讀線索">五條閱讀線索</SectionHead>
+        <dl className="mt-6 divide-y divide-line-soft border-y border-line">
+          {section.readingGuide.map((item) => (
+            <div key={item.title} className="grid gap-2 py-5 sm:grid-cols-[13rem_1fr] sm:gap-6">
+              <dt className="font-serif text-token-body font-bold leading-snug">{item.title}</dt>
+              <dd className="max-w-3xl text-token-body leading-[1.85] text-ink-muted">{item.detail}</dd>
+            </div>
+          ))}
         </dl>
       </section>
 
       <section className="mt-12">
-        <div className="flex items-end justify-between gap-4 border-b border-line pb-4">
-          <div>
-            <p className="text-token-xs font-bold tracking-[.12em] text-accent">篇章次序</p>
-            <h2 className="mt-2 font-serif text-token-xl font-bold">從重慶到臺灣</h2>
-          </div>
-          <span className="hidden text-token-sm text-ink-faint sm:block">1945—1950</span>
+        <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-3 border-b border-line pb-4">
+          <SectionHead id="pieces" toc="六篇言論">六篇言論</SectionHead>
+          <Tabs
+            label="篇目看法"
+            variant="quiet"
+            value={view}
+            onChange={(value) => setView({ view: value })}
+            items={[
+              { id: 'timeline', label: '依年代', count: section.items.length },
+              { id: 'themes', label: '依議題', count: section.themes.length },
+            ]}
+          />
         </div>
-        <ol>
-          {section.items.map((item, index) => (
-            <li key={item.id} className="group grid gap-4 border-b border-line-soft py-6 sm:grid-cols-[4rem_9rem_1fr_auto] sm:items-start">
-              <span className="font-accent text-token-lg tabular-nums text-ink-faint">{String(index + 1).padStart(2, '0')}</span>
-              <div className="text-token-sm leading-relaxed text-ink-muted">
-                <p className="tabular-nums">{item.dateIso.slice(0, 4)}</p>
-                <p>第 {item.bookPages} 頁</p>
-              </div>
-              <div>
-                <h3 className="font-serif text-token-lg font-bold leading-snug">
-                  <Link
-                    to={TEXT_PATH[item.id]}
-                    className="border-b border-transparent transition-colors duration-fast hover:border-accent hover:text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
-                  >
-                    {item.title}
-                  </Link>
-                </h3>
-                <p className="mt-2 text-token-sm leading-relaxed text-ink-muted">{item.occasion}</p>
-              </div>
-              <span className={`w-fit rounded-full border px-3 py-1 text-token-xs ${item.status === '全文已校訂' ? 'border-accent bg-accent-soft text-accent' : 'border-line text-ink-faint'}`}>
-                {item.status}
-              </span>
-            </li>
-          ))}
-        </ol>
-      </section>
-
-      <section className="mt-12 flex flex-col gap-5 rounded-token-lg bg-accent-soft p-7 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-start gap-4">
-          <ScrollText className="mt-1 shrink-0 text-accent" size={24} />
-          <div>
-            <h2 className="font-serif text-token-lg font-bold">六篇全文皆已逐頁校訂</h2>
-            <p className="mt-2 text-token-sm leading-relaxed text-ink-muted">點篇名讀任一篇，或從 1945 年的〈中國之法律教育問題〉依序讀起。</p>
-          </div>
-        </div>
-        <Link
-          to="/zhujiahua/original-text"
-          className="inline-flex shrink-0 items-center gap-2 self-start border-b border-accent pb-1 text-token-sm font-bold text-accent transition-transform duration-fast hover:translate-x-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent sm:self-auto"
-        >
-          閱讀校訂全文 <ArrowRight size={16} />
-        </Link>
+        <p className="mt-4 max-w-3xl text-token-sm leading-relaxed text-ink-muted">
+          {view === 'themes'
+            ? '同一批言論按議題重排：每條線索列出它出現在哪幾篇，以及該篇怎麼談。點篇名讀全文。'
+            : '按原書篇次排列。點篇名讀該篇校訂全文。'}
+        </p>
+        <div className="mt-6">{view === 'themes' ? <ThemeView /> : <TimelineView />}</div>
       </section>
     </div>
   );
 }
 
-function OriginalText({ textId = 'ZJH-LE-001' }) {
+function OriginalText({ textId }) {
   const index = TEXTS.findIndex((item) => item.id === textId);
-  const text = data.verifiedTexts.find((item) => item.id === textId);
-  const previous = index > 0 ? data.legalEducation.items[index - 1] : null;
-  const next = index >= 0 && index < TEXTS.length - 1 ? data.legalEducation.items[index + 1] : null;
+  const text = TEXT_BY_ID[textId];
+  const previous = index > 0 ? TEXTS[index - 1] : null;
+  const next = index >= 0 && index < TEXTS.length - 1 ? TEXTS[index + 1] : null;
+  const label = (entry) => TEXT_BY_ID[entry.id]?.title ?? TOC_ITEM_BY_ID[entry.tocId]?.title;
+  const page = (entry) => TOC_ITEM_BY_ID[entry.tocId]?.bookStartPage;
 
   return (
-    <article className="mx-auto max-w-3xl">
-      <header className="border-b border-line pb-8 text-center">
-        <p className="text-token-xs font-bold tracking-[.14em] text-accent">校訂原文</p>
-        <h2 className="mt-4 font-serif text-token-2xl font-bold leading-tight">{text.title}</h2>
-        <p className="mt-4 text-token-sm text-ink-muted">{text.dateLine}</p>
-        <p className="mt-1 text-token-sm text-ink-muted">{text.occasion}</p>
-        <div className="mt-5 inline-flex items-center gap-2 rounded-full border border-line px-3 py-1 text-token-xs text-ink-faint">
-          <Check size={14} className="text-accent" /> 原書第 {text.bookPages} 頁，逐頁校訂
-        </div>
-      </header>
+    <article className="max-w-3xl">
+      {/* 篇名、日期與場合由外殼的抬頭負責，這裡不重印一次；文內只留原書出處那一行。 */}
+      <p className="border-b border-line pb-4 text-token-sm tabular-nums text-ink-faint">
+        《朱家驊先生言論集》原書第 {text.bookPages} 頁
+      </p>
 
-      <div className="mt-9 text-justify text-scaled-base leading-[2.05] text-ink">
-        {text.paragraphs.map((paragraph, index) => (
-          <p key={index} className="mt-6 first:mt-0">{paragraph}</p>
+      {/* 字級由外殼的 reader-scale 統一縮放；這裡不再掛 text-scaled-*，兩者疊乘會失控。 */}
+      {/* prose-body：校訂全文是整段連續閱讀的面，吃灰階字體平滑（見 index.css）。 */}
+      <div className="prose-body mt-9 text-justify text-token-body leading-[2.05] text-ink">
+        {text.paragraphs.map((paragraph, i) => (
+          <p key={i} className="mt-6 first:mt-0">{paragraph}</p>
         ))}
       </div>
 
       <footer className="mt-12 border-t border-line pt-6">
-        <div className="flex items-start gap-3 text-token-sm leading-relaxed text-ink-muted">
-          <Quote size={18} className="mt-1 shrink-0 text-accent" />
-          <p>本文依《朱家驊先生言論集》原頁校訂；保留原文用字與當時語彙。</p>
-        </div>
+        <p className="text-token-sm leading-relaxed text-ink-muted">
+          本文依《朱家驊先生言論集》原頁校訂，保留原書用字。字形有疑之處與分段依據另有校訂記錄。
+        </p>
         <nav className="mt-8 grid gap-4 border-t border-line-soft pt-6 sm:grid-cols-2">
           {previous ? (
-            <Link
-              to={TEXT_PATH[previous.id]}
-              className="group text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
-            >
-              <span className="text-token-xs text-ink-faint">前一篇 · {previous.dateIso.slice(0, 4)}</span>
-              <span className="mt-1 block font-serif text-token-body font-bold group-hover:text-accent">{previous.title}</span>
+            <Link to={TEXT_PATH[previous.id]} className="group focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent">
+              <span className="text-token-xs tabular-nums text-ink-faint">前一篇全文・原書第 {page(previous)} 頁</span>
+              <span className="mt-1 block font-serif text-token-body font-bold leading-snug group-hover:text-accent">{label(previous)}</span>
             </Link>
           ) : <span />}
           {next ? (
-            <Link
-              to={TEXT_PATH[next.id]}
-              className="group text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent sm:text-right"
-            >
-              <span className="text-token-xs text-ink-faint">後一篇 · {next.dateIso.slice(0, 4)}</span>
-              <span className="mt-1 block font-serif text-token-body font-bold group-hover:text-accent">{next.title}</span>
+            <Link to={TEXT_PATH[next.id]} className="group focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent sm:text-right">
+              <span className="text-token-xs tabular-nums text-ink-faint">後一篇全文・原書第 {page(next)} 頁</span>
+              <span className="mt-1 block font-serif text-token-body font-bold leading-snug group-hover:text-accent">{label(next)}</span>
             </Link>
           ) : null}
         </nav>
+        <Link to="/zhujiahua" className={`mt-8 inline-flex items-center gap-2 pb-1 text-token-sm font-bold text-accent ${LINK} border-accent`}>
+          回全書篇目 <ArrowRight size={16} />
+        </Link>
       </footer>
     </article>
   );
 }
 
-function Questions() {
+/* 尚未校訂的 191 篇：目次知道的每一件事都在這裡，並直說全文還沒有。
+   不給這些篇各自的網址（見下方 hrefOf 的說明），所以這一頁是 /zhujiahua?item=<id>。 */
+function TocEntry({ item }) {
+  const index = TOC.items.findIndex((entry) => entry.id === item.id);
+  const previous = index > 0 ? TOC.items[index - 1] : null;
+  const next = index >= 0 && index < TOC.items.length - 1 ? TOC.items[index + 1] : null;
+
+  const facts = [
+    ['原書起頁', String(item.bookStartPage)],
+    ['原文日期', item.date || '原書未載'],
+    ['所屬部次', [item.part, item.section, item.subsection].filter(Boolean).join('／')],
+    ['全書篇次', `第 ${index + 1} 篇，共 ${TOC.itemCount} 篇`],
+  ];
+
   return (
-    <section>
-      <p className="text-token-xs font-bold tracking-[.12em] text-accent">閱讀線索</p>
-      <h2 className="mt-2 font-serif text-token-xl font-bold">三條彼此牽動的問題</h2>
-      <div className="mt-8 divide-y divide-line border-y border-line">
-        {data.researchQuestions.map((item, index) => (
-          <article key={item.title} className="grid gap-4 py-7 sm:grid-cols-[4rem_1fr]">
-            <span className="font-accent text-token-xl tabular-nums text-accent">{String(index + 1).padStart(2, '0')}</span>
-            <div>
-              <h3 className="font-serif text-token-lg font-bold">{item.title}</h3>
-              <p className="mt-3 max-w-3xl text-token-body leading-[1.9] text-ink-muted">{item.detail}</p>
-            </div>
-          </article>
+    /* 篇名、日期與出處由外殼的抬頭負責，這裡不重印一次（與 OriginalText 同）。 */
+    <article className="max-w-3xl">
+      <dl className="divide-y divide-line-soft border-y border-line">
+        {facts.map(([term, value]) => (
+          <div key={term} className="grid gap-1 py-3 sm:grid-cols-[7rem_1fr] sm:gap-6">
+            <dt className="text-token-sm text-ink-muted">{term}</dt>
+            <dd className="text-token-body tabular-nums">{value}</dd>
+          </div>
         ))}
-      </div>
-      <div className="mt-10 flex items-start gap-3 border-l-2 border-line pl-5">
-        <BookOpenText className="mt-1 shrink-0 text-accent" size={20} />
-        <div>
-          <h2 className="font-serif text-token-lg font-bold">選集也是一種歷史安排</h2>
-          <p className="mt-2 max-w-3xl text-token-body leading-[1.85] text-ink-muted">
-            篇章的收入、刪落與次序都出自後來編纂。研究時會把原始言論的年代與場合，和選集呈現的人物形象分開考察。
-          </p>
-        </div>
-      </div>
-    </section>
-  );
-}
+      </dl>
 
-function Materials() {
-  return (
-    <div>
-      <section>
-        <p className="text-token-xs font-bold tracking-[.12em] text-accent">材料狀態</p>
-        <h2 className="mt-2 font-serif text-token-xl font-bold">全書已分出四個區段</h2>
-        <div className="mt-7 divide-y divide-line border-y border-line">
-          {data.materialSegments.map((item) => (
-            <article key={item.label} className="grid gap-3 py-5 sm:grid-cols-[8rem_8rem_1fr] sm:gap-5">
-              <h3 className="font-serif text-token-body font-bold">{item.label}</h3>
-              <p className="text-token-sm tabular-nums text-accent">第 {item.pdfPages} 頁</p>
-              <p className="text-token-sm leading-relaxed text-ink-muted">{item.note}</p>
-            </article>
-          ))}
-        </div>
-      </section>
+      {item.note ? <p className="mt-5 text-token-sm leading-relaxed text-ink-muted">{item.note}</p> : null}
 
-      <section className="mt-12">
-        <h2 className="font-serif text-token-lg font-bold">整理次序</h2>
-        <ol className="mt-5 divide-y divide-line-soft border-t border-line">
-          {data.methodPlan.map((item, index) => (
-            <li key={item.step} className="grid gap-3 py-5 sm:grid-cols-[3rem_9rem_1fr]">
-              <span className="font-accent tabular-nums text-ink-faint">{index + 1}</span>
-              <h3 className="font-serif text-token-body font-bold">{item.step}</h3>
-              <p className="text-token-sm leading-relaxed text-ink-muted">{item.detail}</p>
-            </li>
-          ))}
-        </ol>
-      </section>
+      <p className="mt-8 text-token-body leading-[1.9] text-ink-muted">
+        本篇尚未校訂全文。篇名、日期與起頁依原書目次逐欄核對，正文仍只存在於原書影像；
+        目前已完成逐頁人工校訂的是 {TOC.readableCount} 篇。{TOC.pageNote}
+      </p>
 
-      <section className="mt-12">
-        <h2 className="font-serif text-token-lg font-bold">解讀時必須留意</h2>
-        <div className="mt-5 divide-y divide-line-soft border-y border-line">
-          {data.riskRegister.map((item) => (
-            <article key={item.risk} className="grid gap-3 py-5 sm:grid-cols-[10rem_1fr]">
-              <h3 className="font-serif text-token-body font-bold">{item.risk}</h3>
-              <p className="text-token-sm leading-relaxed text-ink-muted">{item.response}</p>
-            </article>
-          ))}
-        </div>
-      </section>
-    </div>
+      <nav className="mt-10 grid gap-4 border-t border-line pt-6 sm:grid-cols-2">
+        {previous ? (
+          <Link to={hrefOf(previous)} className="group focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent">
+            <span className="text-token-xs tabular-nums text-ink-faint">前一篇・原書第 {previous.bookStartPage} 頁</span>
+            <span className="mt-1 block font-serif text-token-body font-bold leading-snug group-hover:text-accent">{previous.title}</span>
+          </Link>
+        ) : <span />}
+        {next ? (
+          <Link to={hrefOf(next)} className="group focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent sm:text-right">
+            <span className="text-token-xs tabular-nums text-ink-faint">後一篇・原書第 {next.bookStartPage} 頁</span>
+            <span className="mt-1 block font-serif text-token-body font-bold leading-snug group-hover:text-accent">{next.title}</span>
+          </Link>
+        ) : null}
+      </nav>
+
+      <Link to="/zhujiahua" className={`mt-8 inline-flex items-center gap-2 pb-1 text-token-sm font-bold text-accent ${LINK} border-accent`}>
+        回全書篇目 <ArrowRight size={16} />
+      </Link>
+    </article>
   );
 }
 
 export default function ZhuJiahua({ forcedTab, forcedText }) {
   const [scale, setScale] = useFontScale();
-  const [{ tab: queryTab }, setTabs] = useTabParams({ tab: 'overview' });
-  const navigate = useNavigate();
+  const [{ tab: queryTab, item: queryItem }] = useTabParams({ tab: 'catalog', item: '' });
   const tab = forcedTab || queryTab;
-  const changeTab = (value) => {
-    if (TAB_PATHS[value]) navigate(TAB_PATHS[value]);
-    else setTabs({ tab: value }, { scroll: 'top' });
-  };
+
   const textId = forcedText || 'ZJH-LE-001';
-  const textMeta = data.legalEducation.items.find((item) => item.id === textId);
-  const headerTitle = forcedTab === 'legal'
+  const isText = tab === 'text';
+  const textEntry = TEXTS.find((item) => item.id === textId);
+  const textMeta = TOC_ITEM_BY_ID[textEntry?.tocId];
+  const legalMeta = ITEM_BY_ID[textId];
+
+  // ?item= 只在全書篇目那一支有意義；指到已校訂的篇就讓真網址接手，別留兩個入口。
+  const entry = !isText && tab === 'catalog' && queryItem ? TOC_ITEM_BY_ID[queryItem] : null;
+  const showEntry = Boolean(entry) && !entry.textPath;
+
+  const activeId = isText ? textEntry?.tocId : (showEntry ? entry.id : null);
+
+  const headerTitle = tab === 'legal'
     ? '朱家驊的法律教育論'
-    : forcedTab === 'text'
-      ? textMeta.title
-      : data.project.title;
-  const headerSummary = forcedTab === 'legal'
-    ? '六篇言論、年代、場合與制度脈絡'
-    : forcedTab === 'text'
-      ? `${textMeta.date}・${textMeta.occasion}・人工逐頁校訂全文`
-      : data.project.subtitle;
+    : isText ? (TEXT_BY_ID[textId]?.title ?? textMeta?.title)
+      : showEntry ? entry.title
+        : data.project.title;
+  const headerSummary = tab === 'legal'
+    ? '六篇言論、年代、場合與制度脈絡，全文皆已逐頁校訂'
+    : isText
+      ? [textMeta?.date, legalMeta?.occasion, '人工逐頁校訂全文'].filter(Boolean).join('・')
+      : showEntry
+        ? [entry.date, `原書第 ${entry.bookStartPage} 頁`, '尚未校訂全文'].filter(Boolean).join('・')
+        : `《朱家驊先生言論集》全書 ${TOC.itemCount} 篇篇目，${TOC.readableCount} 篇已校訂全文`;
+
+  const atCatalogRoot = tab === 'catalog' && !showEntry;
+  const refreshKey = isText ? textId : (showEntry ? entry.id : tab);
+
+  // 換篇時回到頂端。三欄殼沒有吸頂分頁列，點了左欄卻停在上一篇的捲動位置，
+  // 讀者會以為連結沒反應。
+  useEffect(() => { window.scrollTo({ top: 0 }); }, [refreshKey]);
 
   return (
-    <DashboardLayout
-      scale={scale}      headerRight={
-        <>
-          <FontSizeControl scale={scale} onChange={setScale} />
-          <AppearanceMenu />
-        </>
-      }
-      eyebrow="Chu Chia-hua Research"
-      title={headerTitle}
-      titleClassName="font-serif font-bold"
-      summary={headerSummary}
-      tabs={{
-        label: '研究室分頁',
-        value: tab,
-        onChange: changeTab,
-        items: TAB_ITEMS,
-      }}
-      refreshKey={tab === 'text' ? textId : tab}
-    >
-      {tab === 'overview' ? <Overview /> : null}
-      {tab === 'legal' ? <LegalEducation /> : null}
-      {tab === 'text' ? <OriginalText textId={textId} /> : null}
-      {tab === 'questions' ? <Questions /> : null}
-      {tab === 'materials' ? <Materials /> : null}
-    </DashboardLayout>
+    <main className="reading-grain min-h-screen bg-paper pb-10 text-ink" style={{ '--reader-scale': scale }}>
+      {/* 返回鍵的落點走全站配置（src/backNav.js）：研究室門面回素首頁、站內頁回研究室。 */}
+      <SiteHeader
+        width="article"
+        scale={scale}
+        onScaleChange={setScale}
+      />
+
+      <ArticleLayout
+        title={headerTitle}
+        eyebrow="朱家驊研究室"
+        summary={headerSummary}
+        tocLabel="本頁區塊"
+        tocKey={refreshKey}
+        /* 右欄只在法律教育專題那一支有東西可列。全書篇目的區塊標題就是十四個部次，
+           左欄目次樹已經列了同一份；同一件事講兩次正是 DashboardLayout 2026-07-20
+           從三欄收成兩欄的原因。全文與篇目兩支則本來就沒有區塊標題。 */
+        hideToc={tab !== 'legal'}
+        nav={
+          <BookTree
+            items={TREE_ITEMS}
+            activeId={activeId}
+            label="全書目次"
+            header={
+              <nav aria-label="研究室導覽" className="mb-4 space-y-1.5 text-token-sm">
+                <Link to="/zhujiahua" className={NAV_LINK(atCatalogRoot)}>全書篇目</Link>
+                <Link to="/zhujiahua/legal-education" className={NAV_LINK(tab === 'legal')}>法律教育專題</Link>
+              </nav>
+            }
+          />
+        }
+      >
+        {isText ? <OriginalText textId={textId} /> : null}
+        {!isText && tab === 'legal' ? <LegalEducation /> : null}
+        {!isText && tab === 'catalog' ? (showEntry ? <TocEntry item={entry} /> : <Catalog />) : null}
+      </ArticleLayout>
+    </main>
   );
 }

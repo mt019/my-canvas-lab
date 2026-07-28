@@ -4,24 +4,18 @@ import SiteHeader from '../../components/SiteHeader';
 import ArticleLayout from '../../components/lab/ArticleLayout';
 import SourceFilter, { usePersistedFlag } from '../../components/lab/SourceFilter';
 import Tabs, { useTabParams } from '../../components/lab/Tabs';
-import MarkButton from './_MarkButton';
-import { snapshotEvent, useGoing, useWent } from './marks';
+import EventRow from './_EventRow';
+import { useGoing, useWent } from './marks';
 import {
   ENTRY_LABEL,
   URGENT_WINDOW,
   blindSpots,
-  dateSegments,
-  dayDiff,
   defaultEventSources,
   entryOf,
-  entryText,
-  eventFacts,
   eventSources,
   events,
   followed,
-  inDays,
   isFollowed,
-  isOngoing,
   md,
   monthKey,
   monthLabel,
@@ -67,85 +61,6 @@ const DEFAULT_SOURCES = defaultEventSources.map((s) => s.id).join(',');
 /* 有指名主辦單位的來源才需要「我關注的／全部」這個開關——NCTS 只有一個主辦單位，
    給它一顆「我關注的」按鈕是家具不是篩選。 */
 const FOLLOWED_SOURCES = new Set(followed.map((f) => f.source));
-
-/*
- * 一場活動一列。時間線排法：左邊窄欄放日期，右邊一整塊放標題與其下的一切——不是三欄
- * 表格。三欄表格的問題是中欄（標題＋名單＋場地）動輒五到十行，兩側短欄只有兩三行，於是
- * 每列被撐得跟標題一樣高、旁邊留一大片空白，讀起來像壞掉。窄螢幕本來就是這樣疊的，讀起來
- * 反而順，桌機照抄那個順序，只把日期拉到左邊。
- *
- * 進場方式與「我要去／我去了」收進標題底下的一行 meta，不另立一欄。而且**佔多數的
- * 「還沒查到」不印字**——48 場裡 42 場都是它，印出來就是整頁重複同一句沒用的話（entryText
- * 早就為了同個理由不給它掛徽章，這裡把文字也一起收掉，只有真的有截止日／額滿／自由入座
- * 才印進場方式）。
- */
-function EventLine({ event, today, showSource, going, went }) {
-  const entry = entryText(event, today);
-  const facts = eventFacts(event);
-  const d = dateSegments(event);
-  const showEntry = Boolean(entry.text);
-  return (
-    <div className="grid grid-cols-1 gap-x-4 border-b border-line-soft py-2 sm:grid-cols-[minmax(0,1fr)_minmax(0,4fr)]">
-      <div className="text-token-xs leading-relaxed tabular-nums text-ink">
-        <span className="whitespace-nowrap">{d.start}</span>
-        {d.end ? <>–<span className="whitespace-nowrap">{d.end}</span></> : null}
-        {d.time ? <span className="whitespace-nowrap"> {d.time}</span> : null}{' '}
-        <span className="whitespace-nowrap text-ink-faint">
-          {isOngoing(event, today) ? '進行中' : inDays(dayDiff(today, event.date))}
-        </span>
-      </div>
-      <div className="min-w-0">
-        <a
-          href={event.detailUrl ?? event.eventUrl ?? undefined}
-          target="_blank"
-          rel="noreferrer"
-          className="text-token-sm leading-snug text-ink transition-colors duration-fast hover:text-accent"
-        >
-          {event.title}
-        </a>
-        {event.status === '暫訂' ? <span className="ml-1.5 text-token-xs text-ink-faint">（暫訂）</span> : null}
-        <div className="text-token-xs leading-relaxed text-ink-faint">
-          {showSource ? <span className="text-ink-muted">{sourceLabel(event.source)}</span> : null}
-          {showSource && facts.length ? ' · ' : ''}
-          {facts.join(' · ')}
-        </div>
-        {event.scheduleNote ? (
-          <div className="text-token-xs leading-relaxed text-ink-faint">{event.scheduleNote}</div>
-        ) : null}
-        {showEntry || event.registerUrl || going || went ? (
-          <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-token-xs tabular-nums">
-            {showEntry ? <span className={entry.loud ? 'text-ink' : 'text-ink-faint'}>{entry.text}</span> : null}
-            {event.registerUrl ? (
-              <a href={event.registerUrl} target="_blank" rel="noreferrer" className="text-accent underline underline-offset-2">
-                報名
-              </a>
-            ) : null}
-            {going ? (
-              <MarkButton
-                on={going.has(event.id)}
-                onToggle={() => {
-                  if (!going.has(event.id)) went.remove(event.id);
-                  going.toggle(snapshotEvent(event));
-                }}
-                label="我要去"
-              />
-            ) : null}
-            {went ? (
-              <MarkButton
-                on={went.has(event.id)}
-                onToggle={() => {
-                  if (!went.has(event.id)) going.remove(event.id);
-                  went.toggle(snapshotEvent(event));
-                }}
-                label="我去了"
-              />
-            ) : null}
-          </div>
-        ) : null}
-      </div>
-    </div>
-  );
-}
 
 /*
  * 月曆。想看的是時間怎麼排——同一週擠了三場、或整個八月只有兩場，這種事寫成清單讀不出來，
@@ -353,7 +268,7 @@ function PivotView({ events: shown, today, rows, cols, onPick, picked, going, we
             <span className="ml-2 text-token-xs text-ink-faint">{pickedEvents.length} 場</span>
           </h3>
           {pickedEvents.map((e) => (
-            <EventLine key={e.id} event={e} today={today} showSource going={going} went={went} />
+            <EventRow key={e.id} event={e} today={today} showSource going={going} went={went} />
           ))}
         </div>
       ) : null}
@@ -561,7 +476,7 @@ export default function Events() {
                   <span className="ml-2 text-token-xs text-ink-faint">{inMonth.length} 場</span>
                 </h3>
                 {inMonth.map((e) => (
-                  <EventLine key={e.id} event={e} today={today} showSource={selected.length > 1} going={going} went={went} />
+                  <EventRow key={e.id} event={e} today={today} showSource={selected.length > 1} going={going} went={went} />
                 ))}
               </div>
             ))

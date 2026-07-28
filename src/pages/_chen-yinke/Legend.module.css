@@ -1,0 +1,101 @@
+.wrap {
+  max-width: 44rem;
+}
+
+/* ---- header ---- */
+.head {
+  padding-bottom: var(--space-5);
+  border-bottom: 1px solid var(--c-line);
+}
+
+.eyebrow {
+  margin: 0;
+  color: var(--cat-7-tx);
+  font-family: var(--font-accent);
+  font-size: var(--text-xs);
+  letter-spacing: .14em;
+}
+
+.title {
+  margin: .5rem 0 .9rem;
+  font-family: var(--font-body);
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.lede {
+  margin: 0;
+  max-width: 40rem;
+  color: var(--c-ink-muted);
+  line-height: 1.95;
+}
+
+/* ---- one row per layer ---- */
+.rows {
+  margin-top: var(--space-5);
+}
+
+.row {
+  padding: var(--space-5) 0;
+  border-top: 1px solid var(--c-line-soft);
+}
+
+.row:first-child {
+  border-top: 0;
+}
+
+.rowHead {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: .75rem;
+}
+
+.hint {
+  margin: 0;
+  color: var(--c-ink-muted);
+  font-size: var(--text-sm);
+  line-height: 1.7;
+}
+
+.example {
+  margin-top: .75rem;
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+}
+
+/* the reused Block/UnitContext carry their own outer margins — tame them so
+   each example sits flush inside its row */
+.example > :first-child {
+  margin-top: 0;
+}
+
+.example > :last-child {
+  margin-bottom: 0;
+}
+
+/* ---- footer ---- */
+.footer {
+  margin-top: var(--space-6);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--c-line);
+}
+
+.openLink {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  padding: 0;
+  color: var(--cat-7-tx);
+  background: none;
+  border: 0;
+  cursor: pointer;
+  font: inherit;
+  font-family: var(--font-accent);
+  font-size: var(--text-sm);
+}
+
+.openLink:hover {
+  text-decoration: underline;
+}

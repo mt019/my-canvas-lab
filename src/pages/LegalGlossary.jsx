@@ -1,11 +1,12 @@
 // DATA — 由 jirs-foreign-law 資料倉 sync（scripts/sync_canvas.py）。
 // 德國聯邦憲法法院裁判選輯第 6–18 輯的德中法學關鍵詞索引，候選工作表（非定稿辭典）。
 import { useMemo, useState } from 'react';
-import { Search, Library, Shuffle } from 'lucide-react';
+import { Library, Shuffle } from 'lucide-react';
 import AppearanceMenu from '../components/AppearanceMenu';
 import FontSizeControl, { useFontScale } from '../components/FontSizeControl';
 import DashboardLayout from '../components/lab/DashboardLayout';
 import { useTabParam } from '../components/lab/Tabs';
+import SearchField from '../components/lab/SearchField';
 import data from '../data/jirsGlossary.json';
 import TermRow from './_jirs-glossary/TermRow';
 import FacetBar from './_jirs-glossary/FacetBar';
@@ -72,7 +73,6 @@ export default function LegalGlossary() {
   return (
     <DashboardLayout
       scale={scale}
-      back={{ href: '/all', label: '全部' }}
       headerRight={<><AppearanceMenu /><FontSizeControl scale={scale} onChange={setScale} /></>}
       eyebrow="Phenom · 德語法學譯語表"
       title="德中法學關鍵詞索引"
@@ -96,14 +96,11 @@ export default function LegalGlossary() {
         <section className="max-w-3xl space-y-4">
           <h2 className="sr-only">檢索</h2>
           <div className="flex flex-wrap items-center gap-2">
-            <div className="relative min-w-0 flex-1 sm:max-w-md">
-              <Search size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-faint" />
-              <input
-                type="search" value={q} onChange={(e) => setQ(e.target.value)}
-                placeholder="搜尋德文或中文術語…"
-                className="w-full rounded-token-md border border-line bg-surface-raised py-2 pl-9 pr-3 text-token-sm text-ink placeholder:text-ink-faint focus:border-accent focus:outline-none"
-              />
-            </div>
+            <SearchField
+              value={q} onChange={setQ}
+              placeholder="搜尋德文或中文術語…"
+              className="min-w-0 flex-1 sm:max-w-md"
+            />
             <button
               type="button" onClick={draw}
               className="inline-flex shrink-0 items-center gap-1.5 rounded-token-md border border-line px-2.5 py-2 text-token-xs text-ink-muted transition-colors duration-fast hover:border-accent hover:text-accent"

@@ -4,10 +4,12 @@ import PageShell from '../components/PageShell';
 import FontSizeControl, { useFontScale } from '../components/FontSizeControl';
 import Tabs, { useTabParam } from '../components/lab/Tabs';
 import LiuRushiEdition from './_chen-yinke/LiuRushiEdition';
+import LegendView from './_chen-yinke/LegendView';
 import styles from './ChenYinke.module.css';
 
 const TABS = [
   { id: 'edition', label: '細讀・第三章' },
+  { id: 'legend', label: '圖例' },
   { id: 'liurushi', label: '柳如是別傳' },
   { id: 'people', label: '人物' },
   { id: 'reading', label: '讀法' },
@@ -51,6 +53,8 @@ export default function ChenYinke() {
       />
 
       {tab === 'edition' && <LiuRushiEdition />}
+
+      {tab === 'legend' && <LegendView onOpenReading={() => setTab('edition')} />}
 
       {tab === 'liurushi' && (
         <div className={styles.body}>

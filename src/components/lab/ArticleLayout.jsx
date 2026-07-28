@@ -2,6 +2,7 @@ import { useRef } from 'react';
 import { SHELL_PAD_X_RAIL } from '../shellPadding';
 import { Link } from 'react-router-dom';
 import TableOfContents from './TableOfContents';
+import PageIdentity from '../PageIdentity';
 
 /*
  * The shell a long article sits in: a quiet rail of everything else there is to
@@ -20,11 +21,27 @@ import TableOfContents from './TableOfContents';
  * on paper with a hairline beside it, and the single accent in the whole shell is
  * the mark on wherever the reader currently is.
  */
-export default function ArticleLayout({ title, eyebrow, summary, meta, nav, tocLabel, tocKey, children }) {
+export default function ArticleLayout({
+  title, eyebrow, summary, meta, nav, tocLabel, tocKey,
+  // 本頁本來就沒有區塊標題可列（單篇原文只有段落），或右欄會跟左欄列出同一份東西時關掉。
+  // 與 DashboardLayout 的同名 prop 同一個理由：同一件事講兩次不是導覽，是雜訊。
+  hideToc = false,
+  // 收起右欄時，中欄預設吃掉騰出來的寬度（清單與表格用得到）。散文頁傳 true：一篇短文
+  // 沒有小標可列，但它的行長不該因此變長——44rem 那條閱讀欄寬本來就是照行長訂的，
+  // 空出來的地方留白即可。
+  keepReadingWidth = false,
+  children,
+}) {
   const bodyRef = useRef(null);
 
   return (
-    <div className={`mx-auto grid max-w-[86rem] gap-10 ${SHELL_PAD_X_RAIL} lg:grid-cols-[15rem_minmax(0,44rem)_14rem] lg:gap-12`}>
+    <div className={`mx-auto grid max-w-[86rem] gap-10 ${SHELL_PAD_X_RAIL} lg:gap-12 ${
+      // 收起右欄時中欄吃掉騰出來的寬度（44＋14＋gap），不留一條空白軌道。散文本來就
+      // 由內容自己的 max-w 收住行長，會用到這段多出來的寬度的是清單與表格。
+      hideToc && !keepReadingWidth
+        ? 'lg:grid-cols-[15rem_minmax(0,61rem)]'
+        : 'lg:grid-cols-[15rem_minmax(0,44rem)_14rem]'
+    }`}>
       <aside className="hidden lg:block">
         {/* Clears the sticky site bar above it (see SiteHeader) — a rail that
             slides under the toolbar loses its first item. */}
@@ -41,35 +58,31 @@ export default function ArticleLayout({ title, eyebrow, summary, meta, nav, tocL
           grid track（minmax(0,44rem)）決定、在 zoom 之外，所以邊界不隨字級移動。 */}
       <article className="reader-scale">
         <header className="mb-8">
-          {eyebrow ? (
-            <p className="mb-2 font-accent text-token-xs uppercase tracking-[0.18em] text-ink-faint">
-              {eyebrow}
-            </p>
-          ) : null}
-          <h1 className="font-display text-token-2xl leading-tight sm:text-token-3xl">{title}</h1>
-          {summary ? (
-            <p className="mt-4 text-token-sm leading-relaxed text-ink-muted">{summary}</p>
-          ) : null}
+          <PageIdentity eyebrow={eyebrow} title={title} summary={summary} />
           {meta}
         </header>
 
-        <details className="mb-8 rounded-token-md border border-line-soft px-4 py-3 lg:hidden">
-          <summary className="cursor-pointer text-token-sm text-ink-muted">{tocLabel ?? '本頁目次'}</summary>
-          <div className="mt-3">
-            <TableOfContents containerRef={bodyRef} label={tocLabel} refreshKey={tocKey} />
-          </div>
-        </details>
+        {hideToc ? null : (
+          <details className="mb-8 rounded-token-md border border-line-soft px-4 py-3 lg:hidden">
+            <summary className="cursor-pointer text-token-sm text-ink-muted">{tocLabel ?? '本頁目次'}</summary>
+            <div className="mt-3">
+              <TableOfContents containerRef={bodyRef} label={tocLabel} refreshKey={tocKey} />
+            </div>
+          </details>
+        )}
 
         <div ref={bodyRef}>{children}</div>
       </article>
 
-      <aside className="hidden lg:block">
-        {/* Clears the sticky site bar above it (see SiteHeader) — a rail that
-            slides under the toolbar loses its first item. */}
-        <div className="sticky top-16 max-h-[calc(100vh-6rem)] overflow-y-auto pb-10">
-          <TableOfContents containerRef={bodyRef} label={tocLabel} refreshKey={tocKey} />
-        </div>
-      </aside>
+      {hideToc ? null : (
+        <aside className="hidden lg:block">
+          {/* Clears the sticky site bar above it (see SiteHeader) — a rail that
+              slides under the toolbar loses its first item. */}
+          <div className="sticky top-16 max-h-[calc(100vh-6rem)] overflow-y-auto pb-10">
+            <TableOfContents containerRef={bodyRef} label={tocLabel} refreshKey={tocKey} />
+          </div>
+        </aside>
+      )}
     </div>
   );
 }

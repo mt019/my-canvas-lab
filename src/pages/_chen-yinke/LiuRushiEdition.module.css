@@ -98,6 +98,25 @@
   color: var(--cat-7-tx);
 }
 
+/* master switch — sits apart from the layer chips as an action, not a toggle */
+.allToggle {
+  margin-left: .35rem;
+  padding: .3rem .5rem;
+  color: var(--c-ink-faint);
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  font: inherit;
+  font-family: var(--font-accent);
+  font-size: var(--text-xs);
+  letter-spacing: .08em;
+  transition: color var(--dur-fast);
+}
+
+.allToggle:hover {
+  color: var(--c-ink);
+}
+
 /* ---- reading surface ---- */
 .reading {
   margin-top: var(--space-6);

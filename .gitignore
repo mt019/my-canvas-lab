@@ -34,6 +34,17 @@ src/data/intlTaxOps/.sync-manifest.json
 # 一律不上 origin。該目錄自帶一個只在本機的 git repo 提供版本還原，勿在此加白名單。
 .claude/history/
 
+# JIRS 資料倉 PDF 的本機開發符號連結（正式站用 VITE_JIRS_PDF_BASE，PDF 不進 canvas 倉）
+public/jirs
+
+# 誤放在 canvas 根目錄的東西。本 repo 是公開的，而 `git add -A` 只要跑過一次就進歷史、
+# 拿不回來，所以先擋住再說。目前擋的是 data/materials/職權分類獨立覆核-A.json——雙人
+# 獨立覆核的編碼者原票，未發表，而且它是盲編碼，另一位編碼者看到就作廢。它的家在
+# ../constitutional-court-research-data，該搬回去（搬是那條線的事，這裡只負責別讓它外流）。
+/data/
+# 臨時截圖／探查腳本（Playwright 一次性用完即丟，不該進版控）
+_shot*.mjs
+
 # vercel link 會自己在這裡加一行 `.env*`——那會連 .env.production 一起蓋掉，而那個檔
 # 是公開值、必須進版控（VITE_SITE_URL 是 canonical／sitemap 的單一來源）。只擋本機的。
 .env.local

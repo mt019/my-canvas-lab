@@ -80,6 +80,12 @@ export const CC_TABS_SEO = [
     keywords: '司法解釋 沿革, 大法官 制度 歷史, 憲法訴訟法, 大理院 解釋, 統一解釋, 意見書 制度',
   },
   {
+    slug: 'jurisdiction', tab: 'jurisdiction', name: '法定職權分類', type: 'Article',
+    title: '釋字的法定職權構成｜統一解釋如何退到個位數',
+    description: '大法官釋字同時承擔解釋憲法與統一解釋法律及命令兩種職權。813 件依五年期分組後，統一解釋佔比從 1955–74 年的八成餘降到 1990 年後的一成以下，含分類判準、法源對照與實測誤差。',
+    keywords: '統一解釋法律及命令, 解釋憲法, 大法官 職權, 憲法第78條, 釋字 分類, 違憲審查 制度變遷',
+  },
+  {
     slug: 'about', tab: 'about', name: '資料說明與方法', type: 'WebPage',
     title: '資料說明與方法｜憲法法庭案例庫',
     description: '案例庫的資料來源、涵蓋範圍、意見書編碼方式與已知限制，以及引註與 BibTeX 匯出的使用說明。',

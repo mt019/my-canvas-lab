@@ -109,6 +109,42 @@ copy. When writing digest/topic prose, narrate what a *reader* learns
 per-post 版、`og:type=article`、JSON-LD 有 Article ＋ 合併節點；預先渲染情境（preview ＋
 networkidle）三條路由的 `#root` 都有 8–12 KB 內容；手機寬度無橫向溢出；console 無錯誤。
 
+### `VocalTraining`（聲樂訓練・Vaccai 練習本，2026-07-27 新建）
+
+`/vocaltraining`，`pages/VocalTraining.jsx` ＋ `pages/_vocal-training/{shared,NowView,PiecesView,MethodView,SourcesView,seo}.jsx`。
+資料倉 `../vocal-training-data`，`npm run sync` 投影一個檔 `src/data/vocalTraining.json`（46 KB）。
+契約見資料倉 `docs/data-contract.md`，**動手前讀它**。
+
+教材是 Nicola Vaccai《Metodo pratico di canto italiano per camera》（1832，倫敦），十五課、
+二十二首帶詞的短練習，詞全部取自 Metastasio 的劇本。四個分頁：`now`（現在練哪一首，
+**由資料倉的 `meta.currentExercise` 指定，前端不寫死曲號**）、`pieces`（二十二首，按課分組、
+可依技術分類篩選）、`method`（教材本身與三套編號對照）、`sources`（按 Metastasio 作品收攏、
+標示考證狀態）。殼＝`DashboardLayout`；主分頁與技術分類篩選是兩個維度，用 `useTabParams`
+一次寫（兩個 `useTabParam` 會掉一個鍵）。
+
+**這頁的三個坑，改之前先知道**：
+
+1. **課號一律阿拉伯數字**。原書印羅馬數字，但 `II` 這種字在中文字體裡排成全形寬度，夾在
+   「第」「課」之間是歪的；羅馬數字只留在「這本教材」那頁的對照表裡。
+2. **右欄目次要 `h2[id]`**。`TableOfContents` 從 DOM 讀 `h2[id]`，id 在 MDX 是 rehype-slug 自動加的，
+   手寫 JSX 沒有——沒加 id 時右欄只會畫出一條空的分隔線，看起來像壞掉。這頁每個 h2 都手寫了 id。
+3. **標題裡的空白要是真字元**。`第 {lesson.no} 課{'　'}` 那個全形空格是刻意寫成 JSX 表達式的：
+   JSX 會吃掉行尾空白，而 `ml-3` 這種 margin 在目次的 `textContent` 裡是看不見的，於是右欄會印成
+   「第 1 課音階」。
+
+**`context` 欄位（同日第二輪）**：這首前後的原文＋逐行中譯，一首可多塊，每塊帶 `label`
+說明是哪裡來的（「唱這首之前的宣敘調」「同一首詠嘆調的第二節，Vaccai 沒有收」）。
+Vaccai 多半只取整首詠嘆調的一節，比喻的答案常常在他砍掉的那一節——第 2 首的斑鳩只有比喻，
+答案在第二節；第 4 首反過來，他取第二節、砍掉第一節那句「命運已經把額前那綹頭髮遞到你手上了」。
+前端用 `ContextBlocks`（`_vocal-training/shared.jsx`）渲染：與正詞同一套逐行對照，但整塊往內縮
+並掛一條細線——**讀者要一眼分得出哪些字他會唱到、哪些不會**。目前只有 ex-02、ex-04 有，
+其餘十三首的原文已抓在資料倉的 `data/raw/web/`，逐首補中譯是後續工作。
+
+歌詞來源與考證狀態逐首標在資料裡：二十二首中十五首已在義大利文 Wikisource 定位到原始場景，
+七首查不到（`source.verified: false`，場景欄位一律 `null`，資料倉的 validator 會擋「未考證卻有值」）。
+第四首〈Avvezzo a vivere〉的歌詞與 Metastasio 原文有異文（`ancor nel porto / paventi il mar`
+→ `in mezzo al porto / pavento il mar`，第二人稱改第一人稱），記在該首的 `variant` 欄。
+
 ### `Brief` ＋ `brief/*`（個人簡報站，2026-07-17 新建，第十輪接上標記層）
 
 站的形狀：`/brief` 儀表板（`pages/Brief.jsx`）＋兩個內頁——`/brief/reading` 讀的東西
@@ -125,6 +161,64 @@ networkidle）三條路由的 `#root` 都有 8–12 KB 內容；手機寬度無�
 另外 `admission` 現在多一種來源會給的答案：官網只留聯絡人、沒講要不要報名的場次，
 `registerByKnown` 是 false、`admission` 是 null，前端照原本「沒有查到」那條路走即可——
 **不要把它畫成自由入座**。細節見資料倉 `engineering/LOG.md` 2026-07-28 那條。
+
+**2026-07-28 第二輪（活動這一面的整修，前端＋資料倉一起）。** 使用者連續指出五件事，根因大半在
+「同一批活動被五個地方各自手刻一次」：
+
+- **活動列收成一份**：`pages/brief/_EventRow.jsx`，日報分區、關門那一區、這一週、活動曆條列、
+  我的講座全用它。先前海報只有我的講座畫得出來、「我要去」在關門那一區整個沒有（最該按的一區）。
+- **活動圖自適應**：貼在標題左邊、寬度 `30%`（下限 `4.5rem`、上限 `9rem`）、保持原始比例。
+  先前是固定 96px 的一欄，手機上是郵票、寬螢幕上看不出畫什麼。
+- **`public/brief/` 與 `/brief` 路由撞名**，Vite dev 直接 500（public 的靜態檔蓋掉路由，線上因為
+  prerender 產物剛好同名而看不出來）。海報改放 `public/brief-posters/`，新增固定檢查
+  `npm run validate:publicpaths`（已進 `verify:policy`）。
+- **今／明／後三天 → 這一週**（`?view=week-events`）。整週之前就開始、還沒結束的獨立一區
+  「整週都在」，其餘按開始的那一天分段——跨日的展覽每天複印一遍會把當天的講座擠掉。
+- **已結束的活動不再消失**：資料倉往回送 30 天的學術活動（`pastEvents`）＋ 按活動編號的活動圖
+  對照表（`posters`），`marks.js` 的 `LIVE` 兩者都收。這一區在頁面上是「剛結束的」（預設收起來），
+  沒去成的仍找得到、仍能按「我去了」。
+
+**2026-07-28 第四輪：分頁重新設計＋抓取被擋的真正原因＋全站導覽兩條路。**
+
+- **日報／週報／月報 → 未讀／讀的東西／活動**（使用者：「到底什麼邏輯？沒看明白」）。三個報
+  各自裝著方向相反的兩種東西，「週報 26」實際是 0 篇文章加 26 場活動。現在文章與活動各自
+  一頁，`讀的東西` 用次分頁切 7／30 天，`活動` 保留自己那排次分頁（多了「本週全覽」）。
+  舊網址 `?view=daily|week|month` 在前端翻成新分頁。
+- **活動列的排序改成「還剩多少時間可以動手」**：沒開始的照開始日、進行中的照結束日。舊規則
+  把「進行中」一律排最前面（本來為暑期課程寫的），接了展覽之後，週報最上面四則全是開到
+  後年的特展，而每個來源只列前 4 則——這幾天的講座整個被擠掉。
+- **Reddit 那三支 403 的真正原因是只送了 User-Agent**（`lib/http.mjs`）。補上 `Accept` 與
+  `Accept-Language` 就 200。**不是「它擋機器人只能開瀏覽器」**——那條路走過一輪：無頭
+  chromium 一樣 403，有頭的真 Chrome 才過，而有頭視窗使用者明令禁止。最後留下的是
+  `lib/browser.mjs` 的無頭退路（只在被擋時才用，兩級都不開視窗），以及一句記在那裡的話：
+  先把請求送得像一次真的瀏覽，再談瀏覽器。順帶：三支 feed 已經十一天沒有新東西，而站上
+  完全正常（靠「留著上次的資料」）——這種安靜的停更目前只有 validate 的 staleDays 在看。
+- **NEP（RePEc）的日期語意修正**：每一則的 `dc:date` 是那篇論文自己標的日期（有的只寫年份、
+  有的排在下個月），不是它進到這一期的時間。改用期號的日期（`dateIsPaperDate` 旗標），
+  否則「最近 7 天出的」永遠算不準，還會出現一篇下個月才出的論文。
+- **導覽兩條路**（`backNav.js` 的 `siteHomeFor()` ＋ `Eyebrow.jsx` 的 `SiteEyebrow`）：左上角
+  箭頭回 canvas 首頁，眉標上的站名回這個站的首頁。同時修掉「站首頁的返回鍵指向自己」
+  （`backFor()` 把 `/brief` 補成 `/brief/` 才去比前綴，剛好命中自己那條規則）與返回鍵太淡。
+
+**2026-07-28 第三輪：新來源——史語所歷史文物陳列館**（`museum.sinica.edu.tw`，資料倉
+`npm run fetch:museum` → `data/materials/museum.json`）。跟法律所同一種漏法而且更徹底：院方
+日曆收得到這個館的幾檔特展（標題掛「[展覽訊息]」），**教育推廣活動一場都沒有**——繪本故事屋、
+專場導覽、古印鑄造工作坊，要報名、名額 15 到 20 人。合併走 `mergeMuseum()`：對得上的（同所、
+同開始日、館方標題整個出現在日曆標題裡）**留日曆那筆當主體**、只補活動圖與摘要（日曆的標題是
+雙語的，搜英文的人靠它才找得到）；對不上的新增。實測對上 2 場、新增 19 場。
+
+日期在這個站分兩種寫法，這是接它最需要小心的地方：展覽的檔期寫在清單上，**活動的日期只寫在
+內頁「活動資訊」那段散文裡**（`2026年8月5日（三）10:00-12:00`），而且一則公告常常包含好幾場，
+所以一場一列（`parseSessions()`，同一天被提到兩次以有時刻的那次為準）。**解不出年月日齊全的
+就不收**：常設展、只公告開始日的特展、系列總覽頁共 8 則不列，寫進盲區
+`museum-standing-exhibitions`。固定檢查 `checkMuseumCoverage()`＋兩個負向案例。
+
+資料倉同一輪修的四件：活動摘要裡的「報名截止：…」現在讀得出來（`mergeDescriptionDeadlines()`，
+只認那四個字後 16 字內的第一個日期；統計科學營的 7/31 截止先前只寫在摘要裡，整個漏在
+「這 7 天關門的」之外）、ICS 的 `DTEND` 收成 `endDate`（跨日活動先前印成一天，而「未來或進行中」
+只看 `endDate`，於是它們開始的隔天就消失；當時未來場次有 19 場長這樣）、來源自己填的「無 (無)」
+不再當成地點印出來、`sync-to-canvas.mjs` 多送 `pastEvents` 與 `posters`。負向測試 27/27、
+`npm run check:brief` 55/55。
 
 **區塊從 `sources[]` 的 `collection` ＋ `kind` 長出來**（`data.js` 的 `sectionsOf`）：一個 kind 一區，
 資料倉加一個新類的來源＝站上多一區，前端一個字都不用改。**這是第九輪修掉的債**——上一版六區是
@@ -231,9 +325,8 @@ kind 之間的順序＝它在 `sources.json` 裡第一次出現的順序（那�
 **這個站被使用者退回五次，教訓全在 `docs/DESIGN.md`**：「資料頁的形狀」「資料驅動的頁不准被單一
 來源綁架」「**也不准被單一種類綁架**」三節。**動這個站之前先讀那三節。**
 
-**下一輪**：(1) **首頁設計**，使用者第九輪排隊時已點名兩個實測到的問題（canvas 根首頁 `/` 兩欄
-grid 讓左欄破一個約 680px 的洞；眉標 `PHENOM · CANVAS LAB` 在 12px＋`tracking-[0.18em]`＋打字機面
-讀成一團粉點雜訊）；(2) **OPENTIX 即時票況走前端現抓**（倉裡刻意不存剩餘票數，幾小時就過期）——
+**下一輪**：(1) ~~首頁設計~~ **已完成（2026-07-27）**：根 `/` 改成 glitch 門面、索引移
+`/all`、眉標豆腐格用 CSS 圓點修掉，見「Canvas home entry」節；(2) **OPENTIX 即時票況走前端現抓**（倉裡刻意不存剩餘票數，幾小時就過期）——
 標記層已經在了，「我要去」那幾場正是該現抓票況的那幾場；(3) **證券市場分析是時間序列不是清單**
 （同一個數字每天更新），要走 `components/lab/chart/` 做圖表，使用者已裁示排隊。
 
@@ -334,13 +427,23 @@ Backed by sibling `../iias-publications-data` repo（GitHub mt019/iias-publicati
 private；data 遷自 SCU 憲法課倉庫）。Pipeline：`npm run app-json`（manifest → 純 metadata
 投影 296KB，NFC 正規化，核數檢查對 manifest 宣告數自校）→ `npm run sync`（JSON →
 `src/data/iiasPublications.json`＋87 張封面 webp → `public/covers/iias/`）。規模：87 種出版品
-／797 篇章（425 PDF＋318 線上閱覽＋54 純目次）。前端四 tab（總覽含年×分類堆疊條、完整清單
-預設全展開、期刊架 42 期、篇章檢索 797 列），CSS Modules＋全域 tokens（分類色固定佔
-`--cat-1..4`，淡底＋ink 細框）。PDF 走 `/api/pdf` 代理（`api/_pdfProxy.mjs` 白名單第 4 條：
-`publication.iias.sinica.edu.tw` 任何 `.pdf` 路徑）；線上閱覽直連官網。字型：本頁進場時補過
-子集（rebuild-font-subsets）＋7 個源字型缺字進 `font-coverage-exceptions.txt`。未做（列於資料
-repo README）：PDF 全文檢索（pdf_text 46MB 在資料倉）；官網「先期出版」欄目前為空，日後上線
-需重抓。
+／797 篇章（**已全面 PDF 化**：~743 篇直連 GitHub Release `iias-pdfs` 的 PDF＋54 純目次無檔；
+`type:"read"` 線上閱覽已消滅為 0）。前端**五 tab**（總覽含分類構成表＋年×分類堆疊條、完整清單
+預設全展開、期刊架 42 期、篇章檢索 797 列、作者榜 429 位）＋策展人（湯德宗）專頁；作者榜靠資料倉
+`normalizeAuthors()` 產的每章 `authorList[]`。CSS Modules＋全域 tokens（分類色固定佔
+`--cat-1..4`，淡底＋ink 細框）。PDF 走 `/api/pdf` 代理（`api/_pdfProxy.mjs` 白名單：中研院官網
+`.pdf` ＋ GitHub Release objects）。字型：本頁進場時補過子集（rebuild-font-subsets）＋7 個源字型
+缺字進 `font-coverage-exceptions.txt`。**本頁 CSS 自帶 reset、與其他頁隔離**：`.workspace button,a`
+只繼承 `font-family`（不可用 `font:inherit`／不可補 `.workspace button{font-size}`，否則蓋掉元件字級、
+全站按鈕變 18px——見 HISTORY.iias 2026-07-27 晚間）。未做（列於資料 repo README）：PDF 全文檢索
+（pdf_text 46MB 在資料倉，需 OCR）；可玩性四方向（隨機一篇／年表可點／作者星圖／依篇幅過濾）。
+
+**「整理者的話」是隱藏版（2026-07-28）**：那一段有幾節對具體論文的方法提出批評，不擺在本站說明的
+首屏。入口＝緣由段之後的一個無標籤墨菱形（`.colophonMark`，8px 轉 45°，實色 `ink-faint`→hover
+`ink`，無光暈），`#colophon` 可直達。**收合用 CSS `display:none`，不做條件渲染——那段一律留在
+DOM**，所以檢視原始碼或抓取頁面的讀得到，人要自己找到入口。這是刻意的，不要「順手改成條件渲染
+省 DOM」。展開後第一句是 `.colophonCaveat`（個人觀感／對事不對人／數字可回原文覆核）。**站規例外**：
+`Accordion` 明令初值全展開且 API 不給收合參數，此處刻意不走 `Accordion`。
 
 ### `ECFAResearch`
 
@@ -585,6 +688,40 @@ warning 擋住 build，然後被關掉——那比現在更糟，因為會以為
 `src/pages/Brief.jsx` 目前還紅（brief 標記層在途，非本輪產出）。
 
 ### `ConstitutionalCourt` (landed 2026-07-06)
+
+- 2026-07-28 **職權轉型曲線上站**（新 `_constitutional-court/JurisdictionShiftChart.jsx`，掛在
+  `?tab=jurisdiction` 的首節）。畫的是釋字每五年期裡「統一解釋法律及命令」佔的百分比：
+  1949–54 為 51%，1955–74 四期都在八成以上，1975–79 為 63%、1980–84 為 38%、1985–89 為 19%，
+  1990 之後每期都在一成以下。這是職權分類那條研究線的實質產出——同一個機關依同一條憲法第78條，
+  七十二年間做的事整個換了一種。
+  - **資料一律來自資料倉**：`職權分類摘要.釋字五年期`（`classify-jurisdiction.mjs` 產生、
+    `validate-jurisdiction.mjs` 驗過合計 813 與年份連續）。**前端不自己分期、不自己加總**；
+    分期規則若兩邊各寫一份，兩條曲線遲早會不一樣。
+  - **長條照 DESIGN.md 現行畫法**：淡彩實色填充（`color-mix(in oklab, --cat-5-tx 22%, --cat-5-bg)`）
+    ＋頂端 2.6px 深墨小蓋、無外框。整張圖只有一個色相，cat-5 與「案件時間軸」下緣那條職權色帶的
+    0% 端同色，兩處講同一件事就用同一個顏色。末期佔比為 0，畫一條貼軸底的細線，讓「有資料而值是 0」
+    跟「沒有資料」看得出差別。
+  - **各期件數靜態標在長條下方**，不藏進 hover：早期各期只有 14–43 件，一件的進出就動好幾個百分點，
+    分母是讀者判斷這條曲線該信到什麼程度的必要資訊。
+  - **窄螢幕給 svg `minWidth: 560` 讓它橫捲，不等比縮**。390px 的手機上若讓它縮到 358px 寬（實測），
+    9.5px 的年份標籤會變成 5px 上下。寬的東西自己捲，別連字一起縮——這條對任何 viewBox 圖都適用。
+  - **同一輪修掉的 bug：職權分類分頁的按鈕是死的。** `/constitutionalcourt/:tab` 交給 `CCTabRoute`，
+    它拿 tab id 去 `CC_TABS_SEO` 查 slug，查不到就 `<Navigate>` 回站首頁——而那張表裡從來沒有
+    `jurisdiction` 這一條，所以按鈕按下去原地彈回，畫面上一個字都不說。連帶地，這一頁也從來
+    沒被 prerender 或寫進 sitemap（`routes.mjs` 也是讀 `CC_TAB_SLUGS`）。**防再犯**：新增
+    `npm run validate:tabroutes`（`scripts/validate-tab-routes.mjs`，已接進 `verify:policy`），
+    把頁面連出去的每個子路由 slug 跟 SEO 表對起來，缺一個就失敗；SEO 表用 import 讀不用正則掃，
+    因為朱家驊那張表是 spread 展開的、掃字面值會生出六個假陽性。CC 與 ZJH 各造一個假故障實測過。
+    **開發時我一直用 `?tab=jurisdiction` 進頁，正好繞過那條路由，所以沒發現。**
+  - **同節的方法段落改掉了卡片與大數字**（使用者：「我討厭卡片 還用卡片？」「職權分類做完了嗎？
+    沒做完怎麼上前端了？」）。原本是一張 `text-3xl` 的「240／813 件」進度條大卡＋六張各帶一個
+    `text-2xl` 彩色數字的狀態卡＋兩段文字各包一張白卡。改成：四列的密集表（規則判定／單人查核／
+    兩人一致／第三人複核，件數 `tabular-nums` 右對齊、不放大不上色——六個數字六種顏色時，色相
+    沒有承載任何分類意義），欄位說明三卡改 `dl`，判定順序的圓圈數字改 `1.`，法源表脫掉圓角白框
+    改髮絲線。**同時改掉的是話術不只是版面**：進度條在宣傳一件不會發生的事（量產複核 471 件已於
+    07-28 判定取消），現在直說「那 471 件不打算逐件複核，這是研究判斷」並附 95.5% 實測誤差。
+    `現況聲明` 那句「釋字職權分類仍須獨立複核」在**資料倉**改掉（`classify-jurisdiction.mjs`），
+    不在前端蓋字。**未 commit。**
 
 - 2026-07-19 **索引頁右欄時間軸捲軸 `TimeRail`＋工具列捲動行為修一輪**（frontend-only，**DONE**，
   零資料 repo 改動）。新 `_constitutional-court/TimeRail.jsx`：索引頁右邊一條縱向時間脊柱，
@@ -1145,23 +1282,80 @@ checked against a deterministic always-pick-left run, `localStorage`
 write confirmed, no console errors, `npm run build` (incl.
 `validate:fonts`/`validate:tokens`) clean at every revision.
 
-## Canvas home entry
+## Canvas home entry （2026-07-27 改為隱藏式：`/`＝門面、`/all`＝索引）
 
-Homepage is grouped by page type, not the old broad
-`music`/`analysis`/`life` split:
+**根 `/` 不再是專案索引，是一個 glitch 門面** `src/components/FrontDoor.jsx`
+（在 `App.jsx` 手動路由）。它只有鉛印風的「Phenom」名牌（Radio Newsman，隨機
+故障套色錯位，`plum`＋`misty-blue` 兩通道，非霓虹）＋一段 Karl Kraus〈Fernes
+Licht〉情詩（德中對照，Huiwen Mincho；德文變音與中文都在現有子集內）。**整頁墨
+在紙上、禁任何發光體**（無 radial glow／box-shadow 光暈／游標暖光——試過、被使
+用者退回，見 memory `feedback_no_glow_ink_only`）。**隱藏入口**：下方空白處平常
+全空，游標靠近才用 `near²` 曲線浮現墨色大寫 `HEREIN`（Radio Newsman，其子集已含
+H/E/R/I/N），點下去才進 `/all`。鍵盤 Tab、觸控都到得了。
 
-- `研究地圖`: long-running research canvases with separated/expandable
-  data layers.
-- `法政解析`: legal, fiscal, policy, investment, institutional case
-  breakdowns.
+**專案索引（原本的分組清單）移到 `/all`**（`HomePage` in `App.jsx`，未 lazy，
+進站瞬間、無載入畫面）。`routes.mjs` 種子 `['/', '/all']`，兩者都預渲染＋進
+sitemap。**動機：藏掉「一站看盡全部專案」的聚合清單**——單一子站照樣各自被
+Google 收錄、可單獨分享，但拿到某個子站連結的人把網址砍回根目錄，只會撞到門面、
+翻不到全貌。
+
+分組（`PAGE_META.group`，`生活雷達` 現排最前＝每天開的 Brief 在最上）：
+
+- `研究地圖`: long-running research canvases with separated/expandable data layers.
+- `法政解析`: legal, fiscal, policy, investment, institutional case breakdowns.
 - `即用工具`: directly usable instruments and sound tools.
 - `生活雷達`: practical decision/availability monitors.
 
-Keep the home page a compact project index with thin separators — no
-wall of rounded cards, no count-heavy dashboard blocks. (This is a
-logical/`PAGE_META.group` grouping for the homepage display, separate
-from the question of whether `src/pages/` should be physically split
-into subfolders — see "Declined" below; the two aren't in tension.)
+`/all` 維持精簡索引：細分隔線，無大圓角卡牆、無數字磚。
+
+### 返回鍵導覽政策（2026-07-28 使用者裁定，取代 07-27 版）
+
+**每一頁都要有一條回頭路，落點只有一個地方決定：`src/backNav.js`。**
+
+07-27 的版本把頂層頁的「← Canvas Lab」全部移除，理由是「通往 `/all` 的返回鍵等於把剛
+藏起來的目錄洩漏給任何拿到單一站連結的人」。那個顧慮成立，但移除返回鍵是過頭的解法：
+執行到一半就變成「有的有、有的沒有、有的回 `/`、有的回 `/all`」四種樣子並存，讀者每進
+一頁都要重新猜。07-28 使用者的原話是「其實我是覺得是要有的」。
+
+**現在的解法是換落點，不是拿掉按鈕**：頂層頁的返回鍵回**素首頁 `/`**（那是一張詩的紙，
+不是目錄），`/all` 只從素首頁的隱藏入口進得去。洩漏的顧慮因此消失，回頭路也回來了。
+
+- 單一事實來源 `src/backNav.js`：`BACK_NAV_ENABLED`（總開關）、`HOME`（預設落點，
+  `label` 空字串＝只畫箭頭不印站名）、`INDEX`（`/all`）、`SITE_HOMES`（主題站例外）、
+  `NO_BACK`（`/` 與 `/all` 自己不畫）、`backFor()`／`resolveBack()`。
+- **畫出來的實作只有一個**：`src/components/BackLink.jsx`。三個殼（`PageShell`／
+  `DashboardLayout`／`SiteHeader`）在抬頭列放它，自己刻版型的頁直接放它。三個殼原本
+  各寫一個 `<a>`＝「安靜」有三份定義。
+- **安靜**：淡墨 `opacity .7`、滑過去轉深；`HOME` 沒有 label 所以只有一個箭頭。
+  「Phenom」不印在每一頁的左上角——那是廣告不是導覽。帶字的只有主題站落點。
+- `SiteHeader` 的 `back` 從必填改成選填：配置已經知道每個主題站的首頁，頁面什麼都不說
+  也拿得到對的連結，而且總開關關得掉全站（原本靠 `throw` 當強制，現在靠配置）。
+- **樂器頁不掛**（`AutoTuner`／`UkuleleTuner`／`VocalTuner`／`ElectricPiano`）：整頁就是
+  一台儀器，沒有抬頭列，浮貼一顆會壓在儀表上。退出用瀏覽器上一頁。
+- 固定檢查 `npm run validate:shell`（已接進 `verify:policy`）：路由頁沒有回頭路就失敗、
+  頁面把 `/` 或 `/all` 寫死當返回鍵就失敗。**免除要具名附理由**，寫在
+  `scripts/validate-shell-chrome.mjs` 的 `NO_BACK_PAGES`——不能靠沉默免除，否則下一個
+  漏掉返回鍵的頁會混在裡面看不出來。
+
+素首頁往 `/all` 的入口同日再隱一階（`FrontDoor`）：近接顯影半徑 210→96px、不透明度
+從 `near²` 改 `near³`，游標要真的停在詩下方那段空白才浮出 `herein`。觸控裝置原本固定
+露出 `.42`（等於手機上一直看得見），改成完全不露。**留給自己的兩條路：按 `h`，或在
+頁面上長按 600ms**——兩者都只是讓字浮出來，進去仍然要點它。
+
+（分組是 `PAGE_META.group` 的邏輯分組，與 `src/pages/` 是否實體拆子資料夾無關——
+見「Declined」。）
+
+全站焦點框政策見「Design system」；字體子集缺字陷阱見「Font system」。
+
+## VocalTuner：單音/旋律引導線（2026-07-27）
+
+`pages/VocalTuner.jsx`。頭部切「單音 / 旋律」兩模式：單音＝互斥（`targetNotes` 恆
+0/1，按新音取代）；旋律＝可疊多條引導線。引導線細（1px＋淡綠帶＋左端音名標籤，多
+條也不雜亂）。選音分工：**按鍵/琴鍵＝加線（dedup，不 toggle）、點引導線＝移除該條、
+右下毛玻璃圓鈕＝全清**（只在有線時出現）。cents 回饋比對最近的引導線，兩模式通用。
+**踩到的 bug**：原本鍵盤觸發把 `handlePianoPress` 包在 `setKeyOctave` 的 updater 裡，
+React StrictMode 雙呼叫 updater → 每音被 toggle 兩次；改用 `keyOctaveRef` 直接呼叫一
+次。通則：side effect 別塞進 setState updater。
 
 ## 憲法法庭年度密度圖：頂線式畫法（2026-07-20）
 
@@ -1249,6 +1443,13 @@ and migration state: `docs/DESIGN.md`. `npm run validate:tokens` (in build)
 blocks bare hex in migrated files; `scripts/design-token-exceptions.txt` is the
 shrink-only list of unmigrated files.
 
+**焦點框全站政策（2026-07-27，`src/index.css`）**：瀏覽器預設 focus 外框（Safari
+藍光／Chrome ring）連滑鼠點按也會留在按鈕上，很醜（音樂工具閒置時最明顯）。規則：
+`:where(a,button,[role=button],input,select,textarea,summary,[tabindex])` 的 `:focus`
+外框一律關掉，只在真正鍵盤操作（`:focus-visible`）時給一圈陶土色（`--c-accent` 45%）。
+`:where()` specificity 0，不蓋 `.canvas-range`/`.canvas-check` 既有 focus 樣式。**別為了
+去掉某個藍框對單一元素加 `outline:none`——全站政策已在。**
+
 **Reader font-scale mechanism (rewritten 2026-07-18, replaces the earlier
 whole-page `zoom` — read `docs/DESIGN.md` 字級規則 first).** The page sets
 `--reader-scale` on its root; shared class `.reader-scale` (index.css) carries
@@ -1292,6 +1493,134 @@ per research — sources in scratchpad `research-*.md`, proposal in
 `*_VARS` raw-hex islands still need consolidating into the semantic tokens —
 do it incrementally, don't open new hex islands.** Rule for any new
 chart/status color: reference `--status-*` / `--cat-*`, never a fresh page hex.
+
+## 資料層與 PDF 代理白名單分岔：加上固定檢查（2026-07-28）
+
+線上中研院出版品的 743 份 PDF 全部回 `forbidden target`。成因是兩份必須同步的東西各自走：
+`src/data/iiasPublications.json` 的網址早就改指 GitHub Release 的自有典藏並進了版控，
+`api/_pdfProxy.mjs` 對應的 `github.com` 白名單規則卻留在工作樹沒 commit。本機 dev 讀工作樹
+所以一切正常，線上讀 HEAD 所以全掛——**這類「本機好、線上壞」的落差不會有任何既有閘門發現。**
+
+`scripts/validate-pdf-proxy.mjs` 直接 import `resolveTarget`，逐一驗證前端會送進 `/api/pdf`
+的網址：中研院出版品的篇章網址（`IiasPublications` 的 `pdfHref` 無條件套代理，白名單漏一條就是
+整批打不開），以及憲法法庭資料裡被 `_constitutional-court/shared.jsx` 的 `PDF_PROXYABLE` 判為
+可代理者（那個 regex 是白名單的第二份寫法，會各自漂移）。覆蓋 2,377 個網址，接進 `verify:policy`。
+負向測試：拿掉 `github.com` 那條規則，檢查回報 738 個網址不被接受並 exit 1。
+
+通則：**資料層改指新來源時，代理／白名單那一側要在同一個 commit 一起推。**
+
+## 作業語言不准進畫面：加上固定檢查（2026-07-27）
+
+站級硬規則本來只寫在本檔開頭，靠人記得。這次聲樂頁的頁尾寫了「資料層在 vocal-training-data」，
+使用者當場退回（「工程信息禁止進前端！！！」）。規則沒有守門人就會反覆被破。
+
+**`npm run validate:copy` 現在擋兩類字**：`資料倉`／`資料層`／`同步過來的快照`，以及逐個列出的
+資料倉目錄名（`*-research-data`、`brief-data`、`vocal-training-data`、`jirs-foreign-law` 等）。
+倉庫名用白名單列、不用 `*-data` 通則式——英文正文裡的 `fiscal-data`、`tax-data` 是真的在講財政
+資料，不是倉庫名。
+
+**註解不算**：比對前會把註解去掉，而且現在連「跟在程式碼後面的行末 `//`」也一起去掉（原本只去
+整行註解，於是 `if (g) { // 資料層優先` 這種會被誤報）。去行末註解時用 `[^:\w]` 擋住 `https://`，
+免得切掉半個網址。
+
+**順手掃出的三處舊違規**（都是真的印在畫面上的字）：憲法法庭 `AboutView` 的空狀態
+「找不到……（資料層尚未同步）」→「目前沒有……的深度分析」；首頁「實證研究」那一組的說明
+「有分離資料層……」→「自己蒐集原始材料……」；`PaletteLab` 的一個標題。
+
+負向測試：把「資料倉 vocal-training-data」塞回聲樂頁頁尾，檢查兩條規則各報一次；還原後通過。
+
+## 眉標的油墨紋理不見了：是字重，不是字級（2026-07-28 使用者裁定）
+
+使用者原話：「眉毛這地方的字體的油墨點點字體呢？？？？底層模板修復」。
+
+**第一次診斷錯了，記下來免得再錯一次。** 我先量到 `Erikas Farbband` 有載入、逐字 advance width
+都是 53.7（等寬），於是判斷「字體有套上，只是 14px＋`ink-faint` 太小太淡，紋理落在次像素裡」，
+把眉標放大到 16px＋`ink-muted`。使用者回：「依然不是那個有油墨點點的字體」。
+
+**真正的原因是字重。** Erikas 有兩支字面：400 是乾淨的細打字機體、沒有紋理；**700
+（`ErikasFarbband-Bold-subset.woff2`）才是色帶油墨的網點字面**。首頁那條「PHENOM · CANVAS LAB」
+一直寫 `font-bold`，共用的 `Eyebrow` 元件卻沒有，所以站上一直有兩種眉標，而使用者記得的是首頁那個。
+**通則：字體看起來「不對」時，先把同一支字體的每個字重排在一起比，再去懷疑字級、顏色與 fallback。**
+
+**順帶修掉兩個一直存在的坑**：Erikas 子集沒有空格字符（advance width＝0），詞距只剩
+`letter-spacing`，字詞邊界糊成一排等距字母——現在按空白切成一詞一個 span、flex `gap` 撐開，
+單獨成詞的間隔號改畫 CSS 圓點（同首頁做法）；中文眉標退到 Huiwen 而 Huiwen 沒有 700 字面，
+加 `font-synthesis: none` 擋掉瀏覽器合成的假粗體，中文才不會在 12px 上糊掉。
+
+現行值：`--text-xs`／700／`tracking .26em`／`ink-muted`。四個呼叫端（`PageShell`、
+`DashboardLayout`、`JirsForeignLaw`、`ZhuJiahua`）一次跟著改；空污費的中文眉標實測正常。
+
+**沒有加機器檢查**：站內另有八處刻意的 10px accent 標籤（AppearanceMenu 分區標題、SourceFilter
+欄名、FrontDoor），一條「accent 一律 bold」的規則會全部誤報。規則寫進 `docs/DESIGN.md`
+「accent 字體：紋理在字重，不在字級」。
+
+## 窄側欄的換行：改元件，不是改單頁（2026-07-27 使用者裁定）
+
+聲樂頁的側欄目次把「第 8 課　倚音（上方與下方）、短倚音」斷成「…（上方與下」＋「方）、短倚音」。
+使用者原話：「修正側邊欄醜 wrap，底層禁止醜 wrap」。
+
+**`TableOfContents` 與 `SubOutline` 都加了同一組**：`[line-break:strict]`（斷行避開全形括號與
+頓號）＋`[text-wrap:pretty]`（最後一行不落單字）＋`line-clamp-2`＋`title`（完整標題留給滑鼠）。
+
+**`TableOfContents` 新增 `data-toc` 支援**：`h2` 有這個屬性就用它當側欄標籤，沒有才用
+`textContent`。這樣內容欄可以印完整課名、側欄印短標，不必為了側欄把正文標題砍短。
+短標放資料層（`vocalTraining.json` 的 `lessons[].topic`，資料倉 validator 限十字內），
+不在 JSX 裡臨時砍字串。
+
+**全站掃過**：十條有側欄目次的路由，共 96 條項目，沒有一條超過兩行、沒有一條被截斷。
+`/brief` 那五條兩行的（「美國國家經濟研究局（NBER）12 篇」之類）現在斷在「（」之前，是完整的兩行。
+規範寫進 `docs/DESIGN.md`「窄側欄的換行」節。
+
+## 首頁卡片文案與 SEO 描述分家（2026-07-27 使用者裁定）
+
+`PAGE_META.desc` 原本同時餵首頁卡片與 `<meta name=description>`。為了 SEO 而寫的事實密集長句
+（VocalTraining 259 字、GermanLawCourseTimeline 約 150 字）於是原封不動印在首頁卡片上，變成
+一大段話。使用者原話：「這兩個太囉嗦！！！！」
+
+**現在**：`desc` ＝首頁卡片那一行（一眼掃得完），`seoDesc` ＝給搜尋與答案引擎的長描述。
+`PageRoute` 取 `route.meta.seoDesc ?? route.meta.desc`，只寫 `desc` 時兩邊共用（多數頁不用改）。
+
+**固定檢查**：`npm run validate:copy` 擋 `PAGE_META.desc` 超過 60 字（現況中位數 30）。
+順手縮短了兩筆既有的：`JirsForeignLaw`（74 字）、`LegalGlossary`（66 字）。
+
+**skill 也改了**：`.claude/skills/canvas-seo/SKILL.md` 步驟 3 原本寫「補上 title、desc（＝description）」
+——那句話正是這次的來源，已改成 `seoDesc` 並加警告。
+
+## 外殼的水平內距：留白改成預設（2026-07-27 使用者裁定）
+
+單一事實來源 `src/components/shellPadding.js`，三個常量 `SHELL_PAD_X`／`SHELL_PAD_X_RAIL`／
+`SHELL_PAD_X_TIGHT`，規範寫在 `docs/DESIGN.md`「外殼的水平內距」節。
+
+**改了什麼**：`DashboardLayout` 的 `padX` 預設從 `px-4 sm:px-6` 改成 `SHELL_PAD_X`
+（`px-4 sm:px-6 lg:px-16 xl:px-24`）；`ArticleLayout` 與 `PageShell` 的 `wide` 版改吃
+`SHELL_PAD_X_RAIL`（側欄本身已是留白，只給一半）；`PageShell` 的 `prose` 版不變
+（`max-w-3xl` 在寬螢幕本來就有大片外邊界）。`LegalGlossary` 原本自己傳的那份 `padX`
+移除——它現在就是預設值。
+
+**為什麼是模板層改，不是逐頁補**：使用者原話是「你底層優化一下我的所有的模板，要不然我每次
+新開一個都有這個問題」。逐頁傳 `padX` 的做法製造的是「補過的頁」與「沒補的頁」兩種樣子，
+而且新頁預設會落在錯的那一邊。
+
+**手機不受影響**：三個值都從 `px-4 sm:px-6` 起跳，留白只在 `lg`（1024px）以上長出來。
+實測左邊界（正文段落，px）：390 → 16、768 → 24、1024 → 64、1280 → 96、1600 → 256；
+390px 下九條路由零水平溢出。量測腳本的做法記在 `.claude/history/`，要複驗就用 playwright
+量 `main p` 的 `getBoundingClientRect().left`。
+
+**加寬表格頁時**：整欄是寬表格、橫向真的不夠用，才傳 `SHELL_PAD_X_TIGHT` 換回貼邊，並在
+呼叫端寫一行理由。
+
+**2026-07-28 補完：規則寫在文件裡擋不住自己刻殼的頁。** 07-27 只改了三個共用殼，而站上
+有 14 頁的版型是自己刻的，它們照樣手寫 `px-4 sm:px-6`——使用者回報「內容起始過於左邊」，
+指的就是這些。這輪加了固定檢查 `npm run validate:shell`（`scripts/validate-shell-chrome.mjs`，
+已接進 `verify:policy`）：任何 `mx-auto` 的寬容器（`max-w-6xl`／`7xl`／`8Xrem`）手寫
+`px-4 sm:px-6` 就失敗，內距字面值被複製到 `shellPadding.js` 以外的檔也失敗；註解裡引用
+舊寫法不算違規（要會分辨程式與註解，`/* */` 區塊要有狀態機，只看行首 `//` 抓不到 JSX 註解）。
+
+它當場掃出四處漏網，全部修掉：`SiteHeader`（`article` 版現吃 `SHELL_PAD_X_RAIL`，與底下
+`ArticleLayout` 的三欄格線對齊——不對齊就會看到返回鍵與正文落在兩條左邊界上）、
+`ConstitutionalCourt`／`ECFAResearch`（各三個容器：抬頭、吸頂分頁、主欄，三個要吃同一個值
+才不會有段差）、`JirsForeignLaw`（有 14rem 左欄，吃 `SHELL_PAD_X_RAIL`）。**通則：
+「單一事實來源」只有配上固定檢查才算數，否則它只約束得了記得去讀文件的那些頁。**
 
 ## Page building blocks: `src/components/lab/` (2026-07-13, new)
 
@@ -1435,6 +1764,15 @@ home chunk contain no katex).
   used only for the `.eyebrow` kicker in `InternationalTaxOps`). **Do
   not make this the default body font again** — that was the original
   bug fixed here.
+- **Latin 顯示/accent 子集是文字驅動的（只含站上用過的字），缺常見標點
+  （2026-07-27 踩到）。** Erikas（`--font-accent`）連半形空格 U+0020、`·`
+  (U+00B7)、nbsp 都沒有，多字詞或 `·` 分隔的 eyebrow 在它底下會跳豆腐格——分隔
+  點用 CSS 圓點畫、詞距用 flex `gap`，別靠字體的空格/·（見 `FrontDoor.jsx`、
+  `App.jsx` 索引 eyebrow）。Radio Newsman（`--font-display`）子集已含
+  H/E/R/I/N/P/h/e/n/o/m（做「Phenom」＋門面 `HEREIN`）；加新 Latin 字母得重建它的
+  子集，而 `rebuild-font-subsets.mjs` 只處理 CJK。**Huiwen（`--font-body`）是固定
+  comprehensive 子集、含 Latin 0x0020–0x024f（連 ä ö ü ß 都有）＋常用 CJK，多語言
+  正文放它最安全。**
 - `font-synthesis: none` on `body` is load-bearing — without it the
   browser fakes bold weights these fonts don't ship, producing a
   moiré-like glitch.

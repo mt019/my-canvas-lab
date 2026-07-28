@@ -545,7 +545,7 @@ export function CaseCard({ d, q, reasoningDefault, pdfMode }) {
         <span className="inline-flex h-2.5 w-2.5 rounded-sm" style={{ background: typeInk(d.類型) }} aria-hidden />
         <Badge tone="plum">{d.類型}{d.子類 ? `・${d.子類}` : ''}</Badge>
         {d.職權分類?.主類 ? (
-          <span className="inline-flex items-center gap-1.5 text-[11.5px] text-[var(--cc-ink-soft)]" title={`${d.職權分類.判定基礎}・信度${d.職權分類.信度}`}>
+          <span className="inline-flex items-center gap-1.5 text-[11.5px] text-[var(--cc-ink-soft)]" title={`${d.職權分類.查核?.覆核狀態 ?? d.職權分類.判定基礎}・${d.職權分類.法定職權?.法源 ?? ''}`}>
             <span className="h-1.5 w-1.5 rounded-full" style={{ background: d.職權分類.主類 === '憲法解釋' ? 'var(--cat-7-tx)' : 'var(--cat-5-tx)' }} aria-hidden />
             {d.職權分類.主類 === '憲法解釋' ? '憲法解釋' : '統一解釋法令'}
             <span className="text-[var(--cc-dim-text)]">／{d.職權分類.子類}</span>

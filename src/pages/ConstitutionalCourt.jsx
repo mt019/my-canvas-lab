@@ -9,6 +9,7 @@ import {
   Landmark,
   Network,
   Search,
+  Scale,
   Users,
 } from 'lucide-react';
 import data from '../data/constitutionalCourt.json';
@@ -22,11 +23,12 @@ import TenureView from './_constitutional-court/TenureView';
 import GraphView from './_constitutional-court/GraphView';
 import ResearchProblem from './_constitutional-court/ResearchProblem';
 import HistoryView from './_constitutional-court/HistoryView';
-import { SHELL_PAD_X } from '../components/shellPadding';
-import BackLink from '../components/BackLink';
 import TypologyReportView from './_constitutional-court/TypologyReportView';
 import AboutView, { Case1Analysis } from './_constitutional-court/AboutView';
 import CollationView from './_constitutional-court/CollationView';
+import { SHELL_PAD_X } from '../components/shellPadding';
+import BackLink from '../components/BackLink';
+import JurisdictionMethodView from './_constitutional-court/JurisdictionMethodView';
 
 const tabs = [
   { id: 'index', label: '案件索引', icon: Search },
@@ -37,6 +39,7 @@ const tabs = [
   { id: 'research', label: '問題意識', icon: FileText },
   { id: 'case1', label: '114 憲判 1 號', icon: Gavel },
   { id: 'history', label: '沿革', icon: Landmark },
+  { id: 'jurisdiction', label: '職權分類', icon: Scale },
   { id: 'about', label: '資料說明', icon: Info },
 ];
 
@@ -188,6 +191,7 @@ export default function ConstitutionalCourt() {
         {active === 'research' ? <ResearchProblem /> : null}
         {active === 'case1' ? <Case1Analysis /> : null}
         {active === 'history' ? <HistoryView onOpenIndex={(機關) => navigate(機關 && 機關 !== '行憲後' ? `/constitutionalcourt?機關=${encodeURIComponent(機關)}` : '/constitutionalcourt')} /> : null}
+        {active === 'jurisdiction' ? <JurisdictionMethodView /> : null}
         {active === 'about' ? <AboutView /> : null}
         {active === 'collation' ? <CollationView /> : null}
         {active === 'typology-report' ? <TypologyReportView /> : null}

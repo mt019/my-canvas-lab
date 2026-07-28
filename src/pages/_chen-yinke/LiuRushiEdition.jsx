@@ -5,7 +5,7 @@ import styles from './LiuRushiEdition.module.css';
 
 // The reading surface stays quiet; each documentary layer appears only when the
 // reader asks for it. Defaults are all off — the point is the text first.
-const LAYERS = [
+export const LAYERS = [
   { id: 'sources', label: '材料來源', hint: '在引文上方標出出處' },
   { id: 'cases', label: '寅恪案', hint: '標出陳寅恪自己的判斷' },
   { id: 'questions', label: '開放問題', hint: '標出「俟考」未決之處' },
@@ -13,6 +13,27 @@ const LAYERS = [
   { id: 'people', label: '人物', hint: '標出人物與其別名' },
   { id: 'context', label: '編者脈絡', hint: '顯示分段標題與判斷語氣' },
 ];
+
+// The reading face opens with every layer showing; readers turn what they don't
+// want off, or clear them all at once.
+const ALL_ON = Object.fromEntries(LAYERS.map((l) => [l.id, true]));
+
+// Layer badge counts, shared by the reading face and the legend so the numbers
+// on both stay in step with the data.
+export function computeCounts(v) {
+  let sources = 0;
+  let cases = 0;
+  let questions = 0;
+  let xref = 0;
+  for (const u of v.units)
+    for (const b of u.blocks) {
+      if (b.role === 'source' && b.sourceRef) sources += 1;
+      if (b.role === 'yinke-case') cases += 1;
+      if (b.openQuestion) questions += 1;
+      if (b.crossReference) xref += 1;
+    }
+  return { sources, cases, questions, xref };
+}
 
 const CERTAINTY = {
   explicit: '明示',
@@ -32,7 +53,7 @@ function EntityCard({ entity }) {
   );
 }
 
-function useEntityMatcher(enabled) {
+export function useEntityMatcher(enabled) {
   return useMemo(() => {
     if (!enabled) return null;
     const map = [];
@@ -89,7 +110,7 @@ function Segments({ segments, matcher, idBase }) {
   );
 }
 
-function Block({ block, layers, matcher }) {
+export function Block({ block, layers, matcher }) {
   const inner = <Segments segments={block.segments} matcher={matcher} idBase={block.id} />;
 
   if (block.role === 'source') {
@@ -133,7 +154,7 @@ function Block({ block, layers, matcher }) {
   );
 }
 
-function UnitContext({ unit }) {
+export function UnitContext({ unit }) {
   if (!unit.note && (!unit.claims || unit.claims.length === 0)) return null;
   return (
     <aside className={styles.context}>
@@ -162,25 +183,14 @@ function UnitContext({ unit }) {
 }
 
 export default function LiuRushiEdition() {
-  const [active, setActive] = useState({});
+  const [active, setActive] = useState(() => ({ ...ALL_ON }));
   const matcher = useEntityMatcher(active.people);
 
-  const counts = useMemo(() => {
-    let sources = 0;
-    let cases = 0;
-    let questions = 0;
-    let xref = 0;
-    for (const u of view.units)
-      for (const b of u.blocks) {
-        if (b.role === 'source' && b.sourceRef) sources += 1;
-        if (b.role === 'yinke-case') cases += 1;
-        if (b.openQuestion) questions += 1;
-        if (b.crossReference) xref += 1;
-      }
-    return { sources, cases, questions, xref };
-  }, []);
+  const counts = useMemo(() => computeCounts(view), []);
 
   const toggle = (id) => setActive((s) => ({ ...s, [id]: !s[id] }));
+  const anyOn = LAYERS.some((l) => active[l.id]);
+  const setAll = () => setActive(anyOn ? {} : { ...ALL_ON });
 
   return (
     <div className={styles.wrap}>
@@ -188,8 +198,8 @@ export default function LiuRushiEdition() {
         <p className={styles.eyebrow}>細讀樣章</p>
         <h2 className={styles.chapter}>{view.chapter}</h2>
         <p className={styles.lede}>
-          陳寅恪由三種顧苓的材料，一步步推回《河東君傳》的可信度與缺口。正文保持安靜；材料出處、
-          陳寅恪的判斷、未決的疑問與跨章線索，都只在你按下時才顯現。
+          陳寅恪由三種顧苓的材料，一步步推回《河東君傳》的可信度與缺口。材料出處、陳寅恪的判斷、
+          未決的疑問與跨章線索預設都已標出；逐層關掉，或按「全關」，正文就回到安靜。
         </p>
         <p className={styles.locator}>
           來源定位：{view.chapter.slice(0, 3)} · {view.scope.sourceFile.replace('OEBPS/', '')} ·{' '}
@@ -215,9 +225,19 @@ export default function LiuRushiEdition() {
             </button>
           );
         })}
+        <button
+          type="button"
+          className={styles.allToggle}
+          onClick={setAll}
+          title={anyOn ? '一鍵關掉所有顯影' : '一鍵開啟所有顯影'}
+        >
+          {anyOn ? '全關' : '全開'}
+        </button>
       </div>
 
-      <div className={styles.reading}>
+      {/* prose-body（全域）：重排本的正文是整段連續閱讀的面，吃灰階字體平滑，
+          與 .mdx 長文同一條規則（見 src/index.css 與 DESIGN.md）。 */}
+      <div className={`${styles.reading} prose-body`}>
         {view.units.map((unit) => (
           <section key={unit.id} className={styles.unit}>
             {active.context ? <UnitContext unit={unit} /> : null}

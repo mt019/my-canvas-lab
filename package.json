@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "prepare": "node scripts/install-git-hooks.mjs",
-    "verify:policy": "npm run validate:fonts && npm run validate:tokens && npm run validate:colors && npm run validate:floating && npm run validate:copy && npm run validate:math && npm run validate:cases && npm run validate:pdfproxy && npm run validate:shell",
+    "verify:policy": "npm run validate:fonts && npm run validate:tokens && npm run validate:colors && npm run validate:floating && npm run validate:copy && npm run validate:math && npm run validate:cases && npm run validate:pdfproxy && npm run validate:shell && npm run validate:publicpaths && npm run validate:tabroutes",
     "build": "npm run verify:policy && vite build && npm run prerender && npm run validate:prerender && npm run sitemap",
     "verify:push": "npm run verify:policy",
     "verify:gates": "npm run verify:policy && vite build --outDir node_modules/.verify-dist --emptyOutDir --logLevel warn",
@@ -18,6 +18,7 @@
     "validate:pdfproxy": "node scripts/validate-pdf-proxy.mjs",
     "validate:prerender": "node scripts/validate-prerender.mjs",
     "validate:shell": "node scripts/validate-shell-chrome.mjs",
+    "validate:publicpaths": "node scripts/validate-public-paths.mjs",
     "validate:fonts": "node scripts/validate-font-coverage.mjs",
     "fonts:rebuild": "node scripts/rebuild-font-subsets.mjs",
     "validate:tokens": "node scripts/validate-design-tokens.mjs",
@@ -27,7 +28,8 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "validate:math": "node scripts/validate-math-notation.mjs",
-    "check:brief": "node scripts/check-brief-pages.mjs"
+    "check:brief": "node scripts/check-brief-pages.mjs",
+    "validate:tabroutes": "node scripts/validate-tab-routes.mjs"
   },
   "dependencies": {
     "@dagrejs/dagre": "^3.0.0",

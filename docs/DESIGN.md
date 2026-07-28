@@ -55,6 +55,120 @@
 只有作用範圍（用 Playwright 讀 `getComputedStyle(el).webkitFontSmoothing`，正文該是 `antialiased`、
 清單該是 `auto`）。
 
+### 吸頂 chrome 的配方與 z-index 階梯
+
+吸頂列（sticky top bar）是**慣例、不是元件**。目前三處各有正當差異，硬抽成一個 `StickyBar` 只會變成堆滿 props（`as`／z-index／要不要毛玻璃／響應式取消吸頂）的殼——把差異藏進一個名不符實的元件、真正共享的東西反而沒抽出來。共享的其實只有下面這組 token，照抄即可：
+
+- **內容區吸頂分頁／導覽列**：`sticky top-0 z-20 border-b border-line-soft bg-paper`（實色、無毛玻璃）。`DashboardLayout` 分頁列、資料頁的 bespoke 左欄 nav 都用這組。
+- **全站頁首 `SiteHeader`**：`sticky top-0 z-40 border-b border-line-soft bg-paper/95 backdrop-blur-sm`——比內容 chrome 高一階（要蓋過吸頂分頁），且用半透明＋毛玻璃因為它常疊在正文捲動之上。
+- **z-index 階梯**（新吸頂／浮層照這個挑，別自己想數字）：內容區 chrome＝`z-20`；全站頁首＝`z-40`；全螢幕遮罩／PDF 檢視器等 modal＝`z-50`。
+- **左欄索引頁在窄屏把 nav 吸頂**：rail 在桌面是側欄、mobile 要讓 nav 貼頂時，用 `aside` 上 `contents lg:block`（mobile 讓 rail 的子元素直接參與外層高容器的排版），nav 才能在整頁捲動中吸頂；`<nav>` 自身 `sticky top-0 z-20 …bg-paper` 並在 `lg:` 取消（`lg:static lg:bg-transparent lg:border-b-0`）。此法目前只 `JirsForeignLaw` 一頁用；出現第二個消費者再考慮抽 shell。
+
+### accent 字體：紋理在字重，不在字級
+
+Erikas Farbband 有兩支字面，差別很大，選錯就等於白付一個特殊字體的代價：
+
+- **400**：乾淨的細打字機體，沒有紋理。遠看跟一般襯線體差不多。
+- **700**：色帶油墨的網點字面，就是站上想要的那個質感。**要紋理就一定要 `font-bold`。**
+
+放大字級救不了 400——2026-07-28 那次先把眉標從 14px 放大到 16px，紋理照樣沒有出現，因為它從頭到尾
+是字重帶來的。判準很簡單：**看得到網點就是 700，看不到就是 400。**
+
+搭配這支字體時另外兩件事：Erikas 的子集**沒有空格字符**（advance width＝0），多詞的句子要自己用
+flex `gap` 撐詞距；中文會退到 Huiwen 而 Huiwen 沒有 700 的字面，所以要 `font-synthesis: none`
+擋掉瀏覽器合成的假粗體。這三件都已包在 `Eyebrow` 元件裡。
+
+## 外殼的水平內距（2026-07-27 使用者裁定，全站通則）
+
+**寬螢幕上正文不准貼著視窗左緣。** 三個外殼的水平內距原本各自寫死 `px-4 sm:px-6`，於是 1280px 的螢幕上，整片文字從離左緣 24px 的地方開始——讀起來累。當時的處置是在譯語表那一頁傳一個比較大的 `padX`，結果是「補過的頁」與「沒補的頁」兩種樣子並存，而且每開一頁新的都會再犯一次。**留白現在是預設值，貼邊是要明講的例外。**
+
+單一事實來源是 `src/components/shellPadding.js`，三個值：
+
+| 常量 | 值 | 用在哪 |
+|---|---|---|
+| `SHELL_PAD_X` | `px-4 sm:px-6 lg:px-16 xl:px-24` | `DashboardLayout` 預設 |
+| `SHELL_PAD_X_RAIL` | `px-4 sm:px-6 lg:px-10 xl:px-16` | 已經有側欄擋在內容與螢幕邊之間的殼：三欄的 `ArticleLayout`、`PageShell` 的 `wide` |
+| `SHELL_PAD_X_TIGHT` | `px-4 sm:px-6` | 例外：整欄是寬表格、橫向就是不夠用的頁 |
+
+兩條規則：
+
+- **手機與平板不加內距。** 三個值一律從 `px-4 sm:px-6` 起跳，留白只在 `lg`（1024px）以上長出來、`xl` 再長一階。窄螢幕上左右各 16px 已經足夠把文字與螢幕邊分開；把桌機的留白照搬過去只會壓短行長、增加換行。
+- **有側欄的殼留一半。** 側欄本身就是一段留白，再加滿版內距會把中間的閱讀欄擠窄。`PageShell` 的 `prose`（`max-w-3xl`）完全不加：它的欄寬只有 48rem，寬螢幕上兩側本來就剩一大片外邊界，加內距只會把行長壓短。
+
+**這條規則有固定檢查**（`npm run validate:shell`，已接進 `verify:policy`）：任何 `mx-auto`
+的寬容器（`max-w-6xl`／`7xl`／`8Xrem`）手寫 `px-4 sm:px-6` 就失敗，常數字面值被複製到
+`shellPadding.js` 以外的檔也失敗。註解裡引用舊寫法不算違規。2026-07-28 用它掃出四處漏網：
+`SiteHeader`、`ConstitutionalCourt`、`ECFAResearch`、`JirsForeignLaw`——前三個都是自己刻殼、
+沒有走共用元件的頁，正是規則只寫在文件裡時最先漂走的那一類。
+
+## 返回鍵（2026-07-28 使用者裁定，全站通則）
+
+**每一頁都要有一條回頭路，而落點只有一個地方決定。** 返回鍵原本每頁自己寫，於是同一個站
+長出四種樣子：有的回素首頁（`/`）、有的回專案清單（`/all`）、有的把人送回 canvas 根、
+十一頁乾脆沒有。讀者每進一頁都要重新猜返回鍵在哪、按下去會去哪。返回鍵不是頁面的內容，
+是站的規矩。
+
+單一事實來源是 `src/backNav.js`：
+
+| 匯出 | 作用 |
+|---|---|
+| `BACK_NAV_ENABLED` | 總開關。改成 `false`，全站的返回鍵一次消失；改回 `true` 全部回來。 |
+| `HOME` | 預設落點，現為素首頁。**`label` 是空的**——回自己家的路只畫一個箭頭，站名印在每一頁的左上角是廣告不是導覽（`title` 供滑鼠停留與螢幕閱讀器）。想讓返回鍵直接回專案清單，把它換成 `INDEX` 就好。 |
+| `INDEX` | 專案清單 `/all`。素首頁的隱藏入口進得去，專案頁上不掛。 |
+| `backFor(pathname)` | 一條路徑該有什麼返回鍵，回 `{ href, label }` 或 `null`。 |
+| `resolveBack(override, pathname)` | 殼共用的解析：頁面沒表示意見就照配置、明講 `null` 就不畫、傳物件就用它的。 |
+
+例外寫在 `backNav.js` 內部，不散在頁面裡：**主題站的內頁回自己站的首頁**
+（`/statistics/*` → 統計學實驗室、`/brief/*` → 簡報、`/constitutionalcourt/case|justices/*`
+→ 案件索引、`/zhujiahua/*` → 朱家驊研究室），讀者在深處要回的是他正在讀的那個站；
+**素首頁與 `/all` 自己不畫**。主題站的
+分頁路由（`/constitutionalcourt/research` 這種）走預設，因為分頁換的是同一頁的內容，
+不是進到更深一層。
+
+**畫出來的實作只有一個**：`src/components/BackLink.jsx`。三個殼在自己的抬頭列放它，自己刻
+版型的頁直接放它。三個殼原本各寫一個 `<a>`，於是「安靜」這件事有三份定義；現在改一個地方
+就全站生效。**頁面不准寫死 `href="/"` 或 `href="/all"` 當返回鍵**——`validate:shell` 會擋。
+
+它是安靜的：淡墨、`opacity .7`，滑過去才轉深；沒有 `label` 的落點只畫一個箭頭。帶字的只有
+主題站的落點（「朱家驊研究室」），那是在告訴讀者他正要回到哪個站。`floating` 版給沒有抬頭
+列可掛的滿版工具頁：貼左上角、`opacity .4`、滑過去才浮出來。
+
+**樂器頁（`AutoTuner`／`UkuleleTuner`／`VocalTuner`／`ElectricPiano`）不掛返回鍵**
+（2026-07-28 使用者裁定）：整頁就是一台儀器，沒有抬頭列，浮貼一顆會壓在儀表上；退出用
+瀏覽器上一頁。免除名單寫在 `validate-shell-chrome.mjs` 裡，每一條附理由——**免除要具名，
+不能靠沉默**，否則下一個漏掉返回鍵的頁會混在裡面看不出來。
+
+素首頁往 `/all` 的入口刻意藏著（`FrontDoor` 的 `herein`）：近接顯影的半徑 96px、
+不透明度走 `near³`，游標要真的停在那段空白上才浮出來。另有兩條任何裝置都走得通的路——
+**按 `h`**（herein 的 h）或**在頁面上長按 600ms**，兩者都只是讓字浮出來，進去仍然要點它。
+
+**站有兩條回頭路，擺在兩個地方（2026-07-28 使用者裁定）**：
+
+- **左上角的箭頭**：離開這個站，回 canvas 首頁。**預設完全隱形**（`opacity-0`），滑到抬頭
+  那一列才浮出來（殼在那一列掛 `group`，不必精準壓在箭頭上）；鍵盤 `focus-visible` 一定
+  看得見——只靠 hover 的隱形控制項對鍵盤使用者等於不存在。**不掛 `title`**：那個原生提示框
+  是系統畫的，跟這個站的字體顏色無關，而且會把隱藏入口寫成說明文字；名字用 `aria-label`。
+- **報頭（眉標＋大標題）**：回這個站的原點。深一層的頁回站首頁（`/brief/events` → `/brief`）；
+  已經在站首頁但切過分頁的，回到沒有參數的那一頁（分頁與篩選都在網址裡，清掉它們是一個
+  真的動作）。乾淨的站首頁上它就是純文字，不連到自己。實作 `components/PageIdentity.jsx`
+  ＋ `backNav.js` 的 `identityHomeFor()`，三個殼（DashboardLayout／PageShell／ArticleLayout）
+  都畫這一個。
+
+**連點兩下箭頭回 `/all`**（只有落點是素首頁的那些）。這是隱藏入口，所以**不寫在任何提示裡**。
+代價講清楚：瀏覽器沒有「這是雙擊的第一下」這種事件，所以單擊必須先等 260ms 確認沒有第二下
+——那個延遲落在最常用的動作上，是這個功能的成本。三件事一定要留著：`href` 照舊（cmd 點、
+中鍵、右鍵選單全走原生，看到修飾鍵直接放行）、鍵盤觸發的 click（`detail === 0`）不等待、
+元件卸載時清掉計時器。
+
+**站首頁的返回鍵不准指向自己。** `backFor()` 比對前綴時不要把當前路徑補上尾斜線再比
+（`/brief` 補成 `/brief/` 會命中 `/brief/` 那條規則，於是箭頭指向自己，按下去什麼都沒發生
+——看起來像「要按兩下才生效」）。
+
+**還沒接上報頭連結的頁**：自己刻抬頭列、沒有走三個殼的那幾頁（`ConstitutionalCourt`、
+`ECFAResearch`、`IiasPublications`、`InternationalTaxOps`、`GovernmentDebt`、
+`ManusMetaAcquisition`、`TranslationAtlas`、`FiscalEnforcementRisk`）目前只有返回鍵、
+沒有可點的報頭。它們各自帶 CSS Module 或頁面級色票，要一頁一頁接。
+
 ## 共用元件（`src/components/`）
 
 | 元件 | 用法 |
@@ -62,10 +176,10 @@
 | `LangSwitch` ＋ `useLang` | `const { lang, setLang, t } = useLang(dict)`；字典以中文原文為 key，zh 零成本、漏譯自動回退。localStorage `canvaslab:lang`，同步 `document.documentElement.lang`。新頁一律用它，不再自造 lang state。 |
 | `FontSizeControl` ＋ `useFontScale` | `const [scale, setScale] = useFontScale()`；七檔 0.85–1.6，localStorage `canvaslab:fontScale`。scale 設在頁根 `--reader-scale`，由 `.reader-scale` 掛在外框內的內容 wrapper（見字級規則）。學術長文頁放 header 右側。 |
 | `PageShell` | 新頁與簡單長文頁的外殼：`--c-paper` 底、prose（~65ch）或 wide 寬度、document.title、header 右側 controls slot。自帶複雜外殼的儀表板頁（分頁導覽、側欄）不硬套。 |
-| `SiteHeader` | 主題站（統計站這類有自己首頁與多個子頁的站）內頁的頁首：返回鍵＋LangSwitch＋FontSizeControl。**`back` 是必填參數，且一律指向該站自己的首頁，不是 canvas 根首頁**——讀者在深處要回的是他正在讀的那個站；canvas 根從站首頁再一步就到。這條規則寫進 API（缺 `back` 直接 throw），不是寫在文件裡靠人記得。曾經三頁各自手刻同一條頁首，其中一頁的返回鍵已經漂到 canvas 根。 |
+| `SiteHeader` | 主題站（統計站這類有自己首頁與多個子頁的站）內頁的頁首：返回鍵＋LangSwitch＋FontSizeControl。返回鍵指向該站自己的首頁，不是 canvas 根。`back` 曾經是必填、缺了就 throw——那是當年唯一擋得住「頁面忘了寫」的辦法。現在改成選填，因為 `src/backNav.js` 已經知道每個主題站的首頁，頁面什麼都不說也會拿到對的連結，而且總開關關得掉全站。傳 `back` 只為覆寫（雙語標籤那種）。內距用 `SHELL_PAD_X_RAIL`，跟底下 `ArticleLayout` 的三欄格線對齊——不對齊就會看到返回鍵與正文落在兩條左邊界上。曾經三頁各自手刻同一條頁首，其中一頁的返回鍵已經漂到 canvas 根。 |
 | `AppearanceMenu` | 色票與紙紋，收在一顆「外觀」按鈕的下拉裡（不平鋪在工具列上——閱讀頁只付得起一排鉻件）。改的是全站設定（localStorage，開站時套用），與 `/palettelab` 同一組值；差別只在讀者不必離開正文就能換。色票圓點顯示的是 accent 不是 paper——每套票的 paper 依規則都近白，排出來會是一排白方塊。 |
 | `ScrollToTop` | 掛在 Router 內一次，全站生效：換 pathname 就回捲到頂。點連結是換一頁，新的一頁從頭開始；React Router 預設只換元件不動捲軸，於是從索引中段點進詞條會落在該詞條的中段。帶 `#hash` 的錨點導覽與瀏覽器上一頁不干預（那兩種情況讀者自己指定了落點）。 |
-| `Eyebrow` | 眉標 kicker。打字機 accent 字體（Erikas）唯一的預設允許位置——曾於 2026-07-07 短暫用於 h1–h3 拉丁面，同日因行內數字紋理過噪而改回 Radio Newsman；標題中文面維持 Huiwen Mincho（與內文同，取代 GenWanMin2）。GenWanMin2 已無 token 引用，字檔暫留。 |
+| `Eyebrow` | 眉標 kicker。打字機 accent 字體（Erikas）唯一的預設允許位置。**必須 `font-bold`**——Erikas 的 400 是一支乾淨的細打字機體，色帶油墨的網點字面在 **700** 那一支；首頁那條「PHENOM · CANVAS LAB」一直是 bold，眉標元件曾經不是，於是同一個站有兩種眉標（2026-07-28 使用者連問兩次「油墨點點的字體呢」）。另外兩件也包在元件裡：**空格自己補**（Erikas 子集沒有空格字符，advance width＝0，詞距只剩 letter-spacing，字詞邊界會糊成一排等距字母——按空白切成一詞一個 span、flex `gap` 撐開，單獨成詞的間隔號改畫 CSS 圓點）；**`font-synthesis: none`**（中文眉標走 Huiwen fallback，而 Huiwen 沒有 700 的字面，不關掉會被畫一層假粗體）。現行值 `--text-xs`／700／`tracking .26em`／`ink-muted`。曾於 2026-07-07 短暫用於 h1–h3 拉丁面，同日因行內數字紋理過噪而改回 Radio Newsman；標題中文面維持 Huiwen Mincho。 |
 
 ## 頁內建構元件（`src/components/lab/`，2026-07-13 建）
 
@@ -74,20 +188,24 @@
 | 元件 | 用法與硬規則 |
 |---|---|
 | `Tabs` ＋ `useTabParam(key, fallback)` | 分頁狀態一律進網址 query（深連結、上一頁可回），預設值不寫進 query，切頁自動捲到頂。`variant="underline"` 給頁面主分頁，`"quiet"` 給次分頁與元件內部切換。 |
-| `Accordion` ＋ `useExpandedSet(ids)` | 多選展開，**初值一律全部展開，且沒有「預設收合」的參數**——收合卡片會把讀者要的東西藏起來，這條規則寫進 API 而不是寫在文件裡靠人記得。 |
+| `Accordion` ＋ `useExpandedSet(ids)` | 多選展開，**初值一律全部展開，且沒有「預設收合」的參數**——收合卡片會把讀者要的東西藏起來，這條規則寫進 API 而不是寫在文件裡靠人記得。**唯一的例外寫法**：真的要藏一整段（`IiasPublications` 的「整理者的話」，因為裡面有對具體論文的批評），就不要走 `Accordion`——自己寫，入口用一個無標籤的小墨記（實色 `ink-faint`→hover `ink`，禁光暈），收合一律用 CSS `display:none` 而不是條件渲染，讓那段留在 DOM 裡給讀原始碼與抓取頁面的人。藏的是版面，不是內容。 |
 | `SourceFilter` ＋ `usePersistedFlag(key)` | 左欄來源篩選（`/brief` 兩個內頁共用）。受控元件，選擇由上層放進網址 `?sources=all\|none\|逗號串`；給 `sections` 就按 kind 分組（整類一起切）、給 `sources` 就平鋪。控制列固定四顆：全選／全不選／反選／單選(radio)，**空集合(全不選)是合法狀態**，內容區給空狀態不擋。UI 偏好（單選模式等）用 `usePersistedFlag` 存 localStorage（`canvaslab:*` 慣例），選擇本身留在網址才貼得出去。 |
-| `DashboardLayout` | 儀表板版兩欄殼（`/brief`、`TaxLitigation` 等用；與文章版 `ArticleLayout` 是姊妹不是同一個）。header 捲走＋吸頂 `dashboard` variant `Tabs`（`bg-surface` 膠囊裡的實心藥丸鈕，靠左對齊標題／內文邊界，不置中、不用毛玻璃）＋兩欄 `[1fr_13rem]`：滿寬內容欄、右欄 `TableOfContents`（h2+h3 全展開＋scroll-spy，可選 `leftRailTop` 放緊急提醒）。2026-07-20 由三欄改兩欄：左欄原本只列 h2，跟吸頂分頁列做的是同一件事。頁面提供抬頭／分頁項目／內容，殼負責版型與把 TOC 接到內容容器。文章要固定閱讀寬度就用 `ArticleLayout`，儀表板要滿寬密集列就用這個。**`reader-scale` 陷阱**：zoom 只能包最內層內容，`mx-auto`/`max-width`/padding 那層必須留在 zoom 外，否則字級放大時置中計算被一起縮放、位置會偏移（100% 時看不出來，160% 才顯形）。 |
+| `DashboardLayout` | 儀表板版兩欄殼（`/brief`、`TaxLitigation` 等用；與文章版 `ArticleLayout` 是姊妹不是同一個）。header 捲走＋吸頂 `dashboard` variant `Tabs`（`bg-surface` 膠囊裡的實心藥丸鈕，靠左對齊標題／內文邊界，不置中、不用毛玻璃）＋兩欄 `[1fr_13rem]`：滿寬內容欄、右欄 `TableOfContents`（h2+h3 全展開＋scroll-spy，可選 `leftRailTop` 放緊急提醒）。2026-07-20 由三欄改兩欄：左欄原本只列 h2，跟吸頂分頁列做的是同一件事。頁面提供抬頭／分頁項目／內容，殼負責版型與把 TOC 接到內容容器。文章要固定閱讀寬度就用 `ArticleLayout`，儀表板要滿寬密集列就用這個。**`padX` prop**：見下方「外殼的水平內距」——**預設已經是留白版**（`SHELL_PAD_X`），寬表格頁才傳 `SHELL_PAD_X_TIGHT` 換回貼邊。三個容器（header／吸頂分頁／內文 grid）吃同一個 `padX`，只縮內文會出現兩條左邊界的段差。**`reader-scale` 陷阱**：zoom 只能包最內層內容，`mx-auto`/`max-width`/padding 那層必須留在 zoom 外，否則字級放大時置中計算被一起縮放、位置會偏移（100% 時看不出來，160% 才顯形）。 |
+| `BookTree`（2026-07-28 建，`/zhujiahua` 用） | 整本書的目次，裝進 `ArticleLayout` 的 `nav` slot——書的導覽單位是它自己的目次，不是幾顆分頁標籤。契約是通用形狀 `{ id, title, href, group, subgroup?, lead?, badge?, hint? }`，元件不認識任何一本書的欄位名，呼叫端自己攤平（朱家驊：部次→`group`、分節＋再分節併成 `subgroup`、原書起頁→`lead`、有全文→`badge`）。items 必須已照書序排好，分組靠相鄰同名、不重排。含搜尋、依 `group` 收合（預設全開）、選中項自動捲進視野——**只設最近可捲祖先的 `scrollTop`，不用 `scrollIntoView`**，後者會連整個視窗一起捲、把讀者從正文拔走。搭配 `ArticleLayout` 的 `hideToc`：全書目次已經在左欄了，右欄再列一次部次就是同一件事講兩次。 |
 | `Badge` | `tone` 只吃語意色槽（danger/warning/success/info/neutral 或 cat-1…cat-8），不吃任意顏色。 |
 | `HoverCite` | 引註標記，hover/focus 顯示出處。出處物件來自資料倉，缺 locator 的引註在資料倉就 FAIL，前端不做把關。 |
 | `Math`（匯入時建議命名為 `Tex`，避免遮蔽全域 `Math`） | KaTeX 包裝，見下方例外。 |
 | `Prose` | MDX 文章的排版映射層：`.mdx` 只寫純 markdown，`h2`/`p`/`blockquote` 的樣式在這裡一次決定。這是 markdown 驅動內容而不破壞設計系統的關鍵。 |
 | `chart/`（`scale.js`、`ChartFrame`、`Axis`、`marks`） | 只有原語（比例尺、軸、格線、`Bars`/`Line`/`Dots`/`AreaWash`/`RuleLine`），沒有「圖表元件」。只吃分類色槽，沒有 `fill` 參數可以繞過——深墨色不塗大面積這條規則寫進 API。 |
+| `PdfViewer`（2026-07-27 建，JIRS＋中研院出版品頁共用） | 頁內 PDF 檢視彈窗，取代開新分頁。props：`src`（可內嵌 iframe 的 URL；本站 `/api/pdf` 代理已設 `Content-Disposition: inline` 故 Release PDF 可內嵌）／`title`／`subtitle`／`onClose`／選配 `roll={threads:[{label,run}], onReroll}`＝隨機翻閱脈絡（順藤摸瓜跳點＋換一篇）。Esc／點外關閉、鎖 body 捲動。頂格版式，標題與動作鈕同一列、順藤摸瓜獨立一列。**呼叫端只在檔案能內嵌時才傳進來**——外站會被 X-Frame 擋的原檔改走新分頁、不進彈窗。開啟入口一律用 `<a href>`＋修飾鍵守衛（左鍵彈窗、Cmd/Ctrl/中鍵新分頁），不用 `<button>`（免置中折行與 `.workspace button` 字級陷阱）。 |
 
 ### 長條怎麼畫（2026-07-13 修訂，取代舊的「近白淡底＋細框」）
 
 舊寫法是 `--cat-N-bg` 近白填色加 1px 同色細框。這在色籤尺寸成立，放大到一根 200px 高的長條就變成**空的線框**：沒有量感，直角＋細框讀起來像試算表。Notion、GitHub、Observable 的長條都是**實色填充、低彩度、無外框、小圓角**。
 
 現行 `Bars` 的畫法：填色＝該色槽的墨色 `--cat-N-tx`，`fill-opacity` 0.22（重點長條 0.85）；同色描邊 `stroke-opacity` 0.35（重點長條無框）；圓角 3px。色彩淡而有色相，面積仍然輕。**一張圖只有一個色相**，重點長條用同色實心或單一語意色（如偽陽性用 danger），不要每根一個顏色。
+
+**2026-07-27 底層修訂（使用者裁定，優先於上一段）：不要「淺色色塊＋外圈細線」的畫法——太陽春、不高級。** 現行 `Bars` 的 `fill-opacity 0.22＋stroke 0.35` 正是這種洗白填色加描邊的空心盒感。改用**實色淡彩填充、無外框**：`fill = color-mix(in oklab, var(--cat-N-tx 或 --c-accent) 22–30%, var(--...-bg 或 --c-paper))`（有分量、非洗白），要定義感就**在頂端加一條實色小蓋**（solid `-tx`，高約 2.5px），不要靠描邊。座標軸／格線 `--c-line(-soft)`＋標籤 `--c-ink-faint`。落地範例＝司法院 `_constitutional-court/TimelineView.jsx`（茎 color-mix 22%＋solid cap）與 `pages/JirsForeignLaw.jsx` 的 `PublicationTimeline`。**待辦**：`chart/marks.jsx` 的 `Bars` 原語仍是舊 0.22+0.35 描邊法，應遷成此法（會動到 statistics 各圖，需一起複檢）。
 
 Y 軸標題橫排放在軸頂，不旋轉 90 度立在側邊。
 
@@ -150,6 +268,29 @@ Notion 的 tag／badge 色系從不出醜，原因是四條紀律，本站色彩
 
 - **可以有克制的紙張紋理，不可以有底色。** 紋理的用途是讓白面在近看時不死平，一旦它濃到讀成「一片顏色」，它就已經是底色了。判準很硬：整頁看下去若感覺到「這頁有底色」，就是超標。`.reading-grain`（`src/index.css`）是唯一許可的實作——程式生成的灰噪、opacity 0.018。它的前一版是 0.035，鋪滿整個視窗後整頁讀成一層灰，使用者當場指為底色。**要調就往更淡調，不要往回加。**
 - 閱讀欄本身（`ArticleLayout` 的中欄）不掛任何 background：紋理屬於整頁，單獨畫在閱讀欄上會露出一個看得見的矩形，那就是換個名字的色塊。
+
+## 窄側欄的換行（2026-07-27 使用者裁定，全站通則）
+
+側欄目次那條只有 13rem 寬。長標題丟進去會斷成不成句的兩三行——中文預設可以在任何字之間斷，
+於是「倚音（上方與下方）」會變成「…（上方與下」＋「方）」，讀起來像壞掉。三件事一起做，
+`TableOfContents` 與 `SubOutline` 都已經內建：
+
+- **`line-break: strict`**：斷行避開「（」「）」「、」「。」這些位置。上面那個例子會改成在
+  「（」之前斷，變成完整的兩行。
+- **`text-wrap: pretty`**：最後一行不會只剩一兩個字。
+- **`line-clamp-2` ＋ `title`**：最多兩行，第三行起截斷，完整標題留在 `title` 給滑鼠停留看。
+  截斷是最後一道防線，不是主要手段——真正的修法是下一條。
+
+**標題太長就給側欄一個短標，不要為了側欄把正文標題砍短。** `TableOfContents` 讀 `h2` 的
+`data-toc` 屬性當標籤，沒有這個屬性才退回 `textContent`：
+
+```jsx
+<h2 id="…" data-toc="第 8 課　倚音與短倚音">第 8 課　倚音（上方與下方）、短倚音</h2>
+```
+
+短標的來源應該在資料層，不是在 JSX 裡臨時砍字串——`vocalTraining.json` 的 `lessons[].topic`
+是範例，它的 validator 限制在十個字以內。**判準：一條側欄項目在 13rem 寬度下折超過兩行，
+就是標題太長，不是側欄太窄。**
 
 ## 清單與索引（全站通則）
 
@@ -240,15 +381,46 @@ canvas 上的資料頁多半吃的是投影過的檔（資料倉送上站的那�
 日期已過但仍在「要去」的列為待確認，不自動假定有到場。
 
 講座收藏快照需保留標題、講者、日期時間、場地、來源、海報與活動摘要。資料仍在公開投影時優先
-畫最新資料，輪替出去才退回本機快照。來源沒有海報時用固定文字占位，不生成不存在的主視覺。
+畫最新資料，輪替出去才退回本機快照。不生成不存在的主視覺。
+
+**投影要含剛結束的那一段。** 只送「還沒結束」的活動，會讓兩件事同時壞掉：使用者沒去成的
+場次一過就查不回來；已經開完、卻被標記過的場次只能退回快照，而活動圖這類事後才補到的東西
+永遠到不了畫面（2026-07-28 實例：圖存進資料倉那天，那場活動已經開完五天）。現在資料倉往回
+送 30 天的學術活動（`pastEvents`），並另送一份按活動編號的活動圖對照表（`posters`），
+兩者都與「這場還在不在清單上」無關。
 
 進場方式的 `unknown` 是資料品質狀態，只供覆蓋率、篩選與「資料來源」缺口說明使用；活動列與
 個人講座卡不得把它朗讀成「進場方式還沒查到」。列級共用函式 `entryText()` 對 unknown 回傳空文字，
 不准由各頁各自補一個隱藏條件，否則新 consumer 會再次洩漏內部缺口標籤。
 
-`今日活動` 是 Brief 第一層門戶，但今／明／後不各佔一個主分頁；門戶內以 underline 次標籤切
-`今天／明天／後天`。第一層 count 永遠只數今天。活動是否落在某日以 `date <= day <= endDate`
-判斷，跨日且當天仍在進行的活動不能因開始日已過而消失。
+**一個分頁只回答一個問題（2026-07-28 使用者裁定，取代日報／週報／月報）。** 三個「報」
+各自裝著方向相反的兩種東西——文章往回看、活動往前看——於是「週報 26」講不出自己是什麼
+（實測是 0 篇文章加 26 場活動），而週報整個包在月報裡，兩個數字並排像兩批不同的東西。
+使用者原話：「日報週報月報到底什麼邏輯？沒看明白。」現在切成：`未讀`（還沒按過看過的，
+文章與活動都算；**不是「今天」**，理由見下）、`讀的東西`（只有文章，次分頁切這 7 天／
+這 30 天）、`活動`（只有活動）、`我的講座`、`要讀的`、`資料來源`。舊網址 `?view=daily|week|month`
+在前端翻成新的分頁，貼出去的連結不會落空。
+
+`活動` 這個分頁的範圍是今天起七天（取代原本的今／明／後三天：三天太短，中研院的講座多半
+提前一兩週公告，而報名截止常落在活動前一週）。
+
+門戶內仍以 underline 次分頁切（`?activityDay=`，2026-07-28 使用者要求保留）：一排十格——
+`本週全覽`、`整週都在`、七天（今天／明天／`7/30（四）`…）、`剛結束的`，預設落在今天。
+來源與主辦單位的篩選（`?sources=`、`?hosts=`，共用 `SourceFilter`）是**頁級**的控制：
+它與「看哪一天」是同一頁的兩個獨立問題，切日期不准把篩選換掉，兩者都寫在網址裡。次分頁的 id 用位移
+（`day0`…`day6`）不用日期：日期每天都不一樣，寫進網址的話，昨天複製的連結明天會指到別的地方。
+
+分格的規則：**這一週之前就開始、還沒結束的（展覽、暑期課程、長期計畫）收進「整週都在」，
+其餘按「開始的那一天」分**。跨日的東西每天複印一遍會把當天真正發生的講座擠掉（實測今天
+那一格 12 場裡 9 場是它們）。第一層分頁的 count 與內文的總數是同一個集合、不重複計。活動
+是否落在某日仍以 `date <= day <= endDate` 判斷。最後一格「剛結束的」是時間軸的另一端，
+跟「整週都在」一頭一尾。
+
+活動列全站只有一份寫法（`pages/brief/_EventRow.jsx`）：日報的分區、關門那一區、這一週、
+活動曆的條列、我的講座都用它。先前五個地方各自手刻，於是海報只有我的講座畫得出來、「我要去」
+在關門那一區整個沒有——而那正是最該按的一區。有活動圖就貼在標題左邊、寬度用比例（`30%`，
+下限 `4.5rem`、上限 `9rem`）並保持原始比例，不裁切、不套統一長寬比；沒有圖就不留空位，
+也不畫占位方塊。
 
 ## 也不准被單一「種類」綁架（2026-07-17 使用者裁定，同日第二次）
 

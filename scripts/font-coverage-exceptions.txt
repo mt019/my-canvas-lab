@@ -121,3 +121,17 @@ U+27B1  # ➱ notched upper-right-shadowed white arrow
 
 # 2026-07-27 JIRS 資料倉頁面新增：以下皆為來源字型（Huiwen/Chiron）確認缺字，走系統 fallback
 U+04D2  # Ӓ 西里爾大寫 A 帶分音符（資料中外文引文偶見）；Huiwen 與 Chiron Sung HK 皆無此字形
+
+# 2026-07-28 brief 的訂閱來源補抓之後帶進來的字：Reddit 貼文標題裡的表情符號，以及一則
+# 韓文標題的論文。這些是別人寫的標題，照實顯示（翻譯或改寫別人的標題是另一回事），
+# Huiwen 與 Chiron 都畫不出來，走系統 fallback。
+U+1F44B  # 👋 waving hand（Reddit 貼文標題）
+U+2764   # ❤ heavy black heart（Reddit 貼文標題）
+U+D55C   # 한
+U+AD6D   # 국
+U+AD50   # 교
+U+C721   # 육
+U+C815   # 정
+U+CC45   # 책
+U+C804   # 전
+U+B9DD   # 망

@@ -1,0 +1,182 @@
+{
+  "schemaVersion": "1.0.0",
+  "work": "柳如是別傳",
+  "author": "陳寅恪",
+  "section": {
+    "id": "front-matter",
+    "order": 0,
+    "title": "卷前說明與附記"
+  },
+  "paragraphs": [
+    {
+      "id": "lrs-00-0001",
+      "sequence": 1,
+      "sectionId": "front-matter",
+      "sectionTitle": "卷前說明與附記",
+      "subheading": null,
+      "sourceFile": "OEBPS/text00143.html",
+      "sourceOrder": 1,
+      "text": "出版説明"
+    },
+    {
+      "id": "lrs-00-0002",
+      "sequence": 2,
+      "sectionId": "front-matter",
+      "sectionTitle": "卷前說明與附記",
+      "subheading": null,
+      "sourceFile": "OEBPS/text00143.html",
+      "sourceOrder": 2,
+      "text": "陳寅恪先生作爲二十世紀極具影響力的歷史學家，以其深厚的學養及獨到的學術眼光聞名於世。他的著述，也成爲一代又一代研治中國文史者的必讀之書。早在二十世紀五十年代，上海古籍出版社的前身古典文學出版社，即出版了經陳先生修訂的《元白詩箋證稿》；又約請陳先生將有關古典文學的論著編集出版（陳先生應允後，擬名爲《金明館叢稿初編》），並聯繫出版其正在撰寫的著作《錢柳因緣詩釋證》（後更名爲《柳如是别傳》），但兩書未能及時出版。一九七八年一月，上海古籍出版社正式更名成立，便立即重印了《元白詩箋證稿》，並接受了陳先生弟子、復旦大學教授蔣天樞先生的建議，啓動《陳寅恪文集》（以下或簡稱《文集》）的出版工作。一九八〇年至一九八二年間，我社陸續出版了《寒柳堂集》、《金明館叢稿初編》、《金明館叢稿二編》、《隋唐制度淵源略論稿》、《唐代政治史述論稿》、《元白詩箋證稿》、《柳如是别傳》，共七種著作。其中，《隋唐制度淵源略論稿》據中華書局一九六三年版紙型重印，《唐代政治史述論稿》據三聯書店一九五七年一版二印紙型重印，《元白詩箋證稿》據上海古籍出版社一九七八年版重印；《寒柳堂集》、《金明館叢稿初編》、《金明館叢稿二編》、《柳如是别傳》四種，都是首次出版。作爲第一次對陳寅恪先生著作的規模性出版，《文集》在當時引起了巨大的反響，也讓更多人認識到陳寅恪先生的學術成就及思想的價值。"
+    },
+    {
+      "id": "lrs-00-0003",
+      "sequence": 3,
+      "sectionId": "front-matter",
+      "sectionTitle": "卷前說明與附記",
+      "subheading": null,
+      "sourceFile": "OEBPS/text00143.html",
+      "sourceOrder": 3,
+      "text": "陳寅恪先生的著作能夠成爲當代學人眼中的經典，與出版社諸位前輩們的努力密切相關。而蔣天樞先生，爲校訂自己老師的書稿不計得失、殫精竭慮的事迹，業已成爲一段學林佳話。他不僅首先向出版社提出編集建議，而且主動承擔了陳先生文稿的搜集整理和校勘工作。他對《陳寅恪文集》的順利出版作出的貢獻值得後人永遠銘記。"
+    },
+    {
+      "id": "lrs-00-0004",
+      "sequence": 4,
+      "sectionId": "front-matter",
+      "sectionTitle": "卷前說明與附記",
+      "subheading": null,
+      "sourceFile": "OEBPS/text00143.html",
+      "sourceOrder": 4,
+      "text": "二〇二〇年是《陳寅恪文集》出版的四十周年，爲紀念陳寅恪先生、蔣天樞先生以及爲《文集》的出版付出過辛勤勞動的上海古籍出版社的前輩們，我社先以影印的形式推出了《陳寅恪文集（紀念版）》。本次出版，又對《文集》進行了重排重校，優化版式，以面向更廣大的讀者。"
+    },
+    {
+      "id": "lrs-00-0005",
+      "sequence": 5,
+      "sectionId": "front-matter",
+      "sectionTitle": "卷前說明與附記",
+      "subheading": null,
+      "sourceFile": "OEBPS/text00143.html",
+      "sourceOrder": 5,
+      "text": "四十年前出版的《陳寅恪文集》，經過蔣天樞先生手訂，本着絶對尊重陳寅恪先生的理念，對陳寅恪先生文稿中的語言、用字、引文甚至是標點符號都不輕易改動。因此，初版《文集》有其特别的著述、标点體例，而這些無不透露着陳寅恪先生的學術個性、蔣天樞先生謹守師法的良苦用心以及上海古籍出版社的前輩們尊重先賢的獨特匠心。故本次重排，也是本着尊重前賢的理念，除了對原版《文集》的版式稍作優化外，對《文集》的特殊體例，如無書名號、卷號以大寫數字表示等，一仍其舊，僅對個别體例和標點酌情進行了處理。在文字的校改方面，僅修改了可以確認爲傳抄之誤與排版之誤的地方。陳寅恪先生徵引文獻常不注明版本，或所據之版本與今常用之本不同，或節引述略，或喜合數條材料爲一，故不便遽以通行版本校改。唯《元白詩箋證稿》一書，自一九五八年出版後，陳寅恪先生又於一九五九年、一九六五年兩次致書出版社，希望對書稿進行修訂，共有十三條修訂意見。受當時技術條件的限制，這十三條意見並没有補入正文，而是作爲「校補記」附於書末。本次重排，則將此十三條校補記移入正文之中，但亦不泯滅歷次修訂之痕迹：僅將校補記附於相應段落之後，並依舊版校補記之序編號，冠以【校補記一】【校補記二】……以明其爲後補移入之內容。"
+    },
+    {
+      "id": "lrs-00-0006",
+      "sequence": 6,
+      "sectionId": "front-matter",
+      "sectionTitle": "卷前說明與附記",
+      "subheading": null,
+      "sourceFile": "OEBPS/text00143.html",
+      "sourceOrder": 6,
+      "text": "本次再版，《隋唐制度淵源略論稿》、《唐代政治史述論稿》、《元白詩箋證稿》三種，即據《文集》初版重排。《寒柳堂集》、《金明館叢稿初編》、《金明館叢稿二編》、《柳如是别傳》四種，初版二印時據各方意見作了不同程度的修訂，其中《金明館叢稿二編》增補文章五篇，故此四種據一九八二年一版二次重排。"
+    },
+    {
+      "id": "lrs-00-0007",
+      "sequence": 7,
+      "sectionId": "front-matter",
+      "sectionTitle": "卷前說明與附記",
+      "subheading": null,
+      "sourceFile": "OEBPS/text00143.html",
+      "sourceOrder": 7,
+      "text": "上海古籍出版社"
+    },
+    {
+      "id": "lrs-00-0008",
+      "sequence": 8,
+      "sectionId": "front-matter",
+      "sectionTitle": "卷前說明與附記",
+      "subheading": null,
+      "sourceFile": "OEBPS/text00143.html",
+      "sourceOrder": 8,
+      "text": "二〇二〇年六月"
+    },
+    {
+      "id": "lrs-00-0009",
+      "sequence": 9,
+      "sectionId": "front-matter",
+      "sectionTitle": "卷前說明與附記",
+      "subheading": null,
+      "sourceFile": "OEBPS/text00144.html",
+      "sourceOrder": 1,
+      "text": "一九八〇年出版説明"
+    },
+    {
+      "id": "lrs-00-0010",
+      "sequence": 10,
+      "sectionId": "front-matter",
+      "sectionTitle": "卷前說明與附記",
+      "subheading": null,
+      "sourceFile": "OEBPS/text00144.html",
+      "sourceOrder": 2,
+      "text": "陳寅恪先生（一八九〇——一九六九），江西修水人，我國著名歷史學家。早年留學日本、西歐，第一次世界大戰結束，又到美國和德國鑽研梵文，歸國後任清華大學、西南聯合大學、嶺南大學等校教授，解放後任中山大學教授、中國科學院哲學社會科學學部委員、中央文史館副館長等職。他學識淵博，精通我國歷史學、古典文學和宗教學等，通曉多種文字，尤精於梵文、突厥文、西夏文等古文字的研究；他關於魏晉南北朝史、隋唐史、蒙古史、唐代和清初文學、佛教典籍的著述尤爲精湛，具有較高的學術價值，早爲國内外學術界所推重。"
+    },
+    {
+      "id": "lrs-00-0011",
+      "sequence": 11,
+      "sectionId": "front-matter",
+      "sectionTitle": "卷前說明與附記",
+      "subheading": null,
+      "sourceFile": "OEBPS/text00144.html",
+      "sourceOrder": 3,
+      "text": "陳寅恪先生繼承和發揚了清代乾嘉學派和歐洲近代研究梵文、佛典的傳統，以其深厚的文、史、哲以及語言文字知識，融會貫通，縱横馳騁，不斷開拓學術研究的新領域，取得學術著述的新成果。在長達半個多世紀的研究、教學、著述事業中，儘管尚未擺脱傳統士大夫思想的影響，但是，他治學嚴肅認真、實事求是的態度，却也使其學術成就達到了很高的境界。"
+    },
+    {
+      "id": "lrs-00-0012",
+      "sequence": 12,
+      "sectionId": "front-matter",
+      "sectionTitle": "卷前說明與附記",
+      "subheading": null,
+      "sourceFile": "OEBPS/text00144.html",
+      "sourceOrder": 4,
+      "text": "本文集中除《隋唐制度淵源略論稿》、《唐代政治史述論稿》和《元白詩箋證稿》在陳寅恪先生生前已有單行本外，其餘《寒柳堂集》、《金明館叢稿》初編、二編所收舊文以及長篇專著《柳如是别傳》等多經陳先生晚年修訂。文集的整理校勘由復旦大學蔣天樞教授承擔；編輯部只做了一些文字標點校訂工作，至於學術觀點方面則保存其歷史面貌，未加改動。我們希望本文集的出版有裨於我國文史研究的深入開展，有助於學術空氣的活躍。"
+    },
+    {
+      "id": "lrs-00-0013",
+      "sequence": 13,
+      "sectionId": "front-matter",
+      "sectionTitle": "卷前說明與附記",
+      "subheading": null,
+      "sourceFile": "OEBPS/text00144.html",
+      "sourceOrder": 5,
+      "text": "上海古籍出版社"
+    },
+    {
+      "id": "lrs-00-0014",
+      "sequence": 14,
+      "sectionId": "front-matter",
+      "sectionTitle": "卷前說明與附記",
+      "subheading": null,
+      "sourceFile": "OEBPS/text00144.html",
+      "sourceOrder": 6,
+      "text": "一九八〇年四月"
+    },
+    {
+      "id": "lrs-00-0015",
+      "sequence": 15,
+      "sectionId": "front-matter",
+      "sectionTitle": "卷前說明與附記",
+      "subheading": "附記",
+      "sourceFile": "OEBPS/text00145.html",
+      "sourceOrder": 1,
+      "text": "附記"
+    },
+    {
+      "id": "lrs-00-0016",
+      "sequence": 16,
+      "sectionId": "front-matter",
+      "sectionTitle": "卷前說明與附記",
+      "subheading": "附記",
+      "sourceFile": "OEBPS/text00145.html",
+      "sourceOrder": 2,
+      "text": "史家紀事自以用公元西曆爲便。但本稿所引資料，本皆陰曆。若事實發生在年末，則不能任意改换陽曆。且因近人所編明末陰陽曆對照表，多與當時人詩文集不合，不能完全依據也。又記述明末遺民之行事，而用清代紀元，於理於心，俱有未安。然若用永曆隆武等南明年號，則非習見，難於换算。如改用甲子，復不易推記。職是之故，本稿記事行文，往往多用清代紀元，實不獲已也。尚希讀者諒之。"
+    },
+    {
+      "id": "lrs-00-0017",
+      "sequence": 17,
+      "sectionId": "front-matter",
+      "sectionTitle": "卷前說明與附記",
+      "subheading": "附記",
+      "sourceFile": "OEBPS/text00145.html",
+      "sourceOrder": 3,
+      "text": "錢柳逝世後三百年，歲次甲辰夏月，陳寅恪書於廣州金明館，時年七十五。"
+    }
+  ]
+}
