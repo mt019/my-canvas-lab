@@ -70,6 +70,15 @@ function noteRoutes() {
   }
 }
 
+function chenYinkeSelectionRoutes() {
+  try {
+    const d = JSON.parse(readFileSync(join(ROOT, 'src', 'data', 'chenYinke', 'liu-rushi-edition', 'reading-view.json'), 'utf8'));
+    return (d.selections || []).map((selection) => `/chenyinke/liu-rushi/${selection.id}`);
+  } catch {
+    return [];
+  }
+}
+
 // One route per justice who has anything to show — the same predicate the app
 // uses to decide who is indexable, so prerender, sitemap and runtime agree.
 function justiceRoutes() {
@@ -113,6 +122,7 @@ export function collectRoutes() {
   for (const route of justiceRoutes()) routes.add(route);
   for (const route of caseRoutes()) routes.add(route);
   for (const slug of ZJH_TAB_SLUGS) routes.add(`/zhujiahua/${slug}`);
+  for (const route of chenYinkeSelectionRoutes()) routes.add(route);
   for (const route of noteRoutes()) routes.add(route);
   return [...routes].sort();
 }

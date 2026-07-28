@@ -30,14 +30,15 @@ export default function PageShell({
   width = 'prose',
   controls,
   fontScale,
+  manageDocumentTitle = true,
   // 返回鍵。不傳＝照全站配置（`src/backNav.js`）決定回哪裡；傳 `null`＝這頁不畫；
   // 傳 `{ href, label }`＝這頁自己說了算。頁面不必再各寫各的。
   back,
   children,
 }) {
   useEffect(() => {
-    if (title) document.title = title;
-  }, [title]);
+    if (manageDocumentTitle && title) document.title = title;
+  }, [manageDocumentTitle, title]);
 
   // The reader lever rides on a CSS var, and .reader-scale (index.css) turns it
   // into `zoom` on the content wrapper *below* the toolbar — never on the full

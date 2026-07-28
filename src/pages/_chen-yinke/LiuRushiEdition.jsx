@@ -1,22 +1,41 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import HoverCard from '../../components/lab/HoverCard';
-import view from '../../data/chenYinke/liu-rushi-edition/pilot-view.json';
+import ArticleLayout from '../../components/lab/ArticleLayout';
+import BookTree from '../../components/lab/BookTree';
+import readingView from '../../data/chenYinke/liu-rushi-edition/reading-view.json';
 import styles from './LiuRushiEdition.module.css';
+import { CHEN_SELECTION_PATH } from '../../lib/chenYinkeSeo';
 
-// The reading surface stays quiet; each documentary layer appears only when the
-// reader asks for it. Defaults are all off — the point is the text first.
-export const LAYERS = [
+const candidateLayers = [
   { id: 'sources', label: '材料來源', hint: '在引文上方標出出處' },
   { id: 'cases', label: '寅恪案', hint: '標出陳寅恪自己的判斷' },
   { id: 'questions', label: '開放問題', hint: '標出「俟考」未決之處' },
   { id: 'xref', label: '跨章', hint: '標出通往其他章的線索' },
   { id: 'people', label: '人物', hint: '標出人物與其別名' },
-  { id: 'context', label: '編者脈絡', hint: '顯示分段標題與判斷語氣' },
+  { id: 'context', label: '編者解讀', hint: '顯示明確標示的編者分段、說明與解讀' },
 ];
+const BOOK_ITEMS = readingView.selections.map((selection) => ({
+  id: selection.id,
+  title: selection.label.replace(/^(卷前|第[一二三四五]章)・/, ''),
+  group: readingView.workProgress.sections
+    .find((section) => section.id === selection.sectionId)?.title.split('　')[0],
+}));
 
-// The reading face opens with every layer showing; readers turn what they don't
-// want off, or clear them all at once.
-const ALL_ON = Object.fromEntries(LAYERS.map((l) => [l.id, true]));
+// The data contract withholds every unreviewed editorial layer. The frontend
+// only offers controls for apparatus that is actually present in the public
+// snapshot; it never tries to reconstruct research metadata.
+export function availableLayers(view) {
+  const hasLayer = {
+    sources: view.units.some((u) => u.blocks.some((b) => b.sourceRef)),
+    cases: view.units.some((u) => u.blocks.some((b) => b.role === 'yinke-case')),
+    questions: view.units.some((u) => u.blocks.some((b) => b.openQuestion)),
+    xref: view.units.some((u) => u.blocks.some((b) => b.crossReference)),
+    people: (view.entities?.length ?? 0) > 0,
+    context: view.units.some((u) => u.annotationIds?.length),
+  };
+  return candidateLayers.filter((layer) => hasLayer[layer.id]);
+}
 
 // Layer badge counts, shared by the reading face and the legend so the numbers
 // on both stay in step with the data.
@@ -48,17 +67,18 @@ function EntityCard({ entity }) {
     <div className={styles.entityCard}>
       <span className={styles.entityCardName}>{entity.label}</span>
       {others.length ? <span className={styles.entityCardAliases}>{others.join('・')}</span> : null}
+      <span className={styles.entityCardMeta}>原文稱謂索引</span>
       {entity.gloss ? <p className={styles.entityCardGloss}>{entity.gloss}</p> : null}
     </div>
   );
 }
 
-export function useEntityMatcher(enabled) {
+export function useEntityMatcher(view, enabled) {
   return useMemo(() => {
     if (!enabled) return null;
     const map = [];
-    for (const ent of view.entities) {
-      for (const alias of [ent.label, ...(ent.aliases || [])]) {
+    for (const ent of view.entities ?? []) {
+      for (const alias of new Set((ent.mentions || []).map((mention) => mention.matchedText))) {
         if (alias && alias.length >= 2) map.push([alias, ent]);
       }
     }
@@ -66,10 +86,11 @@ export function useEntityMatcher(enabled) {
     map.sort((a, b) => b[0].length - a[0].length);
     const seen = new Set();
     const alts = map.filter(([a]) => (seen.has(a) ? false : seen.add(a)));
+    if (!alts.length) return null;
     const pattern = new RegExp(`(${alts.map(([a]) => a).join('|')})`, 'g');
     const canonical = new Map(alts);
     return { pattern, canonical };
-  }, [enabled]);
+  }, [view, enabled]);
 }
 
 function renderText(text, matcher, keyBase) {
@@ -100,10 +121,16 @@ function renderText(text, matcher, keyBase) {
 
 function Segments({ segments, matcher, idBase }) {
   return segments.map((seg, i) =>
-    seg.kind === 'note' ? (
-      <span key={`${idBase}-n${i}`} className={styles.interlinear}>
+    seg.kind === 'author-marker' ? (
+      <span key={`${idBase}-m${i}`} className={styles.caseMark}>
         {seg.text}
       </span>
+    ) : seg.kind === 'note' ? (
+      <span key={`${idBase}-n${i}`} className={styles.interlinear}>
+        {renderText(seg.text, matcher, `${idBase}-n${i}`)}
+      </span>
+    ) : seg.kind === 'inline-glyph' ? (
+      <img key={`${idBase}-g${i}`} className={styles.inlineGlyph} src={seg.asset} alt={seg.alt} />
     ) : (
       <span key={`${idBase}-t${i}`}>{renderText(seg.text, matcher, `${idBase}-t${i}`)}</span>
     ),
@@ -142,7 +169,6 @@ export function Block({ block, layers, matcher }) {
 
   return (
     <p className={cls}>
-      {isCase ? <span className={styles.caseMark}>寅恪案</span> : null}
       {inner}
       {flagQuestion ? <span className={styles.questionMark}>俟考</span> : null}
       {layers.xref && block.crossReference ? (
@@ -154,62 +180,126 @@ export function Block({ block, layers, matcher }) {
   );
 }
 
-export function UnitContext({ unit }) {
-  if (!unit.note && (!unit.claims || unit.claims.length === 0)) return null;
+export function UnitContext({ unit, annotationById }) {
+  const annotations = (unit.annotationIds ?? []).map((id) => annotationById.get(id)).filter(Boolean);
+  if (!annotations.length) return null;
+  const heading = annotations.find((annotation) => annotation.target.placement === 'heading');
+  const notes = annotations.filter((annotation) => annotation.target.placement === 'note');
+  const interpretations = annotations.filter((annotation) => annotation.target.placement === 'interpretation');
   return (
     <aside className={styles.context}>
-      <span className={styles.contextTitle}>{unit.title}</span>
-      {unit.note ? <p>{unit.note}</p> : null}
-      {unit.claims?.length ? (
+      {heading ? (
+        <span className={styles.contextTitle}>
+          <span className={styles.certainty}>{heading.displayLabel}</span>
+          {heading.text}
+        </span>
+      ) : null}
+      {notes.map((annotation) => (
+        <p key={annotation.id}>
+          <span className={styles.certainty}>{annotation.displayLabel}</span>
+          {annotation.text}
+        </p>
+      ))}
+      {interpretations.length ? (
         <ul className={styles.claims}>
-          {unit.claims.map((c, i) => (
-            <li key={i}>
-              <span className={styles.certainty} data-c={c.certainty}>
-                {CERTAINTY[c.certainty] ?? c.certainty}
+          {interpretations.map((annotation) => (
+            <li key={annotation.id}>
+              <span className={styles.certainty} data-c={annotation.sourceStance}>
+                {annotation.displayLabel}
+                {annotation.sourceStance ? `・${CERTAINTY[annotation.sourceStance] ?? annotation.sourceStance}` : ''}
               </span>
-              {c.text}
+              {annotation.text}
             </li>
           ))}
         </ul>
-      ) : null}
-      {unit.witnesses?.length ? (
-        <p className={styles.witnesses}>
-          異本：{unit.witnesses.join('、')}
-          {unit.preferredWitness ? `（以${unit.preferredWitness}為善）` : ''}
-        </p>
       ) : null}
     </aside>
   );
 }
 
-export default function LiuRushiEdition() {
-  const [active, setActive] = useState(() => ({ ...ALL_ON }));
-  const matcher = useEntityMatcher(active.people);
+export default function LiuRushiEdition({ initialSelectionId }) {
+  const navigate = useNavigate();
+  const initialId = readingView.selections.some((selection) => selection.id === initialSelectionId)
+    ? initialSelectionId
+    : readingView.selections[0].id;
+  const [selectionId, setSelectionId] = useState(initialId);
+  const view = readingView.selections.find((selection) => selection.id === selectionId);
+  const layers = useMemo(() => availableLayers(view), [view]);
+  const allOn = useMemo(() => Object.fromEntries(layers.map((layer) => [layer.id, true])), [layers]);
+  const [active, setActive] = useState(() => ({ ...allOn }));
+  const matcher = useEntityMatcher(view, active.people);
+  const annotationById = useMemo(
+    () => new Map((view.publicAnnotations ?? []).map((annotation) => [annotation.id, annotation])),
+    [view],
+  );
 
-  const counts = useMemo(() => computeCounts(view), []);
+  const counts = useMemo(() => computeCounts(view), [view]);
+
+  useEffect(() => {
+    if (initialSelectionId && initialSelectionId !== selectionId) {
+      setSelectionId(initialSelectionId);
+      const next = readingView.selections.find((selection) => selection.id === initialSelectionId);
+      setActive(Object.fromEntries(availableLayers(next).map((layer) => [layer.id, true])));
+    }
+  }, [initialSelectionId, selectionId]);
 
   const toggle = (id) => setActive((s) => ({ ...s, [id]: !s[id] }));
-  const anyOn = LAYERS.some((l) => active[l.id]);
-  const setAll = () => setActive(anyOn ? {} : { ...ALL_ON });
+  const anyOn = layers.some((l) => active[l.id]);
+  const setAll = () => setActive(anyOn ? {} : { ...allOn });
+  const select = (id) => {
+    const next = readingView.selections.find((selection) => selection.id === id);
+    setSelectionId(id);
+    setActive(Object.fromEntries(availableLayers(next).map((layer) => [layer.id, true])));
+    navigate(CHEN_SELECTION_PATH(id));
+  };
+  const attributionKind = view.textAttribution.representation === 'publisher-preface'
+    ? '出版社說明'
+    : '作者正文';
+  const progressSummary = readingView.workProgress.summary
+    .filter((group) => group.sections.length)
+    .map((group) => `${group.label}：${group.sections.join('、')}`)
+    .join('；');
+  const meta = (
+    <div>
+      <p className={styles.locator}>
+        文字責任：{view.textAttribution.displayLabel}（{attributionKind}）
+      </p>
+      <p className={styles.locator}>
+        來源定位：{view.section.slice(0, 3)} · {view.scope.sourceFile.replace('OEBPS/', '')} ·{' '}
+        {view.scope.contentFromBlock}–{view.scope.toBlock} · 共 {view.scope.blockCount} 段
+      </p>
+      <p className={styles.locator}>
+        已整理原書區塊 {readingView.workProgress.selectedBlocks.toLocaleString()}／
+        {readingView.workProgress.totalBlocks.toLocaleString()}；{progressSummary}
+      </p>
+    </div>
+  );
 
   return (
-    <div className={styles.wrap}>
-      <div className={styles.head}>
-        <p className={styles.eyebrow}>細讀樣章</p>
-        <h2 className={styles.chapter}>{view.chapter}</h2>
-        <p className={styles.lede}>
-          陳寅恪由三種顧苓的材料，一步步推回《河東君傳》的可信度與缺口。材料出處、陳寅恪的判斷、
-          未決的疑問與跨章線索預設都已標出；逐層關掉，或按「全關」，正文就回到安靜。
-        </p>
-        <p className={styles.locator}>
-          來源定位：{view.chapter.slice(0, 3)} · {view.scope.sourceFile.replace('OEBPS/', '')} ·{' '}
-          {view.scope.fromBlock}–{view.scope.toBlock} · 共 {view.scope.blockCount} 段
-        </p>
-      </div>
+    <ArticleLayout
+      title={view.section}
+      eyebrow="全書順序細讀"
+      summary="以下依原書次序呈現；編者文字另行標示，關掉全部顯影後只留下逐字原文。"
+      meta={meta}
+      nav={(
+        <BookTree
+          items={BOOK_ITEMS}
+          activeId={selectionId}
+          label="原書次序"
+          searchPlaceholder="搜尋選段…"
+          onSelect={select}
+        />
+      )}
+      hideToc
+      compactReading
+      mobileNavLabel="原書次序"
+      scaleContent={false}
+    >
+      <div className={styles.wrap}>
 
-      <div className={styles.toolbar} role="group" aria-label="顯影層">
+        <div className={styles.toolbar} role="group" aria-label="顯影層">
         <span className={styles.toolbarLabel}>顯影</span>
-        {LAYERS.map((layer) => {
+        {layers.map((layer) => {
           const n = counts[layer.id];
           return (
             <button
@@ -233,20 +323,21 @@ export default function LiuRushiEdition() {
         >
           {anyOn ? '全關' : '全開'}
         </button>
-      </div>
+        </div>
 
       {/* prose-body（全域）：重排本的正文是整段連續閱讀的面，吃灰階字體平滑，
           與 .mdx 長文同一條規則（見 src/index.css 與 DESIGN.md）。 */}
-      <div className={`${styles.reading} prose-body`}>
+        <div className={`${styles.reading} prose-body`}>
         {view.units.map((unit) => (
           <section key={unit.id} className={styles.unit}>
-            {active.context ? <UnitContext unit={unit} /> : null}
+            {active.context ? <UnitContext unit={unit} annotationById={annotationById} /> : null}
             {unit.blocks.map((block) => (
               <Block key={block.id} block={block} layers={active} matcher={matcher} />
             ))}
           </section>
         ))}
+        </div>
       </div>
-    </div>
+    </ArticleLayout>
   );
 }

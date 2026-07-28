@@ -4,6 +4,7 @@
 
 | 來源 repo | 用途 | 最近同步/更新日期 | 過期風險 |
 |---|---|---|---|
+| `1142/chen-yinke-research-data` | `src/data/chenYinke.json`、`src/data/chenYinke/`（陳寅恪文集研究室） | 2026-07-29：第三章 `b0002–b0244`，243 段連續細讀，provenance schema 2.0 | 低——原文可逐字復原並帶 SHA-256；編者解讀逐筆明標，年代結論保留不確定性；人物 Hover 只用原文實見稱謂；`chenYinke.sync.json` 防止 Canvas 手改快照 |
 | `1142/government-debt-research-data` | `src/data/governmentDebt.json`（政府債務比較頁） | 2026-07-02（來源與快照 mtime 一致） | 低——雙方皆已 commit，明文標示 sync 流程 |
 | `1142/ecfa-research-data` | `src/data/ecfaResearch.json`（ECFA 研究頁） | 2026-07-05 同步；快照 2026-07-06 隨 `1157d6e` 入版控 | 低——雙方皆已 commit |
 | `1142/local-fiscal-enforcement-risk-research-data` | `src/data/fiscalEnforcementRisk.json`（地方財政執行風險頁） | 2026-07-02 同步；快照 2026-07-06 隨 `1157d6e` 入版控 | 低——雙方皆已 commit |

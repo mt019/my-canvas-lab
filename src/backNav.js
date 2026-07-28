@@ -58,6 +58,7 @@ const SITE_HOMES = [
   ['/statistics/', { href: '/statisticslab', label: '統計學實驗室' }],
   ['/brief/', { href: '/brief', label: '簡報' }],
   ['/notes/', { href: '/notes', label: '手記' }],
+  ['/chenyinke/liu-rushi/', { href: '/chenyinke', label: '陳寅恪資料庫' }],
   ['/zhujiahua/', { href: '/zhujiahua', label: '朱家驊研究室' }],
   ['/userscripts/', { href: '/userscripts', label: '使用者腳本' }],
 ];

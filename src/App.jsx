@@ -9,6 +9,7 @@ import AccountControl from './components/AccountControl';
 import { AuthProvider } from './personal-state/AuthProvider';
 import { CC_BASE_SEO, CC_TABS_SEO, ccDataset } from './pages/_constitutional-court/seo';
 import { ZJH_BASE_SEO, ZJH_TABS_SEO } from './pages/_zhu-jiahua/seo';
+import { CHEN_BASE_SEO, CHEN_SELECTIONS_SEO } from './lib/chenYinkeSeo';
 import { GLCT_KEYWORDS, GLCT_TITLE, GLCT_DESC, glctSchema } from './pages/_law-classics/seo';
 import { VT_KEYWORDS, VT_TITLE, VT_DESC, vtSchema } from './pages/_vocal-training/seo';
 import { NOTES_KEYWORDS, NOTES_TITLE, NOTES_DESC, notesSchema } from './pages/_notes/seo';
@@ -282,12 +283,16 @@ const PAGE_META = { // token-exempt: per-page identity chip colors (data, not st
     group: 'analysis',
   },
   ChenYinke: {
-    name: '陳寅恪文集',
-    desc: '從《柳如是別傳》進入明清之際的人物、詩文與政治世界',
+    name: CHEN_BASE_SEO.name,
+    title: CHEN_BASE_SEO.title,
+    desc: CHEN_BASE_SEO.description,
     Icon: BookMarked,
     accent: '#eae4d6',
     accentText: '#8a6d3b',
     group: 'humanities',
+    keywords: CHEN_BASE_SEO.keywords,
+    type: CHEN_BASE_SEO.type,
+    buildSchema: CHEN_BASE_SEO.buildSchema,
   },
   ZhuJiahua: {
     name: '朱家驊研究室',
@@ -572,12 +577,26 @@ export default function App() {
               query deep links still resolve on the base route above. */}
           <Route path="/constitutionalcourt/:tab" element={<CCTabRoute routes={routes} />} />
           <Route path="/zhujiahua/:zhuTab" element={<ZhuJiahuaTabRoute routes={routes} />} />
+          <Route path="/chenyinke/liu-rushi/:selectionId" element={<ChenYinkeSelectionRoute routes={routes} />} />
         </Routes>
         </Suspense>
         <BackToTop />
       </Router>
     </AuthProvider>
   );
+}
+
+function ChenYinkeSelectionRoute({ routes }) {
+  const { selectionId } = useParams();
+  const seo = CHEN_SELECTIONS_SEO[selectionId];
+  const chen = routes.find((route) => route.name === 'ChenYinke');
+  if (!seo || !chen) return <Navigate to="/chenyinke" replace />;
+  const page = {
+    ...seo,
+    parent: { name: CHEN_BASE_SEO.name, path: '/chenyinke' },
+  };
+  const Page = chen.component;
+  return <><SeoHead page={page} /><Page forcedSelection={selectionId} /></>;
 }
 
 function ZhuJiahuaTabRoute({ routes }) {

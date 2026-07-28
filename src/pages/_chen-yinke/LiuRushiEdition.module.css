@@ -1,34 +1,6 @@
 .wrap {
+  min-width: 0;
   max-width: 44rem;
-}
-
-/* ---- header ---- */
-.head {
-  padding-bottom: var(--space-5);
-  border-bottom: 1px solid var(--c-line);
-}
-
-.eyebrow {
-  margin: 0;
-  color: var(--cat-7-tx);
-  font-family: var(--font-accent);
-  font-size: var(--text-xs);
-  letter-spacing: .14em;
-}
-
-.chapter {
-  margin: .5rem 0 .9rem;
-  font-family: var(--font-body);
-  font-size: var(--text-2xl);
-  font-weight: 700;
-  line-height: 1.35;
-}
-
-.lede {
-  margin: 0;
-  max-width: 40rem;
-  color: var(--c-ink-muted);
-  line-height: 1.95;
 }
 
 .locator {
@@ -165,6 +137,14 @@
   font-size: .9em;
 }
 
+.inlineGlyph {
+  display: inline-block;
+  width: auto;
+  height: 1em;
+  margin: 0 .08em;
+  vertical-align: -.08em;
+}
+
 /* 寅恪案 — the author's own judgement, in place, quiet until asked for */
 .case {
   padding-left: 1.25rem;
@@ -237,6 +217,13 @@
   margin-left: .55rem;
   color: var(--cat-7-tx);
   font-size: var(--text-sm);
+}
+
+.entityCardMeta {
+  display: block;
+  margin-top: .35rem;
+  color: var(--c-ink-faint);
+  font-size: var(--text-xs);
 }
 
 .entityCardGloss {

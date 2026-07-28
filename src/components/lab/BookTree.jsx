@@ -38,24 +38,40 @@ function buildTree(items) {
 
 const LEAF = 'block border-l-2 py-1 pl-3 pr-2 text-token-xs leading-snug transition-colors duration-fast';
 
-function Leaf({ item, active }) {
+function Leaf({ item, active, onSelect }) {
   const tone = active
     ? 'border-accent bg-accent-soft font-bold text-accent'
     : 'border-transparent text-ink-muted hover:border-line hover:text-accent';
   return (
     <li>
-      <Link
-        to={item.href}
+      {onSelect ? (
+        <button
+          type="button"
+          onClick={() => onSelect(item.id)}
+          aria-current={active ? 'page' : undefined}
+          data-leaf-active={active ? '' : undefined}
+          className={`${LEAF} ${tone} w-full text-left`}
+        >
+          <span className="flex items-baseline gap-2">
+            {item.lead != null ? <span className="w-7 shrink-0 tabular-nums text-ink-faint">{item.lead}</span> : null}
+            <span className="min-w-0 flex-1">{item.title}</span>
+            {item.badge ? <span className="shrink-0 text-accent">{item.badge}</span> : null}
+          </span>
+        </button>
+      ) : (
+        <Link
+          to={item.href}
         data-leaf-active={active ? '' : undefined}
         title={item.hint || undefined}
         className={`${LEAF} ${tone}`}
-      >
+        >
         <span className="flex items-baseline gap-2">
           {item.lead != null ? <span className="w-7 shrink-0 tabular-nums text-ink-faint">{item.lead}</span> : null}
           <span className="min-w-0 flex-1">{item.title}</span>
           {item.badge ? <span className="shrink-0 text-accent">{item.badge}</span> : null}
         </span>
-      </Link>
+        </Link>
+      )}
     </li>
   );
 }
@@ -66,6 +82,7 @@ export default function BookTree({
   label = '全書目次',
   searchPlaceholder = '搜尋篇名…',
   header,
+  onSelect,
 }) {
   const [query, setQuery] = useState('');
   const tree = useMemo(() => buildTree(items), [items]);
@@ -105,7 +122,7 @@ export default function BookTree({
         {hits ? (
           <>
             <p className="px-2 pb-2 text-token-xs tabular-nums text-ink-faint">{hits.length} 篇符合</p>
-            <ul>{hits.map((it) => <Leaf key={it.id} item={it} active={it.id === activeId} />)}</ul>
+            <ul>{hits.map((it) => <Leaf key={it.id} item={it} active={it.id === activeId} onSelect={onSelect} />)}</ul>
           </>
         ) : tree.map((group) => {
           const shut = collapsed.has(group.name);
@@ -127,7 +144,7 @@ export default function BookTree({
                     <p className="px-1 pb-0.5 pl-5 pt-1 text-token-xs text-ink-faint">{block.label}</p>
                   ) : null}
                   <ul className="pl-3">
-                    {block.items.map((it) => <Leaf key={it.id} item={it} active={it.id === activeId} />)}
+                    {block.items.map((it) => <Leaf key={it.id} item={it} active={it.id === activeId} onSelect={onSelect} />)}
                   </ul>
                 </div>
               ))}

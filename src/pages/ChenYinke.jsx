@@ -8,7 +8,7 @@ import LegendView from './_chen-yinke/LegendView';
 import styles from './ChenYinke.module.css';
 
 const TABS = [
-  { id: 'edition', label: '細讀・第三章' },
+  { id: 'edition', label: '細讀原文' },
   { id: 'legend', label: '圖例' },
   { id: 'liurushi', label: '柳如是別傳' },
   { id: 'people', label: '人物' },
@@ -28,7 +28,7 @@ function SectionTitle({ number, children, note }) {
   );
 }
 
-export default function ChenYinke() {
+export default function ChenYinke({ forcedSelection }) {
   const [fontScale, setFontScale] = useFontScale();
   const [tab, setTab] = useTabParam('read', 'edition');
   const spotlight = data.spotlight;
@@ -39,6 +39,7 @@ export default function ChenYinke() {
       eyebrow="中國中古史 · 明清之際 · 詩文證史"
       width="wide"
       fontScale={fontScale}
+      manageDocumentTitle={false}
       controls={<FontSizeControl scale={fontScale} onChange={setFontScale} />}
     >
       <p className={styles.dek}>{data.project.subtitle}</p>
@@ -52,7 +53,7 @@ export default function ChenYinke() {
         className={styles.tabs}
       />
 
-      {tab === 'edition' && <LiuRushiEdition />}
+      {tab === 'edition' && <LiuRushiEdition initialSelectionId={forcedSelection} />}
 
       {tab === 'legend' && <LegendView onOpenReading={() => setTab('edition')} />}
 
@@ -169,4 +170,3 @@ export default function ChenYinke() {
     </PageShell>
   );
 }
-

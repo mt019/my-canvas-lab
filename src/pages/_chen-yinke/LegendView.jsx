@@ -1,13 +1,15 @@
 import { ArrowRight } from 'lucide-react';
-import view from '../../data/chenYinke/liu-rushi-edition/pilot-view.json';
-import { Block, UnitContext, useEntityMatcher, LAYERS, computeCounts } from './LiuRushiEdition';
+import readingView from '../../data/chenYinke/liu-rushi-edition/reading-view.json';
+import { availableLayers, Block, UnitContext, useEntityMatcher, computeCounts } from './LiuRushiEdition';
 import edStyles from './LiuRushiEdition.module.css';
 import styles from './Legend.module.css';
 
 // Every example here is a real passage from 第三章, rendered by the same
 // components as the reading face — so the legend can never drift from what the
-// 細讀面 actually shows. Long blocks are clipped to a snippet; the layer's own
-// marker (俟考 / ⇒ / 出處標籤) is a separate field and survives the clip.
+// 細讀面 actually shows. Long blocks are clipped to a snippet.
+const view = readingView.selections.find((selection) => selection.id === 'chapter-3-opening-chronology');
+const layers = availableLayers(view);
+const annotationById = new Map(view.publicAnnotations.map((annotation) => [annotation.id, annotation]));
 const byId = {};
 const unitById = {};
 for (const u of view.units) {
@@ -24,7 +26,7 @@ function clip(block, n) {
 const counts = computeCounts(view);
 
 export default function LegendView({ onOpenReading }) {
-  const matcher = useEntityMatcher(true);
+  const matcher = useEntityMatcher(view, true);
 
   // One example per layer, keyed by layer id.
   const examples = {
@@ -33,7 +35,7 @@ export default function LegendView({ onOpenReading }) {
     questions: <Block block={byId['lrs-f156-b0013']} layers={{ questions: true }} matcher={null} />,
     xref: <Block block={clip(byId['lrs-f156-b0010'], 22)} layers={{ xref: true }} matcher={null} />,
     people: <Block block={clip(byId['lrs-f156-b0003'], 24)} layers={{}} matcher={matcher} />,
-    context: <UnitContext unit={unitById['lrs-pilot-01']} />,
+    context: <UnitContext unit={unitById['lrs-pilot-01']} annotationById={annotationById} />,
   };
 
   return (
@@ -42,13 +44,13 @@ export default function LegendView({ onOpenReading }) {
         <p className={styles.eyebrow}>圖例</p>
         <h2 className={styles.title}>怎麼讀這個細讀面</h2>
         <p className={styles.lede}>
-          「細讀・第三章」預設把六種顯影全部打開；你可以逐層關掉，或按「全關」讓正文回到安靜。
-          這裡把每個按鈕各是什麼，用第三章的真實段落各示範一次。按鈕上的數字，是那一層在全章出現的次數。
+          「細讀原文」只顯示公開資料中確實存在的原文標記。你可以逐項關掉，或按「全關」只讀原文。
+          這裡以第三章的實際段落示範；按鈕上的數字，是該標記在目前連續細讀範圍出現的次數。
         </p>
       </div>
 
       <div className={styles.rows}>
-        {LAYERS.map((layer) => (
+        {layers.map((layer) => (
           <section key={layer.id} className={styles.row}>
             <div className={styles.rowHead}>
               <span className={edStyles.chip} aria-pressed="true">
@@ -65,7 +67,7 @@ export default function LegendView({ onOpenReading }) {
       {onOpenReading ? (
         <div className={styles.footer}>
           <button type="button" className={styles.openLink} onClick={onOpenReading}>
-            回細讀・第三章自己開關 <ArrowRight size={16} />
+            回細讀原文自己開關 <ArrowRight size={16} />
           </button>
         </div>
       ) : null}

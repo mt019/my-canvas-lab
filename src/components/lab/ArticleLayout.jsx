@@ -30,6 +30,9 @@ export default function ArticleLayout({
   // 沒有小標可列，但它的行長不該因此變長——44rem 那條閱讀欄寬本來就是照行長訂的，
   // 空出來的地方留白即可。
   keepReadingWidth = false,
+  compactReading = false,
+  mobileNavLabel,
+  scaleContent = true,
   children,
 }) {
   const bodyRef = useRef(null);
@@ -38,7 +41,9 @@ export default function ArticleLayout({
     <div className={`mx-auto grid max-w-[86rem] gap-10 ${SHELL_PAD_X_RAIL} lg:gap-12 ${
       // 收起右欄時中欄吃掉騰出來的寬度（44＋14＋gap），不留一條空白軌道。散文本來就
       // 由內容自己的 max-w 收住行長，會用到這段多出來的寬度的是清單與表格。
-      hideToc && !keepReadingWidth
+      compactReading
+        ? 'lg:grid-cols-[15rem_minmax(0,44rem)]'
+        : hideToc && !keepReadingWidth
         ? 'lg:grid-cols-[15rem_minmax(0,61rem)]'
         : 'lg:grid-cols-[15rem_minmax(0,44rem)_14rem]'
     }`}>
@@ -56,11 +61,18 @@ export default function ArticleLayout({
           another name. */}
       {/* reader-scale: 字級放大只縮放這欄閱讀內容，兩側導覽 rail 與工具列固定。欄寬由
           grid track（minmax(0,44rem)）決定、在 zoom 之外，所以邊界不隨字級移動。 */}
-      <article className="reader-scale">
+      <article className={scaleContent ? 'reader-scale' : ''}>
         <header className="mb-8">
           <PageIdentity eyebrow={eyebrow} title={title} summary={summary} />
           {meta}
         </header>
+
+        {mobileNavLabel ? (
+          <details className="mb-8 rounded-token-md border border-line-soft px-4 py-3 lg:hidden">
+            <summary className="cursor-pointer text-token-sm text-ink-muted">{mobileNavLabel}</summary>
+            <div className="mt-3">{nav}</div>
+          </details>
+        ) : null}
 
         {hideToc ? null : (
           <details className="mb-8 rounded-token-md border border-line-soft px-4 py-3 lg:hidden">
