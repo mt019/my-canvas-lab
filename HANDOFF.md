@@ -104,6 +104,26 @@ agent 代勞不了，2026-07-29 試過了，別再嘗試自動化那一步。
 `vercel deploy --prebuilt --prod` 把成品送上去。`vercel.json` 的 `git.deploymentEnabled.main`
 設成 `false`，Vercel 自己不再建；**兩邊同時開會互相覆蓋，別把它打開**。
 
+### 預先渲染的成本量出來了：瓶頸是憲法法庭那支 10.34MB 的 chunk（2026-07-29 實測）
+
+一次部署 331 秒，其中 `vite build` 只有 15.4 秒，**預先渲染 553 頁吃掉 227 秒**，
+`validate:prerender` 與 sitemap 加起來不到 1 秒。
+
+**並行數不要再往上加。** 兩次真實部署的數字：並行 8 是 227 秒、每頁中位數約 3.3 秒；
+改成 16 是 236 秒、每頁中位數 7.1 秒、p90 8.8 秒。每頁耗時正好翻倍而總時間不動——吞吐量
+兩次都是每秒約 2.3 頁，完全飽和。ubuntu-latest 是 4 vCPU，React 的水合把核心吃滿了。
+`scripts/prerender.mjs` 現在會印中位數、p90 與最慢十條，數字自己會講話。
+
+**最慢的十條全是 `/constitutionalcourt/case/…` 與 `/brief`**（並行 16 時 10–13 秒）。
+成因是 `src/pages/ConstitutionalCourt.jsx:15` 靜態 import 整份 `src/data/constitutionalCourt.json`，
+打包成 `dist/assets/constitutionalCourt-*.js` **10.34MB**。459 個個案頁，每一頁為了渲染
+一個案子都要把這 10.34MB 解析一遍。
+
+**這件事對讀者比對 CI 嚴重。** 那 10.34MB 不是只在 CI 上解析一次——每個點進憲法法庭案子的
+真人都要下載並解析它。切片 CI（把路由拆給多個 job）能把建置壓到約 2.5 分鐘，但救不了讀者。
+正解是把那份 JSON 拆成「小索引 ＋ 每案一個檔」，頁面只載它要的那一案；建置會跟著快，因為
+解析成本正是瓶頸。這件事排在 `CHECKPOINT.constitutional-court.md` 的「長期運維」子線。
+
 ### 《手記》的內容在建置當下才進來（2026-07-29 加）
 
 `/notes` 的文章不在這個公開 repo 裡。使用者的裁定是「站上公開沒關係，但不要留在 GitHub」，
