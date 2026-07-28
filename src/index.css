@@ -157,6 +157,10 @@
   --font-body: 'Huiwen Mincho', 'Songti TC', 'Noto Serif CJK TC', serif;
   --font-display: 'Radio Newsman', 'Huiwen Mincho', 'Songti TC', 'Noto Serif CJK TC', serif;
   --font-accent: 'Erikas Farbband', 'Huiwen Mincho', 'Songti TC', 'Noto Serif CJK TC', serif;
+  /* 圍籬程式碼專用。行內 `code` 走 font-accent（Erikas 的油墨網點正好），但整段程式碼靠的是
+     縮排與對齊，比例字面對不齊；而且 Erikas 是子集字型，空白字元不在裡面。系統等寬字堆疊
+     不必下載，CJK 註解交給後面的明體接手。 */
+  --font-mono: ui-monospace, 'SFMono-Regular', Menlo, Consolas, 'Huiwen Mincho', 'Songti TC', monospace;
 }
 
 /* 全站硬性：頁面永不水平捲動（游標拖不動）。用 clip 而非 hidden——不建立捲動容器，
@@ -211,6 +215,28 @@ body {
 .prose-body .font-accent {
   -webkit-font-smoothing: auto;
   -moz-osx-font-smoothing: auto;
+}
+
+/* 手記舊文帶著的動態貼圖（notes-data 的 /notes-assets/emoji/，微博那一套 56×56 GIF）
+   是行內尺寸的圖，原尺寸會把行高撐開。選擇器直接認路徑，不必替 Prose 另開一個
+   notes 專屬的樣式檔——這條規則只認 /notes-assets/emoji/ 開頭的網址，不影響其他
+   長文（陳寅恪、統計學實驗室…）共用的同一個 .prose-body。 */
+.prose-body img[src*="/notes-assets/emoji/"] {
+  display: inline;
+  height: 1.25em;
+  width: 1.25em;
+  vertical-align: -0.2em;
+}
+
+/* 圍籬區塊裡的 <code> 會繼承行內那顆藥丸（細框＋左右內距＋accent 字面）。整段程式碼不需要
+   第二層框，也需要等寬字面，所以在這裡把它退回素的。外框、內距與捲動由 Prose 的 pre 負責。 */
+.prose-body pre > code {
+  border: 0;
+  padding: 0;
+  border-radius: 0;
+  font-family: inherit;
+  font-size: inherit;
+  white-space: pre;
 }
 
 /* 紙面材質畫在獨立的 ::before 兄弟層（絕對定位、負 z-index），不再當作背景畫在

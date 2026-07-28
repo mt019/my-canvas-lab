@@ -59,6 +59,17 @@ const BASE = {
   code: (props) => (
     <code className="rounded-token-sm border border-line-soft px-1 py-0.5 font-accent text-scaled-sm text-ink" {...props} />
   ),
+  // Fenced code. `html { overflow-x: clip }` is a site-wide rule, so a block that overflows
+  // is not merely ugly — the far end of every long line becomes unreachable. The block
+  // therefore carries its own scroll container. Still no fill: the reading column is paper,
+  // and the block is marked by a hairline the same way inline code is.
+  // The nested <code> is reset in index.css — it would otherwise inherit the inline pill.
+  pre: (props) => (
+    <pre
+      className="my-6 overflow-x-auto rounded-token-sm border border-line-soft px-4 py-3 font-mono text-scaled-sm leading-[1.7] text-ink"
+      {...props}
+    />
+  ),
   table: (props) => (
     <div className="my-6 overflow-x-auto">
       <table className="w-full border-collapse text-token-sm" {...props} />

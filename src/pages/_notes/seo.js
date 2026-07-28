@@ -40,6 +40,37 @@ export function notesSchema(SITE_URL) {
   ];
 }
 
+/* 舊帖存檔頁：58 則 2021–2023 年的短記收在一頁。**它們刻意不各自產網址**——最短的一則只有
+   六個字，一則一頁就是五十幾條點進去只有一行字的網址，全部進 sitemap。所以搜尋引擎這邊
+   只認得這一條 `/notes/archive`：它自己進 sitemap，收錄的每一則不進。
+
+   篇數、年份、日期範圍都從資料倉的 notes-archive.json 來，這裡不寫死數字——新抓到的舊文
+   會自動進這一頁，寫死的「58 則」隔天就是錯的。 */
+export function archiveSeo(meta) {
+  const from = meta.dateRange?.from ?? '';
+  const to = meta.dateRange?.to ?? '';
+  const span = `${from.slice(0, 4)}–${to.slice(0, 4)}`;
+  return {
+    name: '舊帖',
+    title: '舊帖｜手記｜Phenom Canvas Lab',
+    description:
+      `${span} 年寫在 Matters 與一個已經關掉的個人站上的 ${meta.count} 則短記，`
+      + '每則短到只有一兩行，最短的六個字。按年份排，由最早的一則讀下來，正文與當年一字不改。',
+    keywords: ['舊帖', '短記', 'Matters', '舊站存檔', '學生時期筆記', '手記'].join('、'),
+    type: 'CollectionPage',
+    parent: { name: '手記', path: '/notes' },
+    buildSchema: (SITE_URL, url) => [
+      {
+        '@context': 'https://schema.org',
+        '@id': `${url}#webpage`,
+        temporalCoverage: from && to ? `${from}/${to}` : undefined,
+        isPartOf: { '@id': `${SITE_URL}/notes#blog` },
+        about: { '@type': 'Thing', name: '2021–2023 年的短記存檔' },
+      },
+    ],
+  };
+}
+
 /* 單篇：SeoHead 收到 type: 'Article' 之後會自己產 headline／author／publisher 那些欄位，
    這裡補的是它不知道的東西——發表日、改版日、閱讀時間、標籤，以及這篇屬於哪個文集。
    節點的 @id 與 SeoHead 主節點相同，JSON-LD 消費端會把兩者併成同一個實體。 */

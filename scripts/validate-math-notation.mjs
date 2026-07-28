@@ -29,6 +29,13 @@ const DATA_PREFIX = 'statistics';
 // Greek, super/subscripts, mathematical operators.
 const BANNED = /[Ͱ-Ͽ⁰-₟∀-⋿]/u;
 
+// 成對的 ⋯⋯（U+22EF ×2）是中文刪節號，是標點不是數學。它落在「數學運算子」區段純屬
+// Unicode 分區的結果——…（U+2026）在明體裡貼著基線，置中的那一個就是 ⋯，中文排版本來
+// 就用它。豁免按字元用途切、不按目錄切：統計站的散文一樣寫得到刪節號，而把整個
+// src/content/notes 移出掃描範圍，會讓那幾篇真的在談機率論的手記漏掉 σ 這類字元。
+// 單獨一個 ⋯ 仍然攔——那才可能是 a₁, ⋯, aₙ 那種數學寫法。
+const CJK_ELLIPSIS = /⋯{2,}/gu;
+
 function walk(path) {
   if (!existsSync(path)) return [];
   if (!statSync(path).isDirectory()) return [path];
@@ -47,7 +54,8 @@ const problems = [];
 for (const file of files) {
   const lines = readFileSync(file, 'utf8').split('\n');
   lines.forEach((line, i) => {
-    const hits = [...new Set([...line].filter((c) => BANNED.test(c)))];
+    const scan = line.replace(CJK_ELLIPSIS, '');
+    const hits = [...new Set([...scan].filter((c) => BANNED.test(c)))];
     if (hits.length > 0) problems.push({ file, line: i + 1, hits: hits.join(' ') });
   });
 }

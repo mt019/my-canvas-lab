@@ -23,6 +23,8 @@ const CCCaseRoute = lazy(() => import('./pages/_constitutional-court/CaseRoute')
 // 一篇手記。文章正文（.mdx）在這條路由底下再按 slug 分包，所以主 bundle 既不帶文章清單、
 // 也不帶任何一篇的正文。
 const NotePostRoute = lazy(() => import('./pages/_notes/PostRoute'));
+// 舊帖：沒有成篇的短記收在一頁。它自己一條網址，收錄的 58 則不各自產網址。
+const NoteArchiveRoute = lazy(() => import('./pages/_notes/ArchiveRoute'));
 
 /*
  * Pages are routed by file path. A file directly under pages/ keeps the old flat
@@ -569,6 +571,9 @@ export default function App() {
           {/* 一篇手記。檔案在 pages/_notes/ 底下（不是路由目錄），路徑在這裡指定；
               scripts/routes.mjs 會照 src/data/notes.json 把每篇展開成一條要預先渲染、
               也要進 sitemap 的網址。 */}
+          {/* 舊帖存檔頁。**要排在 /notes/:slug 前面**——放後面的話 `archive` 會被當成一個
+              slug 吃掉，查不到那篇文章，讀者看到的是「查無此文」。 */}
+          <Route path="/notes/archive" element={<NoteArchiveRoute />} />
           <Route path="/notes/:slug" element={<NotePostRoute />} />
           <Route path="/constitutionalcourt/justices/:justiceName" element={<CCJusticeRoute />} />
           <Route path="/constitutionalcourt/case/:caseNo" element={<CCCaseRoute />} />

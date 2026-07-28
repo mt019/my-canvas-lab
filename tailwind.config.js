@@ -11,6 +11,10 @@ export default {
         serif: ['var(--font-body)'],
         display: ['var(--font-display)'],
         accent: ['var(--font-accent)'],
+        // Fenced code only. Erikas is a ribbon face, not a monospace one — indentation
+        // and column alignment are the whole point of a code block, so it gets a real
+        // monospace stack instead of the accent face used for inline code.
+        mono: ['var(--font-mono)'],
       },
       // All values reference src/styles/tokens.css — edit tokens there, not here.
       colors: {

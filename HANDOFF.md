@@ -104,6 +104,27 @@ agent 代勞不了，2026-07-29 試過了，別再嘗試自動化那一步。
 `vercel deploy --prebuilt --prod` 把成品送上去。`vercel.json` 的 `git.deploymentEnabled.main`
 設成 `false`，Vercel 自己不再建；**兩邊同時開會互相覆蓋，別把它打開**。
 
+### 《手記》的內容在建置當下才進來（2026-07-29 加）
+
+`/notes` 的文章不在這個公開 repo 裡。使用者的裁定是「站上公開沒關係，但不要留在 GitHub」，
+所以正文住在私有的 `mt019/notes-data`，workflow 第 4 步用 `NOTES_DATA_TOKEN` 把它 clone 到
+`$RUNNER_TEMP`、跑 `npm run update`（build ＋ sync），把 `src/data/notes.json`、
+`src/content/notes/*.mdx`、`src/content/notes-archive.mdx`、`src/data/notes-archive.json`
+與 `public/notes-assets/**` 放進工作區；這些路徑全部在 `.gitignore` 裡，建置完隨 runner 消失。
+
+- **要多設一個 secret**：`NOTES_DATA_TOKEN`，fine-grained PAT，只給 `mt019/notes-data` 的
+  Contents: Read。設法同上（`gh secret set NOTES_DATA_TOKEN`，值貼在提示後面）。
+- **私有倉那邊要進版控的是** `content/`、`data/`、`processed/`、`assets/imported/`。
+  `drafts/` 不必（每次重算）；**`raw/` 必須**——Hugo 站已經 404，那份抓取結果是唯一的一份。
+- 存檔頁那兩個產物（`processed/archive.mdx`、`archive.json`）要 commit，因為它們是 `drafts/`
+  算出來的，而 CI 上沒有 `drafts/`。改了短記就在本機跑一次 `npm run archive` 再推。
+- **第 5 步是專門為這件事加的閘**：取內容失敗的樣子是「站上整個 /notes 不見了」，而建置
+  照樣會成功（預先渲染走路由表，少了資料只會少幾頁、不會報錯）。那一步數 `notes.json` 的
+  篇數、比對正文檔數、確認存檔頁在，任一不符就紅掉。
+- 已經發表過的那四篇（`fertility-care-responsibility`、`foreign-languages-and-translation`、
+  `iias-colophon`、`karl-kraus`）仍留在 git 歷史裡。它們本來就是公開的文章，不必改寫歷史；
+  擋的是從今以後不再有新的進來。
+
 **三個 repo secret 已於 2026-07-28 設好，正常情況不必再碰**：`VERCEL_TOKEN`、`VERCEL_ORG_ID`
 （`team_SwNJ9WTE8C5JqKjgMSJlT2u8`）、`VERCEL_PROJECT_ID`（`prj_yeHjPDaypcs7Kl9lSbjsxbtDdTGb`，
 後兩個不是機密）。要重設時的三件事：
@@ -211,6 +232,19 @@ Site URL＝`https://phenomcanvas.com`（單值、無萬用字元），Redirect U
    （返回鍵、報頭）——動它之前先想第二個消費者會變成什麼樣。**
 5. **標籤是篩選，不是路由。** 選擇進網址 `?tag=`（`useTabParam` 配 `scroll: 'preserve'`）。
    文章量還撐不起一標籤一頁，那會生出一堆只有一篇文章的路由。
+6. **舊帖 `/notes/archive`：58 則短記收成一頁，不各自產網址**（2026-07-29 使用者裁定）。
+   最短的一則六個字，一則一頁就是五十幾條點進去只有一行字的網址、五十幾條 sitemap 項目。
+   前端多一個檔 `pages/_notes/ArchiveRoute.jsx`；正文 `src/content/notes-archive.mdx`
+   與計數 `src/data/notes-archive.json` 都是資料倉 `npm run archive`（`build-archive.mjs`）
+   算好送過來的，兩個都進 `notes.sync.json` 的 sha256 清單。三件事要一起知道：
+   **(a)** `App.jsx` 的 `/notes/archive` 要排在 `/notes/:slug` **前面**，否則 `archive`
+   會被當成 slug 吃掉，讀者看到「查無此文」；**(b)** `scripts/routes.mjs` 要自己加這一條
+   （同第 1 點的理由，`pages/_notes/` 不會被 walkPages 掃到）；**(c)** 右欄目次傳
+   `tocLevels={[2]}` 只列年份——草稿自己的小標降級成 `###` 之後有六條都叫
+   「補記（Matters 留言區）」，列進去是把同一個詞印六遍（`tocLevels` 是本輪在
+   `ArticleLayout` 新增的 pass-through，預設仍是 `[2, 3]`）。
+   「哪些算舊帖」在資料倉決定：沒定稿成單篇的草稿就是舊帖，某一則將來升級成正式文章時
+   canvas 這邊不必改。
 
 **寫作素材有本機來源時，先回那個來源核對，不要只憑通行說法。** 卡爾・克勞斯那篇的事實
 是對著 `~/Documents/NTU/1142/Translation/KarlKraus`（兩年的翻譯工程，含
@@ -1639,6 +1673,31 @@ per research — sources in scratchpad `research-*.md`, proposal in
 do it incrementally, don't open new hex islands.** Rule for any new
 chart/status color: reference `--status-*` / `--cat-*`, never a fresh page hex.
 
+## 資料倉是內容的唯一來源，canvas 只負責畫：加上固定檢查（2026-07-29 使用者裁定）
+
+這條界線本來只是一句口號（「改動一律從資料倉下手」），沒有任何東西擋得住違反它的人。
+它壞掉的方式很固定，而且兩種都是當下沒事、以後才炸：
+
+1. **有人為了快，直接改 canvas 這邊的 `src/data/*.json` 或 `src/content/**`。** 下一次 sync
+   把他的改動整個洗掉，而且沒有任何痕跡說明發生過什麼。
+2. **把算得出來的東西寫進 JSX**（分組、排序、摘要、字數、日期格式），於是同一份邏輯在
+   兩個倉各長一份，日後只改到其中一份。
+
+`scripts/validate-synced-content.mjs`（`validate:synced`，已進 `verify:policy`）擋這兩件：
+
+- 資料倉的 `sync` 腳本現在會多寫一份清單 `src/data/<line>.sync.json`，內含每個送過來的檔的
+  sha256。這支檢查重算一次對照，不一致就 exit 1，訊息直接指回該去哪個倉改。清單沒收錄、
+  卻躺在正文目錄裡的 `.mdx` 也會被抓出來（手工加的，下次 sync 就沒了）。
+- 每條線的前端檔案有**行數上限**——「前端只負責畫」的可量化說法。手記現在 459/600 行
+  （`Notes.jsx` ＋ `_notes/`，含 2026-07-29 新增的 `ArchiveRoute.jsx`）。超過通常表示有
+  東西該搬回資料倉。
+
+負向測試三個都驗過會擋：改一個字的 `.mdx`（回報該檔與資料倉不一致）、手工新增一篇
+`.mdx`（回報不在清單裡）、把行數上限暫時壓到 100（回報 326 超過並列出檔名）。
+
+新增一條線時在 `LINES` 加一筆（清單檔名、正文目錄、前端路徑、行數上限），
+並在該資料倉的 sync 腳本裡照 `notes-data/engineering/scripts/sync-to-canvas.mjs` 補寫清單。
+
 ## 資料層與 PDF 代理白名單分岔：加上固定檢查（2026-07-28）
 
 線上中研院出版品的 743 份 PDF 全部回 `forbidden target`。成因是兩份必須同步的東西各自走：
@@ -1881,6 +1940,28 @@ sanctioned exception to "no new fonts" (`docs/DESIGN.md`), confined to `.katex`,
 and land only in the statistics async chunk (verified: `dist/index.html` and the
 home chunk contain no katex).
 
+**已修：`validate:math` 對中文刪節號誤報（2026-07-29 發現並修好）。**
+`⋯`（U+22EF）落在 Unicode 的數學運算子區段，所以上面那條規則抓它；但中文排版用的就是它當
+刪節號——`…`（U+2026）在明體裡貼著基線，`⋯` 才是置中的。手記搬進 `src/content/notes/` 之後，
+一道為統計長文寫的閘套到了散文上，`cannot-say-goodbye`／`learning-to-swim`／
+`semester-2023-fall`／`semester-2024-spring`／`third-time-positive`／`why-it-moved-me` 共 12 處
+全是成對的 `⋯⋯`，`npm run build` 因此紅在第四關。兩條修法：放行成對的 `⋯⋯`（單獨一個 `⋯`
+仍然攔，那才可能是數學）——比較窄，建議這條；或把 `src/content/notes` 移出 `ROOTS`，貼近該檔
+docstring 自述的範圍，代價是手記裡真混進 σ 之類的也不會被抓，而那幾篇正好在談機率論。
+
+**`remark-gfm` 也在管線裡（2026-07-29 加）。** 手記要搬 2021–2024 的舊貼文進來，Matters 的
+`<s>` 標籤轉出來是 `~~刪除線~~`，而 CommonMark 沒有刪除線——少了 gfm 會原樣顯示成波浪號。
+加它之前先量過影響：**站上當時 51 篇 `.mdx` 加與不加的編譯輸出完全相同（0 位元組差）**，
+77 篇舊文草稿也只有帶 `<s>` 的那 4 篇有變化；作者打字拖長音的 `拜托~~~`、`笑~~~` 不是合法的
+刪除線標記，gfm 不碰它們。順帶啟用了表格、裸網址自動連結與註腳，寫新文章時可以直接用。
+**要改這條之前先重跑一次那個比對**（用 `@mdx-js/mdx` 的 `compile()` 對每個 `.mdx` 編兩次比字串），
+不要憑印象判斷「應該沒差」。
+
+**MDX 對 `<` 與 `{` 的容忍度比想像中高。** 反斜線跳脫過的 `\<` 是 CommonMark 的字面字元，
+編得過；只有**沒跳脫**的才會被當成標籤或表達式。用 `/[<{]/` 這種不分跳脫與否的正則去攔，
+會攔到自己人（notes-data 的匯入腳本 `escapeForMdx()` 產出的正是 `\<`）。判斷「這篇編不編得過」
+的正確方式是拿 `@mdx-js/mdx` 真的編一次，不是用正則猜。
+
 ## Font system (stable, don't re-derive)
 
 **字體平滑只給長文正文，別處維持系統預設（2026-07-28 使用者裁定）。**
@@ -1897,6 +1978,12 @@ home chunk contain no katex).
 「字體平滑：只有長文正文吃灰階」。**差別只在 macOS 上看得見，headless 截圖驗不出來**（截圖本來
 就走灰階）——只能請人在瀏覽器裡看；能自動驗的只有作用範圍（實測：手記文章、統計站長文、
 朱家驊全文、陳寅恪重排本正文＝`antialiased`；手記清單、`/brief`、中研院本站說明＝`auto`）。
+
+**Emoji 一律走系統彩色字體，不進子集（2026-07-29）。** 手記搬進 2021–2024 的舊貼文帶了
+17 個 emoji（🙃😭🥹🫠👻💨😆😇😐😑😣😥😬😮🙄🤣🥺），明體子集當然畫不出來，
+`validate:fonts` 會擋。正解是把碼位加進 `scripts/font-coverage-exceptions.txt`（`👋` 早有前例），
+讓它落到 Apple Color Emoji／Noto Color Emoji——**不要為了 emoji 去重建 CJK 子集**，
+那是彩色字形，明體子集本來就不該含。以後有新 emoji 進站照這條走。
 
 `src/index.css` defines three CSS variables:
 

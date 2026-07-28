@@ -49,3 +49,18 @@ _shot*.mjs
 # 是公開值、必須進版控（VITE_SITE_URL 是 canonical／sitemap 的單一來源）。只擋本機的。
 .env.local
 .env*.local
+
+# 《手記》的內容不進這個公開 repo（2026-07-29 使用者裁定：站上公開沒關係，但不要留在
+# GitHub）。文章住在私有的 mt019/notes-data，由 .github/workflows/deploy.yml 在建置當下
+# clone 下來、跑它的 sync 產生下面這些檔，建置完就隨 runner 一起消失。本機開發時它們
+# 一樣由 `npm run sync` 產生，只是不進版控。
+#
+# 已經發表過的那四篇（fertility-care-responsibility、foreign-languages-and-translation、
+# iias-colophon、karl-kraus）仍留在 git 歷史裡——那是已經公開的文章，不必改寫歷史。
+# 這裡擋的是「從今以後不再有新的進來」。
+src/data/notes.json
+src/data/notes.sync.json
+src/data/notes-archive.json
+src/content/notes/
+src/content/notes-archive.mdx
+public/notes-assets/

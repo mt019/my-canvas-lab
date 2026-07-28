@@ -2,6 +2,7 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import mdx from '@mdx-js/rollup'
 import remarkMath from 'remark-math'
+import remarkGfm from 'remark-gfm'
 import rehypeKatex from 'rehype-katex'
 import rehypeSlug from 'rehype-slug'
 import { resolveTarget, fetchUpstream, streamPdf } from './api/_pdfProxy.mjs'
@@ -41,7 +42,12 @@ export default defineConfig({
     { enforce: 'pre', ...mdx({
       providerImportSource: '@mdx-js/react',
       mdExtensions: [],
-      remarkPlugins: [remarkMath],
+      // remarkGfm 為了手記裡的舊文而加（2026-07-29）：Matters 的 <s> 標籤轉成 markdown 是
+      // ~~刪除線~~，而 CommonMark 沒有刪除線，少了它會原樣顯示成波浪號。加它之前先量過：
+      // 站上當時 51 篇 .mdx 加與不加的編譯輸出完全相同（0 位元組差），77 篇舊文草稿也只有
+      // 帶 <s> 的那 4 篇有變化；作者打字拖長音的 `拜托~~~`、`笑~~~` 不是合法的刪除線標記，
+      // gfm 不會動它們。順帶啟用表格、裸網址自動連結、註腳。
+      remarkPlugins: [remarkMath, remarkGfm],
       rehypePlugins: [rehypeSlug, rehypeKatex],
     }) },
     react({ include: /\.(jsx|js|mdx|md|tsx|ts)$/ }),

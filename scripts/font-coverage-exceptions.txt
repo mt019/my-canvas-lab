@@ -136,5 +136,38 @@ U+CC45   # 책
 U+C804   # 전
 U+B9DD   # 망
 
+# 2026-07-29 手記舊文搬家：Matters／telegra.ph 貼文裡的 emoji。中日文明朝體子集本來就
+# 不含 emoji（也不該含——那是彩色字形），一律走系統的 Apple Color Emoji／Noto Color Emoji。
+U+1F47B  # 👻
+U+1F4A8  # 💨
+U+1F606  # 😆
+U+1F607  # 😇
+U+1F610  # 😐
+U+1F611  # 😑
+U+1F623  # 😣
+U+1F625  # 😥
+U+1F62C  # 😬
+U+1F62D  # 😭
+U+1F62E  # 😮
+U+1F643  # 🙃
+U+1F644  # 🙄
+U+1F923  # 🤣
+U+1F979  # 🥹
+U+1F97A  # 🥺
+U+1FAE0  # 🫠
+
 # 陳寅恪保真區塊中的 EPUB 行內圖片位置。前端以同步的原圖呈現，不交給字型繪製。
 U+FFFC  # OBJECT REPLACEMENT CHARACTER
+
+# 2026-07-29 手記舊文搬家（第二批）：songs-to-learn、semester-2023-fall、
+# third-time-positive、taxi-conversations 四篇裡的 emoji，處置同上一批。
+U+1F393  # 🎓
+U+1F411  # 🐑
+U+1F430  # 🐰
+U+1F468  # 👨
+U+1F61D  # 😝
+U+1F695  # 🚕
+U+1F698  # 🚘
+U+1F929  # 🤩
+U+1F9D0  # 🧐
+U+1F9D1  # 🧑

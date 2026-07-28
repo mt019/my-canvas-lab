@@ -124,5 +124,9 @@ export function collectRoutes() {
   for (const slug of ZJH_TAB_SLUGS) routes.add(`/zhujiahua/${slug}`);
   for (const route of chenYinkeSelectionRoutes()) routes.add(route);
   for (const route of noteRoutes()) routes.add(route);
+  // 舊帖存檔頁。它的元件也在 pages/_notes/ 底下，所以跟單篇一樣要在這裡指名，否則不會被
+  // 預先渲染、也不會進 sitemap。它收錄的那 58 則短記刻意不各自產網址——一則一頁就是
+  // 五十幾條點進去只有一行字的網址。
+  routes.add('/notes/archive');
   return [...routes].sort();
 }

@@ -6,6 +6,7 @@ import AppearanceMenu from '../components/AppearanceMenu';
 import DashboardLayout from '../components/lab/DashboardLayout';
 import { useTabParam } from '../components/lab/Tabs';
 import data from '../data/notes.json';
+import archive from '../data/notes-archive.json';
 
 /*
  * 手記的首頁：一份按年份分節、由新到舊的清單。
@@ -84,7 +85,26 @@ export default function Notes() {
         <p className="py-10 text-token-sm text-ink-faint">沒有標記「{tag}」的文章。</p>
       ) : null}
 
-      <div className="mt-14 border-t border-line-soft pt-5">
+      {/* 舊帖：短到撐不起一頁的那些收在一頁，不混進上面的清單（它們沒有摘要也沒有標籤，
+          排進去只會是一整排空欄位）。篇數從資料倉的 notes-archive.json 來，不寫死。 */}
+      <div className="mt-14 border-t border-line pt-6">
+        <Link to="/notes/archive" className="group inline-flex items-baseline gap-2">
+          <span className="font-display text-token-lg text-ink transition-colors duration-fast group-hover:text-accent">
+            舊帖
+          </span>
+          <span className="font-accent text-token-xs tabular-nums text-ink-faint">{archive.count}</span>
+          <ArrowRight
+            size={16}
+            className="shrink-0 self-center text-ink-faint transition-transform duration-fast group-hover:translate-x-0.5 group-hover:text-accent"
+          />
+        </Link>
+        <p className="mt-2 text-token-sm leading-relaxed text-ink-faint">
+          {archive.dateRange.from.slice(0, 4)}–{archive.dateRange.to.slice(0, 4)} 年的短記，多半只有一兩行，
+          最短的一則六個字。收在同一頁上，按年份排。
+        </p>
+      </div>
+
+      <div className="mt-10 border-t border-line-soft pt-5">
         <p className="text-token-sm leading-relaxed text-ink-faint">{site.note}</p>
       </div>
     </DashboardLayout>

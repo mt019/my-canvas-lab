@@ -4,7 +4,8 @@
 # 2026-07-28 之前每一次部署送上線的都是空殼。這裡的 runner 我們裝得動瀏覽器，
 # `playwright install --with-deps` 一步就把系統相依補齊。
 #
-# 需要三個 repo secret：VERCEL_TOKEN、VERCEL_ORG_ID、VERCEL_PROJECT_ID。
+# 需要四個 repo secret：VERCEL_TOKEN、VERCEL_ORG_ID、VERCEL_PROJECT_ID，
+# 以及 NOTES_DATA_TOKEN（讀取私有的 mt019/notes-data，《手記》的內容不進這個公開 repo）。
 # 設定方式寫在 HANDOFF.md 的「部署」節。
 name: deploy
 
@@ -34,6 +35,38 @@ jobs:
           cache: npm
 
       - run: npm ci
+
+      # 《手記》的文章不在這個公開 repo 裡（理由與擋掉的路徑見 .gitignore）。它們住在私有的
+      # mt019/notes-data，這一步把那個倉 clone 到 runner 的暫存目錄、跑它自己的 sync，把
+      # notes.json、57 篇正文、存檔頁與匯入圖片放進工作區；建置完隨 runner 一起消失。
+      # clone 到 $RUNNER_TEMP 而不是工作區底下，免得多出一個目錄被各支 validate 掃進去。
+      # 私有倉那邊要進版控的是正文與產物（content/、data/、processed/、assets/imported/）。
+      # 這裡跑 `npm run update`＝build ＋ sync：build 從 data/ 與 content/ 重算
+      # processed/notes.json，所以就算私有倉那份產物忘了更新也不會送到舊的上線。
+      # 存檔頁那兩個檔（processed/archive.*）例外，它們是 drafts/ 算出來的，而 drafts/ 隨時
+      # 可以從 raw/ 重建、不進版控，所以存檔頁的產物要跟著 commit。
+      - name: Bring in the notes content from its private repo
+        env:
+          NOTES_DATA_TOKEN: ${{ secrets.NOTES_DATA_TOKEN }}
+        run: |
+          test -n "$NOTES_DATA_TOKEN" || { echo "沒有設 NOTES_DATA_TOKEN，取不到《手記》的內容"; exit 1; }
+          git clone --depth=1 "https://x-access-token:${NOTES_DATA_TOKEN}@github.com/mt019/notes-data.git" "$RUNNER_TEMP/notes-data"
+          cd "$RUNNER_TEMP/notes-data"
+          CANVAS_DIR="$GITHUB_WORKSPACE" npm run update
+
+      # 上一步失敗的樣子是「站上整個 /notes 不見了」，而建置本身照樣會成功——預先渲染
+      # 走的是路由表，少了資料只會少幾頁，不會報錯。這種「壞掉時仍然回傳合法值」的環節
+      # 一律要驗產物內容，不驗流程有沒有跑完。
+      - name: Assert the notes content actually arrived
+        run: |
+          test -f src/data/notes.json || { echo "src/data/notes.json 不存在"; exit 1; }
+          n=$(node -p "require('./src/data/notes.json').posts.length")
+          m=$(ls src/content/notes/*.mdx 2>/dev/null | wc -l | tr -d ' ')
+          test -f src/content/notes-archive.mdx || { echo "存檔頁正文不存在"; exit 1; }
+          echo "notes.json $n 篇、正文 $m 個檔、存檔頁在"
+          if [ "$n" -lt 40 ] || [ "$n" != "$m" ]; then
+            echo "篇數不對：至少要有 40 篇，而且 json 的篇數要等於正文檔數"; exit 1
+          fi
 
       # 瀏覽器與系統相依一起裝。少了 --with-deps 就是線上那個故障的成因。
       - run: npx playwright install --with-deps chromium

@@ -23,6 +23,10 @@ import PageIdentity from '../PageIdentity';
  */
 export default function ArticleLayout({
   title, eyebrow, summary, meta, nav, tocLabel, tocKey,
+  // 右欄目次要列到第幾層。預設 h2＋h3。存檔頁那種「一頁收很多則、每則自己帶小標」的
+  // 版面傳 [2]：小標在那裡重複（六則各有一條「補記（Matters 留言區）」），列進去是把
+  // 同一個詞印六遍，不是導覽。
+  tocLevels = [2, 3],
   // 本頁本來就沒有區塊標題可列（單篇原文只有段落），或右欄會跟左欄列出同一份東西時關掉。
   // 與 DashboardLayout 的同名 prop 同一個理由：同一件事講兩次不是導覽，是雜訊。
   hideToc = false,
@@ -78,7 +82,7 @@ export default function ArticleLayout({
           <details className="mb-8 rounded-token-md border border-line-soft px-4 py-3 lg:hidden">
             <summary className="cursor-pointer text-token-sm text-ink-muted">{tocLabel ?? '本頁目次'}</summary>
             <div className="mt-3">
-              <TableOfContents containerRef={bodyRef} label={tocLabel} refreshKey={tocKey} />
+              <TableOfContents containerRef={bodyRef} label={tocLabel} refreshKey={tocKey} levels={tocLevels} />
             </div>
           </details>
         )}
@@ -91,7 +95,7 @@ export default function ArticleLayout({
           {/* Clears the sticky site bar above it (see SiteHeader) — a rail that
               slides under the toolbar loses its first item. */}
           <div className="sticky top-16 max-h-[calc(100vh-6rem)] overflow-y-auto pb-10">
-            <TableOfContents containerRef={bodyRef} label={tocLabel} refreshKey={tocKey} />
+            <TableOfContents containerRef={bodyRef} label={tocLabel} refreshKey={tocKey} levels={tocLevels} />
           </div>
         </aside>
       )}
