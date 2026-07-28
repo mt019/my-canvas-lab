@@ -62,7 +62,12 @@ export function backFor(pathname) {
   if (!BACK_NAV_ENABLED) return null;
   const path = pathname.length > 1 ? pathname.replace(/\/+$/, '') : pathname;
   if (NO_BACK.has(path)) return null;
-  const hit = SITE_HOMES.find(([prefix]) => `${path}/`.startsWith(prefix));
+  /*
+   * **只有站底下的頁才回站首頁，站首頁自己不算。** 這裡本來寫 `${path}/`.startsWith(prefix)，
+   * 於是 `/brief` 補成 `/brief/` 剛好命中 `/brief/` 這條，站首頁的返回鍵指向它自己——按下去
+   * 什麼都沒發生。2026-07-28 使用者問「brief 頁面怎麼沒有回 canvas 首頁的按鈕」，就是這個。
+   */
+  const hit = SITE_HOMES.find(([prefix]) => path.startsWith(prefix));
   return hit ? hit[1] : HOME;
 }
 
