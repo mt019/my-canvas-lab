@@ -106,10 +106,14 @@ async function main() {
   // wall time; a handful of concurrent tabs cuts it to about one. Each worker
   // owns one page and pulls the next route until the queue drains.
   //
-  // 預設從 8 提到 16（2026-07-29）：每個 worker 大部分時間在等網路與等就緒條件，不是在燒
-  // CPU，所以並行數不必跟核心數綁在一起。一個 Chromium page 約 50–80MB，16 個約 1.3GB，
-  // GitHub runner 有 16GB。核心少的機器要調回去就設 PRERENDER_CONCURRENCY。
-  const CONCURRENCY = Math.max(1, Number(process.env.PRERENDER_CONCURRENCY) || 16);
+  // **8 就是這台 runner 的上限，別再往上加**（2026-07-29 實測）。當時的假設是 worker 多半
+  // 在等網路、不是在燒 CPU，於是把預設從 8 提到 16。兩次部署的數字：
+  //   並行 8 ：553 頁 227 秒，每頁中位數約 3.3 秒
+  //   並行 16：553 頁 236 秒，每頁中位數 7.1 秒、p90 8.8 秒
+  // 每頁耗時正好翻倍而總時間不動——吞吐量兩次都是每秒約 2.3 頁，是完全飽和的樣子。
+  // ubuntu-latest 是 4 vCPU，React 的水合與渲染把核心吃滿了，加 worker 只是讓大家一起排隊。
+  // 要更快只能給更多 CPU（把路由切片交給多個 job）或讓每頁做更少事，不是調這個數字。
+  const CONCURRENCY = Math.max(1, Number(process.env.PRERENDER_CONCURRENCY) || 8);
   let next = 0;
   async function worker() {
     const page = await browser.newPage();
