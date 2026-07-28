@@ -84,6 +84,43 @@ copy. When writing digest/topic prose, narrate what a *reader* learns
 改動任何與預先渲染有關的東西之後，線上驗法：`curl -s <url> | grep -c 'id="root"></div>'`
 應為 0，或直接看首頁 bytes 數（空殼是 1.8–2.5 KB，真的有內容是幾十 KB）。
 
+### 搬家帶出來的第二個故障：`[REDACTED]` 被烤進 bundle（2026-07-28 修）
+
+**症狀**：線上每一頁 console 都有 `Invalid supabaseUrl: Must be a valid HTTP or HTTPS URL`，
+`/brief` 的登入鈕按了沒反應。建置全綠、頁面正常、預先渲染也沒問題。
+
+**成因**：`VITE_SUPABASE_URL` 與 `VITE_SUPABASE_PUBLISHABLE_KEY` 在 Vercel 專案裡是
+**sensitive** 變數（`vercel env ls` 顯示 Encrypted，但 API 查 `type` 是 `sensitive`）。
+sensitive 的定義就是誰都讀不回來——`vercel pull` 寫進 `.vercel/.env.production.local` 的是
+字面上的 `"[REDACTED]"`，連帶 `decrypt=true` 的 `/v9/projects/{id}/env` 也只回空字串。
+建置還跑在 Vercel 自己機器上時真值是當場注入的，所以一直沒事；搬到 Actions 之後
+`vercel build` 拿到的就是那串佔位字，Vite 把它烤進 bundle，`AuthProvider` 的
+`configured = Boolean(url && key)` 判定為真（非空字串），supabase-js 拿 `[REDACTED]` 當網址就丟錯。
+**值是空的反而沒事**（`configured` 為偽，登入鈕自己消失、走純 localStorage）；壞在它是個
+truthy 的假值。
+
+**修法（`.github/workflows/deploy.yml` 兩個新步驟）**：
+
+1. `Restore the client-side Supabase env that vercel pull redacts`——拉完設定後用 GitHub
+   secrets 覆寫那兩行。secret 沒設就只出一句 `::warning::`，不擅自改檔。
+2. `Assert no redacted placeholder was baked into the bundle`——建置後掃
+   `.vercel/output/static/assets/`，出現 `[REDACTED]` 就 `exit 1`。**這道閘門是重點**：
+   前一個故障（空殼）與這一個是同一族——**壞掉的時候一切照常回傳合法值**，只有直接檢查
+   產物內容才看得出來。
+
+**這兩個值要三個地方都有**：本機 `.env.local`（開發）、Vercel Environment Variables（歷史
+留存，現在的建置不吃它）、**GitHub repo secrets（現在真正在用的那份）**。它們是公開的
+瀏覽器端值，每個訪客的 bundle 裡都有，放 secrets 只是為了不寫進這個公開 repo。
+
+**登入的落點設定在 Supabase**（Authentication → URL Configuration），不在這個倉裡：
+Site URL＝`https://phenomcanvas.com`（單值、無萬用字元），Redirect URLs 每條都要帶 `/**`
+（`signInWithOAuth` 送的是 `window.location.href`，少了萬用字元就只有首頁算合法落點，
+從 `/brief` 登入會被丟回首頁）。完整步驟見 `docs/PERSONAL_STATE.md`。
+
+**線上驗法**：headless 開 `/brief`，console 應無錯誤；點登入應導向
+`kbbraozovnmdzuhwfskz.supabase.co/auth/v1/authorize`，其 `redirect_to` 應等於你按下按鈕
+那一頁的完整網址（2026-07-28 實測＝`https://phenomcanvas.com/brief`）。
+
 ## Pages
 
 ### `Notes`（手記・個人短文，2026-07-28 新建）
@@ -111,7 +148,13 @@ copy. When writing digest/topic prose, narrate what a *reader* learns
    用 `hasSections` 記下來，`PostRoute` 據此傳 `hideToc`。同時傳
    `keepReadingWidth`（本輪為此在 `ArticleLayout` 新增）——沒有它，中欄會吃掉右欄那段寬度
    變成 61rem，一行約 54 個中文字，對散文太寬；現行實測 688px、約 38 字。
-4. **返回鍵回手記首頁**，不是回素首頁：`src/backNav.js` 的 `SITE_HOMES` 加了 `/notes/`。
+4. **返回鍵與眉標是兩顆按鈕，別合成一顆。** `/notes/` 登記在 `src/backNav.js` 的
+   `SITE_HOMES`，所以文章頁的返回鍵是「← 手記」、眉標「手記」也回 `/notes`。中間繞過一次：
+   `PageIdentity` 剛出來時把眉標＋大標整塊做成連結，登記進 `SITE_HOMES` 之後**文章標題
+   整塊變成按鈕**（2026-07-28 使用者：「這個 title 區域變成返回 note 主頁的按鈕了，太奇怪」），
+   當時的處置是不登記、由 `PostRoute` 自己傳 `back`。2026-07-29 `PageIdentity` 改成眉標與
+   大標題分開掛之後，那個繞路就不需要了，已改回走 `SITE_HOMES`。**一張表兩個消費者
+   （返回鍵、報頭）——動它之前先想第二個消費者會變成什麼樣。**
 5. **標籤是篩選，不是路由。** 選擇進網址 `?tag=`（`useTabParam` 配 `scroll: 'preserve'`）。
    文章量還撐不起一標籤一頁，那會生出一堆只有一篇文章的路由。
 
@@ -123,7 +166,7 @@ copy. When writing digest/topic prose, narrate what a *reader* learns
 瓦普吉斯之夜》1952 年出版＝他死後十六年，不是二十多年），並補上薩梅克那條線。
 譯名跟著該工程走（《人類最後的日子》、《第三個瓦普吉斯之夜》）。
 
-驗收（2026-07-28，dev 5173 ＋ 丟棄式 build 的 preview）：清單四篇、年份分節、標籤篩選
+驗收（2026-07-28，dev 5173 ＋ 丟棄式 build 的 preview；當時四篇）：清單依年份分節、標籤篩選
 1/2 篇且進網址；**從清單點連結**進單篇（不自組網址）→ title/description/keywords 都是
 per-post 版、`og:type=article`、JSON-LD 有 Article ＋ 合併節點；預先渲染情境（preview ＋
 networkidle）三條路由的 `#root` 都有 8–12 KB 內容；手機寬度無橫向溢出；console 無錯誤。
