@@ -9,7 +9,7 @@ disable-model-invocation: true
 
 ## 斷點（`.claude/CHECKPOINT.constitutional-court.md` 全文＝現況，已無歷史節）
 
-!`cat /Users/iw/Documents/NTU/1142/my-canvas-lab/.claude/CHECKPOINT.constitutional-court.md`
+!`cat ~/Documents/NTU/1142/my-canvas-lab/.claude/CHECKPOINT.constitutional-court.md`
 
 上面是整份現況（子線各一節，**每節都要看**）。歷輪的里程碑紀錄另存
 `.claude/history/HISTORY.constitutional-court.md`，本指令不載入，要考古自己 grep。
@@ -19,15 +19,15 @@ disable-model-invocation: true
 
 資料 repo（`~/Documents/NTU/1142/constitutional-court-research-data`）最近提交：
 
-!`git -C /Users/iw/Documents/NTU/1142/constitutional-court-research-data log --oneline -3`
+!`git -C ~/Documents/NTU/1142/constitutional-court-research-data log --oneline -3`
 
 資料 repo 工作樹（**未 commit 的檔＝他線在途，commit 時絕不可掃入**）：
 
-!`git -C /Users/iw/Documents/NTU/1142/constitutional-court-research-data -c core.quotepath=false status --short || echo "（乾淨）"`
+!`git -C ~/Documents/NTU/1142/constitutional-court-research-data -c core.quotepath=false status --short || echo "（乾淨）"`
 
 canvas repo（`~/Documents/NTU/1142/my-canvas-lab`）最近提交：
 
-!`git -C /Users/iw/Documents/NTU/1142/my-canvas-lab log --oneline -3`
+!`git -C ~/Documents/NTU/1142/my-canvas-lab log --oneline -3`
 
 ## 開工前
 

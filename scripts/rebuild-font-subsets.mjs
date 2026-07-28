@@ -22,12 +22,14 @@
 // CJK). It prints the Chiron unicode-range to paste into src/index.css.
 import { execFileSync } from 'node:child_process';
 import { existsSync, writeFileSync, mkdtempSync, rmSync } from 'node:fs';
-import { tmpdir } from 'node:os';
+import { homedir, tmpdir } from 'node:os';
 import { join } from 'node:path';
 import * as fontkit from 'fontkit';
 import { comprehensiveChars } from './font-chars.mjs';
 
-const FONT_LIBRARY_ROOT = process.env.FONT_LIBRARY_ROOT || '/Users/iw/Documents/Font_Library';
+// 字型母庫在版控之外（授權未明的字型不進 repo，見 docs/DESIGN.md 的字體禁令）。
+// 路徑用 homedir() 組，不寫死絕對路徑——那會把本機使用者名稱寫進公開 repo。
+const FONT_LIBRARY_ROOT = process.env.FONT_LIBRARY_ROOT || join(homedir(), 'Documents/Font_Library');
 const HUIWEN_SRC = join(FONT_LIBRARY_ROOT, 'fonts/HuiwenMincho-Improved.ttf');
 const CHIRON_SRC = join(FONT_LIBRARY_ROOT, 'fonts/ChironSungHK-Text-R.ttf');
 
