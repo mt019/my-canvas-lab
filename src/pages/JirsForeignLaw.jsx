@@ -6,6 +6,8 @@
 // 單位，所以主軸是「案件索引」（可搜案名／譯者、依系列篩），卷冊目錄與陽春清單保留為另一檢視。
 import { useMemo, useState, useEffect, useCallback } from 'react';
 import { ExternalLink, X, Search, BookMarked, Dices } from 'lucide-react';
+import { SHELL_PAD_X_RAIL } from '../components/shellPadding';
+import BackLink from '../components/BackLink';
 import AppearanceMenu from '../components/AppearanceMenu';
 import FontSizeControl, { useFontScale } from '../components/FontSizeControl';
 import Eyebrow from '../components/Eyebrow';
@@ -280,13 +282,14 @@ export default function JirsForeignLaw() {
   return (
     <>
       <main className="min-h-screen bg-paper paper-texture text-ink" style={{ '--reader-scale': scale }}>
-        <div className="mx-auto max-w-7xl px-4 sm:px-6">
+        <div className={`mx-auto max-w-7xl ${SHELL_PAD_X_RAIL}`}>
           <div className="lg:grid lg:grid-cols-[14rem_minmax(0,1fr)] lg:gap-10">
 
             {/* ── 左側常駐導覽欄（IIAS 式） ── */}
             <aside className="contents lg:block lg:py-5 lg:sticky lg:top-0 lg:h-screen lg:self-start lg:overflow-y-auto lg:border-r lg:pr-5">
               <div className="flex items-center justify-between gap-2 pt-5 lg:flex-col lg:items-start lg:gap-3 lg:pt-0">
-                <a href="/all" className="shrink-0 whitespace-nowrap text-token-sm text-ink-faint transition-colors duration-fast hover:text-accent">← 全部</a>
+                {/* 這頁自己刻了左欄，返回鍵走共用元件＋全站配置，不寫死落點。 */}
+                <BackLink className="shrink-0 whitespace-nowrap text-token-sm text-ink-faint transition-colors duration-fast hover:text-accent" />
                 <div className="flex shrink-0 items-center gap-2">
                   <AppearanceMenu /><FontSizeControl scale={scale} onChange={setScale} />
                 </div>
@@ -298,7 +301,9 @@ export default function JirsForeignLaw() {
                 <Eyebrow className="mb-1">司法院中譯外國法學</Eyebrow>
                 <h1 className="font-display text-token-lg leading-tight text-ink transition-colors duration-fast group-hover:text-accent lg:text-token-xl">外國法翻譯索引</h1>
               </button>
-              <nav className="sticky top-0 z-20 mt-5 flex gap-1 overflow-x-auto border-b border-line-soft bg-paper py-2 lg:static lg:z-auto lg:grid lg:gap-0.5 lg:border-b-0 lg:bg-transparent lg:py-0">
+              {/* 窄屏吸頂時換行，不橫捲（見 validate-shell-chrome.mjs 的吸頂欄規則）。
+                  lg 起改成左欄的直排格線，本來就不會有橫向問題。 */}
+              <nav className="sticky top-0 z-20 mt-5 flex flex-wrap gap-1 border-b border-line-soft bg-paper py-2 lg:static lg:z-auto lg:grid lg:gap-0.5 lg:border-b-0 lg:bg-transparent lg:py-0">
                 {VIEWS.map((v) => (
                   <button key={v.id} type="button" onClick={() => setView(v.id)}
                     className={`shrink-0 rounded-token-md px-2.5 py-1.5 text-left text-token-sm transition-colors duration-fast ${

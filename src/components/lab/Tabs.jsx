@@ -60,14 +60,14 @@ export function useTabParams(defaults) {
 const VARIANTS = {
   // Underline: the page's primary sections. Reads as a table of contents.
   underline: {
-    list: 'flex gap-5 overflow-x-auto border-b border-line',
+    list: 'flex flex-wrap gap-5 border-b border-line',
     item: 'shrink-0 -mb-px border-b-2 pb-2 pt-1 text-token-sm transition-colors duration-fast',
     on: 'border-accent text-ink',
     off: 'border-transparent text-ink-faint hover:text-ink-muted',
   },
   // Quiet: sub-sections inside a section, and switches inside a figure.
   quiet: {
-    list: 'flex gap-1 overflow-x-auto pb-1',
+    list: 'flex flex-wrap gap-1 pb-1',
     item: 'shrink-0 rounded-md px-2.5 py-1 text-token-xs transition-colors duration-fast',
     on: 'bg-accent-soft text-accent',
     off: 'text-ink-faint hover:bg-surface hover:text-ink-muted',
@@ -76,14 +76,14 @@ const VARIANTS = {
   // chrome (a colored masthead) need the tab strip to belong to that masthead;
   // the underline variant assumes a paper background and goes invisible there.
   bar: {
-    list: 'flex gap-5 overflow-x-auto bg-accent px-4',
+    list: 'flex flex-wrap gap-5 bg-accent px-4',
     item: 'shrink-0 border-b-2 py-3 text-token-sm transition-colors duration-fast',
     on: 'border-paper text-paper',
     off: 'border-transparent text-paper/60 hover:text-paper',
   },
   // Pill: sub-tabs that need to read as buttons rather than as links.
   pill: {
-    list: 'flex gap-1.5 overflow-x-auto pb-1',
+    list: 'flex flex-wrap gap-1.5 pb-1',
     item: 'shrink-0 rounded-token-md border px-3 py-1.5 text-token-xs transition-colors duration-fast',
     on: 'border-accent bg-accent text-paper',
     off: 'border-line bg-surface-raised text-ink-muted hover:border-accent hover:text-accent',
@@ -98,7 +98,7 @@ const VARIANTS = {
   // right of it under a full-width border — inline-flex sizes the track to its
   // buttons, so it reads as one self-contained control regardless of tab count.
   dashboard: {
-    list: 'inline-flex max-w-full gap-1 overflow-x-auto rounded-token-lg bg-surface p-1 my-2',
+    list: 'inline-flex max-w-full flex-wrap gap-1 rounded-token-lg bg-surface p-1 my-2',
     item: 'shrink-0 rounded-token-md px-3 py-2 text-token-sm font-semibold transition-colors duration-fast',
     on: 'bg-accent text-paper',
     off: 'text-ink-muted hover:bg-surface-raised hover:text-ink',

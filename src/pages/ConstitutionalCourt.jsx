@@ -22,6 +22,8 @@ import TenureView from './_constitutional-court/TenureView';
 import GraphView from './_constitutional-court/GraphView';
 import ResearchProblem from './_constitutional-court/ResearchProblem';
 import HistoryView from './_constitutional-court/HistoryView';
+import { SHELL_PAD_X } from '../components/shellPadding';
+import BackLink from '../components/BackLink';
 import TypologyReportView from './_constitutional-court/TypologyReportView';
 import AboutView, { Case1Analysis } from './_constitutional-court/AboutView';
 import CollationView from './_constitutional-court/CollationView';
@@ -102,7 +104,9 @@ export default function ConstitutionalCourt() {
   return (
     <div className="min-h-screen paper-texture bg-[var(--cc-bg)] font-sans text-[var(--cc-ink)]" style={{ ...CC_VARS, ...(active === 'collation' ? COLLATION_READING_VARS : {}), paddingBottom: 60, overflowX: 'clip' }}>
       <header className="border-b border-[var(--cc-line)] bg-white">
-        <div className="mx-auto max-w-6xl px-4 py-7 sm:px-6">
+        <div className={`mx-auto max-w-6xl py-7 ${SHELL_PAD_X}`}>
+          {/* 這頁自己刻了殼，返回鍵走共用元件＋全站配置（src/backNav.js），不寫死落點。 */}
+          <BackLink className="mb-4 block w-fit text-[13px] text-[var(--cc-ink-mid)] transition hover:text-[var(--cc-accent)]" />
           <div className="mb-3 inline-flex items-center gap-2 font-accent text-[12px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow-header)]">
             <Gavel size={13} />
             Constitutional Court Archive
@@ -141,22 +145,27 @@ export default function ConstitutionalCourt() {
       </header>
 
       <nav className="sticky top-0 z-20 border-b border-[var(--cc-line)] bg-white/94 backdrop-blur">
-        <div className="mx-auto flex max-w-6xl gap-1 overflow-x-auto px-4 py-2 sm:px-6">
-          {tabs.map(({ id, label, icon: Icon }) => (
+        {/*
+          分頁列一律換行，不橫向捲動。吸頂欄橫捲的問題是它把「這一頁有哪些分頁」變成
+          要先滑一段才知道的事——貼在畫面頂端的東西應該一眼看完。這裡也不再畫圖示：
+          十個標籤的圖示合計約 200px，正好是逼出第二行的那段寬度，而標籤文字本來就
+          說明白了，圖示只是裝飾。
+        */}
+        <div className={`mx-auto flex max-w-6xl flex-wrap gap-1 py-2 ${SHELL_PAD_X}`}>
+          {tabs.map(({ id, label }) => (
             <Link
               key={id}
               to={tabPath(id)}
-              className="flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-2 text-[13px] font-bold transition hover:bg-[var(--cc-hover-bg)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--cc-highlight)]"
+              className="rounded-lg px-3 py-2 text-[13px] font-bold transition hover:bg-[var(--cc-hover-bg)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--cc-highlight)]"
               style={{ background: active === id ? 'var(--cc-tab-active-bg)' : undefined, color: active === id ? 'var(--cc-tab-active-text)' : 'var(--cc-tab-inactive-text)' }}
             >
-              <Icon size={14} />
               {label}
             </Link>
           ))}
         </div>
       </nav>
 
-      <main className="mx-auto max-w-6xl px-4 sm:px-6">
+      <main className={`mx-auto max-w-6xl ${SHELL_PAD_X}`}>
         {routeCase ? (
           <section className="py-5">
             <Link to="/constitutionalcourt" className="text-[13px] font-bold text-[var(--cc-accent)] hover:underline">← 回案件索引</Link>

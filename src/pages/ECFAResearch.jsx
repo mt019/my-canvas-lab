@@ -847,12 +847,13 @@ export default function ECFAResearch() {
       </header>
 
       <nav className="sticky top-0 z-20 border-b border-[var(--ecfa-line)] bg-white/94 backdrop-blur">
-        <div className={`mx-auto flex max-w-6xl gap-1 overflow-x-auto py-2 ${SHELL_PAD_X}`}>
+        {/* 吸頂分頁列換行，不橫捲——理由見 ConstitutionalCourt 同一處的註解。 */}
+        <div className={`mx-auto flex max-w-6xl flex-wrap gap-1 py-2 ${SHELL_PAD_X}`}>
           {tabs.map(({ id, label, icon: Icon }) => (
             <button
               key={id}
               onClick={() => setActive(id)}
-              className="flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-2 text-[12px] font-bold transition"
+              className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-[12px] font-bold transition"
               style={{ background: active === id ? 'var(--ecfa-tab-active-bg)' : 'transparent', color: active === id ? 'var(--ecfa-tab-active-text)' : 'var(--ecfa-tab-inactive-text)' }}
             >
               <Icon size={14} />

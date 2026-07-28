@@ -52,7 +52,37 @@ for (const path of walk('src').filter((p) => /\.jsx?$/.test(p) && !p.endsWith('s
   }
 }
 
-/* ── 二、返回鍵 ───────────────────────────────────────────── */
+/* ── 二、吸頂分頁列不橫捲 ──────────────────────────────────── */
+
+// 使用者 2026-07-28 明令：吸頂欄不准左右捲動。理由是它把「這一頁有哪些分頁」
+// 變成要先滑一段才知道的事，而貼在畫面頂端的東西應該一眼看完；標籤放不下時
+// 要換行（flex-wrap），或者承認標籤太多、該重新分。
+//
+// 判定方式：找到帶 `sticky` 的那一行之後，往下看 WINDOW 行之內有沒有
+// `overflow-x-auto`。不能只查「同一行同時有兩者」——實際寫法幾乎都是外層 <nav>
+// 吸頂、內層 <div> 捲動，分屬兩行（憲法法庭那個就是這樣，2026-07-28 第一版規則
+// 因此完全沒偵測到它，是負向測試把這件事翻出來的）。
+//
+// 窗口在遇到吸頂容器的結束標籤時提早關閉，所以吸頂列下方的寬表格不會被算進去。
+const WINDOW = 8;
+for (const path of walk('src').filter((p) => /\.jsx$/.test(p))) {
+  const lines = readFileSync(path, 'utf8').split('\n');
+  for (const [i, line] of lines.entries()) {
+    if (!/\bsticky\b/.test(line)) continue;
+    for (let j = i; j < Math.min(i + WINDOW, lines.length); j += 1) {
+      if (j > i && /<\/(?:nav|header|div)>/.test(lines[j])) break;
+      if (/overflow-x-auto/.test(lines[j])) {
+        failures.push(
+          `${relative('.', path)}:${j + 1}：吸頂欄橫向捲動（吸頂容器在第 ${i + 1} 行）。` +
+          `改成 flex-wrap 換行；真的放不下就是標籤太多，重新分組而不是讓它捲`,
+        );
+        break;
+      }
+    }
+  }
+}
+
+/* ── 三、返回鍵 ───────────────────────────────────────────── */
 
 // 路由頁的枚舉法與 scripts/routes.mjs 相同：src/pages 底下的 .jsx，`_` 開頭的路徑段是
 // 建構元件不是路由。
