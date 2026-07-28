@@ -561,7 +561,7 @@ export default function JirsForeignLaw() {
                       每個 PDF 依檔名歸為四類：<strong className="text-ink">案件</strong>（單一裁判譯文，{摘要.附檔類型?.案件} 件，案件索引的母體）、
                       <strong className="text-ink">前置</strong>（封面例言目次索引，{摘要.附檔類型?.前置} 件）、
                       <strong className="text-ink">主題節</strong>（美國選輯按基本權分節，{摘要.附檔類型?.主題節} 件）、
-                      <strong className="text-ink">全文</strong>（單本法規全文，{摘要.附檔類型?.全文} 件）。分類全覆蓋，資料倉 build 以 assert 擋住任何漏分。
+                      <strong className="text-ink">全文</strong>（單本法規全文，{摘要.附檔類型?.全文} 件）。這四類涵蓋全部附檔，沒有落在分類之外的檔案。
                     </p>
                   </div>
                   <div>
