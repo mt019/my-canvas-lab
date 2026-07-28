@@ -22,8 +22,9 @@ const REPOS = [
   { slug: 'mt019/fjud-userscript', name: '裁判書一鍵查詢' },
 ];
 
-// 發布到 Greasy Fork 之後把 id 填進來，例如 'mt019/law-item-labeler': 123456
-const GREASYFORK = {};
+// 發布到 Greasy Fork 之後把 id 填進來。id 就是腳本網址裡的那串數字。
+// 兩支法律腳本沒有送 GF：會去那裡搜中文法律關鍵字的人趨近於零，而公開就有維護成本。
+const GREASYFORK = { 'mt019/social-auto-expand-userscript': 588964 };
 
 const JSDELIVR = { 'mt019/fjud-userscript': 'gh/mt019/fjud-userscript' };
 
@@ -48,7 +49,8 @@ async function jsdelivr(pkg) {
 
 async function greasyfork(id) {
   try {
-    const res = await fetch(`https://greasyfork.org/scripts/${id}.json`);
+    // 這個主機名是必要的：greasyfork.org/scripts/<id>.json 會 308 轉到 api.greasyfork.org。
+    const res = await fetch(`https://api.greasyfork.org/en/scripts/${id}.json`);
     if (!res.ok) return { __error: `HTTP ${res.status}` };
     return await res.json();
   } catch (err) {
