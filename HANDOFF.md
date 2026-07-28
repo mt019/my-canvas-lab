@@ -35,6 +35,15 @@ copy. When writing digest/topic prose, narrate what a *reader* learns
 在前端的唯一入口，三頁都從它讀**）。資料倉 `../brief-data`，`npm run sync` 投影一個檔
 `src/data/brief-events.json`（14 MB → 599 KB）。契約見資料倉 `docs/data-contract.md`，**動手前讀它**。
 
+**2026-07-28：法律學研究所的活動補齊了，前端不必改。** 該所的 Google 行事曆只放週常的個人
+學術研討會，全所性研討會、工作坊、大師講座只公告在 `iias.sinica.edu.tw`——當天行事曆上的未來
+場次 1 場、官網 6 場。資料倉新增 `npm run fetch:iias`，`build-events.mjs` 的 `mergeIias()` 對得上
+的合併、對不上的新增，站上該所未來場次 1 → 6。**前端多了三個可用欄位**（`registerContact`
+怎麼報名的原話、`announcementTitle` 公告原標題、`agendaUrl` 議程檔），目前都還沒有人畫。
+另外 `admission` 現在多一種來源會給的答案：官網只留聯絡人、沒講要不要報名的場次，
+`registerByKnown` 是 false、`admission` 是 null，前端照原本「沒有查到」那條路走即可——
+**不要把它畫成自由入座**。細節見資料倉 `engineering/LOG.md` 2026-07-28 那條。
+
 **區塊從 `sources[]` 的 `collection` ＋ `kind` 長出來**（`data.js` 的 `sectionsOf`）：一個 kind 一區，
 資料倉加一個新類的來源＝站上多一區，前端一個字都不用改。**這是第九輪修掉的債**——上一版六區是
 手寫的，於是資料端從 5 個來源長到 27 個那天，站上還是六區，多出來的 22 個來源全擠進「讀的東西」
