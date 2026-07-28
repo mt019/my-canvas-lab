@@ -135,3 +135,6 @@ U+C815   # 정
 U+CC45   # 책
 U+C804   # 전
 U+B9DD   # 망
+
+# 陳寅恪保真區塊中的 EPUB 行內圖片位置。前端以同步的原圖呈現，不交給字型繪製。
+U+FFFC  # OBJECT REPLACEMENT CHARACTER
