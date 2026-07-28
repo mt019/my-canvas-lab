@@ -30,7 +30,8 @@
     "validate:math": "node scripts/validate-math-notation.mjs",
     "check:brief": "node scripts/check-brief-pages.mjs",
     "validate:tabroutes": "node scripts/validate-tab-routes.mjs",
-    "validate:userscripts": "node scripts/validate-userscripts.mjs"
+    "validate:userscripts": "node scripts/validate-userscripts.mjs",
+    "report:userscripts": "node scripts/userscript-reach.mjs"
   },
   "dependencies": {
     "@dagrejs/dagre": "^3.0.0",
