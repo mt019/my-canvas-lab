@@ -31,9 +31,20 @@ copy. When writing digest/topic prose, narrate what a *reader* learns
 `vercel deploy --prebuilt --prod` 把成品送上去。`vercel.json` 的 `git.deploymentEnabled.main`
 設成 `false`，Vercel 自己不再建；**兩邊同時開會互相覆蓋，別把它打開**。
 
-需要三個 repo secret：`VERCEL_TOKEN`（vercel.com/account/tokens 建）、`VERCEL_ORG_ID`、
-`VERCEL_PROJECT_ID`（後兩者在專案根目錄跑 `npx vercel link` 後看 `.vercel/project.json`，
-或在 Vercel 專案設定頁抄）。設定：`gh secret set VERCEL_TOKEN` 等三行。
+**三個 repo secret 已於 2026-07-28 設好，正常情況不必再碰**：`VERCEL_TOKEN`、`VERCEL_ORG_ID`
+（`team_SwNJ9WTE8C5JqKjgMSJlT2u8`）、`VERCEL_PROJECT_ID`（`prj_yeHjPDaypcs7Kl9lSbjsxbtDdTGb`，
+後兩個不是機密）。要重設時的三件事：
+
+- token 在 vercel.com/account/tokens 建，scope 選 `mt019's projects`。它的權限是整個帳號，
+  Vercel 的 access token 沒有專案級 scope。存法是 `gh secret set VERCEL_TOKEN` 然後**貼在
+  `Paste your secret:` 提示後面**——寫在命令列上會落進 `~/.zsh_history`（zsh 在終端機關閉時
+  才寫入，補救是關視窗前先 `unset HISTFILE`）。
+- 兩個編號從 `npx vercel link` 產生的檔裡抄。**CLI 58 對 git 已連結的專案寫的是
+  `.vercel/repo.json`，不是舊文件說的 `.vercel/project.json`**，欄位在 `projects[0].id`
+  與 `projects[0].orgId`。CI 上沒有這個檔，靠那兩個環境變數認專案。
+- **`vercel link` 會擅自往 `.gitignore` 加一行 `.env*`**。那會連 `.env.production` 一起蓋掉，
+  而那個檔是公開值、必須進版控（`VITE_SITE_URL` 是 canonical 與 sitemap 的單一來源）。
+  本倉已改成只擋 `.env.local` / `.env*.local`，下次 link 完再檢查一次。
 
 **為什麼要搬**：在此之前，線上 473 個路由送的全是空殼，`<div id="root"></div>` 裡零字元，
 四個路由抽驗一致（`/`、`/taxlitigation`、`/chenyinke`、`/iiaspublications`）。成因是 Vercel
