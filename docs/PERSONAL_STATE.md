@@ -17,14 +17,27 @@ GitHub 頭像、使用者名稱與完整 Email 不得渲染到 Canvas。GitHub �
 1. 在 Supabase 建立 Tokyo (`ap-northeast-1`) 專案。
 2. 用 Supabase CLI 套用 `supabase/migrations/001_personal_states.sql`，或先在 SQL Editor 執行同一檔案。
 3. 在 GitHub Settings > Developer settings > OAuth Apps 建立 OAuth App。
-4. Homepage URL 填 `https://my-canvas-lab.vercel.app`；Authorization callback URL 填 Supabase GitHub provider 頁顯示的 `https://<project-ref>.supabase.co/auth/v1/callback`。GitHub OAuth App 只接受一個 callback URL，因此本機測試也沿用雲端 Supabase callback。
+4. Homepage URL 填 `https://phenomcanvas.com`；Authorization callback URL 填 Supabase GitHub provider 頁顯示的 `https://<project-ref>.supabase.co/auth/v1/callback`。GitHub OAuth App 只接受一個 callback URL，因此本機測試也沿用雲端 Supabase callback。
 5. 在 Supabase Authentication > Providers 啟用 GitHub，填入 client ID 與 client secret。
-6. 在 Authentication > URL Configuration 加入本機與正式站的 redirect URL：
-   - `http://localhost:5173/**`
-   - `https://my-canvas-lab.vercel.app/**`
-7. 在本機 `.env.local` 與 Vercel Environment Variables 設定：
+6. 在 Authentication > URL Configuration：
+   - **Site URL** 填 `https://phenomcanvas.com`（只吃一個值、不能用萬用字元；沒指定落點或
+     落點不在允許清單裡時就用它，信件模板也引用它）。
+   - **Redirect URLs** 每條都要帶 `/**`，否則只有首頁算合法落點，從 `/brief` 登入會被
+     丟回 Site URL 而不是原頁（`signInWithOAuth` 傳的是 `window.location.href`）：
+     `https://phenomcanvas.com/**`、`https://www.phenomcanvas.com/**`、
+     `https://my-canvas-lab.vercel.app/**`（舊網址仍通，留著）、`http://localhost:5173/**`。
+7. 兩個瀏覽器端變數要三個地方都有：本機 `.env.local`、Vercel Environment Variables、
+   以及 **GitHub repo secrets**（建置跑在 Actions，見下一段）：
    - `VITE_SUPABASE_URL`
    - `VITE_SUPABASE_PUBLISHABLE_KEY`
+
+   **為什麼 GitHub 那份不能省**：Vercel 專案裡這兩個變數被標成 sensitive，`vercel pull`
+   只還回字面上的 `"[REDACTED]"`（sensitive 就是誰都讀不回來，帶 `decrypt=true` 的 API
+   也一樣）。建置還在 Vercel 自己機器上跑時真值是當場注入的；2026-07-28 建置搬到 GitHub
+   Actions 之後，烤進 bundle 的就變成 `"[REDACTED]"`——`configured` 判定為真、supabase-js
+   拿它當網址，線上每頁 console 丟 `Invalid supabaseUrl`，登入按鈕按了沒反應。現在
+   `.github/workflows/deploy.yml` 會用 GitHub secrets 覆寫那兩行，並在建置後掃產物，
+   `[REDACTED]` 一出現就讓建置失敗。
 
 只能使用 publishable key。`service_role` 或 secret key 不得使用 `VITE_` 前綴、不得送進瀏覽器、不得 commit。
 
