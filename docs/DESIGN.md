@@ -62,7 +62,34 @@
 - **內容區吸頂分頁／導覽列**：`sticky top-0 z-20 border-b border-line-soft bg-paper`（實色、無毛玻璃）。`DashboardLayout` 分頁列、資料頁的 bespoke 左欄 nav 都用這組。
 - **全站頁首 `SiteHeader`**：`sticky top-0 z-40 border-b border-line-soft bg-paper/95 backdrop-blur-sm`——比內容 chrome 高一階（要蓋過吸頂分頁），且用半透明＋毛玻璃因為它常疊在正文捲動之上。
 - **z-index 階梯**（新吸頂／浮層照這個挑，別自己想數字）：內容區 chrome＝`z-20`；全站頁首＝`z-40`；全螢幕遮罩／PDF 檢視器等 modal＝`z-50`。
+- **吸頂列的高度不是常數，要量**：標籤多的分頁列在中等寬度會換行（憲法法庭十個標籤在 900px 以下是兩行，49px → 90px）。底下要吸在它下緣的東西（凍結的表頭、圖表年份軸）**不准寫死 `top-[49px]`**——換行時它們有一半藏在分頁列後面。作法：頁面根容器用 `ResizeObserver` 量出分頁列高度、寫成頁面級變數（`ConstitutionalCourt.jsx` 的 `--cc-nav-h`），消費端寫 `style={{ top: 'var(--cc-nav-h, 49px)' }}`。
+- **吸頂列一律實色**：底下走過的是圖表與密集表格，半透明＋毛玻璃會把它們糊成一條髒斑（愈是兩行的分頁列愈明顯）。毛玻璃只留給疊在**正文**上的 `SiteHeader`。
 - **左欄索引頁在窄屏把 nav 吸頂**：rail 在桌面是側欄、mobile 要讓 nav 貼頂時，用 `aside` 上 `contents lg:block`（mobile 讓 rail 的子元素直接參與外層高容器的排版），nav 才能在整頁捲動中吸頂；`<nav>` 自身 `sticky top-0 z-20 …bg-paper` 並在 `lg:` 取消（`lg:static lg:bg-transparent lg:border-b-0`）。此法目前只 `JirsForeignLaw` 一頁用；出現第二個消費者再考慮抽 shell。
+
+### 長圖與長表：該吸哪一邊就吸哪一邊
+
+一張比一個畫面高（或比容器寬）的圖表／表格，四邊各有一塊「不該跟著捲走」的東西：年份軸與表頭吸頂、
+姓名／識別欄吸左、量值欄吸右、總覽帶吸底。判準很簡單：**捲到一半時還需要它才讀得懂這一列／這一欄，
+它就該吸住**。`TenureView`（124 列的任期甘特圖）是目前的參考實作。
+
+實作有一個必須先知道的限制，不知道就會寫出「看起來吸了、其實沒吸」的東西：**吸附只在最近的捲動容器裡有效，
+而 `overflow-x: auto` 會讓 `overflow-y` 一起變成捲動容器**（規範如此：一軸非 visible，另一軸的 visible 就算成 auto）。
+所以裝在 `overflow-x-auto` 盒子裡的東西，`sticky top` 是吸在那個盒子上——盒子沒有垂直捲動，等於什麼都沒發生，
+整塊跟著頁面走掉。兩條路：
+
+1. **橫向與縱向拆給不同祖先**（`TenureView` 走這條，保留整張圖攤開、頁面捲動的讀法）：姓名欄與量值欄放進
+   `overflow-x-auto` 裡吸左／吸右；年份軸與底部總覽帶放在盒子**外面**吸頂／吸底，再用 `scrollLeft` 把它們
+   平移到跟圖身同一個橫向位置（`onScroll` 裡 `translateX(-scrollLeft)`）。軸帶兩端各壓一塊不隨橫捲移動的
+   遮片，寬度等於左右兩欄，年份滑到那裡才收得乾淨。
+2. **整塊做成有 `max-height` 的內捲盒**（`JusticesView` 那張 124 列的表走這條，因為它任何寬度都要橫捲，
+   表頭沒有第二條路）：四邊都吸在盒子上，一次解決，代價是巢狀捲動。**盒子高度必須留餘裕**：頁面往下捲時
+   盒子跟著上移，捲到底時它的上緣停在「視窗高 − 盒高 − 盒子下方的內容高」，這個值小於吸頂列高度時，
+   凍結的表頭就整條躲到吸頂列後面（症狀是表頭看起來被切掉一半，像是壞了）。所以 `max-height` 要寫成
+   `calc(100vh - var(--lab-sticky-top) - <盒子下方內容的高度>)`，外面再包一層 `sticky` 當保險——註腳在
+   窄螢幕會長高，餘裕不夠時由它接住。驗收就量一次：捲到底，凍結表頭的 `top` 要 ≥ 吸頂列的 `bottom`。
+
+SVG 圖走第一條就必須拆成三個 `<svg>`（左欄／圖身／右欄），座標分別歸零；滑過整列的反白與淡出改成三份各畫一次，
+共用同一個 hover state。**表格**用 `position: sticky` 的 `th`／第一欄 `td`（要給不透明底色，否則捲過去的數字會透出來）。
 
 ### accent 字體：紋理在字重，不在字級
 
@@ -311,6 +338,20 @@ Notion 的 tag／badge 色系從不出醜，原因是四條紀律，本站色彩
 新內容帶進新字時，build 曾經會紅掉並要人手動去跑 `scripts/rebuild-font-subsets.mjs`。那是白繞一圈：閘門已經知道缺哪些字，重建腳本也不需要任何人做決定。現在 `validate:fonts` 偵測到缺字就**自己重建一次再驗**，只有在來源字型本身畫不出那個字時才停下來叫人（換字，或接受系統 fallback 並把碼位寫進 `scripts/font-coverage-exceptions.txt`）。
 
 重建約 20 秒，但只在真的缺字時才跑，平常 build 不付這個成本；而且它是冪等的（同樣的字進去，byte-identical 的 .woff2 出來），不會每次 build 都製造 git 雜訊。
+
+### 全形分隔線 `｜` 在匯文明朝體裡不是全形（2026-07-28 實測）
+
+`｜`（U+FF5C）看起來緊貼前後文字，成因不是缺空格、也不是掉進 fallback——**匯文明朝體把它畫成 281/1000 em 寬，跟半形的 `|` 同一個字形**。同一套字體裡 `、`（U+3001）與 `│`（U+2502）都是 1000，對照就看得出來。量法：
+
+```bash
+node --input-type=module -e "import * as fontkit from 'fontkit';
+const f=fontkit.openSync('public/fonts/HuiwenMincho-subset.woff2');
+const g=f.glyphForCodePoint(0xFF5C); console.log(Math.round(g.advanceWidth/f.unitsPerEm*1000));"
+```
+
+要在頁面上分隔就兩邊各補一個半形空格（333＋281＋333≈一個全形），並包一層 `whitespace-nowrap`，免得換行時 `｜` 被丟到行首。**不要用 nbsp**：它在匯文裡是 1000 寬，補下去太開。範例在 `src/pages/JirsForeignLaw.jsx` 的系統清單那一段。
+
+`document.title`、原生 `title=` 提示框、瀏覽器分頁與搜尋結果都不吃網站字型，那些地方的 `｜` 不必動。動之前先確認那一處到底有沒有經過匯文——本次八個命中裡只有一個是真的畫在頁面上的。
 
 ## 資料頁的形狀（2026-07-17 使用者裁定，全站通則）
 

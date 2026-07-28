@@ -1,19 +1,24 @@
 # 自訂域名遷移
 
-目標域名：`phenomcanvas.com`（2026-07-28 查為可註冊，尚未購買）。
-候選備案：`ferneslicht.com`、`yixutang.com`（同日查為可註冊）。
+**已完成。** `phenomcanvas.com` 於 2026-07-28 23:35:17 在 Cloudflare Registrar 註冊（買到
+2031-07-28，auto-renew 開著），同日接上 Vercel 並完成遷移。本檔留作紀錄與下次換域名的步驟書。
+
+當時一併查過、仍可註冊的備案：`ferneslicht.com`、`yixutang.com`。
 
 ## 為什麼要做
 
 現行網址 `my-canvas-lab.vercel.app` 綁在平台上。換平台就等於換網址，所有已流出的連結與引用一起斷。自有域名讓主機可以換、網址不用換。
 
-## 搬家要改的地方（2026-07-28 實查，只有這三處寫死了舊網址）
+## 搬家要改的地方（2026-07-28 實查）
 
 | 位置 | 內容 |
 | --- | --- |
 | `.env.production` | `VITE_SITE_URL=` — canonical、OG、JSON-LD、sitemap 全部從這裡推導 |
 | `public/robots.txt`（Sitemap 那一行） | `Sitemap: https://.../sitemap.xml` |
 | `scripts/generate-og-image.mjs`（頁腳字樣） | OG 圖片底部印的網址 |
+
+**還有兩處是第一次掃殘留時漏掉的**：`index.html` 的 `og:image` 與 `twitter:image` 寫的是絕對
+網址。grep 舊網址的時候要把 `index.html` 一起掃進去，只掃 `src scripts public` 會漏。
 
 其餘一律從 `scripts/site-config.mjs` 這個單一來源取得，不必動。
 
@@ -30,7 +35,7 @@
 6. GSC 與 Bing Webmaster 各加新 property，提交 sitemap
 7. 把 IndexNow 接進 `deploy.yml`（網址定了才寫，免得寫兩次）
 
-## 遷移前的基準值（2026-07-28 實測，搬完後用來比對）
+## 遷移前後的字數對照（2026-07-28 實測，已驗過）
 
 去掉 script/style 與所有標籤之後的可讀文字量：
 
@@ -43,7 +48,11 @@
 
 `sitemap.xml` 共 478 條 `<url>`。
 
-搬完後對同樣四條路徑重跑一次，字數掉下來就是預先渲染又壞了。這個故障會回傳 HTTP 200，狀態碼看不出來——2026-07-28 之前線上每一份都是空殼，就是這樣過關的（見 `deploy.yml` 的註解與 commit d0bfed5）。
+搬完實測：`/` 331、`/all` 1527、`/constitutionalcourt` 42966、`/chenyinke` 4011，sitemap 480 條，
+`canonical` 全部是 `https://phenomcanvas.com/…`。首頁與 `/all` 少的十幾二十字＝同時被拿掉的舊標題
+與舊描述，數字對得上；`/chenyinke` 多的 818 字與 sitemap 多的 2 條來自另一條線的 `436063a`。
+
+下次換域名，對同樣四條路徑重跑一次，字數掉下來就是預先渲染又壞了。這個故障會回傳 HTTP 200，狀態碼看不出來——2026-07-28 之前線上每一份都是空殼，就是這樣過關的（見 `deploy.yml` 的註解與 commit d0bfed5）。
 
 驗收指令：
 
@@ -67,9 +76,19 @@ GitHub Pages 的規則：一個 repo 只能綁一個域名，一個域名也只�
 
 **不必全搬。** 個人域名是挑選過的集合。研究成果（憲法法庭、中研院法研所、陳寅恪、朱家驊、JIRS 譯語表、統計、Austrian-UmgrStG-zh、My_Academic）值得收進來；課程筆記、語言班、修課痕跡留在原地，舊連結繼續有效。
 
-## 尚未查證的事（動手時現查，不要從這份文件照抄）
+## 這次查證的結果
 
-- Vercel apex 現在給的是哪一筆 A 記錄，以及註冊商支不支援 ALIAS／ANAME
-- `.vercel.app` 舊網址設 primary 後的實際轉址行為（要 curl 驗）
-- Vercel Hobby 方案的單一專案域名數量上限，以及它禁止商業用途的條款（本站非商業，但紫砂品牌若復活要另外處理）
-- GitHub Pages domain verification 的現行操作路徑
+- **Vercel 給的是 CNAME，apex 也是**：`@` 與 `www` 都指向 `e22f8093d6f6ad5e.vercel-dns-017.com`。
+  apex 能用 CNAME 是靠 Cloudflare 的 CNAME flattening；DNS 規範本身不准。換 DNS 供應商前要確認
+  新的那家也支援，否則 apex 得改回 A 記錄。Vercel 說舊的 `cname.vercel-dns.com` 與 `76.76.21.21`
+  仍然有效，但它建議用上面那個專屬名稱。
+- **兩筆記錄的 Proxy status 都要設成 DNS only**，Vercel 自己的說明也寫 `Disabled`。
+- 價格：Cloudflare 收成本價 10.46 美金（Verisign 批發 10.26 ＋ ICANN 0.20），五年 52.30。
+  Verisign 已宣布 2026-11-01 把批發價調到 10.97，依合約每年還可以再漲最多 7%，到 2030。
+
+## 還沒查證的（要用到再查）
+
+- `.vercel.app` 舊網址設 primary 之後的實際轉址行為（沒 curl 驗過就別宣稱它會 301）
+- Vercel Hobby 方案的單一專案域名數量上限，以及它禁止商業用途的條款（本站非商業；紫砂品牌若
+  復活要賣東西就不能放在這個專案上）
+- GitHub Pages 綁子域名與 domain verification 的現行操作路徑（那二十三個站要搬時才需要）

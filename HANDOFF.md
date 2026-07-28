@@ -25,6 +25,25 @@ copy. When writing digest/topic prose, narrate what a *reader* learns
 (「三份文件已完成研讀」), never how the material was obtained
 (「換 headers 後抓取解析成功」).
 
+## 自有域名：`phenomcanvas.com`（2026-07-28 23:35 註冊，已上線）
+
+站的正式網址是 `https://phenomcanvas.com`，`www` 與舊的 `my-canvas-lab.vercel.app` 都轉過來。
+域名在 **Cloudflare Registrar**（買到 2031-07-28，auto-renew 開著），DNS 也在 Cloudflare，
+兩筆 CNAME（`@` 與 `www`）都指向 Vercel 給的 `e22f8093d6f6ad5e.vercel-dns-017.com`。
+
+- **兩筆記錄的 Proxy status 必須是 DNS only（灰色雲）。** 開橘色雲的話 Cloudflare 擋在 Vercel
+  前面，Vercel 簽不到憑證（畫面永遠停在 Generating SSL Certificate，不報錯），HTTPS 轉址還會
+  兩邊互踢。Vercel 自己的 DNS 說明也寫 `Proxy: Disabled`。
+- **apex 用 CNAME 是靠 Cloudflare 的 CNAME flattening**（DNS 規範不准 apex 有 CNAME，
+  Cloudflare 對外會攤平成 A 記錄）。換 DNS 供應商時要確認新的那家也支援，否則 apex 得改 A。
+- 換域名時 repo 只有三處要改：`.env.production` 的 `VITE_SITE_URL`（canonical／OG／JSON-LD／
+  sitemap 全部由它推導）、`public/robots.txt` 的 `Sitemap:` 行、`scripts/generate-og-image.mjs`
+  的頁腳字樣。**`index.html` 裡的 `og:image` 與 `twitter:image` 是絕對網址，第一次掃殘留時漏掉，
+  grep 舊網址時記得把 `index.html` 一起掃。** 完整步驟與遷移前後的字數對照在
+  `docs/domain-migration.md`。
+- 部署順序不能反：**先接通域名、確認 `https://phenomcanvas.com` 真的開得起來，再改那三處推上去**。
+  反過來會讓全站 canonical 指向一個還不存在的主機。
+
 ## 部署：建置在 GitHub Actions，Vercel 只收成品（2026-07-28 改）
 
 `.github/workflows/deploy.yml` 在推上 `main` 時跑完整建置（含 474 個路由的預先渲染），再用

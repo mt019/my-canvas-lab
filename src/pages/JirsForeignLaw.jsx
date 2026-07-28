@@ -520,7 +520,9 @@ export default function JirsForeignLaw() {
                       {(來源.系統清單 || []).map((s) => (
                         <li key={s.名稱} className="border-l-2 border-line pl-3 text-token-sm leading-relaxed text-ink-muted">
                           <a href={s.入口} target="_blank" rel="noreferrer" className="font-semibold text-ink underline decoration-line hover:text-accent">{s.名稱} <ExternalLink size={11} className="inline align-baseline" /></a>
-                          <span className="mt-0.5 block text-token-xs text-ink-faint">{s.涵蓋}｜{s.備註}</span>
+                          {/* 匯文明朝體把全形直線 U+FF5C 畫成 281/1000 寬（同半形），兩邊各補一個
+                              半形空格（333）才湊得出一個全形的間距。nbsp 在這套字體裡是 1000，太寬。 */}
+                          <span className="mt-0.5 block text-token-xs text-ink-faint">{s.涵蓋}<span className="whitespace-nowrap"> ｜ </span>{s.備註}</span>
                         </li>
                       ))}
                     </ul>
