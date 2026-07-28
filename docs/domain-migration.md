@@ -68,6 +68,25 @@ t=re.sub(r'(?s)<[^>]+>',' ',b); print(len(re.sub(r'\s+',' ',t).strip()), '字')
 done
 ```
 
+## 三支使用者腳本（2026-07-29 搬完）
+
+安裝檔改到 `https://phenomcanvas.com/scripts/<檔名>.user.js`，落地頁 `/userscripts` 加三個內頁。
+腳本原本都沒宣告 `@updateURL`／`@downloadURL`，Tampermonkey 因此拿使用者當初的安裝網址查更新——
+那個網址寫在別人的機器裡，改帳號名或 repo 名就靜靜失效。
+
+| 腳本 | 版號 | 舊位置（留跳板版） |
+|---|---|---|
+| `law-item-labeler.user.js` | 1.10.0 | GitHub Pages 的 `law-item-label.user.js`（少一個 `er`，`build.js` 仍然照樣輸出） |
+| `social-auto-expand.user.js` | 2.1.0 | `releases/latest/download/` 的同名資產 |
+| `fjud.user.js` | 1.2.0 | jsDelivr `@latest/dist/fjud.user.js` 與 GitHub Raw |
+
+跳板版是必要的：已安裝的副本仍指著舊網址、不會自己改，要先讓它們拿到帶 `@updateURL` 的那一版，
+才會轉過來。舊位置之後就停在那一版。
+
+搬運不靠人複製——三個來源倉各有一支 `sync-to-canvas.mjs`（canvas 路徑當參數傳），送檔案並回寫
+`src/data/userscripts.json` 的版號、`@match`、`@grant`；canvas 只寫落地頁文案。
+`npm run validate:userscripts` 逐欄比對，接在 `verify:policy` 裡。
+
 ## GitHub Pages 那 23 個站
 
 `mt019.github.io/<repo>/` 底下有 23 個自己的站（2026-07-28 清點）。它們跟 Vercel 是兩套主機，各綁各的。

@@ -107,11 +107,29 @@ const NO_BACK_PAGES = new Map([
 // 殼會自己畫返回鍵（都經過 src/backNav.js）；頁面也可以自己放 <BackLink />。
 const PROVIDES_BACK = /<(?:PageShell|DashboardLayout|SiteHeader|BackLink)\b/;
 
+// 幾條路由共用同一份版型時（/userscripts/<三支腳本> 都是 _ScriptPage 傳一個 id），路由檔
+// 只剩一行 `return <ScriptPage id="…" />`，殼在被匯入的那個建構元件裡。**只跟一層、只跟
+// `_` 開頭的本地檔**：那是這個倉庫裡「建構元件」的標記，跟到別的路由頁上就會讓一個真的
+// 漏了返回鍵的頁靠鄰居過關。
+function providesBack(path, source, followed = false) {
+  if (PROVIDES_BACK.test(source)) return true;
+  if (followed) return false;
+  for (const m of source.matchAll(/^import\s+\w+\s+from\s+'(\.[^']+)'/gm)) {
+    const spec = m[1];
+    if (!/(^|\/)_/.test(spec.split('/').pop())) continue;
+    const target = join(path, '..', spec.endsWith('.jsx') ? spec : `${spec}.jsx`);
+    let inner;
+    try { inner = readFileSync(target, 'utf8'); } catch { continue; }
+    if (providesBack(target, inner, true)) return true;
+  }
+  return false;
+}
+
 for (const path of routePages) {
   const name = path.split('/').pop().replace(/\.jsx$/, '');
   if (NO_BACK_PAGES.has(name)) continue;
   const source = readFileSync(path, 'utf8');
-  if (!PROVIDES_BACK.test(source)) {
+  if (!providesBack(path, source)) {
     failures.push(
       `${relative('.', path)}：沒有回頭路。用 PageShell／DashboardLayout／SiteHeader 其中一個殼，`
       + `或自己刻的版型就放一個 <BackLink />（src/components/BackLink.jsx）`,

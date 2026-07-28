@@ -1,6 +1,6 @@
 import React, { Suspense, lazy, useMemo } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useParams, Navigate } from 'react-router-dom';
-import { ArrowRight, AudioLines, BookMarked, CalendarDays, Droplets, FileSearch, Film, Gavel, Globe2, GraduationCap, Landmark, Languages, Mic, Music, Music2, NotebookPen, Palette, Piano, Receipt, Scale, ScrollText, ShieldAlert, Sigma, Wind } from 'lucide-react';
+import { ArrowRight, AudioLines, BookMarked, CalendarDays, ChevronsDown, Droplets, FileSearch, Film, Gavel, Globe2, GraduationCap, Landmark, Languages, Mic, Music, Music2, NotebookPen, Palette, Piano, Puzzle, Receipt, Scale, ScrollText, ShieldAlert, Sigma, Wind } from 'lucide-react';
 import SeoHead from './components/SeoHead';
 import ScrollToTop from './components/ScrollToTop';
 import BackToTop from './components/BackToTop';
@@ -12,6 +12,7 @@ import { ZJH_BASE_SEO, ZJH_TABS_SEO } from './pages/_zhu-jiahua/seo';
 import { GLCT_KEYWORDS, GLCT_TITLE, GLCT_DESC, glctSchema } from './pages/_law-classics/seo';
 import { VT_KEYWORDS, VT_TITLE, VT_DESC, vtSchema } from './pages/_vocal-training/seo';
 import { NOTES_KEYWORDS, NOTES_TITLE, NOTES_DESC, notesSchema } from './pages/_notes/seo';
+import { USERSCRIPTS_KEYWORDS, USERSCRIPTS_TITLE, USERSCRIPTS_DESC, userscriptsSchema, scriptSeo, scriptSchema } from './pages/_userscripts/seo';
 
 // A single justice's / single case's indexable page. Lazy-loaded so the
 // Constitutional Court archive JSON they pull in never lands in the main bundle.
@@ -195,6 +196,66 @@ const PAGE_META = { // token-exempt: per-page identity chip colors (data, not st
     accent: '#dde0f0',
     accentText: '#6a6fa0',
     group: 'tool',
+  },
+  // 使用者腳本區：總覽上首頁，三支各自的落地頁只從總覽進得去（listed: false）。
+  // 安裝檔本身是 public/scripts/ 的靜態檔，不是路由——validate:userscripts 檢查兩邊一致。
+  Userscripts: {
+    name: '使用者腳本',
+    desc: '法規項次、社群貼文展開、裁判書一鍵查詢，三支自己在用的瀏覽器腳本',
+    Icon: Puzzle,
+    accent: '#dde0f0',
+    accentText: '#6a6fa0',
+    group: 'tool',
+    title: USERSCRIPTS_TITLE,
+    seoDesc: USERSCRIPTS_DESC,
+    keywords: USERSCRIPTS_KEYWORDS,
+    type: 'CollectionPage',
+    buildSchema: userscriptsSchema,
+  },
+  LawItemLabeler: {
+    name: '法規條文項次顯示器',
+    desc: '全國法規資料庫的「第 X 項」改成可以複製的文字',
+    Icon: ScrollText,
+    accent: '#dde0f0',
+    accentText: '#6a6fa0',
+    group: 'tool',
+    listed: false,
+    title: scriptSeo('law-item-labeler').title,
+    seoDesc: scriptSeo('law-item-labeler').description,
+    keywords: scriptSeo('law-item-labeler').keywords,
+    type: 'SoftwareApplication',
+    buildSchema: scriptSchema('law-item-labeler'),
+    parent: { name: '使用者腳本', path: '/userscripts' },
+  },
+  SocialAutoExpand: {
+    name: '社群貼文自動展開',
+    desc: 'LinkedIn 與 Facebook 動態的「查看更多」自動按掉',
+    Icon: ChevronsDown,
+    accent: '#dde0f0',
+    accentText: '#6a6fa0',
+    group: 'tool',
+    listed: false,
+    title: scriptSeo('social-auto-expand').title,
+    seoDesc: scriptSeo('social-auto-expand').description,
+    keywords: scriptSeo('social-auto-expand').keywords,
+    type: 'SoftwareApplication',
+    buildSchema: scriptSchema('social-auto-expand'),
+    parent: { name: '使用者腳本', path: '/userscripts' },
+  },
+  Fjud: {
+    name: '裁判書一鍵查詢',
+    desc: '選一段文字按快捷鍵，直接開司法院裁判書系統並送出',
+    Icon: Gavel,
+    accent: '#dde0f0',
+    accentText: '#6a6fa0',
+    group: 'tool',
+    listed: false,
+    title: scriptSeo('fjud').title,
+    seoDesc: scriptSeo('fjud').description,
+    keywords: scriptSeo('fjud').keywords,
+    type: 'SoftwareApplication',
+    buildSchema: scriptSchema('fjud'),
+    parent: { name: '使用者腳本', path: '/userscripts' },
   },
   AirPollutionFee: {
     name: '空氣污染防制費',

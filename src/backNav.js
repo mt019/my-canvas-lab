@@ -45,6 +45,7 @@ const SITE_HOMES = [
   ['/statistics/', { href: '/statisticslab', label: '統計學實驗室' }],
   ['/brief/', { href: '/brief', label: '簡報' }],
   ['/zhujiahua/', { href: '/zhujiahua', label: '朱家驊研究室' }],
+  ['/userscripts/', { href: '/userscripts', label: '使用者腳本' }],
 ];
 
 /*

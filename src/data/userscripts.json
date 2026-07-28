@@ -1,0 +1,186 @@
+{
+  "site": {
+    "title": "使用者腳本",
+    "eyebrow": "Userscripts",
+    "intro": "三支自己寫來自己用的瀏覽器腳本，裝在 Tampermonkey 這類腳本管理器裡執行。安裝檔都放在這個網域上，腳本自己也宣告了同一個網址當更新來源，所以裝好之後不管當初從哪裡裝的，都會回到這裡查新版。",
+    "note": "原始碼在 GitHub，各頁附連結。三支都是 MIT 授權。"
+  },
+  "scripts": [
+    {
+      "id": "law-item-labeler",
+      "name": "法規條文項次顯示器",
+      "latin": "Law Item Labeler",
+      "version": "1.10.0",
+      "file": "law-item-labeler.user.js",
+      "summary": "在全國法規資料庫的條文裡，把「第 X 項」直接寫成可以複製的文字。",
+      "targetLabel": "全國法規資料庫",
+      "repo": "https://github.com/mt019/law-item-labeler",
+      "body": [
+        "全國法規資料庫的條文有項次，但那個號碼是 CSS 的 ::before 畫上去的——螢幕上看得到，選起來複製卻帶不走，貼到別的地方只剩沒有編號的條文。這支腳本改用真正的 span 元素把「第 X 項」插進條文原本的位置，複製得到、搜尋得到，原始的排版與對齊不動。",
+        "插進去之後原本那組 ::before 號碼會被隱藏，避免同一項出現兩個編號。右上角有一顆開關可以隨時關掉標示，回到網站原本的樣子。項次文字走等寬字體，長條文一路往下讀時比較容易對到位。"
+      ],
+      "matches": [
+        {
+          "pattern": "https://law.moj.gov.tw/LawClass/LawAll.aspx*",
+          "why": "法規全文頁——條文一條接一條的那種頁面"
+        },
+        {
+          "pattern": "https://law.moj.gov.tw/LawClass/LawSingle.aspx*",
+          "why": "單條條文頁"
+        }
+      ],
+      "grants": [],
+      "grantNote": "沒有宣告任何 GM_* 權限，只在上面兩個網址的頁面裡改動畫面，不讀也不送出任何資料。",
+      "changelog": [
+        {
+          "version": "1.10.0",
+          "date": "2026-07-29",
+          "notes": [
+            "安裝檔搬到這個網域，並宣告 @updateURL 與 @downloadURL，讓已安裝的副本查一個固定的地址。"
+          ]
+        },
+        {
+          "version": "1.9.2",
+          "date": "2025-06",
+          "notes": [
+            "模組化重寫：插入邏輯、切換按鈕、進入點各自成檔。"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "social-auto-expand",
+      "name": "社群貼文自動展開",
+      "latin": "Social Auto Expand",
+      "version": "2.1.0",
+      "file": "social-auto-expand.user.js",
+      "summary": "把 LinkedIn 與 Facebook 動態裡的「查看更多」自動按掉，貼文一次讀完。",
+      "targetLabel": "LinkedIn、Facebook",
+      "repo": "https://github.com/mt019/social-auto-expand-userscript",
+      "body": [
+        "社群動態把長貼文摺起來，讀完一段就要伸手點一次「查看更多」。這支腳本會偵測畫面上出現的展開控制項，出現就替你按下去。中英文的常見寫法都認得——see more、show more、查看更多、顯示更多、展開全文這些都在比對清單裡；各站另有自己的元件選擇器，先用選擇器認、認不出來才退回看按鈕上的字。",
+        "LinkedIn 另外會在背景預先載入後面的動態，捲到底時不必等。Facebook 的預載是關掉的：那個站對程式化的捲動跳躍會有明顯反應，畫面會抖，所以只保留貼文展開。使用者剛動過畫面、或有對話框開著的時候，背景預載會暫停。",
+        "要支援新的站，是在 SITE_PROFILES 加一組設定，不是改共用的掃描與點擊邏輯。"
+      ],
+      "matches": [
+        {
+          "pattern": "https://www.linkedin.com/*",
+          "why": "LinkedIn 動態與貼文頁"
+        },
+        {
+          "pattern": "https://linkedin.com/*",
+          "why": "同上，沒有 www 的寫法"
+        },
+        {
+          "pattern": "https://www.facebook.com/*",
+          "why": "Facebook 動態與貼文頁"
+        },
+        {
+          "pattern": "https://web.facebook.com/*",
+          "why": "同上，另一個網域寫法"
+        },
+        {
+          "pattern": "https://m.facebook.com/*",
+          "why": "Facebook 行動版"
+        }
+      ],
+      "grants": [],
+      "grantNote": "沒有宣告任何 GM_* 權限。腳本做的事是在上列頁面裡點畫面上已經存在的按鈕，不讀取貼文內容、不對外送出任何東西。",
+      "changelog": [
+        {
+          "version": "2.1.0",
+          "date": "2026-07-29",
+          "notes": [
+            "安裝檔搬到這個網域，並宣告 @updateURL 與 @downloadURL。"
+          ]
+        },
+        {
+          "version": "2.0.3",
+          "date": "2026-07-17",
+          "notes": [
+            "關掉 Facebook 的背景預載，畫面不再週期性抖動；貼文展開照舊。",
+            "每個站的預載行為改成在設定裡明寫。"
+          ]
+        },
+        {
+          "version": "2.0.0",
+          "date": "2026-07-15",
+          "notes": [
+            "從只支援 LinkedIn 改寫成多站架構，加上 Facebook。"
+          ]
+        },
+        {
+          "version": "1.2.0",
+          "date": "2026-07-11",
+          "notes": [
+            "加上 LinkedIn 的背景預載，載完把畫面位置還原。"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "fjud",
+      "name": "裁判書一鍵查詢",
+      "latin": "FJUD Quick Query",
+      "version": "1.2.0",
+      "file": "fjud.user.js",
+      "summary": "在任何頁面選一段文字，按快捷鍵，直接開司法院裁判書系統並送出查詢。",
+      "targetLabel": "司法院裁判書系統",
+      "repo": "https://github.com/mt019/fjud-userscript",
+      "shortcut": {
+        "mac": "Cmd + Shift + P",
+        "other": "Ctrl + Shift + P"
+      },
+      "body": [
+        "查一個案號或關鍵字，原本要開裁判書系統、找到查詢框、把字貼進去、按送出。這支腳本把這四步縮成一個快捷鍵：在任何頁面選中文字，按 Cmd + Shift + P（Windows 與 Linux 是 Ctrl + Shift + P），新分頁就開在裁判書系統並且已經送出查詢。",
+        "在裁判書系統自己的頁面上選字按快捷鍵也可以，一樣開新分頁查。選中的文字透過腳本管理器的儲存空間在兩個分頁之間傳遞，所以 Tampermonkey 可能會顯示「此腳本正在儲存資料」，那是正常的。",
+        "如果司法院改動了查詢框或送出鈕的元件編號，自動送出會失效——那時請開 issue。"
+      ],
+      "matches": [
+        {
+          "pattern": "*://*/*",
+          "why": "在任何頁面監聽快捷鍵。這是它的用途：你在讀什麼都能選字直接查。腳本在這些頁面上只做一件事——聽鍵盤，等那一組組合鍵。"
+        },
+        {
+          "pattern": "https://judgment.judicial.gov.tw/FJUD/*",
+          "why": "在裁判書系統填入查詢字串並送出"
+        }
+      ],
+      "grants": [
+        {
+          "name": "GM_setValue",
+          "why": "把選中的文字暫存起來，讓新分頁讀得到"
+        },
+        {
+          "name": "GM_getValue",
+          "why": "新分頁開在裁判書系統時把它讀回來"
+        },
+        {
+          "name": "GM_deleteValue",
+          "why": "用完就刪掉，不留在瀏覽器裡"
+        },
+        {
+          "name": "GM_openInTab",
+          "why": "開新分頁"
+        }
+      ],
+      "grantNote": "@match *://*/* 涵蓋所有網站，這一點值得知道：腳本會在你開的每個頁面上執行。它在那些頁面上只註冊一個鍵盤監聽器，等 Cmd/Ctrl + Shift + P；沒有按到那組鍵就什麼都不做，也不會讀取或送出頁面內容。原始碼很短，介意的話可以整份讀完再裝。",
+      "changelog": [
+        {
+          "version": "1.2.0",
+          "date": "2026-07-29",
+          "notes": [
+            "安裝檔搬到這個網域，並宣告 @updateURL 與 @downloadURL。"
+          ]
+        },
+        {
+          "version": "1.1.0",
+          "date": "2026-07",
+          "notes": [
+            "初始公開版：選字快捷鍵、分頁間傳值、目標站自動送出。"
+          ]
+        }
+      ]
+    }
+  ]
+}

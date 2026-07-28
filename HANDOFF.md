@@ -44,6 +44,32 @@ copy. When writing digest/topic prose, narrate what a *reader* learns
 - 部署順序不能反：**先接通域名、確認 `https://phenomcanvas.com` 真的開得起來，再改那三處推上去**。
   反過來會讓全站 canonical 指向一個還不存在的主機。
 
+## 使用者腳本搬到自有域名（2026-07-29）
+
+三支油猴腳本的正式安裝檔現在是 `https://phenomcanvas.com/scripts/<檔名>.user.js`，落地頁在
+`/userscripts`（總覽）與 `/userscripts/law-item-labeler`、`/userscripts/social-auto-expand`、
+`/userscripts/fjud`。
+
+**為什麼要搬**：三支原本都沒宣告 `@updateURL`／`@downloadURL`，Tampermonkey 因此拿「使用者
+當初安裝的那個網址」查更新。那個網址是寫進別人機器裡的軟體的——改帳號名、改 repo 名、
+jsDelivr 改政策，所有已安裝的副本就安靜地不再更新，不報錯也沒人通知。現在三支都指向這個
+網域上的固定位置。
+
+**舊位置留一版跳板**：已安裝的副本仍指著舊網址，不會自己改。所以舊位置（law-item-labeler 的
+GitHub Pages `law-item-label.user.js`、social-auto-expand 的 release 資產、fjud 的 jsDelivr
+`@latest`）都要發一版帶新 `@updateURL` 的，等它們更新過去。`build.js` 因此同時輸出新舊兩個
+檔名，內容相同，**別刪舊的那個**。
+
+**前後端分離照舊**：`public/scripts/*.user.js` 與 `src/data/userscripts.json` 的
+`version`／`file`／`matches[].pattern`／`grants[].name` 都是同步產物，來自三個來源倉各自的
+`sync-to-canvas.mjs`（`node sync-to-canvas.mjs --canvas <canvas 路徑>`，路徑當參數傳、不寫死）。
+canvas 只寫落地頁的文案——介紹、每條 `@match` 為什麼要、版本紀錄。`npm run validate:userscripts`
+（已接進 `verify:policy`）逐欄比對兩邊，版號、安裝網址、`@match`、`@grant` 對不上就擋下來。
+
+`validate:shell` 這次也放寬了一格：幾條路由共用一份版型時（三頁都是 `_ScriptPage` 傳一個 id），
+路由檔裡沒有殼，檢查會跟一層 `_` 開頭的本地匯入去找。只跟一層、只跟 `_` 開頭的檔——跟到別的
+路由頁上，就會讓一個真的漏了返回鍵的頁靠鄰居過關。
+
 ## 部署：建置在 GitHub Actions，Vercel 只收成品（2026-07-28 改）
 
 `.github/workflows/deploy.yml` 在推上 `main` 時跑完整建置（含 474 個路由的預先渲染），再用
