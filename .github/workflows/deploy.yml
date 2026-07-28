@@ -44,10 +44,46 @@ jobs:
       - name: Pull Vercel project settings
         run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
 
+      # Vercel 專案裡那兩個瀏覽器端變數被標成 sensitive，於是 `vercel pull` 只還回字面上的
+      # "[REDACTED]"（sensitive 的設計就是誰都讀不回來，連 API 帶 decrypt=true 也一樣）。
+      # 建置跑在 Vercel 自己機器上時真值是當場注入的，搬到 Actions 之後就變成把 "[REDACTED]"
+      # 烤進 bundle：`configured` 判定為真、supabase-js 拿它當網址，線上每頁 console 都丟
+      # 「Invalid supabaseUrl」，登入是壞的（2026-07-28 發現）。
+      # 這一步用 GitHub secrets 覆寫那兩行。兩個值都是公開的瀏覽器端值（每個訪客的 bundle
+      # 裡都有），放 secrets 只是為了不寫進這個公開 repo。secret 沒設就原樣留著，交給下面的
+      # 閘門擋下來。
+      - name: Restore the client-side Supabase env that `vercel pull` redacts
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
+        run: |
+          file=.vercel/.env.production.local
+          test -f "$file" || { echo "找不到 $file，vercel pull 沒跑成功"; exit 1; }
+          if [ -z "$VITE_SUPABASE_URL" ] || [ -z "$VITE_SUPABASE_PUBLISHABLE_KEY" ]; then
+            echo "::warning::沒有設 VITE_SUPABASE_* 這兩個 GitHub secret，登入功能會是壞的"
+            exit 0
+          fi
+          grep -v '^VITE_SUPABASE_' "$file" > "$file.tmp" && mv "$file.tmp" "$file"
+          printf 'VITE_SUPABASE_URL="%s"\n' "$VITE_SUPABASE_URL" >> "$file"
+          printf 'VITE_SUPABASE_PUBLISHABLE_KEY="%s"\n' "$VITE_SUPABASE_PUBLISHABLE_KEY" >> "$file"
+          echo "已覆寫兩個變數（值不印出來）"
+
       # 這一步會執行 package.json 的 build，也就是 verify:policy → vite build →
       # prerender → validate:prerender → sitemap。任何一關沒過就紅在這裡。
       - name: Build
         run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+
+      # 遮蔽字串不准上線。這種故障不會讓建置失敗、也不會讓頁面變空，只會在每個訪客的
+      # console 裡丟一句錯誤、讓登入不能用，所以要有一道檢查專門偵測它。
+      - name: Assert no redacted placeholder was baked into the bundle
+        run: |
+          if grep -rl '\[REDACTED\]' .vercel/output/static/assets/ >/dev/null 2>&1; then
+            echo '建置產物裡有 "[REDACTED]"：某個 sensitive 環境變數沒有被真值覆寫。'
+            echo '補法：在 GitHub secrets 設 VITE_SUPABASE_URL 與 VITE_SUPABASE_PUBLISHABLE_KEY，'
+            echo '或把 Vercel 專案裡那兩個變數改成非 sensitive，讓 vercel pull 拿得到真值。'
+            exit 1
+          fi
+          echo "產物裡沒有遮蔽字串"
 
       # 再確認一次「要送上去的那份」不是空殼——上一步查的是 dist/，這一步查的是
       # Vercel 實際會拿去部署的目錄。兩者理論上同源，但這是最後一道，很便宜。
@@ -62,3 +98,8 @@ jobs:
 
       - name: Deploy
         run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
+
+      # 上線之後才推，順序不能反——先推等於叫 Bing 去看還沒更新的頁。
+      # 這一步失敗不影響部署結果，理由寫在 scripts/indexnow.mjs 開頭。
+      - name: Tell IndexNow the site changed
+        run: node scripts/indexnow.mjs
