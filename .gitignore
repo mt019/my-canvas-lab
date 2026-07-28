@@ -12,6 +12,9 @@ dist
 dist-ssr
 *.local
 
+# Vercel CLI 在 CI 拉下來的專案設定與建置產物（vercel pull / vercel build）
+.vercel
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
@@ -30,3 +33,8 @@ src/data/intlTaxOps/.sync-manifest.json
 # 工程歷史（2026-07-20 起）。本 repo 是公開的，歷史檔含未發表研究數字、PhD 申請策略與絕對路徑，
 # 一律不上 origin。該目錄自帶一個只在本機的 git repo 提供版本還原，勿在此加白名單。
 .claude/history/
+
+# vercel link 會自己在這裡加一行 `.env*`——那會連 .env.production 一起蓋掉，而那個檔
+# 是公開值、必須進版控（VITE_SITE_URL 是 canonical／sitemap 的單一來源）。只擋本機的。
+.env.local
+.env*.local

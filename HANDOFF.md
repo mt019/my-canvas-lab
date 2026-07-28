@@ -25,6 +25,35 @@ copy. When writing digest/topic prose, narrate what a *reader* learns
 (「三份文件已完成研讀」), never how the material was obtained
 (「換 headers 後抓取解析成功」).
 
+## 部署：建置在 GitHub Actions，Vercel 只收成品（2026-07-28 改）
+
+`.github/workflows/deploy.yml` 在推上 `main` 時跑完整建置（含 474 個路由的預先渲染），再用
+`vercel deploy --prebuilt --prod` 把成品送上去。`vercel.json` 的 `git.deploymentEnabled.main`
+設成 `false`，Vercel 自己不再建；**兩邊同時開會互相覆蓋，別把它打開**。
+
+需要三個 repo secret：`VERCEL_TOKEN`（vercel.com/account/tokens 建）、`VERCEL_ORG_ID`、
+`VERCEL_PROJECT_ID`（後兩者在專案根目錄跑 `npx vercel link` 後看 `.vercel/project.json`，
+或在 Vercel 專案設定頁抄）。設定：`gh secret set VERCEL_TOKEN` 等三行。
+
+**為什麼要搬**：在此之前，線上 473 個路由送的全是空殼，`<div id="root"></div>` 裡零字元，
+四個路由抽驗一致（`/`、`/taxlitigation`、`/chenyinke`、`/iiaspublications`）。成因是 Vercel
+建置環境缺 `libnspr4.so`，Chromium 起不來，而 `scripts/prerender.mjs` 當時把這個例外 catch
+起來、印一行看起來很正常的警告就 **exit 0**。建置顯示成功、sitemap 照樣產出 473 個網址，
+實際上一頁內容都沒輸出——壞掉的時候回傳合法值，沒有任何檢查看得出來。Actions 的 runner
+裝得動瀏覽器（`npx playwright install --with-deps chromium` 一步補齊系統相依），這條路上
+沒有「跑不起來所以跳過」的餘地。
+
+**兩項檢查，別拆掉**：
+
+1. `scripts/prerender.mjs` 現在 launch 失敗就 `exit 1`。只有明寫 `PRERENDER=0` 才准跳過。
+2. `npm run validate:prerender`（`scripts/validate-prerender.mjs`）查產物本身：逐一開
+   `dist/<route>/index.html`，確認根節點不是空的、檔案大於 5 KB、結構化資料有寫進去。
+   它排在 `build` 裡的 `prerender` 之後、`sitemap` 之前——**沒有內容就不會產出網站地圖**。
+   workflow 末端還對 `.vercel/output/static/index.html` 再查一次空殼。
+
+改動任何與預先渲染有關的東西之後，線上驗法：`curl -s <url> | grep -c 'id="root"></div>'`
+應為 0，或直接看首頁 bytes 數（空殼是 1.8–2.5 KB，真的有內容是幾十 KB）。
+
 ## Pages
 
 ### `Brief` ＋ `brief/*`（個人簡報站，2026-07-17 新建，第十輪接上標記層）

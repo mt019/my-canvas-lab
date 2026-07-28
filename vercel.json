@@ -1,5 +1,6 @@
 {
   "regions": ["hnd1"],
+  "git": { "deploymentEnabled": { "main": false } },
   "routes": [
     { "src": "/api/opentix/search", "dest": "https://search.opentix.life/search" },
     { "src": "/api/opentix-csm/(.*)", "dest": "https://csm.api.opentix.life/$1" },

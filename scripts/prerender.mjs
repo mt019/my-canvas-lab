@@ -54,16 +54,21 @@ async function main() {
   const base = `http://127.0.0.1:${port}`;
   console.log(`prerender: ${routes.length} routes → dist/  (origin baked as ${SITE_URL})`);
 
-  // Fail-soft: if the browser can't launch (e.g. Chromium not installed on a CI
-  // image), skip prerender rather than break the deploy. The client SeoHead still
-  // sets per-route metadata; only the no-JS-crawler benefit is lost.
+  // A failed launch must break the build. This used to be fail-soft, and between
+  // then and 2026-07-28 every deploy on Vercel shipped 473 empty shells: the build
+  // image had no libnspr4, launch threw, this printed one warning line that looked
+  // like a normal message, and exited 0. Nothing downstream noticed — the sitemap
+  // still listed every route. Prerendering now happens in CI where the browser is
+  // installed on purpose, so there is no environment left that legitimately can't
+  // launch one. Skipping is only allowed when asked for explicitly (PRERENDER=0).
   let browser;
   try {
     browser = await chromium.launch();
   } catch (err) {
     server.close();
-    console.warn(`prerender: skipped — could not launch Chromium (${err.message}). Build continues with client-only SEO.`);
-    return;
+    console.error(`prerender: could not launch Chromium — ${err.message}`);
+    console.error('prerender: refusing to emit empty shells. Install the browser (npx playwright install --with-deps chromium) or set PRERENDER=0 to skip on purpose.');
+    process.exit(1);
   }
   let ok = 0;
   const warnings = [];

@@ -1,0 +1,64 @@
+# 部署。建置在這裡跑完（含預先渲染 474 個路由），再把成品送上 Vercel。
+#
+# 為什麼不讓 Vercel 自己建：它的建置環境沒有 libnspr4，Chromium 起不來，於是
+# 2026-07-28 之前每一次部署送上線的都是空殼。這裡的 runner 我們裝得動瀏覽器，
+# `playwright install --with-deps` 一步就把系統相依補齊。
+#
+# 需要三個 repo secret：VERCEL_TOKEN、VERCEL_ORG_ID、VERCEL_PROJECT_ID。
+# 設定方式寫在 HANDOFF.md 的「部署」節。
+name: deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - run: npm ci
+
+      # 瀏覽器與系統相依一起裝。少了 --with-deps 就是線上那個故障的成因。
+      - run: npx playwright install --with-deps chromium
+
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+
+      - name: Pull Vercel project settings
+        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+
+      # 這一步會執行 package.json 的 build，也就是 verify:policy → vite build →
+      # prerender → validate:prerender → sitemap。任何一關沒過就紅在這裡。
+      - name: Build
+        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+
+      # 再確認一次「要送上去的那份」不是空殼——上一步查的是 dist/，這一步查的是
+      # Vercel 實際會拿去部署的目錄。兩者理論上同源，但這是最後一道，很便宜。
+      - name: Assert the artifact is not an empty shell
+        run: |
+          file=.vercel/output/static/index.html
+          test -f "$file" || { echo "找不到 $file"; exit 1; }
+          if grep -q '<div id="root"></div>' "$file"; then
+            echo "$file 的根節點是空的，預先渲染沒有生效"; exit 1
+          fi
+          echo "$file: $(wc -c < "$file") bytes"
+
+      - name: Deploy
+        run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
