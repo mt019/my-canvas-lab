@@ -70,6 +70,34 @@ canvas 只寫落地頁的文案——介紹、每條 `@match` 為什麼要、版
 路由檔裡沒有殼，檢查會跟一層 `_` 開頭的本地匯入去找。只跟一層、只跟 `_` 開頭的檔——跟到別的
 路由頁上，就會讓一個真的漏了返回鍵的頁靠鄰居過關。
 
+## 使用者腳本的分發與計數（2026-07-29）
+
+一支腳本同時存在於三個位置，各自服務一批不同的已安裝副本，不是重複備份：這個網域上的
+`/scripts/*.user.js` 是正式來源；GitHub release 與 Pages 的舊檔名是 2.1.0 以前那批副本的跳板；
+Greasy Fork 託管它自己的一份，從那裡裝的人也從那裡更新。
+
+**只有 social-auto-expand 上 Greasy Fork**（id `588964`）。兩支法律腳本不送：會去那裡搜中文
+法律關鍵字的人趨近於零，而公開就有維護義務；fjud 的 `@match *://*/*` 還會踩到 GF 的萬用字元
+建議。GF 規則要求可運作的程式碼放在它站上，也不允許張貼意圖把使用者導去別處的下載網址，所以
+送上去的那一份必須拿掉 `@updateURL` 與 `@downloadURL`——從 GF 裝的人由 GF 負責更新。
+
+那一份是產生的、不是手改的，而且**進版控**：`npm run greasyfork` 產出
+`greasyfork/social-auto-expand.user.js`，GF 從它的 raw 網址同步（webhook 已建在來源倉上，
+push 事件，hook id `658202497`）。說明欄同理，從 `greasyfork-listing.md` 逐字同步，所以那個檔
+裡不能有任何註解或前言。結果是改版仍然只要 push 一次。
+
+**固定檢查**：`npm test`（來源倉）在 `greasyfork/` 那份落後於來源時 exit 1。這是這條線唯一會
+安靜壞掉的地方——GF 會繼續供舊版，列表頁看起來完全正常，兩邊都不報錯。
+
+**看有多少人在用**：`npm run report:userscripts`（`scripts/userscript-reach.mjs`）。它把 release
+下載數、倉庫流量、jsDelivr、Greasy Fork 安裝數並排列出來而**不加總**，因為量的不是同一件事：
+release 下載數只算從 release 資產抓走的次數，且 2.1.0 以前沒有 `@updateURL`，那個數字裡混著
+自己機器每天的更新檢查；law-item-labeler 走 Pages，GitHub 根本不提供計數。GF 的安裝數是唯一
+直接量「有多少人裝」的來源。`/scripts/` 那三個靜態檔沒有任何計數，站上沒裝分析工具。
+
+GF 那一側的設定（同步網址、自動／手動、說明欄網址）只能由使用者自己存——它只收 OAuth 登入，
+agent 代勞不了，2026-07-29 試過了，別再嘗試自動化那一步。
+
 ## 部署：建置在 GitHub Actions，Vercel 只收成品（2026-07-28 改）
 
 `.github/workflows/deploy.yml` 在推上 `main` 時跑完整建置（含 474 個路由的預先渲染），再用
