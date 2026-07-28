@@ -149,6 +149,111 @@ for (const path of routePages) {
     );
   }
 }
+/* ── 三、回頭路的落點 ──────────────────────────────────────── */
+
+// 2026-07-29 踩過的：`identityHomeFor` 的 fallback 寫成「沒有站內原點就回素首頁」，
+// 於是 `/notes/<slug>` 這種站沒登記進 SITE_HOMES 的內頁，整個文章標題直接連到素首頁。
+// 使用者的規矩是：**站內頁往回只能回這個小站的首頁，永遠不會是素首頁**，而且內頁的
+// 大標題根本不是連結。這一節把它變成機械檢查，逐條路由算一次。
+const { backFor, siteHomeFor } = await import('../src/backNav.js');
+const { collectRoutes } = await import('./routes.mjs');
+
+const allRoutes = (await collectRoutes()).map((r) => (typeof r === 'string' ? r : r.path ?? r.url));
+const routeSet = new Set(allRoutes.map((p) => (p.length > 1 ? p.replace(/\/+$/, '') : p)));
+const depth = (p) => p.split('/').filter(Boolean).length;
+
+for (const route of allRoutes) {
+  const inner = depth(route) > 1;
+  const back = backFor(route);
+
+  if (inner) {
+    // 箭頭：一律回素首頁，而且不帶站名（站名歸眉標，見 src/components/Eyebrow.jsx 的 back）
+    if (back?.href !== '/') {
+      failures.push(`${route}：左上角的箭頭應該回素首頁，現在落在「${back?.href ?? '無'}」`);
+    }
+    if (back?.label) {
+      failures.push(
+        `${route}：箭頭上寫著「${back.label}」。那支箭頭只管離開這個站，站名寫在眉標那顆按鈕上，`
+        + '兩個都寫會變成同一畫面兩個同名、去處卻不同的東西',
+      );
+    }
+    // 眉標：站內頁一定要有一顆回自己站首頁的按鈕
+    const site = siteHomeFor(route);
+    if (!site) {
+      failures.push(
+        `${route}：站內頁沒有回自己站首頁的路。把這個站登記進 src/backNav.js 的 SITE_HOMES`
+        + '（前綴長的排前面），眉標才會變成那顆按鈕',
+      );
+    }
+    // 落點可以帶查詢字串（`/statisticslab?tab=glossary`＝實驗室的術語表分頁，沒有自己的路由），
+    // 所以比對路由存不存在之前先把 `?…` 切掉。
+    if (site && !routeSet.has(site.href.split(/[?#]/)[0])) {
+      failures.push(`${route}：站首頁 ${site.href} 不是真的路由。SITE_HOMES 的落點寫錯了`);
+    }
+    if (site && !site.label) {
+      failures.push(`${route}：站首頁沒有標籤，眉標那顆按鈕的 aria-label 會說不出要回哪裡`);
+    }
+  } else if (!['/', '/all'].includes(route)) {
+    if (back?.href !== '/') failures.push(`${route}：站首頁／單頁的箭頭應該回素首頁，現在是「${back?.href ?? '無'}」`);
+    if (back?.label) failures.push(`${route}：箭頭上寫著「${back.label}」。回素首頁的箭頭不掛招牌`);
+    if (siteHomeFor(route)) failures.push(`${route}：站首頁的眉標連到自己。SITE_HOMES 的比對漏掉了「站首頁自己不算內頁」`);
+  }
+}
+
+/* ── 四、模板統一的兩條，逐檔掃 ────────────────────────────── */
+
+// 這兩件事一旦讓頁面自己決定，就會長回 2026-07-29 那天的樣子：每頁一種回頭路。
+for (const path of walk('src/pages').filter((p) => /\.jsx$/.test(p))) {
+  const source = readFileSync(path, 'utf8');
+  const lines = source.split('\n');
+  for (const [i, line] of lines.entries()) {
+    // (1) 箭頭的落點只有 backNav.js 說了算。頁面只能傳 back={null}（這頁不畫）。
+    if (/\bback=\{\{/.test(line)) {
+      failures.push(
+        `${relative('.', path)}:${i + 1}：自己指定了箭頭的落點。箭頭一律回素首頁，`
+        + '站名寫在眉標那顆按鈕上（src/backNav.js 的 SITE_HOMES）；要整頁不畫才傳 back={null}',
+      );
+    }
+    // (2) 大標題不是連結。抓「<Link>／<a> 包住 h1」這種寫法（含把 h1 存成變數再包起來）。
+    if (!/<h1[\s>]|\{heading\}|\{titleEl\}/.test(line)) continue;
+    const before = lines.slice(Math.max(0, i - 6), i).join('\n');
+    if (/<(?:Link|a)\b[^>]*$|<(?:Link|a)\b[^>]*>\s*$/.test(before.trimEnd())) {
+      failures.push(
+        `${relative('.', path)}:${i + 1}：大標題被包成連結。全站的大標題都不可點——`
+        + '回素首頁用左上角的箭頭，回這個站的首頁用眉標上的站名',
+      );
+    }
+  }
+}
+
+/* ── 五、自己刻抬頭列的頁，眉標也要接上 ────────────────────── */
+
+// 走殼的頁由 PageIdentity 把眉標接上 siteHomeFor；自己刻抬頭列的頁（各有各的 CSS 變數與
+// 字級，套不進共用殼）曾經只接了左上角那支箭頭，眉標是一行寫死的字。差別在有內頁的時候
+// 才看得出來：SITE_HOMES 登記了、validate 第三節也算得出「這頁該有回站首頁的路」，但那顆
+// 按鈕根本沒接線，讀者按了沒反應。所以這裡逐檔要求它們走 src/components/SiteHomeEyebrow.jsx。
+const CARVES_OWN_HEADER = /<(?:PageShell|DashboardLayout|ArticleLayout)\b/;
+const WIRED_EYEBROW = /<SiteHomeEyebrow\b|<Eyebrow\b[^>]*\bback=/;
+const EYEBROW_EXEMPT = new Map([
+  ['ElectricPiano', '滿版樂器介面，整頁就是琴鍵，沒有抬頭列'],
+  ['JirsForeignLaw', '眉標與大標題整塊是「回本頁總覽」的按鈕（同頁切視圖，不是換網址）；'
+    + '此站也沒有內頁路由。日後真的長出 /jirsforeignlaw/… 的內頁，要先把那顆按鈕拆開再接眉標'],
+]);
+
+for (const path of routePages) {
+  const name = path.split('/').pop().replace(/\.jsx$/, '');
+  const source = readFileSync(path, 'utf8');
+  if (CARVES_OWN_HEADER.test(source)) continue; // 走殼：PageIdentity 已經接好
+  if (!/<h1[\s>]/.test(source)) continue;       // 沒有大標題＝沒有抬頭列（轉址空殼、樂器頁）
+  if (EYEBROW_EXEMPT.has(name)) continue;
+  if (!WIRED_EYEBROW.test(source)) {
+    failures.push(
+      `${relative('.', path)}：自己刻了抬頭列，眉標卻沒接上站首頁。改用 `
+      + `src/components/SiteHomeEyebrow.jsx（className 原樣傳進去，沒有站首頁可回時畫面一模一樣）`,
+    );
+  }
+}
+
 /* ── 結果 ─────────────────────────────────────────────────── */
 
 if (failures.length) {
@@ -156,5 +261,7 @@ if (failures.length) {
   process.exit(1);
 }
 console.log(
-  `shell chrome ok: ${routePages.length} 個路由頁都有回頭路，寬容器的水平內距全部來自 shellPadding.js`,
+  `shell chrome ok: ${routePages.length} 個路由頁都有回頭路，寬容器的水平內距全部來自 shellPadding.js；`
+  + `${allRoutes.length} 條網址的回頭路落點逐條算過（箭頭一律回素首頁、站內頁的眉標回自己的站首頁、大標題全站都不是連結）；`
+  + '自己刻抬頭列的頁都走 SiteHomeEyebrow',
 );

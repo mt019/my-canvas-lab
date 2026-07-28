@@ -110,7 +110,8 @@ export default function CollationView() {
       </nav>
 
       <div className="grid items-start gap-4 pb-3 min-[680px]:grid-cols-[minmax(320px,370px)_minmax(0,1fr)]">
-        <aside className="w-full min-[680px]:sticky min-[680px]:top-16">
+        {/* 影像欄吸在分頁列下緣：高度量出來的（`--lab-sticky-top`），分頁列會換行 */}
+        <aside className="w-full min-[680px]:sticky" style={{ top: 'calc(var(--lab-sticky-top, 56px) + 0.5rem)' }}>
           <div className="mb-2 flex items-end justify-between gap-2">
             <p className="text-[11.5px] leading-relaxed text-[var(--cc-ink-soft)]">第 {page.冊} 冊・PDF 第 {page.PDF頁} 頁・紙本第 {page.紙本頁} 頁</p>
             <span className="font-display text-[11px] font-bold tabular-nums text-[var(--cc-ink-soft)]">{Math.round(zoom * 100)}%</span>
@@ -133,8 +134,14 @@ export default function CollationView() {
           <a className="mt-3 inline-flex items-center gap-1 text-[11.5px] font-bold text-[var(--cc-accent)] hover:underline" href={collation.來源.網址} target="_blank" rel="noreferrer">國家圖書館原書 <ExternalLink size={11} /></a>
         </aside>
 
-        <section ref={comparisonViewportRef} className="min-w-0 space-y-3 overflow-x-auto pb-2">
-          <div className="sticky left-0 top-14 z-10 w-full space-y-1.5 border-y border-[var(--cc-line)] bg-white/95 px-2 py-2 backdrop-blur">
+        <div className="min-w-0">
+          {/*
+            兩支拉桿要吸在分頁列下緣。它原本寫在下面那個 `overflow-x-auto` 的 section 裡、
+            掛著 `top-14`——那個 top 從來沒有作用：`overflow-x` 會讓 `overflow-y` 一起變成
+            捲動容器，吸附只吸在那個盒子上，而盒子沒有垂直捲動。要真的吸在視窗上，就得待在
+            盒子外面（見 DESIGN.md「長圖與長表」）。
+          */}
+          <div className="sticky z-10 mb-3 w-full space-y-1.5 border-y border-[var(--cc-line)] bg-white px-2 py-2" style={{ top: 'var(--lab-sticky-top, 56px)' }}>
             <div className="flex items-center gap-2">
               <ArrowLeftRight size={13} className="shrink-0 text-[var(--cc-ink-soft)]" />
               <span className="w-[58px] shrink-0 text-[10.5px] font-bold text-[var(--cc-ink-soft)]">左右移動</span>
@@ -174,6 +181,8 @@ export default function CollationView() {
               <span className="w-10 shrink-0 text-right font-display text-[10px] tabular-nums text-[var(--cc-ink-soft)]">{globalCardWidth}%</span>
             </div>
           </div>
+
+          <section ref={comparisonViewportRef} className="min-w-0 space-y-3 overflow-x-auto pb-2">
           <details className="rounded-lg border border-[var(--cc-line)] bg-white px-3 py-2 text-[12px] text-[var(--cc-ink-mid)]">
             <summary className="cursor-pointer font-bold text-[var(--cc-title-ink)]">辨識版本說明</summary>
             <div className="mt-2 grid gap-1.5 leading-relaxed sm:grid-cols-2">
@@ -251,7 +260,8 @@ export default function CollationView() {
             <p className="text-[12px] font-bold text-[var(--cc-title-ink)]">校勘提醒</p>
             <ul className="mt-1 ml-4 list-disc space-y-1 text-[12.5px] leading-relaxed text-[var(--cc-ink-mid)]">{page.已知問題.map((x) => <li key={x}>{x}</li>)}</ul>
           </div>
-        </section>
+          </section>
+        </div>
       </div>
     </div>
   );

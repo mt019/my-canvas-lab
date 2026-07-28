@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import data from '../data/fiscalEnforcementRisk.json';
 import BackLink from '../components/BackLink';
+import SiteHomeEyebrow from '../components/SiteHomeEyebrow';
 
 const ds = data.datasets;
 const initial = ds.initialResults;
@@ -590,7 +591,7 @@ export default function FiscalEnforcementRisk() {
         <header className="fer-hero">
           <div className="fer-hero-copy">
             <div className="fer-hero-topline">
-              <div className="fer-eyebrow">Fiscal Enforcement Risk</div>
+              <SiteHomeEyebrow className="fer-eyebrow">Fiscal Enforcement Risk</SiteHomeEyebrow>
               <LangSwitch
                 lang={lang}
                 onChange={setLang}

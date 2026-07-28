@@ -142,13 +142,33 @@ export default function JusticesView() {
           options={[["", "選擇指標"], ["rate:dissent-voice", "異議發聲率"], ["type:不同意見書", "不同意見書數"], ["type:協同意見書", "協同意見書數"]]}
         />
       </div>
-      <div className="mt-3 overflow-x-auto rounded-lg border border-[var(--cc-table-border)]">
+      {/*
+        124 列、十欄，而且這張表比容器寬、任何寬度都要橫捲。表頭與姓名欄因此都得凍結——
+        捲到第 80 位時「37%」是哪一欄、這一列是誰，光看數字答不出來。
+
+        表頭吸頂沒辦法靠頁面捲動做（`overflow-x` 讓 `overflow-y` 一起變成捲動容器，吸頂
+        只會吸在這個盒子上，而盒子若沒有自己的高度就等於沒吸），所以整塊做成有 max-height
+        的內捲盒。見 DESIGN.md「長圖與長表」路線 2。
+
+        **盒子高度要留餘裕**（下面那個 11rem）：頁面往下捲時盒子會跟著上移，捲到底時它的
+        上緣停在「視窗高 − 盒高 − 盒子下方的內容高」。這個值一旦小於分頁列高度，凍結的表頭
+        就整條躲到分頁列後面——第一版把它當成 `100vh − 分頁列 − 3.5rem`，於是兩行表頭的
+        上面那一行被吃掉，看起來像表頭壞了。扣掉的量要涵蓋盒子下方的註腳與頁尾留白。
+        外層再吸一層是保險：註腳在窄螢幕會長高，餘裕不夠時由它接住。
+      */}
+      <div className="sticky mt-3" style={{ top: 'calc(var(--lab-sticky-top, 49px) + 0.5rem)' }}>
+      <div
+        className="overflow-auto rounded-lg border border-[var(--cc-table-border)]"
+        style={{ maxHeight: 'calc(100vh - var(--lab-sticky-top, 49px) - 11rem)' }}
+      >
         <table className="w-full min-w-[980px] border-collapse bg-white text-left text-[12.5px]">
           {/* 表頭語意換行：動詞一行、受詞一行（提出／意見書…），避免瀏覽器把窄欄硬拆成
               4字+3字+1字的醜換行；姓名與意見書類型不換行（4字名、長類型串靠整表橫捲）。 */}
-          <thead className="bg-[var(--cc-hover-bg)] text-[var(--cc-table-head-ink)] align-bottom">
+          <thead className="text-[var(--cc-table-head-ink)] align-bottom [&_th]:sticky [&_th]:top-0 [&_th]:z-[2] [&_th]:bg-[var(--cc-hover-bg)]">
             <tr>
-              <th className="px-3 py-2 whitespace-nowrap">大法官</th>
+              {/* 姓名欄吸在左邊：這張表比容器寬、一定要橫捲，捲到右半邊時每一列都得還認得出是誰。
+                  背景要不透明（跟著表頭吃 --cc-hover-bg），否則捲過去的數字會透出來。 */}
+              <th className="sticky left-0 !z-[3] bg-[var(--cc-hover-bg)] px-3 py-2 whitespace-nowrap">大法官</th>
               <th className="px-2 py-2 whitespace-nowrap"><SortButton metric="提出意見書" sortKey={sortKey} sortDirection={sortDirection} onSort={activateSort}><span className="block leading-tight">提出</span><span className="block leading-tight">意見書</span></SortButton></th>
               <th className="px-1 py-2 w-[84px]"></th>
               <th className="px-2 py-2 whitespace-nowrap"><SortButton metric="rate:voice" sortKey={sortKey} sortDirection={sortDirection} onSort={activateSort}>發聲率</SortButton><MetricInfo label="色帶總長＝提出意見書數 ÷ 參與案件數；色段依序為協同、混合、不同。外部「更多排序」可改按異議發聲率＝本人提出的不同或混合意見書數 ÷ 參與案件數排序。" /></th>
@@ -165,7 +185,7 @@ export default function JusticesView() {
           <tbody>
             {list.map((j) => (
               <tr key={j.姓名} className="border-t border-[var(--cc-row-border)]">
-                <td className="px-3 py-2 whitespace-nowrap">
+                <td className="sticky left-0 z-[1] bg-white px-3 py-2 whitespace-nowrap">
                   <Link to={ccJusticePath(j.姓名)} className="font-bold text-[var(--cc-ink-heavy)] underline decoration-[var(--cc-link-underline)] underline-offset-2 hover:text-[var(--cc-accent)]">{j.姓名}</Link>
                 </td>
                 <td className="px-2 py-2 font-bold text-[var(--cc-accent)]">{j.提出意見書}</td>
@@ -186,6 +206,7 @@ export default function JusticesView() {
             ))}
           </tbody>
         </table>
+      </div>
       </div>
       <p className="mt-2 max-w-3xl text-[12px] leading-relaxed text-[var(--cc-ink-soft)]">
         統計基礎：行憲後 {data.統計.行憲後} 件（大法官釋字 {data.統計.機關?.大法官 ?? 813}・憲法法庭裁判 {(data.統計.判決 ?? 0) + (data.統計.實體裁定 ?? 0)}）中具名的大法官意見書；行憲前統一解釋無大法官具名意見書、不計入。參與解釋計自官方頁末尾的大法官署名列（813 件全覆蓋；

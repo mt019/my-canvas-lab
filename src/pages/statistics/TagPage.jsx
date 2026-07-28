@@ -4,6 +4,7 @@ import { ArrowRight } from 'lucide-react';
 import { useFontScale } from '../../components/FontSizeControl';
 import { useLang } from '../../components/LangSwitch';
 import SiteHeader from '../../components/SiteHeader';
+import SiteHomeEyebrow from '../../components/SiteHomeEyebrow';
 import hub from '../../data/statistics.json';
 
 /*
@@ -46,7 +47,6 @@ export default function TagPage() {
   return (
     <main className="reading-grain min-h-screen bg-paper pb-10 text-ink" style={{ '--reader-scale': scale }}>
       <SiteHeader
-        back={{ href: '/statisticslab?tab=tags', label: en ? 'All tags' : '所有標籤' }}
         width="prose"
         lang={lang}
         onLangChange={setLang}
@@ -57,9 +57,15 @@ export default function TagPage() {
       <div className="mx-auto max-w-[52rem] px-4 sm:px-6">
        <div className="reader-scale">
         <header className="mb-8">
-          <p className="mb-2 font-accent text-token-xs uppercase tracking-[0.18em] text-ink-faint">
+          {/* 眉標回的是「所有標籤」那份清單，不是實驗室門口——讀者剛才就是從那裡點進來的
+              （落點登記在 src/backNav.js 的 SITE_HOMES）。 */}
+          <SiteHomeEyebrow
+            as="p"
+            className="mb-2 font-accent text-token-xs uppercase tracking-[0.18em] text-ink-faint"
+            linkClassName="hover:text-accent"
+          >
             {en ? 'Tag' : '標籤'}
-          </p>
+          </SiteHomeEyebrow>
           <h1 className="font-display text-token-2xl leading-tight sm:text-token-3xl">{label}</h1>
           <p className="mt-3 text-token-sm text-ink-muted">
             {en ? `${tag.count} article${tag.count > 1 ? 's' : ''} tagged this` : `${tag.count} 篇文章帶這個標籤`}

@@ -30,6 +30,7 @@ import thematicAnalyses from '../data/intlTaxOps/thematic_analyses.json';
 import glossary from '../data/intlTaxOps/glossary.json';
 import styles from './InternationalTaxOps.module.css';
 import BackLink from '../components/BackLink';
+import SiteHomeEyebrow from '../components/SiteHomeEyebrow';
 
 const ui = {
   zh: {
@@ -421,7 +422,9 @@ export default function InternationalTaxOps() {
         <header className={styles.topbar}>
           <div className={styles.brand}>
             <div>
-              <p className={styles.eyebrow}>International Tax Intelligence Workspace</p>
+              <SiteHomeEyebrow as="p" className={styles.eyebrow} linkClassName="hover:text-[var(--c-accent)]">
+                International Tax Intelligence Workspace
+              </SiteHomeEyebrow>
               <h1>{t.app}</h1>
               <p>{t.subtitle}</p>
             </div>

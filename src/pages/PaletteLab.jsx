@@ -13,6 +13,7 @@ import {
 } from '../styles/palettes.js';
 import { POLLUTANT_TONES, SECTION_TONES, SEGMENT_FILLS } from '../styles/tone-candidates.js';
 import BackLink from '../components/BackLink';
+import SiteHomeEyebrow from '../components/SiteHomeEyebrow';
 
 /*
  * 這個測驗不再生成任何顏色——上一版用公式硬算色塊，結果跟站內真正的色票庫（PALETTES，
@@ -574,9 +575,13 @@ export default function PaletteLab() {
     >
       <BackLink className="mb-5 block w-fit text-token-sm" />
       <div className="mx-auto max-w-6xl">
-        <div className="mb-1 mt-3 flex items-center gap-2 font-accent text-[11px] font-bold uppercase tracking-[0.22em]" style={{ color: 'var(--pl-accent)' }}>
-          <Palette size={13} /> Palette Lab
-        </div>
+        <SiteHomeEyebrow
+          className="mb-1 mt-3 flex items-center gap-2 font-accent text-[11px] font-bold uppercase tracking-[0.22em]"
+          style={{ color: 'var(--pl-accent)' }}
+          icon={<Palette size={13} />}
+        >
+          Palette Lab
+        </SiteHomeEyebrow>
         <h1 className="font-display text-3xl leading-tight">色票試穿間</h1>
         <p className="mt-2 max-w-2xl text-[14px] leading-relaxed" style={{ color: 'var(--pl-ink-muted)' }}>
           點左欄試穿，右欄即時換裝。看順眼了按 <Pin size={12} className="inline" />「設為全站配色」——整站跟著換，記在這台瀏覽器。

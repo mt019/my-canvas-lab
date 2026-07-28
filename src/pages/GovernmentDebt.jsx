@@ -13,6 +13,7 @@ import { Grid, AxisX, AxisY } from '../components/lab/chart/Axis';
 import { Line, Dots } from '../components/lab/chart/marks';
 import { linearScale } from '../components/lab/chart/scale';
 import BackLink from '../components/BackLink';
+import SiteHomeEyebrow from '../components/SiteHomeEyebrow';
 
 const GD_VARS = { // token-exempt
   '--gd-ink': '#2d3748',
@@ -208,7 +209,14 @@ export default function GovernmentDebt() {
               <Landmark size={20} color="white" strokeWidth={2.2} />
             </div>
             <div>
-              <p className="text-[10px] font-black uppercase tracking-[0.3em]" style={{ color: 'rgba(255,255,255,0.45)' }}>Government Debt Research</p>
+              <SiteHomeEyebrow
+                as="p"
+                className="text-[10px] font-black uppercase tracking-[0.3em]"
+                style={{ color: 'rgba(255,255,255,0.45)' }}
+                linkClassName="hover:text-white"
+              >
+                Government Debt Research
+              </SiteHomeEyebrow>
               <h1 className="text-xl font-black text-white leading-tight">政府債務問題深度研究</h1>
             </div>
           </div>

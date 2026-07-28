@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { ArrowUpDown } from 'lucide-react';
 import { PRES_COLOR, Select, formatTenureRange, inkToFill, justices, presidents } from './shared';
 
@@ -70,8 +70,31 @@ export default function TenureView({ onOpen }) {
 
   const Y0 = 1948, Y1 = 2027;
   const ROW = 14, LABEL = 62, CHART = 830, COUNT = 52;
+  const RIGHT = COUNT + 10;          // 右欄（意見書細條）連同右邊距
+  const TOTAL = LABEL + CHART + RIGHT;
+  const AXIS_H = 17;                 // 上吸頂的年份軸帶高
+  const FOOT_H = 26;                 // 下吸底的年份＋總統名帶高
   const H = rows.length * ROW;
-  const x = (yr) => LABEL + ((yr - Y0) / (Y1 - Y0)) * CHART;
+  const x = (yr) => ((yr - Y0) / (Y1 - Y0)) * CHART;   // 圖身內座標（不含左邊姓名欄）
+  const xa = (yr) => LABEL + x(yr);                     // 橫跨整張圖的座標（給上下兩條軸帶）
+  const DECADES = Array.from({ length: 8 }, (_, i) => 1950 + i * 10);
+  /*
+   * 上下兩條軸帶不在橫捲的容器裡（它們要吸在視窗上下緣，而吸附只在最近的捲動容器裡有效，
+   * 一旦裝進 overflow-x 的盒子就只會吸在那個盒子裡、跟著頁面捲走），所以橫向位置得自己
+   * 跟圖身對齊：圖身捲動時把兩條軸帶平移同樣的距離。
+   */
+  const bodyRef = useRef(null);
+  const topAxisRef = useRef(null);
+  const footAxisRef = useRef(null);
+  const syncAxes = () => {
+    const left = bodyRef.current?.scrollLeft ?? 0;
+    for (const r of [topAxisRef, footAxisRef]) {
+      if (r.current) r.current.style.transform = `translateX(${-left}px)`;
+    }
+  };
+  // 一列（姓名欄／圖身／右欄各畫一份）共用的滑過反白與淡出
+  const rowFill = (j) => (hover?.姓名 === j.姓名 ? 'var(--cc-hover-bg)' : 'transparent');
+  const isDim = (j) => hover && hover.姓名 !== j.姓名;
   const maxOps = Math.max(...justices.map((j) => j.提出意見書 + j.加入意見書), 1);
   const colorOf = (j) => (colorBy === '出身'
     ? TENURE_BG_COLOR[j.出身] ?? TENURE_BG_COLOR.未著錄
@@ -124,79 +147,99 @@ export default function TenureView({ onOpen }) {
         <span className="ml-2">右欄細條＝具名意見書數；底色帶＝總統任期</span>
       </div>
 
-      {/* 圖已攤開全高，資訊列 sticky 貼在頁面導覽下緣，滾到圖底仍看得到 */}
-      <div className="sticky top-[49px] z-10 mt-2 rounded-md border border-[var(--cc-border)] bg-[var(--cc-bg)]/95 px-3 py-1.5 text-[12.5px] backdrop-blur">
-        {hover ? (
-          <div className="flex flex-wrap items-baseline gap-x-4 gap-y-0.5 text-[var(--cc-ink-strong)]">
-            <strong>{hover.姓名}</strong>
-            <span>{hover.任期.map(formatTenureRange).join('；')}</span>
-            <span><span className="text-[var(--cc-ink-soft)]">出身</span> {hover.出身}</span>
-            <span><span className="text-[var(--cc-ink-soft)]">留學</span> {hover.留學國 ?? (hover.留學已查核 ? '無（國內）' : '未著錄')}</span>
-            {hover.提名總統 ? <span><span className="text-[var(--cc-ink-soft)]">提名</span> {hover.提名總統}</span> : null}
-            {hover.性別 === '女' ? <span><span className="text-[var(--cc-ink-soft)]">性別</span> 女</span> : null}
-            {hover.提出意見書 + hover.加入意見書 > 0
-              ? <span><span className="text-[var(--cc-ink-soft)]">意見書</span> 提出 {hover.提出意見書}／加入 {hover.加入意見書}</span>
-              : null}
+      {/*
+        圖攤開全高、靠頁面捲動，所以四邊各有一塊該留在原地的東西，各吸各的方向：
+        滑過的那個人的細節與年份軸**吸在分頁列下緣**（`--lab-sticky-top` 是量出來的，分頁列會
+        換行，寫死數字會被壓掉一半）；年份與總統名**吸在視窗底緣**；姓名欄**吸在左**、
+        意見書細條欄**吸在右**（後兩者只在窄螢幕真的橫捲時才看得出來）。
+
+        為什麼分成三個 svg 而不是一張：吸附只在最近的捲動容器裡有效。姓名欄要吸左，就得
+        待在橫捲的盒子裡；年份軸要吸在視窗頂，就不能待在那個盒子裡（`overflow-x` 會讓
+        `overflow-y` 一起變成捲動容器，於是頁面往下捲時它只是跟著整張圖走掉——這正是舊版
+        改用「在圖底把年份再印一次」的原因）。兩件事要不同的祖先，所以拆開，再用 scrollLeft
+        把上下兩條軸帶平移到跟圖身同一個橫向位置。
+      */}
+      <div className="sticky z-10 mt-2 bg-[var(--cc-bg)]" style={{ top: 'var(--lab-sticky-top, 49px)' }}>
+        <div className="rounded-md border border-[var(--cc-border)] bg-[var(--cc-bg)]/95 px-3 py-1.5 text-[12.5px] backdrop-blur">
+          {hover ? (
+            <div className="flex flex-wrap items-baseline gap-x-4 gap-y-0.5 text-[var(--cc-ink-strong)]">
+              <strong>{hover.姓名}</strong>
+              <span>{hover.任期.map(formatTenureRange).join('；')}</span>
+              <span><span className="text-[var(--cc-ink-soft)]">出身</span> {hover.出身}</span>
+              <span><span className="text-[var(--cc-ink-soft)]">留學</span> {hover.留學國 ?? (hover.留學已查核 ? '無（國內）' : '未著錄')}</span>
+              {hover.提名總統 ? <span><span className="text-[var(--cc-ink-soft)]">提名</span> {hover.提名總統}</span> : null}
+              {hover.性別 === '女' ? <span><span className="text-[var(--cc-ink-soft)]">性別</span> 女</span> : null}
+              {hover.提出意見書 + hover.加入意見書 > 0
+                ? <span><span className="text-[var(--cc-ink-soft)]">意見書</span> 提出 {hover.提出意見書}／加入 {hover.加入意見書}</span>
+                : null}
+            </div>
+          ) : (
+            <span className="text-[var(--cc-ink-soft)]">游標移到列上看任期細節；點姓名開個人頁（意見書清單、參與裁判與打包下載）。</span>
+          )}
+        </div>
+        <div className="relative mt-1 overflow-hidden bg-[var(--cc-bg)]">
+          <div ref={topAxisRef}>
+            <svg width={TOTAL} height={AXIS_H} aria-hidden className="block">
+              {DECADES.map((yr) => (
+                <text key={yr} x={xa(yr)} y={12} textAnchor="middle" fontSize={10} fill="var(--cc-axis-text)">{yr}</text>
+              ))}
+              <text x={xa(2022) + 3} y={12} fontSize={9} fill="var(--cc-type-judgment)">憲訴法</text>
+            </svg>
           </div>
-        ) : (
-          <span className="text-[var(--cc-ink-soft)]">游標移到列上看任期細節；點姓名開個人頁（意見書清單、參與裁判與打包下載）。</span>
-        )}
+          {/* 兩端不隨橫捲移動的遮片：底下的姓名欄與意見書欄也吸在同樣的位置，年份滑到那裡要收掉 */}
+          <div className="absolute inset-y-0 left-0 bg-[var(--cc-bg)]" style={{ width: LABEL }} />
+          <div className="absolute inset-y-0 right-0 bg-[var(--cc-bg)]" style={{ width: RIGHT }} />
+        </div>
       </div>
 
-      <div className="mt-1 overflow-x-auto">
-        <div style={{ width: LABEL + CHART + COUNT + 10 }}>
-          <svg width={LABEL + CHART + COUNT + 10} height={H + 50} role="img" aria-label="歷任大法官任期甘特圖">
+      <div ref={bodyRef} onScroll={syncAxes} className="overflow-x-auto">
+        <div className="flex" style={{ width: TOTAL }}>
+          {/* 左吸：姓名欄 */}
+          <div className="sticky left-0 z-[2] shrink-0 bg-[var(--cc-bg)]" style={{ width: LABEL }}>
+            <svg width={LABEL} height={H} role="img" aria-label="大法官姓名" className="block">
+              {rows.map((j, i) => (
+                <g key={j.姓名} onMouseEnter={() => setHover(j)} onMouseLeave={() => setHover(null)}>
+                  <rect x={0} y={i * ROW} width={LABEL} height={ROW} fill={rowFill(j)} />
+                  <text x={LABEL - 6} y={i * ROW + ROW / 2 + 3.5} textAnchor="end" fontSize={10.5}
+                    fontWeight={hover?.姓名 === j.姓名 ? 700 : 500}
+                    fill={isDim(j) ? 'var(--cc-dim-text)' : 'var(--cc-ink-strong)'} className="cursor-pointer"
+                    onClick={() => onOpen?.(j.姓名)}>
+                    {j.姓名}
+                  </text>
+                </g>
+              ))}
+            </svg>
+          </div>
+
+          {/* 圖身 */}
+          <svg width={CHART} height={H} role="img" aria-label="歷任大法官任期甘特圖" className="block shrink-0">
             <defs>
               {/* 女性大法官的 45° 斜紋覆層：紙色細線疊在任何 bar 色上都可辨（非僅顏色編碼） */}
               <pattern id="tenure-hatch-f" width={4} height={4} patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
                 <line x1={0} y1={0} x2={0} y2={4} stroke="var(--cc-bg)" strokeWidth={1.6} />
               </pattern>
             </defs>
-            {/* 總統任期背景直帶（交錯淡染＋帶頂總統名） */}
+            {/* 總統任期背景直帶（交錯淡染；總統名在下方那條吸底的軸帶上） */}
             {presidents.map((p, i) => {
               const a = Math.max(tenureYear(p.起, false), Y0);
               const b = Math.min(p.訖 === '9999-12-31' ? Y1 : tenureYear(p.訖, true), Y1);
               if (b <= Y0 || a >= Y1) return null;
-              const w = x(b) - x(a);
-              return (
-                <g key={`${p.總統}${p.起}`}>
-                  {i % 2 ? <rect x={x(a)} y={18} width={w} height={H + 2} fill="var(--cc-hover-bg)" opacity={0.55} /> : null}
-                  {w >= 26 ? (
-                    <text x={x(a) + w / 2} y={H + 46} textAnchor="middle" fontSize={8.5} fill="var(--cc-eyebrow)">
-                      {p.總統.replace('（代）', '')}
-                      {w >= 60 && PRES_NOM_COUNT.get(p.總統) ? `（提名 ${PRES_NOM_COUNT.get(p.總統)} 位）` : ''}
-                    </text>
-                  ) : null}
-                </g>
-              );
+              if (!(i % 2)) return null;
+              return <rect key={`${p.總統}${p.起}`} x={x(a)} y={0} width={x(b) - x(a)} height={H} fill="var(--cc-hover-bg)" opacity={0.55} />;
             })}
             {/* 十年格線 */}
-            {Array.from({ length: 8 }, (_, i) => 1950 + i * 10).map((yr) => (
-              <g key={yr}>
-                <line x1={x(yr)} y1={18} x2={x(yr)} y2={H + 20} stroke="var(--cc-line)" strokeWidth={1} />
-                <text x={x(yr)} y={12} textAnchor="middle" fontSize={10} fill="var(--cc-axis-text)">{yr}</text>
-                {/* 全圖攤開後頂軸會滾出視野，底部重標一次年份 */}
-                <text x={x(yr)} y={H + 33} textAnchor="middle" fontSize={10} fill="var(--cc-axis-text)">{yr}</text>
-              </g>
+            {DECADES.map((yr) => (
+              <line key={yr} x1={x(yr)} y1={0} x2={x(yr)} y2={H} stroke="var(--cc-line)" strokeWidth={1} />
             ))}
             {/* 憲訴法施行 */}
-            <line x1={x(2022)} y1={18} x2={x(2022)} y2={H + 20} stroke="var(--cc-type-judgment)" strokeDasharray="3 3" strokeWidth={1} />
-            <text x={x(2022) + 3} y={12} fontSize={9} fill="var(--cc-type-judgment)">憲訴法</text>
+            <line x1={x(2022)} y1={0} x2={x(2022)} y2={H} stroke="var(--cc-type-judgment)" strokeDasharray="3 3" strokeWidth={1} />
 
             {rows.map((j, i) => {
-              const y = 20 + i * ROW;
-              const dim = hover && hover.姓名 !== j.姓名;
-              const ops = j.提出意見書 + j.加入意見書;
+              const y = i * ROW;
+              const dim = isDim(j);
               return (
-                <g key={j.姓名}
-                  onMouseEnter={() => setHover(j)} onMouseLeave={() => setHover(null)}>
-                  <rect x={0} y={y} width={LABEL + CHART + COUNT} height={ROW} fill={hover?.姓名 === j.姓名 ? 'var(--cc-hover-bg)' : 'transparent'} />
-                  <text x={LABEL - 6} y={y + ROW / 2 + 3.5} textAnchor="end" fontSize={10.5}
-                    fontWeight={hover?.姓名 === j.姓名 ? 700 : 500}
-                    fill={dim ? 'var(--cc-dim-text)' : 'var(--cc-ink-strong)'} className="cursor-pointer"
-                    onClick={() => onOpen?.(j.姓名)}>
-                    {j.姓名}
-                  </text>
+                <g key={j.姓名} onMouseEnter={() => setHover(j)} onMouseLeave={() => setHover(null)}>
+                  <rect x={0} y={y} width={CHART} height={ROW} fill={rowFill(j)} />
                   {tenureSpans(j.任期, Y1 - 0.4).map((s, k) => {
                     const w = Math.max(x(s.b) - x(s.a), 2.5);
                     return (
@@ -213,16 +256,56 @@ export default function TenureView({ onOpen }) {
                       </g>
                     );
                   })}
-                  {ops > 0 ? (
-                    <rect x={LABEL + CHART + 6} y={y + 4.5}
-                      width={Math.max((ops / maxOps) * (COUNT - 8), 1.5)} height={ROW - 9} rx={1.5}
-                      fill="var(--cc-highlight)" opacity={dim ? 0.25 : 0.85} />
-                  ) : null}
                 </g>
               );
             })}
           </svg>
+
+          {/* 右吸：具名意見書數細條 */}
+          <div className="sticky right-0 z-[2] shrink-0 bg-[var(--cc-bg)]" style={{ width: RIGHT }}>
+            <svg width={RIGHT} height={H} aria-hidden className="block">
+              {rows.map((j, i) => {
+                const ops = j.提出意見書 + j.加入意見書;
+                return (
+                  <g key={j.姓名} onMouseEnter={() => setHover(j)} onMouseLeave={() => setHover(null)}>
+                    <rect x={0} y={i * ROW} width={RIGHT} height={ROW} fill={rowFill(j)} />
+                    {ops > 0 ? (
+                      <rect x={6} y={i * ROW + 4.5}
+                        width={Math.max((ops / maxOps) * (COUNT - 8), 1.5)} height={ROW - 9} rx={1.5}
+                        fill="var(--cc-highlight)" opacity={isDim(j) ? 0.25 : 0.85} />
+                    ) : null}
+                  </g>
+                );
+              })}
+            </svg>
+          </div>
         </div>
+      </div>
+
+      {/* 下吸：年份與總統名。捲到圖的任何一段，年代與當時的總統都還在畫面底緣 */}
+      <div className="sticky bottom-0 z-10 overflow-hidden border-t border-[var(--cc-line)] bg-[var(--cc-bg)]">
+        <div ref={footAxisRef}>
+          <svg width={TOTAL} height={FOOT_H} aria-hidden className="block">
+            {DECADES.map((yr) => (
+              <text key={yr} x={xa(yr)} y={11} textAnchor="middle" fontSize={10} fill="var(--cc-axis-text)">{yr}</text>
+            ))}
+            {presidents.map((p) => {
+              const a = Math.max(tenureYear(p.起, false), Y0);
+              const b = Math.min(p.訖 === '9999-12-31' ? Y1 : tenureYear(p.訖, true), Y1);
+              if (b <= Y0 || a >= Y1) return null;
+              const w = x(b) - x(a);
+              if (w < 26) return null;
+              return (
+                <text key={`${p.總統}${p.起}`} x={xa(a) + w / 2} y={22} textAnchor="middle" fontSize={8.5} fill="var(--cc-eyebrow)">
+                  {p.總統.replace('（代）', '')}
+                  {w >= 60 && PRES_NOM_COUNT.get(p.總統) ? `（提名 ${PRES_NOM_COUNT.get(p.總統)} 位）` : ''}
+                </text>
+              );
+            })}
+          </svg>
+        </div>
+        <div className="absolute inset-y-0 left-0 bg-[var(--cc-bg)]" style={{ width: LABEL }} />
+        <div className="absolute inset-y-0 right-0 bg-[var(--cc-bg)]" style={{ width: RIGHT }} />
       </div>
 
       <p className="mt-2 max-w-4xl text-[12px] leading-relaxed text-[var(--cc-ink-soft)]">

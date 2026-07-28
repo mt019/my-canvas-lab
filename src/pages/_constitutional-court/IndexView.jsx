@@ -26,7 +26,7 @@ const RAIL_TONE = { 大理院: ERA_TONE.大理院, 最高法院: ERA_TONE.最高
 // 直接寫 style.transform 而不走 state：這頁掛著數百張案件卡，每個 scroll 事件都 re-render 會掉幀。
 // 回傳 [markRef, barRef]。
 const REVEAL_GAIN = 2.2; // 往上捲時的露出倍速（往下收起為 1:1）
-function useScrollLinkedToolbar(stickyOffset = 49) {
+function useScrollLinkedToolbar(stickyOffset) {
   const markRef = useRef(null);
   const barRef = useRef(null);
   useEffect(() => {
@@ -148,7 +148,7 @@ function SyntaxHint({ onPick }) {
 }
 
 const INDEX_PAGE = 40; // 索引初始/重置顯示件數（比舊 30 多，配合下拉自動加載）
-export default function IndexView({ initialQ = '', onOpenDoc }) {
+export default function IndexView({ initialQ = '', onOpenDoc, navTop = 49 }) {
   const [機關, set機關] = useState(readInitial機關);
   const [type, setType] = useState('全部');
   const [topic, setTopic] = useState('全部');
@@ -161,7 +161,7 @@ export default function IndexView({ initialQ = '', onOpenDoc }) {
   // 「在索引中檢視」由 URL ?q= 帶入字號預搜；此頁已掛載時亦同步（初次掛載為 no-op）。
   useEffect(() => { setQ(initialQ); }, [initialQ]);
   const [limit, setLimit] = useState(INDEX_PAGE);
-  const [toolbarMark, toolbarRef] = useScrollLinkedToolbar();
+  const [toolbarMark, toolbarRef] = useScrollLinkedToolbar(navTop);
   const loadMoreRef = useRef(null);
   const [sortDir, setSortDir] = useState('desc');
   const [reasoningDefault, setReasoningDefault] = usePref('ccReasoningDefault', false);
@@ -339,13 +339,13 @@ export default function IndexView({ initialQ = '', onOpenDoc }) {
     return { railYears: arr, railPosByJid: pos };
   }, [sorted, sortDir]);
 
-  // 切換機關/母體時回到「分頁列」位置（不是整頁最上方的大表頭）：捲到讓表頭捲離、分頁列（sticky
-  // 頂端 49px）貼齊視窗頂端。基準用工具欄前那個 0 高標記——它不是 sticky，getBoundingClientRect
+  // 切換機關/母體時回到「分頁列」位置（不是整頁最上方的大表頭）：捲到讓表頭捲離、分頁列
+  // 貼齊視窗頂端（高度由 navTop 傳進來，分頁列會換行，不是常數）。基準用工具欄前那個 0 高標記——它不是 sticky，getBoundingClientRect
   // 的絕對文件座標不受捲動與工具欄收合影響（用 <nav> 會因它 sticky pin 住而讀到 0，不可靠）。
   const scrollToTabs = () => {
     const el = toolbarMark.current;
     if (!el) { window.scrollTo(0, 0); return; }
-    const top = el.getBoundingClientRect().top + window.scrollY - 49; // 49＝分頁列高
+    const top = el.getBoundingClientRect().top + window.scrollY - navTop;
     window.scrollTo(0, Math.max(0, top));
   };
 
@@ -374,7 +374,7 @@ export default function IndexView({ initialQ = '', onOpenDoc }) {
       <div className="min-w-0">
       <div ref={toolbarMark} aria-hidden className="h-0" />
       {/* 無 transition：位移由捲動事件逐幀寫入，補一層過渡只會讓它落後手指。 */}
-      <div ref={toolbarRef} className="sticky top-[49px] z-10 -mx-4 border-b border-[var(--cc-line)] bg-[var(--cc-bg)]/95 px-4 py-3 backdrop-blur will-change-transform sm:-mx-6 sm:px-6 lg:mr-0">
+      <div ref={toolbarRef} style={{ top: navTop }} className="sticky z-10 -mx-4 border-b border-[var(--cc-line)] bg-[var(--cc-bg)] px-4 py-3 will-change-transform sm:-mx-6 sm:px-6 lg:mr-0">
         {/* 頂部大分段鈕：行憲前後明確切開（預設行憲後）。行憲前另給機關子篩選。 */}
         <div className="mb-2.5 flex flex-wrap items-center gap-2">
           <SegControl
@@ -533,7 +533,7 @@ export default function IndexView({ initialQ = '', onOpenDoc }) {
       {showRail ? (
         <aside className="hidden lg:block">
           {/* z-30：讓右欄（含往左溢出的年份浮標）疊在工具欄（z-10）與分頁列（z-20）之上，浮標才不會被壓住。 */}
-          <div className="sticky top-[57px] z-30 h-[calc(100vh-72px)] py-1">
+          <div className="sticky z-30 py-1" style={{ top: navTop + 8, height: `calc(100vh - ${navTop + 23}px)` }}>
             <TimeRail years={railYears} posByJid={railPosByJid} onJump={railJump} />
           </div>
         </aside>
@@ -545,7 +545,8 @@ export default function IndexView({ initialQ = '', onOpenDoc }) {
         <aside
           onMouseEnter={() => setCompactRailHover(true)}
           onMouseLeave={() => setCompactRailHover(false)}
-          className={`group fixed bottom-3 right-0 top-[57px] z-30 w-[72px] rounded-l-lg border border-r-0 border-[var(--cc-line)] bg-[var(--cc-bg)]/97 py-1 shadow-lg backdrop-blur transition-transform duration-200 lg:hidden ${compactRailOpen ? 'translate-x-0' : 'translate-x-[62px] hover:translate-x-0 focus-within:translate-x-0'}`}
+          style={{ top: navTop + 8 }}
+          className={`group fixed bottom-3 right-0 z-30 w-[72px] rounded-l-lg border border-r-0 border-[var(--cc-line)] bg-[var(--cc-bg)]/97 py-1 shadow-lg backdrop-blur transition-transform duration-200 lg:hidden ${compactRailOpen ? 'translate-x-0' : 'translate-x-[62px] hover:translate-x-0 focus-within:translate-x-0'}`}
         >
           <button
             type="button"

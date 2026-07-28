@@ -4,6 +4,7 @@ import {
   MapPin, } from 'lucide-react';
 import manusCase from '../data/intlTaxOps/manusCase.json';
 import BackLink from '../components/BackLink';
+import SiteHomeEyebrow from '../components/SiteHomeEyebrow';
 
 // ─── Palette ───────────────────────────────────────────────────────────────────
 const MMA_VARS = { // token-exempt
@@ -111,9 +112,14 @@ export default function ManusMetaAcquisition() {
         <header className="mb-8">
           <div className="flex items-start justify-between gap-3 mb-3">
             <div>
-              <p className="text-[9px] font-black uppercase tracking-[0.4em] mb-2" style={{ color: P.muted }}>
+              <SiteHomeEyebrow
+                as="p"
+                className="text-[9px] font-black uppercase tracking-[0.4em] mb-2"
+                style={{ color: P.muted }}
+                linkClassName="hover:opacity-100"
+              >
                 Research Analysis · International Economic Law
-              </p>
+              </SiteHomeEyebrow>
               <h1 className="text-2xl font-black leading-tight" style={{ color: P.primary }}>
                 {iZh ? 'Manus–Meta 跨境收購' : 'Manus–Meta Cross-Border Acquisition'}
               </h1>

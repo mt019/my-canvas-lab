@@ -1435,6 +1435,35 @@ Google 收錄、可單獨分享，但拿到某個子站連結的人把網址砍�
 
 全站焦點框政策見「Design system」；字體子集缺字陷阱見「Font system」。
 
+### 收斂成兩條回頭路，眉標接上站首頁（2026-07-29 使用者裁定）
+
+一天之內被糾正三次才收斂：**左上角的箭頭一律回素首頁、不寫站名**（原本內頁會寫成
+「← 手記」，於是同一畫面兩個寫著「手記」的東西指向不同地方）；**眉標上的站名回這個站的
+首頁**，是內頁唯一一直看得見的回頭路（箭頭平時透明、手機根本沒有 hover），點線底線、
+不畫箭頭（使用者：箭頭太醜）；**大標題全站一律不是連結**，`identityHomeFor()` 已刪除。
+規則本文寫在 `docs/DESIGN.md`「一頁只有兩條回頭路」。
+
+當天收尾的兩件（同日稍晚做完）：
+
+- **自己刻抬頭列的頁全部接上**（`ConstitutionalCourt`／`ECFAResearch`／`IiasPublications`／
+  `InternationalTaxOps`／`GovernmentDebt`／`ManusMetaAcquisition`／`TranslationAtlas`／
+  `FiscalEnforcementRisk`／`statistics/TagPage`）。判斷收進
+  `src/components/SiteHomeEyebrow.jsx` 一份，頁面只交出字、顏色與圖示；沒有站首頁可回時
+  它原樣畫出原本的標籤，所以換過去的當下畫面一模一樣。**這件事本來看不出漏掉**——
+  `SITE_HOMES` 登記了、validator 也算得出「這頁該有回站首頁的路」，那顆按鈕卻沒接線，
+  只有等該站真的長出內頁才會被讀者按到。`validate:shell` 因此加第五節逐檔擋（沒走殼、
+  有 `<h1>` 就必須用 `SiteHomeEyebrow`），免除名單每條附理由；用故意寫壞的案例驗過會失敗。
+  `JirsForeignLaw` 是唯一免除的：它的眉標與大標題整塊是「回本頁總覽」的按鈕，`<a>` 不能
+  包進 `<button>`，而那個站沒有內頁路由。
+- **統計的術語頁與標籤頁回子清單，不是回實驗室門口**。原本各自寫死「← 術語表／← 所有
+  標籤」，寫死的落點在 07-29 那輪被全部收掉之後，眉標一律回 `/statisticslab`，少了一層
+  精確度。改法是把子清單也登記進 `SITE_HOMES`（前綴長的排前面）：
+  `/statistics/glossary/<term>` → 術語表、`/statistics/tags/<tag>` → 所有標籤。這兩份清單是
+  `/statisticslab` 的分頁、沒有自己的路由，落點因此帶查詢字串；`validate:shell` 比對路由
+  存不存在時先切掉 `?…`，所以「分頁真的存在」機器驗不到——**改用 headless 真的點那顆眉標**
+  確認落地後 tags 頁列出 29 個標籤、glossary 頁列出術語清單（2026-07-28 那次就是用
+  `?tab=` 進頁繞過了死掉的分頁按鈕，這次不重蹈）。
+
 ## VocalTuner：單音/旋律引導線（2026-07-27）
 
 `pages/VocalTuner.jsx`。頭部切「單音 / 旋律」兩模式：單音＝互斥（`targetNotes` 恆

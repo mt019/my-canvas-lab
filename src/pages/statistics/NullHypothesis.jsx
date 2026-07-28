@@ -68,7 +68,6 @@ export default function NullHypothesis() {
   return (
     <main className="reading-grain min-h-screen bg-paper pb-10 text-ink" style={{ '--reader-scale': scale }}>
       <SiteHeader
-        back={{ href: '/statisticslab', label: en ? 'Statistics Lab' : '統計學實驗室' }}
         lang={lang}
         onLangChange={setLang}
         scale={scale}

@@ -145,20 +145,17 @@ flex `gap` 撐詞距；中文會退到 Huiwen 而 Huiwen 沒有 700 的字面，
 | `backFor(pathname)` | 一條路徑該有什麼返回鍵，回 `{ href, label }` 或 `null`。 |
 | `resolveBack(override, pathname)` | 殼共用的解析：頁面沒表示意見就照配置、明講 `null` 就不畫、傳物件就用它的。 |
 
-例外寫在 `backNav.js` 內部，不散在頁面裡：**主題站的內頁回自己站的首頁**
-（`/statistics/*` → 統計學實驗室、`/brief/*` → 簡報、`/constitutionalcourt/case|justices/*`
-→ 案件索引、`/zhujiahua/*` → 朱家驊研究室），讀者在深處要回的是他正在讀的那個站；
-**素首頁與 `/all` 自己不畫**。主題站的
-分頁路由（`/constitutionalcourt/research` 這種）走預設，因為分頁換的是同一頁的內容，
-不是進到更深一層。
+`SITE_HOMES` 是主題站的登記表（`/statistics/*` → 統計學實驗室、`/brief/*` → 簡報、
+`/notes/*` → 手記、`/constitutionalcourt/*` → 案件索引、`/zhujiahua/*` → 朱家驊研究室），
+**只給眉標那顆按鈕用**（見下方「一頁只有兩條回頭路」）。箭頭不看這張表。
+新開一個有內頁的站要在這裡加一行，漏了 `validate:shell` 會逐條網址擋下來。
 
 **畫出來的實作只有一個**：`src/components/BackLink.jsx`。三個殼在自己的抬頭列放它，自己刻
 版型的頁直接放它。三個殼原本各寫一個 `<a>`，於是「安靜」這件事有三份定義；現在改一個地方
 就全站生效。**頁面不准寫死 `href="/"` 或 `href="/all"` 當返回鍵**——`validate:shell` 會擋。
 
-它是安靜的：淡墨、`opacity .7`，滑過去才轉深；沒有 `label` 的落點只畫一個箭頭。帶字的只有
-主題站的落點（「朱家驊研究室」），那是在告訴讀者他正要回到哪個站。`floating` 版給沒有抬頭
-列可掛的滿版工具頁：貼左上角、`opacity .4`、滑過去才浮出來。
+它是安靜的：淡墨、`opacity .7`，滑過去才轉深，而且**只畫一個箭頭、不寫站名**。
+`floating` 版給沒有抬頭列可掛的滿版工具頁：貼左上角、`opacity .4`、滑過去才浮出來。
 
 **樂器頁（`AutoTuner`／`UkuleleTuner`／`VocalTuner`／`ElectricPiano`）不掛返回鍵**
 （2026-07-28 使用者裁定）：整頁就是一台儀器，沒有抬頭列，浮貼一顆會壓在儀表上；退出用
@@ -169,17 +166,29 @@ flex `gap` 撐詞距；中文會退到 Huiwen 而 Huiwen 沒有 700 的字面，
 不透明度走 `near³`，游標要真的停在那段空白上才浮出來。另有兩條任何裝置都走得通的路——
 **按 `h`**（herein 的 h）或**在頁面上長按 600ms**，兩者都只是讓字浮出來，進去仍然要點它。
 
-**站有兩條回頭路，擺在兩個地方（2026-07-28 使用者裁定）**：
+### 一頁只有兩條回頭路（2026-07-29 使用者裁定，取代 07-28 的「報頭整塊都是連結」）
 
-- **左上角的箭頭**：離開這個站，回 canvas 首頁。**預設完全隱形**（`opacity-0`），滑到抬頭
-  那一列才浮出來（殼在那一列掛 `group`，不必精準壓在箭頭上）；鍵盤 `focus-visible` 一定
-  看得見——只靠 hover 的隱形控制項對鍵盤使用者等於不存在。**不掛 `title`**：那個原生提示框
-  是系統畫的，跟這個站的字體顏色無關，而且會把隱藏入口寫成說明文字；名字用 `aria-label`。
-- **報頭（眉標＋大標題）**：回這個站的原點。深一層的頁回站首頁（`/brief/events` → `/brief`）；
-  已經在站首頁但切過分頁的，回到沒有參數的那一頁（分頁與篩選都在網址裡，清掉它們是一個
-  真的動作）。乾淨的站首頁上它就是純文字，不連到自己。實作 `components/PageIdentity.jsx`
-  ＋ `backNav.js` 的 `identityHomeFor()`，三個殼（DashboardLayout／PageShell／ArticleLayout）
-  都畫這一個。
+兩條，各一個去處，不重疊：
+
+- **左上角的箭頭 → 素首頁。** 離開這個站用它，**任何頁都一樣，而且不寫站名**。預設完全
+  隱形（`opacity-0`），滑到抬頭那一列才浮出來（殼在那一列掛 `group`，不必精準壓在箭頭上）；
+  鍵盤 `focus-visible` 一定看得見——只靠 hover 的隱形控制項對鍵盤使用者等於不存在。
+  **不掛 `title`**：那個原生提示框是系統畫的，跟這個站的字體顏色無關，而且會把隱藏入口寫成
+  說明文字；名字用 `aria-label`。
+- **眉標上的站名 → 這個站的首頁。** 站內頁唯一一直看得見的回頭路（箭頭平時是透明的，
+  手機上根本沒有 hover）。實作是 `Eyebrow` 的 `back` prop，由 `PageIdentity` 依
+  `siteHomeFor()` 掛上去。**看得出能按靠點線底線，不畫箭頭**（使用者：箭頭太醜）；站首頁
+  本身不連——那是連到自己。
+
+**大標題全站一律不是連結。** 這條在 07-29 一天內被三次糾正才收斂：內頁標題連站首頁
+（「這個 title 區域變成返回 note 主頁的按鈕了，太奇怪」）、內頁標題連素首頁（「不能按到我
+的空首頁去」）、站首頁標題連素首頁（「已經在小站首頁了，點大 title 不應該把我丟回空首頁，
+要回空首頁有最上面那個小箭頭」）都被否掉。原本負責這件事的 `identityHomeFor()` 已刪除——
+留著它就是留一個「有時候可以點」的例外。
+
+`validate:shell` 逐條網址算過全部 481 個網址，並且逐檔擋掉兩種寫法：頁面自己傳
+`back={{…}}` 指定箭頭落點（只准 `back={null}` 表示這頁不畫），以及把 `<h1>` 包進
+`<Link>`／`<a>`。
 
 **連點兩下箭頭回 `/all`**（只有落點是素首頁的那些）。這是隱藏入口，所以**不寫在任何提示裡**。
 代價講清楚：瀏覽器沒有「這是雙擊的第一下」這種事件，所以單擊必須先等 260ms 確認沒有第二下
@@ -191,10 +200,26 @@ flex `gap` 撐詞距；中文會退到 Huiwen 而 Huiwen 沒有 700 的字面，
 （`/brief` 補成 `/brief/` 會命中 `/brief/` 那條規則，於是箭頭指向自己，按下去什麼都沒發生
 ——看起來像「要按兩下才生效」）。
 
-**還沒接上報頭連結的頁**：自己刻抬頭列、沒有走三個殼的那幾頁（`ConstitutionalCourt`、
+**自己刻抬頭列的頁一律走 `SiteHomeEyebrow`**（2026-07-29 接完）。`ConstitutionalCourt`、
 `ECFAResearch`、`IiasPublications`、`InternationalTaxOps`、`GovernmentDebt`、
-`ManusMetaAcquisition`、`TranslationAtlas`、`FiscalEnforcementRisk`）目前只有返回鍵、
-沒有可點的報頭。它們各自帶 CSS Module 或頁面級色票，要一頁一頁接。
+`ManusMetaAcquisition`、`TranslationAtlas`、`FiscalEnforcementRisk`、`statistics/TagPage`
+各有各的 CSS 變數與字級，套不進三個殼，但「站內頁的眉標要能回站首頁」是站的規矩、不是
+某一頁的裝飾，所以判斷只寫在 `src/components/SiteHomeEyebrow.jsx` 一份，頁面只交出自己的
+字、顏色與圖示（`className` 原樣傳進去，`as` 指定原本的標籤，`icon` 走 prop 才不會被底線
+一起劃過去）。沒有站首頁可回時它原樣畫出那個標籤，所以換過去的當下畫面不會有任何變化。
+`validate:shell` 第五節逐檔擋：沒走殼、有 `<h1>`，就必須用 `SiteHomeEyebrow`（或帶 `back`
+的 `Eyebrow`），免除名單每條附理由。
+
+**`JirsForeignLaw` 是唯一的例外**：它的眉標與大標題整塊是「回本頁總覽」的按鈕（同頁切視圖，
+不換網址），而這個站沒有內頁路由。日後真的長出 `/jirsforeignlaw/…` 的內頁，要先把那顆按鈕
+拆開再接眉標——`<a>` 不能包在 `<button>` 裡。
+
+**眉標可以回子清單，不必一路回站首頁。** `SITE_HOMES` 比對的是前綴、長的排前面，所以
+`/statistics/glossary/<term>` 回「術語表」、`/statistics/tags/<tag>` 回「所有標籤」，其餘
+`/statistics/…` 才回實驗室。這兩份清單是 `/statisticslab` 的分頁、沒有自己的路由，落點因此
+帶查詢字串（`/statisticslab?tab=glossary`）；`validate:shell` 比對路由存不存在時會先切掉
+`?…`，所以「那個分頁真的存在」只能靠人驗——加這種落點時**真的點那顆眉標看落到哪**
+（2026-07-28 的教訓：分頁按鈕連到一條查不到 slug 的路由，用 `?tab=` 進頁反而繞過了它）。
 
 ## 共用元件（`src/components/`）
 
@@ -207,6 +232,7 @@ flex `gap` 撐詞距；中文會退到 Huiwen 而 Huiwen 沒有 700 的字面，
 | `AppearanceMenu` | 色票與紙紋，收在一顆「外觀」按鈕的下拉裡（不平鋪在工具列上——閱讀頁只付得起一排鉻件）。改的是全站設定（localStorage，開站時套用），與 `/palettelab` 同一組值；差別只在讀者不必離開正文就能換。色票圓點顯示的是 accent 不是 paper——每套票的 paper 依規則都近白，排出來會是一排白方塊。 |
 | `ScrollToTop` | 掛在 Router 內一次，全站生效：換 pathname 就回捲到頂。點連結是換一頁，新的一頁從頭開始；React Router 預設只換元件不動捲軸，於是從索引中段點進詞條會落在該詞條的中段。帶 `#hash` 的錨點導覽與瀏覽器上一頁不干預（那兩種情況讀者自己指定了落點）。 |
 | `Eyebrow` | 眉標 kicker。打字機 accent 字體（Erikas）唯一的預設允許位置。**必須 `font-bold`**——Erikas 的 400 是一支乾淨的細打字機體，色帶油墨的網點字面在 **700** 那一支；首頁那條「PHENOM · CANVAS LAB」一直是 bold，眉標元件曾經不是，於是同一個站有兩種眉標（2026-07-28 使用者連問兩次「油墨點點的字體呢」）。另外兩件也包在元件裡：**空格自己補**（Erikas 子集沒有空格字符，advance width＝0，詞距只剩 letter-spacing，字詞邊界會糊成一排等距字母——按空白切成一詞一個 span、flex `gap` 撐開，單獨成詞的間隔號改畫 CSS 圓點）；**`font-synthesis: none`**（中文眉標走 Huiwen fallback，而 Huiwen 沒有 700 的字面，不關掉會被畫一層假粗體）。現行值 `--text-xs`／700／`tracking .26em`／`ink-muted`。曾於 2026-07-07 短暫用於 h1–h3 拉丁面，同日因行內數字紋理過噪而改回 Radio Newsman；標題中文面維持 Huiwen Mincho。 |
+| `SiteHomeEyebrow` | 自己刻抬頭列的頁專用的眉標。走殼的頁由 `PageIdentity` 接 `siteHomeFor()`，這些頁沒有殼，曾經只接了左上角那支箭頭、眉標是一行寫死的字——差別在有內頁的時候才看得出來：`SITE_HOMES` 登記了、`validate:shell` 也算得出「這頁該有回站首頁的路」，那顆按鈕卻沒接線。判斷因此只寫這一份：`className`／`style` 原樣傳進去、`as` 指定原本的標籤、`icon` 走 prop（底線只畫在文字那個 span 上，畫在外層會被 flex 吃掉，也會把圖示一起劃過去）。沒有站首頁可回時原樣畫出那個標籤，換過去的當下畫面一模一樣。 |
 
 ## 頁內建構元件（`src/components/lab/`，2026-07-13 建）
 

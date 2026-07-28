@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 import manifest from '../data/translationProjects.json';
 import BackLink from '../components/BackLink';
+import SiteHomeEyebrow from '../components/SiteHomeEyebrow';
 
 const TA_VARS = { // token-exempt
   '--ta-bg': '#fbf8f9',
@@ -148,9 +149,13 @@ export default function TranslationAtlas() {
       <BackLink className="mb-5 block w-fit text-token-sm text-[var(--ta-ink)] opacity-60 transition hover:opacity-100" />
       <div className="mx-auto w-full max-w-5xl">
         <header className="mb-8 border-b border-[var(--ta-line)] pb-7">
-          <p className="mb-4 font-accent text-[10px] font-bold uppercase tracking-[0.28em] text-[var(--ta-eyebrow)]">
+          <SiteHomeEyebrow
+            as="p"
+            className="mb-4 font-accent text-[10px] font-bold uppercase tracking-[0.28em] text-[var(--ta-eyebrow)]"
+            linkClassName="hover:text-[var(--ta-heading)]"
+          >
             Phenom&nbsp;&nbsp;·&nbsp;&nbsp;Translation Atlas
-          </p>
+          </SiteHomeEyebrow>
           <h1 className="font-display text-3xl font-semibold leading-tight text-[var(--ta-heading)] sm:text-4xl">
             翻譯工程總覽
           </h1>

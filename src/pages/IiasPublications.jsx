@@ -9,6 +9,7 @@ import StickyHeading, { useStickyTop } from '../components/lab/StickyHeading';
 import { useTabParam } from '../components/lab/Tabs';
 import data from '../data/iiasPublications.json';
 import BackLink from '../components/BackLink';
+import SiteHomeEyebrow from '../components/SiteHomeEyebrow';
 
 // 分類 → 固定 token 槽位（順序不重排；淡底 -bg 填面、ink -tx 細框，見 docs/DESIGN.md 色彩哲學）
 const CATS = [
@@ -1403,7 +1404,9 @@ export default function IiasPublications() {
       <section className={styles.shell}>
         <header className={styles.topbar}>
           <div>
-            <p className={styles.eyebrow}>Institutum Iurisprudentiae, Academia Sinica</p>
+            <SiteHomeEyebrow as="p" className={styles.eyebrow} linkClassName="hover:text-[var(--c-accent)]">
+              Institutum Iurisprudentiae, Academia Sinica
+            </SiteHomeEyebrow>
             <h1>中研院法律學研究所出版品</h1>
             <p className={styles.subtitle}>法學期刊、專書、叢書與外文出版品的全集清單，篇章直達原文</p>
           </div>

@@ -20,22 +20,49 @@
  *    一團。關掉之後：拉丁走 Erikas 真正的 700，中文維持原本的字重。
  *
  * 非字串的 children（JSX）原樣傳過去，不切也不換。
+ *
+ * **`back`：把整條眉標變成回這個站首頁的按鈕**（`{ href, label }`，2026-07-29 使用者指定的
+ * 位置：「至少那個大標題上面那個手記兩個字，可以做成按鈕，可以回手記的主頁吧」）。站名本來
+ * 就寫在那裡、又緊貼著大標題，是內頁最自然的回頭路；最上面那支箭頭只負責離開這個站，
+ * 不再重複寫一次站名。
+ *
+ * 它必須看得出來能按，但**不畫箭頭**（使用者：「箭頭太醜」）：改成點線底線，跟站上其他
+ * 連結同一種語言（`Prose` 的內文連結也是 underline＋decoration token）。底線畫在每個詞的
+ * span 上、不畫在外層——外層是 flex 容器，text-decoration 不會傳進 flex item，畫上去看不見。
  */
-const DOTS = new Set(['·', '•', '・']);
+import { Link } from 'react-router-dom';
 
-export default function Eyebrow({ children, className = '' }) {
+const DOTS = new Set(['·', '•', '・']);
+const LINKED_TOKEN = 'underline decoration-line decoration-dotted decoration-1 underline-offset-[5px] '
+  + 'transition-colors duration-fast group-hover/eyebrow:decoration-accent';
+
+export default function Eyebrow({ children, className = '', back }) {
   const tokens = typeof children === 'string' ? children.trim().split(/\s+/) : null;
+  const body = tokens
+    ? tokens.map((token, i) => (DOTS.has(token)
+      ? <span key={`dot-${i}`} className="h-[3px] w-[3px] shrink-0 rounded-full bg-current opacity-60" />
+      : <span key={`${token}-${i}`} className={back ? LINKED_TOKEN : undefined}>{token}</span>))
+    : children;
+
+  const shared = 'flex flex-wrap items-center gap-x-[0.85em] gap-y-1 font-accent text-token-xs '
+    + 'font-bold uppercase tracking-[0.26em] text-ink-muted';
+
+  if (back) {
+    return (
+      <Link
+        to={back.href}
+        aria-label={`回${back.label}`}
+        style={{ fontSynthesis: 'none' }}
+        className={`${shared} group/eyebrow w-fit transition-colors duration-fast hover:text-accent ${className}`.trim()}
+      >
+        {body}
+      </Link>
+    );
+  }
 
   return (
-    <div
-      style={{ fontSynthesis: 'none' }}
-      className={`flex flex-wrap items-center gap-x-[0.85em] gap-y-1 font-accent text-token-xs font-bold uppercase tracking-[0.26em] text-ink-muted ${className}`.trim()}
-    >
-      {tokens
-        ? tokens.map((token, i) => (DOTS.has(token)
-          ? <span key={`dot-${i}`} className="h-[3px] w-[3px] shrink-0 rounded-full bg-current opacity-60" />
-          : <span key={`${token}-${i}`}>{token}</span>))
-        : children}
+    <div style={{ fontSynthesis: 'none' }} className={`${shared} ${className}`.trim()}>
+      {body}
     </div>
   );
 }

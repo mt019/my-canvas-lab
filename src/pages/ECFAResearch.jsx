@@ -17,6 +17,7 @@ import data from '../data/ecfaResearch.json';
 import FontSizeControl, { useFontScale } from '../components/FontSizeControl';
 import { SHELL_PAD_X } from '../components/shellPadding';
 import BackLink from '../components/BackLink';
+import SiteHomeEyebrow from '../components/SiteHomeEyebrow';
 
 const ds = data.datasets;
 const thesis = ds.thesisMeta;
@@ -829,10 +830,14 @@ export default function ECFAResearch() {
           <BackLink className="mb-4 block w-fit text-[13px] text-[var(--ecfa-body-text)] transition hover:text-[var(--ecfa-heading)]" />
           <div className="flex items-start justify-between gap-3">
             <div className="reader-scale max-w-4xl">
-              <div className="mb-3 inline-flex items-center gap-2 font-accent text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--ecfa-eyebrow-header)]">
-                <ScrollText size={13} />
+              {/* 眉標＝站名，站內頁時它就是回站首頁那顆按鈕（判斷在 SiteHomeEyebrow）。 */}
+              <SiteHomeEyebrow
+                className="mb-3 inline-flex items-center gap-2 font-accent text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--ecfa-eyebrow-header)]"
+                linkClassName="hover:text-[var(--ecfa-heading)]"
+                icon={<ScrollText size={13} />}
+              >
                 ECFA Research Lab
-              </div>
+              </SiteHomeEyebrow>
                 <h1 className="max-w-3xl leading-tight text-[var(--ecfa-heading)]">
                   <span className="font-display text-3xl font-normal sm:text-4xl">ECFA</span>
                   <span className="ml-3 align-baseline font-sans text-2xl font-semibold sm:text-[2.15rem]">的來歷與實證研究</span>

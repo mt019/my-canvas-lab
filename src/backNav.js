@@ -19,9 +19,9 @@ export const BACK_NAV_ENABLED = true;
 /*
  * 預設落點：素首頁。所有專案頁的返回鍵都回這裡。
  *
- * `label` 是空的，所以畫出來只有一個箭頭——回自己家的路不必掛招牌，站名印在每一頁的
- * 左上角是廣告不是導覽。`title` 只給滑鼠停留與螢幕閱讀器。主題站的落點仍然帶字
- * （「朱家驊研究室」），因為那是在告訴讀者他正要回到哪個站，不是在報站名。
+ * `label` 是空的，所以畫出來只有一個箭頭——回自己家的路不必掛招牌。`title` 只給滑鼠停留
+ * 與螢幕閱讀器。**箭頭上不寫站名**：站名是眉標那顆按鈕的字，寫兩次就變成同一畫面上兩個
+ * 同名、去處卻不同的東西（2026-07-29）。
  *
  * 想讓返回鍵直接回專案清單，把這行換成 INDEX 即可（`export const HOME = INDEX;`）——
  * 這是「我可以決定」的那一格，兩個落點都是現成的。
@@ -35,15 +35,29 @@ export const HOME = { href: '/', label: '', title: '回首頁' };
 export const INDEX = { href: '/all', label: '全部' };
 
 /*
- * 例外一：主題站（自己有首頁與多個內頁的站）的內頁，回自己站的首頁，不回素首頁。
- * 讀者在深處要回的是他正在讀的那個站，素首頁從站首頁再一步就到。
- * 比對用前綴，**長的前綴要排在前面**（陣列由上往下比，第一個中的就算）。
+ * 主題站登記表（自己有首頁與多個內頁的站）。**給眉標那顆按鈕用**：站內頁的眉標寫著站名，
+ * 按下去回這個站的首頁。箭頭不看這張表（它一律回素首頁）。
+ *
+ * 比對用前綴，**長的前綴要排在前面**（陣列由上往下比，第一個中的就算）。新開一個有內頁的
+ * 站就要在這裡加一行，否則那些內頁沒有回自己站的路——`validate:shell` 會逐條網址檢查，
+ * 漏登記會擋下來。
+ *
+ * 落點可以帶查詢字串（統計的術語表與標籤總覽是 `/statisticslab` 的兩個分頁，沒有自己的路由）。
+ * `validate:shell` 比對路由存不存在時會先把 `?…` 切掉，所以只有「?tab= 的分頁真的存在」這件事
+ * 檢查不到——加一條這種落點時，要**真的點那顆眉標**看落到哪個分頁，別只看網址組得出來
+ * （2026-07-28 的教訓：分頁按鈕連到一條查不到 slug 的路由，用 `?tab=` 進頁反而繞過了它）。
  */
 const SITE_HOMES = [
   ['/constitutionalcourt/case/', { href: '/constitutionalcourt', label: '案件索引' }],
   ['/constitutionalcourt/justices/', { href: '/constitutionalcourt', label: '案件索引' }],
+  ['/constitutionalcourt/', { href: '/constitutionalcourt', label: '案件索引' }],
+  // 一個術語、一個標籤各自成頁，往回一層是那份清單，不是整個實驗室——回到「所有標籤」
+  // 比回到實驗室門口精確，讀者剛才就是從那裡點進來的。
+  ['/statistics/glossary/', { href: '/statisticslab?tab=glossary', label: '術語表' }],
+  ['/statistics/tags/', { href: '/statisticslab?tab=tags', label: '所有標籤' }],
   ['/statistics/', { href: '/statisticslab', label: '統計學實驗室' }],
   ['/brief/', { href: '/brief', label: '簡報' }],
+  ['/notes/', { href: '/notes', label: '手記' }],
   ['/zhujiahua/', { href: '/zhujiahua', label: '朱家驊研究室' }],
   ['/userscripts/', { href: '/userscripts', label: '使用者腳本' }],
 ];
@@ -55,21 +69,18 @@ const SITE_HOMES = [
 const NO_BACK = new Set(['/', '/all']);
 
 /*
- * 一條路徑該有什麼返回鍵。回傳 `{ href, label }`，或 `null`＝這頁不畫。
- * 主題站的分頁路由（`/constitutionalcourt/research`、`/zhujiahua/xxx`）走的是預設，
- * 因為分頁換的是同一頁的內容，不是進到更深一層。
+ * 左上角那支箭頭該指向哪。回傳 `{ href, label }`，或 `null`＝這頁不畫。
+ *
+ * **一律回素首頁，而且不帶站名**（2026-07-29 使用者裁定）。它管的是「離開這個站」這一件事，
+ * 站內的回頭路由眉標負責（見 siteHomeFor）。之前內頁的箭頭會寫成「← 手記」，於是同一個
+ * 畫面上出現兩個寫著「手記」的東西、指向不同地方：使用者的話是「最上面那個有箭頭的地方
+ * 是回素首頁的，不應該有小站的名字出現」。
  */
 export function backFor(pathname) {
   if (!BACK_NAV_ENABLED) return null;
   const path = pathname.length > 1 ? pathname.replace(/\/+$/, '') : pathname;
   if (NO_BACK.has(path)) return null;
-  /*
-   * **只有站底下的頁才回站首頁，站首頁自己不算。** 這裡本來寫 `${path}/`.startsWith(prefix)，
-   * 於是 `/brief` 補成 `/brief/` 剛好命中 `/brief/` 這條，站首頁的返回鍵指向它自己——按下去
-   * 什麼都沒發生。2026-07-28 使用者問「brief 頁面怎麼沒有回 canvas 首頁的按鈕」，就是這個。
-   */
-  const hit = SITE_HOMES.find(([prefix]) => path.startsWith(prefix));
-  return hit ? hit[1] : HOME;
+  return HOME;
 }
 
 /*
@@ -86,9 +97,12 @@ export function resolveBack(override, pathname) {
 /*
  * 這一頁屬於哪個主題站——給眉標用的。
  *
- * 站的兩條回頭路是兩件不同的事，所以擺在兩個地方（2026-07-28 使用者裁定）：
- *   左上角的箭頭  → 離開這個站，回 canvas 首頁。
- *   眉標上的站名  → 回這個站自己的首頁（`/brief/events` 的「BRIEF」按下去回 `/brief`）。
+ * 一頁最多三個回頭的東西，各管一件事（2026-07-29 使用者重新裁定，取代 07-28 的「報頭整塊
+ * 都是連結」）：
+ *   左上角的箭頭  → 一律回素首頁，只有箭頭、不帶站名。
+ *   眉標上的站名  → 站內頁那顆看得見的小按鈕，回這個站的首頁（`/notes/…` 的「手記」回 `/notes`）。
+ *   大標題        → **全站一律不是連結**（理由見本檔最後一段）。
+ *
  * 已經在站首頁時回 null——站名不連到自己，那是一個按了沒反應的連結。
  */
 export function siteHomeFor(pathname) {
@@ -99,24 +113,14 @@ export function siteHomeFor(pathname) {
 }
 
 /*
- * 報頭（眉標＋大標題）按下去要去哪。返回鍵管「離開這個站」，報頭管「回到這個站的原點」。
+ * **大標題不是導覽元件，全站一律不可點。** 這裡曾經有一支 `identityHomeFor` 決定「報頭按
+ * 下去去哪」，2026-07-29 一天之內被否掉三次，最後收斂成這條規矩：
  *
- * 兩種原點，都是實際被問出來的：
+ *   - 內頁的大標題連到站首頁 → 「這個 title 區域變成返回 note 主頁的按鈕了，太奇怪」。
+ *   - 內頁的大標題連到素首頁 → 「不能按到我的空首頁去啊」（站沒登記時的 fallback 造成的）。
+ *   - 站首頁的大標題連到素首頁 → 「已經在小站首頁了，點大 title 不應該把我丟回空首頁；
+ *     要回空首頁有最上面那個小箭頭」。
  *
- * 1. **深一層的頁 → 站首頁。** `/brief/events` 的「BRIEF 簡報」回 `/brief`。
- * 2. **同一頁但切過分頁 → 回到沒有參數的那一頁。** 這是第二次被問的那個
- *    （2026-07-28：「這區怎麼還是沒得點回 brief 首頁？」）——當時人就站在 `/brief`，
- *    但網址帶著 `?view=reading&activityDay=day3&sources=…`，報頭卻是純文字，因為第一版
- *    只比路徑、不看參數。分頁與篩選都在網址裡，所以「回到原點」是一個真的動作：把它們
- *    全部清掉。
- *
- * 兩者都不成立（乾淨的站首頁、或不屬於任何站又沒有參數的頁）才回 null——那時候報頭
- * 連到自己，按了不會有任何事發生。
+ * 一頁只剩兩條回頭路，各一個去處，不重疊：**左上角的箭頭回素首頁**（backFor），
+ * **眉標上的站名回這個站的首頁**（siteHomeFor，站首頁本身不連——那是連到自己）。
  */
-export function identityHomeFor(pathname, search = '') {
-  const site = siteHomeFor(pathname);
-  if (site) return site;
-  const path = pathname.length > 1 ? pathname.replace(/\/+$/, '') : pathname;
-  if (NO_BACK.has(path)) return null;
-  return search && search !== '?' ? { href: path, label: '' } : null;
-}

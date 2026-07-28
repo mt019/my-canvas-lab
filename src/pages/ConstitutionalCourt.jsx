@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { Link, useSearchParams, useParams, useNavigate } from 'react-router-dom';
 import {
   CalendarClock,
@@ -28,6 +28,8 @@ import AboutView, { Case1Analysis } from './_constitutional-court/AboutView';
 import CollationView from './_constitutional-court/CollationView';
 import { SHELL_PAD_X } from '../components/shellPadding';
 import BackLink from '../components/BackLink';
+import SiteHomeEyebrow from '../components/SiteHomeEyebrow';
+import { useStickyTop } from '../components/lab/StickyHeading';
 import JurisdictionMethodView from './_constitutional-court/JurisdictionMethodView';
 
 const tabs = [
@@ -104,20 +106,40 @@ export default function ConstitutionalCourt() {
 
   const caseDoc = routeCase ? docs.find((x) => x.字號 === routeCase) : null;
 
+  const heading = (
+    <h1 className="max-w-3xl leading-tight text-[var(--cc-heading)]">
+      <span className="font-sans text-2xl font-semibold sm:text-[2.15rem]">憲法法庭案例庫</span>
+      <span className="ml-3 align-baseline text-base sm:text-lg text-[var(--cc-body-text)]">釋字・憲判・暫時處分</span>
+    </h1>
+  );
+
+  /*
+   * 分頁列有多高——底下每個要吸在它下緣的東西都得知道（案件索引的工具列、任期圖的年份軸、
+   * 校勘頁的頁碼列）。**這個高度不是常數**：十個標籤在 900px 以下換成兩行（49px → 90px），
+   * 讀者字級也會改變它，而各視圖原本各自寫死 49／57，兩行時就有一半藏在分頁列後面。
+   * 量法走共用的 `useStickyTop`（全站同一支，寫成 `--lab-sticky-top`），CSS 端吃變數，
+   * 只能在 JS 裡算的（IndexView 那條隨捲動收合的工具列）吃回傳值。
+   */
+  const navRef = useRef(null);
+  const navH = useStickyTop(navRef) || 49;
+
   return (
     <div className="min-h-screen paper-texture bg-[var(--cc-bg)] font-sans text-[var(--cc-ink)]" style={{ ...CC_VARS, ...(active === 'collation' ? COLLATION_READING_VARS : {}), paddingBottom: 60, overflowX: 'clip' }}>
       <header className="border-b border-[var(--cc-line)] bg-white">
         <div className={`mx-auto max-w-6xl py-7 ${SHELL_PAD_X}`}>
           {/* 這頁自己刻了殼，返回鍵走共用元件＋全站配置（src/backNav.js），不寫死落點。 */}
           <BackLink className="mb-4 block w-fit text-[13px] text-[var(--cc-ink-mid)] transition hover:text-[var(--cc-accent)]" />
-          <div className="mb-3 inline-flex items-center gap-2 font-accent text-[12px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow-header)]">
-            <Gavel size={13} />
+          {/* 站內頁（分頁、個案頁、大法官頁）時，眉標整條是回站首頁那顆按鈕。判斷寫在
+              SiteHomeEyebrow 裡（全站自刻抬頭列的頁共用一份），這裡只交出字與顏色。 */}
+          <SiteHomeEyebrow
+            className="mb-3 inline-flex items-center gap-2 font-accent text-[12px] font-bold uppercase tracking-[0.08em] text-[var(--cc-eyebrow-header)]"
+            linkClassName="hover:text-[var(--cc-accent)]"
+            underlineClassName="decoration-[var(--cc-link-underline)]"
+            icon={<Gavel size={13} />}
+          >
             Constitutional Court Archive
-          </div>
-          <h1 className="max-w-3xl leading-tight text-[var(--cc-heading)]">
-            <span className="font-sans text-2xl font-semibold sm:text-[2.15rem]">憲法法庭案例庫</span>
-            <span className="ml-3 align-baseline text-base sm:text-lg text-[var(--cc-body-text)]">釋字・憲判・暫時處分</span>
-          </h1>
+          </SiteHomeEyebrow>
+          {heading}
           <p className="mt-3 max-w-3xl text-base leading-relaxed text-[var(--cc-body-text)]">
             把中華民國司法解釋沿革——行憲後 {data.統計.行憲後} 件（大法官釋字・憲法法庭裁判，取自憲法法庭官網）與
             行憲前 {data.統計.行憲前} 件（大理院／最高法院／司法院統一解釋；現有底稿取自維基文庫，<Link to="/constitutionalcourt/collation" className="underline decoration-[var(--cc-link-underline)] decoration-dotted underline-offset-[3px] transition-colors hover:text-[var(--cc-accent)]">正以紙本重校</Link>）——做成可檢索的研究工作台：
@@ -147,7 +169,9 @@ export default function ConstitutionalCourt() {
         </div>
       </header>
 
-      <nav className="sticky top-0 z-20 border-b border-[var(--cc-line)] bg-white/94 backdrop-blur">
+      {/* 底色不透明：吸頂列底下走過的是密集的圖表與表格，94% 白＋毛玻璃會把它們糊成一片
+          髒斑（分頁列換到兩行時整條都是），而讀者要的只是分頁列本身看得清楚。 */}
+      <nav ref={navRef} className="sticky top-0 z-20 border-b border-[var(--cc-line)] bg-white">
         {/*
           分頁列一律換行，不橫向捲動。吸頂欄橫捲的問題是它把「這一頁有哪些分頁」變成
           要先滑一段才知道的事——貼在畫面頂端的東西應該一眼看完。這裡也不再畫圖示：
@@ -179,7 +203,7 @@ export default function ConstitutionalCourt() {
             </div>
           </section>
         ) : null}
-        {!routeCase && active === 'index' ? <IndexView initialQ={params.get('q') ?? ''} onOpenDoc={openDoc} /> : null}
+        {!routeCase && active === 'index' ? <IndexView initialQ={params.get('q') ?? ''} onOpenDoc={openDoc} navTop={navH} /> : null}
         {active === 'timeline' ? <TimelineView /> : null}
         {active === 'justices' ? (
           justiceName

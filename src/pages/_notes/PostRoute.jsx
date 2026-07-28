@@ -53,11 +53,12 @@ export default function PostRoute() {
     <>
       <SeoHead page={postSeo(post)} />
       <main className="reading-grain min-h-screen bg-paper pb-10 text-ink" style={{ '--reader-scale': scale }}>
-        {/* 返回鍵直接在這裡指定，不走 backNav.js 的 SITE_HOMES。那張表現在有兩個消費者：
-            返回鍵，以及報頭（`PageIdentity` 把眉標＋大標整塊做成回站首頁的連結）。手記
-            登記進去的話，文章標題會跟著變成一顆連結——2026-07-28 使用者：「這個 title
-            區域變成返回 note 主頁的按鈕了，太奇怪」。 */}
-        <SiteHeader back={{ href: '/notes', label: '手記' }} scale={scale} onScaleChange={setScale} />
+        {/* 返回鍵不寫死落點：手記已登記在 backNav.js 的 SITE_HOMES，這裡不傳 back 就是
+            「← 手記」。以前之所以在這裡自己指定、刻意不登記，是因為 `PageIdentity` 當時
+            把眉標＋大標整塊做成連結，登記後文章標題會跟著變成按鈕（2026-07-28 使用者：
+            「這個 title 區域變成返回 note 主頁的按鈕了，太奇怪」）。2026-07-29 改成眉標與
+            大標題分開掛：眉標「手記」是回站首頁那顆小按鈕，文章標題不是連結。 */}
+        <SiteHeader scale={scale} onScaleChange={setScale} />
 
         <ArticleLayout
           title={post.title}

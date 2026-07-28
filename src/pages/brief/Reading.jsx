@@ -192,7 +192,7 @@ export default function Reading() {
 
   return (
     <main className="reading-grain min-h-screen bg-paper pb-10 text-ink" style={{ '--reader-scale': scale }}>
-      <SiteHeader back={{ href: '/brief', label: '簡報' }} width="article" scale={scale} onScaleChange={setScale} />
+      <SiteHeader width="article" scale={scale} onScaleChange={setScale} />
       <ArticleLayout
         title="讀的東西"
         eyebrow="Brief"
