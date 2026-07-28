@@ -612,6 +612,10 @@ function PubCard({ pub, open, onToggle, onOpen, onAuthor }) {
 
 export default function IiasPublications() {
   const [tab, setTab] = useTabParam('tab', 'overview'); // 分頁狀態同步到 ?tab=，可書籤／上一頁
+  // 「整理者的話」預設不顯示，但一律留在 DOM 裡（只以 CSS 收起，不做條件渲染）：檢視原始碼、
+  // 帶著 #colophon 進來、或抓取頁面的人照樣讀得到，畫面上則要自己找到那個墨記才會展開。
+  const [noteOpen, setNoteOpen] = useState(() =>
+    typeof window !== 'undefined' && decodeURIComponent(window.location.hash) === '#colophon');
   const [cat, setCat] = useState('all');
   const [q, setQ] = useState('');
   // 預設全展開：collapsed 集合為空＝全開（站規：可展開卡片一律預設展開）
@@ -1502,7 +1506,21 @@ export default function IiasPublications() {
                 <p className={styles.aboutWhy}>
                   會做這個，是因為官網不好用：書目分在四個分頁，篇章要逐頁點開，PDF 還藏在翻頁閱覽器後面。本來只想隨手整理，做著做著變成一邊整理一邊讀，時間多半花在讀上面。所以這裡的入口開得多，完整清單、系列、期刊架、篇章檢索、作者、兩岸四地、所史，同一批東西橫看成嶺側成峰。我要的是翻書那種手感：隨便翻開一頁，就能從那裡讀下去。
                 </p>
+                <p className={styles.colophonRow}>
+                  <button
+                    type="button"
+                    className={styles.colophonMark}
+                    aria-expanded={noteOpen}
+                    aria-controls="iias-colophon"
+                    aria-label={noteOpen ? '收起整理者的話' : '整理者的話'}
+                    onClick={() => setNoteOpen((v) => !v)}
+                  />
+                </p>
+                <div id="iias-colophon" className={noteOpen ? styles.colophon : styles.colophonHidden}>
                 <p className={styles.aboutReflectHead}>整理者的話</p>
+                <p className={styles.colophonCaveat}>
+                  以下是我讀完這批出版品後的個人觀感，不是中研院法研所的立場。裡面有幾段對具體論文的方法提出批評，對事不對人，所引的數字都可回原文覆核。
+                </p>
                 <p>
                   法律學研究所在中央研究院裡是很年輕的一個所。2004 年 7 月設籌備處，湯老師接下籌備處主任，把它從一紙計畫、幾個人，一手籌了七年。2011 年 7 月 1 日終於掛牌成所，他成為<a href="https://www.iias.sinica.edu.tw/DirectorofPreprartory" target="_blank" rel="noreferrer">第一任所長</a>。同一年他獲提名為大法官，臨危受命，於是所長只做到 9 月 30 日，隔天他就從法律所退休、赴任大法官去了。今年是法律所十五年，以研究機構的年紀論，它還在長身體，而這批出版品，差不多就是它從無到有的那些年，一頁一頁累起來的東西。
                 </p>
@@ -1539,8 +1557,9 @@ export default function IiasPublications() {
                 <p>
                   到今天（{data.meta.資料截至.slice(0, 4)} 年），它有的是這樣一批東西：四類出版品、將近八百篇文章、一群還在發表的研究者，和一份跟這座島的公法、行政、憲政纏在一起的紀錄。它以後會長成什麼樣，誰也說不準；法治從來不是一個研究所守得住的。可是這幾百篇翻下來，我一直有同一個印象：這是個埋頭做慢事的地方。
                 </p>
+                </div>
                 <p className={styles.aboutNote}>
-                  本站為研究與檢索用途的非官方整理，以上「整理者的話」是我讀完這批出版品後的個人觀感，非該所立場。著作權歸原作者與中研院法研所所有，以官方網站
+                  本站為研究與檢索用途的非官方整理。著作權歸原作者與中研院法研所所有，以官方網站
                   {' '}<a href={data.meta.來源} target="_blank" rel="noreferrer">{data.meta.來源}</a>{' '}
                   為準。
                 </p>
