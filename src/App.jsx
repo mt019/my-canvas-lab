@@ -214,7 +214,7 @@ const PAGE_META = { // token-exempt: per-page identity chip colors (data, not st
   },
   GovernmentDebt: {
     name: '政府債務地圖',
-    desc: '主權債務、地方融資平台與國際比較研究地圖',
+    desc: '主權債務、地方融資平台與國際比較',
     Icon: Landmark,
     accent: '#c8d8e8',
     accentText: '#305878',
@@ -447,7 +447,7 @@ const GROUPS = [
   { key: 'empirical', label: '實證研究', desc: '自己蒐集原始材料、逐件讀過、可長期延伸的研究工作台' },
   { key: 'corpus', label: '語料・譯庫', desc: '可搜尋的語料庫、譯庫與書目目錄，直達原文' },
   { key: 'humanities', label: '人文文庫', desc: '以人物與文本為軸的重排本與文集' },
-  { key: 'analysis', label: '議題解析', desc: '法律、財稅與制度議題的結構化拆解與現況地圖' },
+  { key: 'analysis', label: '議題解析', desc: '法律、財稅與制度議題的拆解' },
   { key: 'learn', label: '教學實驗室', desc: '方法本身的來歷與限制，配上可以親手轉動的模擬' },
   { key: 'tool', label: '即用工具', desc: '可直接操作的工具：音樂、聲音與設計' },
 ];

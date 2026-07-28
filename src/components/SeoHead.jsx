@@ -10,7 +10,7 @@ const SITE_URL = (import.meta.env.VITE_SITE_URL || window.location.origin).repla
 const DEFAULT_OG_IMAGE = `${SITE_URL}/og-default.png`;
 const LOGO = `${SITE_URL}/phenom-ring.svg`;
 const SITE_NAME = 'Phenom Canvas Lab';
-const SITE_DESC = '研究、法政解析與創作工具的互動實驗場。';
+const SITE_DESC = '憲法法庭、稅務訴訟、陳寅恪、朱家驊、司法院外國法譯本、統計，以及幾個自己在用的工具。';
 
 // Publisher/author node, referenced by @id from every page so answer engines
 // resolve one consistent entity for the site rather than an anonymous string.
@@ -55,8 +55,8 @@ export default function SeoHead({ page, itemList }) {
   const url = `${SITE_URL}${pathname === '/' ? '/' : pathname}`;
   const ogImage = page?.image || (pathname === '/' ? DEFAULT_OG_IMAGE : null);
   const metadata = useMemo(() => ({
-    title: page?.title || 'Phenom Canvas Lab｜研究、法政與創作工具',
-    description: page?.description || 'Phenom Canvas Lab 集合可操作的音樂工具，以及法律、財稅、公共政策的資料研究地圖。',
+    title: page?.title || 'Phenom Canvas Lab',
+    description: page?.description || '憲法法庭、稅務訴訟、陳寅恪、朱家驊、司法院外國法譯本、統計，以及幾個自己在用的工具。',
     type: page?.type || 'WebPage',
     indexable: page?.indexable !== false,
     name: page?.name,

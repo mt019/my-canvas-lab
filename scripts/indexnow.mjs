@@ -30,6 +30,27 @@ if (!key) {
   process.exit(0);
 }
 
+// 部署剛結束時，金鑰檔還不一定在 CDN 上生效，而 IndexNow 抓不到金鑰就回 403。
+// 先確認它讀得到再推，讀不到就退場——與其推一次註定失敗的，不如下次部署再推。
+async function keyIsLive() {
+  const url = `${SITE_URL}/${key}.txt`;
+  for (let attempt = 1; attempt <= 6; attempt += 1) {
+    try {
+      const res = await fetch(url, { cache: 'no-store' });
+      if (res.ok && (await res.text()).trim() === key) return true;
+    } catch {
+      // 還沒好，往下等
+    }
+    await new Promise((r) => setTimeout(r, 5000));
+  }
+  return false;
+}
+
+if (!(await keyIsLive())) {
+  console.log(`IndexNow：${SITE_URL}/${key}.txt 還讀不到，這次不推。`);
+  process.exit(0);
+}
+
 const host = new URL(SITE_URL).host;
 const urlList = collectRoutes().map((route) => encodeURI(`${SITE_URL}${route}`));
 

@@ -835,7 +835,7 @@ export default function ECFAResearch() {
               </div>
                 <h1 className="max-w-3xl leading-tight text-[var(--ecfa-heading)]">
                   <span className="font-display text-3xl font-normal sm:text-4xl">ECFA</span>
-                  <span className="ml-3 align-baseline font-sans text-2xl font-semibold sm:text-[2.15rem]">的前世今生與實證研究地圖</span>
+                  <span className="ml-3 align-baseline font-sans text-2xl font-semibold sm:text-[2.15rem]">的來歷與實證研究</span>
                 </h1>
                 <p className="mt-3 max-w-3xl text-token-sm leading-relaxed text-[var(--ecfa-body-text)]">
                   從 WTO 脈絡、江陳會談、協議文本、五個附件、早收清單一路整理到 2024 年中止優惠與商品範圍。

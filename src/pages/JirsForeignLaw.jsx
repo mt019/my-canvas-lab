@@ -493,7 +493,7 @@ export default function JirsForeignLaw() {
                   <h2 className="text-token-lg font-semibold text-ink">關於這份索引</h2>
                   <p className="text-token-base leading-relaxed text-ink-muted">
                     全文為離線整理後的可讀鏡像。官方入口是 JIRS 電子出版品檢索系統，把每筆報告拆成數十個附檔、只能逐一強制下載，
-                    前面還擋著一層防自動下載的安全檢查，網路上也找不到現成的存檔。這裡把 {摘要.官方報告數} 筆報告、{摘要.檔案總數} 件附檔收攏成可檢索的地圖。
+                    前面還擋著一層防自動下載的安全檢查，網路上也找不到現成的存檔。這裡把 {摘要.官方報告數} 筆報告、{摘要.檔案總數} 件附檔收攏起來，可以檢索。
                   </p>
                   <div>
                     <h2 className="mb-2 text-token-lg font-semibold text-ink">附檔怎麼分類</h2>

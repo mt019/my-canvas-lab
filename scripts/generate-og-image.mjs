@@ -9,8 +9,8 @@ import { ROOT } from './site-config.mjs';
 const OUT = join(ROOT, 'public', 'og-default.png');
 
 const sections = [
-  ['研究地圖', 'research canvases'],
-  ['法政解析', 'legal & policy'],
+  ['實證研究', 'empirical research'],
+  ['人文文庫', 'humanities'],
   ['教學實驗室', 'method teaching'],
   ['即用工具', 'interactive tools'],
 ];
@@ -41,10 +41,10 @@ const html = `<!doctype html><html lang="zh-Hant-TW"><head><meta charset="utf-8"
   .foot { font-family: Georgia, serif; font-size: 24px; color: #a77b89; letter-spacing: .04em; }
 </style></head><body>
   <div>
-    <div class="top"><span class="dot"></span><span class="kicker">Phenom Canvas Lab</span></div>
-    <h1 style="margin-top:28px">研究、法政與<br>創作工具的實驗場</h1>
+    <div class="top"><span class="dot"></span></div>
+    <h1 style="margin-top:28px">Phenom<br>Canvas Lab</h1>
   </div>
-  <div class="sub">可操作的資料研究地圖、法律與財稅解析、統計教學模擬與創作工具。</div>
+  <div class="sub">憲法法庭、稅務訴訟、陳寅恪、朱家驊、司法院外國法譯本、統計，以及幾個自己在用的工具。</div>
   <div>
     <div class="rule"></div>
     <div class="grid" style="margin-top:26px">

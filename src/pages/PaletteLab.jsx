@@ -738,7 +738,7 @@ export default function PaletteLab() {
 
             {/* 閱讀區：近白紙面（含所選材質） */}
             <div className="rounded-md border px-5 py-5 sm:px-6" style={{ background: 'var(--pl-paper)', borderColor: 'var(--pl-line)', ...textureStyle }}>
-              <h2 className="font-display text-2xl leading-tight">研究地圖的一頁樣本</h2>
+              <h2 className="font-display text-2xl leading-tight">正文的一頁樣本</h2>
               <p className="mt-2 max-w-xl text-[13px] leading-relaxed" style={{ color: 'var(--pl-ink-muted)' }}>
                 這段是正文密度的段落，坐在近白的紙面上——色彩只出現在周圍的框架、badge 與
                 <a href="#demo" className="underline decoration-1 underline-offset-2" style={{ color: 'var(--pl-accent)' }}>強調色</a>

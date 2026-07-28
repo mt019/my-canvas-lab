@@ -155,7 +155,7 @@ export default function TranslationAtlas() {
             翻譯工程總覽
           </h1>
           <p className="mt-3 max-w-2xl text-[13px] leading-relaxed text-[var(--ta-body-text)]">
-            德語法律判決、文學選譯與英文書籍的中文全譯成果地圖。公版或官方文書作品附全文
+            德語法律判決、文學選譯與英文書籍的中文全譯。公版或官方文書作品附全文
             PDF，仍受著作權保護的原作僅列出成品 metadata，不公開全文。
           </p>
         </header>
