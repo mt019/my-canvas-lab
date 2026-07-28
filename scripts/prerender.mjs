@@ -73,7 +73,13 @@ async function main() {
   let ok = 0;
   const warnings = [];
 
+  // 逐頁計時。553 頁跑 227 秒、沒有任何一頁撞到就緒逾時（2026-07-29 的部署 log），所以那是
+  // 每頁都真的花了那麼久，而不是幾頁拖累全部。但「哪幾頁貴」到現在還是猜的——統計站那些
+  // KaTeX 長文、陳寅恪那份一萬九千行的 JSON，都只是嫌疑。記下來，讓下次建置自己講。
+  const timings = [];
+
   async function renderOne(page, route) {
+    const startedAt = Date.now();
     // Routes carry Chinese names undecoded (justice/case pages); encodeURI turns
     // them into a valid URL while leaving ASCII routes untouched. The output dir
     // keeps the decoded name so the deployed file path matches what's served.
@@ -92,14 +98,18 @@ async function main() {
     const outDir = route === '/' ? DIST : join(DIST, route);
     await mkdir(outDir, { recursive: true });
     await writeFile(join(outDir, 'index.html'), html);
+    timings.push([route, Date.now() - startedAt]);
     ok += 1;
   }
 
-  // Render a pool of pages in parallel — 425 routes one-at-a-time is minutes of
+  // Render a pool of pages in parallel — 553 routes one-at-a-time is minutes of
   // wall time; a handful of concurrent tabs cuts it to about one. Each worker
-  // owns one page and pulls the next route until the queue drains. Concurrency
-  // is bounded (and overridable) so a CI box with few cores doesn't thrash.
-  const CONCURRENCY = Math.max(1, Number(process.env.PRERENDER_CONCURRENCY) || 8);
+  // owns one page and pulls the next route until the queue drains.
+  //
+  // 預設從 8 提到 16（2026-07-29）：每個 worker 大部分時間在等網路與等就緒條件，不是在燒
+  // CPU，所以並行數不必跟核心數綁在一起。一個 Chromium page 約 50–80MB，16 個約 1.3GB，
+  // GitHub runner 有 16GB。核心少的機器要調回去就設 PRERENDER_CONCURRENCY。
+  const CONCURRENCY = Math.max(1, Number(process.env.PRERENDER_CONCURRENCY) || 16);
   let next = 0;
   async function worker() {
     const page = await browser.newPage();
@@ -113,6 +123,15 @@ async function main() {
   await browser.close();
   server.close();
   console.log(`prerender: wrote ${ok} pages`);
+  // 中位數與 p90 看整體、最慢十條看有沒有離群的。全部 553 條印出來是雜訊，只印這些。
+  if (timings.length) {
+    const ms = timings.map(([, t]) => t).sort((a, b) => a - b);
+    const at = (q) => ms[Math.min(ms.length - 1, Math.floor(ms.length * q))];
+    const slowest = [...timings].sort((a, b) => b[1] - a[1]).slice(0, 10);
+    console.log(`prerender: 每頁耗時 中位數 ${at(0.5)}ms、p90 ${at(0.9)}ms、最慢 ${ms[ms.length - 1]}ms`
+      + `（並行 ${CONCURRENCY}）`);
+    console.log(`prerender: 最慢十條 → ${slowest.map(([r, t]) => `${r} ${t}ms`).join('、')}`);
+  }
   if (warnings.length) console.warn(`prerender: render signal timed out (captured anyway) for ${warnings.length}: ${warnings.join(', ')}`);
 }
 
