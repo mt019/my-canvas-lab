@@ -475,7 +475,10 @@ export default function ZhuJiahua({ forcedTab, forcedText }) {
 
       <ArticleLayout
         title={headerTitle}
-        eyebrow="朱家驊研究室"
+        /* 眉標走 Erikas 打字機體（見 components/Eyebrow.jsx），中文會落到 Huiwen fallback、
+           再被 0.26em 字距拆成「朱 家 驊 研 究 室」，而且門面上還與大標一字不差。
+           改成拉丁文的來源書名，字體對、也不跟任何一支的大標重複。 */
+        eyebrow="ZHU JIAHUA · COLLECTED SPEECHES"
         summary={headerSummary}
         tocLabel="本頁區塊"
         tocKey={refreshKey}
