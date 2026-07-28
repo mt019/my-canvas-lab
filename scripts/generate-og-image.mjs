@@ -50,7 +50,7 @@ const html = `<!doctype html><html lang="zh-Hant-TW"><head><meta charset="utf-8"
     <div class="grid" style="margin-top:26px">
       ${sections.map(([zh, en]) => `<div class="cell"><div class="zh">${zh}</div><div class="en">${en}</div></div>`).join('')}
     </div>
-    <div class="foot" style="margin-top:34px">my-canvas-lab.vercel.app</div>
+    <div class="foot" style="margin-top:34px">phenomcanvas.com</div>
   </div>
 </body></html>`;
 

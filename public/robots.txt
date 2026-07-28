@@ -67,4 +67,4 @@ Allow: /
 User-agent: meta-externalagent
 Allow: /
 
-Sitemap: https://my-canvas-lab.vercel.app/sitemap.xml
+Sitemap: https://phenomcanvas.com/sitemap.xml
