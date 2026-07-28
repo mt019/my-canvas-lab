@@ -4,7 +4,9 @@
 // 2. www.president.gov.tw 的 /File/Doc/<GUID>（大法官被提名人自傳／簡歷，108年批仍在線）
 // 3. web.archive.org 的 /web/<ts>id_/https://www.president.gov.tw/File/Doc/<GUID>
 //    （112年批官網已撤檔，走網際網路檔案館原始回放；id_ 帶原站 attachment header，仍需本代理改 inline）
-// 4. publication.iias.sinica.edu.tw 的任何 .pdf 路徑（中研院法研所出版品：根層與 /journal/、/books/ 子路徑）
+// 4. publication.iias.sinica.edu.tw 的任何 .pdf 路徑（中研院法研所出版品：官網原生期刊 PDF）
+// 5. github.com 的 my-canvas-lab Release 下載路徑（中研院出版品自有典藏：flipbook 轉存 PDF＋期刊備份，
+//    消滅官網線上閱覽依賴。github.com 回 302 轉 objects.githubusercontent.com，fetch 自動跟隨、無須另列）
 export const ALLOW_HOST = 'cons.judicial.gov.tw';
 const GUID = '[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}';
 const ALLOW = [
@@ -12,6 +14,7 @@ const ALLOW = [
   { host: 'www.president.gov.tw', path: new RegExp(`^/File/Doc/${GUID}$`, 'i') },
   { host: 'web.archive.org', path: new RegExp(`^/web/\\d{14}id_/https://www\\.president\\.gov\\.tw/File/Doc/${GUID}$`, 'i') },
   { host: 'publication.iias.sinica.edu.tw', path: /\.pdf$/i },
+  { host: 'github.com', path: /^\/mt019\/my-canvas-lab\/releases\/download\/[^/]+\/[^/]+\.pdf$/i },
 ];
 
 // 回傳合法的官方 PDF URL 物件；非法則 null。
