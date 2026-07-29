@@ -88,9 +88,21 @@ jobs:
             echo "篇數不對：至少要有 40 篇，而且 json 的篇數要等於正文檔數"; exit 1
           fi
 
+      # Chromium 本體每次重抓 20 秒上下，而它只隨 playwright 版本變，所以快取它。
+      # 快取沒中就照樣下載，行為不變。key 綁 package-lock，升 playwright 自動換一份新的。
+      - name: Cache the Playwright browser
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+
       # 瀏覽器與系統相依一起裝。少了 --with-deps 就是線上那個故障的成因。
+      # 上一步命中時這裡只補系統相依（apt 那段不能快取，但只有幾秒）。
       - run: npx playwright install --with-deps chromium
 
+      # 這一步要 17 秒。試過改成 devDependency 讓 `npm ci` 順便裝（2026-07-29），但
+      # `npm install --save-dev --package-lock-only vercel` 會把整份 package-lock 重新
+      # 解析——一萬六千行變動、間接相依跟著漂——為了 17 秒不划算，維持全域安裝。
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
 
