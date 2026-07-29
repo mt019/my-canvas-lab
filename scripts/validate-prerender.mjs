@@ -54,6 +54,13 @@ for (const route of routes) {
   if (!html.includes('data-seo-schema')) {
     failures.push(`${route} — 沒有結構化資料，SeoHead 沒跑完`);
   }
+  // Vercel Analytics 的腳本標籤不該留在產物裡。<Analytics /> 是在 useEffect 裡把它
+  // 塞進 head 的，而 prerender 抓的是 hydrate 之後的 DOM，所以不特別處理就會被存進
+  // 每一份靜態檔；線上 React 再插一次，一次造訪可能記成兩個 page view。prerender.mjs
+  // 存檔前會移掉它，這條擋的是那段被改掉、而錯誤只會表現成「數字偏高」的情況。
+  if (html.includes('/_vercel/insights/')) {
+    failures.push(`${route} — 產物裡有 Vercel Analytics 的腳本標籤，prerender 沒有把它移掉，會重複計數`);
+  }
 }
 
 if (failures.length) {

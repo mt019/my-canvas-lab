@@ -86,7 +86,7 @@ Greasy Fork 託管它自己的一份，從那裡裝的人也從那裡更新。
 push 事件，hook id `658202497`）。說明欄同理，從 `greasyfork-listing.md` 逐字同步，所以那個檔
 裡不能有任何註解或前言。結果是改版仍然只要 push 一次。
 
-**固定檢查**：`npm test`（來源倉）在 `greasyfork/` 那份落後於來源時 exit 1。這是這條線唯一會
+**固定檢查**：`npm test`（來源倉）在 `greasyfork/` 那份落後於來源時 exit 1。這是整套分發唯一會
 安靜壞掉的地方——GF 會繼續供舊版，列表頁看起來完全正常，兩邊都不報錯。
 
 **看有多少人在用**：`npm run report:userscripts`（`scripts/userscript-reach.mjs`）。它把 release
@@ -143,6 +143,33 @@ agent 代勞不了，2026-07-29 試過了，別再嘗試自動化那一步。
 **「每案一檔」查證後暫不成立**：`CaseRoute` 渲染的是完整 `<ConstitutionalCourt />`，
 個案頁掛著整個 app（索引、篩選、時間軸都要全量 7,228 筆），拆檔要先重構個案頁 UI
 才有意義。要不要走那一步看部署數字再說。
+
+#### 第二輪：預先渲染改「一次載入、片內換頁」，每頁 1.2 秒 → 0.12 秒（2026-07-29）
+
+553 頁的成本從來不是渲染，是**每頁都冷載入整個 app**——解析執行 React＋那支 7MB 資料
+chunk、整段水合，一頁 1.2–3.3 秒。`scripts/prerender.mjs` 改成：路由按站區分片（≤32 頁），
+每片第一頁冷載入，其餘用 pushState＋popstate 讓 React Router 在同一個分頁裡換頁，bundle
+只在片頭解析一次。本機實測中位數 1167ms → 118ms、p90 252ms；CI 的 227 秒預期縮到一分鐘
+上下，等下次部署 log 證實。逃生口：`PRERENDER_SPA=0` 退回逐頁冷載入。
+
+細節在 `prerender.mjs` 的註解，這裡只記四個踩過才知道的坑（每一個都是先錯過一輪才加的）：
+
+- **熱導航前要先跳一格不存在的路由**把上一頁 unmount。不跳的話，同型路由（案件頁接
+  案件頁）沿用同一個 React 實例，先前頁面的展開狀態一路累積——實測案件頁把先前訪過
+  案件的全文也烤了進來。
+- **就緒（canonical 等於目標路由）之後還要等 DOM 安定**（連續 5 個 rAF 長度不變）。
+  不等就把「載入理由書中…」烤進憲判案件頁、手記頁的目次整個沒長出來。
+- **Vite 的 modulepreload 只加不收**：跳板時給既有 preload 打記號、存檔時剝掉，否則
+  一篇手記帶著同片三十篇的 mdx chunk 預載，訪客白抓幾百 KB。stylesheet 一律不剝。
+- **SPA fallback 要回「開跑當下快取的乾淨殼」**：首頁一被 prerender，`dist/index.html`
+  就是烤了內容的首頁，之後冷載入的路由拿它當起點，首頁的 head 就殘進每一頁。
+  順手修掉的同族 bug：`SeoHead` 的 keywords meta 原本只設不刪，SPA 導航（線上真使用者
+  也一樣）從有 keywords 的頁走到沒有的頁會殘留上一頁的。
+
+驗證方法（下次改這支照做）：`vite build --outDir` 到隔離目錄（`PRERENDER_DIST` 指過去，
+不碰共用 dist）、`PRERENDER_SPA=0` 與預設模式各跑一輪、553 頁逐頁比對——body 逐位元組
+相同（唯一例外 `/iiaspublications` 首頁的隨機選文，任兩輪都不同）、head 核心標籤
+（meta／canonical／JSON-LD）集合相同才算過。
 
 ### 《手記》的內容在建置當下才進來（2026-07-29 加）
 
@@ -246,6 +273,32 @@ Site URL＝`https://phenomcanvas.com`（單值、無萬用字元），Redirect U
 **線上驗法**：headless 開 `/brief`，console 應無錯誤；點登入應導向
 `kbbraozovnmdzuhwfskz.supabase.co/auth/v1/authorize`，其 `redirect_to` 應等於你按下按鈕
 那一頁的完整網址（2026-07-28 實測＝`https://phenomcanvas.com/brief`）。
+
+## 造訪統計：Vercel Web Analytics（2026-07-29 裝上）
+
+`@vercel/analytics`，在 `src/main.jsx` 掛一個 `<Analytics />`。元件本身不吐 DOM，掛載時往
+`<head>` 塞 `<script src="/_vercel/insights/script.js">`，那個路徑只有 Vercel 的邊緣節點供應
+得出來（本機與預先渲染時會落到 SPA fallback，什麼也不會發生）。無 cookie，所以不需要同意
+橫幅。
+
+**還要在 Vercel 專案的 Analytics 分頁按啟用**，只裝套件不會有資料——邊緣節點沒開就不供應
+那支腳本。
+
+**預先渲染要把那個標籤拿掉。** `prerender.mjs` 抓的是 hydrate 之後的
+`document.documentElement.outerHTML`，不處理的話標籤會被存進全部 474 份靜態檔，線上 React
+再插一次，一次造訪可能記成兩個 page view。存檔前的 `page.evaluate` 會移掉它，
+`validate:prerender` 另有一條擋回歸——這種錯不會讓建置變紅，只會讓數字安靜地偏高。
+
+**Hobby 方案的兩條限制**（Vercel 官方定價頁，文件標示 2026-06-26 更新）：每月含 50,000
+events（這個站遠遠用不完，超量不計費、暫停收集）；**報表視窗只有 1 個月**，且**沒有 custom
+events**。所以看得到的永遠是最近 30 天，要時間序列就得自己每月匯出；`/userscripts` 那三頁
+「按了下載幾次」也做不成事件，分發計數仍以 `scripts/userscript-reach.mjs` 的四個來源為準。
+
+**數字會系統性偏低，而且偏差有方向。** 擋廣告的規則清單收了 `_vercel/insights`，而本站訪客
+分成裝油猴腳本的與找法學資料的兩群，前者用擋廣告工具的比例高得多，所以**跨頁比較不可靠**。
+另外客戶端腳本看不到任何爬蟲，robots.txt 放行的那 20 個 AI 爬蟲、以及答案引擎有沒有引用，
+在這裡一律不會出現——那件事只有 GSC 與 Bing 的報表算數。結論：當方向指標用，別把它的數字
+寫進報告或申請材料。
 
 ## Pages
 

@@ -91,7 +91,10 @@ export default function SeoHead({ page, itemList }) {
     setMeta('name', 'twitter:card', ogImage ? 'summary_large_image' : 'summary');
     setMeta('name', 'twitter:title', metadata.title);
     setMeta('name', 'twitter:description', metadata.description);
+    // Set-or-remove, never just set: under SPA navigation the previous page's
+    // keywords would otherwise linger on pages that declare none.
     if (metadata.keywords) setMeta('name', 'keywords', metadata.keywords);
+    else removeMeta('name', 'keywords');
     setLink('canonical', url);
 
     const isArticle = metadata.type === 'Article';
