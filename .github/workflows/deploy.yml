@@ -17,8 +17,10 @@ on:
   # notes-data 那邊的 workflow 在短記 issue 開出來時打過來的（他在捷運上說一句話，
   # 幾分鐘後站上就有）。只有 opened 觸發——改錯字不值得整站重建一次，改完的內容
   # 會搭下一次任何部署順便上去。
+  # notes-content 是同一個倉在 content/ 或 data/ 被推上來時打的（改完文章不必再手動
+  # 跑一次部署）。兩種分開命名只為了在 Actions 列表上看得出這次是為什麼重建。
   repository_dispatch:
-    types: [notes-stream]
+    types: [notes-stream, notes-content]
 
 concurrency:
   group: deploy-${{ github.ref }}
