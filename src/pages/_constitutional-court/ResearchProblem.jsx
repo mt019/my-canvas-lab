@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import HoverCard from '../../components/lab/HoverCard';
-import data from '../../data/constitutionalCourt.json';
+import data from './dataset.js';
 import { Badge, PRES_COLOR, heatFill, inkToFill } from './shared';
 import { renderInline } from './TypologyReportView';
 

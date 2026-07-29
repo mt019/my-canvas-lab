@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowDown, Info } from 'lucide-react';
 import HoverCard from '../../components/lab/HoverCard';
-import data from '../../data/constitutionalCourt.json';
+import data from './dataset.js';
 import { ccJusticePath } from './seo';
 import { docs, Select, justices, opinionTypeEntries } from './shared';
 

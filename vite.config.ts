@@ -53,6 +53,10 @@ export default defineConfig({
     react({ include: /\.(jsx|js|mdx|md|tsx|ts)$/ }),
     pdfProxyDev(),
   ],
+  // 大型 JSON 快照（憲法法庭 7MB）輸出成 JSON.parse("字串") 而非 JS 物件字面量：
+  // V8 解析字串裡的 JSON 比解析同等大小的物件字面量快得多，預先渲染每頁都要付一次
+  // 這筆解析成本。代價是 JSON 不能用 named import——全站都是 default import，安全。
+  json: { stringify: true },
   build: {
     rollupOptions: {
       output: {

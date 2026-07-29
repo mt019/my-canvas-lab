@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { BookOpen, CalendarClock, Check, ChevronDown, Clipboard, ExternalLink, Search, Shuffle, X } from 'lucide-react';
-import data from '../../data/constitutionalCourt.json';
+import data from './dataset.js';
 import { lookupCases } from './caseQuery';
 import { formatDate, formatDateRange } from '../../utils/date';
 import OpinionText, { opinionPlainText } from './OpinionText.jsx';

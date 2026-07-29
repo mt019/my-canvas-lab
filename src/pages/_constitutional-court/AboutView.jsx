@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ExternalLink, FileText } from 'lucide-react';
-import data from '../../data/constitutionalCourt.json';
+import data from './dataset.js';
 import { formatDate } from '../../utils/date';
 import { Badge, CaseRef, SegControl, docs, pdfHref, usePref } from './shared';
 

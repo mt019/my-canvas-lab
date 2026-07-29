@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useExpandedSet } from '../../components/lab/Accordion';
 import { ChevronDown, ExternalLink } from 'lucide-react';
-import data from '../../data/constitutionalCourt.json';
+import data from './dataset.js';
 import { formatDateRange } from '../../utils/date';
 import { ERA_TONE, jurisdictionSummary } from './shared';
 

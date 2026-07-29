@@ -1,5 +1,5 @@
 import { CheckCircle2, Layers3, Scale, ShieldCheck, TrendingDown } from 'lucide-react';
-import data from '../../data/constitutionalCourt.json';
+import data from './dataset.js';
 import JurisdictionShiftChart from './JurisdictionShiftChart';
 
 const summary = data.職權分類摘要;

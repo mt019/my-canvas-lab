@@ -7,6 +7,7 @@ import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { ROOT } from './site-config.mjs';
 import { CC_TAB_SLUGS, ccJusticePath, justiceHasContent, ccCasePath, caseIsIndexable } from '../src/pages/_constitutional-court/seo.js';
+import { decodeDataset } from '../src/pages/_constitutional-court/decode.js';
 import { ZJH_TAB_SLUGS } from '../src/pages/_zhu-jiahua/seo.js';
 
 const PAGES = join(ROOT, 'src', 'pages');
@@ -83,7 +84,9 @@ function chenYinkeSelectionRoutes() {
 // uses to decide who is indexable, so prerender, sitemap and runtime agree.
 function justiceRoutes() {
   try {
-    const d = JSON.parse(readFileSync(join(ROOT, 'src', 'data', 'constitutionalCourt.json'), 'utf8'));
+    // decodeDataset：快照的重複欄位是查表編碼的（見 _constitutional-court/decode.js）。
+    // 這裡目前只讀主鍵與大法官（都不編碼），仍統一過解碼層，免得日後改讀編碼欄位時靜默拿到索引。
+    const d = decodeDataset(JSON.parse(readFileSync(join(ROOT, 'src', 'data', 'constitutionalCourt.json'), 'utf8')));
     return (d.大法官 || []).filter(justiceHasContent).map((j) => ccJusticePath(j.姓名));
   } catch {
     return [];
@@ -94,7 +97,7 @@ function justiceRoutes() {
 // curated 釋字 list — the same caseIsIndexable predicate the runtime uses.
 function caseRoutes() {
   try {
-    const d = JSON.parse(readFileSync(join(ROOT, 'src', 'data', 'constitutionalCourt.json'), 'utf8'));
+    const d = decodeDataset(JSON.parse(readFileSync(join(ROOT, 'src', 'data', 'constitutionalCourt.json'), 'utf8')));
     return (d.文件 || []).filter((doc) => caseIsIndexable(doc.字號)).map((doc) => ccCasePath(doc.字號));
   } catch {
     return [];

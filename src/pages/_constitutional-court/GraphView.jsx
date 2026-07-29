@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 import { ExternalLink } from 'lucide-react';
-import data from '../../data/constitutionalCourt.json';
+import data from './dataset.js';
 import { Badge, CaseRef, PRES_COLOR, Select, docs, inkToFill, justices, pdfHref, usePref } from './shared';
 
 // ── 意見書圖譜：分期共同具名矩陣 ───────────────────────────────────────────

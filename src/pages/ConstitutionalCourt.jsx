@@ -12,7 +12,7 @@ import {
   Scale,
   Users,
 } from 'lucide-react';
-import data from '../data/constitutionalCourt.json';
+import data from './_constitutional-court/dataset.js';
 import { ccJusticePath } from './_constitutional-court/seo';
 import { CaseCard, CC_VARS, DocSpotlight, docs, usePref } from './_constitutional-court/shared';
 import IndexView from './_constitutional-court/IndexView';

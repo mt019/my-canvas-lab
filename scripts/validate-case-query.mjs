@@ -7,9 +7,10 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { parseCaseNo } from '../src/pages/_constitutional-court/caseQuery.js';
+import { decodeDataset } from '../src/pages/_constitutional-court/decode.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
-const docs = JSON.parse(readFileSync(join(root, 'src/data/constitutionalCourt.json'), 'utf8')).文件;
+const docs = decodeDataset(JSON.parse(readFileSync(join(root, 'src/data/constitutionalCourt.json'), 'utf8'))).文件;
 const docByNo = new Map(docs.map((d) => [d.字號, d]));
 
 // [使用者打的字, 期望解析出且庫裡存在的字號]
@@ -30,7 +31,7 @@ const 應命中 = [
   ['111憲暫裁1', '111年憲暫裁字第1號'],
   ['院88', '院字第88號'],
   ['院字第88號', '院字第88號'],
-  ['院解2876', '院解字第2876號'],  // 院解 與 院 前綴重疊，這條咬的是它不會被解成院字第2876號
+  ['院解2876', '院解字第2876號'],  // 院解 與 院 前綴重疊，這條驗的是它不會被解成院字第2876號
   ['統1000', '統字第1000號'],
   ['解1', '解字第1號'],
 ];

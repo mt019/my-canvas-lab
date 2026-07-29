@@ -1,5 +1,5 @@
 import { useParams } from 'react-router-dom';
-import data from '../../data/constitutionalCourt.json';
+import data from './dataset.js';
 import SeoHead from '../../components/SeoHead';
 import ConstitutionalCourt from '../ConstitutionalCourt';
 import { justiceSeo } from './seo';

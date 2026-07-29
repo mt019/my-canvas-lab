@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import data from '../../data/constitutionalCourt.json';
+import data from './dataset.js';
 
 // 資料一律來自資料倉：`職權分類摘要.釋字五年期` 由 classify-jurisdiction.mjs 產生、
 // validate-jurisdiction.mjs 驗過合計 813 與年份連續。前端不自己分期、不自己加總。

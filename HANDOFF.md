@@ -124,6 +124,26 @@ agent 代勞不了，2026-07-29 試過了，別再嘗試自動化那一步。
 正解是把那份 JSON 拆成「小索引 ＋ 每案一個檔」，頁面只載它要的那一案；建置會跟著快，因為
 解析成本正是瓶頸。這件事排在 `CHECKPOINT.constitutional-court.md` 的「長期運維」子線。
 
+#### 第一輪減肥做完：查表編碼＋JSON.parse 輸出，chunk 10.34MB → 6.97MB（2026-07-29）
+
+動手前先量了欄位組成：`文件` 的 職權分類 佔 4.80MB 卻只有 875 種相異值（7,228 筆），
+審查結論 86 種、機關 5 種——肥的是重複值逐筆展開，不是內容本身。兩個修法疊加：
+
+1. **查表編碼（資料倉）**：`build-app-json.mjs` 把重複欄位換成「編碼表存一份＋逐筆存下標」，
+   快照 11.15MB → 6.97MB。canvas 端 `_constitutional-court/decode.js` 還原、`dataset.js`
+   是唯一取用入口（11 個頁面的 import 全改走它）。解碼是參照共用不複製，這些欄位前端必須
+   唯讀。新固定檢查 `validate:ccdataset`（在 verify:policy 裡）擋兩件事：dataset.js 以外
+   直接 import 原始 JSON、解碼後編碼欄位還是數字。新舊快照解碼後逐位元組相同（實測 equal）。
+2. **`json.stringify: true`（vite.config.ts）**：JSON chunk 從 JS 物件字面量改輸出
+   `JSON.parse("字串")`，V8 解析後者快得多；全站 JSON 都受惠，代價只有 named import
+   失效（全站沒人用）。
+
+線上傳輸從 gzip 3.65MB 降到 **1.25MB**。chunk 檔名跟著入口改叫 `dist/assets/dataset-*.js`。
+
+**「每案一檔」查證後暫不成立**：`CaseRoute` 渲染的是完整 `<ConstitutionalCourt />`，
+個案頁掛著整個 app（索引、篩選、時間軸都要全量 7,228 筆），拆檔要先重構個案頁 UI
+才有意義。要不要走那一步看部署數字再說。
+
 ### 《手記》的內容在建置當下才進來（2026-07-29 加）
 
 `/notes` 的文章不在這個公開 repo 裡。使用者的裁定是「站上公開沒關係，但不要留在 GitHub」，
