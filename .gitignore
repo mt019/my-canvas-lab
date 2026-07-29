@@ -65,3 +65,7 @@ src/data/notes-stream.json
 src/content/notes/
 src/content/notes-archive.mdx
 public/notes-assets/
+
+# 一次性的探勘腳本（.t-*.mjs）：本機用完即丟，常帶絕對路徑與外部來源識別碼。
+# 這是公開倉，一次 git add -A 就會把它們推上去。
+.t-*.mjs
