@@ -2,6 +2,8 @@
   "regions": ["hnd1"],
   "git": { "deploymentEnabled": { "main": false } },
   "routes": [
+    { "src": "/notes", "dest": "https://phenom-notes.pages.dev/notes/" },
+    { "src": "/notes/(.*)", "dest": "https://phenom-notes.pages.dev/notes/$1" },
     { "src": "/api/opentix/search", "dest": "https://search.opentix.life/search" },
     { "src": "/api/opentix-csm/(.*)", "dest": "https://csm.api.opentix.life/$1" },
     { "handle": "filesystem" },
