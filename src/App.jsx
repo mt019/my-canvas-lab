@@ -25,6 +25,7 @@ const CCCaseRoute = lazy(() => import('./pages/_constitutional-court/CaseRoute')
 const NotePostRoute = lazy(() => import('./pages/_notes/PostRoute'));
 // 舊帖：沒有成篇的短記收在一頁。它自己一條網址，收錄的 58 則不各自產網址。
 const NoteArchiveRoute = lazy(() => import('./pages/_notes/ArchiveRoute'));
+const NoteStreamRoute = lazy(() => import('./pages/_notes/StreamRoute'));
 
 /*
  * Pages are routed by file path. A file directly under pages/ keeps the old flat
@@ -574,6 +575,8 @@ export default function App() {
           {/* 舊帖存檔頁。**要排在 /notes/:slug 前面**——放後面的話 `archive` 會被當成一個
               slug 吃掉，查不到那篇文章，讀者看到的是「查無此文」。 */}
           <Route path="/notes/archive" element={<NoteArchiveRoute />} />
+          {/* 短記流。同上，要排在 /notes/:slug 前面。 */}
+          <Route path="/notes/stream" element={<NoteStreamRoute />} />
           <Route path="/notes/:slug" element={<NotePostRoute />} />
           <Route path="/constitutionalcourt/justices/:justiceName" element={<CCJusticeRoute />} />
           <Route path="/constitutionalcourt/case/:caseNo" element={<CCCaseRoute />} />

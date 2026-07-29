@@ -4,9 +4,8 @@ import SeoHead from '../../components/SeoHead';
 import SiteHeader from '../../components/SiteHeader';
 import Prose from '../../components/lab/Prose';
 import ArticleLayout, { ArticleNav } from '../../components/lab/ArticleLayout';
-import data from '../../data/notes.json';
 import meta from '../../data/notes-archive.json';
-import { archiveSeo } from './seo';
+import { archiveSeo, postsNav } from './seo';
 
 /*
  * 舊帖：58 則沒有成篇的短記，一頁。
@@ -24,13 +23,6 @@ const Body = lazy(() => import('../../content/notes-archive.mdx'));
 
 export default function ArchiveRoute() {
   const [scale, setScale] = useFontScale();
-
-  // 左欄與單篇同一份：讀完舊帖不必回清單才能讀下一篇。年份是它的 topic。
-  const topics = [...new Set(data.posts.map((p) => p.publishedAt.slice(0, 4)))].map((year) => ({
-    id: year,
-    label: `${year} 年`,
-  }));
-  const articles = data.posts.map((p) => ({ ...p, topic: p.publishedAt.slice(0, 4) }));
 
   return (
     <>
@@ -66,7 +58,7 @@ export default function ArchiveRoute() {
           // 列進去等於把同一個詞印六遍。
           tocLevels={[2]}
           nav={
-            <ArticleNav topics={topics} articles={articles} homeHref="/notes" homeLabel="手記" />
+            <ArticleNav {...postsNav()} homeHref="/notes" homeLabel="手記" />
           }
         >
           <Prose>

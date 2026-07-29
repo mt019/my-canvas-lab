@@ -153,7 +153,8 @@ agent 代勞不了，2026-07-29 試過了，別再嘗試自動化那一步。
 與 `public/notes-assets/**` 放進工作區；這些路徑全部在 `.gitignore` 裡，建置完隨 runner 消失。
 
 - **要多設一個 secret**：`NOTES_DATA_TOKEN`，fine-grained PAT，只給 `mt019/notes-data` 的
-  Contents: Read。設法同上（`gh secret set NOTES_DATA_TOKEN`，值貼在提示後面）。
+  Contents: Read **＋ Issues: Read（2026-07-29 起短記要抓 issue）**。設法同上
+  （`gh secret set NOTES_DATA_TOKEN`，值貼在提示後面）。
 - **私有倉那邊要進版控的是** `content/`、`data/`、`processed/`、`assets/imported/`。
   `drafts/` 不必（每次重算）；**`raw/` 必須**——Hugo 站已經 404，那份抓取結果是唯一的一份。
 - 存檔頁那兩個產物（`processed/archive.mdx`、`archive.json`）要 commit，因為它們是 `drafts/`
@@ -164,6 +165,16 @@ agent 代勞不了，2026-07-29 試過了，別再嘗試自動化那一步。
 - 已經發表過的那四篇（`fertility-care-responsibility`、`foreign-languages-and-translation`、
   `iias-colophon`、`karl-kraus`）仍留在 git 歷史裡。它們本來就是公開的文章，不必改寫歷史；
   擋的是從今以後不再有新的進來。
+- **短記「說完就上站」（2026-07-29 加）**：deploy 第 4 步在 `npm run update` 之前先跑
+  `npm run stream:fetch`（`gh` 拿 `NOTES_DATA_TOKEN` 當 token，所以它要多開 Issues: Read），
+  每次部署都帶上 notes-data 上帶 `stream` 標籤的 issue 最新內容。notes-data 那邊的
+  `.github/workflows/say-deploys-canvas.yml` 在這種 issue **opened** 時打
+  `repository_dispatch`（type `notes-stream`）過來觸發部署——只有 opened；edited 與 close
+  不觸發，改動搭下一次任何部署上去。它需要 notes-data 那邊一顆 secret
+  `CANVAS_DISPATCH_TOKEN`（fine-grained PAT，對 `mt019/my-canvas-lab` 的
+  Contents: Read and write，repository_dispatch 這個 API 要求的權限）。失敗語意：
+  dispatch 觸發的部署抓不到短記就紅（那次建置唯一的目的就是帶上那句話）；push 觸發的
+  抓不到只警告、用私有倉裡既有的短記內容建。
 
 **三個 repo secret 已於 2026-07-28 設好，正常情況不必再碰**：`VERCEL_TOKEN`、`VERCEL_ORG_ID`
 （`team_SwNJ9WTE8C5JqKjgMSJlT2u8`）、`VERCEL_PROJECT_ID`（`prj_yeHjPDaypcs7Kl9lSbjsxbtDdTGb`，
@@ -285,6 +296,21 @@ Site URL＝`https://phenomcanvas.com`（單值、無萬用字元），Redirect U
    `ArticleLayout` 新增的 pass-through，預設仍是 `[2, 3]`）。
    「哪些算舊帖」在資料倉決定：沒定稿成單篇的草稿就是舊帖，某一則將來升級成正式文章時
    canvas 這邊不必改。
+7. **短記 `/notes/stream`：一句話一則，帶著說出來的時刻，同樣收成一頁**（2026-07-29 新建）。
+   `pages/_notes/StreamRoute.jsx`，資料是 `src/data/notes-stream.json`（資料倉
+   `npm run stream:build` 產出，進 `notes.sync.json` 的 sha256 清單）。上一條的 (a)(b)
+   對它一字不改地適用——`/notes/stream` 也要排在 `/notes/:slug` 前面、也要自己加進
+   `scripts/routes.mjs`。另外三件：
+   **(a)** **時刻只切字串，前端與資料倉都不准 `new Date()`。** 時刻帶的是說話當下那支手機的
+   時區偏移（`2026-07-29T14:19:32+08:00`），交給 `Date` 會換算成讀者瀏覽器所在的時區，
+   於是在洛桑寫的那句在台北讀就變成半夜。要留住的正是「他說這句話的時候，他的鐘上是幾點」。
+   **(b)** **月分節、日分段、時刻與段落切分都在資料倉算完**（`build-stream.mjs`），
+   JSX 只 map。這不是風格偏好：頭一版把分組寫在 JSX 裡，`validate:synced` 的行數上限當場
+   擋下來（669 行 / 上限 600）。搬完 619 行，同時把舊帖與短記各寫一份的左欄合成
+   `seo.js` 的 `postsNav()`，上限才調到 660。
+   **(c)** 輸入端有三條路、寫進去的東西格式一樣：終端機 `npm run say`、Claude Code 的
+   `/say`（`~/.claude/commands/say.md`）、手機捷徑開 GitHub issue（`fetch-stream-issues.mjs`
+   抓回來）。細節在 `notes-data/AGENTS.md`「短記流」節。
 
 **寫作素材有本機來源時，先回那個來源核對，不要只憑通行說法。** 卡爾・克勞斯那篇的事實
 是對著 `~/Documents/NTU/1142/Translation/KarlKraus`（兩年的翻譯工程，含

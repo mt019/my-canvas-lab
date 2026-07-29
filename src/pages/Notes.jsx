@@ -5,8 +5,12 @@ import FontSizeControl, { useFontScale } from '../components/FontSizeControl';
 import AppearanceMenu from '../components/AppearanceMenu';
 import DashboardLayout from '../components/lab/DashboardLayout';
 import { useTabParam } from '../components/lab/Tabs';
+import Dropdown from '../components/lab/Dropdown';
+import FilterBar from '../components/lab/FilterBar';
+import SectionLink from '../components/lab/SectionLink';
 import data from '../data/notes.json';
 import archive from '../data/notes-archive.json';
+import stream from '../data/notes-stream.json';
 
 /*
  * 手記的首頁：一份按年份分節、由新到舊的清單。
@@ -55,18 +59,43 @@ export default function Notes() {
       tocLabel="本頁區塊"
       refreshKey={tag}
     >
-      <div className="mb-10 flex flex-wrap items-center gap-2 border-b border-line-soft pb-5">
-        <TagButton label="全部" count={posts.length} on={tag === 'all'} onClick={() => setTag('all', { scroll: 'preserve' })} />
-        {tags.map((t) => (
-          <TagButton
-            key={t.label}
-            label={t.label}
-            count={t.count}
-            on={tag === t.label}
-            onClick={() => setTag(tag === t.label ? 'all' : t.label, { scroll: 'preserve' })}
-          />
-        ))}
-      </div>
+      {/* 短記入口放在最上面。它是這個站唯一每天會變的東西，排在 57 篇之後等於藏起來
+          （2026-07-29 使用者：「短記在首頁看不見？」）。最新那一則的內容與截斷都在資料倉
+          算好（notes-stream.json 的 latest），這裡只印。 */}
+      <SectionLink to="/notes/stream" title="短記" count={stream.count} className="mb-8">
+        <span className="mr-2 whitespace-nowrap font-accent text-token-xs tabular-nums text-ink-faint">
+          {stream.latest.date} {stream.latest.time}
+        </span>
+        {stream.latest.text}
+      </SectionLink>
+
+      {/* 標籤：48 個裡有 30 個只用一次，攤平成一整面牆會佔掉五行、而且讀起來像目錄不像
+          篩選器（2026-07-29 使用者：「tag 太多太佔版面且不直覺」）。收進一顆可搜尋的
+          下拉，選中的那個另外標出來，按一下就清掉。 */}
+      <FilterBar
+        label="標籤"
+        note={tag === 'all' ? null : `列出 ${shown.length} 篇，全部共 ${posts.length} 篇`}
+        className="mb-10"
+      >
+        <Dropdown
+          value={tag}
+          onChange={(v) => setTag(v, { scroll: 'preserve' })}
+          options={[
+            { value: 'all', label: `全部（${posts.length}）` },
+            ...tags.map((t) => ({ value: t.label, label: `${t.label}（${t.count}）` })),
+          ]}
+          panelWidth="w-64"
+        />
+        {tag === 'all' ? null : (
+          <button
+            type="button"
+            onClick={() => setTag('all', { scroll: 'preserve' })}
+            className="text-token-sm text-ink-faint underline decoration-line underline-offset-4 transition-colors duration-fast hover:text-accent"
+          >
+            清除
+          </button>
+        )}
+      </FilterBar>
 
       {years.map((group, i) => (
         <section key={group.year} className={i === 0 ? '' : 'mt-12 border-t border-line pt-8'}>
@@ -87,45 +116,17 @@ export default function Notes() {
 
       {/* 舊帖：短到撐不起一頁的那些收在一頁，不混進上面的清單（它們沒有摘要也沒有標籤，
           排進去只會是一整排空欄位）。篇數從資料倉的 notes-archive.json 來，不寫死。 */}
-      <div className="mt-14 border-t border-line pt-6">
-        <Link to="/notes/archive" className="group inline-flex items-baseline gap-2">
-          <span className="font-display text-token-lg text-ink transition-colors duration-fast group-hover:text-accent">
-            舊帖
-          </span>
-          <span className="font-accent text-token-xs tabular-nums text-ink-faint">{archive.count}</span>
-          <ArrowRight
-            size={16}
-            className="shrink-0 self-center text-ink-faint transition-transform duration-fast group-hover:translate-x-0.5 group-hover:text-accent"
-          />
-        </Link>
-        <p className="mt-2 text-token-sm leading-relaxed text-ink-faint">
+      <div className="mt-14 border-t border-line pt-2">
+        <SectionLink to="/notes/archive" title="舊帖" count={archive.count}>
           {archive.dateRange.from.slice(0, 4)}–{archive.dateRange.to.slice(0, 4)} 年的短記，多半只有一兩行，
           最短的一則六個字。收在同一頁上，按年份排。
-        </p>
+        </SectionLink>
       </div>
 
       <div className="mt-10 border-t border-line-soft pt-5">
         <p className="text-token-sm leading-relaxed text-ink-faint">{site.note}</p>
       </div>
     </DashboardLayout>
-  );
-}
-
-/* 標籤鈕。選中的那顆用 accent 的細框與字色標出來，沒有底色——一整排實色藥丸會把清單本身
-   壓下去，而這排東西是篩選器，不是內容。 */
-function TagButton({ label, count, on, onClick }) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      aria-pressed={on}
-      className={`inline-flex items-baseline gap-1.5 rounded-token-sm border px-2.5 py-1 text-token-sm transition-colors duration-fast ${
-        on ? 'border-accent text-accent' : 'border-line-soft text-ink-muted hover:border-accent hover:text-accent'
-      }`}
-    >
-      {label}
-      <span className="font-accent text-token-xs tabular-nums text-ink-faint">{count}</span>
-    </button>
   );
 }
 

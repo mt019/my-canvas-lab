@@ -5,6 +5,17 @@
  * 每篇的 keywords、摘要、日期都住在資料倉（notes-data），這裡只負責把它們接成 SeoHead
  * 認得的形狀。文章一多也不必回來改這個檔。
  */
+import notes from '../../data/notes.json';
+
+/* 左欄：按年份分組的文章清單。舊帖與短記那兩頁的左欄是同一份東西（讀完一則不必回清單
+   才能讀下一篇），所以只寫一次。年份就是它的 topic。 */
+export function postsNav() {
+  const years = [...new Set(notes.posts.map((p) => p.publishedAt.slice(0, 4)))];
+  return {
+    topics: years.map((year) => ({ id: year, label: `${year} 年` })),
+    articles: notes.posts.map((p) => ({ ...p, topic: p.publishedAt.slice(0, 4) })),
+  };
+}
 
 export const NOTES_TITLE = '手記｜聽講、讀書與整理資料時寫下的短文｜Phenom Canvas Lab';
 
@@ -66,6 +77,35 @@ export function archiveSeo(meta) {
         temporalCoverage: from && to ? `${from}/${to}` : undefined,
         isPartOf: { '@id': `${SITE_URL}/notes#blog` },
         about: { '@type': 'Thing', name: '2021–2023 年的短記存檔' },
+      },
+    ],
+  };
+}
+
+/* 短記流：一句話一則，帶著說出來的那一刻。跟舊帖同一個判斷——**每一則刻意不各自產網址**，
+   所以搜尋引擎只認得這一條 `/notes/stream`。
+
+   則數與日期範圍從資料倉的 notes-stream.json 來，不寫死：這一頁每天都在長，寫死的數字
+   隔天就是錯的。 */
+export function streamSeo(meta) {
+  const from = (meta.dateRange?.from ?? '').slice(0, 10);
+  const to = (meta.dateRange?.to ?? '').slice(0, 10);
+  return {
+    name: '短記',
+    title: '短記｜手記｜Phenom Canvas Lab',
+    description:
+      `${meta.count} 則一句話長度的隨手紀錄，每則標明說出來的時刻，由新到舊按月份與日期排列。`
+      + '題材是日常見聞與讀書、聽講途中的即時想法，不成篇也不修飾。',
+    keywords: ['短記', '微網誌', '隨手筆記', '日常紀錄', '時間戳', '手記'].join('、'),
+    type: 'CollectionPage',
+    parent: { name: '手記', path: '/notes' },
+    buildSchema: (SITE_URL, url) => [
+      {
+        '@context': 'https://schema.org',
+        '@id': `${url}#webpage`,
+        temporalCoverage: from && to ? `${from}/${to}` : undefined,
+        isPartOf: { '@id': `${SITE_URL}/notes#blog` },
+        about: { '@type': 'Thing', name: '一句話長度的日常紀錄' },
       },
     ],
   };

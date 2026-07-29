@@ -7,6 +7,7 @@ import SiteHeader from '../components/SiteHeader';
 import ArticleLayout from '../components/lab/ArticleLayout';
 import BookTree from '../components/lab/BookTree';
 import Dropdown from '../components/lab/Dropdown';
+import FilterBar from '../components/lab/FilterBar';
 import SearchField from '../components/lab/SearchField';
 import Tabs, { useTabParams } from '../components/lab/Tabs';
 import data from '../data/zhuJiahua.json';
@@ -148,7 +149,7 @@ function Catalog() {
       </section>
 
       <section className="mt-8">
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-3 border-y border-line py-3">
+        <FilterBar note={`列出 ${shown.length} 篇${shown.length !== TOC.itemCount ? `，全書共 ${TOC.itemCount} 篇` : ''}`}>
           <SearchField
             value={query}
             onChange={setQuery}
@@ -173,11 +174,7 @@ function Catalog() {
           >
             只看已校訂全文（{TOC.readableCount}）
           </button>
-        </div>
-
-        <p className="mt-3 text-token-sm tabular-nums text-ink-faint">
-          列出 {shown.length} 篇{shown.length !== TOC.itemCount ? `，全書共 ${TOC.itemCount} 篇` : ''}
-        </p>
+        </FilterBar>
 
         {shown.length === 0 ? (
           <p className="mt-8 text-token-body text-ink-muted">沒有符合的篇目。改用較短的關鍵字，或把部次改回全部。</p>

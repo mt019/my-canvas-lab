@@ -131,5 +131,8 @@ export function collectRoutes() {
   // 預先渲染、也不會進 sitemap。它收錄的那 58 則短記刻意不各自產網址——一則一頁就是
   // 五十幾條點進去只有一行字的網址。
   routes.add('/notes/archive');
+  // 短記流。同上，元件在 pages/_notes/ 底下，不指名就不會被預先渲染、也不會進 sitemap。
+  // 收錄的每一則同樣刻意不各自產網址。
+  routes.add('/notes/stream');
   return [...routes].sort();
 }

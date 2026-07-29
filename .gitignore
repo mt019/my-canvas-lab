@@ -61,6 +61,7 @@ _shot*.mjs
 src/data/notes.json
 src/data/notes.sync.json
 src/data/notes-archive.json
+src/data/notes-stream.json
 src/content/notes/
 src/content/notes-archive.mdx
 public/notes-assets/

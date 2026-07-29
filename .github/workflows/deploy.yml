@@ -5,7 +5,8 @@
 # `playwright install --with-deps` 一步就把系統相依補齊。
 #
 # 需要四個 repo secret：VERCEL_TOKEN、VERCEL_ORG_ID、VERCEL_PROJECT_ID，
-# 以及 NOTES_DATA_TOKEN（讀取私有的 mt019/notes-data，《手記》的內容不進這個公開 repo）。
+# 以及 NOTES_DATA_TOKEN（讀取私有的 mt019/notes-data，《手記》的內容不進這個公開 repo；
+# 權限要 Contents: Read ＋ Issues: Read——後者給短記，抓 stream 標籤的 issue 用）。
 # 設定方式寫在 HANDOFF.md 的「部署」節。
 name: deploy
 
@@ -13,6 +14,11 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  # notes-data 那邊的 workflow 在短記 issue 開出來時打過來的（他在捷運上說一句話，
+  # 幾分鐘後站上就有）。只有 opened 觸發——改錯字不值得整站重建一次，改完的內容
+  # 會搭下一次任何部署順便上去。
+  repository_dispatch:
+    types: [notes-stream]
 
 concurrency:
   group: deploy-${{ github.ref }}
@@ -52,6 +58,20 @@ jobs:
           test -n "$NOTES_DATA_TOKEN" || { echo "沒有設 NOTES_DATA_TOKEN，取不到《手記》的內容"; exit 1; }
           git clone --depth=1 "https://x-access-token:${NOTES_DATA_TOKEN}@github.com/mt019/notes-data.git" "$RUNNER_TEMP/notes-data"
           cd "$RUNNER_TEMP/notes-data"
+          # 短記：把 notes-data 上帶 stream 標籤的 issue 抓下來，這次建置就帶上最新的
+          # 短記。token 要多開 Issues: Read 才抓得到。抓不到時的分岔：
+          #   - 部署本來就是短記 issue 觸發的（repository_dispatch）→ 這次建置唯一的
+          #     目的就是帶上那句話，抓不到就紅，不准默默上一個沒有它的版本。
+          #   - 一般 push 觸發的部署 → 警告後繼續，短記頁用私有倉裡上一次的內容建，
+          #     頁面是好的、只是短記舊——別讓 token 權限問題擋住所有部署。
+          if GH_TOKEN="$NOTES_DATA_TOKEN" npm run stream:fetch; then
+            echo "短記已抓到最新"
+          elif [ "${GITHUB_EVENT_NAME}" = "repository_dispatch" ]; then
+            echo "這次部署就是為了帶上新短記，抓不到＝白跑，紅掉。多半是 NOTES_DATA_TOKEN 沒開 Issues: Read。"
+            exit 1
+          else
+            echo "::warning::短記抓取失敗（NOTES_DATA_TOKEN 沒開 Issues: Read？），這次先用私有倉裡既有的短記內容建"
+          fi
           CANVAS_DIR="$GITHUB_WORKSPACE" npm run update
 
       # 上一步失敗的樣子是「站上整個 /notes 不見了」，而建置本身照樣會成功——預先渲染
