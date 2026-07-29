@@ -163,8 +163,13 @@ jobs:
           fi
           echo "$file: $(wc -c < "$file") bytes"
 
+      # --archive=tgz：整份產物打包成一個壓縮檔上傳，取代逐檔上傳。
+      # 站上有五百多個預先渲染的頁，逐檔上傳等於一次部署就用掉五百多次上傳額度；
+      # 免費方案是 24 小時 5000 次，2026-07-29 那天推得比較密集就爆掉了，錯誤長這樣：
+      #   Error: Too many requests - try again in 24 hours (more than 5000, code: "api-upload-free")
+      # 它出現在 Deploy 這一步，前面所有檢查都已經綠了，所以症狀是「建置全過但站沒更新」。
       - name: Deploy
-        run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
+        run: vercel deploy --prebuilt --prod --archive=tgz --token=${{ secrets.VERCEL_TOKEN }}
 
       # 上線之後才推，順序不能反——先推等於叫 Bing 去看還沒更新的頁。
       # 這一步失敗不影響部署結果，理由寫在 scripts/indexnow.mjs 開頭。
