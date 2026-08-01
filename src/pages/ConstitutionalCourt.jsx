@@ -127,8 +127,11 @@ export default function ConstitutionalCourt() {
     <div className="min-h-screen paper-texture bg-[var(--cc-bg)] font-sans text-[var(--cc-ink)]" style={{ ...CC_VARS, ...(active === 'collation' ? COLLATION_READING_VARS : {}), paddingBottom: 60, overflowX: 'clip' }}>
       <header className="border-b border-[var(--cc-line)] bg-white">
         <div className={`mx-auto max-w-6xl py-7 ${SHELL_PAD_X}`}>
-          {/* 這頁自己刻了殼，返回鍵走共用元件＋全站配置（src/backNav.js），不寫死落點。 */}
-          <BackLink className="mb-4 block w-fit text-[13px] text-[var(--cc-ink-mid)] transition hover:text-[var(--cc-accent)]" />
+          {/* 返回鍵走共用元件＋全站配置（src/backNav.js）：落點、隱形、字級、顏色全在
+              src/components/BackLink.jsx，這裡只決定它放在哪。 */}
+          <div className="mb-4">
+            <BackLink />
+          </div>
           {/* 站內頁（分頁、個案頁、大法官頁）時，眉標整條是回站首頁那顆按鈕。判斷寫在
               SiteHomeEyebrow 裡（全站自刻抬頭列的頁共用一份），這裡只交出字與顏色。 */}
           <SiteHomeEyebrow

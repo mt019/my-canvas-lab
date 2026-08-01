@@ -369,7 +369,7 @@ export default function InternationalTaxOps() {
   return (
     <main className={styles.workspace}>
       <aside className={styles.sidebar}>
-        <BackLink className="px-1 text-[12px] text-[var(--c-ink-faint)] transition hover:text-[var(--c-accent)]" />
+        <BackLink />
         <div className={styles.sidebarBrand}>
           <div className={styles.brandMark}><Globe2 size={20} /></div>
           <div>

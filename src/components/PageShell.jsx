@@ -49,7 +49,7 @@ export default function PageShell({
   return (
     <main className="min-h-screen bg-paper paper-texture text-ink" style={scaleStyle}>
       <div className={`mx-auto py-10 ${PAD_X[width] ?? PAD_X.prose} ${WIDTHS[width] ?? WIDTHS.prose}`}>
-        <div className="group mb-4 flex items-center justify-between gap-4">
+        <div className="mb-4 flex items-center justify-between gap-4">
           <BackLink back={back} />
           <span className="flex-1" />
           {controls ? <div className="flex items-center gap-2">{controls}</div> : null}

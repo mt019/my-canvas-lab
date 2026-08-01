@@ -573,7 +573,9 @@ export default function PaletteLab() {
       className="min-h-screen px-4 py-8 sm:px-6"
       style={{ ...style, background: 'var(--pl-paper)', color: 'var(--pl-ink)' }}
     >
-      <BackLink className="mb-5 block w-fit text-token-sm" />
+      <div className="mb-5">
+        <BackLink />
+      </div>
       <div className="mx-auto max-w-6xl">
         <SiteHomeEyebrow
           className="mb-1 mt-3 flex items-center gap-2 font-accent text-[11px] font-bold uppercase tracking-[0.22em]"

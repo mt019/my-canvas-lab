@@ -174,12 +174,12 @@ chunk、整段水合，一頁 1.2–3.3 秒。`scripts/prerender.mjs` 改成：�
 ### 《手記》的內容在建置當下才進來（2026-07-29 加）
 
 `/notes` 的文章不在這個公開 repo 裡。使用者的裁定是「站上公開沒關係，但不要留在 GitHub」，
-所以正文住在私有的 `mt019/notes-data`，workflow 第 4 步用 `NOTES_DATA_TOKEN` 把它 clone 到
+所以正文住在私有的 `mt019/phenom-notes-data`，workflow 第 4 步用 `NOTES_DATA_TOKEN` 把它 clone 到
 `$RUNNER_TEMP`、跑 `npm run update`（build ＋ sync），把 `src/data/notes.json`、
 `src/content/notes/*.mdx`、`src/content/notes-archive.mdx`、`src/data/notes-archive.json`
 與 `public/notes-assets/**` 放進工作區；這些路徑全部在 `.gitignore` 裡，建置完隨 runner 消失。
 
-- **要多設一個 secret**：`NOTES_DATA_TOKEN`，fine-grained PAT，只給 `mt019/notes-data` 的
+- **要多設一個 secret**：`NOTES_DATA_TOKEN`，fine-grained PAT，只給 `mt019/phenom-notes-data` 的
   Contents: Read **＋ Issues: Read（2026-07-29 起短記要抓 issue）**。設法同上
   （`gh secret set NOTES_DATA_TOKEN`，值貼在提示後面）。
 - **私有倉那邊要進版控的是** `content/`、`data/`、`processed/`、`assets/imported/`。
@@ -194,10 +194,10 @@ chunk、整段水合，一頁 1.2–3.3 秒。`scripts/prerender.mjs` 改成：�
   擋的是從今以後不再有新的進來。
 - **短記「說完就上站」（2026-07-29 加）**：deploy 第 4 步在 `npm run update` 之前先跑
   `npm run stream:fetch`（`gh` 拿 `NOTES_DATA_TOKEN` 當 token，所以它要多開 Issues: Read），
-  每次部署都帶上 notes-data 上帶 `stream` 標籤的 issue 最新內容。notes-data 那邊的
+  每次部署都帶上 phenom-notes-data 上帶 `stream` 標籤的 issue 最新內容。phenom-notes-data 那邊的
   `.github/workflows/say-deploys-canvas.yml` 在這種 issue **opened** 時打
   `repository_dispatch`（type `notes-stream`）過來觸發部署——只有 opened；edited 與 close
-  不觸發，改動搭下一次任何部署上去。它需要 notes-data 那邊一顆 secret
+  不觸發，改動搭下一次任何部署上去。它需要 phenom-notes-data 那邊一顆 secret
   `CANVAS_DISPATCH_TOKEN`（fine-grained PAT，對 `mt019/my-canvas-lab` 的
   Contents: Read and write，repository_dispatch 這個 API 要求的權限）。失敗語意：
   dispatch 觸發的部署抓不到短記就紅（那次建置唯一的目的就是帶上那句話）；push 觸發的
@@ -306,7 +306,7 @@ events**。所以看得到的永遠是最近 30 天，要時間序列就得自�
 
 `/notes` 是清單，`/notes/<slug>` 是單篇。前端三個檔：`pages/Notes.jsx`（清單）、
 `pages/_notes/PostRoute.jsx`（單篇）、`pages/_notes/seo.js`（兩條路由共用的 SEO 資料）。
-資料倉 `../notes-data`：文章正文在它的 `content/<slug>.mdx`、meta 在 `data/posts.json`，
+資料倉 `../phenom-notes-data`：文章正文在它的 `content/<slug>.mdx`、meta 在 `data/posts.json`，
 `npm run update` 產出 `processed/notes.json` 再同步成 canvas 的 `src/data/notes.json`
 與 `src/content/notes/*.mdx`。**新增一篇文章不必碰 canvas 的任何一個檔。**
 
@@ -336,6 +336,15 @@ events**。所以看得到的永遠是最近 30 天，要時間序列就得自�
    （返回鍵、報頭）——動它之前先想第二個消費者會變成什麼樣。**
 5. **標籤是篩選，不是路由。** 選擇進網址 `?tag=`（`useTabParam` 配 `scroll: 'preserve'`）。
    文章量還撐不起一標籤一頁，那會生出一堆只有一篇文章的路由。
+5b. **手記連到站內其他專案的連結，網址前綴不在 canvas 這邊**（2026-07-30 加）。資料倉正文寫
+   `[釋字 426](cc:case/釋字第426號)`，前綴查它的 `data/sites.json`（`cc`＝`/constitutionalcourt`、
+   `iias`、`jirs`），`sync-to-canvas.mjs` 送過來時才換成完整路徑，所以 `src/content/notes/*.mdx`
+   收到的已經是可用的連結，canvas 這邊不必做任何事。**憲法法庭之後要拆成獨立子網域**
+   （使用者 2026-07-30 交代先鋪好），屆時改資料倉那一行即可，canvas 不用動。
+   一件待裁定：手記現在引到釋字 426 與 515，這兩件**不在** `_constitutional-court/case-index.js`
+   那份凍結的 200 件清單裡，所以單案頁打得開但 noindex、也不預先渲染。要讓被引用的案自動進
+   索引，得在那份清單加第六個判準「被站內文章引用」（從 `src/data/notes.json` 現算後併入），
+   才不會破壞它「用判準可重現」的性質。沒有使用者裁定前不要手動塞案號進去。
 6. **舊帖 `/notes/archive`：58 則短記收成一頁，不各自產網址**（2026-07-29 使用者裁定）。
    最短的一則六個字，一則一頁就是五十幾條點進去只有一行字的網址、五十幾條 sitemap 項目。
    前端多一個檔 `pages/_notes/ArchiveRoute.jsx`；正文 `src/content/notes-archive.mdx`
@@ -363,7 +372,7 @@ events**。所以看得到的永遠是最近 30 天，要時間序列就得自�
    `seo.js` 的 `postsNav()`，上限才調到 660。
    **(c)** 輸入端有三條路、寫進去的東西格式一樣：終端機 `npm run say`、Claude Code 的
    `/say`（`~/.claude/commands/say.md`）、手機捷徑開 GitHub issue（`fetch-stream-issues.mjs`
-   抓回來）。細節在 `notes-data/AGENTS.md`「短記流」節。
+   抓回來）。細節在 `phenom-notes-data/AGENTS.md`「短記流」節。
 
 **寫作素材有本機來源時，先回那個來源核對，不要只憑通行說法。** 卡爾・克勞斯那篇的事實
 是對著 `~/Documents/NTU/1142/Translation/KarlKraus`（兩年的翻譯工程，含
@@ -1815,7 +1824,7 @@ chart/status color: reference `--status-*` / `--cat-*`, never a fresh page hex.
 `.mdx`（回報不在清單裡）、把行數上限暫時壓到 100（回報 326 超過並列出檔名）。
 
 新增一條線時在 `LINES` 加一筆（清單檔名、正文目錄、前端路徑、行數上限），
-並在該資料倉的 sync 腳本裡照 `notes-data/engineering/scripts/sync-to-canvas.mjs` 補寫清單。
+並在該資料倉的 sync 腳本裡照 `phenom-notes-data/engineering/scripts/sync-to-canvas.mjs` 補寫清單。
 
 ## 資料層與 PDF 代理白名單分岔：加上固定檢查（2026-07-28）
 
@@ -1876,6 +1885,33 @@ chart/status color: reference `--status-*` / `--cat-*`, never a fresh page hex.
 **沒有加機器檢查**：站內另有八處刻意的 10px accent 標籤（AppearanceMenu 分區標題、SourceFilter
 欄名、FrontDoor），一條「accent 一律 bold」的規則會全部誤報。規則寫進 `docs/DESIGN.md`
 「accent 字體：紋理在字重，不在字級」。
+
+## 隱形的返回鍵在九頁上從來沒有隱形過（2026-07-30 使用者裁定）
+
+使用者原話三句，每一句都指到更上游：「返回按鈕怎麼不是隱形的？我要隱形的箭頭啊！全局審查
+修正」→「這應該是通用元件啊不是應該提出去統一管理嗎？？」→「hover 顯示箭頭的範圍也太大了吧？？」
+
+**成因是 `className || QUIET`。** `BackLink` 把 `className` 當成整份替換，於是呼叫端一傳樣式，
+`opacity-0` 那組隱形連帶消失。三個殼不傳，所以殼裡是對的；九個自己刻抬頭列的頁（憲法法庭、
+ECFA、涉外稅務、法研所、JIRS、財政缺口、翻譯地圖、色票實驗室、Manus）各自傳了字級與 hover
+色，那九頁的箭頭一直是實心的，而且九頁九種字級（12px／13px／token-sm）、九種 hover 色。
+**看起來像九個頁面各自的樣式選擇，其實是同一個缺口的九個實例**——這正是「共用元件開一個口子
+給呼叫端覆寫外觀」的代價：口子開了就沒有共用了。
+
+修法是把口子收掉：`className` 這個 prop 拿掉，隱形、字級、hover 色、hover 熱區全在
+`src/components/BackLink.jsx`。呼叫端只決定放在哪、要不要包一層 `mb-*`。顏色改成跟著容器的
+文字色（不設 `text-*`），hover 色吃 `--backlink-accent`（沒設就用 `--c-accent`），有自己色盤
+的頁在它本來就有的變數表加一行（`CC_VARS`、`ECFA_VARS` 各加了一行）。
+
+**hover 熱區也一起收。** 原本是「殼在整條抬頭列掛 `group`」，游標掃過標題或內文都會讓箭頭
+浮出來；自己刻版型的頁沒有那個 `group`，行為又不一樣。現在熱區＝箭頭本身外擴 4px（負外距
+補回內距，版面不動），三個殼那一列的 `group` 拿掉，全站一種行為。
+
+固定檢查：`validate-shell-chrome.mjs` 第六節，`<BackLink className=` 一出現就擋，訊息直接寫
+「要換 hover 色就在該頁的頁面級變數表加一行 `--backlink-accent`」。負向測試：故意加回一個
+`className="opacity-60"`，validator 指出檔案:行號並 exit 1；移除後全綠。驗收用 headless
+Playwright 逐頁量計算後的 opacity——十二條路由（含三個殼的頁）idle＝0、游標在標題上＝0、
+游標在箭頭上＝1。
 
 ## 窄側欄的換行：改元件，不是改單頁（2026-07-27 使用者裁定）
 
@@ -2078,7 +2114,7 @@ docstring 自述的範圍，代價是手記裡真混進 σ 之類的也不會被
 
 **MDX 對 `<` 與 `{` 的容忍度比想像中高。** 反斜線跳脫過的 `\<` 是 CommonMark 的字面字元，
 編得過；只有**沒跳脫**的才會被當成標籤或表達式。用 `/[<{]/` 這種不分跳脫與否的正則去攔，
-會攔到自己人（notes-data 的匯入腳本 `escapeForMdx()` 產出的正是 `\<`）。判斷「這篇編不編得過」
+會攔到自己人（phenom-notes-data 的匯入腳本 `escapeForMdx()` 產出的正是 `\<`）。判斷「這篇編不編得過」
 的正確方式是拿 `@mdx-js/mdx` 真的編一次，不是用正則猜。
 
 ## Font system (stable, don't re-derive)

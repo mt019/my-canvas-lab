@@ -12,6 +12,8 @@ import HoverCard from '../../components/lab/HoverCard';
 
 export const CC_VARS = { // token-exempt
   '--cc-accent': '#8f6071',
+  // 共用返回鍵的 hover 色（src/components/BackLink.jsx 吃這個變數；沒設就用全站 accent）
+  '--backlink-accent': '#8f6071',
   '--cc-line': '#eadde2',
   '--cc-eyebrow': '#a77b89',
   '--cc-ink-soft': '#74636a',

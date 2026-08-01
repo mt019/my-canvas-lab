@@ -152,6 +152,8 @@ function PostRow({ post }) {
       {post.subtitle ? <p className="mt-1 text-token-sm text-ink-muted">{post.subtitle}</p> : null}
       <p className="mt-2 text-token-sm leading-relaxed text-ink-faint">{post.summary}</p>
       <p className="mt-3 font-accent text-token-xs text-ink-faint">
+        {/* 草稿只存在於本機（NOTES_DRAFTS=1 建出來的那一份），標出來免得跟已發布的混在一起讀。 */}
+        {post.draft ? <span className="mr-2 text-accent">草稿</span> : null}
         {post.publishedAt}
         {post.readingMinutes ? ` · 約 ${post.readingMinutes} 分鐘` : ''}
         {(post.tags ?? []).length > 0 ? ` · ${post.tags.join('、')}` : ''}

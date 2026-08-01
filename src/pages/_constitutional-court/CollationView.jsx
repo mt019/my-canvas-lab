@@ -1,10 +1,11 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { ArrowLeftRight, ExternalLink, Maximize2, Minus, Plus } from 'lucide-react';
 import collation from '../../data/daliyuanCollation.json';
 import './CollationView.css';
 
 const sourceOrder = ['Paddle繁體模型', 'Paddle新版模型', '維基文庫', '校定稿'];
 const sourceShort = { Paddle繁體模型: '繁辨', Paddle新版模型: '新辨', 維基文庫: '維基', 校定稿: '校定' };
+const clampZoom = (next) => Math.min(2.5, Math.max(0.25, next));
 
 function splitDate(text) {
   const match = text?.match(/^(民國[^日]{1,20}日)([\s\S]*)$/);
@@ -23,12 +24,11 @@ export default function CollationView() {
   const [horizontalMax, setHorizontalMax] = useState(0);
   const [globalCardWidth, setGlobalCardWidth] = useState(100);
   const [cardWidthOverrides, setCardWidthOverrides] = useState({});
-  const clampZoom = (next) => Math.min(2.5, Math.max(0.25, next));
-  const applyZoom = (next) => {
+  const applyZoom = useCallback((next) => {
     const value = clampZoom(next);
     zoomRef.current = value;
     setZoom(value);
-  };
+  }, []);
 
   const selectPage = (index) => {
     setPageIndex(index);
@@ -65,7 +65,7 @@ export default function CollationView() {
     };
     viewport.addEventListener('wheel', onPinch, { passive: false });
     return () => viewport.removeEventListener('wheel', onPinch);
-  }, []);
+  }, [applyZoom]);
 
   useEffect(() => {
     const viewport = comparisonViewportRef.current;

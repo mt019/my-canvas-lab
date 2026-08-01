@@ -32,6 +32,8 @@ const ECFA_VARS = { // token-exempt
   '--ecfa-ink-mid': '#5b4e55',
   '--ecfa-ink-muted': '#76666d',
   '--ecfa-accent': '#8f6071',
+  // 共用返回鍵的 hover 色（src/components/BackLink.jsx 吃這個變數；沒設就用全站 accent）
+  '--backlink-accent': '#8f6071',
   '--ecfa-icon': '#9b6b7b',
   '--ecfa-eyebrow': '#a77b89',
   '--ecfa-title-ink': '#45343c',
@@ -826,8 +828,11 @@ export default function ECFAResearch() {
     <div className="min-h-screen paper-texture bg-[var(--ecfa-bg)] font-sans text-[var(--ecfa-ink-strong)]" style={{ ...ECFA_VARS, paddingBottom: 60, '--reader-scale': fontScale }}>
       <header className="border-b border-[var(--ecfa-line)] bg-white">
         <div className={`mx-auto max-w-6xl py-7 ${SHELL_PAD_X}`}>
-          {/* 這頁自己刻了殼，返回鍵走共用元件＋全站配置（src/backNav.js），不寫死落點。 */}
-          <BackLink className="mb-4 block w-fit text-[13px] text-[var(--ecfa-body-text)] transition hover:text-[var(--ecfa-heading)]" />
+          {/* 返回鍵走共用元件＋全站配置（src/backNav.js）：落點、隱形、字級、顏色全在
+              src/components/BackLink.jsx，這裡只決定它放在哪。 */}
+          <div className="mb-4">
+            <BackLink />
+          </div>
           <div className="flex items-start justify-between gap-3">
             <div className="reader-scale max-w-4xl">
               {/* 眉標＝站名，站內頁時它就是回站首頁那顆按鈕（判斷在 SiteHomeEyebrow）。 */}

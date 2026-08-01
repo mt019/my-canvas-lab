@@ -106,7 +106,9 @@ export default function ManusMetaAcquisition() {
   return (
     <div className="min-h-screen paper-texture font-sans" style={{ ...MMA_VARS, background: P.bg }}>
       <div className="max-w-2xl mx-auto px-4 pt-10 pb-20">
-        <BackLink className="mb-6 block w-fit text-token-sm opacity-60 transition hover:opacity-100" />
+        <div className="mb-6">
+          <BackLink />
+        </div>
 
         {/* ── Header ── */}
         <header className="mb-8">

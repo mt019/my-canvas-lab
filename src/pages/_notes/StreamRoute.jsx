@@ -103,6 +103,5 @@ function linkify(text) {
     <a key={part} href={part} target="_blank" rel="noreferrer" className="text-accent underline decoration-line underline-offset-2">
       {part}
     </a>
-  // eslint-disable-next-line react/no-array-index-key
   ) : <span key={i}>{part}</span>));
 }

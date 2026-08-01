@@ -13,22 +13,39 @@ import { INDEX, resolveBack } from '../backNav';
  * 左上角（那是廣告不是導覽）。帶字的只有主題站的落點（「朱家驊研究室」），那是在告訴讀者
  * 他正要回到哪個站。
  *
- * **預設隱形，滑到抬頭那一列才浮出來**（2026-07-28 使用者裁定）。它照樣佔著位置（不是
- * display:none），浮出來時不會把旁邊的東西推開；殼在那一列掛了 `group`，所以游標移到
- * 左上角附近它就出現，不必精準壓在那個箭頭上。**鍵盤一定看得見**（`focus-visible`）——
+ * **預設隱形，滑過去才浮出來**（2026-07-28 使用者裁定）。它照樣佔著位置（不是
+ * display:none），浮出來時不會把旁邊的東西推開。**鍵盤一定看得見**（`focus-visible`）——
  * 只靠 hover 的隱形控制項對鍵盤使用者等於不存在，那不是安靜，是壞掉。
  *
- * `className` 拿來接該頁自己的顏色（頁面級 CSS 變數、CSS Module class）。位置由呼叫端
- * 決定——這個元件不假設自己被放在哪裡。
+ * **外觀與隱形全在這個檔裡，呼叫端一個字都不傳**（2026-07-30 使用者：「這應該是通用元件
+ * 啊不是應該提出去統一管理嗎」）。前一版把 `className` 當成整份替換（`className || QUIET`），
+ * 於是九個自己刻抬頭列的頁各自傳了一組字級與顏色，隱形樣式連帶被換掉——箭頭在那些頁上
+ * 從來沒有隱形過，而且九頁九種字級（12px／13px／token-sm）與九種 hover 色。
+ * 現在呼叫端只決定它放在哪、要不要留下方間距；顏色與字級由這裡定：
  *
- * `floating` 給沒有抬頭列可掛的滿版工具頁：貼左上角、近乎透明、滑過去才浮出來。
+ * - **顏色跟著所在容器的文字色走**（不設 `text-*`，就是 `inherit`），所以它自動落在每頁
+ *   自己的墨色裡，不必逐頁傳變數。
+ * - **hover 色吃 `--backlink-accent`，沒設就用全站 accent。** 有自己色盤的頁把這一行加進
+ *   它本來就有的頁面級變數表（`CC_VARS` 這種），不要傳 class。
+ * - **熱區就在箭頭身上**，外圈只多 4px（負外距補回來，版面不動）。曾經是「整條抬頭列
+ *   掛 `group`」，於是游標掃過標題或內文都會讓它浮出來（2026-07-30 使用者：「hover 顯示
+ *   箭頭的範圍也太大了吧」）。隱形的東西要靠近它才顯形，一整列都算靠近就等於沒有隱形。
+ *   所以三個殼那一列的 `group` 已經拿掉，熱區只由這個元件決定，全站一種行為。
+ *
+ * `floating` 給沒有抬頭列可掛的滿版工具頁：貼左上角，同樣隱形，靠自身那塊內距接住游標。
  */
-const QUIET = 'text-token-sm text-ink-muted opacity-0 transition duration-fast '
-  + 'group-hover:opacity-100 hover:text-accent hover:opacity-100 focus-visible:opacity-100';
+const HIDDEN = 'opacity-0 transition duration-fast '
+  + 'group-hover:opacity-100 hover:opacity-100 focus-visible:opacity-100';
 
-const FLOATING = 'fixed left-3 top-3 z-50 rounded-token-md px-2 py-1 text-token-xs '
-  + 'text-ink-muted opacity-80 transition duration-fast hover:bg-paper hover:opacity-100 hover:text-accent '
-  + 'focus-visible:bg-paper focus-visible:opacity-100';
+const ARROW = 'inline-block whitespace-nowrap text-token-sm '
+  + 'hover:text-[var(--backlink-accent,var(--c-accent))]';
+
+// 負外距把內距抵掉，熱區比箭頭大一圈而版面不動。
+const ZONE = 'group -m-1 block w-fit shrink-0 p-1';
+
+const FLOATING_ZONE = 'group fixed left-1 top-1 z-50 block p-2';
+const FLOATING_ARROW = 'inline-block rounded-token-md px-1 text-token-xs '
+  + 'hover:bg-paper hover:text-[var(--backlink-accent,var(--c-accent))] focus-visible:bg-paper';
 
 /*
  * 連點兩下回專案清單（2026-07-28 使用者裁定）。
@@ -48,7 +65,7 @@ const FLOATING = 'fixed left-3 top-3 z-50 rounded-token-md px-2 py-1 text-token-
  */
 const DOUBLE_MS = 260;
 
-export default function BackLink({ className = '', back, floating = false }) {
+export default function BackLink({ back, floating = false }) {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const timer = useRef(null);
@@ -84,13 +101,15 @@ export default function BackLink({ className = '', back, floating = false }) {
   };
 
   return (
-    <Link
-      to={link.href}
-      aria-label={link.title || label_}
-      onClick={onClick}
-      className={className || (floating ? FLOATING : QUIET)}
-    >
-      {label ? `← ${label}` : '←'}
-    </Link>
+    <span className={floating ? FLOATING_ZONE : ZONE}>
+      <Link
+        to={link.href}
+        aria-label={link.title || label_}
+        onClick={onClick}
+        className={`${HIDDEN} ${floating ? FLOATING_ARROW : ARROW}`}
+      >
+        {label ? `← ${label}` : '←'}
+      </Link>
+    </span>
   );
 }

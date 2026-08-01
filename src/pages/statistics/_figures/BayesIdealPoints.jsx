@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import ChartFrame from '../../../components/lab/chart/ChartFrame';
 import { linearScale } from '../../../components/lab/chart/scale';
 
 /*

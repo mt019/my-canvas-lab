@@ -44,7 +44,7 @@ const PAD_X = {
 export default function SiteHeader({ back, width = 'article', lang, onLangChange, scale, onScaleChange }) {
   return (
     <div className="sticky top-0 z-40 mb-6 border-b border-line-soft bg-paper/95 backdrop-blur-sm">
-      <div className={`group mx-auto flex items-center justify-between gap-4 py-2 ${PAD_X[width] ?? PAD_X.article} ${WIDTHS[width] ?? WIDTHS.article}`}>
+      <div className={`mx-auto flex items-center justify-between gap-4 py-2 ${PAD_X[width] ?? PAD_X.article} ${WIDTHS[width] ?? WIDTHS.article}`}>
         <BackLink back={back} />
         <span className="flex-1" />
         <div className="flex items-center gap-2">

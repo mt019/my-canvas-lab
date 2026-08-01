@@ -60,9 +60,10 @@ export default function PostRoute() {
             大標題分開掛：眉標「手記」是回站首頁那顆小按鈕，文章標題不是連結。 */}
         <SiteHeader scale={scale} onScaleChange={setScale} />
 
+        {/* 眉標：草稿只在本機看得到（NOTES_DRAFTS=1 建出來的那一份），標出來免得誤以為已經發布。 */}
         <ArticleLayout
           title={post.title}
-          eyebrow="手記"
+          eyebrow={post.draft ? '手記 · 草稿' : '手記'}
           summary={post.subtitle}
           meta={
             <ArticleMeta

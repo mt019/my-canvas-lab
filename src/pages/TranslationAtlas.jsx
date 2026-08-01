@@ -146,7 +146,9 @@ export default function TranslationAtlas() {
       className="min-h-screen paper-texture bg-[var(--ta-bg)] px-4 font-sans text-[var(--ta-ink)] sm:px-6"
       style={{ ...TA_VARS, paddingTop: 46, paddingBottom: 64 }}
     >
-      <BackLink className="mb-5 block w-fit text-token-sm text-[var(--ta-ink)] opacity-60 transition hover:opacity-100" />
+      <div className="mb-5">
+        <BackLink />
+      </div>
       <div className="mx-auto w-full max-w-5xl">
         <header className="mb-8 border-b border-[var(--ta-line)] pb-7">
           <SiteHomeEyebrow

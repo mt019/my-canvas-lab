@@ -254,6 +254,29 @@ for (const path of routePages) {
   }
 }
 
+/* ── 六、返回鍵的外觀不准逐頁傳 ────────────────────────────── */
+
+// 2026-07-30 使用者在 /constitutionalcourt 點出來的：那頁的箭頭一直看得見。成因是
+// `BackLink` 當時寫 `className || QUIET`——呼叫端一傳 className，整組隱形樣式就被換掉，
+// 而九個自己刻抬頭列的頁全都傳了自己的字級與顏色。於是「預設隱形」只在三個殼裡成立，
+// 頁面自己放 BackLink 的地方一律是實心的，看起來像九頁各自的樣式選擇，其實是同一個缺口
+// （順帶：九頁九種字級與九種 hover 色）。
+//
+// 現在 `BackLink` 沒有 `className` 這個 prop：隱形、字級、hover 色、hover 熱區都在
+// src/components/BackLink.jsx 裡，呼叫端只決定它放在哪、要不要留間距。要換某頁的 hover
+// 色，就在該頁本來就有的頁面級變數表加一行 `--backlink-accent`。
+for (const path of walk('src').filter((p) => /\.jsx$/.test(p))) {
+  const lines = readFileSync(path, 'utf8').split('\n');
+  for (const [i, line] of lines.entries()) {
+    if (!/<BackLink\b[^>]*\bclassName=/.test(line)) continue;
+    failures.push(
+      `${relative('.', path)}:${i + 1}：又給返回鍵傳樣式了。BackLink 沒有 className——`
+      + '外觀與隱形都歸元件（src/components/BackLink.jsx），要換 hover 色就在該頁的頁面級'
+      + '變數表加一行 `--backlink-accent`',
+    );
+  }
+}
+
 /* ── 結果 ─────────────────────────────────────────────────── */
 
 if (failures.length) {

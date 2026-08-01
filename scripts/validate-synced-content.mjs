@@ -4,7 +4,7 @@
 //
 //   node scripts/validate-synced-content.mjs
 //
-// 為什麼要有這支：內容住在各自的資料倉（notes-data 等），canvas 只負責畫。
+// 為什麼要有這支：內容住在各自的資料倉（phenom-notes-data 等），canvas 只負責畫。
 // 這條界線壞掉的方式很固定——有人為了快，直接改 canvas 這邊的 JSON 或 .mdx，
 // 下一次 sync 就把他的改動洗掉；或者把分組、排序、字數這類算得出來的東西寫進
 // JSX，於是同一份邏輯在兩個倉各有一份。兩件事都是「當下沒事、以後才炸」，

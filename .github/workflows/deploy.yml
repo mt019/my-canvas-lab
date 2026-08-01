@@ -5,7 +5,7 @@
 # `playwright install --with-deps` 一步就把系統相依補齊。
 #
 # 需要四個 repo secret：VERCEL_TOKEN、VERCEL_ORG_ID、VERCEL_PROJECT_ID，
-# 以及 NOTES_DATA_TOKEN（讀取私有的 mt019/notes-data，《手記》的內容不進這個公開 repo；
+# 以及 NOTES_DATA_TOKEN（讀取私有的 mt019/phenom-notes-data，《手記》的內容不進這個公開 repo；
 # 權限要 Contents: Read ＋ Issues: Read——後者給短記，抓 stream 標籤的 issue 用）。
 # 設定方式寫在 HANDOFF.md 的「部署」節。
 name: deploy
@@ -14,7 +14,7 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
-  # notes-data 那邊的 workflow 在短記 issue 開出來時打過來的（他在捷運上說一句話，
+  # phenom-notes-data 那邊的 workflow 在短記 issue 開出來時打過來的（他在捷運上說一句話，
   # 幾分鐘後站上就有）。只有 opened 觸發——改錯字不值得整站重建一次，改完的內容
   # 會搭下一次任何部署順便上去。
   # notes-content 是同一個倉在 content/ 或 data/ 被推上來時打的（改完文章不必再手動
@@ -45,7 +45,7 @@ jobs:
       - run: npm ci
 
       # 《手記》的文章不在這個公開 repo 裡（理由與擋掉的路徑見 .gitignore）。它們住在私有的
-      # mt019/notes-data，這一步把那個倉 clone 到 runner 的暫存目錄、跑它自己的 sync，把
+      # mt019/phenom-notes-data，這一步把那個倉 clone 到 runner 的暫存目錄、跑它自己的 sync，把
       # notes.json、57 篇正文、存檔頁與匯入圖片放進工作區；建置完隨 runner 一起消失。
       # clone 到 $RUNNER_TEMP 而不是工作區底下，免得多出一個目錄被各支 validate 掃進去。
       # 私有倉那邊要進版控的是正文與產物（content/、data/、processed/、assets/imported/）。
@@ -58,9 +58,9 @@ jobs:
           NOTES_DATA_TOKEN: ${{ secrets.NOTES_DATA_TOKEN }}
         run: |
           test -n "$NOTES_DATA_TOKEN" || { echo "沒有設 NOTES_DATA_TOKEN，取不到《手記》的內容"; exit 1; }
-          git clone --depth=1 "https://x-access-token:${NOTES_DATA_TOKEN}@github.com/mt019/notes-data.git" "$RUNNER_TEMP/notes-data"
-          cd "$RUNNER_TEMP/notes-data"
-          # 短記：把 notes-data 上帶 stream 標籤的 issue 抓下來，這次建置就帶上最新的
+          git clone --depth=1 "https://x-access-token:${NOTES_DATA_TOKEN}@github.com/mt019/phenom-notes-data.git" "$RUNNER_TEMP/phenom-notes-data"
+          cd "$RUNNER_TEMP/phenom-notes-data"
+          # 短記：把 phenom-notes-data 上帶 stream 標籤的 issue 抓下來，這次建置就帶上最新的
           # 短記。token 要多開 Issues: Read 才抓得到。抓不到時的分岔：
           #   - 部署本來就是短記 issue 觸發的（repository_dispatch）→ 這次建置唯一的
           #     目的就是帶上那句話，抓不到就紅，不准默默上一個沒有它的版本。

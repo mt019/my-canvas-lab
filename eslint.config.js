@@ -14,7 +14,11 @@ import tseslint from 'typescript-eslint'
 // 掛得太早的話，一堆 warning 擋著 build，最後會被關掉——那比現在更糟，
 // 因為會以為它在把關。
 export default tseslint.config(
-  { ignores: ['dist', 'api/**'] },
+  {
+    // 這些是建置／同步產物，不是 Canvas 原始碼。public/scripts 的 Tampermonkey
+    // 檔案使用 GM_* 執行環境；用一般 browser globals 檢查只會得到假陽性。
+    ignores: ['dist', 'api/**', 'public/scripts/**', 'greasyfork/**'],
+  },
   {
     extends: [js.configs.recommended, ...tseslint.configs.recommended],
     files: ['**/*.{ts,tsx}'],
