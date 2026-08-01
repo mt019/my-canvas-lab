@@ -393,6 +393,7 @@ const PAGE_META = { // token-exempt: per-page identity chip colors (data, not st
     accent: '#d9dfe6',
     accentText: '#3f5a72',
     group: 'corpus',
+    externalUrl: 'https://judicial-translations.phenomcanvas.com/',
   },
   LegalGlossary: {
     name: '德語法學譯語表',
@@ -401,6 +402,7 @@ const PAGE_META = { // token-exempt: per-page identity chip colors (data, not st
     accent: '#e8e1d2',
     accentText: '#7a6440',
     group: 'corpus',
+    externalUrl: 'https://judicial-translations.phenomcanvas.com/glossary/',
   },
   TaxLitigation: {
     name: '稅務訴訟計量研究',
@@ -662,11 +664,8 @@ function CCTabRoute({ routes }) {
 
 function RouteRow({ route }) {
   const { name, desc, Icon, accent, accentText } = route.meta;
-  return (
-    <Link
-      to={route.path}
-      className="group grid grid-cols-[34px_1fr_auto] items-center gap-3 border-b border-[var(--home-line)] py-3 transition-colors hover:bg-[var(--home-hover)]"
-    >
+  const row = (
+    <>
       <div
         className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg"
         style={{ backgroundColor: accent }}
@@ -681,6 +680,22 @@ function RouteRow({ route }) {
         size={14}
         className="shrink-0 text-[var(--home-arrow)] transition-transform duration-200 group-hover:translate-x-1 group-hover:text-[var(--home-arrow-hover)]"
       />
+    </>
+  );
+  const className = "group grid grid-cols-[34px_1fr_auto] items-center gap-3 border-b border-[var(--home-line)] py-3 transition-colors hover:bg-[var(--home-hover)]";
+  return route.meta.externalUrl ? (
+    <a
+      href={route.meta.externalUrl}
+      className={className}
+    >
+      {row}
+    </a>
+  ) : (
+    <Link
+      to={route.path}
+      className={className}
+    >
+      {row}
     </Link>
   );
 }
@@ -703,7 +718,12 @@ function HomePage({ routes }) {
   const unknown = routes.filter((r) => !r.meta);
   // Directory of the front-door canvases, as an ItemList in the homepage JSON-LD.
   // Mirrors the links rendered below, so it describes on-screen content only.
-  const directory = known.map((r) => ({ name: r.meta.name, description: r.meta.desc, path: r.path }));
+  const directory = known.map((r) => ({
+    name: r.meta.name,
+    description: r.meta.desc,
+    path: r.path,
+    url: r.meta.externalUrl,
+  }));
   return (
     <div
       className="min-h-screen paper-texture bg-[var(--home-bg)] px-4 font-sans text-[var(--home-ink)] sm:px-6"

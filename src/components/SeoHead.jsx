@@ -150,7 +150,7 @@ export default function SeoHead({ page, itemList }) {
           position: i + 1,
           name: it.name,
           description: it.description,
-          url: `${SITE_URL}${it.path}`,
+          url: it.url ?? `${SITE_URL}${it.path}`,
         })),
       });
     }
