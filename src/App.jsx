@@ -22,13 +22,11 @@ import { USERSCRIPTS_KEYWORDS, USERSCRIPTS_TITLE, USERSCRIPTS_DESC, userscriptsS
  * starting with "_" is a building block, not a page — figures, simulation code —
  * and never becomes a route.
  */
-// Constitutional Court is now an independent site. Exclude both its former page
-// and private building blocks from Vite's module graph: keeping a card on /all
-// must not keep producing the archive chunks in every Canvas build.
+// Constitutional Court is now an independent site and its files are gone from
+// this repo entirely — the card on /all is an external link, built from
+// PAGE_META alone with no page or data graph behind it.
 const pages = import.meta.glob([
   './pages/**/*.{jsx,tsx}',
-  '!./pages/ConstitutionalCourt.jsx',
-  '!./pages/_constitutional-court/**',
   '!./pages/Notes.jsx',
   '!./pages/_notes/**',
 ]);

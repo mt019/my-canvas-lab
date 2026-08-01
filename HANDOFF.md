@@ -356,7 +356,8 @@ manifest 回 `Cache-Control: no-store, max-age=0`，內容路由的代理行為�
    `iias`、`jirs`），`sync-to-canvas.mjs` 送過來時才換成完整路徑，所以 `src/content/notes/*.mdx`
    收到的已經是可用的連結，canvas 這邊不必做任何事。**憲法法庭之後要拆成獨立子網域**
    （使用者 2026-07-30 交代先鋪好），屆時改資料倉那一行即可，canvas 不用動。
-   一件待裁定：手記現在引到釋字 426 與 515，這兩件**不在** `_constitutional-court/case-index.js`
+   一件待裁定（2026-08-02 起這件事歸 `phenom-court`，canvas 已無憲法法庭的檔）：手記現在引到
+   釋字 426 與 515，這兩件**不在** `phenom-court` 的 `_constitutional-court/case-index.js`
    那份凍結的 200 件清單裡，所以單案頁打得開但 noindex、也不預先渲染。要讓被引用的案自動進
    索引，得在那份清單加第六個判準「被站內文章引用」（從 `src/data/notes.json` 現算後併入），
    才不會破壞它「用判準可重現」的性質。沒有使用者裁定前不要手動塞案號進去。
@@ -980,7 +981,35 @@ work.
 warning 擋住 build，然後被關掉——那比現在更糟，因為會以為它在把關。
 `src/pages/Brief.jsx` 目前還紅（brief 標記層在途，非本輪產出）。
 
-### `ConstitutionalCourt` (landed 2026-07-06)
+### `ConstitutionalCourt` (landed 2026-07-06；2026-08-02 完全移出本倉)
+
+**憲法法庭已經不在 canvas 了，下面整節是拆分前的紀錄，不要照著改。** 現役副本在
+`phenom-court`（線上 `https://cc.phenomcanvas.com/constitutionalcourt/`），改動一律去那邊。
+2026-08-02 從 canvas 刪掉了 `src/pages/ConstitutionalCourt.jsx`、
+`src/pages/_constitutional-court/`（25 檔）、四份資料快照（`constitutionalCourt.json`、
+`-reasoning-fulltext`、`-pre1947-fulltext`、`daliyuanCollation.json`、`typologyReport.md`）
+與 `public/data/constitutionalCourt-opinions/`（529 檔 34MB）；canvas 只留 `/all` 的外鏈卡
+與 `vercel.json` 的兩條 308 轉址。
+
+**這一步是為了修一個實際發生過的錯**：停用副本與現役檔同名同結構、路徑無任何標示，
+`grep OpinionText` 兩倉都中，而 canvas 是預設工作目錄——上次改字體就是改到了停用副本上，
+`phenom-court` 一行沒動。留著「以備回滾」的副本，代價是每次改都可能改錯邊；回滾改靠
+git 歷史與 `phenom-court` 的完整副本。
+
+守這件事的是 `validate:cccutover`：它從前斷言「App.jsx 的排除 glob 還在」，現在改成斷言
+那 8 條路徑**不存在**（`existsSync` 為 false），轉址那三條照舊。三支原本吃
+`_constitutional-court/` 的閘：`validate:cases`、`validate:ccdataset` 已搬進 `phenom-court`
+的 `verify:policy`（`validate-cc-dataset.mjs` 是重寫的，見下），`validate:floating` 留在
+canvas 但改掃全站頁面與 lab 元件——HoverCard 在 canvas 仍是現役（`_chen-yinke/
+LiuRushiEdition`、`HoverCite`、`TermLink` 都在用）。`validate:pdfproxy` 只砍掉讀
+`constitutionalCourt.json` 那半，中研院出版品那半（738 個網址）照舊。
+
+**`validate-cc-dataset.mjs` 為什麼不能直接搬**：`phenom-court` 的執行期資料是
+`prepare-data.mjs` 從 `.court-snapshot/` 產的 runtime／archive 兩支，而現行快照**沒有
+`編碼表`**（逐檔數過）。照搬的話「解碼抽驗」那圈會一個欄位都沒有、exit 0 而什麼都沒驗到。
+重寫版改成驗三件不會落空的事：src 內唯一入口、runtime／archive 分流契約（874＋6,354＝7,228、
+意見書清單 529 件與 `public/data` 檔案數一致）、結構型欄位不是裸數字；而且欄位覆蓋率低於
+九成就直接失敗，理由寫在錯誤訊息裡（「這支檢查已經驗不到東西」）。六個負向測試逐一驗過會失敗。
 
 - 2026-07-28 **職權轉型曲線上站**（新 `_constitutional-court/JurisdictionShiftChart.jsx`，掛在
   `?tab=jurisdiction` 的首節）。畫的是釋字每五年期裡「統一解釋法律及命令」佔的百分比：

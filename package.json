@@ -15,8 +15,6 @@
     "sitemap": "node scripts/generate-sitemap.mjs",
     "prune:retired-public": "node scripts/prune-retired-public.mjs",
     "og:image": "node scripts/generate-og-image.mjs",
-    "validate:cases": "node scripts/validate-case-query.mjs",
-    "validate:ccdataset": "node scripts/validate-cc-dataset.mjs",
     "validate:pdfproxy": "node scripts/validate-pdf-proxy.mjs",
     "validate:prerender": "node scripts/validate-prerender.mjs",
     "validate:shell": "node scripts/validate-shell-chrome.mjs",

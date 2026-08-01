@@ -13,7 +13,7 @@ const kebab = (s) => s.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();
 // Glossary: the standalone /statistics/glossary page was folded into the
 // Statistics Lab hub's 術語表 tab. The file stays only to redirect old links, so
 // it is kept out of prerender and the sitemap (no duplicate of the tab's content).
-const NOINDEX = new Set(['PaletteLab', 'TaipeiFilmFestival', 'Glossary', 'Tags', 'ConstitutionalCourt', 'Notes']);
+const NOINDEX = new Set(['PaletteLab', 'TaipeiFilmFestival', 'Glossary', 'Tags', 'Notes']);
 const PARAM_ROUTES = { GlossaryTerm: '/statistics/glossary/:slug', TagPage: '/statistics/tags/:slug' };
 
 function walkPages(dir, rel = '') {

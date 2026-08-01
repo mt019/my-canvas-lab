@@ -30,7 +30,7 @@ const PERSONAL_DIR = /\/Users\/[A-Za-z0-9_.-]+\/(Documents|Desktop|Downloads|Lib
 // 只掃入版控的文字檔。鎖檔與資料快照不算，前者是工具產的、後者是原文照錄。
 const SKIP_EXT = new Set(['.png', '.jpg', '.jpeg', '.gif', '.webp', '.ico', '.svg', '.woff', '.woff2', '.ttf', '.otf', '.pdf', '.zip', '.mp4', '.webm']);
 const SKIP_FILE = new Set(['package-lock.json']);
-const SKIP_DIR = ['public/data/constitutionalCourt-opinions/'];
+const SKIP_DIR = [];
 
 const tracked = execFileSync('git', ['ls-files', '-z'], { cwd: ROOT, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 })
   .split('\0')
