@@ -7,18 +7,12 @@ import BackToTop from './components/BackToTop';
 import FrontDoor from './components/FrontDoor';
 import AccountControl from './components/AccountControl';
 import { AuthProvider } from './personal-state/AuthProvider';
-import { CC_BASE_SEO, CC_TABS_SEO, ccDataset } from './pages/_constitutional-court/seo';
 import { ZJH_BASE_SEO, ZJH_TABS_SEO } from './pages/_zhu-jiahua/seo';
 import { CHEN_BASE_SEO, CHEN_SELECTIONS_SEO } from './lib/chenYinkeSeo';
 import { GLCT_KEYWORDS, GLCT_TITLE, GLCT_DESC, glctSchema } from './pages/_law-classics/seo';
 import { VT_KEYWORDS, VT_TITLE, VT_DESC, vtSchema } from './pages/_vocal-training/seo';
 import { NOTES_KEYWORDS, NOTES_TITLE, NOTES_DESC, notesSchema } from './pages/_notes/seo';
 import { USERSCRIPTS_KEYWORDS, USERSCRIPTS_TITLE, USERSCRIPTS_DESC, userscriptsSchema, scriptSeo, scriptSchema } from './pages/_userscripts/seo';
-
-// A single justice's / single case's indexable page. Lazy-loaded so the
-// Constitutional Court archive JSON they pull in never lands in the main bundle.
-const CCJusticeRoute = lazy(() => import('./pages/_constitutional-court/JusticeRoute'));
-const CCCaseRoute = lazy(() => import('./pages/_constitutional-court/CaseRoute'));
 
 // 一篇手記。文章正文（.mdx）在這條路由底下再按 slug 分包，所以主 bundle 既不帶文章清單、
 // 也不帶任何一篇的正文。
@@ -36,7 +30,14 @@ const NoteStreamRoute = lazy(() => import('./pages/_notes/StreamRoute'));
  * starting with "_" is a building block, not a page — figures, simulation code —
  * and never becomes a route.
  */
-const pages = import.meta.glob('./pages/**/*.{jsx,tsx}');
+// Constitutional Court is now an independent site. Exclude both its former page
+// and private building blocks from Vite's module graph: keeping a card on /all
+// must not keep producing the archive chunks in every Canvas build.
+const pages = import.meta.glob([
+  './pages/**/*.{jsx,tsx}',
+  '!./pages/ConstitutionalCourt.jsx',
+  '!./pages/_constitutional-court/**',
+]);
 
 const kebab = (name) => name.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();
 
@@ -351,11 +352,7 @@ const PAGE_META = { // token-exempt: per-page identity chip colors (data, not st
     accent: '#e8dae0',
     accentText: '#8f6071',
     group: 'empirical',
-    // Richer SEO for the archive: keywords + CollectionPage + a Dataset node
-    // (Google Dataset Search eligible). Tab sub-routes add their own below.
-    keywords: CC_BASE_SEO.keywords,
-    type: CC_BASE_SEO.type,
-    buildSchema: (SITE_URL) => [ccDataset(SITE_URL)],
+    externalUrl: 'https://cc.phenomcanvas.com/constitutionalcourt/',
   },
   IiasPublications: {
     name: '中研院法研所出版品',
@@ -525,7 +522,7 @@ const GROUPS = [
 
 export default function App() {
   const routes = useMemo(() => {
-    return Object.keys(pages)
+    const localRoutes = Object.keys(pages)
       .filter((path) => !path.includes('/_'))
       .map((path) => {
         const name = path.split('/').pop().replace(/\.(jsx|tsx)$/, '');
@@ -536,6 +533,17 @@ export default function App() {
           meta: PAGE_META[name] ?? null,
         };
       });
+    // The standalone archive remains discoverable on /all without restoring a
+    // local React route or importing its former page/data graph.
+    return [
+      ...localRoutes,
+      {
+        name: 'ConstitutionalCourt',
+        path: '/constitutionalcourt',
+        component: null,
+        meta: PAGE_META.ConstitutionalCourt,
+      },
+    ];
   }, []);
 
   return (
@@ -565,12 +573,9 @@ export default function App() {
         <Routes>
           <Route path="/" element={<FrontDoor />} />
           <Route path="/all" element={<HomePage routes={routes} />} />
-          {routes.map((route) => (
+          {routes.filter((route) => route.component).map((route) => (
             <Route key={route.path} path={route.path} element={<PageRoute route={route} />} />
           ))}
-          {/* One clean, indexable URL per justice / per case — matched before the
-              tab route since they have an extra path segment. Lazy so the archive
-              JSON stays out of the main bundle. */}
           {/* 一篇手記。檔案在 pages/_notes/ 底下（不是路由目錄），路徑在這裡指定；
               scripts/routes.mjs 會照 src/data/notes.json 把每篇展開成一條要預先渲染、
               也要進 sitemap 的網址。 */}
@@ -580,12 +585,6 @@ export default function App() {
           {/* 短記流。同上，要排在 /notes/:slug 前面。 */}
           <Route path="/notes/stream" element={<NoteStreamRoute />} />
           <Route path="/notes/:slug" element={<NotePostRoute />} />
-          <Route path="/constitutionalcourt/justices/:justiceName" element={<CCJusticeRoute />} />
-          <Route path="/constitutionalcourt/case/:caseNo" element={<CCCaseRoute />} />
-          {/* Clean, separately-indexable URL per Constitutional Court tab
-              (/constitutionalcourt/research …). Backward-compatible: the ?tab=
-              query deep links still resolve on the base route above. */}
-          <Route path="/constitutionalcourt/:tab" element={<CCTabRoute routes={routes} />} />
           <Route path="/zhujiahua/:zhuTab" element={<ZhuJiahuaTabRoute routes={routes} />} />
           <Route path="/chenyinke/liu-rushi/:selectionId" element={<ChenYinkeSelectionRoute routes={routes} />} />
         </Routes>
@@ -638,27 +637,6 @@ function PageRoute({ route }) {
     indexable: !['PaletteLab', 'TaipeiFilmFestival'].includes(route.name),
   } : undefined;
   const Page = route.component;
-  return <><SeoHead page={page} /><Page /></>;
-}
-
-// A Constitutional Court tab under its own clean URL. Renders the same lazy
-// ConstitutionalCourt component (which reads the tab from the path param) with
-// tab-specific SEO; unknown slugs fall back to the base archive.
-function CCTabRoute({ routes }) {
-  const { tab } = useParams();
-  const seo = CC_TABS_SEO.find((t) => t.slug === tab);
-  const cc = routes.find((r) => r.name === 'ConstitutionalCourt');
-  if (!seo || !cc) return <Navigate to="/constitutionalcourt" replace />;
-  const page = {
-    name: seo.name,
-    title: seo.title,
-    description: seo.description,
-    type: seo.type,
-    keywords: seo.keywords,
-    indexable: seo.indexable !== false,
-    parent: { name: '憲法法庭案例庫', path: '/constitutionalcourt' },
-  };
-  const Page = cc.component;
   return <><SeoHead page={page} /><Page /></>;
 }
 

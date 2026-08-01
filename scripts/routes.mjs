@@ -6,8 +6,6 @@
 import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { ROOT } from './site-config.mjs';
-import { CC_TAB_SLUGS, ccJusticePath, justiceHasContent, ccCasePath, caseIsIndexable } from '../src/pages/_constitutional-court/seo.js';
-import { decodeDataset } from '../src/pages/_constitutional-court/decode.js';
 import { ZJH_TAB_SLUGS } from '../src/pages/_zhu-jiahua/seo.js';
 
 const PAGES = join(ROOT, 'src', 'pages');
@@ -15,7 +13,7 @@ const kebab = (s) => s.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();
 // Glossary: the standalone /statistics/glossary page was folded into the
 // Statistics Lab hub's 術語表 tab. The file stays only to redirect old links, so
 // it is kept out of prerender and the sitemap (no duplicate of the tab's content).
-const NOINDEX = new Set(['PaletteLab', 'TaipeiFilmFestival', 'Glossary', 'Tags']);
+const NOINDEX = new Set(['PaletteLab', 'TaipeiFilmFestival', 'Glossary', 'Tags', 'ConstitutionalCourt']);
 const PARAM_ROUTES = { GlossaryTerm: '/statistics/glossary/:slug', TagPage: '/statistics/tags/:slug' };
 
 function walkPages(dir, rel = '') {
@@ -80,30 +78,6 @@ function chenYinkeSelectionRoutes() {
   }
 }
 
-// One route per justice who has anything to show — the same predicate the app
-// uses to decide who is indexable, so prerender, sitemap and runtime agree.
-function justiceRoutes() {
-  try {
-    // decodeDataset：快照的重複欄位是查表編碼的（見 _constitutional-court/decode.js）。
-    // 這裡目前只讀主鍵與大法官（都不編碼），仍統一過解碼層，免得日後改讀編碼欄位時靜默拿到索引。
-    const d = decodeDataset(JSON.parse(readFileSync(join(ROOT, 'src', 'data', 'constitutionalCourt.json'), 'utf8')));
-    return (d.大法官 || []).filter(justiceHasContent).map((j) => ccJusticePath(j.姓名));
-  } catch {
-    return [];
-  }
-}
-
-// One route per indexable case: every 憲判 (live from the data) plus the frozen
-// curated 釋字 list — the same caseIsIndexable predicate the runtime uses.
-function caseRoutes() {
-  try {
-    const d = decodeDataset(JSON.parse(readFileSync(join(ROOT, 'src', 'data', 'constitutionalCourt.json'), 'utf8')));
-    return (d.文件 || []).filter((doc) => caseIsIndexable(doc.字號)).map((doc) => ccCasePath(doc.字號));
-  } catch {
-    return [];
-  }
-}
-
 export function collectRoutes() {
   // '/' is the glitch front door; '/all' is the project index it hides behind.
   const routes = new Set(['/', '/all']);
@@ -119,11 +93,6 @@ export function collectRoutes() {
       routes.add(route);
     }
   }
-  // Constitutional Court archive: one clean, prerendered URL per tab, per justice
-  // with recorded activity, and per indexable case.
-  for (const slug of CC_TAB_SLUGS) routes.add(`/constitutionalcourt/${slug}`);
-  for (const route of justiceRoutes()) routes.add(route);
-  for (const route of caseRoutes()) routes.add(route);
   for (const slug of ZJH_TAB_SLUGS) routes.add(`/zhujiahua/${slug}`);
   for (const route of chenYinkeSelectionRoutes()) routes.add(route);
   for (const route of noteRoutes()) routes.add(route);

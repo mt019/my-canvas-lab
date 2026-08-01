@@ -2,6 +2,8 @@
   "regions": ["hnd1"],
   "git": { "deploymentEnabled": { "main": false } },
   "routes": [
+    { "src": "/constitutionalcourt", "dest": "https://cc.phenomcanvas.com/constitutionalcourt/", "status": 308 },
+    { "src": "/constitutionalcourt/(.*)", "dest": "https://cc.phenomcanvas.com/constitutionalcourt/$1", "status": 308 },
     { "src": "/notes", "dest": "https://phenom-notes.pages.dev/notes/" },
     { "src": "/notes/(.*)", "dest": "https://phenom-notes.pages.dev/notes/$1" },
     { "src": "/api/opentix/search", "dest": "https://search.opentix.life/search" },
