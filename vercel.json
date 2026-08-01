@@ -1,6 +1,12 @@
 {
   "regions": ["hnd1"],
   "git": { "deploymentEnabled": { "main": false } },
+  "headers": [
+    {
+      "source": "/notes/deployment-manifest.json",
+      "headers": [{ "key": "Cache-Control", "value": "no-store, max-age=0" }]
+    }
+  ],
   "routes": [
     { "src": "/constitutionalcourt", "dest": "https://cc.phenomcanvas.com/constitutionalcourt/", "status": 308 },
     { "src": "/constitutionalcourt/(.*)", "dest": "https://cc.phenomcanvas.com/constitutionalcourt/$1", "status": 308 },

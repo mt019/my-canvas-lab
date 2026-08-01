@@ -311,6 +311,11 @@ events**。所以看得到的永遠是最近 30 天，要時間序列就得自�
 
 ### `Notes`（手記・個人短文；2026-08-01 已移出 Canvas）
 
+部署後的 revision 以 `/notes/deployment-manifest.json` 為準。2026-08-01 曾出現 Pages 直連
+已是新 web/data SHA、`phenomcanvas.com` 卻仍回上一版的情況；stream HTML 同時已更新，
+確認是 Vercel external rewrite 快取小型 JSON，不是部署失敗。`vercel.json` 因此只對這個
+manifest 回 `Cache-Control: no-store, max-age=0`，內容路由的代理行為不變。
+
 下面是拆站前的實作紀錄。現在的修改入口是 `../phenom-notes`，內容主本在
 `../phenom-notes-data`，部署在 `../phenom-ops`；Canvas 不再擁有任何 Notes route 或內容檔。
 
