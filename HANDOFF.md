@@ -171,7 +171,14 @@ chunk、整段水合，一頁 1.2–3.3 秒。`scripts/prerender.mjs` 改成：�
 相同（唯一例外 `/iiaspublications` 首頁的隨機選文，任兩輪都不同）、head 核心標籤
 （meta／canonical／JSON-LD）集合相同才算過。
 
-### 《手記》的內容在建置當下才進來（2026-07-29 加）
+### 《手記》的舊 Canvas 內容注入流程（2026-08-01 退役）
+
+下面留的是舊流程，別照著接回去。Canvas commit `235e539` 已移除 Notes React 頁面、route
+expansion、私有資料 checkout、`NOTES_DATA_TOKEN`、短記 repository dispatch、sync validator
+和 Notes 專屬資產。現在 Canvas 只在 `vercel.json` 保留 `/notes`、`/notes/*` 到
+`https://phenom-notes.pages.dev/notes/*` 的公開代理，`/all` 則保留外鏈卡片。內容更新由
+`phenom-notes-data` 以完整 data SHA dispatch `phenom-ops`；run `30696570015` 已完成 preview、
+remote smoke 與同 artifact production promotion。不要恢復下面的舊流程。
 
 `/notes` 的文章不在這個公開 repo 裡。使用者的裁定是「站上公開沒關係，但不要留在 GitHub」，
 所以正文住在私有的 `mt019/phenom-notes-data`，workflow 第 4 步用 `NOTES_DATA_TOKEN` 把它 clone 到
@@ -302,7 +309,10 @@ events**。所以看得到的永遠是最近 30 天，要時間序列就得自�
 
 ## Pages
 
-### `Notes`（手記・個人短文，2026-07-28 新建）
+### `Notes`（手記・個人短文；2026-08-01 已移出 Canvas）
+
+下面是拆站前的實作紀錄。現在的修改入口是 `../phenom-notes`，內容主本在
+`../phenom-notes-data`，部署在 `../phenom-ops`；Canvas 不再擁有任何 Notes route 或內容檔。
 
 `/notes` 是清單，`/notes/<slug>` 是單篇。前端三個檔：`pages/Notes.jsx`（清單）、
 `pages/_notes/PostRoute.jsx`（單篇）、`pages/_notes/seo.js`（兩條路由共用的 SEO 資料）。
