@@ -24,21 +24,6 @@ const DATA_DIR = join(ROOT, 'src', 'data');
 // 上限是「前端只負責畫」的可量化說法——真的需要更多行，那多半是有東西該搬回資料倉。
 const LINES = [
   {
-    name: '手記 notes',
-    manifest: 'notes.sync.json',
-    ownedDirs: [
-      { path: 'src/content/notes', extensions: ['.mdx'] },
-      { path: 'public/notes-assets', extensions: ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.avif'] },
-    ],
-    // 清單頁、單篇（PostRoute）、舊帖存檔頁（ArchiveRoute）、短記流（StreamRoute）
-    // 與它們共用的 seo.js。`src/pages/_notes` 是整個目錄，所以那底下新增的頁自動算進來。
-    frontend: ['src/pages/Notes.jsx', 'src/pages/_notes'],
-    // 2026-07-29：600 → 660。短記流那一頁進來時先觸線，處理過一輪——月分節、日分段、
-    // 時刻與段落切分都搬回資料倉的 build-stream.mjs（669→619 行），舊帖與短記重複寫的
-    // 左欄合成 seo.js 的 postsNav()。剩下的是「多一頁」本身的成本，不是前端又在算東西。
-    maxFrontendLines: 660,
-  },
-  {
     name: '陳寅恪研究室',
     manifest: 'chenYinke.sync.json',
     ownedDirs: [

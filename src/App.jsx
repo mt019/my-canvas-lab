@@ -11,15 +11,7 @@ import { ZJH_BASE_SEO, ZJH_TABS_SEO } from './pages/_zhu-jiahua/seo';
 import { CHEN_BASE_SEO, CHEN_SELECTIONS_SEO } from './lib/chenYinkeSeo';
 import { GLCT_KEYWORDS, GLCT_TITLE, GLCT_DESC, glctSchema } from './pages/_law-classics/seo';
 import { VT_KEYWORDS, VT_TITLE, VT_DESC, vtSchema } from './pages/_vocal-training/seo';
-import { NOTES_KEYWORDS, NOTES_TITLE, NOTES_DESC, notesSchema } from './pages/_notes/seo';
 import { USERSCRIPTS_KEYWORDS, USERSCRIPTS_TITLE, USERSCRIPTS_DESC, userscriptsSchema, scriptSeo, scriptSchema } from './pages/_userscripts/seo';
-
-// 一篇手記。文章正文（.mdx）在這條路由底下再按 slug 分包，所以主 bundle 既不帶文章清單、
-// 也不帶任何一篇的正文。
-const NotePostRoute = lazy(() => import('./pages/_notes/PostRoute'));
-// 舊帖：沒有成篇的短記收在一頁。它自己一條網址，收錄的 58 則不各自產網址。
-const NoteArchiveRoute = lazy(() => import('./pages/_notes/ArchiveRoute'));
-const NoteStreamRoute = lazy(() => import('./pages/_notes/StreamRoute'));
 
 /*
  * Pages are routed by file path. A file directly under pages/ keeps the old flat
@@ -37,6 +29,8 @@ const pages = import.meta.glob([
   './pages/**/*.{jsx,tsx}',
   '!./pages/ConstitutionalCourt.jsx',
   '!./pages/_constitutional-court/**',
+  '!./pages/Notes.jsx',
+  '!./pages/_notes/**',
 ]);
 
 const kebab = (name) => name.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();
@@ -428,11 +422,7 @@ const PAGE_META = { // token-exempt: per-page identity chip colors (data, not st
   Notes: {
     name: '手記',
     desc: '聽講、讀書與整理資料時寫下的短文',
-    seoDesc: NOTES_DESC,
-    title: NOTES_TITLE,
-    keywords: NOTES_KEYWORDS,
-    type: 'CollectionPage',
-    buildSchema: notesSchema,
+    externalUrl: 'https://phenomcanvas.com/notes/',
     Icon: NotebookPen,
     accent: '#e7e2d8',
     accentText: '#6f6552',
@@ -543,6 +533,12 @@ export default function App() {
         component: null,
         meta: PAGE_META.ConstitutionalCourt,
       },
+      {
+        name: 'Notes',
+        path: '/notes',
+        component: null,
+        meta: PAGE_META.Notes,
+      },
     ];
   }, []);
 
@@ -576,15 +572,6 @@ export default function App() {
           {routes.filter((route) => route.component).map((route) => (
             <Route key={route.path} path={route.path} element={<PageRoute route={route} />} />
           ))}
-          {/* 一篇手記。檔案在 pages/_notes/ 底下（不是路由目錄），路徑在這裡指定；
-              scripts/routes.mjs 會照 src/data/notes.json 把每篇展開成一條要預先渲染、
-              也要進 sitemap 的網址。 */}
-          {/* 舊帖存檔頁。**要排在 /notes/:slug 前面**——放後面的話 `archive` 會被當成一個
-              slug 吃掉，查不到那篇文章，讀者看到的是「查無此文」。 */}
-          <Route path="/notes/archive" element={<NoteArchiveRoute />} />
-          {/* 短記流。同上，要排在 /notes/:slug 前面。 */}
-          <Route path="/notes/stream" element={<NoteStreamRoute />} />
-          <Route path="/notes/:slug" element={<NotePostRoute />} />
           <Route path="/zhujiahua/:zhuTab" element={<ZhuJiahuaTabRoute routes={routes} />} />
           <Route path="/chenyinke/liu-rushi/:selectionId" element={<ChenYinkeSelectionRoute routes={routes} />} />
         </Routes>

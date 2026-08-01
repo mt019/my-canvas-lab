@@ -4,9 +4,7 @@
 # 2026-07-28 之前每一次部署送上線的都是空殼。這裡的 runner 我們裝得動瀏覽器，
 # `playwright install --with-deps` 一步就把系統相依補齊。
 #
-# 需要四個 repo secret：VERCEL_TOKEN、VERCEL_ORG_ID、VERCEL_PROJECT_ID，
-# 以及 NOTES_DATA_TOKEN（讀取私有的 mt019/phenom-notes-data，《手記》的內容不進這個公開 repo；
-# 權限要 Contents: Read ＋ Issues: Read——後者給短記，抓 stream 標籤的 issue 用）。
+# 需要三個 repo secret：VERCEL_TOKEN、VERCEL_ORG_ID、VERCEL_PROJECT_ID。
 # 設定方式寫在 HANDOFF.md 的「部署」節。
 name: deploy
 
@@ -14,13 +12,6 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
-  # phenom-notes-data 那邊的 workflow 在短記 issue 開出來時打過來的（他在捷運上說一句話，
-  # 幾分鐘後站上就有）。只有 opened 觸發——改錯字不值得整站重建一次，改完的內容
-  # 會搭下一次任何部署順便上去。
-  # notes-content 是同一個倉在 content/ 或 data/ 被推上來時打的（改完文章不必再手動
-  # 跑一次部署）。兩種分開命名只為了在 Actions 列表上看得出這次是為什麼重建。
-  repository_dispatch:
-    types: [notes-stream, notes-content]
 
 concurrency:
   group: deploy-${{ github.ref }}
@@ -43,52 +34,6 @@ jobs:
           cache: npm
 
       - run: npm ci
-
-      # 《手記》的文章不在這個公開 repo 裡（理由與擋掉的路徑見 .gitignore）。它們住在私有的
-      # mt019/phenom-notes-data，這一步把那個倉 clone 到 runner 的暫存目錄、跑它自己的 sync，把
-      # notes.json、57 篇正文、存檔頁與匯入圖片放進工作區；建置完隨 runner 一起消失。
-      # clone 到 $RUNNER_TEMP 而不是工作區底下，免得多出一個目錄被各支 validate 掃進去。
-      # 私有倉那邊要進版控的是正文與產物（content/、data/、processed/、assets/imported/）。
-      # 這裡跑 `npm run update`＝build ＋ sync：build 從 data/ 與 content/ 重算
-      # processed/notes.json，所以就算私有倉那份產物忘了更新也不會送到舊的上線。
-      # 存檔頁那兩個檔（processed/archive.*）例外，它們是 drafts/ 算出來的，而 drafts/ 隨時
-      # 可以從 raw/ 重建、不進版控，所以存檔頁的產物要跟著 commit。
-      - name: Bring in the notes content from its private repo
-        env:
-          NOTES_DATA_TOKEN: ${{ secrets.NOTES_DATA_TOKEN }}
-        run: |
-          test -n "$NOTES_DATA_TOKEN" || { echo "沒有設 NOTES_DATA_TOKEN，取不到《手記》的內容"; exit 1; }
-          git clone --depth=1 "https://x-access-token:${NOTES_DATA_TOKEN}@github.com/mt019/phenom-notes-data.git" "$RUNNER_TEMP/phenom-notes-data"
-          cd "$RUNNER_TEMP/phenom-notes-data"
-          # 短記：把 phenom-notes-data 上帶 stream 標籤的 issue 抓下來，這次建置就帶上最新的
-          # 短記。token 要多開 Issues: Read 才抓得到。抓不到時的分岔：
-          #   - 部署本來就是短記 issue 觸發的（repository_dispatch）→ 這次建置唯一的
-          #     目的就是帶上那句話，抓不到就紅，不准默默上一個沒有它的版本。
-          #   - 一般 push 觸發的部署 → 警告後繼續，短記頁用私有倉裡上一次的內容建，
-          #     頁面是好的、只是短記舊——別讓 token 權限問題擋住所有部署。
-          if GH_TOKEN="$NOTES_DATA_TOKEN" npm run stream:fetch; then
-            echo "短記已抓到最新"
-          elif [ "${GITHUB_EVENT_NAME}" = "repository_dispatch" ]; then
-            echo "這次部署就是為了帶上新短記，抓不到＝白跑，紅掉。多半是 NOTES_DATA_TOKEN 沒開 Issues: Read。"
-            exit 1
-          else
-            echo "::warning::短記抓取失敗（NOTES_DATA_TOKEN 沒開 Issues: Read？），這次先用私有倉裡既有的短記內容建"
-          fi
-          CANVAS_DIR="$GITHUB_WORKSPACE" npm run update
-
-      # 上一步失敗的樣子是「站上整個 /notes 不見了」，而建置本身照樣會成功——預先渲染
-      # 走的是路由表，少了資料只會少幾頁，不會報錯。這種「壞掉時仍然回傳合法值」的環節
-      # 一律要驗產物內容，不驗流程有沒有跑完。
-      - name: Assert the notes content actually arrived
-        run: |
-          test -f src/data/notes.json || { echo "src/data/notes.json 不存在"; exit 1; }
-          n=$(node -p "require('./src/data/notes.json').posts.length")
-          m=$(ls src/content/notes/*.mdx 2>/dev/null | wc -l | tr -d ' ')
-          test -f src/content/notes-archive.mdx || { echo "存檔頁正文不存在"; exit 1; }
-          echo "notes.json $n 篇、正文 $m 個檔、存檔頁在"
-          if [ "$n" -lt 40 ] || [ "$n" != "$m" ]; then
-            echo "篇數不對：至少要有 40 篇，而且 json 的篇數要等於正文檔數"; exit 1
-          fi
 
       # Chromium 本體每次重抓 20 秒上下，而它只隨 playwright 版本變，所以快取它。
       # 快取沒中就照樣下載，行為不變。key 綁 package-lock，升 playwright 自動換一份新的。

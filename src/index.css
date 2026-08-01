@@ -217,17 +217,6 @@ body {
   -moz-osx-font-smoothing: auto;
 }
 
-/* 手記舊文帶著的動態貼圖（notes-data 的 /notes-assets/emoji/，微博那一套 56×56 GIF）
-   是行內尺寸的圖，原尺寸會把行高撐開。選擇器直接認路徑，不必替 Prose 另開一個
-   notes 專屬的樣式檔——這條規則只認 /notes-assets/emoji/ 開頭的網址，不影響其他
-   長文（陳寅恪、統計學實驗室…）共用的同一個 .prose-body。 */
-.prose-body img[src*="/notes-assets/emoji/"] {
-  display: inline;
-  height: 1.25em;
-  width: 1.25em;
-  vertical-align: -0.2em;
-}
-
 /* 圍籬區塊裡的 <code> 會繼承行內那顆藥丸（細框＋左右內距＋accent 字面）。整段程式碼不需要
    第二層框，也需要等寬字面，所以在這裡把它退回素的。外框、內距與捲動由 Prose 的 pre 負責。 */
 .prose-body pre > code {

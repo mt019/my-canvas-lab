@@ -57,7 +57,6 @@ const SITE_HOMES = [
   ['/statistics/tags/', { href: '/statisticslab?tab=tags', label: '所有標籤' }],
   ['/statistics/', { href: '/statisticslab', label: '統計學實驗室' }],
   ['/brief/', { href: '/brief', label: '簡報' }],
-  ['/notes/', { href: '/notes', label: '手記' }],
   ['/chenyinke/liu-rushi/', { href: '/chenyinke', label: '陳寅恪資料庫' }],
   ['/zhujiahua/', { href: '/zhujiahua', label: '朱家驊研究室' }],
   ['/userscripts/', { href: '/userscripts', label: '使用者腳本' }],
@@ -101,7 +100,7 @@ export function resolveBack(override, pathname) {
  * 一頁最多三個回頭的東西，各管一件事（2026-07-29 使用者重新裁定，取代 07-28 的「報頭整塊
  * 都是連結」）：
  *   左上角的箭頭  → 一律回素首頁，只有箭頭、不帶站名。
- *   眉標上的站名  → 站內頁那顆看得見的小按鈕，回這個站的首頁（`/notes/…` 的「手記」回 `/notes`）。
+ *   眉標上的站名  → 站內頁那顆看得見的小按鈕，回主題首頁。
  *   大標題        → **全站一律不是連結**（理由見本檔最後一段）。
  *
  * 已經在站首頁時回 null——站名不連到自己，那是一個按了沒反應的連結。

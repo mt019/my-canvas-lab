@@ -152,7 +152,7 @@ for (const path of routePages) {
 /* ── 三、回頭路的落點 ──────────────────────────────────────── */
 
 // 2026-07-29 踩過的：`identityHomeFor` 的 fallback 寫成「沒有站內原點就回素首頁」，
-// 於是 `/notes/<slug>` 這種站沒登記進 SITE_HOMES 的內頁，整個文章標題直接連到素首頁。
+// 於是主題站若沒登記進 SITE_HOMES，整個文章標題會直接連到素首頁。
 // 使用者的規矩是：**站內頁往回只能回這個小站的首頁，永遠不會是素首頁**，而且內頁的
 // 大標題根本不是連結。這一節把它變成機械檢查，逐條路由算一次。
 const { backFor, siteHomeFor } = await import('../src/backNav.js');

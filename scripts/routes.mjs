@@ -13,7 +13,7 @@ const kebab = (s) => s.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();
 // Glossary: the standalone /statistics/glossary page was folded into the
 // Statistics Lab hub's 術語表 tab. The file stays only to redirect old links, so
 // it is kept out of prerender and the sitemap (no duplicate of the tab's content).
-const NOINDEX = new Set(['PaletteLab', 'TaipeiFilmFestival', 'Glossary', 'Tags', 'ConstitutionalCourt']);
+const NOINDEX = new Set(['PaletteLab', 'TaipeiFilmFestival', 'Glossary', 'Tags', 'ConstitutionalCourt', 'Notes']);
 const PARAM_ROUTES = { GlossaryTerm: '/statistics/glossary/:slug', TagPage: '/statistics/tags/:slug' };
 
 function walkPages(dir, rel = '') {
@@ -56,19 +56,6 @@ function tagSlugs() {
   }
 }
 
-// One route per note. The page component lives under pages/_notes/ (a building
-// block directory, so walkPages skips it) and App.jsx names the path itself, which
-// means nothing here would find these pages on its own — without this they would
-// never be prerendered and never reach the sitemap.
-function noteRoutes() {
-  try {
-    const d = JSON.parse(readFileSync(join(ROOT, 'src', 'data', 'notes.json'), 'utf8'));
-    return (d.posts || []).map((post) => `/notes/${post.slug}`);
-  } catch {
-    return [];
-  }
-}
-
 function chenYinkeSelectionRoutes() {
   try {
     const d = JSON.parse(readFileSync(join(ROOT, 'src', 'data', 'chenYinke', 'liu-rushi-edition', 'reading-view.json'), 'utf8'));
@@ -95,13 +82,5 @@ export function collectRoutes() {
   }
   for (const slug of ZJH_TAB_SLUGS) routes.add(`/zhujiahua/${slug}`);
   for (const route of chenYinkeSelectionRoutes()) routes.add(route);
-  for (const route of noteRoutes()) routes.add(route);
-  // 舊帖存檔頁。它的元件也在 pages/_notes/ 底下，所以跟單篇一樣要在這裡指名，否則不會被
-  // 預先渲染、也不會進 sitemap。它收錄的那 58 則短記刻意不各自產網址——一則一頁就是
-  // 五十幾條點進去只有一行字的網址。
-  routes.add('/notes/archive');
-  // 短記流。同上，元件在 pages/_notes/ 底下，不指名就不會被預先渲染、也不會進 sitemap。
-  // 收錄的每一則同樣刻意不各自產網址。
-  routes.add('/notes/stream');
   return [...routes].sort();
 }
