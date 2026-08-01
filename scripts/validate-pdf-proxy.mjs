@@ -8,10 +8,10 @@
 // 檢查一件事：iiasPublications.json 的每個 pdf 篇章網址都能被 resolveTarget 接受
 // （該頁的 pdfHref 無條件套代理，白名單漏一條就是整份打不開）。
 //
-// 2026-08-02：原本還檢查 constitutionalCourt.json 裡可代理的網址，該資料與憲法法庭
-// 頁面已一併移出本倉，那半移除。api/_pdfProxy.mjs 的 ALLOW 仍留著 cons.judicial.gov.tw
-// 與 president.gov.tw 兩條規則——canvas 這邊已無頁面送這些網址進來，要不要一併收掉
-// 是獨立的一件事，留給後續決定。
+// 2026-08-02：原本還檢查 constitutionalCourt.json 裡可代理的網址，該資料與憲法法庭頁面
+// 已一併移出本倉，那半移除；`api/_pdfProxy.mjs` 的三條憲法法庭專用規則（cons.judicial.gov.tw、
+// www.president.gov.tw、web.archive.org 對後者的回放）與 `?id=` 簡寫也同時拿掉——白名單是
+// 防開放式代理的東西，沒有頁面在用的規則就是白留一個對外開口。現在只剩中研院出版品兩條。
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';

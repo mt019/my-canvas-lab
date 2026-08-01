@@ -1,25 +1,22 @@
 // 官方 PDF 代理的共用核心：Vercel function（api/pdf.js）與 vite dev middleware 共用，避免兩份邏輯漂移。
 // 白名單防開放式代理/SSRF，僅允許：
-// 1. cons.judicial.gov.tw 的 /download/download.aspx（判決／意見書／立場表）
-// 2. www.president.gov.tw 的 /File/Doc/<GUID>（大法官被提名人自傳／簡歷，108年批仍在線）
-// 3. web.archive.org 的 /web/<ts>id_/https://www.president.gov.tw/File/Doc/<GUID>
-//    （112年批官網已撤檔，走網際網路檔案館原始回放；id_ 帶原站 attachment header，仍需本代理改 inline）
-// 4. publication.iias.sinica.edu.tw 的任何 .pdf 路徑（中研院法研所出版品：官網原生期刊 PDF）
-// 5. github.com 的 my-canvas-lab Release 下載路徑（中研院出版品自有典藏：flipbook 轉存 PDF＋期刊備份，
+// 1. publication.iias.sinica.edu.tw 的任何 .pdf 路徑（中研院法研所出版品：官網原生期刊 PDF）
+// 2. github.com 的 my-canvas-lab Release 下載路徑（中研院出版品自有典藏：flipbook 轉存 PDF＋期刊備份，
 //    消滅官網線上閱覽依賴。github.com 回 302 轉 objects.githubusercontent.com，fetch 自動跟隨、無須另列）
-export const ALLOW_HOST = 'cons.judicial.gov.tw';
-const GUID = '[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}';
+//
+// 2026-08-02 移除三條憲法法庭專用規則（cons.judicial.gov.tw 的 /download/download.aspx、
+// www.president.gov.tw 的 /File/Doc/<GUID>、web.archive.org 對後者的回放）與 `?id=` 簡寫。
+// 那些網址只有已移出本倉的憲法法庭頁在送，現役副本在 phenom-court，它有自己的取用方式。
+// 白名單是防開放式代理的東西，沒有頁面在用的規則就是白留一個對外開口。要接回去的話，
+// 連同 scripts/validate-pdf-proxy.mjs 的對應檢查一起加。
 const ALLOW = [
-  { host: ALLOW_HOST, path: /\/download\/download\.aspx$/i },
-  { host: 'www.president.gov.tw', path: new RegExp(`^/File/Doc/${GUID}$`, 'i') },
-  { host: 'web.archive.org', path: new RegExp(`^/web/\\d{14}id_/https://www\\.president\\.gov\\.tw/File/Doc/${GUID}$`, 'i') },
   { host: 'publication.iias.sinica.edu.tw', path: /\.pdf$/i },
   { host: 'github.com', path: /^\/mt019\/my-canvas-lab\/releases\/download\/[^/]+\/[^/]+\.pdf$/i },
 ];
 
 // 回傳合法的官方 PDF URL 物件；非法則 null。
-export function resolveTarget(url, id) {
-  const raw = url || (id ? `https://${ALLOW_HOST}/download/download.aspx?id=${id}` : '');
+export function resolveTarget(url) {
+  const raw = url || '';
   let u;
   try { u = new URL(raw); } catch { return null; }
   if (u.protocol !== 'https:') return null;

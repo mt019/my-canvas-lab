@@ -15,7 +15,7 @@ function pdfProxyDev() {
     configureServer(server: any) {
       server.middlewares.use('/api/pdf', async (req: any, res: any) => {
         const q = new URL(req.url, 'http://localhost').searchParams
-        const u = resolveTarget(q.get('url') || undefined, q.get('id') || undefined)
+        const u = resolveTarget(q.get('url') || undefined)
         if (!u) { res.statusCode = 403; res.end('forbidden target'); return }
         try {
           const upstream = await fetchUpstream(u)
