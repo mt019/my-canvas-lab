@@ -11,11 +11,11 @@
          bergerHsu1996Equivalence / greenland2016 / gelmanEtAl2013BayesianDataAnalysis。<Term id="permutation-test"> 已在 glossary。
       2. 兩個互動圖元件 <BayesIdealPoints />（貝氏 GRM 逐法官毛毛蟲：古典 MDS vs 貝氏並排＋90% CI）與 <SameNomineeForest />
          （八算法勝算森林）待在 canvas src/pages/statistics/_figures/ 用 lab chart primitives 重寫，資料內嵌於 figures.json params
-         （抽自 constitutional-court-research-data 的 立場表GRM.json / 共同具名-TierB-{階層,穩健}.json）。CC 頁同名元件與 cc-* 調色盤／
+         （抽自 phenom-court-data 的 立場表GRM.json / 共同具名-TierB-{階層,穩健}.json）。CC 頁同名元件與 cc-* 調色盤／
          LCT_RESULT 緊耦合，不可直接搬。
       3. LaTeX 渲染（使用者要求）：單行 display 一律置中、含分式用 displaystyle 不壓扁。本檔 display 全用獨立 $$ 區塊、行內無分式；
          canvas 端要驗 .katex-display 置中與 displayMode 生效。
-      4. 所有數字皆出自 constitutional-court-research-data/docs/立場表計量-發現報告.md 與各文獻評閱，非虛擬。 */}
+      4. 所有數字皆出自 phenom-court-data/docs/立場表計量-發現報告.md 與各文獻評閱，非虛擬。 */}
 
 高共識的憲法法院能不能從投票估出大法官的意識形態位置，是比較司法量化長年的難題。本研究以台灣憲法法庭 2022 年憲法訴訟法施行後的官方逐主文項立場表為資料，把每位大法官在每個主文項的反應編為相對多數的違憲宣告方向，以貝氏分級反應模型估計逐法官的違憲宣告傾向 $\theta$，再以置換檢定檢驗這條軸是否沿提名總統、任命批次、出身、留學背景結構化。四個維度都測不到效果（提名總統 $p \approx 0.34$）。這種「測不到差異、虛無假設推翻不了」的結果，統計上稱為 null；而這個 null 帶檢定力、等價與規格曲線的紀律：效果若存在，量級以同意率差計被關在約 $\pm 0.1$ 內。逐法官的可信區間普遍很寬、相鄰全部重疊，顯示這屆在稀疏異議下多半彼此不可區分。另一層以 1949 年以來意見書的共同具名網絡、用帶法官隨機效果的階層二項模型估計，同提名人對共同具名有中等且穩健的正效果，換八種設定都排除零。投票層測不到、協作層測得到，兩層各說各的。台灣既有的憲法法庭實證研究沒有一篇用過官方逐項真投票；本研究補上這個缺口，並對一篇問題意識高度重疊、迄今未能取得全文的研究，在新穎性上保留宣稱。
 

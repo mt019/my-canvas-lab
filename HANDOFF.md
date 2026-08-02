@@ -717,7 +717,7 @@ processed＋LOG）；兩 repo 同步。
 
 ### `IiasPublications`（中研院法研所出版品，2026-07-11）
 
-Backed by sibling `../iias-publications-data` repo（GitHub mt019/iias-publications-data，
+Backed by sibling `../phenom-iias-data` repo（GitHub mt019/phenom-iias-data，
 private；data 遷自 SCU 憲法課倉庫）。Pipeline：`npm run app-json`（manifest → 純 metadata
 投影 296KB，NFC 正規化，核數檢查對 manifest 宣告數自校）→ `npm run sync`（JSON →
 `src/data/iiasPublications.json`＋87 張封面 webp → `public/covers/iias/`）。規模：87 種出版品
@@ -1148,7 +1148,7 @@ LiuRushiEdition`、`HoverCite`、`TermLink` 都在用）。`validate:pdfproxy` �
   **審判長**（僅憲判 60 件、弱化樣式、`JusticeRef` 可點）——研究判斷：審判長／主席＝主持評議
   之院長、程序性、資訊量低，故只憲判掛、釋字主席 813 件全為院長不掛（主筆才是實質作者）；
   (9) 逐人統計表頭語意換行（提出／意見書 兩行、非 4+3+1 醜拆）＋姓名／意見書類型 nowrap＋
-  縮長條欄。**資料 repo**（`../constitutional-court-research-data`，投影層 build-app-json，
+  縮長條欄。**資料 repo**（`../phenom-court-data`，投影層 build-app-json，
   原樣層不動）：(a) 官方文字勘誤層 `data/materials/官方文字勘誤.json`——釋字562 解釋文民國年碼
   是官方自訂字型 PUA 字元 U+E8C7（肉眼空白），依理由書＋官方連結還原「臺（77）內地字」；
   (b) `stripBenchRoster` 剔憲判理由書尾端合議庭署名列（60 件，已結構化在 參與/審判長 欄）。
@@ -1161,7 +1161,7 @@ LiuRushiEdition`、`HoverCite`、`TermLink` 都在用）。`validate:pdfproxy` �
   行憲前 rows are lean catalog previews, not full text) plus a lazy
   companion `constitutionalCourt-pre1947-fulltext.json` (~2.4MB,
   dynamic-imported on demand — see M5 below). Both are copied snapshots
-  owned by the sibling repo `../constitutional-court-research-data`
+  owned by the sibling repo `../phenom-court-data`
   (GitHub mt019). Update flow: in that repo run `npm run update`
   (incremental crawl of cons.judicial.gov.tw) → `npm run sync` (copies
   both files) → here rebuild font subsets if new glyphs appeared
