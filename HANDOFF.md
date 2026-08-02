@@ -2276,6 +2276,13 @@ Playwright 實測：貼齊前 0；往下 20/40/60/80 → 上移 20/40/60/80；�
 
 ## Running `npm run build` (2026-07-20 — 一次自己製造的事故)
 
+**2026-08-02 起，下面說的互踩有機制擋了，但這一節的診斷方法照樣有用。** 現在
+`npm run build` 走 `scripts/build.mjs`：整段建置期間握著 `.dist.lock`（記 pid 與起始
+時間），第二個 build 會停在那裡等，並印出對方的 pid；對方的進程死了才接手。要驗證而
+不想等，跑 `npm run verify:full`——完整建置（含 prerender、validate:prerender、sitemap）
+跑進 `node_modules/.verify-dist`，完全不碰共用的 `dist/`。產物目錄的單一來源是
+`scripts/dist-target.mjs`，四支碰產物的腳本都從那裡拿路徑。
+
 `npm run build` 是一條長鏈：五支 validate 腳本 → `vite build` → `prerender.mjs`
 寫 459 頁 → sitemap。整條在這台機器上要跑好幾分鐘，**常常超過 agent harness 的
 單次命令逾時而被移到背景**。

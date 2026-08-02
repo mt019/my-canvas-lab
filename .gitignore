@@ -12,6 +12,9 @@ dist
 dist-ssr
 *.local
 
+# 寫共用 dist/ 的建置在整段期間握著這把鎖（scripts/dist-target.mjs），結束就刪。
+.dist.lock
+
 # Vercel CLI 在 CI 拉下來的專案設定與建置產物（vercel pull / vercel build）
 .vercel
 

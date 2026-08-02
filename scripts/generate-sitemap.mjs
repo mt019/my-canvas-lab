@@ -4,7 +4,8 @@
 // for a site whose pages are rebuilt together, and not claimed per-page.
 import { writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import { ROOT, SITE_URL } from './site-config.mjs';
+import { SITE_URL } from './site-config.mjs';
+import { DIST, DIST_LABEL } from './dist-target.mjs';
 import { collectRoutes } from './routes.mjs';
 
 const today = new Date().toISOString().slice(0, 10);
@@ -27,5 +28,5 @@ const body = routes.map((route) => {
 
 const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${body}\n</urlset>\n`;
 
-await writeFile(join(ROOT, 'dist', 'sitemap.xml'), xml);
-console.log(`sitemap: ${routes.length} urls → dist/sitemap.xml`);
+await writeFile(join(DIST, 'sitemap.xml'), xml);
+console.log(`sitemap: ${routes.length} urls → ${DIST_LABEL}/sitemap.xml`);

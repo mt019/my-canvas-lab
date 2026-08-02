@@ -50,8 +50,12 @@ jobs:
       # 這一步要 17 秒。試過改成 devDependency 讓 `npm ci` 順便裝（2026-07-29），但
       # `npm install --save-dev --package-lock-only vercel` 會把整份 package-lock 重新
       # 解析——一萬六千行變動、間接相依跟著漂——為了 17 秒不划算，維持全域安裝。
+      # 版本釘死，不用 @latest。Node 靠 setup-node 釘在 22、Playwright 靠 package-lock 釘住，
+      # 只有這支每次抓最新的：它出破壞性改版時建置照樣綠，行為卻換了一套，故障長相跟
+      # 2026-07-28 的 [REDACTED] 那次同一類（建置全綠、線上壞）。升版本走獨立 commit，
+      # 這樣壞了看得出是哪一次換的。
       - name: Install Vercel CLI
-        run: npm install --global vercel@latest
+        run: npm install --global vercel@58.4.4
 
       - name: Pull Vercel project settings
         run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
@@ -82,8 +86,20 @@ jobs:
 
       # 這一步會執行 package.json 的 build，也就是 verify:policy → vite build →
       # prerender → validate:prerender → sitemap。任何一關沒過就紅在這裡。
+      # 驗那 15 支閘本身。每支先跑一次基線（該過），再造一個違規讓它跑（該擋），
+      # 兩個方向都對才算數——只驗基線等於只證明了它在沒事的時候不吵。2.7 秒。
+      # 這一步會臨時改動受版控的檔再還原，所以只跑在 CI 這種全新 checkout 上，
+      # 不掛 pre-push：本機工作樹可能有第二個 session 同時在改。
+      - name: Test that the gates actually catch things
+        run: npm run test:validators
+
       - name: Build
         run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+
+      # 把這次的 commit SHA 寫進產物，部署後才有辦法問「線上這份是不是我剛剛建的」。
+      # 沒有它的話，部署沒生效跟部署生效了看起來一模一樣。
+      - name: Stamp the build with this commit
+        run: echo "${{ github.sha }}" > .vercel/output/static/build-id.txt
 
       # 遮蔽字串不准上線。這種故障不會讓建置失敗、也不會讓頁面變空，只會在每個訪客的
       # console 裡丟一句錯誤、讓登入不能用，所以要有一道檢查專門偵測它。
@@ -115,6 +131,13 @@ jobs:
       # 它出現在 Deploy 這一步，前面所有檢查都已經綠了，所以症狀是「建置全過但站沒更新」。
       - name: Deploy
         run: vercel deploy --prebuilt --prod --archive=tgz --token=${{ secrets.VERCEL_TOKEN }}
+
+      # 上面兩道檢查查的都是「要上傳的那份」。這一道查使用者真的拿得到的東西：
+      # 幾頁的內容、三條指向獨立站的轉址、以及線上的 build-id 是不是這次的 commit。
+      # 判準看內容不看狀態碼——vercel.json 最後一條把任何不存在的網址都回成 200 加
+      # 首頁外殼，狀態碼在這個站沒有鑑別力。
+      - name: Smoke the live site
+        run: node scripts/smoke-live.mjs --base https://phenomcanvas.com --expect-build-id ${{ github.sha }}
 
       # 上線之後才推，順序不能反——先推等於叫 Bing 去看還沒更新的頁。
       # 這一步失敗不影響部署結果，理由寫在 scripts/indexnow.mjs 開頭。

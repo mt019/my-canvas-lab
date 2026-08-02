@@ -10,6 +10,7 @@
 import { readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { ROOT } from './site-config.mjs';
+import { DIST } from './dist-target.mjs';
 import { collectRoutes } from './routes.mjs';
 
 if (process.env.PRERENDER === '0') {
@@ -17,7 +18,6 @@ if (process.env.PRERENDER === '0') {
   process.exit(0);
 }
 
-const DIST = join(ROOT, 'dist');
 const routes = collectRoutes();
 
 // 空殼是 1.8–2.5 KB；渲染過的頁最小的是 /vocaltuner 的 7.2 KB（2026-07-28 實測）。

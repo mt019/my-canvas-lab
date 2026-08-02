@@ -10,14 +10,11 @@
 import { createServer } from 'node:http';
 import { writeFile, mkdir, stat, readFile } from 'node:fs/promises';
 import { createReadStream } from 'node:fs';
-import { join, extname, resolve } from 'node:path';
+import { join, extname } from 'node:path';
 import { chromium } from 'playwright';
-import { ROOT, SITE_URL } from './site-config.mjs';
+import { SITE_URL } from './site-config.mjs';
+import { DIST, DIST_LABEL } from './dist-target.mjs';
 import { collectRoutes } from './routes.mjs';
-
-// PRERENDER_DIST：驗證用的隔離目錄（把 vite build --outDir 到別處、對那份跑 prerender，
-// 不碰共用的 dist/——兩個 session 併行時曾同時建刪 dist 而互相覆寫，見 HANDOFF 部署節）。平常不設。
-const DIST = process.env.PRERENDER_DIST ? resolve(process.env.PRERENDER_DIST) : join(ROOT, 'dist');
 
 // --- static file server with SPA fallback ----------------------------------
 const MIME = {
@@ -63,7 +60,7 @@ async function main() {
   const server = await startServer(shellHtml);
   const { port } = server.address();
   const base = `http://127.0.0.1:${port}`;
-  console.log(`prerender: ${routes.length} routes → dist/  (origin baked as ${SITE_URL})`);
+  console.log(`prerender: ${routes.length} routes → ${DIST_LABEL}/  (origin baked as ${SITE_URL})`);
 
   // A failed launch must break the build. This used to be fail-soft, and between
   // then and 2026-07-28 every deploy on Vercel shipped 473 empty shells: the build

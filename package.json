@@ -7,14 +7,17 @@
     "dev": "vite",
     "prepare": "node scripts/install-git-hooks.mjs",
     "verify:policy": "npm run validate:fonts && npm run validate:tokens && npm run validate:colors && npm run validate:floating && npm run validate:copy && npm run validate:math && npm run validate:shell && npm run validate:publicpaths && npm run validate:abspaths && npm run validate:tabroutes && npm run validate:extcards && npm run validate:cccutover && npm run validate:notescutover && npm run validate:userscripts && npm run validate:synced",
-    "build": "npm run verify:policy && vite build && npm run prune:retired-public && npm run prerender && npm run validate:prerender && npm run sitemap",
+    "build": "npm run verify:policy && node scripts/build.mjs",
     "verify:push": "npm run verify:policy",
     "verify:gates": "npm run verify:policy && vite build --outDir node_modules/.verify-dist --emptyOutDir --logLevel warn",
+    "verify:full": "npm run verify:policy && node scripts/build.mjs --dist node_modules/.verify-dist",
     "preprerender": "playwright install chromium",
     "prerender": "node scripts/prerender.mjs",
     "sitemap": "node scripts/generate-sitemap.mjs",
     "prune:retired-public": "node scripts/prune-retired-public.mjs",
     "og:image": "node scripts/generate-og-image.mjs",
+    "smoke:live": "node scripts/smoke-live.mjs --base https://phenomcanvas.com",
+    "test:validators": "node scripts/test-validators.mjs",
     "validate:pdfproxy": "node scripts/validate-pdf-proxy.mjs",
     "validate:prerender": "node scripts/validate-prerender.mjs",
     "validate:shell": "node scripts/validate-shell-chrome.mjs",
@@ -36,7 +39,8 @@
     "validate:notescutover": "node scripts/validate-notes-cutover.mjs",
     "validate:userscripts": "node scripts/validate-userscripts.mjs",
     "report:userscripts": "node scripts/userscript-reach.mjs",
-    "validate:synced": "node scripts/validate-synced-content.mjs"
+    "validate:synced": "node scripts/validate-synced-content.mjs",
+    "baseline:synced": "node scripts/validate-synced-content.mjs --update"
   },
   "dependencies": {
     "@dagrejs/dagre": "^3.0.0",
