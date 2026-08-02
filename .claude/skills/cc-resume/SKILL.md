@@ -17,13 +17,13 @@ disable-model-invocation: true
 
 ## 兩 repo 即時狀態
 
-資料 repo（`~/Documents/NTU/1142/constitutional-court-research-data`）最近提交：
+資料 repo（`~/Documents/NTU/1142/phenom-court-data`）最近提交：
 
-!`git -C ~/Documents/NTU/1142/constitutional-court-research-data log --oneline -3`
+!`git -C ~/Documents/NTU/1142/phenom-court-data log --oneline -3`
 
 資料 repo 工作樹（**未 commit 的檔＝他線在途，commit 時絕不可掃入**）：
 
-!`git -C ~/Documents/NTU/1142/constitutional-court-research-data -c core.quotepath=false status --short || echo "（乾淨）"`
+!`git -C ~/Documents/NTU/1142/phenom-court-data -c core.quotepath=false status --short || echo "（乾淨）"`
 
 canvas repo（`~/Documents/NTU/1142/my-canvas-lab`）最近提交：
 
