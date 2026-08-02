@@ -33,7 +33,16 @@ for (const rel of 不得存在) {
   assert.equal(existsSync(join(ROOT, rel)), false, `${rel} 又回到 canvas 了——憲法法庭的現役副本在 phenom-court，改那邊`);
 }
 
-const [exact, deep] = config.routes;
+// 按 src 找，不按位置取。原本寫的是 `const [exact, deep] = config.routes`，於是 2026-08-02
+// 在前面插兩條設快取標頭的路由就把這支弄紅了——它報的是「第一條不是憲法法庭」，而那不是
+// 它要守的東西。位置是別人的自由，src 才是這支的契約。
+const byExactSrc = (src) => {
+  const found = config.routes.filter((route) => route.src === src);
+  assert.equal(found.length, 1, `vercel.json 裡 src 為 ${src} 的路由應該剛好一條，實際 ${found.length} 條`);
+  return found[0];
+};
+const exact = byExactSrc('/constitutionalcourt');
+const deep = byExactSrc('/constitutionalcourt/(.*)');
 assert.deepEqual(exact, {
   src: '/constitutionalcourt',
   dest: 'https://cc.phenomcanvas.com/constitutionalcourt/',
