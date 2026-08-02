@@ -23,6 +23,11 @@ const forbidden = [
   // 哪一種讀者；「來吵」把使用者回報講成一個帶脾氣的動作。兩個都寫它實際是什麼就好。
   // 「撞上」把讀者遇到一個問題寫成撞到東西（2026-07-29 使用者明令）。直接寫他會發現什麼。
   ['指定禁語', /圈子|來吵|撞上/g],
+  // 2026-08-02 使用者指定：把工具擬人化的「咬」（檢查咬到、負向測試咬合）、把爭論說成
+  // 「吵」（學界吵了二十年）。工具沒有牙齒，學者也不是在吵架——寫它實際做了什麼、
+  // 爭的是什麼。字面用法放行：歌唱的咬字、引文裡的爭吵吵鬧。
+  ['把工具擬人化的咬', /(?<!歌唱|義大利文|原書關於)咬(?!字)/g],
+  ['把爭論說成吵', /吵(?!架|鬧|雜)|爭吵/g],
   // 翻轉揭曉：先立一個假想再推翻它（「本來以為只是方便。後來發現不是。」）。第二拍
   // 沒有內容，只負責製造轉折，而那個假想通常是編的。直接寫真正的差別在哪。
   // 2026-07-29 使用者明令。
@@ -62,8 +67,8 @@ const engineeringWords = [
   ['作業語言', /資料層/g],
   ['作業語言', /同步過來的快照/g],
   // 資料倉目錄名逐個列，不用通則式的 `*-data`——英文正文裡的 fiscal-data、tax-data
-  // 是真的在講財政資料，不是倉庫名。
-  ['資料倉名', /\b(?:[a-z][a-z0-9-]*-research-data|brief-data|vocal-training-data|statistics-lab-data|iias-publications-data|jirs-foreign-law|intl-tax-ops-lab)\b/g],
+  // 是真的在講財政資料，不是倉庫名。`phenom-*-data` 帶前綴，不會誤傷，所以用通則。
+  ['資料倉名', /\b(?:[a-z][a-z0-9-]*-research-data|phenom-[a-z0-9-]+-data|brief-data|vocal-training-data|statistics-lab-data|jirs-foreign-law|intl-tax-ops-lab)\b/g],
 ];
 
 const failures = [];

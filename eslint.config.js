@@ -52,7 +52,7 @@ export default tseslint.config(
     rules: {
       ...js.configs.recommended.rules,
       // 底線開頭＝作者明講「知道它沒用到」（UkuleleTuner 的 catch (_error) 有 7 處）。
-      // 尊重這個慣例，其餘沒用到的照咬。
+      // 尊重這個慣例，其餘沒用到的照樣報錯。
       'no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_', caughtErrorsIgnorePattern: '^_' }],
       // 用在 JSX 裡的變數也算用過。少了這條，每個元件 import 都會被誤報成沒用到
       // （實測會多出 396 個假陽性，把真正的 9 件淹掉）。
@@ -65,7 +65,7 @@ export default tseslint.config(
       // 正文與註解裡的全形空格是本站的排版方式，不是錯字。
       'no-irregular-whitespace': ['error', { skipStrings: true, skipComments: true, skipTemplates: true, skipJSXText: true }],
       // 三個調音器／電鋼琴頁的 Web Audio 收音全是 catch {}：對已停止的 oscillator 再 stop
-      // 本來就會丟例外，這裡忽略是對的。13 處都屬此類，故放行空 catch（其他空區塊仍咬）。
+      // 本來就會丟例外，這裡忽略是對的。13 處都屬此類，故放行空 catch（其他空區塊照樣報錯）。
       'no-empty': ['error', { allowEmptyCatch: true }],
     },
   },
