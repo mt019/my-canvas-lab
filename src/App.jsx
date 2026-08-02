@@ -24,8 +24,8 @@ import { USERSCRIPTS_KEYWORDS, USERSCRIPTS_TITLE, USERSCRIPTS_DESC, userscriptsS
  */
 // Constitutional Court and the two judicial-translation pages are now
 // independent sites and their files are gone from this repo entirely — the
-// cards on /all are external links, built from PAGE_META alone with no page or
-// data graph behind them.
+// cards on /all are external links with no page or data graph behind them,
+// assembled from a PAGE_META entry plus a route stub in App() below.
 const pages = import.meta.glob([
   './pages/**/*.{jsx,tsx}',
   '!./pages/Notes.jsx',
@@ -525,8 +525,10 @@ export default function App() {
           meta: PAGE_META[name] ?? null,
         };
       });
-    // The standalone archive remains discoverable on /all without restoring a
-    // local React route or importing its former page/data graph.
+    // Sites that moved out of this repo stay discoverable on /all without
+    // restoring a local React route or importing their former page/data graph:
+    // each keeps a PAGE_META entry with an externalUrl, and the entry below is
+    // what actually puts the card on the page — PAGE_META alone renders nothing.
     return [
       ...localRoutes,
       {
@@ -540,6 +542,18 @@ export default function App() {
         path: '/notes',
         component: null,
         meta: PAGE_META.Notes,
+      },
+      {
+        name: 'JirsForeignLaw',
+        path: '/jirsforeignlaw',
+        component: null,
+        meta: PAGE_META.JirsForeignLaw,
+      },
+      {
+        name: 'LegalGlossary',
+        path: '/legalglossary',
+        component: null,
+        meta: PAGE_META.LegalGlossary,
       },
     ];
   }, []);
