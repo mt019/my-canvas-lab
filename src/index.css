@@ -2,6 +2,38 @@
 @tailwind components;
 @tailwind utilities;
 
+/* 捲軸。作業系統原生那條在每個平台長得都不一樣，而且是這一整套版面上唯一沒有經過設計的
+   東西——兩側 rail、寬表格、下拉選單、程式碼區塊都會露出它。這裡一次換掉，套在全域，
+   免得每加一個 overflow 容器就要記得補一次（記不得就是漏一處，而漏的那處特別顯眼）。
+
+   軌道不畫，只留一條墨線當滑塊，滑過去才變深；粗細 6px，比原生細，貼著內容也不搶。
+   兩套語法都寫：scrollbar-width／scrollbar-color 走 Firefox 與新版 Chrome，
+   ::-webkit-scrollbar 走 WebKit。**別只寫其中一套**，Safari 不吃前者。
+   與 @phenomcanvas/ui 的 styles.css 是同一份，改一邊要改兩邊。 */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in oklab, var(--c-ink) 22%, transparent) transparent;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track,
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--c-ink) 22%, transparent);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in oklab, var(--c-ink) 40%, transparent);
+}
+
 /* 站內數值滑桿：避免瀏覽器／作業系統原生 thumb 跳離 Canvas 控制項語彙。 */
 .canvas-range {
   height: 1.25rem;

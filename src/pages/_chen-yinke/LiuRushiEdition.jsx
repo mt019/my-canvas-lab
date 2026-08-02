@@ -291,7 +291,6 @@ export default function LiuRushiEdition({ initialSelectionId }) {
         />
       )}
       hideToc
-      compactReading
       mobileNavLabel="原書次序"
       scaleContent={false}
     >

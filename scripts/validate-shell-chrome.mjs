@@ -275,6 +275,23 @@ for (const path of walk('src').filter((p) => /\.jsx$/.test(p))) {
   }
 }
 
+/* ── 七、捲軸不准是原生那條 ────────────────────────────────── */
+
+// 2026-08-02 使用者明令「全局底層模板禁止原生醜 UI 滑動軌道 bar」。兩側 rail、寬表格、
+// 下拉選單都是 overflow 容器，原生捲軸在每個平台長得都不一樣，是整套版面上唯一沒設計過
+// 的東西。樣式套在全域選擇器上（不逐個容器補，補就會漏），所以這道檢查只確認那一組規則
+// 還在，而且兩套語法都寫了——只寫 scrollbar-width 的話 Safari 照樣是原生的。
+// 共用包 @phenomcanvas/ui/src/styles.css 有同一份，改一邊要改兩邊。
+{
+  const css = readFileSync('src/index.css', 'utf8');
+  if (!/scrollbar-width:\s*thin/.test(css) || !/scrollbar-color:/.test(css)) {
+    failures.push('src/index.css：少了 scrollbar-width／scrollbar-color（Firefox 與新版 Chrome 走這套）');
+  }
+  if (!/::-webkit-scrollbar-thumb\s*\{/.test(css)) {
+    failures.push('src/index.css：少了 ::-webkit-scrollbar-thumb（Safari 不吃 scrollbar-color，只寫一套等於沒改）');
+  }
+}
+
 /* ── 結果 ─────────────────────────────────────────────────── */
 
 if (failures.length) {

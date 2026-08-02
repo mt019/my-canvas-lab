@@ -4,6 +4,7 @@ import BackLink from '../BackLink';
 import { SHELL_PAD_X } from '../shellPadding';
 import Tabs from './Tabs';
 import TableOfContents from './TableOfContents';
+import useHeadings from './useHeadings';
 
 /*
  * 儀表板版的兩欄殼——`/brief` 手刻過，抽到這裡讓別的儀表板頁共用（DESIGN.md 元件表）。
@@ -38,7 +39,9 @@ export default function DashboardLayout({
   tabs,
   leftRailTop,
   tocLabel = '本頁區塊',
-  hideToc = false, // 頁面沒有 h2/h3 區塊（如單張圖表）時關掉右欄目次，內容占滿寬度
+  // 右欄目次是預設。底下沒有 h2／h3 可列（單張圖表那種）時殼自己會收起來，不必宣告；
+  // hideToc 只留給「右欄會跟左欄或分頁列列出同一份東西」那種重複的情況。
+  hideToc = false,
   // 水平內距。**預設就留白**（SHELL_PAD_X：手機貼邊、lg 起左右各 4rem、xl 起 6rem）——
   // 貼著螢幕邊的正文讀起來累，而「只有補過的那幾頁才不貼邊」比兩者都糟。整欄是寬表格
   // 的頁面才傳 SHELL_PAD_X_TIGHT 換回貼邊。三個容器（抬頭、吸頂分頁、內文）吃同一個值，
@@ -48,6 +51,10 @@ export default function DashboardLayout({
   children,
 }) {
   const bodyRef = useRef(null);
+  // 先量再排版。leftRailTop 那塊（篩選器之類）跟目次共用這條軌道，所以它單獨存在時
+  // 軌道照留——收起來的條件是「這條軌道整條沒東西」，不是「沒有標題」。
+  const { items, active } = useHeadings(bodyRef, { refreshKey });
+  const showToc = !hideToc && (items.length > 0 || Boolean(leftRailTop));
 
   return (
     <main className="min-h-screen bg-paper paper-texture text-ink" style={{ '--reader-scale': scale }}>
@@ -97,23 +104,23 @@ export default function DashboardLayout({
         </div>
       ) : null}
 
-      {/* 寬內容欄＋右欄本頁大綱（h2+h3，跟著捲動高亮）。右欄在 lg 以下收起。
-          hideToc：頁面本就沒有區塊標題可列（單張圖表頁），關掉右欄、內容占滿。 */}
+      {/* 寬內容欄＋右欄本頁大綱（h2+h3，跟著捲動高亮）。右欄在 lg 以下收起，底下沒有
+          標題可列時也收起——那條軌道留不留由量測決定，不由頁面宣告（見 useHeadings）。 */}
       <div
         className={`mx-auto grid max-w-7xl gap-8 py-8 lg:gap-10 ${padX} ${
-          hideToc ? '' : 'lg:grid-cols-[minmax(0,1fr)_13rem]'
+          showToc ? 'lg:grid-cols-[minmax(0,1fr)_13rem]' : ''
         }`}
       >
         <div ref={bodyRef} className="reader-scale min-w-0">{children}</div>
 
-        {hideToc ? null : (
+        {showToc ? (
           <aside className="hidden lg:block">
             <div className="sticky top-20 max-h-[calc(100vh-5.5rem)] overflow-y-auto border-l border-line-soft pb-10 pl-5">
               {leftRailTop}
-              <TableOfContents containerRef={bodyRef} label={tocLabel} refreshKey={refreshKey} />
+              <TableOfContents label={tocLabel} items={items} active={active} />
             </div>
           </aside>
-        )}
+        ) : null}
       </div>
     </main>
   );

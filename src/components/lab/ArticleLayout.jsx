@@ -2,6 +2,7 @@ import { useRef } from 'react';
 import { SHELL_PAD_X_RAIL } from '../shellPadding';
 import { Link } from 'react-router-dom';
 import TableOfContents from './TableOfContents';
+import useHeadings from './useHeadings';
 import PageIdentity from '../PageIdentity';
 
 /*
@@ -27,29 +28,36 @@ export default function ArticleLayout({
   // 版面傳 [2]：小標在那裡重複（六則各有一條「補記（Matters 留言區）」），列進去是把
   // 同一個詞印六遍，不是導覽。
   tocLevels = [2, 3],
-  // 本頁本來就沒有區塊標題可列（單篇原文只有段落），或右欄會跟左欄列出同一份東西時關掉。
-  // 與 DashboardLayout 的同名 prop 同一個理由：同一件事講兩次不是導覽，是雜訊。
+  // 右欄目次是預設，而且不由頁面宣告有沒有——底下真的有 h2／h3 就出現，沒有就收起來
+  // （見 useHeadings 的說明）。頁面只有在「右欄會跟左欄列出同一份東西」這種重複的情況
+  // 才傳 hideToc 強制關掉；「這頁大概沒有小標吧」不是理由，那件事殼自己看得到。
   hideToc = false,
-  // 收起右欄時，中欄預設吃掉騰出來的寬度（清單與表格用得到）。散文頁傳 true：一篇短文
-  // 沒有小標可列，但它的行長不該因此變長——44rem 那條閱讀欄寬本來就是照行長訂的，
-  // 空出來的地方留白即可。
-  keepReadingWidth = false,
-  compactReading = false,
+  // 內容欄放寬到 61rem。以條文對照表、寬表格當骨架的頁面才傳；散文不傳，44rem 那條
+  // 閱讀欄寬是照行長訂的。**放寬不影響右欄目次**——兩件事以前綁在同一個 prop 上，
+  // 於是要表格擺得下就得放棄目次，那是假的取捨。
+  wideContent = false,
   mobileNavLabel,
   scaleContent = true,
   children,
 }) {
   const bodyRef = useRef(null);
+  // 先量再排版：這一頁有沒有標題可列，決定右欄那條軌道存不存在。
+  const { items, active } = useHeadings(bodyRef, { levels: tocLevels, refreshKey: tocKey });
+  const showToc = !hideToc && items.length > 0;
 
   return (
-    <div className={`mx-auto grid max-w-[86rem] gap-10 ${SHELL_PAD_X_RAIL} lg:gap-12 ${
-      // 收起右欄時中欄吃掉騰出來的寬度（44＋14＋gap），不留一條空白軌道。散文本來就
-      // 由內容自己的 max-w 收住行長，會用到這段多出來的寬度的是清單與表格。
-      compactReading
-        ? 'lg:grid-cols-[15rem_minmax(0,44rem)]'
-        : hideToc && !keepReadingWidth
+    <div className={`mx-auto grid gap-10 ${SHELL_PAD_X_RAIL} lg:gap-12 ${
+      // 寬版面加上右欄比容器的 86rem 還寬，所以那個組合另給一個上限；沒有目次可列時
+      // 不留空軌道，中欄吃掉騰出來的寬度只發生在本來就要寬的頁面，散文照舊留白。
+      showToc && wideContent ? 'max-w-[96rem]' : 'max-w-[86rem]'
+    } ${
+      showToc && wideContent
+        ? 'lg:grid-cols-[15rem_minmax(0,61rem)_14rem]'
+        : showToc
+        ? 'lg:grid-cols-[15rem_minmax(0,44rem)_14rem]'
+        : wideContent
         ? 'lg:grid-cols-[15rem_minmax(0,61rem)]'
-        : 'lg:grid-cols-[15rem_minmax(0,44rem)_14rem]'
+        : 'lg:grid-cols-[15rem_minmax(0,44rem)]'
     }`}>
       <aside className="hidden lg:block">
         {/* Clears the sticky site bar above it (see SiteHeader) — a rail that
@@ -78,27 +86,27 @@ export default function ArticleLayout({
           </details>
         ) : null}
 
-        {hideToc ? null : (
+        {showToc ? (
           <details className="mb-8 rounded-token-md border border-line-soft px-4 py-3 lg:hidden">
             <summary className="cursor-pointer text-token-sm text-ink-muted">{tocLabel ?? '本頁目次'}</summary>
             <div className="mt-3">
-              <TableOfContents containerRef={bodyRef} label={tocLabel} refreshKey={tocKey} levels={tocLevels} />
+              <TableOfContents label={tocLabel} items={items} active={active} />
             </div>
           </details>
-        )}
+        ) : null}
 
         <div ref={bodyRef}>{children}</div>
       </article>
 
-      {hideToc ? null : (
+      {showToc ? (
         <aside className="hidden lg:block">
           {/* Clears the sticky site bar above it (see SiteHeader) — a rail that
               slides under the toolbar loses its first item. */}
           <div className="sticky top-16 max-h-[calc(100vh-6rem)] overflow-y-auto pb-10">
-            <TableOfContents containerRef={bodyRef} label={tocLabel} refreshKey={tocKey} levels={tocLevels} />
+            <TableOfContents label={tocLabel} items={items} active={active} />
           </div>
         </aside>
-      )}
+      ) : null}
     </div>
   );
 }
