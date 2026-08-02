@@ -8,6 +8,12 @@ import { join, relative } from 'node:path';
 
 const ROOTS = ['src/pages', 'src/components'];
 const HOVER_CARD = 'src/components/lab/HoverCard.jsx';
+// AnnotatedHtml 是第二個獲准的產生者：它的註標在 dangerouslySetInnerHTML 進來的 HTML 裡，
+// 只能事件委派＋自己開 portal，包不進 HoverCard 的子元件寫法。所以它不走白名單放行，
+// 而是照 HoverCard 的規格逐項驗核心行為（見下方 PRODUCERS）。定位與避讓在共用的
+// useFloatingCard.js，那支的 viewport 夾擠另外驗。
+const ANNOTATED_HTML = 'src/components/lab/AnnotatedHtml.jsx';
+const FLOATING_HOOK = 'src/components/lab/useFloatingCard.js';
 const walk = (dir) => readdirSync(dir).flatMap((name) => {
   const path = join(dir, name);
   return statSync(path).isDirectory() ? walk(path) : [path];
@@ -20,28 +26,45 @@ for (const path of files) {
   if (/group-hover(?:\/[\w-]+)?:block/.test(source)) {
     failures.push(`${relative('.', path)}：禁止以 group-hover:block 顯示浮層，改用 HoverCard portal`);
   }
-  // HoverCard 本身就是那個唯一的產生者，它當然要寫 role="tooltip"。
-  if (relative('.', path) !== HOVER_CARD && /role=["']tooltip["']/.test(source)) {
-    failures.push(`${relative('.', path)}：tooltip role 只能由共用 HoverCard 產生`);
+  // 產生者以外的檔案一律不得自己寫 tooltip role。
+  const rel = relative('.', path);
+  if (rel !== HOVER_CARD && rel !== ANNOTATED_HTML && /role=["']tooltip["']/.test(source)) {
+    failures.push(`${rel}：tooltip role 只能由共用 HoverCard／AnnotatedHtml 產生`);
   }
 }
 
-let hoverCard;
-try {
-  hoverCard = readFileSync(HOVER_CARD, 'utf8');
-} catch {
-  // 檔案被搬走時要當成失敗；直接跳過等於下面五項行為完全沒檢查到。
-  console.error(`floating surface validation failed:\n- 讀不到 ${HOVER_CARD}，改這支腳本的 HOVER_CARD 常數`);
-  process.exit(1);
-}
-for (const [needle, label] of [
-  ['createPortal(', 'portal 脫離裁切層'],
-  ["document.addEventListener('pointerdown'", '點外關閉'],
-  ["e.key === 'Escape'", 'Esc 關閉'],
-  ['window.innerWidth - cardW - GAP', 'viewport 左右避讓'],
-  ['closeActiveCard', '單次只開一張'],
-]) {
-  if (!hoverCard.includes(needle)) failures.push(`HoverCard 缺少核心行為：${label}`);
+// 每個獲准的產生者都要具備同一組核心行為；獲准不等於免檢。
+const PRODUCERS = [
+  [HOVER_CARD, [
+    ['createPortal(', 'portal 脫離裁切層'],
+    ["document.addEventListener('pointerdown'", '點外關閉'],
+    ["e.key === 'Escape'", 'Esc 關閉'],
+    ['window.innerWidth - cardW - GAP', 'viewport 左右避讓'],
+    ['closeActiveCard', '單次只開一張'],
+  ]],
+  [ANNOTATED_HTML, [
+    ['createPortal(', 'portal 脫離裁切層'],
+    ["document.addEventListener('pointerdown'", '點外關閉'],
+    ["event.key === 'Escape'", 'Esc 關閉'],
+    ['useFloatingCard(', '定位交給共用 useFloatingCard'],
+    ['const [active, setActive]', '單一 active 狀態，單次只開一張'],
+  ]],
+  [FLOATING_HOOK, [
+    ['window.innerWidth - cardW - CARD_GAP', 'viewport 左右避讓'],
+  ]],
+];
+for (const [file, needles] of PRODUCERS) {
+  let source;
+  try {
+    source = readFileSync(file, 'utf8');
+  } catch {
+    // 檔案被搬走時要當成失敗；直接跳過等於底下的行為完全沒檢查到。
+    failures.push(`讀不到 ${file}，改這支腳本的產生者清單`);
+    continue;
+  }
+  for (const [needle, label] of needles) {
+    if (!source.includes(needle)) failures.push(`${file} 缺少核心行為：${label}`);
+  }
 }
 
 if (failures.length) {
