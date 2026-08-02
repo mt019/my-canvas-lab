@@ -180,6 +180,20 @@ const cases = [
       }),
   },
   {
+    npmScript: 'validate:cachehdrs',
+    script: 'scripts/validate-vercel-cache-headers.mjs',
+    // 把死設定（頂層 headers）加回去。這正是 2026-08-02 掛了一整天沒人發現的那個長相：
+    // 設定看起來完全正確，部署不報錯，線上量起來沒生效。
+    setup: () =>
+      editedFile('vercel.json', (src) => {
+        const config = JSON.parse(src);
+        config.headers = [
+          { source: '/assets/(.*)', headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }] },
+        ];
+        return `${JSON.stringify(config, null, 2)}\n`;
+      }),
+  },
+  {
     npmScript: 'validate:cccutover',
     script: 'scripts/validate-constitutional-court-cutover.mjs',
     // 憲法法庭已徹底搬離本倉；讓其中一個「不得存在」的檔案重新出現。

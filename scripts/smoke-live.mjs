@@ -114,6 +114,30 @@ for (const page of PAGES) {
   console.log(`${label} — ${res.text.length} bytes、「${title}」✓`);
 }
 
+// 二之二、線上實際回的快取標頭。
+//
+// 設定寫對了而線上沒送出去，是 2026-08-02 踩到的形狀：vercel.json 頂層的 headers 在這個
+// 部署裡完全不生效（有 routes 就不吃），設定看起來正確、部署不報錯，掛了一整天沒人發現。
+// scripts/validate-vercel-cache-headers.mjs 檢查設定，這裡檢查線上實際回來的標頭。
+const assetPath = (shell.text.match(/\/assets\/[A-Za-z0-9._-]+\.js/) ?? [])[0];
+if (!assetPath) {
+  failures.push('外殼裡找不到 /assets 底下的 js，無法驗資產的快取標頭');
+} else {
+  const HEADER_CHECKS = [
+    { path: assetPath, want: /immutable/, why: '檔名帶內容雜湊，該給一年加 immutable' },
+    { path: '/notes/deployment-manifest.json', want: /no-store/, why: '部署驗證讀的檔，被快取存起來就會讀到舊的答案' },
+  ];
+  for (const { path, want, why } of HEADER_CHECKS) {
+    const res = await fetch(`${base}${path}`);
+    const cacheControl = res.headers.get('cache-control') ?? '';
+    if (want.test(cacheControl)) {
+      console.log(`${path} — Cache-Control: ${cacheControl} ✓`);
+    } else {
+      failures.push(`${path} — Cache-Control 是「${cacheControl || '沒有'}」，${why}；設定在 vercel.json 的 routes 裡，改了要確認線上真的送出來`);
+    }
+  }
+}
+
 // 三、轉址。要看 Location 的實際值，不能只看它有沒有轉。
 for (const r of REDIRECTS) {
   const res = await get(r.path, 'manual');
@@ -168,4 +192,4 @@ if (failures.length) {
   for (const f of failures) console.error(`  - ${f}`);
   process.exit(1);
 }
-console.log(`\n線上檢查通過：${PAGES.length} 頁、${REDIRECTS.length} 條轉址${expectBuildId ? '、build-id 相符' : ''}`);
+console.log(`\n線上檢查通過：${PAGES.length} 頁、${REDIRECTS.length} 條轉址、2 條快取標頭${expectBuildId ? '、build-id 相符' : ''}`);

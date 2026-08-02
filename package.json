@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "prepare": "node scripts/install-git-hooks.mjs",
-    "verify:policy": "npm run validate:fonts && npm run validate:tokens && npm run validate:colors && npm run validate:floating && npm run validate:copy && npm run validate:math && npm run validate:shell && npm run validate:publicpaths && npm run validate:abspaths && npm run validate:tabroutes && npm run validate:extcards && npm run validate:cccutover && npm run validate:notescutover && npm run validate:userscripts && npm run validate:synced",
+    "verify:policy": "npm run validate:fonts && npm run validate:tokens && npm run validate:colors && npm run validate:floating && npm run validate:copy && npm run validate:math && npm run validate:shell && npm run validate:publicpaths && npm run validate:abspaths && npm run validate:tabroutes && npm run validate:extcards && npm run validate:cachehdrs && npm run validate:cccutover && npm run validate:notescutover && npm run validate:userscripts && npm run validate:synced",
     "build": "npm run verify:policy && node scripts/build.mjs",
     "verify:push": "npm run verify:policy",
     "verify:gates": "npm run verify:policy && vite build --outDir node_modules/.verify-dist --emptyOutDir --logLevel warn",
@@ -35,6 +35,7 @@
     "check:brief": "node scripts/check-brief-pages.mjs",
     "validate:tabroutes": "node scripts/validate-tab-routes.mjs",
     "validate:extcards": "node scripts/validate-external-cards.mjs",
+    "validate:cachehdrs": "node scripts/validate-vercel-cache-headers.mjs",
     "validate:cccutover": "node scripts/validate-constitutional-court-cutover.mjs",
     "validate:notescutover": "node scripts/validate-notes-cutover.mjs",
     "validate:userscripts": "node scripts/validate-userscripts.mjs",
