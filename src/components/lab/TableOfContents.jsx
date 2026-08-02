@@ -28,7 +28,13 @@ export default function TableOfContents({
         {list.map((it) => {
           const on = it.id === current;
           return (
-            <li key={it.id} style={{ paddingLeft: it.level === 3 ? 22 : 12 }}>
+            /*
+             * 階層要看得出來，靠的不只是縮排：只差十個 px 的兩排字，讀者讀到的是一份平的
+             * 清單。第一級用正常字面、深一階的墨色，第二級縮排並降一級字級——文章有兩層
+             * 結構時，側欄就長得跟正文一樣有兩層。文章本身只有一級標題的話，這裡自然也是
+             * 一級，那是母本的事，不是這一欄的事。
+             */
+            <li key={it.id} style={{ paddingLeft: it.level >= 3 ? 24 : 12 }}>
               {/*
                 * 側欄只有 13rem 寬，長標題在這裡最多折兩行，第三行起截斷（滑過去看完整標題）。
                 * line-break: strict 讓中日文的斷行避開「（」「）」「、」這些位置——沒有它，
@@ -38,10 +44,12 @@ export default function TableOfContents({
               <a
                 href={`#${it.id}`}
                 title={it.full}
-                className="-ml-px block border-l-2 py-0.5 pl-2 transition-colors duration-fast [line-break:strict] [text-wrap:pretty] line-clamp-2"
+                className={`-ml-px block border-l-2 py-0.5 pl-2 transition-colors duration-fast [line-break:strict] [text-wrap:pretty] line-clamp-2${
+                  it.level >= 3 ? ' text-[0.92em]' : ''
+                }`}
                 style={{
                   borderColor: on ? 'var(--c-accent)' : 'transparent',
-                  color: on ? 'var(--c-ink)' : 'var(--c-ink-faint)',
+                  color: on ? 'var(--c-ink)' : (it.level >= 3 ? 'var(--c-ink-faint)' : 'var(--c-ink-muted)'),
                 }}
               >
                 {it.text}

@@ -13,9 +13,26 @@ import { Clock, RefreshCw, Tag } from 'lucide-react';
  * Each tag links to its own page — every other article about the same thing.
  * The slug is language-neutral (keyed on the Chinese label) and comes paired with
  * the tag from the data repo, so `tags[i]` and `tagSlugs[i]` are the same tag; a
- * tag without a slug still renders, just as plain text.
+ * tag without a slug still renders, just as plain text. `tagBase` is where those
+ * links point: each site has its own tag route, so a site that isn't the
+ * statistics one passes its own, and a site with no tag pages at all passes no
+ * slugs and gets plain chips.
+ *
+ * A site whose articles all went up on the same day has nothing to say with a
+ * date — it passes no `publishedAt` and that slot disappears rather than
+ * printing the word 發表 on its own. Anything else the line should carry (a
+ * source count, a chapter number) comes in as children and sits at the end.
  */
-export default function ArticleMeta({ publishedAt, updatedAt, readingMinutes, tags = [], tagSlugs = [], lang = 'zh' }) {
+export default function ArticleMeta({
+  publishedAt,
+  updatedAt,
+  readingMinutes,
+  tags = [],
+  tagSlugs = [],
+  tagBase = '/statistics/tags',
+  lang = 'zh',
+  children = null,
+}) {
   const en = lang === 'en';
   const changed = updatedAt && updatedAt !== publishedAt;
   const tagClass =
@@ -23,10 +40,12 @@ export default function ArticleMeta({ publishedAt, updatedAt, readingMinutes, ta
 
   return (
     <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 border-y border-line-soft py-3 text-token-xs text-ink-faint">
-      <span className="inline-flex items-center gap-1.5">
-        <span className="font-accent">{publishedAt}</span>
-        {en ? 'published' : '發表'}
-      </span>
+      {publishedAt ? (
+        <span className="inline-flex items-center gap-1.5">
+          <span className="font-accent">{publishedAt}</span>
+          {en ? 'published' : '發表'}
+        </span>
+      ) : null}
 
       {changed ? (
         <span className="inline-flex items-center gap-1.5">
@@ -48,7 +67,7 @@ export default function ArticleMeta({ publishedAt, updatedAt, readingMinutes, ta
           <Tag size={12} />
           {tags.map((t, i) =>
             tagSlugs[i] ? (
-              <Link key={t} to={`/statistics/tags/${tagSlugs[i]}`} className={tagClass}>
+              <Link key={t} to={`${tagBase}/${tagSlugs[i]}`} className={tagClass}>
                 {t}
               </Link>
             ) : (
@@ -59,6 +78,8 @@ export default function ArticleMeta({ publishedAt, updatedAt, readingMinutes, ta
           )}
         </span>
       ) : null}
+
+      {children}
     </div>
   );
 }
