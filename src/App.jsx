@@ -22,13 +22,17 @@ import { USERSCRIPTS_KEYWORDS, USERSCRIPTS_TITLE, USERSCRIPTS_DESC, userscriptsS
  * starting with "_" is a building block, not a page — figures, simulation code —
  * and never becomes a route.
  */
-// Constitutional Court is now an independent site and its files are gone from
-// this repo entirely — the card on /all is an external link, built from
-// PAGE_META alone with no page or data graph behind it.
+// Constitutional Court and the two judicial-translation pages are now
+// independent sites and their files are gone from this repo entirely — the
+// cards on /all are external links, built from PAGE_META alone with no page or
+// data graph behind them.
 const pages = import.meta.glob([
   './pages/**/*.{jsx,tsx}',
   '!./pages/Notes.jsx',
   '!./pages/_notes/**',
+  '!./pages/JirsForeignLaw.jsx',
+  '!./pages/LegalGlossary.jsx',
+  '!./pages/_jirs-glossary/**',
 ]);
 
 const kebab = (name) => name.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();

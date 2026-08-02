@@ -236,8 +236,6 @@ const CARVES_OWN_HEADER = /<(?:PageShell|DashboardLayout|ArticleLayout)\b/;
 const WIRED_EYEBROW = /<SiteHomeEyebrow\b|<Eyebrow\b[^>]*\bback=/;
 const EYEBROW_EXEMPT = new Map([
   ['ElectricPiano', '滿版樂器介面，整頁就是琴鍵，沒有抬頭列'],
-  ['JirsForeignLaw', '眉標與大標題整塊是「回本頁總覽」的按鈕（同頁切視圖，不是換網址）；'
-    + '此站也沒有內頁路由。日後真的長出 /jirsforeignlaw/… 的內頁，要先把那顆按鈕拆開再接眉標'],
 ]);
 
 for (const path of routePages) {
