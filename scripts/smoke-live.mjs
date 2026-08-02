@@ -67,6 +67,20 @@ async function get(path, redirect = 'follow') {
   return { status: res.status, location: res.headers.get('location'), text };
 }
 
+// 上面那支 get() 一律打原本的網址，因為這支腳本要驗的就是使用者實際拿到什麼——繞過快取
+// 等於繞過了要檢查的東西。下面這支只給 build-id 的收尾診斷用。
+//
+// 換 query 參數（換掉快取鍵）與送 Cache-Control: no-cache 請求標頭（MDN 快取指南
+// 「Reload and force reload」）兩件事一起做：只做前者會被「兩次剛好用同一個值」漏掉，
+// 只做後者遇到不理會請求端指令的快取就沒有用。
+// phenom-ops 的 `scripts/lib/fetch-uncached.mjs` 是這段的雙胞胎，改一邊要順手看另一邊。
+async function getUncached(path) {
+  const url = new URL(`${base}${path}`);
+  url.searchParams.set('__nocache', `${Date.now()}`);
+  const res = await fetch(url, { headers: { 'cache-control': 'no-cache' } });
+  return { status: res.status, text: await res.text() };
+}
+
 // 一、先取「查無此頁」的外殼樣本。
 const shell = await get(MISSING_PATH);
 const shellTitle = titleOf(shell.text);
@@ -131,7 +145,21 @@ if (expectBuildId) {
   if (live === expectBuildId) {
     console.log(`build-id — ${live} ✓（線上這份就是這次建的）`);
   } else {
-    failures.push(`build-id — 線上是 ${live}，這次建的是 ${expectBuildId}；部署沒生效，或是被別的部署蓋過去`);
+    // 重試次數用完還是舊的，成因有兩個：某一層快取還在把舊的送給使用者，或部署本身
+    // 沒生效。兩者在外面長得一模一樣，修法相反，所以再打一次繞過快取的來分辨。
+    // 前一版沒有這一步，於是十次重試打的都是同一個網址——中間留著舊的一份的話，
+    // 十次讀到的是同一份，重試本身沒有作用（見 phenom-ops 的 ops-learning 快取筆記）。
+    let why = '';
+    try {
+      const bypass = await getUncached('/build-id.txt');
+      const body = bypass.text.trim();
+      why = bypass.status === 200 && looksLikeSha(body) && body === expectBuildId
+        ? '；繞過快取拿到的是這次建的，所以部署成功，中間有一層快取還在送舊的'
+        : `；繞過快取拿到的是 ${brief(body)}，所以是部署沒有生效`;
+    } catch (error) {
+      why = `；繞過快取那次請求也失敗了：${error.message}`;
+    }
+    failures.push(`build-id — 線上是 ${live}，這次建的是 ${expectBuildId}${why}`);
   }
 }
 
