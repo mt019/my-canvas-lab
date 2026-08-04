@@ -1,6 +1,6 @@
 import React, { Suspense, lazy, useMemo } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useParams, Navigate } from 'react-router-dom';
-import { ArrowRight, AudioLines, BookMarked, CalendarDays, ChevronsDown, Droplets, FileSearch, Film, Gavel, Globe2, GraduationCap, Landmark, Languages, Mic, Music, Music2, NotebookPen, Palette, Piano, Puzzle, Receipt, Scale, ScrollText, ShieldAlert, Sigma, Wind } from 'lucide-react';
+import { ArrowRight, AudioLines, BookMarked, CalendarDays, ChevronsDown, Coins, Droplets, FileSearch, Film, Gavel, Globe2, GraduationCap, Landmark, Languages, Mic, Music, Music2, NotebookPen, Palette, Piano, Puzzle, Receipt, Scale, ScrollText, ShieldAlert, Sigma, Wind } from 'lucide-react';
 import SeoHead from './components/SeoHead';
 import ScrollToTop from './components/ScrollToTop';
 import BackToTop from './components/BackToTop';
@@ -397,6 +397,15 @@ const PAGE_META = { // token-exempt: per-page identity chip colors (data, not st
     group: 'corpus',
     externalUrl: 'https://judicial-translations.phenomcanvas.com/glossary/',
   },
+  FamilyWealth: {
+    name: 'Patrimonia｜家族財富研究室',
+    desc: '家族財富的跨法域知識體系：信託、繼承、稅制平行法域檔案，逐條讀最新規範',
+    Icon: Coins,
+    accent: '#ece1d4',
+    accentText: '#8a6035',
+    group: 'corpus',
+    externalUrl: 'https://wealth.phenomcanvas.com/',
+  },
   TaxLitigation: {
     name: '稅務訴訟計量研究',
     desc: '逐件讀司法院公開稅務判決：租稅協定被援引時法院怎麼判、撤銷判決撤的是原核定還是復查決定',
@@ -554,6 +563,12 @@ export default function App() {
         path: '/legalglossary',
         component: null,
         meta: PAGE_META.LegalGlossary,
+      },
+      {
+        name: 'FamilyWealth',
+        path: '/familywealth',
+        component: null,
+        meta: PAGE_META.FamilyWealth,
       },
     ];
   }, []);
