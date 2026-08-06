@@ -38,6 +38,23 @@ const walk = (dir, rel = '') => {
   }
 };
 walk(publicDir);
+
+// 第二關：vercel.json 要有一條把 /scripts/ 整個打成 404 的路由，而且排在 filesystem 之前。
+// 光是把檔案刪掉不夠——SPA 的 catch-all 會讓 /scripts/fjud.user.js 回 200 加一份 index.html，
+// 只看狀態碼的人（含複查的人）會以為東西還在。排在 filesystem 之前，是為了萬一哪天又有
+// .user.js 被放進 public/scripts/，那條路徑也端不出檔案來。
+const vercel = JSON.parse(readFileSync(join(ROOT, 'vercel.json'), 'utf8'));
+const routes = vercel.routes ?? [];
+const fsIndex = routes.findIndex((r) => r.handle === 'filesystem');
+const guardIndex = routes.findIndex((r) => r.src === '/scripts/(.*)' && r.status === 404);
+if (guardIndex === -1) {
+  failures.push('vercel.json：少了 { "src": "/scripts/(.*)", "status": 404 } 這條路由，'
+    + '/scripts/ 底下的網址會被 SPA catch-all 接成 200');
+} else if (fsIndex !== -1 && guardIndex > fsIndex) {
+  failures.push('vercel.json：/scripts/ 的 404 路由排在 filesystem 之後，'
+    + 'public/ 底下若有同名檔案仍會被端出來。要排在 filesystem 之前');
+}
+
 for (const f of strayScripts) {
   failures.push(
     `${f}：這個網域不可以端出可安裝的使用者腳本。\n`
