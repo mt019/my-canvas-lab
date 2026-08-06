@@ -2,6 +2,7 @@
   "regions": ["hnd1"],
   "git": { "deploymentEnabled": { "main": false } },
   "routes": [
+    { "src": "/(.*)", "has": [{ "type": "host", "value": "my-canvas-lab.vercel.app" }], "dest": "https://phenomcanvas.com/$1", "status": 308 },
     { "src": "/assets/(.*)", "headers": { "Cache-Control": "public, max-age=31536000, immutable" }, "continue": true },
     { "src": "/notes/deployment-manifest.json", "headers": { "Cache-Control": "no-store, max-age=0" }, "continue": true },
     { "src": "/constitutionalcourt", "dest": "https://cc.phenomcanvas.com/constitutionalcourt/", "status": 308 },
