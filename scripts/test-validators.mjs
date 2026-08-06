@@ -212,8 +212,7 @@ const cases = [
   {
     npmScript: 'validate:userscripts',
     script: 'scripts/validate-userscripts.mjs',
-    // 把第一支腳本在 userscripts.json 裡的版號改掉，跟 public/scripts/ 那份 .user.js
-    // 的 @version 對不上。
+    // 把第一支腳本的版號改掉，跟它自己版本紀錄最上面那條對不上（發版時漏寫一條的長相）。
     setup: () =>
       editedFile('src/data/userscripts.json', (src) => {
         const data = JSON.parse(src);
@@ -221,6 +220,21 @@ const cases = [
         data.scripts[0].version = '9.9.9-validator-test';
         return JSON.stringify(data, null, 2) + '\n';
       }),
+  },
+  {
+    npmScript: 'validate:userscripts',
+    label: 'validate:userscripts（安裝檔又出現在 public/）',
+    script: 'scripts/validate-userscripts.mjs',
+    // 這支閘現在最重要的一條：這個網域不准端出可安裝的使用者腳本。2026-08-06 就是因為
+    // public/scripts/ 放了三支 .user.js，整個 phenomcanvas.com 被 Safe Browsing 標成不實
+    // 網頁。來源倉的 sync 腳本以前會自動複製進來，所以要有東西擋著它被加回去。
+    // 夾具放 public/ 根目錄而不是 public/scripts/：那個目錄已經整個刪掉了，而這支閘本來
+    // 就是遞迴掃整個 public/，放在任何深度都該被抓到，放根目錄順便驗到遞迴有沒有生效。
+    setup: () =>
+      tempFile(
+        'public/validator-test.user.js',
+        '// ==UserScript==\n// @name test\n// ==/UserScript==\n',
+      ),
   },
   {
     npmScript: 'validate:synced',

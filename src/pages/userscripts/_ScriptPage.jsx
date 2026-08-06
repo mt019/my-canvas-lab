@@ -19,7 +19,7 @@ import data from '../../data/userscripts.json';
 export default function ScriptPage({ id }) {
   const [scale, setScale] = useFontScale();
   const entry = data.scripts.find((s) => s.id === id);
-  const install = `/scripts/${entry.file}`;
+  const install = entry.install;
 
   return (
     <DashboardLayout
@@ -89,9 +89,10 @@ export default function ScriptPage({ id }) {
           )}
         </ol>
 
-        {/* 靜態檔，不走 react-router：<a> 讓瀏覽器整頁請求它，腳本管理器才攔得到。 */}
+        {/* 安裝檔在 GitHub 上，不在這個網域：外連，腳本管理器會攔下 .user.js 跳出安裝畫面。 */}
         <a
           href={install}
+          rel="noopener"
           className="mt-6 inline-flex items-center gap-2 rounded-token-sm border border-accent px-4 py-2 text-token-sm text-accent transition-colors duration-fast hover:bg-accent hover:text-paper"
         >
           <Download size={15} className="shrink-0" />
@@ -99,7 +100,7 @@ export default function ScriptPage({ id }) {
         </a>
 
         <p className="mt-4 max-w-3xl text-token-sm leading-relaxed text-ink-muted">
-          這個網址同時是腳本宣告的更新來源，裝好的副本從此固定查它。原始碼在{' '}
+          安裝檔與更新來源都在 GitHub，這個網域不放安裝檔，只寫這幾頁說明。原始碼在{' '}
           <a
             href={entry.repo}
             className="underline decoration-line decoration-dotted underline-offset-[4px] transition-colors duration-fast hover:text-accent"

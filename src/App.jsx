@@ -199,7 +199,7 @@ const PAGE_META = { // token-exempt: per-page identity chip colors (data, not st
     group: 'tool',
   },
   // 使用者腳本區：總覽上首頁，三支各自的落地頁只從總覽進得去（listed: false）。
-  // 安裝檔本身是 public/scripts/ 的靜態檔，不是路由——validate:userscripts 檢查兩邊一致。
+  // 安裝檔不在這個網域（2026-08-06 起放 GitHub，見 validate:userscripts 開頭），這裡只有說明頁。
   Userscripts: {
     name: '使用者腳本',
     desc: '法規項次、社群貼文展開、裁判書一鍵查詢，三支自己在用的瀏覽器腳本',

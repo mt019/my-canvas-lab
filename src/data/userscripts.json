@@ -2,7 +2,7 @@
   "site": {
     "title": "使用者腳本",
     "eyebrow": "Userscripts",
-    "intro": "三支自己寫來自己用的瀏覽器腳本，裝在 Tampermonkey 這類腳本管理器裡執行。安裝檔都放在這個網域上，腳本自己也宣告了同一個網址當更新來源，所以裝好之後不管當初從哪裡裝的，都會回到這裡查新版。",
+    "intro": "三支自己寫來自己用的瀏覽器腳本，裝在 Tampermonkey 這類腳本管理器裡執行。安裝檔放在各自的 GitHub 倉，腳本也宣告同一個網址當更新來源；這幾頁只寫它們做什麼、要什麼權限、改過什麼。",
     "note": "原始碼在 GitHub，各頁附連結。三支都是 MIT 授權。"
   },
   "scripts": [
@@ -10,8 +10,9 @@
       "id": "law-item-labeler",
       "name": "法規條文項次顯示器",
       "latin": "Law Item Labeler",
-      "version": "1.10.0",
+      "version": "1.10.1",
       "file": "law-item-labeler.user.js",
+      "install": "https://mt019.github.io/law-item-labeler/law-item-labeler.user.js",
       "summary": "在全國法規資料庫的條文裡，把「第 X 項」直接寫成可以複製的文字。",
       "targetLabel": "全國法規資料庫",
       "repo": "https://github.com/mt019/law-item-labeler",
@@ -33,6 +34,13 @@
       "grantNote": "沒有宣告任何 GM_* 權限，只在上面兩個網址的頁面裡改動畫面，不讀也不送出任何資料。",
       "changelog": [
         {
+          "version": "1.10.1",
+          "date": "2026-08-06",
+          "notes": [
+            "安裝與更新來源改回各自的 GitHub 倉，這個網域不再放安裝檔。"
+          ]
+        },
+        {
           "version": "1.10.0",
           "date": "2026-07-29",
           "notes": [
@@ -52,8 +60,9 @@
       "id": "social-auto-expand",
       "name": "社群貼文自動展開",
       "latin": "Social Auto Expand",
-      "version": "2.1.0",
+      "version": "2.1.1",
       "file": "social-auto-expand.user.js",
+      "install": "https://raw.githubusercontent.com/mt019/social-auto-expand-userscript/main/social-auto-expand.user.js",
       "summary": "把 LinkedIn 與 Facebook 動態裡的「查看更多」自動按掉，貼文一次讀完。",
       "targetLabel": "LinkedIn、Facebook",
       "repo": "https://github.com/mt019/social-auto-expand-userscript",
@@ -87,6 +96,13 @@
       "grants": [],
       "grantNote": "沒有宣告任何 GM_* 權限。腳本做的事是在上列頁面裡點畫面上已經存在的按鈕，不讀取貼文內容、不對外送出任何東西。",
       "changelog": [
+        {
+          "version": "2.1.1",
+          "date": "2026-08-06",
+          "notes": [
+            "安裝與更新來源改回各自的 GitHub 倉，這個網域不再放安裝檔。"
+          ]
+        },
         {
           "version": "2.1.0",
           "date": "2026-07-29",
@@ -122,8 +138,9 @@
       "id": "fjud",
       "name": "裁判書一鍵查詢",
       "latin": "FJUD Quick Query",
-      "version": "1.2.0",
+      "version": "1.2.1",
       "file": "fjud.user.js",
+      "install": "https://raw.githubusercontent.com/mt019/fjud-userscript/main/dist/fjud.user.js",
       "summary": "在任何頁面選一段文字，按快捷鍵，直接開司法院裁判書系統並送出查詢。",
       "targetLabel": "司法院裁判書系統",
       "repo": "https://github.com/mt019/fjud-userscript",
@@ -166,6 +183,13 @@
       ],
       "grantNote": "@match *://*/* 涵蓋所有網站，這一點值得知道：腳本會在你開的每個頁面上執行。它在那些頁面上只註冊一個鍵盤監聽器，等 Cmd/Ctrl + Shift + P；沒有按到那組鍵就什麼都不做，也不會讀取或送出頁面內容。原始碼很短，介意的話可以整份讀完再裝。",
       "changelog": [
+        {
+          "version": "1.2.1",
+          "date": "2026-08-06",
+          "notes": [
+            "安裝與更新來源改回各自的 GitHub 倉，這個網域不再放安裝檔。"
+          ]
+        },
         {
           "version": "1.2.0",
           "date": "2026-07-29",
