@@ -103,7 +103,7 @@ Pages 偷加尾斜線，最後驗 404、Functions 與 109 條 canonical。`/api/
 Pages Functions；PDF 白名單與原快取／inline 行為保留。
 
 Home 本機倉在 `../phenom-home`，checkpoint `7290d7d`；ops 控制平面在 `../phenom-ops`，checkpoint
-`e6f269c`。ops 的 preview workflow 會把兩站的 `dist/` 與 `functions/` 打成同一份 immutable artifact，
+`35db9d6`。ops 的 preview workflow 會把兩站的 `dist/` 與 `functions/` 打成同一份 immutable artifact，
 production 只下載並 promotion，不 rebuild；production 與 DNS 是兩個不同 gate，rollback 只接受已登記
 的 Home／Canvas production deployment。正式指令與紀錄格式見 `phenom-ops/docs/runbooks/apex-canvas-cutover.md`。
 本機 Wrangler 雙站 smoke 已驗 Home／Canvas 路由、108 條精確舊路徑 308、真 404、Notes noindex/no-store、
