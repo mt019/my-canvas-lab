@@ -10,6 +10,7 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
+.wrangler/
 *.local
 
 # 寫共用 dist/ 的建置在整段期間握著這把鎖（scripts/dist-target.mjs），結束就刪。

@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { hasEnglishVersion, pathForLanguage, splitLanguagePath } from '../lib/siteLanguages';
 
 const STORAGE_KEY = 'canvaslab:lang';
 
@@ -8,7 +10,12 @@ const STORAGE_KEY = 'canvaslab:lang';
  * zero cost and untranslated strings fall back to the original.
  */
 export function useLang(dict = {}) {
-  const [lang, setLang] = useState(() => {
+  const { pathname, search, hash } = useLocation();
+  const navigate = useNavigate();
+  const indexedLanguageVariant = hasEnglishVersion(pathname);
+  const urlLanguage = splitLanguagePath(pathname).language === 'en' ? 'en' : 'zh';
+  const [lang, setLangState] = useState(() => {
+    if (indexedLanguageVariant) return urlLanguage;
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved === 'zh' || saved === 'en') return saved;
@@ -17,11 +24,24 @@ export function useLang(dict = {}) {
   });
 
   useEffect(() => {
+    if (indexedLanguageVariant) setLangState(urlLanguage);
+  }, [indexedLanguageVariant, urlLanguage]);
+
+  useEffect(() => {
     try {
       localStorage.setItem(STORAGE_KEY, lang);
     } catch { /* ignore */ }
-    document.documentElement.lang = lang === 'en' ? 'en' : 'zh-Hant';
+    document.documentElement.lang = lang === 'en' ? 'en' : 'zh-Hant-TW';
   }, [lang]);
+
+  const setLang = useCallback((next) => {
+    const language = next === 'en' ? 'en' : 'zh';
+    if (hasEnglishVersion(pathname)) {
+      navigate(`${pathForLanguage(pathname, language)}${search}${hash}`);
+      return;
+    }
+    setLangState(language);
+  }, [navigate, pathname, search, hash]);
 
   const t = useCallback(
     (text) => (lang !== 'en' ? text : dict[text] ?? text),

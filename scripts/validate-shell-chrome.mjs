@@ -157,13 +157,16 @@ for (const path of routePages) {
 // 大標題根本不是連結。這一節把它變成機械檢查，逐條路由算一次。
 const { backFor, siteHomeFor } = await import('../src/backNav.js');
 const { collectRoutes } = await import('./routes.mjs');
+const { splitLanguagePath } = await import('../src/lib/siteLanguages.js');
 
 const allRoutes = (await collectRoutes()).map((r) => (typeof r === 'string' ? r : r.path ?? r.url));
 const routeSet = new Set(allRoutes.map((p) => (p.length > 1 ? p.replace(/\/+$/, '') : p)));
 const depth = (p) => p.split('/').filter(Boolean).length;
 
 for (const route of allRoutes) {
-  const inner = depth(route) > 1;
+  // A locale prefix is routing infrastructure, not another level in the site's
+  // information architecture. /en/statisticslab is still the topic homepage.
+  const inner = depth(splitLanguagePath(route).basePath) > 1;
   const back = backFor(route);
 
   if (inner) {

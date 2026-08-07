@@ -34,6 +34,50 @@
   background: color-mix(in oklab, var(--c-ink) 40%, transparent);
 }
 
+/*
+ * 正文標記——舊書的圈點。與共用包 @phenomcanvas/ui 的 styles/marks.css 是同一份，
+ * 改一邊要改兩邊。母本寫類別不寫樣式，所以同一份標記出得了網頁與 xeCJK 兩種版；
+ * 完整規格在 phenom-wealth-data/engineering/text-marks.md。
+ *
+ * 位置一律 under right：中文的著重號在字的右下。skip-ink 關掉是必要的，預設值會在有
+ * 下伸筆畫的地方把線斷開（Safari 尤其明顯），一條波浪線被切成幾截就認不出是書名號。
+ * 記號用的是字型裡的 • 與 ○（U+2022、U+25CB），換字型或重做子集要一起確認。
+ */
+.text-mark[data-mark='term'] {
+  text-emphasis: filled dot;
+  text-emphasis-position: under right;
+}
+
+.text-mark[data-mark='proper'] {
+  text-decoration-line: underline;
+  text-decoration-style: solid;
+  text-decoration-thickness: from-font;
+  text-decoration-color: color-mix(in oklab, currentColor 40%, transparent);
+  text-decoration-skip-ink: none;
+  text-underline-offset: 0.18em;
+}
+
+.text-mark[data-mark='title'] {
+  text-decoration-line: underline;
+  text-decoration-style: wavy;
+  text-decoration-color: color-mix(in oklab, currentColor 40%, transparent);
+  text-decoration-skip-ink: none;
+  text-underline-offset: 0.2em;
+}
+
+/* 作者強調給空心圈：實心點留給專門用語，那是讀者最需要辨識的東西。 */
+.phenom-emphasis {
+  font-weight: 400;
+  text-emphasis: open circle;
+  text-emphasis-position: under right;
+}
+
+[data-marks='off'] .text-mark,
+[data-marks='off'] .phenom-emphasis {
+  text-emphasis: none;
+  text-decoration-line: none;
+}
+
 /* 站內數值滑桿：避免瀏覽器／作業系統原生 thumb 跳離 Canvas 控制項語彙。 */
 .canvas-range {
   height: 1.25rem;

@@ -44,6 +44,76 @@ copy. When writing digest/topic prose, narrate what a *reader* learns
 - 部署順序不能反：**先接通域名、確認 `https://phenomcanvas.com` 真的開得起來，再改那三處推上去**。
   反過來會讓全站 canonical 指向一個還不存在的主機。
 
+## 多語言 SEO／AEO（2026-08-07）
+
+`phenomcanvas.com` 是個人品牌主網域，不是只容納研究專案的產品網域。既有中文網址永久保留；
+確有完整英文內容的頁面另以 `/en/...` 建立可索引網址。**不要因為畫面上有語言切換器，就假設
+該頁可以發英文索引版**：英文 stub、翻譯不完整或仍會大量 fallback 中文的頁面都不登記。
+
+單一來源是 `src/lib/siteLanguages.js`。它同時決定：
+
+- React 是否建立 `/en/...` 路由；
+- 語言切換是否真的換網址；
+- prerender／sitemap 是否收錄該語言版本；
+- `<html lang>`、canonical、`hreflang` 與 `x-default`；
+- 英文站內文章連結是否留在英文空間。
+
+新增英文索引頁時，先確認英文正文完整，再把中文 base route 加進該 manifest，並在 `PAGE_META`
+補 `en.name`／`en.desc`。不要在 `App.jsx`、sitemap 與 prerender 各加一份清單。中文沿用原 URL，
+英文用 `/en` 前綴；`scripts/validate-prerender.mjs` 會逐頁擋空殼、錯誤語言、自指 canonical 與
+不成對 alternate。完整驗收跑 `npm run verify:full`。
+
+全站結構化資料保留 `Phenom Canvas Lab` 這個 Organization，同時用 `/#person` 的 `Phenom`
+Person 節點把個人品牌、網站 creator 與文章 author 接起來。將來公開真實姓名或穩定外部身分頁時，
+只擴充這一個 Person 節點，不在各頁另造人物。
+
+**Notes 明确不参加这轮 SEO／AEO。** Canvas 的 route collector、sitemap 与 prerender 本来就不含
+Notes；但 `/notes/` 由独立 `phenom-notes` 项目在同一主网域下输出，它目前另有未完成工作树改动，
+本轮没有覆盖。要完全退出索引，必须等那批改动收口后，在 Notes 自己的静态渲染、sitemap 与
+validator 一起改成 noindex／不列 sitemap；只改 Canvas 不等于 Notes 已退索引。
+
+### 高階中文私人對談
+
+服務頁有三個完整索引版本：`/mandarin-dialogue`、`/de/mandarin-dialogue`、
+`/en/mandarin-dialogue`。德文負責德語區獲客，英文是次要國際入口，繁中是品牌原文；實際服務與
+Cal.com 的篩選問題全部使用中文。頁面預設 CTA 指向 `https://cal.com/eva-wang/first`，仍可用
+`VITE_BOOKING_URL` 覆寫，但 production 不應再出現無法預約的複製文字 fallback。
+
+Cal.com 目前有兩個已驗證的 PayPal 付費活動：
+
+- 公開初談：`/eva-wang/first`，25 分鐘、€39；三個必答中文問題，活動前後各 10 分鐘，每日最多
+  3 場，至少提前一天，開放未來 30 個日曆日。
+- 隱藏正式對談：`/eva-wang/dialogue`，50 分鐘、€69；只交給通過初談的客戶，同樣使用前後
+  10 分鐘、每日最多 3 場、提前 24 小時與 30 個日曆日限制。
+
+兩者都使用 Cal Video，取消原因由參與者填寫，取消與改期功能保留。公開頁已測到付款前一步，
+不得在自動測試中送出預約或觸發 PayPal 交易。可錄製的中文自介稿、升價條件、30／60／90 天指標
+與分發邊界在 `brand/mandarin-dialogue-launch.md`。
+
+Notes 已在 Canvas 的 PAGE_META 設為 `listed: false`，因此不再由 `/all` 卡片或首頁 ItemList
+結構化資料助推；Notes 子站自身的 noindex 仍是另一個專案的後續工作。
+
+### 商業上線前的託管 gate
+
+長期終局已定為 Cloudflare，不升級 Vercel Pro：`phenomcanvas.com` 由獨立 `phenom-home` 提供個人
+品牌入口、`/all` 與三條高階中文服務頁；本倉在 `canvas.phenomcanvas.com` 提供研究目錄與 109 條
+Canvas 索引路由。Canvas 的 Cloudflare 建置入口是 `npm run build:cloudflare`：它固定 canonical origin、
+拒絕缺少或被遮蔽的 Supabase browser config、預渲染、把 route/index.html 攤平成 route.html 以避免
+Pages 偷加尾斜線，最後驗 404、Functions 與 109 條 canonical。`/api/pdf`、OpenTix 代理已移成窄範圍
+Pages Functions；PDF 白名單與原快取／inline 行為保留。
+
+Home 本機倉在 `../phenom-home`，checkpoint `7290d7d`；ops 控制平面在 `../phenom-ops`，checkpoint
+`e6f269c`。ops 的 preview workflow 會把兩站的 `dist/` 與 `functions/` 打成同一份 immutable artifact，
+production 只下載並 promotion，不 rebuild；production 與 DNS 是兩個不同 gate，rollback 只接受已登記
+的 Home／Canvas production deployment。正式指令與紀錄格式見 `phenom-ops/docs/runbooks/apex-canvas-cutover.md`。
+本機 Wrangler 雙站 smoke 已驗 Home／Canvas 路由、108 條精確舊路徑 308、真 404、Notes noindex/no-store、
+PDF SSRF 阻擋、OpenTix parity、Supabase config、canonical 與尾斜線，10/10 通過。
+
+仍未做且不得順手做：建立／公開 `phenom-home` GitHub repo、push 任一 checkpoint、Cloudflare preview、
+production promotion、custom-domain attach、DNS 切換、Vercel 移除。Vercel production 是切換後 7–14 天
+的回退目標；完成觀察窗前不可刪。`mandarin.phenomcanvas.com` 如將來建立，只作到主網域德文 canonical
+的永久轉址，不另放一份索引內容。
+
 ## 使用者腳本搬到自有域名（2026-07-29）
 
 三支油猴腳本的正式安裝檔現在是 `https://phenomcanvas.com/scripts/<檔名>.user.js`，落地頁在

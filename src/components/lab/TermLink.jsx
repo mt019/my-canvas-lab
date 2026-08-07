@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import HoverCard from './HoverCard';
+import { pathForLanguage } from '../../lib/siteLanguages';
 
 /*
  * A term marker on a word. Hover it and the definition arrives in place — one
@@ -31,7 +32,7 @@ export default function TermLink({ term, lang = 'zh', children }) {
         <span className="mt-1.5 block border-l-2 border-line pl-2 text-ink-faint">{example}</span>
       ) : null}
       <Link
-        to={term.route}
+        to={pathForLanguage(term.route, lang)}
         className="mt-2 inline-flex items-center gap-1 text-accent hover:underline"
       >
         {en ? 'Full entry' : '完整說明'} <ArrowRight size={11} />
