@@ -48,6 +48,7 @@ export const INDEX = { href: '/all', label: '全部' };
  * （2026-07-28 的教訓：分頁按鈕連到一條查不到 slug 的路由，用 `?tab=` 進頁反而繞過了它）。
  */
 const SITE_HOMES = [
+  ['/en/statistics/', { href: '/en/statisticslab', label: 'Statistics Lab' }],
   ['/constitutionalcourt/case/', { href: '/constitutionalcourt', label: '案件索引' }],
   ['/constitutionalcourt/justices/', { href: '/constitutionalcourt', label: '案件索引' }],
   ['/constitutionalcourt/', { href: '/constitutionalcourt', label: '案件索引' }],

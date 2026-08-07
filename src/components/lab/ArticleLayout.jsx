@@ -1,6 +1,7 @@
 import { useRef } from 'react';
 import { SHELL_PAD_X_RAIL } from '../shellPadding';
 import { Link } from 'react-router-dom';
+import { pathForLanguage } from '../../lib/siteLanguages';
 import TableOfContents from './TableOfContents';
 import useHeadings from './useHeadings';
 import PageIdentity from '../PageIdentity';
@@ -120,7 +121,7 @@ export function ArticleNav({ topics = [], articles = [], currentSlug, homeHref, 
   return (
     <nav aria-label={homeLabel} className="text-token-xs">
       <Link
-        to={homeHref}
+        to={pathForLanguage(homeHref, lang)}
         className="mb-4 block font-accent uppercase tracking-[0.12em] text-ink-faint transition-colors duration-fast hover:text-accent"
       >
         {homeLabel}
@@ -137,7 +138,7 @@ export function ArticleNav({ topics = [], articles = [], currentSlug, homeHref, 
                 return (
                   <li key={a.slug}>
                     <Link
-                      to={a.route}
+                      to={pathForLanguage(a.route, lang)}
                       className="-ml-px block border-l-2 py-1 pl-3 leading-snug transition-colors duration-fast"
                       style={{
                         borderColor: on ? 'var(--c-accent)' : 'transparent',

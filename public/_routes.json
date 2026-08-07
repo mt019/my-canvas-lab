@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "include": [
+    "/api/pdf",
+    "/api/opentix/search",
+    "/api/opentix-csm/*"
+  ],
+  "exclude": []
+}

@@ -7,6 +7,7 @@ import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { ROOT } from './site-config.mjs';
 import { ZJH_TAB_SLUGS } from '../src/pages/_zhu-jiahua/seo.js';
+import { localizedIndexRoutes } from '../src/lib/siteLanguages.js';
 
 const PAGES = join(ROOT, 'src', 'pages');
 const kebab = (s) => s.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();
@@ -14,7 +15,11 @@ const kebab = (s) => s.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();
 // Statistics Lab hub's 術語表 tab. The file stays only to redirect old links, so
 // it is kept out of prerender and the sitemap (no duplicate of the tab's content).
 const NOINDEX = new Set(['PaletteLab', 'TaipeiFilmFestival', 'Glossary', 'Tags', 'Notes']);
-const PARAM_ROUTES = { GlossaryTerm: '/statistics/glossary/:slug', TagPage: '/statistics/tags/:slug' };
+const PARAM_ROUTES = {
+  GlossaryTerm: '/statistics/glossary/:slug',
+  TagPage: '/statistics/tags/:slug',
+  Dialogue: '/mandarin-dialogue',
+};
 
 function walkPages(dir, rel = '') {
   const out = [];
@@ -66,11 +71,14 @@ function chenYinkeSelectionRoutes() {
 }
 
 export function collectRoutes() {
-  // '/' is the glitch front door; '/all' is the project index it hides behind.
-  const routes = new Set(['/', '/all']);
+  const canvasBuild = process.env.VITE_DEPLOY_TARGET === 'canvas';
+  // Cloudflare Canvas owns a research-only directory at its root. The personal
+  // front door, /all, and the Mandarin service remain exclusively on the apex.
+  const routes = new Set(canvasBuild ? ['/'] : ['/', '/all']);
   for (const rel of walkPages(PAGES)) {
     const name = rel.replace(/\.(jsx|tsx)$/, '').split('/').pop();
     if (NOINDEX.has(name)) continue;
+    if (canvasBuild && name === 'Dialogue') continue;
     const route = routeFor(rel);
     if (route === '/statistics/glossary/:slug') {
       for (const slug of glossarySlugs()) routes.add(`/statistics/glossary/${slug}`);
@@ -82,5 +90,5 @@ export function collectRoutes() {
   }
   for (const slug of ZJH_TAB_SLUGS) routes.add(`/zhujiahua/${slug}`);
   for (const route of chenYinkeSelectionRoutes()) routes.add(route);
-  return [...routes].sort();
+  return localizedIndexRoutes([...routes]);
 }

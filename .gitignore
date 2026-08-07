@@ -10,6 +10,7 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
+.wrangler/
 *.local
 
 # 寫共用 dist/ 的建置在整段期間握著這把鎖（scripts/dist-target.mjs），結束就刪。
@@ -65,3 +66,6 @@ public/notes-assets/
 # 一次性的探勘腳本（.t-*.mjs）：本機用完即丟，常帶絕對路徑與外部來源識別碼。
 # 這是公開倉，一次 git add -A 就會把它們推上去。
 .t-*.mjs
+
+# 服務的經營資料（自介稿、定價策略、頭像）住私有倉 phenom-mandarin，不進這個公開倉。
+brand/

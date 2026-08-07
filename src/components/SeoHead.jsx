@@ -1,5 +1,6 @@
 import { useEffect, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
+import { languageAlternates, splitLanguagePath } from '../lib/siteLanguages';
 
 // Do not fall back to a third-party domain. Set VITE_SITE_URL in production
 // when a fixed public URL is needed; local previews use their current origin.
@@ -11,6 +12,21 @@ const DEFAULT_OG_IMAGE = `${SITE_URL}/og-default.png`;
 const LOGO = `${SITE_URL}/phenom-ring.svg`;
 const SITE_NAME = 'Phenom Canvas Lab';
 const SITE_DESC = '憲法法庭、稅務訴訟、陳寅恪、朱家驊、司法院外國法譯本、統計，以及幾個自己在用的工具。';
+const SITE_DESC_EN = 'Research canvases on law, public affairs, history, statistics, translation, and tools by Phenom.';
+const SITE_DESC_DE = 'Forschungsessays zu Recht, Gesellschaft, Geschichte und Statistik sowie ausgewählte private Angebote von Phenom.';
+
+// phenomcanvas.com is the owner's personal-brand domain. Keep the visible brand
+// as the publishing organisation, but connect every page to the person behind it
+// so answer engines do not resolve the site as an anonymous content warehouse.
+const PERSON = {
+  '@type': 'Person',
+  '@id': `${SITE_URL}/#person`,
+  name: 'Eva Wang',
+  alternateName: 'Phenom',
+  url: `${SITE_URL}/`,
+  image: LOGO,
+  sameAs: ['https://cal.com/eva-wang'],
+};
 
 // Publisher/author node, referenced by @id from every page so answer engines
 // resolve one consistent entity for the site rather than an anonymous string.
@@ -20,6 +36,7 @@ const PUBLISHER = {
   name: SITE_NAME,
   url: `${SITE_URL}/`,
   logo: { '@type': 'ImageObject', url: LOGO },
+  founder: { '@id': `${SITE_URL}/#person` },
 };
 
 function setMeta(attribute, key, content) {
@@ -46,32 +63,47 @@ function setLink(rel, href) {
   node.setAttribute('href', href);
 }
 
+function setAlternateLinks(alternates) {
+  document.head.querySelectorAll('link[data-seo-alternate]').forEach((node) => node.remove());
+  for (const alternate of alternates) {
+    const node = document.createElement('link');
+    node.rel = 'alternate';
+    node.hreflang = alternate.hreflang;
+    node.href = `${SITE_URL}${alternate.path}`;
+    node.dataset.seoAlternate = 'true';
+    document.head.appendChild(node);
+  }
+}
+
 /** Keeps route identity, sharing metadata, and schema.org in one place.
  * The JSON-LD describes only visible page content: page identity, the site's
  * own directory (itemList, passed only where those links are on screen), and
  * the publishing organisation. It does not invent FAQs, ratings, or dates. */
 export default function SeoHead({ page, itemList }) {
   const { pathname } = useLocation();
+  const { language } = splitLanguagePath(pathname);
+  const isEnglish = language === 'en';
+  const isGerman = language === 'de';
   const url = `${SITE_URL}${pathname === '/' ? '/' : pathname}`;
   const ogImage = page?.image || (pathname === '/' ? DEFAULT_OG_IMAGE : null);
   const metadata = useMemo(() => ({
     title: page?.title || 'Phenom Canvas Lab',
-    description: page?.description || '憲法法庭、稅務訴訟、陳寅恪、朱家驊、司法院外國法譯本、統計，以及幾個自己在用的工具。',
+    description: page?.description || (isEnglish ? SITE_DESC_EN : isGerman ? SITE_DESC_DE : SITE_DESC),
     type: page?.type || 'WebPage',
     indexable: page?.indexable !== false,
     name: page?.name,
     keywords: page?.keywords,
     parent: page?.parent,
     buildSchema: page?.buildSchema,
-  }), [page]);
+  }), [page, isEnglish, isGerman]);
 
   useEffect(() => {
     document.title = metadata.title;
-    document.documentElement.lang = 'zh-Hant-TW';
+    document.documentElement.lang = language;
     setMeta('name', 'description', metadata.description);
     setMeta('name', 'robots', metadata.indexable ? 'index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1' : 'noindex,nofollow');
     setMeta('property', 'og:type', metadata.type === 'Article' ? 'article' : 'website');
-    setMeta('property', 'og:locale', 'zh_TW');
+    setMeta('property', 'og:locale', isEnglish ? 'en_US' : isGerman ? 'de_DE' : 'zh_TW');
     setMeta('property', 'og:site_name', SITE_NAME);
     setMeta('property', 'og:title', metadata.title);
     setMeta('property', 'og:description', metadata.description);
@@ -96,6 +128,7 @@ export default function SeoHead({ page, itemList }) {
     if (metadata.keywords) setMeta('name', 'keywords', metadata.keywords);
     else removeMeta('name', 'keywords');
     setLink('canonical', url);
+    setAlternateLinks(languageAlternates(pathname));
 
     const isArticle = metadata.type === 'Article';
     const primary = {
@@ -104,21 +137,22 @@ export default function SeoHead({ page, itemList }) {
       url,
       name: metadata.title,
       description: metadata.description,
-      inLanguage: 'zh-Hant-TW',
+      inLanguage: language,
       isPartOf: { '@id': `${SITE_URL}/#website` },
       ...(ogImage ? { primaryImageOfPage: ogImage } : {}),
       ...(isArticle ? {
         headline: metadata.name || metadata.title,
         ...(ogImage ? { image: ogImage } : {}),
-        author: { '@id': `${SITE_URL}/#org` },
+        author: { '@id': `${SITE_URL}/#person` },
         publisher: { '@id': `${SITE_URL}/#org` },
         mainEntityOfPage: url,
       } : {}),
     };
 
     const graph = [
+      PERSON,
       PUBLISHER,
-      { '@type': 'WebSite', '@id': `${SITE_URL}/#website`, url: `${SITE_URL}/`, name: SITE_NAME, inLanguage: 'zh-Hant-TW', description: SITE_DESC, publisher: { '@id': `${SITE_URL}/#org` } },
+      { '@type': 'WebSite', '@id': `${SITE_URL}/#website`, url: `${SITE_URL}/`, name: SITE_NAME, inLanguage: ['zh-Hant-TW', 'de', 'en'], description: SITE_DESC, creator: { '@id': `${SITE_URL}/#person` }, publisher: { '@id': `${SITE_URL}/#org` } },
       primary,
       { '@type': 'BreadcrumbList', itemListElement: [
         { '@type': 'ListItem', position: 1, name: SITE_NAME, item: `${SITE_URL}/` },
@@ -132,7 +166,7 @@ export default function SeoHead({ page, itemList }) {
     // Page-supplied extra schema nodes (e.g. the archive Dataset). The function
     // receives the resolved origin and page URL so it can emit absolute @ids.
     if (typeof metadata.buildSchema === 'function') {
-      const extra = metadata.buildSchema(SITE_URL, url);
+      const extra = metadata.buildSchema(SITE_URL, url, language);
       if (Array.isArray(extra)) graph.push(...extra);
     }
 
@@ -163,7 +197,7 @@ export default function SeoHead({ page, itemList }) {
       document.head.appendChild(script);
     }
     script.textContent = JSON.stringify({ '@context': 'https://schema.org', '@graph': graph });
-  }, [metadata, pathname, url, ogImage, itemList]);
+  }, [metadata, pathname, url, ogImage, itemList, language, isEnglish, isGerman]);
 
   return null;
 }

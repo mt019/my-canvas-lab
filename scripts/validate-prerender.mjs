@@ -9,9 +9,10 @@
 // 渲染成白畫面，都會在這裡停下。
 import { readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
-import { ROOT } from './site-config.mjs';
+import { ROOT, SITE_URL } from './site-config.mjs';
 import { DIST } from './dist-target.mjs';
 import { collectRoutes } from './routes.mjs';
+import { languageAlternates, splitLanguagePath } from '../src/lib/siteLanguages.js';
 
 if (process.env.PRERENDER === '0') {
   console.log('validate:prerender — 跳過（PRERENDER=0，本來就沒有預先渲染）');
@@ -53,6 +54,20 @@ for (const route of routes) {
   }
   if (!html.includes('data-seo-schema')) {
     failures.push(`${route} — 沒有結構化資料，SeoHead 沒跑完`);
+  }
+  const expectedLang = splitLanguagePath(route).language;
+  if (!html.includes(`<html lang="${expectedLang}"`)) {
+    failures.push(`${route} — html lang 不是 ${expectedLang}`);
+  }
+  const expectedCanonical = `${SITE_URL}${route === '/' ? '/' : encodeURI(route)}`;
+  if (!html.includes(`<link rel="canonical" href="${expectedCanonical}"`)) {
+    failures.push(`${route} — canonical 不是自己（${expectedCanonical}）`);
+  }
+  for (const alternate of languageAlternates(route)) {
+    const href = `${SITE_URL}${encodeURI(alternate.path)}`;
+    if (!html.includes(`hreflang="${alternate.hreflang}"`) || !html.includes(`href="${href}"`)) {
+      failures.push(`${route} — 缺少 ${alternate.hreflang} alternate（${href}）`);
+    }
   }
   // Vercel Analytics 的腳本標籤不該留在產物裡。<Analytics /> 是在 useEffect 裡把它
   // 塞進 head 的，而 prerender 抓的是 hydrate 之後的 DOM，所以不特別處理就會被存進

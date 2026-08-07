@@ -167,6 +167,10 @@ async function main() {
     // 2026-07-29：SPA 直導時，憲法法庭案件頁把先前訪過案件的展開全文也烤了進來。
     // 雙 rAF 等 unmount 的 commit 落地。
     await page.evaluate((shellHrefs) => {
+      // A visitor's language preference is useful at runtime, but a warm
+      // prerender tab must not carry one page's toggle into the next route's
+      // static HTML. URL language is the only source of truth for the artifact.
+      localStorage.removeItem('canvaslab:lang');
       window.history.pushState({}, '', '/__prerender-reset__');
       window.dispatchEvent(new PopStateEvent('popstate'));
       // 這一刻 head 裡的 preload 都是先前那些頁的相依（殼自帶的除外），對接下來要渲染
@@ -224,6 +228,7 @@ async function main() {
   let nextSlice = 0;
   async function worker() {
     const page = await browser.newPage();
+    await page.addInitScript(() => localStorage.removeItem('canvaslab:lang'));
     for (let s = nextSlice++; s < slices.length; s = nextSlice++) {
       let warm = false; // 這個片裡是否已有載入完成的 app 可以做熱導航
       for (const route of slices[s]) {
