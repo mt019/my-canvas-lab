@@ -72,23 +72,22 @@ Notes；但 `/notes/` 由独立 `phenom-notes` 项目在同一主网域下输出
 本轮没有覆盖。要完全退出索引，必须等那批改动收口后，在 Notes 自己的静态渲染、sitemap 与
 validator 一起改成 noindex／不列 sitemap；只改 Canvas 不等于 Notes 已退索引。
 
-### 高階中文私人對談
+### 高階中文私人對談（服務已移出本倉，2026-08-08 更正）
 
-服務頁有三個完整索引版本：`/mandarin-dialogue`、`/de/mandarin-dialogue`、
-`/en/mandarin-dialogue`。德文負責德語區獲客，英文是次要國際入口，繁中是品牌原文；實際服務與
-Cal.com 的篩選問題全部使用中文。頁面預設 CTA 指向 `https://cal.com/eva-wang/first`，仍可用
-`VITE_BOOKING_URL` 覆寫，但 production 不應再出現無法預約的複製文字 fallback。
+**這個服務不再由本倉提供，本節只記邊界。** 產品的家是私有倉 `phenom-mandarin`
+（`mandarin.phenomcanvas.com`），`phenom-home` 的 `c158474` 已把 apex 的三條路徑
+`/mandarin-dialogue`、`/de/mandarin-dialogue`、`/en/mandarin-dialogue` 改成 308 轉到該子網域。
+本節先前寫的「`mandarin.phenomcanvas.com` 如將來建立，只作到主網域的永久轉址，不另放一份索引
+內容」已經反過來了：內容在子網域，轉址在 apex。
 
-Cal.com 目前有兩個已驗證的 PayPal 付費活動：
+本倉的 Cloudflare 建置本來就排除這一頁（`scripts/routes.mjs` 的 `canvasBuild && name === 'Dialogue'`），
+但 `src/pages/mandarin/Dialogue.jsx` 與 `App.jsx` 的 `Dialogue` meta 仍留著一份平行副本，現行的
+Vercel 建置照樣會輸出它。**這是待裁定事項，不要順手刪**：刪掉之後、`mandarin` 子網域上線之前，
+apex 的 308 會轉到一個還不存在的主機。順序是先確認子網域可用，再收本倉的副本。
 
-- 公開初談：`/eva-wang/first`，25 分鐘、€39；三個必答中文問題，活動前後各 10 分鐘，每日最多
-  3 場，至少提前一天，開放未來 30 個日曆日。
-- 隱藏正式對談：`/eva-wang/dialogue`，50 分鐘、€69；只交給通過初談的客戶，同樣使用前後
-  10 分鐘、每日最多 3 場、提前 24 小時與 30 個日曆日限制。
-
-兩者都使用 Cal Video，取消原因由參與者填寫，取消與改期功能保留。公開頁已測到付款前一步，
-不得在自動測試中送出預約或觸發 PayPal 交易。可錄製的中文自介稿、升價條件、30／60／90 天指標
-與分發邊界在 `brand/mandarin-dialogue-launch.md`。
+定價、Cal.com 活動設定、可錄製的自介稿、升價條件與 30／60／90 天指標都是經營資料，
+**家在 `phenom-mandarin` 的 `brand/`（私有倉）**。本倉是公開倉，`brand/` 已從追蹤與歷史中移除，
+`.gitignore` 也擋著，不要再放回來。
 
 Notes 已在 Canvas 的 PAGE_META 設為 `listed: false`，因此不再由 `/all` 卡片或首頁 ItemList
 結構化資料助推；Notes 子站自身的 noindex 仍是另一個專案的後續工作。
@@ -96,7 +95,8 @@ Notes 已在 Canvas 的 PAGE_META 設為 `listed: false`，因此不再由 `/all
 ### 商業上線前的託管 gate
 
 長期終局已定為 Cloudflare，不升級 Vercel Pro：`phenomcanvas.com` 由獨立 `phenom-home` 提供個人
-品牌入口、`/all` 與三條高階中文服務頁；本倉在 `canvas.phenomcanvas.com` 提供研究目錄與 109 條
+品牌入口與 `/all`（服務頁已於 `c158474` 移出，改 308 轉到 `mandarin.phenomcanvas.com`）；
+本倉在 `canvas.phenomcanvas.com` 提供研究目錄與 109 條
 Canvas 索引路由。Canvas 的 Cloudflare 建置入口是 `npm run build:cloudflare`：它固定 canonical origin、
 拒絕缺少或被遮蔽的 Supabase browser config、預渲染、把 route/index.html 攤平成 route.html 以避免
 Pages 偷加尾斜線，最後驗 404、Functions 與 109 條 canonical。`/api/pdf`、OpenTix 代理已移成窄範圍
@@ -111,8 +111,8 @@ PDF SSRF 阻擋、OpenTix parity、Supabase config、canonical 與尾斜線，10
 
 仍未做且不得順手做：建立／公開 `phenom-home` GitHub repo、push 任一 checkpoint、Cloudflare preview、
 production promotion、custom-domain attach、DNS 切換、Vercel 移除。Vercel production 是切換後 7–14 天
-的回退目標；完成觀察窗前不可刪。`mandarin.phenomcanvas.com` 如將來建立，只作到主網域德文 canonical
-的永久轉址，不另放一份索引內容。
+的回退目標；完成觀察窗前不可刪。`mandarin.phenomcanvas.com` 的內容由私有倉 `phenom-mandarin`
+提供，不由本倉輸出；本倉留著的 `Dialogue` 副本何時收，見上一節的待裁定。
 
 ## 使用者腳本搬到自有域名（2026-07-29）
 
