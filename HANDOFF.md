@@ -80,12 +80,16 @@ validator 一起改成 noindex／不列 sitemap；只改 Canvas 不等于 Notes 
 本節先前寫的「`mandarin.phenomcanvas.com` 如將來建立，只作到主網域的永久轉址，不另放一份索引
 內容」已經反過來了：內容在子網域，轉址在 apex。
 
-本倉的 Cloudflare 建置本來就排除這一頁（`scripts/routes.mjs` 的 `canvasBuild && name === 'Dialogue'`），
-但 `src/pages/mandarin/Dialogue.jsx` 與 `App.jsx` 的 `Dialogue` meta 仍留著一份平行副本，現行的
-Vercel 建置照樣會輸出它。**這是待裁定事項，不要順手刪**：刪掉之後、`mandarin` 子網域上線之前，
-apex 的 308 會轉到一個還不存在的主機。順序是先確認子網域可用，再收本倉的副本。
+本倉先前留著的那份平行副本已於 `72b96bd` 刪除：`src/pages/mandarin/Dialogue.jsx`、
+`App.jsx` 的 `Dialogue` meta 與 Service 結構化資料、`routes.mjs` 的排除條件、
+`siteLanguages.js` 的 `de` 前綴。**canvas 只發繁中與英文兩種索引版本，德文屬服務站。**
+要改服務頁就去 `phenom-mandarin`，不要在這裡重建一份。
 
-定價、Cal.com 活動設定、可錄製的自介稿、升價條件與 30／60／90 天指標都是經營資料，
+`src/components/SeoHead.jsx` 的全站 Person 節點是 `Phenom`，**不掛真名、不掛預約頁**。
+真實姓名與 Cal.com 只出現在服務站自己的 `Seo.jsx`。研究站每一頁都吃這個節點，
+在這裡加真名等於把它印在全部 110 條路由的結構化資料裡，搜尋引擎抓走就撤不回來。
+
+定價、Cal.com 活動設定、自介稿、升價條件與 30／60／90 天指標都是經營資料，
 **家在 `phenom-mandarin` 的 `brand/`（私有倉）**。本倉是公開倉，`brand/` 已從追蹤與歷史中移除，
 `.gitignore` 也擋著，不要再放回來。
 
