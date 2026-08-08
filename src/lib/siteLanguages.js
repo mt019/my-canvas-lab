@@ -8,17 +8,15 @@ const ROUTE_LANGUAGES = new Map([
   ['/statistics/equivalence-testing', ['en']],
   ['/statistics/justice-partial-pooling', ['en']],
   ['/statistics/null-hypothesis', ['en']],
-  ['/mandarin-dialogue', ['de', 'en']],
 ]);
 
 export const DEFAULT_LANGUAGE = 'zh-Hant-TW';
 export const ENGLISH_LANGUAGE = 'en';
-export const GERMAN_LANGUAGE = 'de';
-const PREFIX_LANGUAGES = new Set([ENGLISH_LANGUAGE, GERMAN_LANGUAGE]);
+const PREFIX_LANGUAGES = new Set([ENGLISH_LANGUAGE]);
 
 export function splitLanguagePath(pathname) {
   const path = pathname || '/';
-  const match = path.match(/^\/(en|de)(?:\/|$)/);
+  const match = path.match(/^\/(en)(?:\/|$)/);
   if (!match) return { language: DEFAULT_LANGUAGE, basePath: path };
   const language = match[1];
   const basePath = path.slice(language.length + 1) || '/';

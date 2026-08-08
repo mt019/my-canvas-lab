@@ -18,7 +18,6 @@ const NOINDEX = new Set(['PaletteLab', 'TaipeiFilmFestival', 'Glossary', 'Tags',
 const PARAM_ROUTES = {
   GlossaryTerm: '/statistics/glossary/:slug',
   TagPage: '/statistics/tags/:slug',
-  Dialogue: '/mandarin-dialogue',
 };
 
 function walkPages(dir, rel = '') {
@@ -73,12 +72,12 @@ function chenYinkeSelectionRoutes() {
 export function collectRoutes() {
   const canvasBuild = process.env.VITE_DEPLOY_TARGET === 'canvas';
   // Cloudflare Canvas owns a research-only directory at its root. The personal
-  // front door, /all, and the Mandarin service remain exclusively on the apex.
+  // front door and /all stay on the apex (phenom-home); the Mandarin service is
+  // its own site (phenom-mandarin), not a page here.
   const routes = new Set(canvasBuild ? ['/'] : ['/', '/all']);
   for (const rel of walkPages(PAGES)) {
     const name = rel.replace(/\.(jsx|tsx)$/, '').split('/').pop();
     if (NOINDEX.has(name)) continue;
-    if (canvasBuild && name === 'Dialogue') continue;
     const route = routeFor(rel);
     if (route === '/statistics/glossary/:slug') {
       for (const slug of glossarySlugs()) routes.add(`/statistics/glossary/${slug}`);

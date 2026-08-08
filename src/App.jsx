@@ -46,7 +46,6 @@ const kebab = (name) => name.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase(
 const PARAM_ROUTES = {
   GlossaryTerm: '/statistics/glossary/:slug',
   TagPage: '/statistics/tags/:slug',
-  Dialogue: '/mandarin-dialogue',
 };
 
 function routeFor(path) {
@@ -59,66 +58,7 @@ function routeFor(path) {
     : `/${parts.map(kebab).join('/')}/${kebab(name)}`;
 }
 
-function dialogueSchema(siteUrl, pageUrl, language) {
-  const localized = {
-    'zh-Hant-TW': {
-      name: '高階中文私人對談',
-      description: '為高階成人中文使用者提供全程中文的五十分鐘私人對談。',
-      audience: '能夠全程使用中文的成人',
-    },
-    de: {
-      name: 'Private Mandarin-Dialoge für Fortgeschrittene',
-      description: 'Private fünfzigminütige Gespräche für fortgeschrittene Erwachsene, vollständig auf Chinesisch.',
-      audience: 'Fortgeschrittene erwachsene Mandarinsprecher',
-    },
-    en: {
-      name: 'Private Mandarin Dialogues for Advanced Speakers',
-      description: 'A private fifty-minute Mandarin dialogue conducted entirely in Chinese for advanced adults.',
-      audience: 'Advanced adult Mandarin speakers',
-    },
-  }[language] ?? {};
-  return [{
-    '@type': 'Service',
-    '@id': `${pageUrl}#service`,
-    name: localized.name,
-    description: localized.description,
-    inLanguage: language,
-    provider: { '@id': `${siteUrl}/#person` },
-    areaServed: ['Germany', 'Austria', 'Switzerland'],
-    availableLanguage: ['Chinese', 'Mandarin Chinese'],
-    audience: { '@type': 'Audience', audienceType: localized.audience },
-    offers: [
-      { '@type': 'Offer', name: 'First Conversation', price: '39', priceCurrency: 'EUR', url: 'https://cal.com/eva-wang/first', availability: 'https://schema.org/LimitedAvailability' },
-      { '@type': 'Offer', name: 'Private Mandarin Dialogue', price: '69', priceCurrency: 'EUR', url: pageUrl, availability: 'https://schema.org/LimitedAvailability' },
-    ],
-  }];
-}
-
 const PAGE_META = { // token-exempt: per-page identity chip colors (data, not styling)
-  Dialogue: {
-    name: '高階中文私人對談',
-    desc: '給能夠全程使用中文的成人：以法律、商業、文學與社會議題，把正確中文推進到成熟自然的表達',
-    Icon: Languages,
-    accent: '#e8ddd4',
-    accentText: '#765e50',
-    group: 'service',
-    type: 'WebPage',
-    title: '高階中文私人對談｜全中文一對一｜Phenom',
-    seoDesc: '面向高階中文使用者的全中文一對一私人對談。法律、商業、文學、社會與茶文化；熟悉中國大陸與台灣語感、簡繁體及多種漢語方言。50分鐘 €69。',
-    de: {
-      name: 'Private Mandarin-Dialoge',
-      desc: 'Anspruchsvolle Gespräche vollständig auf Chinesisch – über Recht, Wirtschaft, Literatur und Gesellschaft',
-      title: 'Private Mandarin-Dialoge für Fortgeschrittene｜Phenom',
-      seoDesc: 'Private Mandarin-Gespräche für Fortgeschrittene, vollständig auf Chinesisch. Recht, Wirtschaft, Literatur, Gesellschaft und Teekultur; 50 Minuten ab 69 €.',
-    },
-    en: {
-      name: 'Private Mandarin Dialogues',
-      desc: 'Substantive, all-Chinese conversation for advanced speakers across law, business, literature, and society',
-      title: 'Private Mandarin Dialogues for Advanced Speakers｜Phenom',
-      seoDesc: 'Private, all-Chinese Mandarin dialogue for advanced speakers. Law, business, literature, society, and tea culture; 50 minutes from €69.',
-    },
-    buildSchema: dialogueSchema,
-  },
   StatisticsLab: {
     name: '統計學實驗室',
     desc: '把統計方法拆開來，用可以親手操作的模擬解釋它為什麼長這樣',
@@ -600,7 +540,6 @@ const HOME_VARS = { // token-exempt
    研究側原本擠成一個 15 件的大群，拆成三條：實證研究（有資料層的工作台）、語料・譯庫（可搜尋的
    資料庫）、人文文庫；只做議題總覽或現況地圖的頁降級併入議題解析。 */
 const GROUPS = [
-  { key: 'service', label: '私人服務', desc: '以自己的專業與語言經驗，提供少量、深度的一對一合作' },
   { key: 'life', label: '生活雷達', desc: '活動、餘額、行程與日常決策輔助' },
   { key: 'empirical', label: '實證研究', desc: '自己蒐集原始材料、逐件讀過、可長期延伸的研究工作台' },
   { key: 'corpus', label: '語料・譯庫', desc: '可搜尋的語料庫、譯庫與書目目錄，直達原文' },
@@ -687,12 +626,12 @@ export default function App() {
         </div>
       }>
         <Routes>
-          <Route path="/" element={CANVAS_BUILD ? <HomePage routes={routes.filter((route) => route.component && route.meta?.group !== 'service')} /> : <FrontDoor />} />
+          <Route path="/" element={CANVAS_BUILD ? <HomePage routes={routes} /> : <FrontDoor />} />
           {!CANVAS_BUILD && <Route path="/all" element={<HomePage routes={routes} />} />}
-          {routes.filter((route) => route.component && (!CANVAS_BUILD || route.name !== 'Dialogue')).map((route) => (
+          {routes.filter((route) => route.component).map((route) => (
             <Route key={route.path} path={route.path} element={<PageRoute route={route} />} />
           ))}
-          {routes.filter((route) => route.component && (!CANVAS_BUILD || route.name !== 'Dialogue')).flatMap((route) =>
+          {routes.filter((route) => route.component).flatMap((route) =>
             localizedPathsForRoute(route.path).map(({ path }) => (
               <Route key={path} path={path} element={<PageRoute route={route} />} />
             ))
