@@ -49,9 +49,8 @@ export const INDEX = { href: '/all', label: '全部' };
  */
 const SITE_HOMES = [
   ['/en/statistics/', { href: '/en/statisticslab', label: 'Statistics Lab' }],
-  ['/constitutionalcourt/case/', { href: '/constitutionalcourt', label: '案件索引' }],
-  ['/constitutionalcourt/justices/', { href: '/constitutionalcourt', label: '案件索引' }],
-  ['/constitutionalcourt/', { href: '/constitutionalcourt', label: '案件索引' }],
+  // 憲法法庭三條已移除：那些內頁 2026-08-01 隨獨立站搬到 cc.phenomcanvas.com，
+  // 本倉 /constitutionalcourt 只剩 308 轉址與 /all 的一張卡片，沒有內頁要回站首。
   // 一個術語、一個標籤各自成頁，往回一層是那份清單，不是整個實驗室——回到「所有標籤」
   // 比回到實驗室門口精確，讀者剛才就是從那裡點進來的。
   ['/statistics/glossary/', { href: '/statisticslab?tab=glossary', label: '術語表' }],

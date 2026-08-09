@@ -28,6 +28,11 @@ const 不得存在 = [
   'src/data/daliyuanCollation.json',
   'src/data/typologyReport.md',
   'public/data/constitutionalCourt-opinions',
+  // 大理院校勘的紙本影像。2026-08-09 才發現它留在本倉：獨立站的校勘資料照舊寫著
+  // /research-assets/daliyuan/*.jpg，檔案卻沒跟著搬，線上整欄影像 404 而兩邊建置都是綠的。
+  // 現役副本在 phenom-court/public/research-assets/daliyuan/，那邊的 validate-build 會驗
+  // 「資料點名的每個影像 dist 裡都有檔」。
+  'public/research-assets/daliyuan',
 ];
 for (const rel of 不得存在) {
   assert.equal(existsSync(join(ROOT, rel)), false, `${rel} 又回到 canvas 了——憲法法庭的現役副本在 phenom-court，改那邊`);
