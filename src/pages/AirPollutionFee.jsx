@@ -15,7 +15,7 @@ import HistoryView from './_air-pollution-fee/HistoryView';
  * 空污費：一個特別公課的完整解剖。
  *
  * 分頁對應的是這個公課的各個面向（要件、費率、程序、效果、逃漏、財政、沿革），
- * 不是內容種類的分類箱——與 TaxLitigation／ConstitutionalCourt 同一個慣例。
+ * 不是內容種類的分類箱——與 TaxLitigation 同一個慣例。
  *
  * 費率查詢原本埋在「構成要件」底下一顆要點開的按鈕裡，現在自己是一個分頁：
  * 有吸頂分頁列之後就沒有理由再藏，它本來就是讀者最常來查的東西。

@@ -22,8 +22,8 @@ export function useExpandedSet(ids) {
     });
   }, []);
 
-  // Open without toggling — for "jump to this card and make sure it is showing"
-  // (ConstitutionalCourt's history timeline scrolls to a card and opens it).
+  // Open without toggling — for "jump to this card and make sure it is showing",
+  // as a timeline does when it scrolls to a card and opens it.
   const open = useCallback((id) => {
     setOpenIds((prev) => (prev.has(id) ? prev : new Set(prev).add(id)));
   }, []);

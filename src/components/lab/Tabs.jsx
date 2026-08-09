@@ -3,9 +3,9 @@ import { useSearchParams } from 'react-router-dom';
 
 /*
  * Tab state that lives in the URL, so every tabbed view on the site is
- * deep-linkable and back-button-correct. Before this existed, only
- * ConstitutionalCourt bothered; GovernmentDebt and ECFA used bare useState,
- * which silently broke sharing a link to a specific view.
+ * deep-linkable and back-button-correct. Before this existed, most tabbed
+ * pages used bare useState (GovernmentDebt and ECFA among them), which
+ * silently broke sharing a link to a specific view.
  *
  * The default value is kept OUT of the query string (a bare /page and
  * /page?tab=<default> must be the same URL), and switching tabs scrolls to

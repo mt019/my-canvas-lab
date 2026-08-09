@@ -857,7 +857,8 @@ export default function ECFAResearch() {
       </header>
 
       <nav className="sticky top-0 z-20 border-b border-[var(--ecfa-line)] bg-white/94 backdrop-blur">
-        {/* 吸頂分頁列換行，不橫捲——理由見 ConstitutionalCourt 同一處的註解。 */}
+        {/* 吸頂分頁列換行，不橫捲：橫捲會把後面幾個分頁推到畫面外，而捲動條在吸頂列裡
+            細到看不出來，讀者不會知道還有分頁。換行只是多占一列的高度。 */}
         <div className={`mx-auto flex max-w-6xl flex-wrap gap-1 py-2 ${SHELL_PAD_X}`}>
           {tabs.map(({ id, label, icon: Icon }) => (
             <button

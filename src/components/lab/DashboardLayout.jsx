@@ -75,7 +75,8 @@ export default function DashboardLayout({
       </header>
 
       {/* 吸頂的分頁列：永遠看得到。dashboard variant 是裝在 bg-surface 膠囊裡的實心藥丸鈕
-          （仿 ConstitutionalCourt.jsx 的吸頂導覽）；膠囊只包住按鈕本身寬度（inline-flex），
+          （這個長相源自憲法法庭頁的吸頂導覽，該頁 2026-08-01 隨獨立站搬到 cc.phenomcanvas.com，
+          本倉已無該檔）；膠囊只包住按鈕本身寬度（inline-flex），
           按鈕少時也不會孤零零貼在空白左側——但膠囊仍靠左對齊，跟上面標題／內文同一條左邊界
           （不置中：置中會讓它脫離文字的視覺起點，反而更奇怪）。**不用毛玻璃**——這條又寬、
           按鈕又少時，毛玻璃把「大片空白」變成「一整條模糊」，比空白本身更顯眼；純色底＋底線

@@ -9,8 +9,7 @@ import germanRows from '../data/germanLawCourseTimeline.json';
 
 /*
  * 法學名著選讀・教師時序。每個分頁是一個語言的「XX 文法學名著選讀」——同一門課系列的
- * 不同語言版本，走 ConstitutionalCourt／TaxLitigation 一樣的吸頂分頁 pattern（見
- * DashboardLayout）。目前只有德文一個分頁；加英美／法文／日文，往 LANGUAGES 增一筆
+ * 不同語言版本，走 TaxLitigation 一樣的吸頂分頁 pattern（見 DashboardLayout）。目前只有德文一個分頁；加英美／法文／日文，往 LANGUAGES 增一筆
  * config ＋ 一份同 schema 的 rows JSON，CourseTimeline 元件不用動。
  *
  * config 只描述「這個語言的課長什麼樣」：領域名怎麼對到校準過的分類色槽（domainOrder，

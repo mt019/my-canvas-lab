@@ -12,7 +12,7 @@ import data from '../data/taxLitigation.json';
 
 /*
  * Each tab button is one research line, not a content-kind bucket — the
- * pattern ConstitutionalCourt.jsx established. 撤銷範圍's numbers still move
+ * convention every tabbed research page here follows. 撤銷範圍's numbers still move
  * still move under active research work (see its own "資料仍在擴充" badge) and
  * 兩岸港澳／外國法院 are still exploratory (their own "探索中" badge) — all
  * three are visible tabs regardless, because the badge on the page itself is
