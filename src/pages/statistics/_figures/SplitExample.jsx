@@ -61,24 +61,22 @@ export default function SplitExample({
   const steps = useMemo(() => c.steps(cut1, n), [c, cut1, n]);
   const last = steps.length - 1;
 
-  // A short deck sits in one row; 52 wraps at 26. The assembled deck occupies
-  // the middle rows, the packets after a cut one row each above and below.
-  const perRow = n <= 16 ? n : window.Math.ceil(n / 2);
-  const deckRows = window.Math.ceil(n / perRow);
-  // When the row is wide enough, the lower packet keeps its horizontal position
-  // (cards slide apart vertically at the cut); otherwise both packets align left.
-  const pileShift = perRow - cut1 >= cut1 ? cut1 : 0;
+  // The whole deck stays on one row at every step — wrapping it would draw two
+  // rows and look like two runs before anything happened (2026-08-13 站主退回).
+  // A cut slides the front packet up and the back packet down, keeping each
+  // card's horizontal position at its place in the deck, so the cut point reads
+  // directly off the gap.
+  const perRow = n;
+  const deckRows = 1;
 
   // Per step, where every card sits, keyed by card value so a tile's identity
   // survives every rearrangement and CSS can animate it.
   const layouts = useMemo(() => {
     const sorted = Array.from({ length: n }, (_, i) => i + 1);
-    const slotDeck = (deck) => Object.fromEntries(deck.map((v, i) => [
-      v, { row: 1 + window.Math.floor(i / perRow), col: i % perRow },
-    ]));
+    const slotDeck = (deck) => Object.fromEntries(deck.map((v, i) => [v, { row: 1, col: i }]));
     const slotPiles = (deck, cut) => ({
       ...Object.fromEntries(deck.slice(0, cut).map((v, i) => [v, { row: 0, col: i }])),
-      ...Object.fromEntries(deck.slice(cut).map((v, i) => [v, { row: deckRows + 1, col: pileShift + i }])),
+      ...Object.fromEntries(deck.slice(cut).map((v, i) => [v, { row: 2, col: cut + i }])),
     });
     return [
       slotDeck(sorted),
@@ -87,7 +85,7 @@ export default function SplitExample({
       slotPiles(order1, cut2),
       slotDeck(order2),
     ];
-  }, [n, cut1, order1, cut2, order2, perRow, deckRows, pileShift]);
+  }, [n, cut1, order1, cut2, order2]);
 
   // Colour by the first cut for the whole first shuffle; on the last step each
   // half fades into its two halves — the split the bound is about.
@@ -131,19 +129,19 @@ export default function SplitExample({
       <figure className="mt-4">
         {/* 26 張一列在手機塞不下，牌面區自己橫向捲，頁面不捲（DESIGN.md 的寬內容規則）。 */}
         <div className="overflow-x-auto">
-        <div className="relative" style={{ height: `${(totalRows - 1) * rowH + 1.4}rem`, minWidth: `${perRow}rem` }}>
+        <div className="relative" style={{ height: `${(totalRows - 1) * rowH + 1.4}rem`, minWidth: `${perRow * 0.75}rem` }}>
           {values.map((v) => {
             const slot = layout[v];
             const { tone, mix } = toneOf(v, step);
             return (
               <span
                 key={v}
-                className="absolute rounded-[3px] py-0.5 text-center text-[0.65rem] leading-tight tabular-nums transition-transform duration-500"
+                className="absolute rounded-[2px] py-0.5 text-center text-[0.55rem] leading-tight tabular-nums transition-transform duration-500"
                 style={{
-                  width: `calc(${100 / perRow}% - 2px)`,
+                  width: `calc(${100 / perRow}% - 1px)`,
                   left: 0,
                   top: 0,
-                  transform: `translate(calc(${slot.col} * (100% + ${2 * perRow / (perRow - 1)}px)), ${slot.row * rowH}rem)`,
+                  transform: `translate(calc(${slot.col} * (100% + ${perRow / (perRow - 1)}px)), ${slot.row * rowH}rem)`,
                   color: tone,
                   backgroundColor: `color-mix(in oklab, ${tone} ${mix}%, transparent)`,
                 }}
