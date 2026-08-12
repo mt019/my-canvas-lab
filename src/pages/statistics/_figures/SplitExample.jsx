@@ -27,7 +27,7 @@ const COPY = {
     next: '下一步',
     stepOf: (i, n) => `步驟 ${i}/${n}`,
     steps: (cut, n) => [
-      `${n} 張牌照 1 到 ${n} 排好，整副是一段遞增序列。`,
+      `${n} 張牌照 1 到 ${n} 排好，柱高是牌值：整副是一段遞增序列，一道爬滿的階梯。`,
       `切牌：分成 1–${cut}（上）與 ${cut + 1}–${n}（下）兩堆，每堆內部照舊由小到大。`,
       `交錯落下：兩堆的牌混進同一副，但同色的牌前後次序不變，1 到 ${cut} 的位置仍然遞增，${cut + 1} 到 ${n} 也是。整副拆成兩段遞增序列。`,
       '洗第二次，先切牌：把剛才的排列分成兩堆，每一堆都橫跨原來的兩種顏色。',
@@ -39,7 +39,7 @@ const COPY = {
     next: 'Next',
     stepOf: (i, n) => `Step ${i}/${n}`,
     steps: (cut, n) => [
-      `${n} cards in order, 1 to ${n}: the whole deck is one rising sequence.`,
+      `${n} cards in order, 1 to ${n}, bar height showing the card's value: the whole deck is one rising sequence, a single staircase.`,
       `Cut: two packets, 1–${cut} above and ${cut + 1}–${n} below, each still ascending inside.`,
       `Riffle: the packets interleave into one deck, but cards of the same colour keep their order. The positions of 1 to ${cut} still ascend, and so do ${cut + 1} to ${n}: two rising sequences.`,
       'Second shuffle, cut first: the arrangement splits into two packets, and each packet spans both colours.',
@@ -101,7 +101,11 @@ export default function SplitExample({
 
   const layout = layouts[step];
   const values = Array.from({ length: n }, (_, i) => i + 1);
-  const rowH = 1.7;
+  // 一張牌一根細柱，柱高就是牌值：「由小到大」直接是看得見的上升階梯，不用在
+  // 12px 的格子裡塞兩位數（52 張單列的數字誰都讀不了，站主退回）。柱用百分比寬，
+  // 任何螢幕都放得下一列，不捲。牌值留在 title，滑鼠停上去看得到。
+  const unit = 0.055; // rem per 牌值
+  const bandH = n * unit + 0.5; // 每一水平帶的高度：最高的柱＋一點空
   const totalRows = deckRows + 2;
 
   return (
@@ -127,30 +131,28 @@ export default function SplitExample({
       </div>
 
       <figure className="mt-4">
-        {/* 26 張一列在手機塞不下，牌面區自己橫向捲，頁面不捲（DESIGN.md 的寬內容規則）。 */}
-        <div className="overflow-x-auto">
-        <div className="relative" style={{ height: `${(totalRows - 1) * rowH + 1.4}rem`, minWidth: `${perRow * 0.75}rem` }}>
+        <div className="relative" style={{ height: `${totalRows * bandH}rem` }}>
           {values.map((v) => {
             const slot = layout[v];
             const { tone, mix } = toneOf(v, step);
+            const h = v * unit;
             return (
               <span
                 key={v}
-                className="absolute rounded-[2px] py-0.5 text-center text-[0.55rem] leading-tight tabular-nums transition-transform duration-500"
+                title={String(v)}
+                className="absolute rounded-t-[1px] transition-transform duration-500"
                 style={{
                   width: `calc(${100 / perRow}% - 1px)`,
+                  height: `${h}rem`,
                   left: 0,
                   top: 0,
-                  transform: `translate(calc(${slot.col} * (100% + ${perRow / (perRow - 1)}px)), ${slot.row * rowH}rem)`,
-                  color: tone,
-                  backgroundColor: `color-mix(in oklab, ${tone} ${mix}%, transparent)`,
+                  // 柱在自己那條水平帶裡落底：帶底減柱高。柱高不隨步驟變，動畫只有移動。
+                  transform: `translate(calc(${slot.col} * (100% + ${perRow / (perRow - 1)}px)), ${(slot.row + 1) * bandH - h}rem)`,
+                  backgroundColor: `color-mix(in oklab, ${tone} ${window.Math.min(mix * 3.2, 88)}%, transparent)`,
                 }}
-              >
-                {v}
-              </span>
+              />
             );
           })}
-        </div>
         </div>
         <figcaption className="mt-2 text-token-xs leading-relaxed text-ink-faint">{steps[step]}</figcaption>
       </figure>
