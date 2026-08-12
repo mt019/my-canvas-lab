@@ -110,32 +110,33 @@ export default function SplitExample({
   const bandH = n * unit + 0.5; // 每一水平帶的高度：最高的柱＋一點空
   const totalRows = deckRows + 2;
 
-  // 步驟列照 wizard 樣式的常規做：每一步是帶名字與序號的可點目標，五格本身就是
-  // 全部的導航，不另擺上一步／下一步（兩顆箭頭鈕跟五格擠不進一行，而且是冗餘的
-  // 操作面）。三種狀態不靠顏色單獨區分：當前步實心反白、走過的正常、沒到的退淡。
-  // 觸標 py-2 拉到手指按得中的大小。
+  // 這是一段有順序的敘事，主控制是上一步／下一步（2026-08-13 站主裁定：順序性的
+  // 東西就該用上下步走）；五個步驟名降成進度標示——「3/5・交錯」——只報位置不當
+  // 按鈕。可點步驟列留給 wizard 表單那種要回頭改答案的場合。觸標 py-2。
   return (
     <div className="my-8 rounded-token-md border border-line-soft p-5">
-      <div role="group" aria-label={c.stepOf(step + 1, last + 1)} className="flex flex-wrap items-center gap-1.5">
-        {c.labels.map((label, i) => (
-          <button
-            key={label}
-            type="button"
-            onClick={() => setStep(i)}
-            aria-current={i === step ? 'step' : undefined}
-            className={`rounded-full px-3.5 py-2 text-token-sm leading-none transition-colors duration-fast ${
-              i === step
-                ? 'bg-ink font-medium text-paper'
-                : i < step
-                ? 'text-ink-muted hover:bg-surface-raised hover:text-ink'
-                : 'text-ink-faint hover:bg-surface-raised hover:text-ink'
-            }`}
-          >
-            {/* 序號與名字之間是真的空格，不是 margin——無障礙名稱與 locator 都讀
-                文字，不讀樣式（useHeadings 那條教訓的同款）。 */}
-            <span className="tabular-nums">{i + 1}</span>{' '}{label}
-          </button>
-        ))}
+      <div className="flex flex-wrap items-center gap-2.5">
+        <button
+          type="button"
+          onClick={() => setStep((s) => window.Math.max(0, s - 1))}
+          disabled={step === 0}
+          className="rounded-token-sm border border-line-soft px-4 py-2 text-token-sm leading-none text-ink transition-colors duration-fast hover:border-line disabled:cursor-default disabled:opacity-40 disabled:hover:border-line-soft"
+        >
+          {c.prev}
+        </button>
+        <button
+          type="button"
+          onClick={() => setStep((s) => window.Math.min(last, s + 1))}
+          disabled={step === last}
+          className="rounded-token-sm border border-line-soft px-4 py-2 text-token-sm leading-none text-ink transition-colors duration-fast hover:border-line disabled:cursor-default disabled:opacity-40 disabled:hover:border-line-soft"
+        >
+          {c.next}
+        </button>
+        <p aria-live="polite" className="text-token-sm text-ink-muted">
+          <span className="tabular-nums">{step + 1}/{last + 1}</span>
+          <span className="mx-1.5 text-ink-faint">·</span>
+          <span className="font-medium text-ink">{c.labels[step]}</span>
+        </p>
       </div>
 
       <figure className="mt-4">
