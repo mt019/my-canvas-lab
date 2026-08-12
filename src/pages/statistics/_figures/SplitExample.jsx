@@ -26,26 +26,30 @@ const COPY = {
     prev: '上一步',
     next: '下一步',
     stepOf: (i, n) => `步驟 ${i}/${n}`,
-    labels: ['起點', '切牌', '交錯', '再切牌', '再交錯'],
-    steps: (cut, n) => [
+    labels: ['起點', '切牌', '交錯', '再切牌', '再交錯', '第三次切牌', '第三次交錯'],
+    steps: (cut, cut3, n) => [
       `${n} 張牌照 1 到 ${n} 排好，柱高是牌值：整副是一段遞增序列，一道爬滿的階梯。`,
       `切牌：分成 1–${cut}（上）與 ${cut + 1}–${n}（下）兩堆，每堆內部照舊由小到大。`,
       `交錯落下：兩堆的牌混進同一副，但同色的牌前後次序不變，1 到 ${cut} 的位置仍然遞增，${cut + 1} 到 ${n} 也是。整副拆成兩段遞增序列。`,
       '洗第二次，先切牌：把剛才的排列分成兩堆，每一堆都橫跨原來的兩種顏色。',
-      <>再交錯落下：原來的每一段各被對半拆成兩段（深淺各一），共四段。洗 <Math tex="k" /> 次最多 <Math tex="2^k" /> 段。</>,
+      '再交錯落下：原來的每一段各被對半拆成兩段（深淺各一），共四段。',
+      `洗第三次，先切牌：這一刀落在第 ${cut3} 張，兩堆各自橫跨原來的四段。`,
+      <>第三次交錯落下：四段各再拆成兩段，共八段，換八種顏色標示。段數每洗一次至多翻倍，洗 <Math tex="k" /> 次最多 <Math tex="2^k" /> 段。</>,
     ],
   },
   en: {
     prev: 'Back',
     next: 'Next',
     stepOf: (i, n) => `Step ${i}/${n}`,
-    labels: ['Start', 'Cut', 'Riffle', 'Cut again', 'Riffle again'],
-    steps: (cut, n) => [
+    labels: ['Start', 'Cut', 'Riffle', 'Cut again', 'Riffle again', 'Third cut', 'Third riffle'],
+    steps: (cut, cut3, n) => [
       `${n} cards in order, 1 to ${n}, bar height showing the card's value: the whole deck is one rising sequence, a single staircase.`,
       `Cut: two packets, 1–${cut} above and ${cut + 1}–${n} below, each still ascending inside.`,
       `Riffle: the packets interleave into one deck, but cards of the same colour keep their order. The positions of 1 to ${cut} still ascend, and so do ${cut + 1} to ${n}: two rising sequences.`,
       'Second shuffle, cut first: the arrangement splits into two packets, and each packet spans both colours.',
-      <>Riffle again: each of the two runs splits in half, one dark and one light shade — four rising sequences. After <Math tex="k" /> shuffles, at most <Math tex="2^k" />.</>,
+      'Riffle again: each of the two runs splits in half, one dark and one light shade — four rising sequences.',
+      `Third shuffle, cut first: this cut falls at card ${cut3}, and each packet spans the four runs.`,
+      <>Third riffle: the four runs split once more into eight, recoloured one tint per run. The count can at most double per shuffle — after <Math tex="k" /> shuffles, at most <Math tex="2^k" />.</>,
     ],
   },
 };
@@ -56,11 +60,13 @@ export default function SplitExample({
   order1 = [],
   cut2 = 26,
   order2 = [],
+  cut3 = 25,
+  order3 = [],
   lang = 'zh',
 }) {
   const c = COPY[lang] ?? COPY.zh;
   const [step, setStep] = useState(0);
-  const steps = useMemo(() => c.steps(cut1, n), [c, cut1, n]);
+  const steps = useMemo(() => c.steps(cut1, cut3, n), [c, cut1, cut3, n]);
   const last = steps.length - 1;
 
   // The whole deck stays on one row at every step — wrapping it would draw two
@@ -86,19 +92,38 @@ export default function SplitExample({
       slotDeck(order1),
       slotPiles(order1, cut2),
       slotDeck(order2),
+      slotPiles(order2, cut3),
+      slotDeck(order3),
     ];
-  }, [n, cut1, order1, cut2, order2]);
+  }, [n, cut1, order1, cut2, order2, cut3, order3]);
 
-  // Colour by the first cut for the whole first shuffle; on the last step each
-  // half fades into its two halves — the split the bound is about.
+  // Which of the eight runs each value belongs to after the third riffle:
+  // count the run boundaries at or below it. The boundaries are read off the
+  // arrangement itself, so the tinting can never disagree with the data.
+  const thirdRunOf = useMemo(() => {
+    const pos = {};
+    order3.forEach((v, i) => { pos[v] = i; });
+    const runOf = {};
+    let run = 0;
+    for (let v = 1; v <= order3.length; v += 1) {
+      if (v > 1 && pos[v] < pos[v - 1]) run += 1;
+      runOf[v] = run;
+    }
+    return runOf;
+  }, [order3]);
+
+  // Colour by the first cut for the whole first shuffle; after the second the
+  // halves split into shades; after the third every run gets its own tint —
+  // the split the bound is about, told three times.
   const toneOf = (value, s) => {
-    if (s === 0) return { tone: 'var(--c-ink-muted)', mix: 10 };
+    if (s === 0) return { tone: 'var(--c-ink-muted)', mix: 32 };
+    if (s === 6) return { tone: `var(--cat-${(thirdRunOf[value] % 8) + 1}-tx)`, mix: 70 };
     // Plum against blue (cat-1 / cat-2): the two packets have to stay tellable
     // apart at a pale wash, and the neighbouring reds in the palette are not.
     const cat = value <= cut1 ? 'var(--cat-1-tx)' : 'var(--cat-2-tx)';
-    if (s < 4) return { tone: cat, mix: 16 };
+    if (s < 4) return { tone: cat, mix: 51 };
     const firstHalfOfRun = value <= cut1 ? value <= cut1 / 2 : value <= cut1 + (n - cut1) / 2;
-    return { tone: cat, mix: firstHalfOfRun ? 34 : 12 };
+    return { tone: cat, mix: firstHalfOfRun ? 88 : 38 };
   };
 
   const layout = layouts[step];
@@ -164,7 +189,7 @@ export default function SplitExample({
                   transitionDuration: '480ms',
                   transitionTimingFunction: 'cubic-bezier(0.2, 0, 0, 1)',
                   transitionDelay: `${slot.col * 7}ms`,
-                  backgroundColor: `color-mix(in oklab, ${tone} ${window.Math.min(mix * 3.2, 88)}%, transparent)`,
+                  backgroundColor: `color-mix(in oklab, ${tone} ${mix}%, transparent)`,
                 }}
               />
             );
