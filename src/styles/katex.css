@@ -10,21 +10,32 @@
   font-size: 1.02em; /* KaTeX_Main runs small next to an 18px Ming face */
 }
 
-/* 行內公式不在中間被折行。底線的讓位規則：預設 skip-ink: none——漢字的墨沉到基線
-   之下，auto 會在每個字底下讓開，整條虛線碎掉；$A$、$B$、普通括號這種只淺淺低於
-   基線的也一樣，auto 會替它們斷線（2026-08-13 站主兩張截圖先後退回）。只有分數、
-   根號、上下標、加大的括號這些真的往下戳的結構，在自己的子樹裡把值改回 auto，
-   讓位只發生在那幾格。先前兩版分別是 display:inline-block（每個公式前後都斷）與
-   整個 .katex 開 auto（簡單字母下也斷），都被退回。 */
+/* 行內公式不在中間被折行。 */
 .katex:not(.katex-display .katex) {
   white-space: nowrap;
+}
+
+/* 引註的虛線底線要穿過公式底下。KaTeX 每個公式的內容包在 .base（inline-block），
+   text-decoration 不進 atomic inline，所以標記的底線在每個公式底下都是斷的——
+   skip-ink 怎麼調都救不了，斷線根本不是 skip 出來的（2026-08-13 站主三張截圖
+   逐版退回後才找到這個洞）。修法：在引註（span[data-cite] 的子樹）裡，.base 自己
+   畫一段同款虛線接上去。offset 用 em，兩邊字級差 2%，接縫看不出來。
+   讓位規則放在這條自畫的線上：預設 none（$A$、$B$、普通括號這種淺下緣不斷線），
+   只有分數、根號、上下標這些真的往下戳的結構，在自己的子樹裡改回 auto。 */
+span[data-cite] .katex:not(.katex-display .katex) .base {
+  text-decoration: underline dotted var(--c-ink-faint);
+  text-underline-offset: 0.3em;
   text-decoration-skip-ink: none;
 }
 
-.katex .mfrac,
-.katex .sqrt,
-.katex .msupsub,
-.katex .delimsizing {
+span[data-cite]:hover .katex:not(.katex-display .katex) .base {
+  text-decoration-color: var(--c-accent);
+}
+
+span[data-cite] .katex .mfrac,
+span[data-cite] .katex .sqrt,
+span[data-cite] .katex .msupsub,
+span[data-cite] .katex .delimsizing {
   text-decoration-skip-ink: auto;
 }
 
