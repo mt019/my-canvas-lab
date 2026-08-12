@@ -47,7 +47,10 @@ export default function ArticleLayout({
   const showToc = !hideToc && items.length > 0;
 
   return (
-    <div className={`mx-auto grid gap-10 ${SHELL_PAD_X_RAIL} lg:gap-12 ${
+    // 手機的單欄要寫成 minmax(0,1fr)：grid 的 auto 軌會被寬內容（26 張一列的牌面、
+    // min-width 480 的圖表）撐到內容寬，整欄超出視口、被 html 的 overflow-x clip 藏掉，
+    // 圖表自己的橫向捲動因此永遠不會發生（2026-08-13 手機驗收）。
+    <div className={`mx-auto grid grid-cols-[minmax(0,1fr)] gap-10 ${SHELL_PAD_X_RAIL} lg:gap-12 ${
       // 寬版面加上右欄比容器的 86rem 還寬，所以那個組合另給一個上限；沒有目次可列時
       // 不留空軌道，中欄吃掉騰出來的寬度只發生在本來就要寬的頁面，散文照舊留白。
       showToc && wideContent ? 'max-w-[96rem]' : 'max-w-[86rem]'
