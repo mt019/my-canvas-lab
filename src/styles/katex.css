@@ -10,13 +10,21 @@
   font-size: 1.02em; /* KaTeX_Main runs small next to an 18px Ming face */
 }
 
-/* 行內公式不在中間被折行。底線的讓位規則分兩段：標記本體是 skip-ink: none（漢字的墨
-   沉到基線之下，auto 會在每個字底下讓開，整條虛線碎掉——2026-08-13 站主截圖），只有
-   公式這段把繼承值改回 auto，讓位只發生在分數這種真的戳進線裡的字符；$m$ 這種不低於
-   基線的照樣連著畫過去。先前用 display:inline-block 把公式變成 atomic inline，底線在
-   每個公式前後都斷一次，小公式也跟著斷（同日另一張截圖）。 */
+/* 行內公式不在中間被折行。底線的讓位規則：預設 skip-ink: none——漢字的墨沉到基線
+   之下，auto 會在每個字底下讓開，整條虛線碎掉；$A$、$B$、普通括號這種只淺淺低於
+   基線的也一樣，auto 會替它們斷線（2026-08-13 站主兩張截圖先後退回）。只有分數、
+   根號、上下標、加大的括號這些真的往下戳的結構，在自己的子樹裡把值改回 auto，
+   讓位只發生在那幾格。先前兩版分別是 display:inline-block（每個公式前後都斷）與
+   整個 .katex 開 auto（簡單字母下也斷），都被退回。 */
 .katex:not(.katex-display .katex) {
   white-space: nowrap;
+  text-decoration-skip-ink: none;
+}
+
+.katex .mfrac,
+.katex .sqrt,
+.katex .msupsub,
+.katex .delimsizing {
   text-decoration-skip-ink: auto;
 }
 

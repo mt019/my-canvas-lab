@@ -26,6 +26,7 @@ const COPY = {
     prev: '上一步',
     next: '下一步',
     stepOf: (i, n) => `步驟 ${i}/${n}`,
+    labels: ['起點', '切牌', '交錯', '再切牌', '再交錯'],
     steps: (cut, n) => [
       `${n} 張牌照 1 到 ${n} 排好，柱高是牌值：整副是一段遞增序列，一道爬滿的階梯。`,
       `切牌：分成 1–${cut}（上）與 ${cut + 1}–${n}（下）兩堆，每堆內部照舊由小到大。`,
@@ -38,6 +39,7 @@ const COPY = {
     prev: 'Back',
     next: 'Next',
     stepOf: (i, n) => `Step ${i}/${n}`,
+    labels: ['Start', 'Cut', 'Riffle', 'Cut again', 'Riffle again'],
     steps: (cut, n) => [
       `${n} cards in order, 1 to ${n}, bar height showing the card's value: the whole deck is one rising sequence, a single staircase.`,
       `Cut: two packets, 1–${cut} above and ${cut + 1}–${n} below, each still ascending inside.`,
@@ -108,26 +110,32 @@ export default function SplitExample({
   const bandH = n * unit + 0.5; // 每一水平帶的高度：最高的柱＋一點空
   const totalRows = deckRows + 2;
 
+  // 步驟列照 wizard 樣式的常規做：每一步是帶名字與序號的可點目標，五格本身就是
+  // 全部的導航，不另擺上一步／下一步（兩顆箭頭鈕跟五格擠不進一行，而且是冗餘的
+  // 操作面）。三種狀態不靠顏色單獨區分：當前步實心反白、走過的正常、沒到的退淡。
+  // 觸標 py-2 拉到手指按得中的大小。
   return (
     <div className="my-8 rounded-token-md border border-line-soft p-5">
-      <div className="flex flex-wrap items-center gap-3">
-        <button
-          type="button"
-          onClick={() => setStep((s) => window.Math.max(0, s - 1))}
-          disabled={step === 0}
-          className="rounded-token-sm border border-line-soft px-3 py-1 text-token-sm text-ink-muted transition-colors duration-fast hover:border-line hover:text-ink disabled:cursor-default disabled:opacity-40 disabled:hover:border-line-soft disabled:hover:text-ink-muted"
-        >
-          {c.prev}
-        </button>
-        <button
-          type="button"
-          onClick={() => setStep((s) => window.Math.min(last, s + 1))}
-          disabled={step === last}
-          className="rounded-token-sm border border-line-soft px-3 py-1 text-token-sm text-ink-muted transition-colors duration-fast hover:border-line hover:text-ink disabled:cursor-default disabled:opacity-40 disabled:hover:border-line-soft disabled:hover:text-ink-muted"
-        >
-          {c.next}
-        </button>
-        <span className="whitespace-nowrap text-token-sm tabular-nums text-ink-faint">{c.stepOf(step + 1, last + 1)}</span>
+      <div role="group" aria-label={c.stepOf(step + 1, last + 1)} className="flex flex-wrap items-center gap-1.5">
+        {c.labels.map((label, i) => (
+          <button
+            key={label}
+            type="button"
+            onClick={() => setStep(i)}
+            aria-current={i === step ? 'step' : undefined}
+            className={`rounded-full px-3.5 py-2 text-token-sm leading-none transition-colors duration-fast ${
+              i === step
+                ? 'bg-ink font-medium text-paper'
+                : i < step
+                ? 'text-ink-muted hover:bg-surface-raised hover:text-ink'
+                : 'text-ink-faint hover:bg-surface-raised hover:text-ink'
+            }`}
+          >
+            {/* 序號與名字之間是真的空格，不是 margin——無障礙名稱與 locator 都讀
+                文字，不讀樣式（useHeadings 那條教訓的同款）。 */}
+            <span className="tabular-nums">{i + 1}</span>{' '}{label}
+          </button>
+        ))}
       </div>
 
       <figure className="mt-4">
@@ -140,7 +148,7 @@ export default function SplitExample({
               <span
                 key={v}
                 title={String(v)}
-                className="absolute rounded-t-[1px] transition-transform duration-500"
+                className="absolute rounded-t-[1px] transition-transform motion-reduce:transition-none"
                 style={{
                   width: `calc(${100 / perRow}% - 1px)`,
                   height: `${h}rem`,
@@ -148,6 +156,13 @@ export default function SplitExample({
                   top: 0,
                   // 柱在自己那條水平帶裡落底：帶底減柱高。柱高不隨步驟變，動畫只有移動。
                   transform: `translate(calc(${slot.col} * (100% + ${perRow / (perRow - 1)}px)), ${(slot.row + 1) * bandH - h}rem)`,
+                  // 波次：按目的欄位由左到右各延遲 7ms（52 張共 357ms，落在 stagger 總預算
+                  // 500ms 之內），切牌與落牌讀成一道從左掃到右的波，不是整片同時跳。
+                  // easing 用 MD3 的標準曲線；prefers-reduced-motion 時整個 transition 關掉，
+                  // 直接跳到下一步的排面。
+                  transitionDuration: '480ms',
+                  transitionTimingFunction: 'cubic-bezier(0.2, 0, 0, 1)',
+                  transitionDelay: `${slot.col * 7}ms`,
                   backgroundColor: `color-mix(in oklab, ${tone} ${window.Math.min(mix * 3.2, 88)}%, transparent)`,
                 }}
               />
