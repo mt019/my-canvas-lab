@@ -2,7 +2,9 @@
 
 One test at $\alpha = .05$ raises a false alarm 5% of the time when the null is true. Run 20 independent tests and the chance of at least one false alarm is
 
-$$1 - (1 - 0.05)^{20} \approx 0.64$$
+$$
+1 - (1 - 0.05)^{20} \approx 0.64
+$$
 
 Run enough tests and noise alone will hand you a "significant" one. Correcting for multiple comparisons means paying for that: either hold down the familywise error rate (Bonferroni: divide the threshold by the number of tests) or control the false discovery rate — <Cite id="benjaminiHochberg1995FDR">Benjamini and Hochberg's 1995 proposal, which governs the share of errors among the findings you declare</Cite>.
 

@@ -1,0 +1,19 @@
+## What it says
+
+Split the deck into two packets, one in each hand, and let the cards fall interleaved with your thumbs. This is how cards are usually shuffled, and it is written mathematically in two steps: <Cite id="bayerDiaconis1992">cut $n$ cards into two packets according to the binomial distribution, then drop them interleaved, the next card coming from the left packet with probability $A/(A+B)$ when $A$ and $B$ cards remain</Cite>. The model is due to Gilbert and Shannon, and independently to Reeds, and is usually called the GSR model.
+
+<Cite id="levinPeres2017MixingTimes">There is an equivalent description running backwards: label each card with a fair coin flip, then pull every card labelled 0 to the front keeping their relative order, which is exactly the inverse of one shuffle</Cite>. Running the shuffle backwards is often easier to count.
+
+## Where it comes from
+
+<Cite id="bayerDiaconis1992">Bayer and Diaconis used the model in 1992 to compute the chance of any arrangement after $m$ shuffles and to prove that $\frac{3}{2}\log_2 n$ shuffles suffice for $n$ cards</Cite>. The familiar "seven shuffles for 52 cards" comes from this result and holds only for this way of shuffling.
+
+## A concrete example
+
+One shuffle splits the original order into two runs, each still ascending. Such a maximal ascending run is a rising sequence, and $k$ shuffles leave at most $2^k$ of them. <Cite id="bayerDiaconis1992">A uniformly random 52-card deck averages 26.5 rising sequences, while four shuffles leave at most 16</Cite>, so counting them separates the two.
+
+## Common misreadings
+
+**Treating it as the only shuffle.** <Cite id="aldousDiaconis1986">"Move the top card to a random position" is another much-analysed model, with a critical number of order $n\log n$</Cite>, a different order of magnitude from $\frac{3}{2}\log_2 n$.
+
+**Treating the model as the human hand.** GSR approximates how people shuffle; <Cite id="bayerDiaconis1992">the paper reports experiments indicating the model describes real shuffling</Cite>, and this site has not checked that experimental data.

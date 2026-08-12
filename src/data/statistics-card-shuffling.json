@@ -1,0 +1,767 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-08-12T16:58:10.902Z",
+  "source": "statistics-lab-data, built by engineering/scripts/build-app-json.mjs",
+  "meta": {
+    "slug": "card-shuffling",
+    "topic": "randomness",
+    "title": "一副牌要洗幾次才算洗好",
+    "subtitle": "同一副撲克牌，換一種距離就換一個答案：五次、七次、十二次",
+    "summary": "52 張牌分成兩疊、交錯落下（鴿尾式）洗七次，與均勻分佈的全變異距離是 0.334。這個數字的意思是：拿洗過的牌和電腦排的隨機牌各一副放在你面前，就算用最會挑毛病的方法去檢查，也只有 66.7% 的把握指出哪一副洗過，瞎猜是 50%。改用資訊量衡量，洗五次剩 3.52% 的資訊；只在意紅黑，第六次的分離距離是 0.317；要讓全副牌序在分離距離下收斂，洗十二次仍有 0.278。文內的精確表由本站以整數有理數重算，與 Bayer–Diaconis 1992 年的原表相符。",
+    "publishedAt": "2026-08-12",
+    "tags": [
+      "全變異距離",
+      "混合時間",
+      "cutoff 現象",
+      "鴿尾式洗牌",
+      "隨機性檢驗",
+      "馬可夫鏈"
+    ],
+    "en": {
+      "title": "How many shuffles does a deck need",
+      "subtitle": "One deck of cards: change the distance and the answer changes to five, seven or twelve",
+      "summary": "Seven riffle shuffles (split the deck in two, let the packets fall interleaved) leave a 52-card deck 0.334 away from uniform in total variation. Put that deck beside one a computer arranged at random: even the shrewdest check anyone can run identifies the shuffled one only 66.7 percent of the time, against 50 percent for a guess. Measured by information, 3.52 percent survives five shuffles; for colours alone the separation distance is 0.317 by the sixth; the full order is still 0.278 away after twelve. The exact table here was recomputed in exact integer arithmetic and agrees with the 1992 original.",
+      "tags": [
+        "total variation distance",
+        "mixing time",
+        "cutoff phenomenon",
+        "riffle shuffle",
+        "testing for randomness",
+        "Markov chain"
+      ],
+      "readingMinutes": 7
+    },
+    "readingMinutes": 7,
+    "updatedAt": "2026-08-12",
+    "tagSlugs": [
+      "全變異距離",
+      "混合時間",
+      "cutoff-現象",
+      "鴿尾式洗牌",
+      "隨機性檢驗",
+      "馬可夫鏈"
+    ]
+  },
+  "figures": {
+    "split-example": {
+      "id": "split-example",
+      "type": "worked-example",
+      "title": "一次洗牌拆兩段，兩次拆四段",
+      "description": "十二張牌的分步例子。切牌把照順序排好的牌分成兩堆，交錯落下時每堆內部的前後次序不動，所以洗一次之後整副最多兩段遞增序列；第二次切牌把每一段最多再拆成兩段。洗 $k$ 次的牌堆最多 $2^k$ 段。",
+      "params": {
+        "n": 12,
+        "cut1": 6,
+        "order1": [
+          1,
+          7,
+          2,
+          8,
+          9,
+          3,
+          4,
+          10,
+          5,
+          11,
+          6,
+          12
+        ],
+        "cut2": 6,
+        "order2": [
+          4,
+          1,
+          7,
+          10,
+          2,
+          5,
+          8,
+          9,
+          11,
+          3,
+          6,
+          12
+        ]
+      },
+      "notes": "order1 是把 1–6 與 7–12 兩堆交錯的一種合法落法（兩堆各自的相對次序保持），遞增序列數 2：{1–6}、{7–12}。order2 是把 order1 的前六張 [1,7,2,8,9,3] 與後六張 [4,10,5,11,6,12] 再交錯的一種合法落法，遞增序列數 4：{1–3}、{4–6}、{7–9}、{10–12}——原來的每一段各被拆成兩段。兩個排列都是手選的定值，不是抽樣，選它是因為每段恰好對半、段數正好走滿上限 1→2→4。"
+    },
+    "rising-sequences": {
+      "id": "rising-sequences",
+      "type": "resampling-simulation",
+      "seed": 20260812,
+      "title": "洗過的牌會留下痕跡：遞增序列",
+      "description": "一副依序排好的 52 張牌，按 Gilbert–Shannon–Reeds 模型連續洗牌。滑桿選洗牌次數，每張牌依它所屬的遞增序列上色。洗 k 次之後，牌堆最多只能被切成 $2^k$ 段遞增序列；均勻隨機的牌堆平均有 26.5 段，標準差 2.10，落在 16 段以內的機率是 $4.67 \\times 10^{-7}$。四次以下的牌堆因此連「看起來像隨機」都做不到。",
+      "params": {
+        "n": 52,
+        "kMax": 10,
+        "defaultK": 3,
+        "uniformMeanRising": 26.5,
+        "uniformSdRising": 2.1016,
+        "uniformProbAtMost16": 4.666e-7
+      },
+      "notes": "GSR 正向模型：先依二項分佈 $\\mathrm{Bin}(n, 1/2)$ 決定切牌位置，左右兩堆各剩 A 與 B 張時，下一張來自左堆的機率為 $A/(A+B)$。遞增序列的計數方式：把牌堆由上而下讀成一個排列，原始牌值連號且在牌堆中順序遞增的極大區段各算一段；等價於 $r = d(\\pi^{-1}) + 1$，$d$ 為下降位置數。均勻分佈下 $r$ 的分佈由 Eulerian 數給出，平均 $(n+1)/2 = 26.5$。亂數產生器為 mulberry32，種子 20260812，與 data/reference/card-shuffling.json 的參考輸出同一套算法。"
+    },
+    "mixing-curve": {
+      "id": "mixing-curve",
+      "type": "exact-enumeration",
+      "title": "全變異距離的下墜：cutoff",
+      "description": "每種牌堆大小各畫一條曲線：洗 k 次之後的分佈與均勻分佈之間的全變異距離。距離先貼著 1 不動，到某一點才開始下墜，之後每洗一次大約減半。虛線標出 $\\frac{3}{2}\\log_2 n$。52 張牌的第 5 次是 0.924、第 6 次 0.614、第 7 次 0.334、第 8 次 0.167。",
+      "params": {
+        "decks": [
+          25,
+          32,
+          52,
+          78,
+          104,
+          208,
+          312
+        ],
+        "defaultDeck": 52,
+        "kMax": 14,
+        "highlightK": 7,
+        "totalVariation": {
+          "25": [
+            1,
+            1,
+            0.9992,
+            0.7755,
+            0.4371,
+            0.2311,
+            0.1144,
+            0.0564,
+            0.0279,
+            0.0139,
+            0.0069,
+            0.0035,
+            0.0017,
+            0.0009
+          ],
+          "32": [
+            1,
+            1,
+            1,
+            0.9289,
+            0.597,
+            0.3216,
+            0.1638,
+            0.0835,
+            0.042,
+            0.021,
+            0.0105,
+            0.0053,
+            0.0026,
+            0.0013
+          ],
+          "52": [
+            1,
+            1,
+            1,
+            1,
+            0.9237,
+            0.6136,
+            0.3341,
+            0.1672,
+            0.0854,
+            0.0429,
+            0.0215,
+            0.0108,
+            0.0054,
+            0.0027
+          ],
+          "78": [
+            1,
+            1,
+            1,
+            1,
+            0.9996,
+            0.8926,
+            0.5713,
+            0.3065,
+            0.1532,
+            0.078,
+            0.0392,
+            0.0196,
+            0.0098,
+            0.0049
+          ],
+          "104": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            0.9877,
+            0.7718,
+            0.4538,
+            0.2373,
+            0.1187,
+            0.06,
+            0.0301,
+            0.0151,
+            0.0075
+          ],
+          "208": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            0.9996,
+            0.9137,
+            0.6027,
+            0.3288,
+            0.1682,
+            0.0841,
+            0.0423,
+            0.0212
+          ],
+          "312": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            0.9985,
+            0.8829,
+            0.5648,
+            0.3033,
+            0.1545,
+            0.0773,
+            0.0388
+          ]
+        }
+      },
+      "notes": "由 Bayer–Diaconis 定理 1 精確計算，以整數有理數（BigInt）算到底，數值由資料倉產出、前端只排版，不涉及亂數，不需要 seed。洗 k 次後排列 $\\pi$ 的機率為 $\\binom{2^k + n - r}{n} / 2^{kn}$，$r$ 為 $\\pi$ 的遞增序列數；全變異距離 $= \\frac{1}{2}\\sum_r A(n,r)\\,\\bigl|\\binom{2^k+n-r}{n}/2^{kn} - 1/n!\\bigr|$，$A(n,r)$ 為 Eulerian 數。七種牌堆大小、k 從 1 到 10 共 70 個數值，與原文表 3（p.309）全部相符。"
+    },
+    "guessing-game": {
+      "id": "guessing-game",
+      "type": "analytic",
+      "title": "把距離換成猜中的張數",
+      "description": "牌背朝上逐張猜，猜完翻開再猜下一張。均勻隨機的牌堆，最佳策略平均猜中 $H_{52} = 4.54$ 張。原文用同一個策略跑 Monte Carlo，每個數字十萬次，洗五次仍多猜中兩張，洗六次剩一張，之後每次大約減半。",
+      "params": {
+        "baseline": 4.538,
+        "k": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10
+        ],
+        "noCut": [
+          31.17,
+          19.69,
+          12.92,
+          8.8,
+          6.56,
+          5.51,
+          5.01,
+          4.76,
+          4.65,
+          4.6
+        ],
+        "cut": [
+          29.45,
+          19.09,
+          12.69,
+          8.7,
+          6.5,
+          5.46,
+          4.97,
+          4.73,
+          4.63,
+          4.57
+        ],
+        "series": {
+          "noCut": "只洗 k 次",
+          "cut": "洗 k 次後再切一次牌"
+        },
+        "en": {
+          "series": {
+            "noCut": "k shuffles",
+            "cut": "k shuffles then a cut"
+          }
+        }
+      },
+      "notes": "兩列數值照錄 Bayer–Diaconis 表 5（p.310），每個數字基於十萬次模擬，策略是該文 5.1 節描述的猜法（原文稱其為推測的最佳策略，最佳性未證明）。基準線 4.538 為 $H_{52} = \\sum_{i=1}^{52} 1/i$ 的精確值，原文正文寫作 4.54。本圖只排版母本數值，不在瀏覽器重跑模擬。"
+    },
+    "question-panel": {
+      "id": "question-panel",
+      "type": "analytic",
+      "title": "換一個問題，答案就不同",
+      "description": "同一套洗牌、同一個分離距離，五種問法各畫一條線。問全副牌序的排列，洗十二次仍有 0.278；只問二十一點看得見的牌值，第九次就掉到 0.366；只問紅黑，第六次 0.317。",
+      "params": {
+        "k": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12
+        ],
+        "rows": [
+          {
+            "id": "full",
+            "label": "全副牌序",
+            "en": {
+              "label": "Full order"
+            },
+            "values": [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              0.995,
+              0.928,
+              0.729,
+              0.478,
+              0.278
+            ],
+            "exact": true
+          },
+          {
+            "id": "blackjack",
+            "label": "二十一點",
+            "en": {
+              "label": "Blackjack"
+            },
+            "values": [
+              1,
+              1,
+              1,
+              1,
+              0.999,
+              0.97,
+              0.834,
+              0.596,
+              0.366,
+              0.204,
+              0.108,
+              0.056
+            ],
+            "exact": false
+          },
+          {
+            "id": "suits",
+            "label": "只看花色",
+            "en": {
+              "label": "Suits only"
+            },
+            "values": [
+              1,
+              1,
+              0.997,
+              0.976,
+              0.884,
+              0.683,
+              0.447,
+              0.26,
+              0.14,
+              0.073,
+              0.037,
+              0.019
+            ],
+            "exact": false
+          },
+          {
+            "id": "redblack",
+            "label": "只看紅黑",
+            "en": {
+              "label": "Red and black only"
+            },
+            "values": [
+              0.962,
+              0.925,
+              0.849,
+              0.708,
+              0.508,
+              0.317,
+              0.179,
+              0.095,
+              0.049,
+              0.025,
+              0.013,
+              0.006
+            ],
+            "exact": false
+          },
+          {
+            "id": "single",
+            "label": "追蹤單一張牌",
+            "en": {
+              "label": "One tracked card"
+            },
+            "values": [
+              1,
+              1,
+              0.993,
+              0.943,
+              0.778,
+              0.536,
+              0.321,
+              0.177,
+              0.093,
+              0.048,
+              0.024,
+              0.012
+            ],
+            "exact": false
+          }
+        ]
+      },
+      "notes": "五列照錄 Assaf–Diaconis–Soundararajan 表 1（arXiv:0908.3462v1, p.3）。距離為分離距離 $\\mathrm{sep}(P) = \\max_w \\bigl(1 - P(w)/U(w)\\bigr)$，與 mixing-curve 圖的全變異距離不同，兩張圖的縱軸不可互相比較；分離距離恆不小於全變異距離。第一列由 Bayer–Diaconis 公式精確計算，其餘四列為該文的近似公式，原文說明紅黑列在 k=1,2 與 Conger–Viswanath 的精確值 0.8898、0.8897 有差距。"
+    }
+  },
+  "sources": {
+    "aldousDiaconis1986": {
+      "author": "David Aldous & Persi Diaconis",
+      "title": "Shuffling Cards and Stopping Times",
+      "year": 1986,
+      "container": "The American Mathematical Monthly 93(5): 333–348",
+      "locator": "p.335：全變異距離的三個等價定義（2.3）、看見底牌就使距離等於 $1-1/n$ 的例子，以及 cut-off 現象的定義與圖 2。",
+      "quote": "Suppose, after well-shuffling a deck of n cards, that you happen to see the bottom card, c. Then your distribution Q on S_n is uniform on the set of permutations for which pi(c) = n, and ||Q - U|| = 1 - 1/n. This shows the variation distance can be very \"unforgiving\" of small deviations from uniformity.",
+      "url": "https://www.jstor.org/stable/2323590",
+      "en": {
+        "locator": "p.335: the equivalent definitions of variation distance (2.3), the seen-bottom-card example giving distance 1 - 1/n, and the statement of the cut-off phenomenon with Fig. 2."
+      }
+    },
+    "assafDiaconisSoundararajan2011": {
+      "author": "Sami Assaf, Persi Diaconis & K. Soundararajan",
+      "title": "A rule of thumb for riffle shuffling",
+      "year": 2011,
+      "container": "The Annals of Applied Probability 21(3): 843–875",
+      "locator": "第 1 節表 1：52 張牌在分離距離下，全牌序、二十一點、只看花色、只看紅黑四種問法各自的收斂數字（arXiv:0908.3462v1, p.3）。",
+      "quote": "We study how many riffle shuffles are required to mix n cards if only certain features of the deck are of interest, e.g. suits disregarded or only the colors of interest. For these features, the number of shuffles drops from 3/2 log2 n to log2 n.",
+      "url": "https://arxiv.org/abs/0908.3462",
+      "en": {
+        "locator": "Section 1, Table 1: separation distance for 52 cards under four questions (full order, blackjack, suits only, red-black only); arXiv:0908.3462v1, p.3."
+      }
+    },
+    "bayerDiaconis1992": {
+      "author": "Dave Bayer & Persi Diaconis",
+      "title": "Trailing the Dovetail Shuffle to its Lair",
+      "year": 1992,
+      "container": "The Annals of Applied Probability 2(2): 294–313",
+      "locator": "p.294 定理 1（洗 m 次後某個排列出現的機率）與 GSR 模型的描述；p.296 表 1（52 張牌的全變異距離）；p.309 表 3（七種牌堆大小的精確值）與表 4（1.5 log2 n）；p.310 表 5（逐張猜牌的平均猜中數）與 5.1 節。",
+      "quote": "Experiments reported in Diaconis (1988) show that the Gilbert-Shannon-Reeds (GSR) model is a good description of the way real people shuffle real cards.",
+      "url": "https://projecteuclid.org/journals/annals-of-applied-probability/volume-2/issue-2/Trailing-the-Dovetail-Shuffle-to-its-Lair/10.1214/aoap/1177005705.full",
+      "en": {
+        "locator": "p.294 Theorem 1 and the description of the GSR model; p.296 Table 1 (total variation for 52 cards); p.309 Tables 3 and 4; p.310 Table 5 and Section 5.1."
+      }
+    },
+    "diaconisFulmanHolmes2013": {
+      "author": "Persi Diaconis, Jason Fulman & Susan Holmes",
+      "title": "Analysis of Casino Shelf Shuffling Machines",
+      "year": 2013,
+      "container": "The Annals of Applied Probability 23(4): 1692–1720",
+      "locator": "第 1 節：廠商送來的十層洗牌機、工程師自訂的檢查看起來沒問題，以及改用逐張猜牌算出的 9.5 張與 4.5 張（arXiv:1107.2961v2, pp.1–2）。",
+      "quote": "using our theory, we were able to show that a knowledgeable player could guess about 9 1/2 cards correctly in a single run through a 52-card deck. For a well-shuffled deck, the optimal strategy gets about 4 1/2 cards correct. This data did convince the company.",
+      "url": "https://arxiv.org/abs/1107.2961",
+      "en": {
+        "locator": "Section 1: the ten-shelf machine, the engineers' own ad hoc tests, and the 9.5 versus 4.5 guessed cards (arXiv:1107.2961v2, pp.1-2)."
+      }
+    },
+    "levinPeres2017MixingTimes": {
+      "author": "David A. Levin & Yuval Peres",
+      "title": "Markov Chains and Mixing Times",
+      "year": 2017,
+      "container": "2nd ed. Providence: American Mathematical Society",
+      "locator": "第 8.3 節「Riffle Shuffles」pp.107-110：鴿尾式洗牌的三種等價描述（其中第三種是逆洗牌的位元標籤法）、命題 8.11 的強停止時間，以及命題 8.12 的上界 $t_{\\mathrm{mix}} \\le 2\\log_2(4n/3)$。第 4.1 節 p.47 定義全變異距離，第 18 章 p.261 處理 cutoff 現象。",
+      "quote": "A rising sequence of a permutation is a maximal set of consecutive values that occur in the correct relative order.",
+      "url": "https://pages.uoregon.edu/dlevin/MARKOV/mcmt2e.pdf",
+      "en": {
+        "locator": "Section 8.3 'Riffle Shuffles', pp.107-110: three equivalent descriptions of the shuffle (the third being the inverse bit-labelling construction), the strong stationary time of Proposition 8.11, and the bound of Proposition 8.12. Total variation is defined in Section 4.1, p.47; the cutoff phenomenon is Chapter 18, p.261."
+      }
+    },
+    "mactutorDiaconis": {
+      "author": "J. J. O'Connor & E. F. Robertson",
+      "title": "Persi Warren Diaconis",
+      "year": 2023,
+      "container": "MacTutor History of Mathematics Archive, University of St Andrews",
+      "locator": "生年與出生地（1945 年 1 月 31 日，紐約市）、十四歲隨 Dai Vernon 離家、1971 年 1 月取得紐約市立學院數學學士、1974 年在 Mosteller 指導下取得哈佛博士、Martin Gardner 的推薦信。",
+      "quote": "This young student is one of the best card mechanics in the country.",
+      "url": "https://mathshistory.st-andrews.ac.uk/Biographies/Diaconis/",
+      "en": {
+        "locator": "Born 31 January 1945 in New York City; left home at fourteen to tour with Dai Vernon; BS in mathematics from City College of New York in January 1971; Harvard PhD in 1974 under Frederick Mosteller; Martin Gardner's letter of recommendation."
+      }
+    },
+    "mathmediaDiaconis2023": {
+      "author": "劉太平、黃啟瑞（訪問）",
+      "title": "有朋自遠方來——專訪 Persi Diaconis 教授",
+      "year": 2023,
+      "container": "數學傳播 47 卷 2 期，中央研究院數學研究所",
+      "locator": "pp.3-26。訪問時間民國 112 年 3 月 6 日，地點中央研究院數學研究所；同期報導其應中華民國數學會與中研院數學所「許振榮講座」之邀，2023 年 3 月 8 日至 10 日在臺灣大學天文數學館以《洗牌的數學》為題演講三日。",
+      "url": "https://www.math.sinica.edu.tw/media/pdf/d472/47201.pdf",
+      "en": {
+        "locator": "pp.3-26. Interviewed 6 March 2023 at the Institute of Mathematics, Academia Sinica; the same visit brought him to the Chen-Jung Hsu Lectures at National Taiwan University's Astronomy-Mathematics Building, 8-10 March 2023, on The Mathematics of Shuffling Cards."
+      }
+    },
+    "trefethen2000": {
+      "author": "Lloyd N. Trefethen & Lloyd M. Trefethen",
+      "title": "How many shuffles to randomize a deck of cards?",
+      "year": 2000,
+      "container": "Proceedings of the Royal Society A 456(2002): 2561–2568",
+      "locator": "p.2564 圖 2 的說明文字與同頁正文：改以資訊量衡量時沒有 cut-off，$\\log_2 n$ 次就把資訊降到任意小的比例。",
+      "quote": "For n = 52, 3.52% of the information remains after five shuffles and 0.92% after six shuffles.",
+      "url": "https://people.maths.ox.ac.uk/~trefethen/publication/PDF/2000_87.pdf",
+      "en": {
+        "locator": "p.2564, caption to Fig. 2 and the surrounding text: measured by information, there is no cut-off, and log2 n shuffles suffice to reduce the information to an arbitrarily small proportion."
+      }
+    }
+  },
+  "quiz": [
+    {
+      "id": "q1-what-seven-means",
+      "prompt": "「52 張牌要洗七次」這句話，最準確的讀法是哪一個？",
+      "options": [
+        "洗到第七次，牌堆就成了均勻隨機的排列",
+        "第六次還完全不隨機，到第七次才變隨機",
+        "七次是實驗量出來的經驗值，沒有算式支撐",
+        "洗到第七次，全變異距離降到 0.334，最會挑毛病的檢查也只有 66.7% 認得出哪一副洗過"
+      ],
+      "correctIndex": 3,
+      "explain": "52 張牌的距離第七次是 0.334，第八次 0.167，第十次 0.043，一直往下，永遠不到 0。七這個數字站在曲線陡降的那一段（第五次到第八次），沒有哪一次跨過一條界線。全變異距離取的是所有事件裡的最大差距，所以 0.334 說的是：把洗過的牌和隨機排的牌擺在一起，最好的那套檢查認出洗過那一副的機率是 $\\frac{1}{2} + \\frac{1}{2} \\times 0.334 = 66.7\\%$，瞎猜是 50%。",
+      "en": {
+        "prompt": "Which reading of “a 52-card deck needs seven shuffles” is the accurate one?",
+        "options": [
+          "After the seventh shuffle the deck is a uniformly random permutation",
+          "The sixth shuffle leaves the deck ordered and the seventh makes it random",
+          "Seven is an experimental figure with no formula behind it",
+          "After seven shuffles the distance is 0.334, so even the shrewdest check spots the shuffled deck only 67% of the time"
+        ],
+        "explain": "For 52 cards the distance runs 0.334 at seven shuffles, 0.167 at eight, 0.043 at ten — always falling, never zero. Seven sits inside the steep stretch of the curve, between the fifth and eighth shuffle; no single shuffle crosses a line. Total variation takes the largest gap over all events, so 0.334 says this: set the shuffled deck beside a randomly arranged one and the best check available picks out the shuffled deck with probability $\\frac{1}{2} + \\frac{1}{2} \\times 0.334 = 66.7\\%$."
+      }
+    },
+    {
+      "id": "q2-rising-sequences",
+      "prompt": "為什麼洗四次以下的牌堆，連「看起來像隨機」都做不到？",
+      "options": [
+        "洗四次還動不到最底下那幾張牌",
+        "洗 k 次至多有 $2^k$ 段遞增序列，四次至多 16 段，隨機牌堆平均 26.5 段",
+        "四次還不到 $\\frac{3}{2}\\log_2 52 = 8.55$ 次",
+        "切牌位置服從二項分佈，洗四次還沒攤平"
+      ],
+      "correctIndex": 1,
+      "explain": "每洗一次，遞增序列的段數至多加倍，四次至多 16 段。均勻分佈下段數平均 $(n+1)/2 = 26.5$、標準差 2.10，落在 16 段以內的機率是 $4.67 \\times 10^{-7}$，大約兩百萬次才遇得到一次。數段數這一個檢驗就把四次以下的牌堆和隨機牌堆分開了，而且幾乎不會判錯，前四次的全變異距離因此是 1.000。8.55 是漸近公式給出的位置，四次不夠的理由是段數數得出來。",
+      "en": {
+        "prompt": "Why does a deck shuffled four times or fewer fail even to look random?",
+        "options": [
+          "Four shuffles never reach the cards at the bottom",
+          "$k$ shuffles leave at most $2^k$ rising sequences, so at most 16 after four, against 26.5 on average for a random deck",
+          "Four is short of $\\frac{3}{2}\\log_2 52 = 8.55$",
+          "The cut position is binomial, and four shuffles have not flattened it"
+        ],
+        "explain": "Each shuffle at most doubles the number of rising sequences, so four give at most 16. Under the uniform distribution the count averages $(n+1)/2 = 26.5$ with standard deviation 2.10, and lands at 16 or below with probability $4.67 \\times 10^{-7}$ — about once in two million decks. Counting rising sequences, one test on its own, separates a four-shuffle deck from a random one and almost never errs, which is why the total variation distance reads 1.000 for the first four shuffles. The 8.55 comes from the asymptotic formula; four shuffles fail because the count gives them away."
+      }
+    },
+    {
+      "id": "q3-machine-tests",
+      "prompt": "賭場設備廠商的工程師跑了幾項檢查都正常，三位作者仍判定那台洗牌機不能用。兩邊的判準差在哪裡？",
+      "options": [
+        "工程師的那幾項檢查算錯了",
+        "機器裡的亂數產生器本身有偏差",
+        "幾項檢查各自只算一個統計量，全變異距離取的是所有檢驗裡的最大差距",
+        "十層的機器結構產生不出隨機排列"
+      ],
+      "correctIndex": 2,
+      "explain": "作者算出單次通過之後每個排列的機率，再換算成懂行的玩家逐張猜能猜中幾張：那台機器 9.5 張，洗好的牌 4.5 張，這份數字說服了廠商。事先挑好的幾項檢查全部通過，說明的只是那幾個統計量正常；距離取所有事件的最大差距，還沒有人想到的檢驗也在計算之內。",
+      "en": {
+        "prompt": "A casino supplier's engineers ran their own checks on a shuffling machine and saw nothing wrong; the three authors ruled it unusable. Where do the two standards differ?",
+        "options": [
+          "The engineers' checks were miscalculated",
+          "The random number generator inside the machine was biased",
+          "Each check computes one statistic, while total variation takes the largest gap over every possible test",
+          "A ten-shelf mechanism cannot produce a random permutation"
+        ],
+        "explain": "The authors computed the probability of each permutation after a single pass, then converted it into cards a knowledgeable player guesses one at a time: 9.5 for the machine against 4.5 for a well-shuffled deck, and that figure persuaded the supplier. A fixed set of checks passing says only that those statistics look normal; the distance takes the largest gap over all events, tests nobody has thought of included."
+      }
+    }
+  ],
+  "statements": {
+    "right": [
+      {
+        "id": "r-distance-first",
+        "statement": "洗七次之後，52 張牌的分佈與均勻分佈的全變異距離是 0.334；再洗一次減到 0.167。",
+        "why": "把數字連同它的距離一起講出來，讀者才知道 0.334 是什麼意思：任何一個檢驗，最多只能拿到三成三的優勢。",
+        "source": "bayerDiaconis1992",
+        "en": {
+          "statement": "After seven shuffles the total variation distance between the deck and the uniform distribution is 0.334; one more shuffle brings it to 0.167.",
+          "why": "Quoting the number together with its distance tells the reader what 0.334 means: no test can do better than a 33 percent edge."
+        }
+      },
+      {
+        "id": "r-criterion-bound",
+        "statement": "只要在意的是紅黑，六次之後分離距離是 0.317；問全副牌序，十二次仍有 0.278。",
+        "why": "同一副牌、同一個距離，答案隨問題改變。說「夠亂了」之前要先說清楚是為了什麼用途。",
+        "source": "assafDiaconisSoundararajan2011",
+        "en": {
+          "statement": "If only the colours matter, separation distance is 0.317 after six shuffles; for the full order of the deck it is still 0.278 after twelve.",
+          "why": "Same deck, same distance, different question. \"Random enough\" is only meaningful once the use is named."
+        }
+      },
+      {
+        "id": "r-model-named",
+        "statement": "這些結果算的是 Gilbert–Shannon–Reeds 模型下的洗牌，該文說明實驗顯示這個模型能描述人實際的洗法。",
+        "why": "結論的適用範圍等於模型的適用範圍。模型與人手之間的落差是實證問題，不是數學結果的一部分。",
+        "source": "bayerDiaconis1992",
+        "en": {
+          "statement": "These results are computed under the Gilbert-Shannon-Reeds model, which the paper reports to be a good description of how people actually shuffle.",
+          "why": "A conclusion reaches exactly as far as its model does. Whether hands match the model is an empirical question, separate from the theorem."
+        }
+      }
+    ],
+    "wrong": [
+      {
+        "id": "w-threshold",
+        "claim": "洗六次不隨機，洗七次就隨機了。",
+        "why": "距離從 1 連續降到 0，第七次是 0.334、第十次 0.043，沒有任何一次讓它等於 0。把陡降讀成門檻，等於把一條曲線讀成一道開關。",
+        "instead": "寫「洗牌的混合程度在第五次到第八次之間急劇下降，第七次的距離是 0.334」。",
+        "source": "bayerDiaconis1992",
+        "en": {
+          "claim": "Six shuffles is not random; seven is.",
+          "why": "The distance falls continuously from 1 towards 0 and never reaches it: 0.334 at seven, 0.043 at ten. Reading the steep part as a threshold turns a curve into a switch.",
+          "instead": "Write that mixing drops sharply between the fifth and eighth shuffle, and that the distance at seven is 0.334."
+        }
+      },
+      {
+        "id": "w-universal",
+        "claim": "任何牌堆洗七次就夠。",
+        "why": "同一條公式給 32 張牌五到六次、104 張牌八到九次、312 張牌十一次以上；七次是 52 張牌的位置，隨 $\\frac{3}{2}\\log_2 n$ 移動。",
+        "instead": "先說牌堆有幾張，再引對應的數值。",
+        "source": "bayerDiaconis1992",
+        "en": {
+          "claim": "Seven shuffles is enough for any deck.",
+          "why": "Seven belongs to 52 cards. The same formula gives five or six for 32 cards, eight or nine for 104, and eleven or more for 312, tracking (3/2) log2 n.",
+          "instead": "State the deck size first, then quote the number that goes with it."
+        }
+      },
+      {
+        "id": "w-only-answer",
+        "claim": "七次是這個問題的答案。",
+        "why": "以資訊量衡量，52 張牌洗五次剩 3.52% 的資訊、六次剩 0.92%，而且沒有陡降。該文自己的收尾是：兩種衡量哪一種更要緊，要看玩的是哪一種遊戲。距離換了，答案就換了。",
+        "instead": "講「在全變異距離下，第七次是 0.334；改以資訊量衡量，五次剩 3.52%、六次剩 0.92%」，把判準寫進句子裡。",
+        "source": "trefethen2000",
+        "en": {
+          "claim": "Seven is the answer to this question.",
+          "why": "Measured by information, 3.52 percent remains after five shuffles and 0.92 percent after six, with no cut-off at all. The paper closes by saying that which measure matters more to gamblers and card players is presumably game dependent. Change the distance and the answer changes.",
+          "instead": "Say \"0.334 at seven under total variation; 3.52 percent of the information left at five and 0.92 percent at six\", and keep the criterion inside the sentence."
+        }
+      },
+      {
+        "id": "w-tests-passed",
+        "claim": "幾項隨機性檢查都通過了，所以這台洗牌機沒問題。",
+        "why": "一組事先挑好的檢查通過，只說明這幾個統計量正常。同一台十層洗牌機通過了工程師自訂的檢查，卻讓懂行的玩家單次平均猜中 9.5 張，而洗好的牌是 4.5 張。",
+        "instead": "算距離，或算一個涵蓋所有檢驗的指標（例如最佳猜牌策略的期望猜中數），不要只列通過的檢查。",
+        "source": "diaconisFulmanHolmes2013",
+        "en": {
+          "claim": "It passed several randomness tests, so the machine is fine.",
+          "why": "Passing a fixed set of tests says only that those statistics look normal. The ten-shelf machine passed the engineers' own tests while letting a knowledgeable player guess 9.5 cards per run, against 4.5 for a well-shuffled deck.",
+          "instead": "Compute a distance, or a quantity that ranges over all tests such as the expected number of correct guesses under the best strategy."
+        }
+      }
+    ]
+  },
+  "misreadings": [
+    {
+      "id": "w-threshold",
+      "claim": "洗六次不隨機，洗七次就隨機了。",
+      "why": "距離從 1 連續降到 0，第七次是 0.334、第十次 0.043，沒有任何一次讓它等於 0。把陡降讀成門檻，等於把一條曲線讀成一道開關。",
+      "instead": "寫「洗牌的混合程度在第五次到第八次之間急劇下降，第七次的距離是 0.334」。",
+      "source": "bayerDiaconis1992",
+      "en": {
+        "claim": "Six shuffles is not random; seven is.",
+        "why": "The distance falls continuously from 1 towards 0 and never reaches it: 0.334 at seven, 0.043 at ten. Reading the steep part as a threshold turns a curve into a switch.",
+        "instead": "Write that mixing drops sharply between the fifth and eighth shuffle, and that the distance at seven is 0.334."
+      }
+    },
+    {
+      "id": "w-universal",
+      "claim": "任何牌堆洗七次就夠。",
+      "why": "同一條公式給 32 張牌五到六次、104 張牌八到九次、312 張牌十一次以上；七次是 52 張牌的位置，隨 $\\frac{3}{2}\\log_2 n$ 移動。",
+      "instead": "先說牌堆有幾張，再引對應的數值。",
+      "source": "bayerDiaconis1992",
+      "en": {
+        "claim": "Seven shuffles is enough for any deck.",
+        "why": "Seven belongs to 52 cards. The same formula gives five or six for 32 cards, eight or nine for 104, and eleven or more for 312, tracking (3/2) log2 n.",
+        "instead": "State the deck size first, then quote the number that goes with it."
+      }
+    },
+    {
+      "id": "w-only-answer",
+      "claim": "七次是這個問題的答案。",
+      "why": "以資訊量衡量，52 張牌洗五次剩 3.52% 的資訊、六次剩 0.92%，而且沒有陡降。該文自己的收尾是：兩種衡量哪一種更要緊，要看玩的是哪一種遊戲。距離換了，答案就換了。",
+      "instead": "講「在全變異距離下，第七次是 0.334；改以資訊量衡量，五次剩 3.52%、六次剩 0.92%」，把判準寫進句子裡。",
+      "source": "trefethen2000",
+      "en": {
+        "claim": "Seven is the answer to this question.",
+        "why": "Measured by information, 3.52 percent remains after five shuffles and 0.92 percent after six, with no cut-off at all. The paper closes by saying that which measure matters more to gamblers and card players is presumably game dependent. Change the distance and the answer changes.",
+        "instead": "Say \"0.334 at seven under total variation; 3.52 percent of the information left at five and 0.92 percent at six\", and keep the criterion inside the sentence."
+      }
+    },
+    {
+      "id": "w-tests-passed",
+      "claim": "幾項隨機性檢查都通過了，所以這台洗牌機沒問題。",
+      "why": "一組事先挑好的檢查通過，只說明這幾個統計量正常。同一台十層洗牌機通過了工程師自訂的檢查，卻讓懂行的玩家單次平均猜中 9.5 張，而洗好的牌是 4.5 張。",
+      "instead": "算距離，或算一個涵蓋所有檢驗的指標（例如最佳猜牌策略的期望猜中數），不要只列通過的檢查。",
+      "source": "diaconisFulmanHolmes2013",
+      "en": {
+        "claim": "It passed several randomness tests, so the machine is fine.",
+        "why": "Passing a fixed set of tests says only that those statistics look normal. The ten-shelf machine passed the engineers' own tests while letting a knowledgeable player guess 9.5 cards per run, against 4.5 for a well-shuffled deck.",
+        "instead": "Compute a distance, or a quantity that ranges over all tests such as the expected number of correct guesses under the best strategy."
+      }
+    }
+  ],
+  "timeline": [],
+  "terms": {
+    "cutoff-phenomenon": {
+      "slug": "cutoff-phenomenon",
+      "term": "cutoff 現象",
+      "oneLine": "距離幾乎不動地貼著 1，到某個次數附近才在很短的區間內掉到接近 0。",
+      "example": "52 張牌洗前四次距離都是 1.000，第五次 0.924，第六次 0.614，第七次 0.334，第八次 0.167。",
+      "route": "/statistics/glossary/cutoff-phenomenon",
+      "en": {
+        "term": "cutoff phenomenon",
+        "oneLine": "The distance sits at 1, then falls almost all the way to 0 within a short window around a critical number of steps.",
+        "example": "Four riffle shuffles of 52 cards leave the distance at 1.000; then come 0.924, 0.614, 0.334 and 0.167."
+      }
+    },
+    "riffle-shuffle": {
+      "slug": "riffle-shuffle",
+      "term": "鴿尾式洗牌",
+      "oneLine": "把一副牌分成兩疊、讓兩疊交錯落下的洗法，也是撲克牌最常見的洗法。",
+      "example": "52 張牌照這種洗法洗七次，與均勻分佈的全變異距離降到 0.334；洗四次以下，牌堆最多只有 16 段遞增序列，一眼就分得出來。",
+      "route": "/statistics/glossary/riffle-shuffle",
+      "en": {
+        "term": "riffle shuffle",
+        "oneLine": "Splitting a deck into two packets and letting them fall interleaved, the way cards are usually shuffled.",
+        "example": "Seven such shuffles of 52 cards bring the total variation distance down to 0.334; four or fewer leave at most 16 rising sequences, which is easy to spot."
+      }
+    },
+    "total-variation-distance": {
+      "slug": "total-variation-distance",
+      "term": "全變異距離",
+      "oneLine": "兩個機率分佈之間，在同一個事件上機率差距的最大值。",
+      "example": "有人瞄到一副洗好的牌的底牌。「底牌是那一張」這個事件，在均勻分佈下的機率是 1/52，在他知道之後是 1，兩者的全變異距離因此是 51/52。",
+      "route": "/statistics/glossary/total-variation-distance",
+      "en": {
+        "term": "total variation distance",
+        "oneLine": "The largest gap between two probability distributions on any single event.",
+        "example": "Someone glimpses the bottom card of a shuffled deck. The event “the bottom card is that one” has probability 1/52 under the uniform distribution and 1 under theirs, so the total variation distance is 51/52."
+      }
+    }
+  }
+}

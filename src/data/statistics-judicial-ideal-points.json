@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-07-19T06:35:06.839Z",
+  "generatedAt": "2026-08-12T16:58:10.902Z",
   "source": "statistics-lab-data, built by engineering/scripts/build-app-json.mjs",
   "meta": {
     "slug": "judicial-ideal-points",
@@ -9,7 +9,7 @@
     "subtitle": "用貝氏分級反應模型把真投票變成一條違憲宣告傾向的軸，檢驗它沿不沿提名總統結構化——一個有紀律的 null，加一層測得到的協作訊號",
     "summary": "把一位大法官放到一條「傾向」的軸上，這條軸從哪裡來？本文以憲法法庭 2022 年後官方逐項立場表為真投票，用 Samejima 分級反應模型的貝氏估計逐法官的違憲宣告傾向，再用置換檢定看它沿不沿提名總統排列。四個維度都測不到效果，而這個 null 帶檢定力、等價與規格曲線的紀律；逐法官可信區間普遍很寬、相鄰全部重疊，這屆在稀疏異議下多半彼此不可區分。另一層用 1949 年以來的意見書共同具名網絡、階層二項模型，測到同提名人中等而穩健的正效果。投票層測不到、協作層測得到，兩層各說各的。台灣既有實證研究沒有一篇用過官方逐項真投票——本文補上這個缺口，並對一篇問題意識高度重疊、迄今未取得全文的研究，在新穎性上保留。",
     "publishedAt": "2026-07-19",
-    "updatedAt": "2026-07-19",
+    "updatedAt": "2026-08-01",
     "tags": [
       "理想點",
       "項目反應理論",
@@ -491,7 +491,7 @@
         "否"
       ],
       "correctIndex": 1,
-      "explain": "否。同意率只回答「多常同意」，理想點回答「站在哪裡」。兩人可以有相同的不同意率，卻在方向相反的案子上反對——一位常投「應該更違憲」、一位常投「應該更合憲」。分級反應模型用每題各自的參數與投票方向定位，兩人會落在軸的兩端，而不是同一點。",
+      "explain": "否。同意率只回答「多常同意」，理想點回答「站在哪裡」。兩人可以有相同的不同意率，卻在方向相反的案子上反對：一位常投「應該更違憲」，一位常投「應該更合憲」。分級反應模型用每題各自的參數與投票方向定位，兩人會落在量尺的兩端，而不是同一點。",
       "en": {
         "prompt": "Two justices both dissent 40% of the time. Does this mean the measurement model will place them at nearly the same point on the ideal-point axis?",
         "options": [
@@ -509,7 +509,7 @@
         "否"
       ],
       "correctIndex": 1,
-      "explain": "否。區間全重疊說的是「分不出誰在哪」，不是「大家都在中間」。稀疏異議、樣本小，位置就估不準，區間因此很寬。模型排得出先後，卻沒有把握把某個人和鄰座分開——這是資訊量不足的表現，不是「無差別」的證據。這也是 Hanretty 對高共識法院的警告：異議太稀可能根本估不出理想點。",
+      "explain": "否。區間全重疊說的是「分不出誰在哪」，不是「大家都在中間」。稀疏異議、樣本小，位置就估不準，區間因此很寬。模型排得出先後，卻沒有把握把某個人和鄰座分開，那是資訊量不足，不是「無差別」的證據。這也是 Hanretty 對高共識法院的警告：異議太稀可能根本估不出理想點。",
       "en": {
         "prompt": "After ranking the 19 justices by their theta point estimates, every adjacent pair's 90% credible interval overlaps. Does this show that 'we have measured everyone to be in the middle, with no differences'?",
         "options": [

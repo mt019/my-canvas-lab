@@ -1,5 +1,6 @@
 import Accordion, { useExpandedSet } from '../../../components/lab/Accordion';
 import Badge from '../../../components/lab/Badge';
+import MathText from '../../../components/lab/MathText';
 
 /*
  * "This way of saying it is right / this way is wrong." Two curated lists, not a
@@ -30,11 +31,11 @@ export default function StatementsPanel({ statements = {}, lang = 'zh' }) {
             const c = pick(it);
             return {
               id: it.id,
-              title: <span className="text-ink">{c.statement}</span>,
+              title: <span className="text-ink"><MathText>{c.statement}</MathText></span>,
               meta: <Badge tone="success">{heading('精確', 'precise')}</Badge>,
               render: () => (
                 <div className="text-token-sm leading-relaxed">
-                  <p className="text-ink">{c.why}</p>
+                  <p className="text-ink"><MathText>{c.why}</MathText></p>
                 </div>
               ),
             };
@@ -53,13 +54,13 @@ export default function StatementsPanel({ statements = {}, lang = 'zh' }) {
             const c = pick(it);
             return {
               id: it.id,
-              title: <span className="text-ink">{c.claim}</span>,
+              title: <span className="text-ink"><MathText>{c.claim}</MathText></span>,
               meta: <Badge tone="danger">{heading('誤讀', 'misreading')}</Badge>,
               render: () => (
                 <div className="text-token-sm leading-relaxed">
-                  <p className="text-ink">{c.why}</p>
+                  <p className="text-ink"><MathText>{c.why}</MathText></p>
                   {c.instead ? (
-                    <p className="mt-2 border-l-2 border-line pl-3 text-ink-muted">{c.instead}</p>
+                    <p className="mt-2 border-l-2 border-line pl-3 text-ink-muted"><MathText>{c.instead}</MathText></p>
                   ) : null}
                 </div>
               ),

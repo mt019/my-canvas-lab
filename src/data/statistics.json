@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-07-19T06:35:06.839Z",
+  "generatedAt": "2026-08-12T16:58:10.902Z",
   "source": "statistics-lab-data, built by engineering/scripts/build-app-json.mjs",
   "site": {
     "intro": "統計課本教你怎麼算，很少告訴你這些東西當初是為了什麼問題被發明出來，又是在哪裡開始被誤用。這個站一次處理一個看起來理所當然、來歷卻可疑的概念：它為什麼長成這樣，是誰為了什麼發明它，以及它壞掉的時候會壞在哪裡。文章裡的模擬都可以親手轉動，因為有些事情得自己按下去重跑一萬次才會相信。",
@@ -39,9 +39,51 @@
         "label": "Inference",
         "blurb": "Hypothesis tests, estimates, intervals — the most used and the most misread part of the subject."
       }
+    },
+    {
+      "id": "randomness",
+      "label": "隨機與收斂",
+      "blurb": "一個程序要重複幾次，結果才能當成隨機的——距離怎麼定義，收斂有多快。",
+      "en": {
+        "label": "Randomness and convergence",
+        "blurb": "How many times a procedure has to repeat before its output counts as random: how the distance is defined, and how fast it closes."
+      }
     }
   ],
   "articles": [
+    {
+      "slug": "card-shuffling",
+      "route": "/statistics/card-shuffling",
+      "topic": "randomness",
+      "title": "一副牌要洗幾次才算洗好",
+      "subtitle": "同一副撲克牌，換一種距離就換一個答案：五次、七次、十二次",
+      "summary": "52 張牌分成兩疊、交錯落下（鴿尾式）洗七次，與均勻分佈的全變異距離是 0.334。這個數字的意思是：拿洗過的牌和電腦排的隨機牌各一副放在你面前，就算用最會挑毛病的方法去檢查，也只有 66.7% 的把握指出哪一副洗過，瞎猜是 50%。改用資訊量衡量，洗五次剩 3.52% 的資訊；只在意紅黑，第六次的分離距離是 0.317；要讓全副牌序在分離距離下收斂，洗十二次仍有 0.278。文內的精確表由本站以整數有理數重算，與 Bayer–Diaconis 1992 年的原表相符。",
+      "publishedAt": "2026-08-12",
+      "updatedAt": "2026-08-12",
+      "readingMinutes": 7,
+      "tags": [
+        "全變異距離",
+        "混合時間",
+        "cutoff 現象",
+        "鴿尾式洗牌",
+        "隨機性檢驗",
+        "馬可夫鏈"
+      ],
+      "en": {
+        "title": "How many shuffles does a deck need",
+        "subtitle": "One deck of cards: change the distance and the answer changes to five, seven or twelve",
+        "summary": "Seven riffle shuffles (split the deck in two, let the packets fall interleaved) leave a 52-card deck 0.334 away from uniform in total variation. Put that deck beside one a computer arranged at random: even the shrewdest check anyone can run identifies the shuffled one only 66.7 percent of the time, against 50 percent for a guess. Measured by information, 3.52 percent survives five shuffles; for colours alone the separation distance is 0.317 by the sixth; the full order is still 0.278 away after twelve. The exact table here was recomputed in exact integer arithmetic and agrees with the 1992 original.",
+        "tags": [
+          "total variation distance",
+          "mixing time",
+          "cutoff phenomenon",
+          "riffle shuffle",
+          "testing for randomness",
+          "Markov chain"
+        ],
+        "readingMinutes": 7
+      }
+    },
     {
       "slug": "judicial-ideal-points",
       "route": "/statistics/judicial-ideal-points",
@@ -50,7 +92,7 @@
       "subtitle": "用貝氏分級反應模型把真投票變成一條違憲宣告傾向的軸，檢驗它沿不沿提名總統結構化——一個有紀律的 null，加一層測得到的協作訊號",
       "summary": "把一位大法官放到一條「傾向」的軸上，這條軸從哪裡來？本文以憲法法庭 2022 年後官方逐項立場表為真投票，用 Samejima 分級反應模型的貝氏估計逐法官的違憲宣告傾向，再用置換檢定看它沿不沿提名總統排列。四個維度都測不到效果，而這個 null 帶檢定力、等價與規格曲線的紀律；逐法官可信區間普遍很寬、相鄰全部重疊，這屆在稀疏異議下多半彼此不可區分。另一層用 1949 年以來的意見書共同具名網絡、階層二項模型，測到同提名人中等而穩健的正效果。投票層測不到、協作層測得到，兩層各說各的。台灣既有實證研究沒有一篇用過官方逐項真投票——本文補上這個缺口，並對一篇問題意識高度重疊、迄今未取得全文的研究，在新穎性上保留。",
       "publishedAt": "2026-07-19",
-      "updatedAt": "2026-07-19",
+      "updatedAt": "2026-08-01",
       "readingMinutes": 12,
       "tags": [
         "理想點",
@@ -83,9 +125,9 @@
       "topic": "inference",
       "title": "怎麼證明「沒有差別」",
       "subtitle": "檢定力與等價檢定：把「沒測到差異」變成「差異小到不重要」",
-      "summary": "一個檢定跑出 p = 0.56，你不能因此說兩者相同——不顯著可能只是這個研究沒力氣把差異看清楚。本文用學名藥的生體相等性當例子，說明檢定力（研究看得見多大的效果）與等價檢定（TOST：把效果正面關進一個事先訂好的邊界），以及為什麼「不顯著」要拆成「能排除任何重要差異」與「只是測不到」兩種。",
+      "summary": "一個檢定跑出 p = 0.56，你不能因此說兩者相同；不顯著可能只是這個研究看不清楚那麼小的差異。本文用學名藥的生體相等性當例子，說明檢定力（研究看得見多大的效果）與等價檢定（TOST：正面證明效果落在一個事先訂好的邊界內），以及為什麼「不顯著」要拆成「能排除任何重要差異」與「只是測不到」兩種。",
       "publishedAt": "2026-07-18",
-      "updatedAt": "2026-07-18",
+      "updatedAt": "2026-07-19",
       "readingMinutes": 5,
       "tags": [
         "等價檢定",
@@ -116,7 +158,7 @@
       "topic": "inference",
       "title": "到底什麼是信賴區間",
       "subtitle": "一則民調的「誤差 ±4 個百分點」，和那句 95% 到底掛在誰身上",
-      "summary": "民調說某人的支持度是 45%、誤差 ±4 個百分點，於是報紙寫「真實支持度有 95% 的機率落在 41% 到 49% 之間」。這句話幾乎每個人都會講，而它是錯的。這篇從一個平均數把信賴區間親手推一遍，看那句 95% 是怎麼在「代入手上的數字」那一步失去立足點的；再用潛艇、比值區間、六句自測，指出連專家都栽在同一個地方。頻率派的工具沒有壞——它正確回答了一個定義清楚的問題，只是那個問題不是你想問的那個。",
+      "summary": "民調說某人的支持度是 45%、誤差 ±4 個百分點，於是報紙寫「真實支持度有 95% 的機率落在 41% 到 49% 之間」。這句話幾乎每個人都會講，而它是錯的。這篇從一個平均數把信賴區間親手推一遍，看那句 95% 是怎麼在「代入手上的數字」那一步失去立足點的；再用潛艇、比值區間、六句自測，指出連專家都栽在同一個地方。頻率派的工具正確回答了一個定義清楚的問題，只是那個問題不是你想問的那個。",
       "publishedAt": "2026-07-18",
       "updatedAt": "2026-07-18",
       "readingMinutes": 12,
@@ -270,6 +312,20 @@
       "en": {
         "label": "Estimating positions from behavior",
         "blurb": "How an unobserved stance, ability, or leaning is recovered from a grid of votes or responses, carrying its own uncertainty."
+      }
+    },
+    {
+      "id": "randomness",
+      "label": "怎麼算是隨機了",
+      "blurb": "一個程序重複幾次，結果才能當成隨機的：距離怎麼定義，收斂是平滑的還是陡的。",
+      "terms": [
+        "riffle-shuffle",
+        "total-variation-distance",
+        "cutoff-phenomenon"
+      ],
+      "en": {
+        "label": "When something counts as random",
+        "blurb": "How many repetitions make an outcome random: how the distance is defined, and whether the approach is smooth or abrupt."
       }
     }
   ],
@@ -477,6 +533,42 @@
         "term": "Ideal point",
         "oneLine": "Each voter is placed on an unobserved policy axis, positioned so that who-votes-like-whom is explained as well as possible. The axis is estimated, not measured in advance."
       }
+    },
+    {
+      "slug": "riffle-shuffle",
+      "route": "/statistics/glossary/riffle-shuffle",
+      "topic": "randomness",
+      "group": "randomness",
+      "term": "鴿尾式洗牌",
+      "oneLine": "把一副牌分成兩疊、讓兩疊交錯落下的洗法，也是撲克牌最常見的洗法。",
+      "en": {
+        "term": "riffle shuffle",
+        "oneLine": "Splitting a deck into two packets and letting them fall interleaved, the way cards are usually shuffled."
+      }
+    },
+    {
+      "slug": "total-variation-distance",
+      "route": "/statistics/glossary/total-variation-distance",
+      "topic": "randomness",
+      "group": "randomness",
+      "term": "全變異距離",
+      "oneLine": "兩個機率分佈之間，在同一個事件上機率差距的最大值。",
+      "en": {
+        "term": "total variation distance",
+        "oneLine": "The largest gap between two probability distributions on any single event."
+      }
+    },
+    {
+      "slug": "cutoff-phenomenon",
+      "route": "/statistics/glossary/cutoff-phenomenon",
+      "topic": "randomness",
+      "group": "randomness",
+      "term": "cutoff 現象",
+      "oneLine": "距離幾乎不動地貼著 1，到某個次數附近才在很短的區間內掉到接近 0。",
+      "en": {
+        "term": "cutoff phenomenon",
+        "oneLine": "The distance sits at 1, then falls almost all the way to 0 within a short window around a critical number of steps."
+      }
     }
   ],
   "tags": [
@@ -667,6 +759,26 @@
       "count": 1
     },
     {
+      "zh": "全變異距離",
+      "en": "total variation distance",
+      "slug": "全變異距離",
+      "articles": [
+        {
+          "slug": "card-shuffling",
+          "route": "/statistics/card-shuffling",
+          "title": "一副牌要洗幾次才算洗好",
+          "topic": "randomness",
+          "publishedAt": "2026-08-12",
+          "en": {
+            "title": "How many shuffles does a deck need"
+          }
+        }
+      ],
+      "count": 1,
+      "termRoute": "/statistics/glossary/total-variation-distance",
+      "termSlug": "total-variation-distance"
+    },
+    {
       "zh": "貝氏估計",
       "en": "Bayesian estimation",
       "slug": "貝氏估計",
@@ -697,6 +809,42 @@
           "publishedAt": "2026-07-13",
           "en": {
             "title": "How Large Are the Differences Between Justices?"
+          }
+        }
+      ],
+      "count": 1
+    },
+    {
+      "zh": "馬可夫鏈",
+      "en": "Markov chain",
+      "slug": "馬可夫鏈",
+      "articles": [
+        {
+          "slug": "card-shuffling",
+          "route": "/statistics/card-shuffling",
+          "title": "一副牌要洗幾次才算洗好",
+          "topic": "randomness",
+          "publishedAt": "2026-08-12",
+          "en": {
+            "title": "How many shuffles does a deck need"
+          }
+        }
+      ],
+      "count": 1
+    },
+    {
+      "zh": "混合時間",
+      "en": "mixing time",
+      "slug": "混合時間",
+      "articles": [
+        {
+          "slug": "card-shuffling",
+          "route": "/statistics/card-shuffling",
+          "title": "一副牌要洗幾次才算洗好",
+          "topic": "randomness",
+          "publishedAt": "2026-08-12",
+          "en": {
+            "title": "How many shuffles does a deck need"
           }
         }
       ],
@@ -893,6 +1041,24 @@
       "termSlug": "replication-crisis"
     },
     {
+      "zh": "隨機性檢驗",
+      "en": "testing for randomness",
+      "slug": "隨機性檢驗",
+      "articles": [
+        {
+          "slug": "card-shuffling",
+          "route": "/statistics/card-shuffling",
+          "title": "一副牌要洗幾次才算洗好",
+          "topic": "randomness",
+          "publishedAt": "2026-08-12",
+          "en": {
+            "title": "How many shuffles does a deck need"
+          }
+        }
+      ],
+      "count": 1
+    },
+    {
       "zh": "頻率派推論",
       "en": "frequentist inference",
       "slug": "頻率派推論",
@@ -931,6 +1097,26 @@
       "termSlug": "statistical-power"
     },
     {
+      "zh": "鴿尾式洗牌",
+      "en": "riffle shuffle",
+      "slug": "鴿尾式洗牌",
+      "articles": [
+        {
+          "slug": "card-shuffling",
+          "route": "/statistics/card-shuffling",
+          "title": "一副牌要洗幾次才算洗好",
+          "topic": "randomness",
+          "publishedAt": "2026-08-12",
+          "en": {
+            "title": "How many shuffles does a deck need"
+          }
+        }
+      ],
+      "count": 1,
+      "termRoute": "/statistics/glossary/riffle-shuffle",
+      "termSlug": "riffle-shuffle"
+    },
+    {
       "zh": "觀念史",
       "en": "history of ideas",
       "slug": "觀念史",
@@ -947,6 +1133,26 @@
         }
       ],
       "count": 1
+    },
+    {
+      "zh": "cutoff 現象",
+      "en": "cutoff phenomenon",
+      "slug": "cutoff-現象",
+      "articles": [
+        {
+          "slug": "card-shuffling",
+          "route": "/statistics/card-shuffling",
+          "title": "一副牌要洗幾次才算洗好",
+          "topic": "randomness",
+          "publishedAt": "2026-08-12",
+          "en": {
+            "title": "How many shuffles does a deck need"
+          }
+        }
+      ],
+      "count": 1,
+      "termRoute": "/statistics/glossary/cutoff-phenomenon",
+      "termSlug": "cutoff-phenomenon"
     },
     {
       "zh": "Fisher",

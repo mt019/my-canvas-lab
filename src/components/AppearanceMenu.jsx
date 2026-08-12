@@ -8,6 +8,7 @@ import {
   getSiteTextureId,
   setSiteTexture,
 } from '../styles/palettes.js';
+import { setHoverCardsEnabled, useHoverCardsEnabled } from '../styles/hoverCards.js';
 
 /*
  * Colour and paper, behind one button.
@@ -30,6 +31,7 @@ export default function AppearanceMenu({ lang = 'zh' }) {
   const [open, setOpen] = useState(false);
   const [palette, setPalette] = useState(getSitePaletteId);
   const [texture, setTexture] = useState(getSiteTextureId);
+  const hoverCards = useHoverCardsEnabled();
   const ref = useRef(null);
 
   useEffect(() => {
@@ -105,6 +107,32 @@ export default function AppearanceMenu({ lang = 'zh' }) {
                 }}
               >
                 {t.name}
+              </button>
+            ))}
+          </div>
+
+          {/* 引用與術語的浮出註卡。關掉之後虛線底線照舊：引用點了捲到章末的
+              資料來源清單，術語點了直接進它自己的頁。 */}
+          <p className="mb-2 mt-4 font-accent text-token-xs uppercase tracking-[0.12em] text-ink-faint">
+            {en ? 'Hover cards' : '浮出註卡'}
+          </p>
+          <div className="flex flex-wrap gap-1.5">
+            {[
+              { on: true, label: en ? 'On' : '開' },
+              { on: false, label: en ? 'Off' : '關' },
+            ].map((choice) => (
+              <button
+                key={String(choice.on)}
+                type="button"
+                onClick={() => setHoverCardsEnabled(choice.on)}
+                aria-pressed={hoverCards === choice.on}
+                className="rounded-token-sm border px-2 py-1 text-token-xs transition-colors duration-fast"
+                style={{
+                  borderColor: hoverCards === choice.on ? 'var(--c-ink)' : 'var(--c-line-soft)',
+                  color: hoverCards === choice.on ? 'var(--c-ink)' : 'var(--c-ink-faint)',
+                }}
+              >
+                {choice.label}
               </button>
             ))}
           </div>

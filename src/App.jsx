@@ -155,6 +155,21 @@ const PAGE_META = { // token-exempt: per-page identity chip colors (data, not st
       desc: 'Power and equivalence testing: separating an unimportant difference from a study that simply could not tell',
     },
   },
+  CardShuffling: {
+    name: '一副牌要洗幾次才算洗好',
+    desc: '七次這個答案，是拿哪一種距離量出來的',
+    seoDesc: '52 張牌洗到第七次，全變異距離是 0.334：拿洗過的牌和電腦排的隨機牌各一副擺在一起，最會挑毛病的檢查也只有 66.7% 的把握指出哪一副洗過。本文重算 Bayer–Diaconis 的精確表，把距離換成逐張猜牌能多猜中幾張，並說明改用資訊量或只看紅黑時，答案為什麼是五、六或十二。',
+    Icon: Sigma,
+    accent: '#dfe3ea',
+    accentText: '#6c7690',
+    group: 'learn',
+    listed: false,
+    type: 'Article',
+    en: {
+      name: 'How Many Shuffles Does a Deck Need',
+      desc: 'Which distance the seven-shuffle answer is measured in',
+    },
+  },
   ConfidenceInterval: {
     name: '到底什麼是信賴區間',
     desc: '一則民調的「誤差 ±4 個百分點」，那句 95% 到底掛在誰身上——覆蓋率、潛艇、比值區間與六句自測',

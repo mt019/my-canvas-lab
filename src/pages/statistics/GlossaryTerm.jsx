@@ -5,6 +5,7 @@ import { useLang } from '../../components/LangSwitch';
 import SiteHeader from '../../components/SiteHeader';
 import Prose from '../../components/lab/Prose';
 import HoverCite from '../../components/lab/HoverCite';
+import SourcesList from '../../components/lab/SourcesList';
 import TermLink from '../../components/lab/TermLink';
 import ArticleLayout from '../../components/lab/ArticleLayout';
 import glossary from '../../data/statistics-glossary.json';
@@ -34,7 +35,7 @@ export default function GlossaryTerm() {
   const term = glossary.terms?.[slug];
 
   const components = useMemo(() => ({
-    Cite: ({ id, children }) => <HoverCite source={term?.sources?.[id]} lang={lang}>{children}</HoverCite>,
+    Cite: ({ id, children }) => <HoverCite source={term?.sources?.[id]} sourceId={id} lang={lang}>{children}</HoverCite>,
     Term: ({ id, children }) => <TermLink term={term?.mentions?.[id]} lang={lang}>{children}</TermLink>,
   }), [term, lang]);
 
@@ -91,6 +92,7 @@ export default function GlossaryTerm() {
       >
         <Prose components={components}>
           {Body ? <Body /> : null}
+          <SourcesList sources={term?.sources} lang={lang} />
         </Prose>
 
         {related.length > 0 ? (

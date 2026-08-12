@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-07-19T06:35:06.839Z",
+  "generatedAt": "2026-08-12T16:58:10.902Z",
   "source": "statistics-lab-data, built by engineering/scripts/build-app-json.mjs",
   "meta": {
     "slug": "justice-partial-pooling",
@@ -107,7 +107,7 @@
         "把每個比例都做顯著性檢定，只保留 p < 0.05 的人"
       ],
       "correctIndex": 2,
-      "explain": "部分匯聚不是抹平差異。它讓資料量少的估計保留較大的不確定性，並以群體資料提供有限的資訊；資料量多時，個別資料自然占較大權重。"
+      "explain": "資料量少的估計保留較大的不確定性，群體資料只提供有限的資訊；資料量多時，個別資料自然占較大權重。差異因此被縮短，沒有被抹平。"
     },
     {
       "id": "q3-estimand",

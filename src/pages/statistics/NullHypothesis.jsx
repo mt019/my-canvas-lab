@@ -4,6 +4,7 @@ import { useLang } from '../../components/LangSwitch';
 import SiteHeader from '../../components/SiteHeader';
 import Prose from '../../components/lab/Prose';
 import HoverCite from '../../components/lab/HoverCite';
+import SourcesList from '../../components/lab/SourcesList';
 import TermLink from '../../components/lab/TermLink';
 import ArticleLayout, { ArticleNav } from '../../components/lab/ArticleLayout';
 import ArticleMeta from '../../components/lab/ArticleMeta';
@@ -52,7 +53,7 @@ export default function NullHypothesis() {
     Timeline: () => <Timeline items={timeline ?? []} lang={lang} />,
     // <Cite id="fisher1935…">…</Cite> — the id is checked against sources.json in
     // the data repo, so a citation with no source cannot reach the page.
-    Cite: ({ id, children }) => <HoverCite source={sources?.[id]} lang={lang}>{children}</HoverCite>,
+    Cite: ({ id, children }) => <HoverCite source={sources?.[id]} sourceId={id} lang={lang}>{children}</HoverCite>,
     // <Term id="p-value">p 值</Term> — same contract, against the glossary: the
     // card carries the definition, the card's link carries the reader to the
     // term's own page.
@@ -103,6 +104,7 @@ export default function NullHypothesis() {
       >
         <Prose components={components}>
           <Article />
+          <SourcesList sources={sources} lang={lang} />
         </Prose>
       </ArticleLayout>
     </main>

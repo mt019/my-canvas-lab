@@ -1,0 +1,21 @@
+## What it says
+
+Run a randomising procedure over and over and its distance $d(k)$ to uniform decreases. Intuition says it should slide smoothly from 1 to 0. <Cite id="aldousDiaconis1986">Aldous and Diaconis observed that none of the shuffling models they could analyse behaves that way: there is a critical number $k_0$ with $d(k_0 + o(k_0)) \approx 0$ and $d(k_0 - o(k_0)) \approx 1$</Cite>. The curve is nearly vertical around $k_0$.
+
+This has a direct consequence for "how many times". Extra repetitions below $k_0$ move the distance hardly at all. Past $k_0$, each further step roughly halves it, and the returns fall away quickly.
+
+## Where it comes from
+
+<Cite id="aldousDiaconis1986">The name and the definition come from Aldous and Diaconis, "Shuffling Cards and Stopping Times" (1986), where the critical value $n \log n$ is proved for the top-in-at-random shuffle</Cite>. <Cite id="bayerDiaconis1992">Six years later Bayer and Diaconis computed exact distances for the riffle shuffle, put the critical point at $\frac{3}{2}\log_2 n$, and showed the limiting shape to be $1 - 2\Phi(-2^{-\theta}/(4\sqrt{3}\,))$</Cite>.
+
+## An example that happened
+
+<Cite id="bayerDiaconis1992">For riffle shuffles of 52 cards the total variation distance is 1.000 for the first four shuffles, then 0.924, 0.614, 0.334, 0.167, 0.085, 0.043</Cite>. Here $\frac{3}{2}\log_2 52 = 8.55$. The same table for 312 cards holds at 1.000 through seven shuffles and is still 0.565 at ten.
+
+## How it is misread
+
+**Taking the steep part for a threshold.** The distance never equals 0. "Seven is enough" says that the seventh shuffle falls inside the steep stretch, and nothing more.
+
+**Assuming every procedure looks like this.** <Cite id="trefethen2000">Measured by information, the same deck gives a smooth decay with no cutoff at all</Cite>. Whether a cutoff appears depends on the distance being used.
+
+**Using it as a stopping rule.** The critical point is an asymptotic result. What a particular deck needs depends on its size and on which question the shuffling has to answer.

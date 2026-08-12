@@ -1,13 +1,13 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-07-19T06:35:06.839Z",
+  "generatedAt": "2026-08-12T16:58:10.902Z",
   "source": "statistics-lab-data, built by engineering/scripts/build-app-json.mjs",
   "meta": {
     "slug": "confidence-interval",
     "topic": "inference",
     "title": "到底什麼是信賴區間",
     "subtitle": "一則民調的「誤差 ±4 個百分點」，和那句 95% 到底掛在誰身上",
-    "summary": "民調說某人的支持度是 45%、誤差 ±4 個百分點，於是報紙寫「真實支持度有 95% 的機率落在 41% 到 49% 之間」。這句話幾乎每個人都會講，而它是錯的。這篇從一個平均數把信賴區間親手推一遍，看那句 95% 是怎麼在「代入手上的數字」那一步失去立足點的；再用潛艇、比值區間、六句自測，指出連專家都栽在同一個地方。頻率派的工具沒有壞——它正確回答了一個定義清楚的問題，只是那個問題不是你想問的那個。",
+    "summary": "民調說某人的支持度是 45%、誤差 ±4 個百分點，於是報紙寫「真實支持度有 95% 的機率落在 41% 到 49% 之間」。這句話幾乎每個人都會講，而它是錯的。這篇從一個平均數把信賴區間親手推一遍，看那句 95% 是怎麼在「代入手上的數字」那一步失去立足點的；再用潛艇、比值區間、六句自測，指出連專家都栽在同一個地方。頻率派的工具正確回答了一個定義清楚的問題，只是那個問題不是你想問的那個。",
     "publishedAt": "2026-07-18",
     "en": {
       "title": "What a Confidence Interval Actually Is",
@@ -247,7 +247,7 @@
         "錯"
       ],
       "correctIndex": 1,
-      "explain": "錯。真實平均是一個固定的未知常數，對它不能做機率陳述。95% 是「製造區間的程序」的覆蓋率，不是「真實平均大於 0」這個特定命題的機率。區間整段在 0 的右邊，頂多告訴你：拿 0 當虛無假設會在 0.05 水準被拒絕——那是程序的性質，不是命題為真的機率。",
+      "explain": "錯。真實平均是一個固定的未知常數，對它不能做機率陳述。95% 是「製造區間的程序」的覆蓋率，不是「真實平均大於 0」這個特定命題的機率。區間整段在 0 的右邊，頂多告訴你：拿 0 當虛無假設會在 0.05 水準被拒絕，那是程序的性質，不是命題為真的機率。",
       "en": {
         "prompt": "Setup: a professor reports a 95% confidence interval of 0.1 to 0.4 for a mean. Is this true? \"The probability that the true mean is greater than 0 is at least 95%.\"",
         "options": [
@@ -301,7 +301,7 @@
         "錯"
       ],
       "correctIndex": 1,
-      "explain": "錯。這是根本信賴謬誤（本文的主角）。0.1 到 0.4 一旦算出來就是固定的，真實平均也是固定的，它要麼在裡面、要麼不在，是非零即一的事實。95% 掛在「程序長期覆蓋的比例」上，不掛在這一段。這句話正是報紙對民調犯的錯。",
+      "explain": "錯。這是根本信賴謬誤（本文的主角）。0.1 到 0.4 一旦算出來就是固定的，真實平均也是固定的，它要麼在裡面、要麼不在，是非零即一的事實。報紙寫民調誤差時犯的就是這一句：95% 掛在「程序長期覆蓋的比例」上，不掛在這一段。",
       "en": {
         "prompt": "Same setup. Is this true? \"There is a 95% probability that the true mean lies between 0.1 and 0.4.\"",
         "options": [
@@ -337,7 +337,7 @@
         "錯"
       ],
       "correctIndex": 1,
-      "explain": "錯，而且錯得最隱微。重複實驗時，變動的是「每次重新算出來的區間」，不是真實平均——真實平均固定不動，0.1 到 0.4 這一段也固定不動。正確的說法是「95% 的『區間』會含住真實平均」；這句話卻把該動的（區間）和不該動的（真值、與這段固定的 0.1–0.4）對調了。差別就在覆蓋率是掛在飄動的區間上，不是掛在固定的真值上。",
+      "explain": "錯，而且錯得最隱微。重複實驗時，變動的是「每次重新算出來的區間」，不是真實平均；真實平均固定不動，0.1 到 0.4 這一段也固定不動。正確的說法是「95% 的『區間』會含住真實平均」；這句話卻把該動的（區間）和不該動的（真值、與這段固定的 0.1–0.4）對調了。差別就在覆蓋率是掛在飄動的區間上，不是掛在固定的真值上。",
       "en": {
         "prompt": "Same setup. Is this true? \"If we repeated the experiment over and over, 95% of the time the true mean would fall between 0.1 and 0.4.\"",
         "options": [
@@ -363,7 +363,7 @@
       {
         "id": "computed-interval-is-zero-or-one",
         "statement": "區間一旦算出來，它要麼含真值、要麼不含，是 0 或 1 的事實，不是機率。",
-        "why": "代入數字那一步，把會亂跳的樣本平均換成一個定死的數；能承載機率的隨機性沒了。真值是未知的常數，對它的值不能再做機率陳述——這是 Neyman 自己的結論。",
+        "why": "代入數字那一步，把會亂跳的樣本平均換成一個定死的數；能承載機率的隨機性沒了。真值是未知的常數，對它的值不能再做機率陳述，這是 Neyman 自己的結論。",
         "source": "neyman1937ConfidenceIntervals",
         "en": {
           "statement": "Once the interval is computed, it either contains the true value or it does not — a zero-or-one fact, not a probability.",
@@ -372,7 +372,7 @@
       },
       {
         "id": "ci-is-property-of-procedure-not-parameter",
-        "statement": "信賴區間告訴你的是程序的性質，不直接告訴你參數的任何性質——這是頻率派技術的常態。",
+        "statement": "信賴區間告訴你的是程序的性質，不直接告訴你參數的任何性質，頻率派的技術都是如此。",
         "why": "六句經典誤讀都栽在同一處：想從一句程序性的陳述裡，擠出一句關於這個參數、這一次的話。這句話（Hoekstra 等人的原話）把界線劃在對的地方。",
         "source": "hoekstra2014",
         "en": {
@@ -395,12 +395,12 @@
       {
         "id": "fundamental-confidence-fallacy",
         "claim": "真值有 95% 的機率落在這段算出來的區間裡。",
-        "why": "把「隨機程序長期覆蓋 95%」讀成「這一段觀測到的區間有 95% 機率含真值」——Morey 等人叫它根本信賴謬誤，也正是報紙對民調犯的錯。區間一算出來就定死了，真值也是定死的常數，兩者之間沒有機率可言。",
+        "why": "把「隨機程序長期覆蓋 95%」讀成「這一段觀測到的區間有 95% 機率含真值」，Morey 等人稱為根本信賴謬誤，報紙寫民調時犯的就是這一個。區間一算出來就定死了，真值也是定死的常數，兩者之間沒有機率可言。",
         "instead": "95% 是整套程序的長期覆蓋率；要談「這一次真值在不在裡面的機率」，得換到貝氏框架、配一個先驗，那叫可信區間。",
         "source": "hoekstra2014",
         "en": {
           "claim": "There is a 95% probability that the true value lies inside this computed interval.",
-          "why": "This reads 'the random procedure covers 95% in the long run' as 'this observed interval has a 95% probability of containing the truth' — Morey and colleagues call it the fundamental confidence fallacy, the very error the newspaper makes about the poll. Once computed, the interval is fixed and so is the true value; there is no probability left between them.",
+          "why": "This reads 'the random procedure covers 95% in the long run' as 'this observed interval has a 95% probability of containing the truth', which Morey and colleagues call the fundamental confidence fallacy, the same error the newspaper makes about the poll. Once computed, the interval is fixed and so is the true value; there is no probability left between them.",
           "instead": "The 95% is the long-run coverage of the whole procedure; for 'the probability the truth is in this one' you must switch to a Bayesian frame with a prior — that is a credible interval."
         }
       },
@@ -408,7 +408,7 @@
         "id": "precision-fallacy",
         "claim": "區間越窄，估計就越精確。",
         "why": "潛艇故事裡最窄的區間反而最沒資訊：兩個氣泡靠得很近時區間很窄，但這兩泡對艙門在哪幾乎沒提供訊息。窄不等於精確。",
-        "instead": "寬度本身不是精確度；先問你手上的資料是不是落在一個「覆蓋率跟整體很不一樣」的相關子集裡——區間長度往往就漏了口風。",
+        "instead": "寬度本身不是精確度；先問你手上的資料是不是落在一個「覆蓋率跟整體很不一樣」的相關子集裡；區間長度本身常常就是判斷的線索。",
         "source": "morey2016",
         "en": {
           "claim": "The narrower the interval, the more precise the estimate.",
@@ -419,12 +419,12 @@
       {
         "id": "likelihood-fallacy",
         "claim": "區間內的值，比區間外的值更可能為真。",
-        "why": "兩個氣泡相距近 10 公尺時，那段 50% 區間裡幾乎全是不可能的位置——區間內外誰更「可能」，區間本身答不了。Morey 等人叫它似真誤。",
+        "why": "兩個氣泡相距近 10 公尺時，那段 50% 區間裡幾乎全是不可能的位置，而區間內外誰更「可能」，區間本身答不了。Morey 等人叫它似真誤。",
         "instead": "區間內的值是更相容於資料，不是更可能為真；要談「更可能」需要一個先驗，那是另一套工具。",
         "source": "morey2016",
         "en": {
           "claim": "Values inside the interval are more likely to be true than values outside.",
-          "why": "When the two bubbles are nearly 10 metres apart, that 50% interval is almost all impossible positions — which of inside or outside is more 'likely' is something the interval cannot answer. Morey and colleagues call it the likelihood fallacy.",
+          "why": "When the two bubbles are nearly 10 metres apart, that 50% interval is almost all impossible positions, and which of inside or outside is more 'likely' is something the interval cannot answer. Morey and colleagues call it the likelihood fallacy.",
           "instead": "Values inside are more compatible with the data, not more probable; 'more probable' needs a prior, which is a different tool."
         }
       },
@@ -446,12 +446,12 @@
     {
       "id": "fundamental-confidence-fallacy",
       "claim": "真值有 95% 的機率落在這段算出來的區間裡。",
-      "why": "把「隨機程序長期覆蓋 95%」讀成「這一段觀測到的區間有 95% 機率含真值」——Morey 等人叫它根本信賴謬誤，也正是報紙對民調犯的錯。區間一算出來就定死了，真值也是定死的常數，兩者之間沒有機率可言。",
+      "why": "把「隨機程序長期覆蓋 95%」讀成「這一段觀測到的區間有 95% 機率含真值」，Morey 等人稱為根本信賴謬誤，報紙寫民調時犯的就是這一個。區間一算出來就定死了，真值也是定死的常數，兩者之間沒有機率可言。",
       "instead": "95% 是整套程序的長期覆蓋率；要談「這一次真值在不在裡面的機率」，得換到貝氏框架、配一個先驗，那叫可信區間。",
       "source": "hoekstra2014",
       "en": {
         "claim": "There is a 95% probability that the true value lies inside this computed interval.",
-        "why": "This reads 'the random procedure covers 95% in the long run' as 'this observed interval has a 95% probability of containing the truth' — Morey and colleagues call it the fundamental confidence fallacy, the very error the newspaper makes about the poll. Once computed, the interval is fixed and so is the true value; there is no probability left between them.",
+        "why": "This reads 'the random procedure covers 95% in the long run' as 'this observed interval has a 95% probability of containing the truth', which Morey and colleagues call the fundamental confidence fallacy, the same error the newspaper makes about the poll. Once computed, the interval is fixed and so is the true value; there is no probability left between them.",
         "instead": "The 95% is the long-run coverage of the whole procedure; for 'the probability the truth is in this one' you must switch to a Bayesian frame with a prior — that is a credible interval."
       }
     },
@@ -459,7 +459,7 @@
       "id": "precision-fallacy",
       "claim": "區間越窄，估計就越精確。",
       "why": "潛艇故事裡最窄的區間反而最沒資訊：兩個氣泡靠得很近時區間很窄，但這兩泡對艙門在哪幾乎沒提供訊息。窄不等於精確。",
-      "instead": "寬度本身不是精確度；先問你手上的資料是不是落在一個「覆蓋率跟整體很不一樣」的相關子集裡——區間長度往往就漏了口風。",
+      "instead": "寬度本身不是精確度；先問你手上的資料是不是落在一個「覆蓋率跟整體很不一樣」的相關子集裡；區間長度本身常常就是判斷的線索。",
       "source": "morey2016",
       "en": {
         "claim": "The narrower the interval, the more precise the estimate.",
@@ -470,12 +470,12 @@
     {
       "id": "likelihood-fallacy",
       "claim": "區間內的值，比區間外的值更可能為真。",
-      "why": "兩個氣泡相距近 10 公尺時，那段 50% 區間裡幾乎全是不可能的位置——區間內外誰更「可能」，區間本身答不了。Morey 等人叫它似真誤。",
+      "why": "兩個氣泡相距近 10 公尺時，那段 50% 區間裡幾乎全是不可能的位置，而區間內外誰更「可能」，區間本身答不了。Morey 等人叫它似真誤。",
       "instead": "區間內的值是更相容於資料，不是更可能為真；要談「更可能」需要一個先驗，那是另一套工具。",
       "source": "morey2016",
       "en": {
         "claim": "Values inside the interval are more likely to be true than values outside.",
-        "why": "When the two bubbles are nearly 10 metres apart, that 50% interval is almost all impossible positions — which of inside or outside is more 'likely' is something the interval cannot answer. Morey and colleagues call it the likelihood fallacy.",
+        "why": "When the two bubbles are nearly 10 metres apart, that 50% interval is almost all impossible positions, and which of inside or outside is more 'likely' is something the interval cannot answer. Morey and colleagues call it the likelihood fallacy.",
         "instead": "Values inside are more compatible with the data, not more probable; 'more probable' needs a prior, which is a different tool."
       }
     },

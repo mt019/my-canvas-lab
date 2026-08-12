@@ -14,17 +14,23 @@ I am not here to scold anyone. "I just want to know the probability that the tru
 
 Suppose you are estimating a mean. The population mean is $\mu$, unknown; you have $n$ observations, with sample mean $\bar X$ and sample standard deviation $s$. One quantity ties the unknown $\mu$ to the computable $\bar X$:
 
-$$ T = \frac{\bar X - \mu}{s / \sqrt{n}} $$
+$$
+T = \frac{\bar X - \mu}{s / \sqrt{n}}
+$$
 
 This $T$ has a useful property. Whatever $\mu$ actually equals, as long as the data are roughly normal, $T$ follows a $t$ distribution with $n-1$ degrees of freedom. Its shape does not depend on the unknown $\mu$. A quantity that carries an unknown parameter inside yet has a fixed distribution is called a **pivot**, and it is what the whole construction turns on.
 
 Because the distribution of $T$ is fixed, I can write one probability statement on it that holds firmly. Let $t^* = t_{0.975,\,n-1}$, the critical value that brackets the middle 95% of the $t$ distribution:
 
-$$ P\!\left( -t^* \le \frac{\bar X - \mu}{s / \sqrt{n}} \le t^* \right) = 0.95 $$
+$$
+P\!\left( -t^* \le \frac{\bar X - \mu}{s / \sqrt{n}} \le t^* \right) = 0.95
+$$
 
 Nothing has gone wrong yet. Now a step of pure algebra: unwrap the inequality so that $\mu$ stands alone in the middle. Multiply through by $s/\sqrt n$, rearrange, flip signs, and
 
-$$ P\!\left( \bar X - t^* \frac{s}{\sqrt n} \;\le\; \mu \;\le\; \bar X + t^* \frac{s}{\sqrt n} \right) = 0.95 $$
+$$
+P\!\left( \bar X - t^* \frac{s}{\sqrt n} \;\le\; \mu \;\le\; \bar X + t^* \frac{s}{\sqrt n} \right) = 0.95
+$$
 
 That $\bar X \pm t^*\, s/\sqrt n$ is the confidence interval. The poll's ±4-point band is the proportion version of the same object: score each "approve" as a 1 and each "disapprove" as a 0, and 45% is the mean of those 0s and 1s, with standard error $\sqrt{p(1-p)/n}$. Plug in $p=0.45$ and $n=1023$, and $1.96$ standard errors come to about 3 points; Gallup reports ±4 because <Cite id="pew2016MarginOfError">the actual margin of error also absorbs weighting and the survey design</Cite>, running a little above the textbook value. The skeleton is identical.
 
@@ -36,15 +42,21 @@ Then you draw the sample, $\bar X = 45\%$, $s$ is fixed, and the interval comes 
 
 Every step of solving the probability statement for $\mu$:
 
-$$ -t^* \le \frac{\bar X - \mu}{s/\sqrt n} \le t^* $$
+$$
+-t^* \le \frac{\bar X - \mu}{s/\sqrt n} \le t^*
+$$
 
 Multiply all three parts by $s/\sqrt n$ (positive, so the inequalities keep their direction):
 
-$$ -t^* \frac{s}{\sqrt n} \le \bar X - \mu \le t^* \frac{s}{\sqrt n} $$
+$$
+-t^* \frac{s}{\sqrt n} \le \bar X - \mu \le t^* \frac{s}{\sqrt n}
+$$
 
 Subtract $\bar X$ from all three parts, then multiply by $-1$ (negative, so both inequalities flip):
 
-$$ \bar X - t^* \frac{s}{\sqrt n} \le \mu \le \bar X + t^* \frac{s}{\sqrt n} $$
+$$
+\bar X - t^* \frac{s}{\sqrt n} \le \mu \le \bar X + t^* \frac{s}{\sqrt n}
+$$
 
 As for why coverage is **exactly** $1-\alpha$, no more and no less: the distribution of $T$ is continuous. By definition $t^*$ satisfies $P(-t^* \le T \le t^*) = 1-\alpha$, a property of the $t$ distribution that does not depend on $\mu$. Solving the inequality above is a **reversible** equivalence — "$T$ falls in $[-t^*, t^*]$" and "$\mu$ falls in $[\bar X - t^* s/\sqrt n,\ \bar X + t^* s/\sqrt n]$" are two ways of writing the same event. The same event has the same probability, so the coverage equals $1-\alpha$ precisely. This also shows Neyman's general recipe: carve out a region of probability $1-\alpha$ on the pivot, then translate it back into the language of the parameter. It is dual to a hypothesis test — every value inside the interval is exactly a value that would not be rejected at level $\alpha$ if taken as the null.
 

@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight, ExternalLink } from 'lucide-react';
 import { CARD_GAP as GAP, useFloatingCard } from './useFloatingCard.js';
+import MathText from './MathText';
 
 /*
  * 已經在建置時轉成 HTML 的正文，加上編號註標。註標由建置端寫成
@@ -215,7 +216,7 @@ function NoteCard({ note }) {
         <span className="mt-1.5 block border-l-2 border-line pl-2 text-ink-muted">{note.quote}</span>
       ) : null}
       {note.text ? <span className="mt-1.5 block text-ink-muted">{note.text}</span> : null}
-      {note.locator ? <span className="mt-1.5 block text-ink-faint">{note.locator}</span> : null}
+      {note.locator ? <span className="mt-1.5 block text-ink-faint"><MathText>{note.locator}</MathText></span> : null}
       {note.href ? (
         <a
           href={note.href}

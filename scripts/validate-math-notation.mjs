@@ -60,6 +60,87 @@ for (const file of files) {
   });
 }
 
+/*
+ * Second rule: a data field carrying $…$ must reach the page through a
+ * component that compiles it. .mdx prose gets remark-math at build time, but a
+ * JSON string printed straight into JSX shows the source ($2^k$) — that is how
+ * the card-shuffling quiz options shipped. Every field below is rendered by
+ * <MathText>; a new field with LaTeX in it fails here until it is wired up
+ * (src/components/lab/MathText.jsx).
+ */
+const MATH_RENDERED_FIELDS = new Set([
+  'prompt', 'options', 'explain',   // Quiz.jsx
+  'statement', 'claim', 'why', 'instead', // StatementsPanel.jsx
+  'caption',                        // ChartFrame.jsx
+  'locator',                        // HoverCite.jsx, AnnotatedHtml.jsx
+  // Written for the data repo's own docs and for figure components that pass
+  // their own JSX captions; never printed as a bare string.
+  'description', 'notes', 'source', 'title', 'label',
+]);
+
+function fieldsWithLatex(value, key, out) {
+  if (typeof value === 'string') {
+    if (/\$[^$\n]+\$/.test(value) && !MATH_RENDERED_FIELDS.has(key)) out.add(key);
+    return;
+  }
+  if (Array.isArray(value)) {
+    for (const item of value) fieldsWithLatex(item, key, out);
+    return;
+  }
+  if (value && typeof value === 'object') {
+    for (const [k, v] of Object.entries(value)) fieldsWithLatex(v, k, out);
+  }
+}
+
+/*
+ * Third rule: a display formula must be fenced on its own lines.
+ *
+ *   $$
+ *   \|Q_m - U\| = \max_A |Q_m(A) - U(A)|
+ *   $$
+ *
+ * remark-math reads a one-line `$$…$$` as text math, so it renders inline
+ * inside the paragraph element: left-aligned, body line-height, no
+ * `.katex-display` wrapper and none of the spacing katex.css sets for it. The
+ * page looks like the author wanted a display formula and got a long inline
+ * one, which is exactly what shipped in the shuffling and confidence-interval
+ * articles.
+ */
+const ONE_LINE_DISPLAY = /^\s*\$\$.*\S.*\$\$\s*$/;
+const inlineDisplay = [];
+for (const file of files.filter((f) => f.endsWith('.mdx'))) {
+  readFileSync(file, 'utf8').split('\n').forEach((line, i) => {
+    if (ONE_LINE_DISPLAY.test(line)) inlineDisplay.push({ file, line: i + 1 });
+  });
+}
+
+if (inlineDisplay.length > 0) {
+  console.error('獨立成行的公式要把 $$ 各自放在自己的一行，中間才是式子；寫成一行的 $$…$$ 會被當成行內數學，靠左貼著段落排。');
+  console.error('以下位置要拆成三行：\n');
+  for (const d of inlineDisplay) console.error(`  ${d.file}:${d.line}`);
+  process.exit(1);
+}
+
+const unrendered = [];
+for (const file of files.filter((f) => f.endsWith('.json'))) {
+  let parsed;
+  try {
+    parsed = JSON.parse(readFileSync(file, 'utf8'));
+  } catch {
+    continue;
+  }
+  const out = new Set();
+  fieldsWithLatex(parsed, '', out);
+  for (const key of out) unrendered.push({ file, key });
+}
+
+if (unrendered.length > 0) {
+  console.error('資料層有欄位含 $…$，但前端沒有用 <MathText> 渲染它，讀者會看到 LaTeX 原文。');
+  console.error('把該欄位接上 src/components/lab/MathText.jsx，再把欄名加進本檔的 MATH_RENDERED_FIELDS：\n');
+  for (const u of unrendered) console.error(`  ${u.file}  欄位 ${u.key || '(頂層)'}`);
+  process.exit(1);
+}
+
 if (problems.length > 0) {
   console.error('數學記號必須寫成 LaTeX：.mdx 用 $…$，JSX 用 <Math tex="…" />。');
   console.error('以下位置直接打了 Unicode 數學字元：\n');

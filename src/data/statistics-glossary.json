@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-07-19T06:35:06.839Z",
+  "generatedAt": "2026-08-12T16:58:10.902Z",
   "source": "statistics-lab-data, built by engineering/scripts/build-app-json.mjs",
   "terms": {
     "confidence-interval": {
@@ -246,6 +246,102 @@
           "title": "大法官站在哪裡：從投票估計理想點",
           "en": {
             "title": "Where Do the Justices Stand: Estimating Ideal Points from Votes"
+          }
+        }
+      ]
+    },
+    "cutoff-phenomenon": {
+      "slug": "cutoff-phenomenon",
+      "term": "cutoff 現象",
+      "aliases": [
+        "cutoff phenomenon",
+        "cut-off phenomenon",
+        "截止現象"
+      ],
+      "oneLine": "距離幾乎不動地貼著 1，到某個次數附近才在很短的區間內掉到接近 0。",
+      "example": "52 張牌洗前四次距離都是 1.000，第五次 0.924，第六次 0.614，第七次 0.334，第八次 0.167。",
+      "related": [
+        {
+          "slug": "total-variation-distance",
+          "term": "全變異距離",
+          "oneLine": "兩個機率分佈之間，在同一個事件上機率差距的最大值。",
+          "example": "有人瞄到一副洗好的牌的底牌。「底牌是那一張」這個事件，在均勻分佈下的機率是 1/52，在他知道之後是 1，兩者的全變異距離因此是 51/52。",
+          "route": "/statistics/glossary/total-variation-distance",
+          "en": {
+            "term": "total variation distance",
+            "oneLine": "The largest gap between two probability distributions on any single event.",
+            "example": "Someone glimpses the bottom card of a shuffled deck. The event “the bottom card is that one” has probability 1/52 under the uniform distribution and 1 under theirs, so the total variation distance is 51/52."
+          }
+        },
+        {
+          "slug": "sampling-distribution",
+          "term": "抽樣分佈",
+          "oneLine": "同一個統計量在反覆抽樣下會長成的樣子。p 值與信賴區間都是從它身上量出來的。",
+          "example": "品茶實驗的 70 種挑法就是一個抽樣分佈：全部列出來，再數有幾種跟實際結果一樣極端。",
+          "route": "/statistics/glossary/sampling-distribution",
+          "en": {
+            "term": "Sampling distribution",
+            "oneLine": "The shape a statistic takes under repeated sampling. Both p values and confidence intervals are read off it.",
+            "example": "The 70 ways of picking four cups out of eight are a sampling distribution: list them all, then count how many are as extreme as what actually happened."
+          }
+        }
+      ],
+      "en": {
+        "term": "cutoff phenomenon",
+        "aliases": [
+          "cut-off phenomenon"
+        ],
+        "oneLine": "The distance sits at 1, then falls almost all the way to 0 within a short window around a critical number of steps.",
+        "example": "Four riffle shuffles of 52 cards leave the distance at 1.000; then come 0.924, 0.614, 0.334 and 0.167."
+      },
+      "topic": "randomness",
+      "route": "/statistics/glossary/cutoff-phenomenon",
+      "sources": {
+        "aldousDiaconis1986": {
+          "author": "David Aldous & Persi Diaconis",
+          "title": "Shuffling Cards and Stopping Times",
+          "year": 1986,
+          "container": "The American Mathematical Monthly 93(5): 333–348",
+          "locator": "p.335：全變異距離的三個等價定義（2.3）、看見底牌就使距離等於 $1-1/n$ 的例子，以及 cut-off 現象的定義與圖 2。",
+          "quote": "Suppose, after well-shuffling a deck of n cards, that you happen to see the bottom card, c. Then your distribution Q on S_n is uniform on the set of permutations for which pi(c) = n, and ||Q - U|| = 1 - 1/n. This shows the variation distance can be very \"unforgiving\" of small deviations from uniformity.",
+          "url": "https://www.jstor.org/stable/2323590",
+          "en": {
+            "locator": "p.335: the equivalent definitions of variation distance (2.3), the seen-bottom-card example giving distance 1 - 1/n, and the statement of the cut-off phenomenon with Fig. 2."
+          }
+        },
+        "bayerDiaconis1992": {
+          "author": "Dave Bayer & Persi Diaconis",
+          "title": "Trailing the Dovetail Shuffle to its Lair",
+          "year": 1992,
+          "container": "The Annals of Applied Probability 2(2): 294–313",
+          "locator": "p.294 定理 1（洗 m 次後某個排列出現的機率）與 GSR 模型的描述；p.296 表 1（52 張牌的全變異距離）；p.309 表 3（七種牌堆大小的精確值）與表 4（1.5 log2 n）；p.310 表 5（逐張猜牌的平均猜中數）與 5.1 節。",
+          "quote": "Experiments reported in Diaconis (1988) show that the Gilbert-Shannon-Reeds (GSR) model is a good description of the way real people shuffle real cards.",
+          "url": "https://projecteuclid.org/journals/annals-of-applied-probability/volume-2/issue-2/Trailing-the-Dovetail-Shuffle-to-its-Lair/10.1214/aoap/1177005705.full",
+          "en": {
+            "locator": "p.294 Theorem 1 and the description of the GSR model; p.296 Table 1 (total variation for 52 cards); p.309 Tables 3 and 4; p.310 Table 5 and Section 5.1."
+          }
+        },
+        "trefethen2000": {
+          "author": "Lloyd N. Trefethen & Lloyd M. Trefethen",
+          "title": "How many shuffles to randomize a deck of cards?",
+          "year": 2000,
+          "container": "Proceedings of the Royal Society A 456(2002): 2561–2568",
+          "locator": "p.2564 圖 2 的說明文字與同頁正文：改以資訊量衡量時沒有 cut-off，$\\log_2 n$ 次就把資訊降到任意小的比例。",
+          "quote": "For n = 52, 3.52% of the information remains after five shuffles and 0.92% after six shuffles.",
+          "url": "https://people.maths.ox.ac.uk/~trefethen/publication/PDF/2000_87.pdf",
+          "en": {
+            "locator": "p.2564, caption to Fig. 2 and the surrounding text: measured by information, there is no cut-off, and log2 n shuffles suffice to reduce the information to an arbitrarily small proportion."
+          }
+        }
+      },
+      "mentions": {},
+      "usedIn": [
+        {
+          "slug": "card-shuffling",
+          "route": "/statistics/card-shuffling",
+          "title": "一副牌要洗幾次才算洗好",
+          "en": {
+            "title": "How many shuffles does a deck need"
           }
         }
       ]
@@ -1547,6 +1643,104 @@
         }
       ]
     },
+    "riffle-shuffle": {
+      "slug": "riffle-shuffle",
+      "term": "鴿尾式洗牌",
+      "aliases": [
+        "riffle shuffle",
+        "鴿尾洗牌",
+        "GSR 模型",
+        "Gilbert–Shannon–Reeds"
+      ],
+      "oneLine": "把一副牌分成兩疊、讓兩疊交錯落下的洗法，也是撲克牌最常見的洗法。",
+      "example": "52 張牌照這種洗法洗七次，與均勻分佈的全變異距離降到 0.334；洗四次以下，牌堆最多只有 16 段遞增序列，一眼就分得出來。",
+      "related": [
+        {
+          "slug": "total-variation-distance",
+          "term": "全變異距離",
+          "oneLine": "兩個機率分佈之間，在同一個事件上機率差距的最大值。",
+          "example": "有人瞄到一副洗好的牌的底牌。「底牌是那一張」這個事件，在均勻分佈下的機率是 1/52，在他知道之後是 1，兩者的全變異距離因此是 51/52。",
+          "route": "/statistics/glossary/total-variation-distance",
+          "en": {
+            "term": "total variation distance",
+            "oneLine": "The largest gap between two probability distributions on any single event.",
+            "example": "Someone glimpses the bottom card of a shuffled deck. The event “the bottom card is that one” has probability 1/52 under the uniform distribution and 1 under theirs, so the total variation distance is 51/52."
+          }
+        },
+        {
+          "slug": "cutoff-phenomenon",
+          "term": "cutoff 現象",
+          "oneLine": "距離幾乎不動地貼著 1，到某個次數附近才在很短的區間內掉到接近 0。",
+          "example": "52 張牌洗前四次距離都是 1.000，第五次 0.924，第六次 0.614，第七次 0.334，第八次 0.167。",
+          "route": "/statistics/glossary/cutoff-phenomenon",
+          "en": {
+            "term": "cutoff phenomenon",
+            "oneLine": "The distance sits at 1, then falls almost all the way to 0 within a short window around a critical number of steps.",
+            "example": "Four riffle shuffles of 52 cards leave the distance at 1.000; then come 0.924, 0.614, 0.334 and 0.167."
+          }
+        }
+      ],
+      "en": {
+        "term": "riffle shuffle",
+        "aliases": [
+          "GSR model",
+          "Gilbert-Shannon-Reeds"
+        ],
+        "oneLine": "Splitting a deck into two packets and letting them fall interleaved, the way cards are usually shuffled.",
+        "example": "Seven such shuffles of 52 cards bring the total variation distance down to 0.334; four or fewer leave at most 16 rising sequences, which is easy to spot."
+      },
+      "topic": "randomness",
+      "route": "/statistics/glossary/riffle-shuffle",
+      "sources": {
+        "aldousDiaconis1986": {
+          "author": "David Aldous & Persi Diaconis",
+          "title": "Shuffling Cards and Stopping Times",
+          "year": 1986,
+          "container": "The American Mathematical Monthly 93(5): 333–348",
+          "locator": "p.335：全變異距離的三個等價定義（2.3）、看見底牌就使距離等於 $1-1/n$ 的例子，以及 cut-off 現象的定義與圖 2。",
+          "quote": "Suppose, after well-shuffling a deck of n cards, that you happen to see the bottom card, c. Then your distribution Q on S_n is uniform on the set of permutations for which pi(c) = n, and ||Q - U|| = 1 - 1/n. This shows the variation distance can be very \"unforgiving\" of small deviations from uniformity.",
+          "url": "https://www.jstor.org/stable/2323590",
+          "en": {
+            "locator": "p.335: the equivalent definitions of variation distance (2.3), the seen-bottom-card example giving distance 1 - 1/n, and the statement of the cut-off phenomenon with Fig. 2."
+          }
+        },
+        "bayerDiaconis1992": {
+          "author": "Dave Bayer & Persi Diaconis",
+          "title": "Trailing the Dovetail Shuffle to its Lair",
+          "year": 1992,
+          "container": "The Annals of Applied Probability 2(2): 294–313",
+          "locator": "p.294 定理 1（洗 m 次後某個排列出現的機率）與 GSR 模型的描述；p.296 表 1（52 張牌的全變異距離）；p.309 表 3（七種牌堆大小的精確值）與表 4（1.5 log2 n）；p.310 表 5（逐張猜牌的平均猜中數）與 5.1 節。",
+          "quote": "Experiments reported in Diaconis (1988) show that the Gilbert-Shannon-Reeds (GSR) model is a good description of the way real people shuffle real cards.",
+          "url": "https://projecteuclid.org/journals/annals-of-applied-probability/volume-2/issue-2/Trailing-the-Dovetail-Shuffle-to-its-Lair/10.1214/aoap/1177005705.full",
+          "en": {
+            "locator": "p.294 Theorem 1 and the description of the GSR model; p.296 Table 1 (total variation for 52 cards); p.309 Tables 3 and 4; p.310 Table 5 and Section 5.1."
+          }
+        },
+        "levinPeres2017MixingTimes": {
+          "author": "David A. Levin & Yuval Peres",
+          "title": "Markov Chains and Mixing Times",
+          "year": 2017,
+          "container": "2nd ed. Providence: American Mathematical Society",
+          "locator": "第 8.3 節「Riffle Shuffles」pp.107-110：鴿尾式洗牌的三種等價描述（其中第三種是逆洗牌的位元標籤法）、命題 8.11 的強停止時間，以及命題 8.12 的上界 $t_{\\mathrm{mix}} \\le 2\\log_2(4n/3)$。第 4.1 節 p.47 定義全變異距離，第 18 章 p.261 處理 cutoff 現象。",
+          "quote": "A rising sequence of a permutation is a maximal set of consecutive values that occur in the correct relative order.",
+          "url": "https://pages.uoregon.edu/dlevin/MARKOV/mcmt2e.pdf",
+          "en": {
+            "locator": "Section 8.3 'Riffle Shuffles', pp.107-110: three equivalent descriptions of the shuffle (the third being the inverse bit-labelling construction), the strong stationary time of Proposition 8.11, and the bound of Proposition 8.12. Total variation is defined in Section 4.1, p.47; the cutoff phenomenon is Chapter 18, p.261."
+          }
+        }
+      },
+      "mentions": {},
+      "usedIn": [
+        {
+          "slug": "card-shuffling",
+          "route": "/statistics/card-shuffling",
+          "title": "一副牌要洗幾次才算洗好",
+          "en": {
+            "title": "How many shuffles does a deck need"
+          }
+        }
+      ]
+    },
     "sampling-distribution": {
       "slug": "sampling-distribution",
       "term": "抽樣分佈",
@@ -1934,6 +2128,115 @@
           "title": "為什麼叫虛無假設",
           "en": {
             "title": "Why It Is Called the Null Hypothesis"
+          }
+        }
+      ]
+    },
+    "total-variation-distance": {
+      "slug": "total-variation-distance",
+      "term": "全變異距離",
+      "aliases": [
+        "total variation distance",
+        "變異距離",
+        "TV distance"
+      ],
+      "oneLine": "兩個機率分佈之間，在同一個事件上機率差距的最大值。",
+      "example": "有人瞄到一副洗好的牌的底牌。「底牌是那一張」這個事件，在均勻分佈下的機率是 1/52，在他知道之後是 1，兩者的全變異距離因此是 51/52。",
+      "related": [
+        {
+          "slug": "cutoff-phenomenon",
+          "term": "cutoff 現象",
+          "oneLine": "距離幾乎不動地貼著 1，到某個次數附近才在很短的區間內掉到接近 0。",
+          "example": "52 張牌洗前四次距離都是 1.000，第五次 0.924，第六次 0.614，第七次 0.334，第八次 0.167。",
+          "route": "/statistics/glossary/cutoff-phenomenon",
+          "en": {
+            "term": "cutoff phenomenon",
+            "oneLine": "The distance sits at 1, then falls almost all the way to 0 within a short window around a critical number of steps.",
+            "example": "Four riffle shuffles of 52 cards leave the distance at 1.000; then come 0.924, 0.614, 0.334 and 0.167."
+          }
+        },
+        {
+          "slug": "sampling-distribution",
+          "term": "抽樣分佈",
+          "oneLine": "同一個統計量在反覆抽樣下會長成的樣子。p 值與信賴區間都是從它身上量出來的。",
+          "example": "品茶實驗的 70 種挑法就是一個抽樣分佈：全部列出來，再數有幾種跟實際結果一樣極端。",
+          "route": "/statistics/glossary/sampling-distribution",
+          "en": {
+            "term": "Sampling distribution",
+            "oneLine": "The shape a statistic takes under repeated sampling. Both p values and confidence intervals are read off it.",
+            "example": "The 70 ways of picking four cups out of eight are a sampling distribution: list them all, then count how many are as extreme as what actually happened."
+          }
+        },
+        {
+          "slug": "significance-level",
+          "term": "顯著水準",
+          "oneLine": "事前選定的門檻：長期而言，你願意讓多少比例的真虛無被錯判為顯著。",
+          "example": "Fisher 說二十分之一是個方便的界線，如此而已。方便，而且當年好查表。",
+          "route": "/statistics/glossary/significance-level",
+          "en": {
+            "term": "Significance level",
+            "oneLine": "A threshold fixed in advance: the share of true nulls you are willing to reject in the long run.",
+            "example": "Fisher called one in twenty a convenient limit. Convenient, and easy to look up in a table."
+          }
+        }
+      ],
+      "en": {
+        "term": "total variation distance",
+        "aliases": [
+          "TV distance",
+          "variation distance"
+        ],
+        "oneLine": "The largest gap between two probability distributions on any single event.",
+        "example": "Someone glimpses the bottom card of a shuffled deck. The event “the bottom card is that one” has probability 1/52 under the uniform distribution and 1 under theirs, so the total variation distance is 51/52."
+      },
+      "topic": "randomness",
+      "route": "/statistics/glossary/total-variation-distance",
+      "sources": {
+        "aldousDiaconis1986": {
+          "author": "David Aldous & Persi Diaconis",
+          "title": "Shuffling Cards and Stopping Times",
+          "year": 1986,
+          "container": "The American Mathematical Monthly 93(5): 333–348",
+          "locator": "p.335：全變異距離的三個等價定義（2.3）、看見底牌就使距離等於 $1-1/n$ 的例子，以及 cut-off 現象的定義與圖 2。",
+          "quote": "Suppose, after well-shuffling a deck of n cards, that you happen to see the bottom card, c. Then your distribution Q on S_n is uniform on the set of permutations for which pi(c) = n, and ||Q - U|| = 1 - 1/n. This shows the variation distance can be very \"unforgiving\" of small deviations from uniformity.",
+          "url": "https://www.jstor.org/stable/2323590",
+          "en": {
+            "locator": "p.335: the equivalent definitions of variation distance (2.3), the seen-bottom-card example giving distance 1 - 1/n, and the statement of the cut-off phenomenon with Fig. 2."
+          }
+        },
+        "bayerDiaconis1992": {
+          "author": "Dave Bayer & Persi Diaconis",
+          "title": "Trailing the Dovetail Shuffle to its Lair",
+          "year": 1992,
+          "container": "The Annals of Applied Probability 2(2): 294–313",
+          "locator": "p.294 定理 1（洗 m 次後某個排列出現的機率）與 GSR 模型的描述；p.296 表 1（52 張牌的全變異距離）；p.309 表 3（七種牌堆大小的精確值）與表 4（1.5 log2 n）；p.310 表 5（逐張猜牌的平均猜中數）與 5.1 節。",
+          "quote": "Experiments reported in Diaconis (1988) show that the Gilbert-Shannon-Reeds (GSR) model is a good description of the way real people shuffle real cards.",
+          "url": "https://projecteuclid.org/journals/annals-of-applied-probability/volume-2/issue-2/Trailing-the-Dovetail-Shuffle-to-its-Lair/10.1214/aoap/1177005705.full",
+          "en": {
+            "locator": "p.294 Theorem 1 and the description of the GSR model; p.296 Table 1 (total variation for 52 cards); p.309 Tables 3 and 4; p.310 Table 5 and Section 5.1."
+          }
+        },
+        "diaconisFulmanHolmes2013": {
+          "author": "Persi Diaconis, Jason Fulman & Susan Holmes",
+          "title": "Analysis of Casino Shelf Shuffling Machines",
+          "year": 2013,
+          "container": "The Annals of Applied Probability 23(4): 1692–1720",
+          "locator": "第 1 節：廠商送來的十層洗牌機、工程師自訂的檢查看起來沒問題，以及改用逐張猜牌算出的 9.5 張與 4.5 張（arXiv:1107.2961v2, pp.1–2）。",
+          "quote": "using our theory, we were able to show that a knowledgeable player could guess about 9 1/2 cards correctly in a single run through a 52-card deck. For a well-shuffled deck, the optimal strategy gets about 4 1/2 cards correct. This data did convince the company.",
+          "url": "https://arxiv.org/abs/1107.2961",
+          "en": {
+            "locator": "Section 1: the ten-shelf machine, the engineers' own ad hoc tests, and the 9.5 versus 4.5 guessed cards (arXiv:1107.2961v2, pp.1-2)."
+          }
+        }
+      },
+      "mentions": {},
+      "usedIn": [
+        {
+          "slug": "card-shuffling",
+          "route": "/statistics/card-shuffling",
+          "title": "一副牌要洗幾次才算洗好",
+          "en": {
+            "title": "How many shuffles does a deck need"
           }
         }
       ]

@@ -1,13 +1,13 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-07-19T06:35:06.839Z",
+  "generatedAt": "2026-08-12T16:58:10.902Z",
   "source": "statistics-lab-data, built by engineering/scripts/build-app-json.mjs",
   "meta": {
     "slug": "equivalence-testing",
     "topic": "inference",
     "title": "怎麼證明「沒有差別」",
     "subtitle": "檢定力與等價檢定：把「沒測到差異」變成「差異小到不重要」",
-    "summary": "一個檢定跑出 p = 0.56，你不能因此說兩者相同——不顯著可能只是這個研究沒力氣把差異看清楚。本文用學名藥的生體相等性當例子，說明檢定力（研究看得見多大的效果）與等價檢定（TOST：把效果正面關進一個事先訂好的邊界），以及為什麼「不顯著」要拆成「能排除任何重要差異」與「只是測不到」兩種。",
+    "summary": "一個檢定跑出 p = 0.56，你不能因此說兩者相同；不顯著可能只是這個研究看不清楚那麼小的差異。本文用學名藥的生體相等性當例子，說明檢定力（研究看得見多大的效果）與等價檢定（TOST：正面證明效果落在一個事先訂好的邊界內），以及為什麼「不顯著」要拆成「能排除任何重要差異」與「只是測不到」兩種。",
     "publishedAt": "2026-07-18",
     "en": {
       "title": "How to Show There Is No Difference",
@@ -32,7 +32,7 @@
       "非顯著結果"
     ],
     "readingMinutes": 5,
-    "updatedAt": "2026-07-18",
+    "updatedAt": "2026-07-19",
     "tagSlugs": [
       "等價檢定",
       "tost",

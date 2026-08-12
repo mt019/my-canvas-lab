@@ -1,4 +1,5 @@
 import { createContext, useContext } from 'react';
+import MathText from '../MathText';
 
 /*
  * The outer shell of every chart: viewBox, margins, a caption, and the
@@ -51,7 +52,7 @@ export default function ChartFrame({
         </svg>
       </div>
       {caption ? (
-        <figcaption className="mt-2 text-token-xs leading-relaxed text-ink-faint">{caption}</figcaption>
+        <figcaption className="mt-2 text-token-xs leading-relaxed text-ink-faint"><MathText>{caption}</MathText></figcaption>
       ) : null}
     </figure>
   );

@@ -1,0 +1,90 @@
+{/* Prose is plain markdown. All mathematics in LaTeX ($…$).
+    Figures and <Cite> are injected by the page; nothing is imported here. */}
+
+<Cite id="mathmediaDiaconis2023">In March 2023 Diaconis gave the Chen-Jung Hsu Lectures at National Taiwan University's Astronomy-Mathematics Building, three days on the mathematics of shuffling</Cite>. My stochastic calculus lecturer, Chii-Ruey Hwang, cancelled a week of class and told us all to go; he was also one of the two interviewers two days before the lectures. The room was AstroMath 202, my favourite room on campus.
+
+A new deck comes out of its box with each suit running from ace to king. You start shuffling. After how many shuffles can you deal?
+
+Seven. The answer comes from a 1992 paper in the *Annals of Applied Probability*, <Cite id="bayerDiaconis1992">where Dave Bayer and Persi Diaconis give a closed formula for the chance of any arrangement after $m$ shuffles and prove that $\frac{3}{2}\log_2 n$ shuffles suffice to mix $n$ cards</Cite>. The number holds only when three things are true at once: the deck has 52 cards, the shuffle is a <Term id="riffle-shuffle">riffle</Term> (split the deck in two and let the packets fall interleaved, the way cards are usually shuffled), and the measure of how far the deck still sits from random is <Term id="total-variation-distance">total variation distance</Term>. Change the deck or change the distance and a different number comes out.
+
+<Cite id="mactutorDiaconis">Diaconis was born in New York in 1945, left home at fourteen to tour with the card magician Dai Vernon, took a mathematics degree from City College of New York in January 1971, and finished a Harvard doctorate under Frederick Mosteller in 1974; Martin Gardner's letter to Harvard described him as one of the best card mechanics in the country</Cite>. The question he wanted answered came from the table: how much of the original order survives a shuffle.
+
+## What one shuffle leaves of the original order
+
+<Cite id="bayerDiaconis1992">The model proposed by Gilbert and Shannon, and independently by Reeds, writes a shuffle in two steps: cut the deck in two according to a binomial distribution, then interleave, dropping the next card from the left packet with probability $A/(A+B)$ when $A$ and $B$ cards remain in the two packets. The paper reports that experiments show this to be a good description of how people actually shuffle</Cite>. Every number below is computed under that model.
+
+One shuffle divides the original order in two: the cards from the left packet still ascend among themselves, and so do those from the right. Such a maximal ascending run is a rising sequence, a second shuffle splits each run into at most two, and after $k$ shuffles the deck holds at most $2^k$ of them.
+
+<SplitExample />
+
+<Cite id="levinPeres2017MixingTimes">Levin and Peres give a third equivalent description: label each card with a fair coin flip and pull all the cards labelled 0 to the top, keeping their relative order, which is exactly the inverse of one riffle shuffle</Cite>. Do that $k$ times and every card carries a $k$-bit label, with the deck sorted lexicographically by label. There are only $2^k$ labels, so the deck falls into at most $2^k$ groups, which read forwards are the at most $2^k$ rising sequences. <Cite id="levinPeres2017MixingTimes">Waiting until every card holds a distinct label is the birthday problem, and the book uses it to prove the bound $t_{\mathrm{mix}} \le 2\log_2(4n/3)$</Cite>. That bound is looser than the exact Bayer-Diaconis result and needs nothing beyond the birthday calculation.
+
+<RisingSequences />
+
+A uniformly random deck averages 26.5 runs with a standard deviation of 2.10, and the chance of 16 or fewer is $4.67 \times 10^{-7}$. A deck shuffled four times holds at most 16, so counting runs catches it, and the count is wrong about once in two million tries.
+
+## How to measure the distance from random
+
+Counting runs is only one test among many. Take every test at once, including the ones nobody has thought of, and what comes out is the total variation distance: find the event whose probability differs most between the two distributions, and the size of that gap is
+
+$$
+\|Q_m - U\| = \max_{A} |Q_m(A) - U(A)|
+$$
+
+where $Q_m$ is the distribution after $m$ shuffles and $U$ is uniform over the 52! arrangements. <Cite id="aldousDiaconis1986">Aldous and Diaconis used it to ask how far a deck sits from uniform after $k$ shuffles, and warned that the distance is unforgiving of small deviations</Cite>. Their example is a glimpse of the bottom card: the other 51 are genuinely random, and the distance is nonetheless $1 - 1/52$.
+
+The same quantity can be written as a wager. Two decks lie on the table, one shuffled $m$ times and one put in a genuinely random order by a computer, and you have to say which is which. Any method is allowed: count the rising sequences, turn over the top card and see whether the ace of spades is still there, look at the pattern of reds and blacks, spread all 52 out and compare at leisure. Blind guessing succeeds half the time, and the best method available succeeds with probability $\frac{1}{2} + \frac{1}{2}\|Q_m - U\|$. That expression comes straight from the definition: take $A$ to be the event whose probability differs most, and call the deck shuffled whenever the outcome lands in $A$.
+
+Five shuffles give 96.2 percent, six give 80.7, seven give 66.7, eight 58.4, ten 52.1. The first four are all 100 percent, because counting runs already wins: four shuffles leave at most 16 runs, and a random deck produces 16 or fewer about once in two million.
+
+Defined this way the distance covers tests nobody has invented yet. It takes a maximum rather than an average: in the bottom-card example almost every other event has barely moved, and the distance is near 1 all the same.
+
+## The exact numbers for 52 cards: 1.000 down to 0.043
+
+<Cite id="bayerDiaconis1992">Theorem 1 gives the chance of arrangement $\pi$ after $m$ shuffles as $\binom{2^m + n - r}{n} / 2^{mn}$, where $r$ counts the rising sequences of $\pi$</Cite>. The arrangement enters the formula only through $r$, so a sum over 52! terms collapses to 52 and the distance can be computed exactly.
+
+<MixingCurve />
+
+For 52 cards the first four shuffles all give 1.000, followed by 0.924, 0.614, 0.334, 0.167, 0.085 and 0.043. Here $\frac{3}{2}\log_2 52 = 8.55$. <Cite id="aldousDiaconis1986">A distance that holds at 1 and then drops within a short window has a name, the <Term id="cutoff-phenomenon">cutoff phenomenon</Term>, which Aldous and Diaconis identified in shuffling problems in 1986</Cite>.
+
+The numbers in the figure were recomputed here from the same formula in exact integer arithmetic: seven deck sizes, $k$ from 1 to 10, seventy values, all agreeing with Table 3 of the paper. Take the deck to 312 cards and the first seven shuffles are still 1.000, with 0.565 remaining at ten.
+
+## Said another way: cards guessed correctly
+
+<Cite id="bayerDiaconis1992">The paper calls total variation difficult to explain to nonspecialists, and offers a second measure: guess the cards one at a time, turning each over after the guess, and count how many come out right</Cite>. Against a uniformly random deck the best strategy averages $H_{52} = 1/52 + 1/51 + \cdots + 1 = 4.54$ cards.
+
+<GuessingGame />
+
+Five shuffles leave 6.56 correct, two cards above a properly mixed deck; six leave 5.51, about one card above; after that the excess roughly halves each time.
+
+<Cite id="diaconisFulmanHolmes2013">A casino equipment manufacturer once sent the three authors a ten-shelf shuffling machine to evaluate, and the engineers' own tests had all looked satisfactory. The authors showed that after a single pass a knowledgeable player could average 9.5 correct guesses, against 4.5 for a well-shuffled deck, and that figure convinced the company</Cite>. Passing a fixed battery of tests establishes only that those statistics look ordinary.
+
+## Caring only about colours takes fewer shuffles
+
+Seven answers a question about the full arrangement of the deck. A blackjack player does not care whether the seven of spades precedes the seven of hearts, and a player betting on colour never looks at suits.
+
+<QuestionPanel />
+
+<Cite id="assafDiaconisSoundararajan2011">Assaf, Diaconis and Soundararajan take up exactly this case: when only some features of the deck matter, the requirement drops from $\frac{3}{2}\log_2 n$ to $\log_2 n$</Cite>. Their distance is separation, so the numbers cannot be set beside the earlier figure, while the five curves within this one compare directly: the full order is still 0.278 away after twelve shuffles, blackjack values reach 0.366 by the ninth, and colour alone is at 0.317 by the sixth.
+
+<Cite id="trefethen2000">Trefethen and Trefethen worked in information instead, finding that 3.52% of the information in a 52-card deck survives five shuffles and 0.92% survives six, along a curve that decays smoothly with no cutoff</Cite>. They draw no recommendation from it. Their closing line is that which measure matters more to gamblers and card players is presumably game dependent.
+
+## Three questions to test yourself
+
+Three questions, each built on a phrasing that circulates. Explanations follow the answers.
+
+<Quiz />
+
+## Which statements hold, which are misreadings
+
+The same result, in the phrasings that hold up and in the misreadings that keep coming back, each with the sentence that fixes it.
+
+<Statements />
+
+## What this piece does not claim
+
+Every number above is computed under the Gilbert-Shannon-Reeds model. Whether real hands follow it is a separate question; the paper cites experiments reported by Diaconis in 1988, which this site has not examined. None of the tables applies to a deck with repeated cards, as when two decks are shuffled together or only part of one is dealt.
+
+The guessing figures come from simulation, 100,000 runs per entry, under a strategy the paper describes as conjecturally optimal without proving it. In the separation table only the first row is exact; the rest come from an approximation, and the paper notes that the red-black row disagrees with the exact values 0.8898 and 0.8897 at one and two shuffles.
+
+Nor is there advice here about how many times to shuffle. That question needs someone to say first what the deck is for, and whoever is using it decides that.

@@ -4,6 +4,7 @@ import { useLang } from '../../components/LangSwitch';
 import SiteHeader from '../../components/SiteHeader';
 import Prose from '../../components/lab/Prose';
 import HoverCite from '../../components/lab/HoverCite';
+import SourcesList from '../../components/lab/SourcesList';
 import TermLink from '../../components/lab/TermLink';
 import Quiz from '../../components/lab/Quiz';
 import ArticleLayout, { ArticleNav } from '../../components/lab/ArticleLayout';
@@ -35,7 +36,7 @@ export default function JudicialIdealPoints() {
     BayesIdealPoints: () => <BayesIdealPoints {...params['bayes-ideal-points']} lang={lang} />,
     SameNomineeForest: () => <SameNomineeForest {...params['same-nominee-forest']} lang={lang} />,
     Quiz: () => <Quiz items={quiz ?? []} lang={lang} />,
-    Cite: ({ id, children }) => <HoverCite source={sources?.[id]} lang={lang}>{children}</HoverCite>,
+    Cite: ({ id, children }) => <HoverCite source={sources?.[id]} sourceId={id} lang={lang}>{children}</HoverCite>,
     Term: ({ id, children }) => <TermLink term={terms?.[id]} lang={lang}>{children}</TermLink>,
   }), [params, sources, terms, quiz, lang]);
 
@@ -83,6 +84,7 @@ export default function JudicialIdealPoints() {
       >
         <Prose components={components}>
           <Article />
+          <SourcesList sources={sources} lang={lang} />
         </Prose>
       </ArticleLayout>
     </main>

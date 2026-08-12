@@ -6,30 +6,32 @@ import Prose from '../../components/lab/Prose';
 import HoverCite from '../../components/lab/HoverCite';
 import SourcesList from '../../components/lab/SourcesList';
 import TermLink from '../../components/lab/TermLink';
-import Derivation from '../../components/lab/Derivation';
 import Quiz from '../../components/lab/Quiz';
-import StatementsPanel from './_figures/StatementsPanel';
 import ArticleLayout, { ArticleNav } from '../../components/lab/ArticleLayout';
 import ArticleMeta from '../../components/lab/ArticleMeta';
-import ArticleZh from '../../content/statistics/confidence-interval.zh.mdx';
-import ArticleEn from '../../content/statistics/confidence-interval.en.mdx';
-import data from '../../data/statistics-confidence-interval.json';
+import ArticleZh from '../../content/statistics/card-shuffling.zh.mdx';
+import ArticleEn from '../../content/statistics/card-shuffling.en.mdx';
+import data from '../../data/statistics-card-shuffling.json';
 import hub from '../../data/statistics.json';
-import PollErrorBand from './_figures/PollErrorBand';
-import Coverage from './_figures/Coverage';
-import Submarine from './_figures/Submarine';
-import Fieller from './_figures/Fieller';
-import FreqVsBayes from './_figures/FreqVsBayes';
+import RisingSequences from './_figures/RisingSequences';
+import SplitExample from './_figures/SplitExample';
+import MixingCurve from './_figures/MixingCurve';
+import GuessingGame from './_figures/GuessingGame';
+import QuestionPanel from './_figures/QuestionPanel';
+import StatementsPanel from './_figures/StatementsPanel';
 
 /*
  * The article shell, same contract as the other statistics pieces: the .mdx owns
  * the prose, this file owns which figures exist, the parameters they run with,
- * and where citations and glossary terms resolve from. Five figures — the coverage
- * one is a seeded simulation that must match the data repo's reference; the rest
- * are deterministic. <Derivation> and <Quiz> are injected the same way a figure is.
- * See NullHypothesis.jsx / EquivalenceTesting.jsx for the pattern.
+ * and where citations and glossary terms resolve from.
+ *
+ * One of the four figures is a seeded simulation (RisingSequences, GSR at seed
+ * 20260812) whose run must match data/reference/card-shuffling.json in the data
+ * repo. The other three lay out numbers computed or transcribed there — the exact
+ * Bayer-Diaconis distances, Table 5, and the separation-distance table — because
+ * the exact arithmetic behind the first of those is too heavy for a browser tab.
  */
-export default function ConfidenceInterval() {
+export default function CardShuffling() {
   const { meta, figures, sources, terms, quiz, statements } = data;
   const [scale, setScale] = useFontScale();
   const { lang, setLang } = useLang();
@@ -41,19 +43,12 @@ export default function ConfidenceInterval() {
   );
 
   const components = useMemo(() => ({
-    PollErrorBand: () => <PollErrorBand {...params['poll-error-band']} lang={lang} />,
-    Coverage: () => <Coverage {...params.coverage} lang={lang} />,
-    Submarine: () => <Submarine {...params.submarine} lang={lang} />,
-    Fieller: () => <Fieller {...params.fieller} lang={lang} />,
-    FreqVsBayes: () => <FreqVsBayes {...params['freq-vs-bayes']} lang={lang} />,
-    // The one collapsible aside on the site that starts closed — optional algebra,
-    // not skipped content. Title is authored per language in the prose.
-    Derivation,
-    // <Quiz /> renders the six-statement self-test in place; the data comes from
-    // the data repo, the correct index is shared across languages.
+    RisingSequences: () => <RisingSequences {...params['rising-sequences']} lang={lang} />,
+    SplitExample: () => <SplitExample {...params['split-example']} lang={lang} />,
+    MixingCurve: () => <MixingCurve {...params['mixing-curve']} lang={lang} />,
+    GuessingGame: () => <GuessingGame {...params['guessing-game']} lang={lang} />,
+    QuestionPanel: () => <QuestionPanel {...params['question-panel']} lang={lang} />,
     Quiz: () => <Quiz items={quiz ?? []} lang={lang} />,
-    // <Statements /> renders the right / wrong panel: curated precise phrasings
-    // beside the classic misreadings, each misreading paired with its fix.
     Statements: () => <StatementsPanel statements={statements ?? {}} lang={lang} />,
     // <Cite id="…"> resolves against sources.json in the data repo, so a citation
     // with no source cannot reach the page.

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-07-19T06:35:06.839Z",
+  "generatedAt": "2026-08-12T16:58:10.902Z",
   "source": "statistics-lab-data, built by engineering/scripts/build-app-json.mjs",
   "meta": {
     "slug": "null-hypothesis",
@@ -343,7 +343,7 @@
         "這個結果有 97% 的機率可以被重複驗證"
       ],
       "correctIndex": 1,
-      "explain": "p 值的定義是「條件在虛無假設為真之上，觀察到目前資料或更極端資料的機率」，寫成符號是 p(D|H0)。它不是任何一個假設為真或為假的機率——要問假設為真的機率，需要貝氏方法帶入先驗，單靠 p 值算不出來。Gigerenzer, Krauss & Vitouch (2004) 的六題是非題示範就是專門打這個誤解。"
+      "explain": "p 值的定義是「條件在虛無假設為真之上，觀察到目前資料或更極端資料的機率」，寫成符號是 p(D|H0)。它不是任何一個假設為真或為假的機率；要問假設為真的機率，需要貝氏方法帶入先驗，單靠 p 值算不出來。Gigerenzer, Krauss & Vitouch (2004) 的六題是非題示範就是專門打這個誤解。"
     },
     {
       "id": "q2-significant-means-important",
@@ -379,7 +379,7 @@
         "Fisher 邏輯只能用在小樣本，Neyman-Pearson 邏輯只能用在大樣本"
       ],
       "correctIndex": 1,
-      "explain": "Fisher 1935 年的立場是「虛無假設從不被證明，只可能被推翻」，p 值報告的是這次資料構成多強的反對證據。Neyman 與 Pearson 1933 年的論文則是另一套語言：先訂好長期犯錯率（第一類、第二類錯誤），把檢定當成一條「規則」（rule of behaviour），不對單一結果做證據強弱的解讀，只問要不要照這條規則行動。今天教科書里常見的「用 p 值報告、又套一個固定 0.05 門檻」，是兩套邏輯焊接出來、誰都没有正式設計過的混血程序——Gigerenzer 等人管這個叫 hybrid logic。"
+      "explain": "Fisher 1935 年的立場是「虛無假設從不被證明，只可能被推翻」，p 值報告的是這次資料構成多強的反對證據。Neyman 與 Pearson 1933 年的論文則是另一套語言：先訂好長期犯錯率（第一類、第二類錯誤），把檢定當成一條「規則」（rule of behaviour），不對單一結果做證據強弱的解讀，只問要不要照這條規則行動。今天教科書里常見的「用 p 值報告、又套一個固定 0.05 門檻」，是兩套邏輯焊接出來、誰都沒有正式設計過的混血程序，Gigerenzer 等人稱之為 hybrid logic。"
     },
     {
       "id": "q5-asa-statement",
@@ -399,7 +399,7 @@
       {
         "id": "p-is-conditional-on-null",
         "statement": "p 值是：假設虛無為真，得到至少和手上這批一樣極端的資料的機率。",
-        "why": "條件方向是對的——它算的是「資料｜虛無」，一句關於資料的話，不是關於假設的話。整排誤讀幾乎都從把這個條件反過來讀開始，所以先把正確的方向記牢，反而是最省事的防身術。",
+        "why": "p 值算的是「資料｜虛無」，一句關於資料的話，不是關於假設的話。整排誤讀幾乎都從把這個條件反過來讀開始。",
         "source": "wassersteinLazar2016",
         "en": {
           "statement": "A p value is the probability of getting data at least as extreme as these, assuming the null holds.",
@@ -409,7 +409,7 @@
       {
         "id": "fisher-null-is-nullifiable",
         "statement": "Fisher 的虛無假設是為了被推翻而設的：實驗架起它，好讓資料有一個明確的東西可以反駁。",
-        "why": "null 講的是可推翻性，不是「什麼都沒發生」。這正是這篇文章的主軸，也是「虛無」這個譯名最容易帶錯的地方。",
+        "why": "null 講的是可推翻性，不是「什麼都沒發生」。「虛無」這個譯名容易讓人讀成後面那一種。",
         "source": "gigerenzerKraussVitouch2004NullEtymology",
         "en": {
           "statement": "Fisher's null is set up to be nullified: the experiment erects it so the data have one definite thing to argue against.",
@@ -441,7 +441,7 @@
       {
         "id": "prob-null-true",
         "claim": "p = 0.03 代表虛無假設為真的機率只有 3%",
-        "why": "p 值算的是「虛無為真的前提下，看到這種資料的機率」。這句話把條件反過來讀成「看到這種資料的前提下，虛無為真的機率」。兩者可以差很遠，差多遠取決於這個領域裡本來有多少假說是真的——而 p 值對此一無所知。",
+        "why": "p 值算的是「虛無為真的前提下，看到這種資料的機率」。這句話把條件反過來讀成「看到這種資料的前提下，虛無為真的機率」。兩者可以差很遠，差多遠取決於這個領域裡本來有多少假說是真的，而 p 值不含這項資訊。",
         "instead": "要回答「這個結果有多大機會是真的」，必須額外引入事前勝算與檢定力（見本文的 2x2 表）。",
         "source": "greenland2016",
         "en": {
@@ -516,7 +516,7 @@
     {
       "id": "prob-null-true",
       "claim": "p = 0.03 代表虛無假設為真的機率只有 3%",
-      "why": "p 值算的是「虛無為真的前提下，看到這種資料的機率」。這句話把條件反過來讀成「看到這種資料的前提下，虛無為真的機率」。兩者可以差很遠，差多遠取決於這個領域裡本來有多少假說是真的——而 p 值對此一無所知。",
+      "why": "p 值算的是「虛無為真的前提下，看到這種資料的機率」。這句話把條件反過來讀成「看到這種資料的前提下，虛無為真的機率」。兩者可以差很遠，差多遠取決於這個領域裡本來有多少假說是真的，而 p 值不含這項資訊。",
       "instead": "要回答「這個結果有多大機會是真的」，必須額外引入事前勝算與檢定力（見本文的 2x2 表）。",
       "source": "greenland2016",
       "en": {

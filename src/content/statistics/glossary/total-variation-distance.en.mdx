@@ -1,0 +1,33 @@
+## What it says
+
+For two probability distributions $P$ and $Q$ on the same set, the total variation distance runs over every event $A$ and takes the largest gap:
+
+$$
+\|P - Q\| = \max_{A} |P(A) - Q(A)| = \frac{1}{2}\sum_{x} |P(x) - Q(x)|
+$$
+
+<Cite id="aldousDiaconis1986">The two forms agree, and the maximum is attained at $\{x : P(x) > Q(x)\}$</Cite>. The distance always lies between 0 and 1.
+
+There is a working reading of this definition. Think of an event $A$ as a test: I look at the outcome and declare it came from $P$. The distance is the edge available to the best such test. A distance of 0.334 means no test anyone can design beats guessing by more than 33 percent; a distance of 0.01 means nothing tells them apart.
+
+## Where it comes from
+
+It is the standard way of measuring how far apart two distributions are, and in shuffling and Markov chain problems it defines what "random by now" means. <Cite id="aldousDiaconis1986">Aldous and Diaconis wrote it in 1986 as $d(k) = \|Q^{k*} - U\|$ to ask how far a deck is from uniform after $k$ shuffles</Cite>.
+
+## An example that happened
+
+Three examples, running from obvious to nearly invisible.
+
+**A glimpsed bottom card: 0.98.** <Cite id="aldousDiaconis1986">Take a well-shuffled deck of $n$ cards and suppose you catch sight of the bottom card. Your distribution is uniform over the permutations that put that card at the bottom, and it sits $1 - 1/n$ away from uniform</Cite>. For 52 cards that is 0.98, even though the other 51 really are random: one event, "the bottom card is that one", moves from probability $1/52$ to 1.
+
+**A deck shuffled four times: 1.000.** <Cite id="bayerDiaconis1992">$k$ shuffles leave at most $2^k$ rising sequences, so four leave at most 16, while a uniformly random 52-card deck averages 26.5 and falls to 16 or below with probability $4.67 \times 10^{-7}$</Cite>. Take "at most 16 rising sequences" as the event and the two probabilities are 1 and roughly four in ten million, so the distance sits at 1. The test here is nothing more than counting.
+
+**A deck shuffled seven times: 0.334.** Set it beside a randomly arranged deck and ask someone to point out the shuffled one: guessing wins half the time, the best available check $\frac{1}{2} + \frac{1}{2} \times 0.334 = 66.7\%$. <Cite id="bayerDiaconis1992">By the tenth shuffle the distance is 0.043</Cite>, which leaves 52.1 percent — close to a coin flip.
+
+## How it is misread
+
+**Reading it as an average gap.** It is a maximum. In the example above almost every event has barely moved, and the distance is still near 1. <Cite id="aldousDiaconis1986">The paper calls the distance "unforgiving" of small deviations</Cite>.
+
+**Reading a small distance as sameness.** A distance of 0.043 says no test gets an edge above 4.3 percent. It does not say the distributions match.
+
+**Comparing it against a different distance.** Separation, $l_\infty$ and information each have their own definition and their numbers do not line up; <Cite id="diaconisFulmanHolmes2013">for a given distribution the total variation distance never exceeds the separation distance</Cite>. Change the distance and the answer to "how many times" changes with it.

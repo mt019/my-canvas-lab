@@ -4,6 +4,7 @@ import { useLang } from '../../components/LangSwitch';
 import SiteHeader from '../../components/SiteHeader';
 import Prose from '../../components/lab/Prose';
 import HoverCite from '../../components/lab/HoverCite';
+import SourcesList from '../../components/lab/SourcesList';
 import TermLink from '../../components/lab/TermLink';
 import ArticleLayout, { ArticleNav } from '../../components/lab/ArticleLayout';
 import AboutZh from '../../content/statistics/about.zh.mdx';
@@ -26,7 +27,7 @@ export default function About() {
   const en = lang === 'en';
 
   const components = useMemo(() => ({
-    Cite: ({ id, children }) => <HoverCite source={sources?.[id]} lang={lang}>{children}</HoverCite>,
+    Cite: ({ id, children }) => <HoverCite source={sources?.[id]} sourceId={id} lang={lang}>{children}</HoverCite>,
     Term: ({ id, children }) => <TermLink term={terms?.[id]} lang={lang}>{children}</TermLink>,
   }), [sources, terms, lang]);
 
@@ -69,6 +70,7 @@ export default function About() {
       >
         <Prose components={components}>
           <Body />
+          <SourcesList sources={sources} lang={lang} />
         </Prose>
       </ArticleLayout>
     </main>
