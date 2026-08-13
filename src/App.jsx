@@ -1,6 +1,6 @@
 import React, { Suspense, lazy, useMemo } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation, useParams, Navigate } from 'react-router-dom';
-import { ArrowRight, AudioLines, BookMarked, CalendarDays, ChevronsDown, Coins, Droplets, FileSearch, Film, Gavel, Globe2, GraduationCap, Landmark, Languages, Mic, Music, Music2, NotebookPen, Palette, Piano, Puzzle, Receipt, Scale, ScrollText, ShieldAlert, Sigma, Wind } from 'lucide-react';
+import { ArrowRight, AudioLines, BookMarked, CalendarDays, Castle, ChevronsDown, Coins, Droplets, FileSearch, Film, Gavel, Globe2, GraduationCap, Landmark, Languages, Mic, Music, Music2, NotebookPen, Palette, Piano, Puzzle, Receipt, Scale, ScrollText, ShieldAlert, Sigma, Wind } from 'lucide-react';
 import SeoHead from './components/SeoHead';
 import ScrollToTop from './components/ScrollToTop';
 import BackToTop from './components/BackToTop';
@@ -335,6 +335,17 @@ const PAGE_META = { // token-exempt: per-page identity chip colors (data, not st
     keywords: CHEN_BASE_SEO.keywords,
     type: CHEN_BASE_SEO.type,
     buildSchema: CHEN_BASE_SEO.buildSchema,
+  },
+  Tokugawa: {
+    name: '德川日本入門',
+    title: '德川日本的統治與「家」：武士身分制、イエ與宗族的對照',
+    desc: '武士身分制、イエ與宗族的差別、三地時代對照帶，與從長崎出島到 1945 年的對外關係年表',
+    Icon: Castle,
+    accent: '#e8e0d4',
+    accentText: '#7a5f42',
+    group: 'humanities',
+    keywords: ['德川時代', '江戶時代', '武士', '幕府', '身分制', '宗族', '鎖國', '出島', '明治維新', '日本近世史'],
+    type: 'Article',
   },
   ZhuJiahua: {
     name: '朱家驊研究室',
