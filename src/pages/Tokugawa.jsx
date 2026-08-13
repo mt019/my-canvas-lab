@@ -12,6 +12,7 @@ const TABS = [
   { id: 'chronology', label: '年表' },
   { id: 'order', label: '身分秩序與「家」' },
   { id: 'glossary', label: '術語表' },
+  { id: 'qa', label: '背景問答' },
 ];
 
 const NAV_LINK = (active) =>
@@ -198,8 +199,8 @@ function TermHead({ term, reading, roman }) {
           {term}<rt>{reading}</rt>
         </ruby>
       ) : term}
-      {roman ? <span className="ml-2 align-baseline font-accent text-token-xs font-normal text-ink-faint">{roman}</span> : null}
       {!kana ? <span className="block text-token-xs font-normal text-ink-faint">{reading}</span> : null}
+      {roman ? <span className="block font-accent text-token-xs font-normal leading-snug text-ink-faint">{roman}</span> : null}
     </>
   );
 }
@@ -298,6 +299,30 @@ function OrderTab() {
   );
 }
 
+function QaTab() {
+  return (
+    <div>
+      <SectionHead id="qa" toc="背景問答">背景問答十二題</SectionHead>
+      <p className="mt-5 max-w-3xl text-token-body leading-[1.95] text-ink-muted">
+        讀日本近世史料時常見的背景疑問，逐題整理。內容限於通說層級的公開知識，帶年代的斷言逐條對照過權威辭書與官方站（查核紀錄在資料倉）。
+      </p>
+      <div className="mt-8 space-y-10">
+        {data.qa.map((item, i) => (
+          <section key={item.q} className="max-w-3xl border-t border-line-soft pt-6 first:border-t-0 first:pt-0">
+            <h3 id={`qa-${i + 1}`} className="font-serif text-token-lg font-bold leading-snug">
+              <span className="mr-2 tabular-nums text-ink-faint">{String(i + 1).padStart(2, '0')}</span>
+              {item.q}
+            </h3>
+            {item.a.map((para) => (
+              <p key={para.slice(0, 16)} className="mt-4 text-token-body leading-[1.95] text-ink-muted">{para}</p>
+            ))}
+          </section>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function Tokugawa() {
   const [scale, setScale] = useFontScale();
   const [{ tab }, setTab] = useTabParams({ tab: 'overview' });
@@ -311,7 +336,7 @@ export default function Tokugawa() {
       <SiteHeader width="article" scale={scale} onScaleChange={setScale} />
       <ArticleLayout
         title={data.meta.title}
-        eyebrow="TOKUGAWA JAPAN · A PRIMER"
+        eyebrow="TOKUGAWA JAPAN"
         summary={data.meta.summary}
         tocLabel="本頁區塊"
         tocKey={active}
@@ -328,6 +353,7 @@ export default function Tokugawa() {
         {active === 'overview' ? <Overview /> : null}
         {active === 'chronology' ? <ChronologyTab /> : null}
         {active === 'order' ? <OrderTab /> : null}
+        {active === 'qa' ? <QaTab /> : null}
         {active === 'glossary' ? (
           <section>
             <SectionHead id="glossary" toc="術語表">術語表</SectionHead>
