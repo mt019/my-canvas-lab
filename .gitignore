@@ -69,3 +69,4 @@ public/notes-assets/
 
 # 服務的經營資料（自介稿、定價策略、頭像）住私有倉 phenom-mandarin，不進這個公開倉。
 brand/
+src/data/*.local.json

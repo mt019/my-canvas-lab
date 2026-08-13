@@ -19,7 +19,9 @@ function walk(dir) {
 }
 
 export function extractChars() {
-  const textFiles = ['index.html', ...walk('src')].filter(Boolean);
+  // *.local.* 是 gitignored 的本機私有資料（不部署、不給讀者），字不進公開子集；
+  // 這些字在本機頁面落到系統字型。
+  const textFiles = ['index.html', ...walk('src')].filter((file) => !/\.local\./.test(file));
   const text = textFiles
     .filter((file) => existsSync(file))
     .map((file) => readFileSync(file, 'utf8'))

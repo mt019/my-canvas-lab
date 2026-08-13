@@ -7,12 +7,20 @@ import { useTabParams } from '../components/lab/Tabs';
 import { linearScale } from '../components/lab/chart/scale';
 import data from '../data/tokugawaBackground.json';
 
+/* 本機私有層：gitignored 的 *.local.json（未出版材料的全文對讀與筆記）。
+   檔在（只有這台機器）才多出兩個分頁；公開倉與部署環境沒有這個檔，分頁不存在。 */
+const PRIVATE = Object.values(import.meta.glob('../data/tokugawaPrivate.local.json', { eager: true }))[0]?.default ?? null;
+
 const TABS = [
   { id: 'overview', label: '總覽：分期與對照' },
   { id: 'chronology', label: '年表' },
   { id: 'order', label: '身分秩序與「家」' },
   { id: 'glossary', label: '術語表' },
   { id: 'qa', label: '背景問答' },
+  ...(PRIVATE ? [
+    { id: 'reading', label: '對讀（本機）' },
+    { id: 'notes', label: '筆記（本機）' },
+  ] : []),
 ];
 
 const NAV_LINK = (active) =>
@@ -323,6 +331,133 @@ function QaTab() {
   );
 }
 
+/* ——以下兩個分頁只在本機私有層存在時 render，資料全部來自 PRIVATE—— */
+
+function PrivateNotice() {
+  return (
+    <p className="mt-3 max-w-3xl border-l-2 border-accent pl-3 text-token-xs leading-relaxed text-ink-faint">{PRIVATE.warning}</p>
+  );
+}
+
+/* 對讀：一次一篇，問答卡插在它錨定的段落正下方（全部展開，站規：可展開的預設全開）。 */
+function ReadingTab() {
+  const [textId, setTextId] = useState(PRIVATE.texts[0].id);
+  const text = PRIVATE.texts.find((t) => t.id === textId);
+  const byPara = new Map();
+  PRIVATE.annotations.filter((a) => a.text === textId).forEach((a) => {
+    byPara.set(a.p, [...(byPara.get(a.p) ?? []), a]);
+  });
+  return (
+    <div>
+      <SectionHead id="reading" toc="對讀">對讀：原文與預習問答</SectionHead>
+      <PrivateNotice />
+      <div className="mt-5 flex flex-wrap gap-2">
+        {PRIVATE.texts.map((t) => (
+          <button
+            key={t.id}
+            type="button"
+            onClick={() => setTextId(t.id)}
+            className={`border px-3 py-1 text-token-sm transition-colors duration-fast ${t.id === textId ? 'border-accent font-bold text-ink' : 'border-line text-ink-muted hover:border-accent'}`}
+          >
+            {t.title}
+          </button>
+        ))}
+      </div>
+      <article className="mt-8 max-w-3xl">
+        <h3 className="font-serif text-token-lg font-bold leading-snug">{text.title}</h3>
+        {text.paras.map((para, i) => (
+          <div key={`${textId}-${i}`}>
+            <p className="mt-4 text-token-body leading-[2] text-ink">{para}</p>
+            {(byPara.get(i) ?? []).map((a) => (
+              <aside key={a.q} className="mt-3 border-l-2 border-accent bg-paper py-2 pl-4">
+                <p className="text-token-sm font-bold">{a.q}</p>
+                {a.a.map((s) => (
+                  <p key={s.slice(0, 16)} className="mt-2 text-token-sm leading-[1.9] text-ink-muted">{s}</p>
+                ))}
+              </aside>
+            ))}
+          </div>
+        ))}
+      </article>
+    </div>
+  );
+}
+
+/* 筆記：極簡 markdown 渲染——標題、清單、表格列，夠自己讀就好。 */
+function NotesBlock({ raw }) {
+  const blocks = [];
+  let buf = [];
+  const flush = (kind) => {
+    if (!buf.length) return;
+    blocks.push({ kind, lines: buf });
+    buf = [];
+  };
+  let mode = 'p';
+  for (const line of raw.split('\n')) {
+    const t = line.trimEnd();
+    if (!t.trim()) { flush(mode); mode = 'p'; continue; }
+    if (t.startsWith('# ')) { flush(mode); continue; }
+    if (t.startsWith('## ')) { flush(mode); blocks.push({ kind: 'h', lines: [t.slice(3)] }); continue; }
+    if (t.startsWith('- ')) { if (mode !== 'ul') flush(mode); mode = 'ul'; buf.push(t.slice(2)); continue; }
+    if (t.startsWith('|')) { if (mode !== 'table') flush(mode); mode = 'table'; buf.push(t); continue; }
+    if (mode !== 'p') { flush(mode); mode = 'p'; }
+    buf.push(t);
+  }
+  flush(mode);
+  return (
+    <div className="max-w-3xl">
+      {blocks.map((b, i) => {
+        if (b.kind === 'h') return <h3 key={i} className="mt-10 font-serif text-token-lg font-bold leading-snug">{b.lines[0]}</h3>;
+        if (b.kind === 'ul') return (
+          <ul key={i} className="mt-4 list-disc space-y-2 pl-5">
+            {b.lines.map((li) => <li key={li.slice(0, 16)} className="text-token-sm leading-[1.9] text-ink-muted">{li}</li>)}
+          </ul>
+        );
+        if (b.kind === 'table') return (
+          <div key={i} className="mt-4 overflow-x-auto">
+            <table className="border-collapse text-token-sm text-ink-muted">
+              <tbody>
+                {b.lines.filter((r) => !/^\|[\s:-]+\|/.test(r.replace(/\|/g, '|'))).filter((r) => !/^[|\s:-]+$/.test(r)).map((row) => (
+                  <tr key={row.slice(0, 24)} className="border-b border-line-soft">
+                    {row.split('|').slice(1, -1).map((cell, ci) => (
+                      <td key={ci} className="py-2 pr-5 align-top leading-[1.8]">{cell.trim()}</td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        );
+        return <p key={i} className="mt-4 text-token-sm leading-[1.95] text-ink-muted">{b.lines.join('')}</p>;
+      })}
+    </div>
+  );
+}
+
+function NotesTab() {
+  const [name, setName] = useState(PRIVATE.notes[0].name);
+  const note = PRIVATE.notes.find((n) => n.name === name);
+  return (
+    <div>
+      <SectionHead id="notes" toc="筆記">預習筆記</SectionHead>
+      <PrivateNotice />
+      <div className="mt-5 flex flex-wrap gap-2">
+        {PRIVATE.notes.map((n) => (
+          <button
+            key={n.name}
+            type="button"
+            onClick={() => setName(n.name)}
+            className={`border px-3 py-1 text-token-sm transition-colors duration-fast ${n.name === name ? 'border-accent font-bold text-ink' : 'border-line text-ink-muted hover:border-accent'}`}
+          >
+            {n.name}
+          </button>
+        ))}
+      </div>
+      <div className="mt-6"><NotesBlock raw={note.raw} /></div>
+    </div>
+  );
+}
+
 export default function Tokugawa() {
   const [scale, setScale] = useFontScale();
   const [{ tab }, setTab] = useTabParams({ tab: 'overview' });
@@ -354,6 +489,8 @@ export default function Tokugawa() {
         {active === 'chronology' ? <ChronologyTab /> : null}
         {active === 'order' ? <OrderTab /> : null}
         {active === 'qa' ? <QaTab /> : null}
+        {PRIVATE && active === 'reading' ? <ReadingTab /> : null}
+        {PRIVATE && active === 'notes' ? <NotesTab /> : null}
         {active === 'glossary' ? (
           <section>
             <SectionHead id="glossary" toc="術語表">術語表</SectionHead>
