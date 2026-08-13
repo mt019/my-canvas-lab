@@ -42,7 +42,7 @@ const CAT = (n) => `var(--cat-${n}-tx)`;
 function EraBands() {
   const { range, tracks, eras, ticks, events } = data.periods;
   const [note, setNote] = useState('');
-  const M = { left: 64, right: 20, top: 8, bottom: 26 };
+  const M = { left: 92, right: 84, top: 8, bottom: 26 };
   const innerW = 880;
   const rowH = 52;
   const barH = 16;
