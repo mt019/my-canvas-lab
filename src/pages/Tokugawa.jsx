@@ -383,7 +383,15 @@ function ReadingTab() {
   );
 }
 
-/* 筆記：極簡 markdown 渲染——標題、清單、表格列，夠自己讀就好。 */
+/* 筆記：極簡 markdown 渲染——標題、清單、表格列、**粗體**，夠自己讀就好。 */
+function mdInline(text) {
+  return text.split(/(\*\*[^*]+\*\*)/g).map((piece, i) =>
+    piece.startsWith('**') && piece.endsWith('**')
+      ? <strong key={i} className="font-bold text-ink">{piece.slice(2, -2)}</strong>
+      : piece,
+  );
+}
+
 function NotesBlock({ raw }) {
   const blocks = [];
   let buf = [];
@@ -410,7 +418,7 @@ function NotesBlock({ raw }) {
         if (b.kind === 'h') return <h3 key={i} className="mt-10 font-serif text-token-lg font-bold leading-snug">{b.lines[0]}</h3>;
         if (b.kind === 'ul') return (
           <ul key={i} className="mt-4 list-disc space-y-2 pl-5">
-            {b.lines.map((li) => <li key={li.slice(0, 16)} className="text-token-sm leading-[1.9] text-ink-muted">{li}</li>)}
+            {b.lines.map((li) => <li key={li.slice(0, 16)} className="text-token-sm leading-[1.9] text-ink-muted">{mdInline(li)}</li>)}
           </ul>
         );
         if (b.kind === 'table') return (
@@ -428,7 +436,7 @@ function NotesBlock({ raw }) {
             </table>
           </div>
         );
-        return <p key={i} className="mt-4 text-token-sm leading-[1.95] text-ink-muted">{b.lines.join('')}</p>;
+        return <p key={i} className="mt-4 text-token-sm leading-[1.95] text-ink-muted">{mdInline(b.lines.join(''))}</p>;
       })}
     </div>
   );
