@@ -1,8 +1,68 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-08-12T17:07:57.590Z",
+  "generatedAt": "2026-08-13T06:35:33.222Z",
   "source": "statistics-lab-data, built by engineering/scripts/build-app-json.mjs",
   "terms": {
+    "birthday-problem": {
+      "slug": "birthday-problem",
+      "term": "生日問題",
+      "aliases": [
+        "birthday problem",
+        "birthday paradox",
+        "生日悖論"
+      ],
+      "oneLine": "一群人裡出現同一天生日的兩個人，需要的人數比直覺少得多：23 個人的機率就過一半。",
+      "example": "逆向洗牌給每張牌貼位元標籤，要等 52 張的標籤全不重複，跟 52 個人抽生日全不同天是同一個計算；Levin 與 Peres 用它證出洗牌次數的上界。",
+      "related": [
+        {
+          "slug": "riffle-shuffle",
+          "term": "鴿尾式洗牌",
+          "oneLine": "把一副牌分成兩疊、讓兩疊交錯落下的洗法，也是撲克牌最常見的洗法。",
+          "example": "52 張牌照這種洗法洗七次，與均勻分佈的全變異距離降到 0.334；洗四次以下，牌堆最多只有 16 段遞增序列，一眼就分得出來。",
+          "route": "/statistics/glossary/riffle-shuffle",
+          "en": {
+            "term": "riffle shuffle",
+            "oneLine": "Splitting a deck into two packets and letting them fall interleaved, the way cards are usually shuffled.",
+            "example": "Seven such shuffles of 52 cards bring the total variation distance down to 0.334; four or fewer leave at most 16 rising sequences, which is easy to spot."
+          }
+        }
+      ],
+      "en": {
+        "term": "birthday problem",
+        "aliases": [
+          "birthday paradox"
+        ],
+        "oneLine": "Fewer people than intuition suggests suffice for two of them to share a birthday: with 23 the odds already pass one half.",
+        "example": "Inverse riffle shuffles label every card with bits, and waiting until all 52 labels differ is the same computation as 52 people drawing distinct birthdays; Levin and Peres use it to bound the number of shuffles."
+      },
+      "topic": "randomness",
+      "route": "/statistics/glossary/birthday-problem",
+      "sources": {
+        "levinPeres2017MixingTimes": {
+          "author": "David A. Levin & Yuval Peres",
+          "title": "Markov Chains and Mixing Times",
+          "year": 2017,
+          "container": "2nd ed. Providence: American Mathematical Society",
+          "locator": "第 8.3 節「Riffle Shuffles」pp.107-110：鴿尾式洗牌的三種等價描述（其中第三種是逆洗牌的位元標籤法）、命題 8.11 的強停止時間，以及命題 8.12 的上界 $t_{\\mathrm{mix}} \\le 2\\log_2(4n/3)$。第 4.1 節 p.47 定義全變異距離，第 18 章 p.261 處理 cutoff 現象。",
+          "quote": "A rising sequence of a permutation is a maximal set of consecutive values that occur in the correct relative order.",
+          "url": "https://pages.uoregon.edu/dlevin/MARKOV/mcmt2e.pdf",
+          "en": {
+            "locator": "Section 8.3 'Riffle Shuffles', pp.107-110: three equivalent descriptions of the shuffle (the third being the inverse bit-labelling construction), the strong stationary time of Proposition 8.11, and the bound of Proposition 8.12. Total variation is defined in Section 4.1, p.47; the cutoff phenomenon is Chapter 18, p.261."
+          }
+        }
+      },
+      "mentions": {},
+      "usedIn": [
+        {
+          "slug": "card-shuffling",
+          "route": "/statistics/card-shuffling",
+          "title": "一副牌要洗幾次才算洗好",
+          "en": {
+            "title": "How many shuffles does a deck need"
+          }
+        }
+      ]
+    },
     "confidence-interval": {
       "slug": "confidence-interval",
       "term": "信賴區間",

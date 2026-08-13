@@ -54,14 +54,12 @@ export default function HoverCite({ source, sourceId, lang = 'zh', children }) {
 
   // No asterisk on the marker. A marker is one more character, and Chinese breaks
   // between any two characters, so it gets orphaned onto the next line just as the
-  // punctuation did. The dotted underline says the same thing and cannot be.
+  // punctuation did. The dotted mark says the same thing and cannot be.
   //
-  // 底線走 text-decoration，不用 border-bottom：行內公式的盒子比一行中文高，border
-  // 畫在盒子的底緣，分數的分母因此被那條虛線穿過去（2026-08-13 站主截圖）。
-  // skip-ink 在這裡是 none：漢字的墨本來就沉到基線之下，auto 會在每個字底下讓位，
-  // 整條線碎掉（2026-08-13 站主第二張截圖）。只有 KaTeX 那段在 katex.css 把繼承值
-  // 改回 auto，讓位只發生在分數這種真的戳進線裡的地方。
-  const underline = 'underline decoration-dotted decoration-ink-faint underline-offset-[0.3em] [text-decoration-skip-ink:none] transition-colors duration-fast';
+  // 點線不走 text-decoration，由 .cite-mark（index.css）當背景畫：text-decoration
+  // 逐盒畫，KaTeX 子盒各有字級，點的大小與高度拼不齊，且 .base 是 inline-block、
+  // 父層的線進不去。背景一次畫整條，公式底下照樣連續。
+  const underline = 'cite-mark transition-colors duration-fast';
 
   if (!cardsOn) {
     const jump = sourceId

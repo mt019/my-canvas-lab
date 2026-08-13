@@ -1,0 +1,15 @@
+## What it says
+
+In a room of 23 people, the probability that two share a birthday is 0.507. The computation runs backwards: the second person avoids the first's birthday with probability $364/365$, the third avoids both with $363/365$, and multiplying down to the 23rd person gives
+
+$$
+\prod_{i=1}^{22} \frac{365-i}{365} \approx 0.493,
+$$
+
+so a shared birthday has probability $1 - 0.493 = 0.507$. At 50 people that probability is 97%.
+
+23 people form $\binom{23}{2} = 253$ pairs, and every pair is one chance of landing on the same day; the chances grow with the square of the head count, so the head count need not be large. Intuition counts heads, which is why it misses this.
+
+## What it has to do with shuffling
+
+<Cite id="levinPeres2017MixingTimes">After $k$ inverse riffle shuffles every card carries a $k$-bit label, and one sufficient condition for a mixed deck is that all 52 labels differ, which is the birthday problem with 52 "people" drawing from $2^k$ "birthdays". The book uses exactly this computation to prove the riffle-shuffle bound $t_{\mathrm{mix}} \le 2\log_2(4n/3)$</Cite>. Hash-table collisions and repeated random seeds run on the same arithmetic.

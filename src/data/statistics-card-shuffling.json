@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-08-12T17:49:51.626Z",
+  "generatedAt": "2026-08-13T06:35:33.222Z",
   "source": "statistics-lab-data, built by engineering/scripts/build-app-json.mjs",
   "meta": {
     "slug": "card-shuffling",
@@ -862,6 +862,18 @@
   ],
   "timeline": [],
   "terms": {
+    "birthday-problem": {
+      "slug": "birthday-problem",
+      "term": "生日問題",
+      "oneLine": "一群人裡出現同一天生日的兩個人，需要的人數比直覺少得多：23 個人的機率就過一半。",
+      "example": "逆向洗牌給每張牌貼位元標籤，要等 52 張的標籤全不重複，跟 52 個人抽生日全不同天是同一個計算；Levin 與 Peres 用它證出洗牌次數的上界。",
+      "route": "/statistics/glossary/birthday-problem",
+      "en": {
+        "term": "birthday problem",
+        "oneLine": "Fewer people than intuition suggests suffice for two of them to share a birthday: with 23 the odds already pass one half.",
+        "example": "Inverse riffle shuffles label every card with bits, and waiting until all 52 labels differ is the same computation as 52 people drawing distinct birthdays; Levin and Peres use it to bound the number of shuffles."
+      }
+    },
     "cutoff-phenomenon": {
       "slug": "cutoff-phenomenon",
       "term": "cutoff 現象",

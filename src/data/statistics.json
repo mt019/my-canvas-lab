@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-08-12T17:07:57.590Z",
+  "generatedAt": "2026-08-13T06:35:33.222Z",
   "source": "statistics-lab-data, built by engineering/scripts/build-app-json.mjs",
   "site": {
     "intro": "統計課本教你怎麼算，很少告訴你這些東西當初是為了什麼問題被發明出來，又是在哪裡開始被誤用。這個站一次處理一個看起來理所當然、來歷卻可疑的概念：它為什麼長成這樣，是誰為了什麼發明它，以及它壞掉的時候會壞在哪裡。文章裡的模擬都可以親手轉動，因為有些事情得自己按下去重跑一萬次才會相信。",
@@ -321,7 +321,8 @@
       "terms": [
         "riffle-shuffle",
         "total-variation-distance",
-        "cutoff-phenomenon"
+        "cutoff-phenomenon",
+        "birthday-problem"
       ],
       "en": {
         "label": "When something counts as random",
@@ -568,6 +569,18 @@
       "en": {
         "term": "cutoff phenomenon",
         "oneLine": "The distance sits at 1, then falls almost all the way to 0 within a short window around a critical number of steps."
+      }
+    },
+    {
+      "slug": "birthday-problem",
+      "route": "/statistics/glossary/birthday-problem",
+      "topic": "randomness",
+      "group": "randomness",
+      "term": "生日問題",
+      "oneLine": "一群人裡出現同一天生日的兩個人，需要的人數比直覺少得多：23 個人的機率就過一半。",
+      "en": {
+        "term": "birthday problem",
+        "oneLine": "Fewer people than intuition suggests suffice for two of them to share a birthday: with 23 the odds already pass one half."
       }
     }
   ],

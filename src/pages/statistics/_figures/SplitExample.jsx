@@ -32,9 +32,9 @@ const COPY = {
       `切牌：分成 1–${cut}（上）與 ${cut + 1}–${n}（下）兩堆，每堆內部照舊由小到大。`,
       `交錯落下：兩堆的牌混進同一副，但同色的牌前後次序不變，1 到 ${cut} 的位置仍然遞增，${cut + 1} 到 ${n} 也是。整副拆成兩段遞增序列。`,
       '洗第二次，先切牌：把剛才的排列分成兩堆，每一堆都橫跨原來的兩種顏色。',
-      '再交錯落下：原來的每一段各被對半拆成兩段（深淺各一），共四段。',
+      '再交錯落下：原來的每一段各被對半拆成兩段，各換上同族的兩色，共四段。',
       `洗第三次，先切牌：這一刀落在第 ${cut3} 張，兩堆各自橫跨原來的四段。`,
-      <>第三次交錯落下：四段各再拆成兩段，共八段，換八種顏色標示。段數每洗一次至多翻倍，洗 <Math tex="k" /> 次最多 <Math tex="2^k" /> 段。</>,
+      <>第三次交錯落下：四段各再拆成兩段（深淺各一），共八段。段數每洗一次至多翻倍，洗 <Math tex="k" /> 次最多 <Math tex="2^k" /> 段。</>,
     ],
   },
   en: {
@@ -47,9 +47,9 @@ const COPY = {
       `Cut: two packets, 1–${cut} above and ${cut + 1}–${n} below, each still ascending inside.`,
       `Riffle: the packets interleave into one deck, but cards of the same colour keep their order. The positions of 1 to ${cut} still ascend, and so do ${cut + 1} to ${n}: two rising sequences.`,
       'Second shuffle, cut first: the arrangement splits into two packets, and each packet spans both colours.',
-      'Riffle again: each of the two runs splits in half, one dark and one light shade — four rising sequences.',
+      'Riffle again: each of the two runs splits in half, taking two colours of the same family — four rising sequences.',
       `Third shuffle, cut first: this cut falls at card ${cut3}, and each packet spans the four runs.`,
-      <>Third riffle: the four runs split once more into eight, recoloured one tint per run. The count can at most double per shuffle — after <Math tex="k" /> shuffles, at most <Math tex="2^k" />.</>,
+      <>Third riffle: the four runs split once more, one dark and one light shade each — eight rising sequences. The count can at most double per shuffle — after <Math tex="k" /> shuffles, at most <Math tex="2^k" />.</>,
     ],
   },
 };
@@ -112,18 +112,21 @@ export default function SplitExample({
     return runOf;
   }, [order3]);
 
-  // Colour by the first cut for the whole first shuffle; after the second the
-  // halves split into shades; after the third every run gets its own tint —
-  // the split the bound is about, told three times.
+  // 上色照 chart/marks.jsx 的 Bars 畫法：色票 token 淡填充＋同色細框，不自創
+  // 混色比例（2026-08-13 站主退回八色相 70% 的一版：「醜色票」）。色相只用兩對
+  // 同族：第一刀分梅紫（cat-1）對藍（cat-2）；第二刀把每半分成同族兩色——梅紫半
+  // 分出梅紫與玫瑰（cat-7）、藍半分出藍與湖青（cat-5）；第三刀不再加色相，
+  // 每段深淺各一。
+  const QUARTER_TONES = ['var(--cat-1-tx)', 'var(--cat-7-tx)', 'var(--cat-2-tx)', 'var(--cat-5-tx)'];
   const toneOf = (value, s) => {
-    if (s === 0) return { tone: 'var(--c-ink-muted)', mix: 32 };
-    if (s === 6) return { tone: `var(--cat-${(thirdRunOf[value] % 8) + 1}-tx)`, mix: 70 };
-    // Plum against blue (cat-1 / cat-2): the two packets have to stay tellable
-    // apart at a pale wash, and the neighbouring reds in the palette are not.
-    const cat = value <= cut1 ? 'var(--cat-1-tx)' : 'var(--cat-2-tx)';
-    if (s < 4) return { tone: cat, mix: 51 };
-    const firstHalfOfRun = value <= cut1 ? value <= cut1 / 2 : value <= cut1 + (n - cut1) / 2;
-    return { tone: cat, mix: firstHalfOfRun ? 88 : 38 };
+    if (s === 0) return { tone: 'var(--c-ink-muted)', fill: 18, border: 28 };
+    if (s < 4) {
+      return { tone: value <= cut1 ? 'var(--cat-1-tx)' : 'var(--cat-2-tx)', fill: 30, border: 42 };
+    }
+    const quarter = window.Math.min(3, window.Math.floor(((value - 1) * 4) / n));
+    if (s < 6) return { tone: QUARTER_TONES[quarter], fill: 30, border: 42 };
+    const firstOfPair = thirdRunOf[value] % 2 === 0;
+    return { tone: QUARTER_TONES[quarter], fill: firstOfPair ? 62 : 20, border: 42 };
   };
 
   const layout = layouts[step];
@@ -168,7 +171,7 @@ export default function SplitExample({
         <div className="relative" style={{ height: `${totalRows * bandH}rem` }}>
           {values.map((v) => {
             const slot = layout[v];
-            const { tone, mix } = toneOf(v, step);
+            const { tone, fill, border } = toneOf(v, step);
             const h = v * unit;
             return (
               <span
@@ -189,7 +192,8 @@ export default function SplitExample({
                   transitionDuration: '480ms',
                   transitionTimingFunction: 'cubic-bezier(0.2, 0, 0, 1)',
                   transitionDelay: `${slot.col * 7}ms`,
-                  backgroundColor: `color-mix(in oklab, ${tone} ${mix}%, transparent)`,
+                  backgroundColor: `color-mix(in oklab, ${tone} ${fill}%, transparent)`,
+                  border: `1px solid color-mix(in oklab, ${tone} ${border}%, transparent)`,
                 }}
               />
             );
