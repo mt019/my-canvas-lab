@@ -317,6 +317,27 @@ body {
   -moz-osx-font-smoothing: auto;
 }
 
+/* 編號註標（AnnotatedHtml／AnnotatedText 產生的 <sup class="fn-ref">）。
+   中文可在任兩字之間斷行，單一字元的標記會被孤立到下一行單獨站著，所以 nowrap 把它與
+   前一個字綁在一起；母本那邊負責把註標貼在標點之後。
+   顏色用 accent、字級縮到七成，滑過時整顆變實色——它是可以按的（點了釘住浮卡）。 */
+.fn-ref {
+  white-space: nowrap;
+  margin-left: 0.1em;
+  font-family: var(--font-accent);
+  font-size: 0.7em;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  vertical-align: super;
+  color: color-mix(in srgb, var(--c-accent) 72%, var(--c-ink));
+  cursor: pointer;
+}
+
+.fn-ref:hover,
+.fn-ref:focus-visible {
+  color: var(--c-accent);
+}
+
 /* 圍籬區塊裡的 <code> 會繼承行內那顆藥丸（細框＋左右內距＋accent 字面）。整段程式碼不需要
    第二層框，也需要等寬字面，所以在這裡把它退回素的。外框、內距與捲動由 Prose 的 pre 負責。 */
 .prose-body pre > code {

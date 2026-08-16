@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import * as fontkit from 'fontkit';
-import { extractChars } from './font-chars.mjs';
+import { extractChars, requiredLatinAccentChars } from './font-chars.mjs';
 
 /*
  * Does every character the site renders exist in the committed font subsets?
@@ -70,4 +70,44 @@ if (missing.length > 0) {
   );
 }
 
-console.log(`Font coverage validated: ${chars.length} glyphs against the committed subsets.`);
+/*
+ * 拉丁點綴面（font-accent＝Erikas Farbband）另外驗一次，判準與上面不同。
+ *
+ * 上面驗的是「畫得出來」，用的是整個字型堆疊的聯集，所以缺字會落到 Huiwen 而照樣通過。
+ * 2026-08-13 德川頁術語表就是這樣壞的：平文式羅馬字的 ō（daimyō、taishōgun、bushidō）
+ * 不在 Erikas 子集裡，落到 Huiwen 明體，一個詞裡兩種字面。這一段驗的是「同一個面畫得完」
+ * ——常用拉丁字元必須全部在 Erikas 自己的子集裡，不看堆疊下游。
+ */
+const ACCENT = {
+  label: 'Erikas Farbband 拉丁點綴面（font-accent）',
+  paths: ['public/fonts/ErikasFarbband-subset.woff2', 'public/fonts/ErikasFarbband-Bold-subset.woff2'],
+};
+
+// 來源字型 erikas-farbband.ttf 本身就沒有的碼位（重建也生不出來），與 CJK 那份
+// font-coverage-exceptions.txt 分開列，免得在內文字型那邊也一併放行。
+// U+0113 ē 長音 e：日文平文式羅馬字用不到（長音 e 寫 ei），拉脫維亞語等才需要。
+// U+014A/U+014B Ŋŋ：非洲語言與 IPA。三者在 font-accent 裡會落到明體。
+const ACCENT_SOURCE_GAPS = new Set([0x0113, 0x014a, 0x014b]);
+
+for (const path of ACCENT.paths) {
+  const face = fontkit.openSync(path);
+  const gaps = requiredLatinAccentChars().filter(
+    (char) => !ACCENT_SOURCE_GAPS.has(char.codePointAt(0))
+      && !exceptions.has(char.codePointAt(0))
+      && !face.hasGlyphForCodePoint(char.codePointAt(0)),
+  );
+  if (gaps.length > 0) {
+    throw new Error(
+      `${ACCENT.label}：${path} 畫不出 ${describe(gaps)}\n` +
+      '這些字元本身有別的字型畫得出來，所以上面的缺字驗證不會報——壞的是字面一致性：\n' +
+      '一個羅馬字詞裡，缺的那個字母會掉到堆疊下一個字型（明體），半個詞不是打字機體。\n' +
+      '→ 在有來源字型的機器上跑 `npm run fonts:rebuild` 重建子集並提交；\n' +
+      '來源字型本身就沒有的碼位，加進 scripts/font-coverage-exceptions.txt。',
+    );
+  }
+}
+
+console.log(
+  `Font coverage validated: ${chars.length} glyphs against the committed subsets; ` +
+  `${ACCENT.paths.length} 個拉丁點綴面涵蓋常用拉丁字元。`,
+);

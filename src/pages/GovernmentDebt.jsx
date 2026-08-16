@@ -730,7 +730,7 @@ export default function GovernmentDebt() {
                             </div>
                             <h3 className="text-xs font-black leading-snug" style={{ color: 'var(--gd-ink)' }}>{sec.heading}</h3>
                           </div>
-                          <p className="text-[11px] leading-[1.75] pl-7" style={{ color: 'var(--gd-body)' }}>{sec.body}</p>
+                          <p className="text-[11px] leading-[1.8] pl-7" style={{ color: 'var(--gd-body)' }}>{sec.body}</p>
                         </div>
                       ))}
                     </div>

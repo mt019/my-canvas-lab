@@ -25,13 +25,15 @@ import { existsSync, writeFileSync, mkdtempSync, rmSync } from 'node:fs';
 import { homedir, tmpdir } from 'node:os';
 import { join } from 'node:path';
 import * as fontkit from 'fontkit';
-import { comprehensiveChars } from './font-chars.mjs';
+import { comprehensiveChars, latinChars } from './font-chars.mjs';
 
 // 字型母庫在版控之外（授權未明的字型不進 repo，見 docs/DESIGN.md 的字體禁令）。
 // 路徑用 homedir() 組，不寫死絕對路徑——那會把本機使用者名稱寫進公開 repo。
 const FONT_LIBRARY_ROOT = process.env.FONT_LIBRARY_ROOT || join(homedir(), 'Documents/Font_Library');
 const HUIWEN_SRC = join(FONT_LIBRARY_ROOT, 'fonts/HuiwenMincho-Improved.ttf');
 const CHIRON_SRC = join(FONT_LIBRARY_ROOT, 'fonts/ChironSungHK-Text-R.ttf');
+const ERIKAS_SRC = join(FONT_LIBRARY_ROOT, 'categories/typewriter-latin/erikas-farbband.ttf');
+const ERIKAS_BOLD_SRC = join(FONT_LIBRARY_ROOT, 'categories/typewriter-latin/erikas-farbband-bold.ttf');
 
 if (!existsSync(HUIWEN_SRC)) {
   console.error(`source font missing: ${HUIWEN_SRC}`);
@@ -54,9 +56,14 @@ const fallbackChars = comprehensiveChars(CHIRON_SRC).filter(
   (ch) => !huiwenSource.hasGlyphForCodePoint(ch.codePointAt(0)),
 );
 
+// 拉丁點綴（font-accent）的兩個字重：同樣是固定覆蓋、與網站文字無關（見 font-chars.mjs
+// 的 LATIN_COVERAGE_RANGES）。這個字型只有 440 個碼位，整套收進來也只多幾十 KB，換到的是
+// 「羅馬字不會半個詞掉出打字機體」。
 const SOURCES = {
   'public/fonts/HuiwenMincho-subset.woff2': { source: HUIWEN_SRC, text: bodyChars },
   'public/fonts/ChironSungHK-fallback-subset.woff2': { source: CHIRON_SRC, text: fallbackChars },
+  'public/fonts/ErikasFarbband-subset.woff2': { source: ERIKAS_SRC, text: latinChars(ERIKAS_SRC) },
+  'public/fonts/ErikasFarbband-Bold-subset.woff2': { source: ERIKAS_BOLD_SRC, text: latinChars(ERIKAS_BOLD_SRC) },
 };
 
 const tmp = mkdtempSync(join(tmpdir(), 'canvas-font-build-'));

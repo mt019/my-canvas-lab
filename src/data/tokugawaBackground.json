@@ -1,8 +1,8 @@
 {
   "meta": {
-    "title": "德川日本的統治與「家」",
+    "title": "德川日本",
     "summary": "武士身分制、イエ與宗族的差別、與明清中國的同時代對照，加上從長崎出島到 1945 年的對外關係線。讀日本近世史材料之前的背景整理。",
-    "updated": "2026-08-13",
+    "updated": "2026-08-14",
     "note": "內容取自已出版的日本近世史與政治思想史文獻，見 sources。"
   },
   "periods": {
@@ -301,111 +301,137 @@
       }
     ]
   },
+  "chronologySections": [
+    {
+      "title": "戰國到關原",
+      "range": "1467–1600",
+      "from": 1467,
+      "to": 1600
+    },
+    {
+      "title": "德川：幕府、四口與蘭學",
+      "range": "1603–1774",
+      "from": 1603,
+      "to": 1852
+    },
+    {
+      "title": "開國與維新",
+      "range": "1853–1889",
+      "from": 1853,
+      "to": 1893
+    },
+    {
+      "title": "帝國到 1945",
+      "range": "1894–1945",
+      "from": 1894,
+      "to": 1945
+    }
+  ],
   "chronologyMain": [
     {
       "year": "1467",
       "region": "日本",
-      "event": "應仁之亂爆發，此後全國內亂約一世紀（戰國時代）。武士的行為規範在實戰環境裡成形。"
+      "event": "應仁之亂爆發，此後全國內亂約一世紀（戰國時代）。[^c-onin]武士的行為規範在實戰環境裡成形。"
     },
     {
       "year": "1543",
       "region": "對外",
-      "event": "葡萄牙人漂流到種子島，火繩槍（鐵砲）傳入；1549 年沙勿略抵鹿兒島，基督教開始傳教。"
+      "event": "葡萄牙人漂流到種子島，火繩槍（鐵砲）傳入；[^c-teppo]1549 年沙勿略抵鹿兒島，基督教開始傳教。[^c-xavier]"
     },
     {
       "year": "1590",
       "region": "日本",
-      "event": "豐臣秀吉統一全國，戰國內亂收束；1592、1597 兩度出兵朝鮮，失敗。"
+      "event": "豐臣秀吉統一全國，戰國內亂收束；[^c-hideyoshi]1592、1597 兩度出兵朝鮮，失敗。[^c-bunroku]"
     },
     {
       "year": "1600",
       "region": "日本",
-      "event": "關原之戰，德川家康取得全國霸權。同年荷蘭船漂著日本，此後荷蘭人取得貿易許可。"
+      "event": "關原之戰，德川家康取得全國霸權。[^c-sekigahara]同年荷蘭船漂著日本，此後荷蘭人取得貿易許可。[^c-liefde]"
     },
     {
       "year": "1603",
       "region": "日本",
-      "event": "德川家康受任征夷大將軍，在江戶（今東京）開設幕府。德川家世襲將軍十五代。"
+      "event": "德川家康受任征夷大將軍，在江戶（今東京）開設幕府。德川家世襲將軍十五代。[^c-edo-bakufu]"
     },
     {
       "year": "1609",
       "region": "對外",
-      "event": "薩摩藩島津氏出兵琉球。琉球此後對明清照樣朝貢、對薩摩實質從屬，維持兩屬狀態近三百年。"
+      "event": "薩摩藩島津氏出兵琉球。[^c-shimazu]琉球此後對明清照樣朝貢、對薩摩實質從屬，維持兩屬狀態近三百年。[^c-ryozoku]"
     },
     {
       "year": "1635–41",
       "region": "對外",
-      "event": "禁止日本人海外渡航（1635）、驅逐葡萄牙船（1639）、荷蘭商館遷入長崎出島（1641）——後世稱「鎖國」。實際留了四個窗口：長崎對荷蘭（VOC）與中國商船，對馬對朝鮮，薩摩對琉球，松前對蝦夷地。"
+      "event": "禁止日本人海外渡航（1635）、驅逐葡萄牙船（1639）、荷蘭商館遷入長崎出島（1641）——後世稱「鎖國」。[^c-sakoku]實際留了四個窗口：長崎對荷蘭（VOC）與中國商船，對馬對朝鮮，薩摩對琉球，松前對蝦夷地。"
     },
     {
       "year": "1774",
       "region": "日本",
-      "event": "杉田玄白等譯《解體新書》出版。經長崎荷蘭語書籍傳入的西學（蘭學）在醫學、天文領域成形。"
+      "event": "杉田玄白等譯《解體新書》出版。[^c-kaitai]經長崎荷蘭語書籍傳入的西學（蘭學）在醫學、天文領域成形。"
     },
     {
       "year": "1853",
       "region": "對外",
-      "event": "美國培里艦隊駛入江戶灣（黑船來航），要求開國。幕府權威從此動搖。"
+      "event": "美國培里艦隊駛入江戶灣（黑船來航），要求開國。幕府權威從此動搖。[^c-kurofune]"
     },
     {
       "year": "1854・1858",
       "region": "對外",
-      "event": "日美和親條約開國；安政五國條約承認領事裁判權、喪失關稅自主。修改不平等條約成為此後半世紀日本外交的主題。"
+      "event": "日美和親條約開國；[^c-washin]安政五國條約承認領事裁判權、喪失關稅自主。[^c-ansei]修改不平等條約成為此後半世紀日本外交的主題。[^c-joyaku-kaisei]"
     },
     {
       "year": "1867–68",
       "region": "日本",
-      "event": "大政奉還、明治維新。此後廢身分制、廢藩置縣（1871），武士階層消失。"
+      "event": "大政奉還、明治維新。[^c-taisei-hokan]此後廢身分制、廢藩置縣（1871），武士階層消失。[^c-haihan]"
     },
     {
       "year": "1874",
       "region": "台灣",
-      "event": "牡丹社事件：明治政府以琉球漂流民被殺為由出兵台灣南部，是明治日本第一次對外用兵。"
+      "event": "牡丹社事件：明治政府以琉球漂流民被殺為由出兵台灣南部，是明治日本第一次對外用兵。[^c-taiwan-shuppei]"
     },
     {
       "year": "1879",
       "region": "琉球",
-      "event": "琉球處分：廢琉球藩、設沖繩縣，兩屬狀態終結；清國抗議未果。"
+      "event": "琉球處分：廢琉球藩、設沖繩縣，兩屬狀態終結；清國抗議未果。[^c-ryukyu-shobun]"
     },
     {
       "year": "1889",
       "region": "日本",
-      "event": "大日本帝國憲法發布，天皇主權下的立憲體制成立。"
+      "event": "大日本帝國憲法發布，天皇主權下的立憲體制成立。[^c-teikoku-kenpo]"
     },
     {
       "year": "1894–95",
       "region": "台灣",
-      "event": "甲午戰爭（日清戰爭）。馬關條約割讓台灣、澎湖，台灣進入日本統治五十年。"
+      "event": "甲午戰爭（日清戰爭）。[^c-nisshin]馬關條約割讓台灣、澎湖，台灣進入日本統治五十年。[^c-shimonoseki]"
     },
     {
       "year": "1904–05",
       "region": "對外",
-      "event": "日俄戰爭。戰後取得南滿權益，1910 年併吞韓國。"
+      "event": "日俄戰爭。[^c-nichiro]戰後取得南滿權益，1910 年併吞韓國。[^c-kankoku]"
     },
     {
       "year": "1914",
       "region": "對外",
-      "event": "第一次世界大戰：日本對德宣戰，佔領山東的德國租借地與南洋群島。"
+      "event": "第一次世界大戰：日本對德宣戰，佔領山東的德國租借地與南洋群島。[^c-wwi]"
     },
     {
       "year": "1931・1937",
       "region": "對外",
-      "event": "滿洲事變（九一八）；1937 年蘆溝橋事變後中日全面戰爭。"
+      "event": "滿洲事變（九一八）；[^c-manshu]1937 年蘆溝橋事變後中日全面戰爭。[^c-nicchu]"
     },
     {
       "year": "1941",
       "region": "對外",
-      "event": "美國對日石油禁運（8 月）；12 月日軍偷襲夏威夷珍珠港的美國太平洋艦隊，太平洋戰爭開始。"
+      "event": "美國對日石油禁運（8 月）；12 月日軍偷襲夏威夷珍珠港的美國太平洋艦隊，太平洋戰爭開始。[^c-taiheiyo]"
     },
     {
       "year": "1942",
       "region": "對外",
-      "event": "日軍攻佔荷屬東印度（今印尼）：2 月空降蘇門答臘巨港油田、爪哇海海戰，3 月荷軍在爪哇投降。奪取蘭印石油是對美開戰的直接目標；這片殖民地正是荷蘭從 VOC 時代經營起來的。1945 年日本投降後，印尼宣布獨立。"
+      "event": "日軍攻佔荷屬東印度（今印尼）：2 月空降蘇門答臘巨港油田、爪哇海海戰，3 月荷軍在爪哇投降。[^c-ranin]奪取蘭印石油是對美開戰的直接目標；這片殖民地正是荷蘭從 VOC 時代經營起來的。1945 年日本投降後，印尼宣布獨立。"
     },
     {
       "year": "1945",
       "region": "日本",
-      "event": "廣島、長崎原爆，日本投降。占領期改革：新憲法（1946 年公布）、民法家制度廢止。"
+      "event": "廣島、長崎原爆，日本投降。占領期改革：新憲法（1946 年公布）、民法家制度廢止。[^c-kazoku-seido]"
     }
   ],
   "chronologyConcept": [
@@ -534,43 +560,43 @@
         {
           "term": "幕府",
           "reading": "ばくふ",
-          "def": "武家政權的政府。「幕」原指出征將軍的軍帳。德川幕府 1603 年由德川家康開設於江戶，1867 年大政奉還為止。",
+          "def": "武家政權的政府。「幕」原指出征將軍的軍帳。德川幕府 1603 年由德川家康開設於江戶，1867 年大政奉還為止。[^g-bakufu]",
           "roman": "bakufu"
         },
         {
           "term": "征夷大將軍",
           "reading": "せいいたいしょうぐん",
-          "def": "武家政權的最高首長，名義上由天皇任命。德川家世襲十五代。",
+          "def": "武家政權的最高首長，名義上由天皇任命。德川家世襲十五代。[^g-seii-taishogun]",
           "roman": "seii taishōgun"
         },
         {
           "term": "大名",
           "reading": "だいみょう",
-          "def": "領地規模達一定標準的地方領主，德川時代約二百六十家；各自統治領國，對將軍負軍役義務。",
+          "def": "領地規模達一定標準的地方領主，德川時代約二百六十家；各自統治領國，對將軍負軍役義務。[^g-daimyo]",
           "roman": "daimyō"
         },
         {
           "term": "藩",
           "reading": "はん",
-          "def": "大名的領國與統治組織。1871 年廢藩置縣，改由中央政府直轄。",
+          "def": "大名的領國與統治組織。1871 年廢藩置縣，改由中央政府直轄。[^g-han]",
           "roman": "han"
         },
         {
           "term": "旗本",
           "reading": "はたもと",
-          "def": "直屬將軍的高階武士，有資格謁見將軍；與御家人同為幕府直臣。",
+          "def": "直屬將軍的高階武士，有資格謁見將軍；與御家人同為幕府直臣。[^g-hatamoto]",
           "roman": "hatamoto"
         },
         {
           "term": "武士",
           "reading": "ぶし",
-          "def": "世襲的軍人身分階層。德川時代的政務——徵稅、審判——都由武士執行。",
+          "def": "世襲的軍人身分階層。德川時代的政務——徵稅、審判——都由武士執行。[^g-bushi]",
           "roman": "bushi"
         },
         {
           "term": "武士道",
           "reading": "ぶしどう",
-          "def": "武士的行為規範，以榮譽感為基礎，核心是武藝、勇敢與強壯；膽小、卑怯是最重的指責。",
+          "def": "武士的行為規範，以榮譽感為基礎，核心是武藝、勇敢與強壯；膽小、卑怯是最重的指責。[^g-bushido]",
           "roman": "bushidō",
           "notes": [
             "德川兩百多年的和平把實戰武德轉成身分倫理：同儕之間的譴責句是「你還算得上是武士嗎」，膽小、卑怯是最重的指責。"
@@ -579,36 +605,36 @@
         {
           "term": "町人",
           "reading": "ちょうにん",
-          "def": "城市的工商業者身分。",
+          "def": "城市的工商業者身分。[^g-chonin]",
           "roman": "chōnin"
         },
         {
           "term": "百姓",
           "reading": "ひゃくしょう",
-          "def": "農村居民的身分稱呼，主體是農民。",
+          "def": "農村居民的身分稱呼，主體是農民。[^g-hyakusho]",
           "roman": "hyakushō"
         },
         {
           "term": "公家",
           "reading": "くげ",
-          "def": "京都天皇朝廷的貴族，與武家相對。",
+          "def": "京都天皇朝廷的貴族，與武家相對。[^g-kuge]",
           "roman": "kuge"
         },
         {
           "term": "士大夫",
           "reading": "scholar-official",
-          "def": "明清中國經科舉出身的文人官僚。日本的統治者是軍人（warrior-official），常拿來對照。"
+          "def": "明清中國經科舉出身的文人官僚。日本的統治者是軍人（warrior-official），常拿來對照。[^g-shitaifu]"
         },
         {
           "term": "戰國時代",
           "reading": "15–16 世紀",
-          "def": "應仁之亂（1467）之後約一世紀的全國內亂期，武士的實戰氣質在此養成；豐臣秀吉 1590 年統一全國收束。",
+          "def": "應仁之亂（1467）之後約一世紀的全國內亂期，武士的實戰氣質在此養成；豐臣秀吉 1590 年統一全國收束。[^g-sengoku]",
           "roman": "sengoku jidai"
         },
         {
           "term": "明治維新",
           "reading": "1868–",
-          "def": "德川幕府倒台後的政權更替與一連串改革：廢身分制、廢藩置縣，武士階層消失。",
+          "def": "德川幕府倒台後的政權更替與一連串改革：廢身分制、廢藩置縣，武士階層消失。[^g-meiji-ishin]",
           "roman": "Meiji ishin"
         }
       ]
@@ -619,7 +645,7 @@
         {
           "term": "イエ（家）",
           "reading": "i-e",
-          "def": "日本近世的「家」：經營特定家業的存續體，性質接近法人。與漢人的家、宗族是不同的東西，研究上常直接用假名寫。",
+          "def": "日本近世的「家」：經營特定家業的存續體，性質接近法人。與漢人的家、宗族是不同的東西，研究上常直接用假名寫。[^g-ie]",
           "roman": "ie",
           "notes": [
             "五個特徵一次看：有家業、有家格、有戶主（可生前讓位，稱隱居）、有原則上不可分割的家產、有與地位一體的名跡。與宗族的逐項對比在「身分秩序與家」分頁。"
@@ -628,61 +654,61 @@
         {
           "term": "家業・家職",
           "reading": "かぎょう",
-          "def": "一個家世代傳承的職業或營業，大名的領主職務也算。",
+          "def": "一個家世代傳承的職業或營業，大名的領主職務也算。[^g-kagyo]",
           "roman": "kagyō / kashoku"
         },
         {
           "term": "家格・家柄",
           "reading": "かかく・いえがら",
-          "def": "家的社會地位等級，與家業連動；婚姻、俸祿、儀式待遇都看它。",
+          "def": "家的社會地位等級，與家業連動；婚姻、俸祿、儀式待遇都看它。[^g-kakaku]",
           "roman": "kakaku / iegara"
         },
         {
           "term": "戶主",
           "reading": "こしゅ",
-          "def": "家的代表者地位，通常為男性。是一個地位，未必是家中最年長者，可以生前讓位。",
+          "def": "家的代表者地位，通常為男性。是一個地位，未必是家中最年長者，可以生前讓位。[^g-koshu]",
           "roman": "koshu"
         },
         {
           "term": "隱居",
           "reading": "いんきょ",
-          "def": "戶主生前把地位讓給繼承人之後的身分；讓位後再回任也有其例。",
+          "def": "戶主生前把地位讓給繼承人之後的身分；讓位後再回任也有其例。[^g-inkyo]",
           "roman": "inkyo"
         },
         {
           "term": "家產・家督",
           "reading": "かさん・かとく",
-          "def": "屬於家本身的財產，原則上不可分割，隨家單獨繼承；戶主是管理者而非個人所有者。",
+          "def": "屬於家本身的財產，原則上不可分割，隨家單獨繼承；戶主是管理者而非個人所有者。[^g-katoku]",
           "roman": "kasan / katoku"
         },
         {
           "term": "名跡",
           "reading": "みょうせき",
-          "def": "與戶主地位一體的名號。繼承人承接名號稱「襲名」；歌舞伎的「市川團十郎」承到第十三代，是至今還活著的例子。",
+          "def": "與戶主地位一體的名號。繼承人承接名號稱「襲名」；歌舞伎的「市川團十郎」承到第十三代，是至今還活著的例子。[^g-myoseki]",
           "roman": "myōseki"
         },
         {
           "term": "婿養子",
           "reading": "むこようし",
-          "def": "招贅的女婿：改從妻家之姓、以養子身分繼承其家。身分高的家也公開為之。",
+          "def": "招贅的女婿：改從妻家之姓、以養子身分繼承其家。身分高的家也公開為之。[^g-mukoyoshi]",
           "roman": "mukoyōshi"
         },
         {
           "term": "夫婦養子",
           "reading": "ふうふようし",
-          "def": "沒有子女的家收養一對男女、使之成婚並繼承家的做法，不限親戚。",
+          "def": "沒有子女的家收養一對男女、使之成婚並繼承家的做法，不限親戚。[^g-fufu-yoshi]",
           "roman": "fūfu yōshi"
         },
         {
           "term": "壱人兩名",
           "reading": "いちにんりょうめい",
-          "def": "一人同時頂著兩個名字、兩個身分生活的近世現象，多半為了讓兩個家都存續。",
+          "def": "一人同時頂著兩個名字、兩個身分生活的近世現象，多半為了讓兩個家都存續。[^g-ichinin-ryomei]",
           "roman": "ichinin ryōmei"
         },
         {
           "term": "宗族",
           "reading": "漢人社會",
-          "def": "嚴格按父系追溯同一祖先的血緣集團，修族譜、序行輩，常設族產、祠堂。",
+          "def": "嚴格按父系追溯同一祖先的血緣集團，修族譜、序行輩，常設族產、祠堂。[^g-zongzu]",
           "notes": [
             "台灣可對照的制度化實例是祭祀公業——宗族共有財產在現行法上的法人化（祭祀公業條例），行輩、族譜在台灣漢人家族裡也仍可見。"
           ]
@@ -690,7 +716,7 @@
         {
           "term": "行輩（字輩）",
           "reading": "世代標示",
-          "def": "同宗同一世代的男性名字中共用的字，用來標示世代與長幼。"
+          "def": "同宗同一世代的男性名字中共用的字，用來標示世代與長幼。[^g-hangbei]"
         }
       ]
     },
@@ -700,7 +726,7 @@
         {
           "term": "鎖國",
           "reading": "さこく",
-          "def": "1630 年代成形的對外管制體制：禁日本人出海、限制來航者。並未全閉，留有長崎、對馬、薩摩、松前四個窗口。",
+          "def": "1630 年代成形的對外管制體制：禁日本人出海、限制來航者。並未全閉，留有長崎、對馬、薩摩、松前四個窗口。[^g-sakoku]",
           "roman": "sakoku",
           "notes": [
             "「鎖國」一詞是後起的：蘭學者志筑忠雄 1801 年翻譯 Kaempfer 的日本誌時所造，當時的幕府自己不這樣稱呼；近年研究多改講「海禁與四口體制」。"
@@ -709,46 +735,46 @@
         {
           "term": "出島",
           "reading": "でじま",
-          "def": "長崎港內的人工小島，1641 年起荷蘭商館所在地，是德川日本與歐洲唯一的固定接點。",
+          "def": "長崎港內的人工小島，1641 年起荷蘭商館所在地，是德川日本與歐洲唯一的固定接點。[^g-dejima]",
           "roman": "Dejima"
         },
         {
           "term": "VOC",
           "reading": "荷蘭東印度公司",
-          "def": "1602 年成立的特許公司，壟斷荷蘭的亞洲貿易；在台灣（1624–62）與長崎出島都設過據點。日本貿易由它經營。"
+          "def": "1602 年成立的特許公司，壟斷荷蘭的亞洲貿易；在台灣（1624–62）與長崎出島都設過據點。日本貿易由它經營。[^g-voc]"
         },
         {
           "term": "蘭學",
           "reading": "らんがく",
-          "def": "經長崎荷蘭語書籍傳入的西洋學術，以醫學、天文為主；《解體新書》（1774）是代表作。",
+          "def": "經長崎荷蘭語書籍傳入的西洋學術，以醫學、天文為主；《解體新書》（1774）是代表作。[^g-rangaku]",
           "roman": "rangaku"
         },
         {
           "term": "琉球",
           "reading": "兩屬",
-          "def": "琉球王國 1609 年被薩摩藩征服後，對明清照樣朝貢、對薩摩實質從屬；1879 年琉球處分設沖繩縣。",
+          "def": "琉球王國 1609 年被薩摩藩征服後，對明清照樣朝貢、對薩摩實質從屬；1879 年琉球處分設沖繩縣。[^g-ryukyu]",
           "roman": "Ryūkyū"
         },
         {
           "term": "黑船來航",
           "reading": "1853",
-          "def": "培里率美國艦隊駛入江戶灣要求開國。「黑船」指塗黑船身的蒸汽軍艦。",
+          "def": "培里率美國艦隊駛入江戶灣要求開國。「黑船」指塗黑船身的蒸汽軍艦。[^g-kurofune]",
           "roman": "kurofune raikō"
         },
         {
           "term": "不平等條約",
           "reading": "安政條約",
-          "def": "1858 年起與五國締結的通商條約：領事裁判權、協定關稅。修約到 1911 年才完成，是明治外交的長期課題。"
+          "def": "1858 年起與五國締結的通商條約：領事裁判權、協定關稅。修約到 1911 年才完成，是明治外交的長期課題。[^g-joyaku]"
         },
         {
           "term": "馬關條約",
           "reading": "1895",
-          "def": "甲午戰爭的和約，清國割讓台灣、澎湖。台灣總督府統治至 1945 年。"
+          "def": "甲午戰爭的和約，清國割讓台灣、澎湖。台灣總督府統治至 1945 年。[^g-shimonoseki]"
         },
         {
           "term": "太平洋戰爭",
           "reading": "1941–45",
-          "def": "偷襲珍珠港（夏威夷）對美開戰起，至 1945 年投降。戰後占領期廢除民法家制度、制定新憲法。",
+          "def": "偷襲珍珠港（夏威夷）對美開戰起，至 1945 年投降。戰後占領期廢除民法家制度、制定新憲法。[^g-taiheiyo]",
           "roman": "Taiheiyō sensō"
         }
       ]
@@ -790,7 +816,7 @@
     {
       "q": "「德川時代」的「德川」到底是什麼？",
       "a": [
-        "一個家的姓。松平氏出自三河（今愛知縣東部），松平家康 1566 年改姓德川，並接上新田氏、往上通到清和源氏的系譜——學界普遍認為是攀附，目的是符合「征夷大將軍由源氏後裔出任」的慣例。",
+        "一個家的姓。松平氏出自三河（今愛知縣東部），松平家康 1566 年改姓德川，並接上新田氏、往上通到清和源氏的系譜——學界普遍認為是攀附，配合「征夷大將軍由源氏後裔出任」的通說——該說本身是江戶時代的俗說，鎌倉中後期已有非源氏的攝家與親王將軍。",
         "1603 年家康受任征夷大將軍、在江戶開設幕府，此後這個家世襲將軍十五代，到 1867 年大政奉還為止。所謂德川時代，就是這個家當將軍的兩百六十多年：幕藩體制、身分世襲、海禁管制下的長期和平。"
       ]
     },
@@ -840,14 +866,14 @@
       "q": "日本有過女性天皇嗎？武家有女性掌權嗎？",
       "a": [
         "天皇有：8 世紀前後六位八代（推古、皇極／齊明、持統、元明、元正、孝謙／稱德），江戶時代也有明正、後櫻町兩位——但德川時代的天皇朝廷本身沒有實權。",
-        "武家政權的將軍十五代全為男性。實質的縫隙有：北條政子（源賴朝之妻，鎌倉初期實質主導幕政，稱「尼將軍」）、春日局（三代將軍家光的乳母，建立大奧的職務組織）、將軍生母經大奧的人事影響力——但這些權力都不出檯面，也沒有制度語言承認它。"
+        "武家政權的將軍十五代全為男性。實質上有過例外：北條政子（源賴朝之妻，鎌倉初期實質主導幕政，稱「尼將軍」）、春日局（三代將軍家光的乳母，建立大奧的職務組織）、將軍生母經大奧的人事影響力——但這些權力都不出檯面，也沒有制度語言承認它。"
       ]
     },
     {
       "q": "日語的「人」跟「男」是同一個詞嗎？",
       "a": [
         "是兩個不相干的詞：「人」（ひと）指人類，性別中立；「男」（おとこ）古形をとこ，與をとめ（乙女）成對，字尾こ／め是男女後綴（彥／姬同一組）。中文同樣分「人」與「男」。",
-        "歐洲語言相反：英語 man（古英語 mann）本義是「人」，男人另有 wer（werewolf 的 wer），後來 man 才收窄成男性專稱；拉丁語分 homo（人）／vir（男），法語把 vir 丟了，homme 一詞兼任兩義——1789 年《人權和公民權宣言》的 droits de l’homme 含不含女性，從字面上就讀不出來，Olympe de Gouges 1791 年的《女權與女公民權宣言》回應的正是這一點。"
+        "歐洲語言相反：英語 man（古英語 mann）本義是「人」，男人另有 wer（werewolf 的 wer），後來 man 才收窄成男性專稱；拉丁語分 homo（人）／vir（男），法語未繼承 vir，homme 一詞兼任兩義——1789 年《人權和公民權宣言》的 droits de l’homme 含不含女性，從字面上就讀不出來，Olympe de Gouges 1791 年的《女權與女公民權宣言》回應的正是這一點。"
       ]
     },
     {
@@ -861,15 +887,509 @@
       "q": "當時的人口與生育是什麼樣子？",
       "a": [
         "德川人口史靠宗門改帳（寺請制度年年造的戶口冊）重建，是近世史料最好的領域之一。18 世紀全國人口停在三千萬上下；節育靠晚婚、出外奉公與「間引」（殺嬰棄養，東北農村尤多）。",
-        "間引的性別選擇與中國不同：單獨繼承下只需要一個繼承人，多餘的兒子是負擔、女兒有勞動與婚姻價值，研究顯示是「調子女結構」而非一律去女；清代中國的溺女嬰則直接綁在諸子均分與宗祧祭祀上——每個兒子都必要。城市另一層：江戶的成年性別比嚴重偏男（武士單身赴任加上進城謀生者）。個別數字屬通說概數，引用前請再核。"
+        "間引的性別選擇與中國不同：單獨繼承下只需要一個繼承人，多餘的兒子是負擔、女兒有勞動與婚姻價值，研究顯示農家是按家業需要調整子女的性別與人數組成（已有繼承人後的次子、已有數女後的女兒較易被去掉），而非一律去女；清代中國的溺女嬰則有制度上的成因——諸子均分讓每個兒子都分產立房，宗祧祭祀要求每一房都有男嗣承祀，兒子因此是必需品，女兒出嫁不承祀不分產。城市另一層：江戶的成年性別比嚴重偏男（武士單身赴任加上進城謀生者）。個別數字屬通說概數，引用前請再核。"
       ]
     },
     {
       "q": "日本現在有同性婚姻嗎？",
       "a": [
-        "沒有：民法與戶籍法未設同性婚制度（不是有明文「禁止」），政府解釋憲法第 24 條「婚姻は、両性の合意のみに基いて成立し」的「両性」指男女。2019 年起的集體訴訟中，2024–25 年札幌、東京、福岡、名古屋、大阪五件高等法院判決全部認定違憲或違憲狀態；最高裁判所未終局、國會未修法（現況記至 2026 年初）。地方自治體的伴侶宣誓制度自 2015 年（澀谷區、世田谷區）起擴散，但沒有民法效力。",
-        "歷史的對位：日本 1880 年（舊刑法）以後從未把成年人合意的同性性行為入罪，早於多數西方國家；現行反對同性婚所訴諸的「傳統家族觀」，制度上源自明治民法的家制度，不是德川的傳統。"
+        "沒有：民法與戶籍法未設同性婚制度（不是有明文「禁止」），政府解釋憲法第 24 條「婚姻は、両性の合意のみに基いて成立し」的「両性」指男女。2019 年起的集體訴訟（形式是國家賠償請求，日本採附隨審查制、沒有憲法法院）至今高等法院判了六件：札幌（2024-03）、東京一次（2024-10）、福岡（2024-12）、名古屋（2025-03）、大阪（2025-03）五件認定相關規定違憲，東京二次（2025-11）判合憲；六件都同時駁回賠償請求，違憲判斷只拘束個案、對國會沒有修法的法律拘束力。因為判斷分歧，最高裁判所 2026 年 3 月把六案全數移付大法廷，統一的憲法判斷未作成、國會未修法（現況記至 2026 年 8 月）。地方自治體的伴侶宣誓制度自 2015 年（澀谷區、世田谷區）起擴散，但沒有民法效力。",
+        "歷史的對位：明治 5 年（1872）的鶏姦條例曾短暫把同性性行為入罪，1880 年舊刑法（法系範本）未沿用，此後日本再未把成年人合意的同性性行為入罪，早於多數西方國家；德川時代則從未入罪。現行反對同性婚所訴諸的「傳統家族觀」，制度上源自明治民法的家制度，不是德川的傳統。"
       ]
     }
-  ]
+  ],
+  "author": {
+    "name": "渡邊浩",
+    "kana": "わたなべ ひろし",
+    "intro": [
+      "渡邊浩（1946– ），日本政治思想史學者。1969 年東京大學法學部畢業，經助手、助教授，1983 年昇任教授，在東大歷任評議員、法學部長、副學長、理事；2004 至 2006 年任日本政治學會理事長。2010 年轉任法政大學法學部教授，2017 年定年。現為東京大學、法政大學名譽教授；2017 年 12 月獲選日本學士院會員，2025 年度獲頒文化功勞者。",
+      "東京大學的顕彰文（苅部直撰）描述他的學問：批判地繼承丸山眞男、福田歓一兩位教授的政治思想史研究，把德川到明治的政治思想放進東亞比較的視野。本頁的分期、身分秩序與「家」的整理，參照的就是他的德川研究。"
+    ],
+    "works": [
+      {
+        "title": "近世日本社会と宋学",
+        "publisher": "東京大学出版会",
+        "year": 1985,
+        "edition": "增補新裝版 2010",
+        "desc": "宋學在中國、朝鮮是體制的正統思想，在近世日本則是帶著違和感的外來思想——本書由此對比追蹤儒學在德川日本的接受、抵抗與展開。"
+      },
+      {
+        "title": "東アジアの王権と思想",
+        "publisher": "東京大学出版会",
+        "year": 1997,
+        "edition": "增補新裝版 2016",
+        "desc": "以儀禮這種「演劇裝置」解釋德川支配的正統化，在與中國、朝鮮的近似與相違裡分析近世到近代的政治體制思想。中譯《東亞的王權與思想》（歐建英譯，上海古籍出版社，2016，復旦文史叢刊）。"
+      },
+      {
+        "title": "日本政治思想史 十七～十九世紀",
+        "publisher": "東京大学出版会",
+        "year": 2010,
+        "desc": "從「御威光」支配到文明開化的政治思想通史。英譯 A History of Japanese Political Thought, 1600–1901（David Noble 譯，International House of Japan，2012）；韓譯高麗大學校出版文化院（2017）。"
+      },
+      {
+        "title": "明治革命・性・文明——政治思想史の冒険",
+        "publisher": "東京大学出版会",
+        "year": 2021,
+        "desc": "問看似安定的德川體制為何因四艘美國船來航而崩解，從當時人的政治思考與性別・性意識的變動切入；第三部「性」與權力處理夫婦關係與男女理想像的變動。"
+      },
+      {
+        "title": "日本思想史と現在",
+        "publisher": "筑摩書房（筑摩選書）",
+        "year": 2024
+      },
+      {
+        "title": "たとえば「自由」はリバティか——西洋の基礎概念とその翻訳語をめぐる6つの講義",
+        "publisher": "岩波書店",
+        "year": 2025
+      }
+    ],
+    "note": "履歷對照日本學士院會員頁、東京大學 2025 年度文化功勞者顕彰文、日本政治學會歷代理事長頁與日語維基百科；書目與主旨對照東京大学出版会書頁，逐本核對，2026-08-13。"
+  },
+  "refs": {
+    "kotobank": {
+      "label": "コトバンク",
+      "container": "『日本大百科全書』『世界大百科事典』等辭典的聚合站"
+    },
+    "jpn-archives": {
+      "label": "國立公文書館",
+      "container": "「公文書にみる日本のあゆみ」"
+    },
+    "kobe-u": {
+      "label": "神戶大學",
+      "container": "新刊紹介"
+    },
+    "watanabe-2010": {
+      "label": "渡辺浩《日本政治思想史 十七～十九世紀》",
+      "container": "東京大学出版会，2010 年"
+    },
+    "watanabe-2021": {
+      "label": "渡辺浩《明治革命・性・文明：政治思想史の冒険》",
+      "container": "東京大学出版会，2021 年"
+    },
+    "shiga-1967": {
+      "label": "滋賀秀三《中国家族法の原理》",
+      "container": "創文社，1967 年"
+    },
+    "ueda-1995": {
+      "label": "上田信《伝統中国：〈盆地〉〈宗族〉にみる明清時代》",
+      "container": "講談社選書メチエ，1995 年"
+    },
+    "omori-2004": {
+      "label": "大森映子《お家相続：大名家の苦闘》",
+      "container": "角川選書，2004 年"
+    },
+    "okinawa-archives": {
+      "label": "沖繩縣公文書館",
+      "container": "「あの日の沖縄」"
+    },
+    "nippon-com": {
+      "label": "nippon.com",
+      "container": "專題報導"
+    }
+  },
+  "notes": {
+    "g-bakufu": {
+      "kind": "cite",
+      "ref": "kotobank",
+      "locator": "「幕府」詞條",
+      "href": "https://kotobank.jp/word/%E5%B9%95%E5%BA%9C"
+    },
+    "g-seii-taishogun": {
+      "kind": "cite",
+      "ref": "kotobank",
+      "locator": "「征夷大将軍」詞條",
+      "href": "https://kotobank.jp/word/%E5%BE%81%E5%A4%B7%E5%A4%A7%E5%B0%86%E8%BB%8D"
+    },
+    "g-daimyo": {
+      "kind": "cite",
+      "ref": "kotobank",
+      "locator": "「大名」詞條",
+      "href": "https://kotobank.jp/word/%E5%A4%A7%E5%90%8D",
+      "text": "江戶時代以石高一萬石為大名的門檻，家數約二百六十至二百七十。"
+    },
+    "g-han": {
+      "kind": "cite",
+      "ref": "kotobank",
+      "locator": "「藩」詞條",
+      "href": "https://kotobank.jp/word/%E8%97%A9"
+    },
+    "g-hatamoto": {
+      "kind": "cite",
+      "ref": "kotobank",
+      "locator": "「旗本」詞條",
+      "href": "https://kotobank.jp/word/%E6%97%97%E6%9C%AC",
+      "text": "旗本與御家人的分野在有無「御目見」（謁見將軍）資格。"
+    },
+    "g-bushi": {
+      "kind": "cite",
+      "ref": "kotobank",
+      "locator": "「武士」詞條",
+      "href": "https://kotobank.jp/word/%E6%AD%A6%E5%A3%AB"
+    },
+    "g-bushido": {
+      "kind": "cite",
+      "ref": "kotobank",
+      "locator": "「武士道」詞條",
+      "href": "https://kotobank.jp/word/%E6%AD%A6%E5%A3%AB%E9%81%93"
+    },
+    "g-chonin": {
+      "kind": "cite",
+      "ref": "kotobank",
+      "locator": "「町人」詞條",
+      "href": "https://kotobank.jp/word/%E7%94%BA%E4%BA%BA"
+    },
+    "g-hyakusho": {
+      "kind": "cite",
+      "ref": "kotobank",
+      "locator": "「百姓」詞條",
+      "href": "https://kotobank.jp/word/%E7%99%BE%E5%A7%93"
+    },
+    "g-kuge": {
+      "kind": "cite",
+      "ref": "kotobank",
+      "locator": "「公家」詞條",
+      "href": "https://kotobank.jp/word/%E5%85%AC%E5%AE%B6"
+    },
+    "g-shitaifu": {
+      "kind": "cite",
+      "ref": "kotobank",
+      "locator": "「士大夫」詞條",
+      "href": "https://kotobank.jp/word/%E5%A3%AB%E5%A4%A7%E5%A4%AB"
+    },
+    "g-sengoku": {
+      "kind": "cite",
+      "ref": "kotobank",
+      "locator": "「戦国時代」詞條",
+      "href": "https://kotobank.jp/word/%E6%88%A6%E5%9B%BD%E6%99%82%E4%BB%A3",
+      "text": "終期在學說上有 1568 年信長入京、1573 年室町幕府滅亡、1590 年秀吉統一三說；本頁年代帶取到 1600 年關原之戰，是為了銜接德川體制的編年框，不是主張戰國終於該年。"
+    },
+    "g-meiji-ishin": {
+      "kind": "cite",
+      "ref": "kotobank",
+      "locator": "「明治維新」詞條",
+      "href": "https://kotobank.jp/word/%E6%98%8E%E6%B2%BB%E7%B6%AD%E6%96%B0"
+    },
+    "g-ie": {
+      "kind": "cite",
+      "ref": "kotobank",
+      "locator": "「家（イエ）」詞條",
+      "href": "https://kotobank.jp/word/%E5%AE%B6"
+    },
+    "g-kagyo": {
+      "kind": "cite",
+      "ref": "kotobank",
+      "locator": "「家業」詞條",
+      "href": "https://kotobank.jp/word/%E5%AE%B6%E6%A5%AD"
+    },
+    "g-kakaku": {
+      "kind": "cite",
+      "ref": "kotobank",
+      "locator": "「家格」詞條",
+      "href": "https://kotobank.jp/word/%E5%AE%B6%E6%A0%BC"
+    },
+    "g-koshu": {
+      "kind": "cite",
+      "ref": "kotobank",
+      "locator": "「戸主」詞條",
+      "href": "https://kotobank.jp/word/%E6%88%B8%E4%B8%BB"
+    },
+    "g-inkyo": {
+      "kind": "cite",
+      "ref": "kotobank",
+      "locator": "「隠居」詞條",
+      "href": "https://kotobank.jp/word/%E9%9A%A0%E5%B1%85"
+    },
+    "g-katoku": {
+      "kind": "cite",
+      "ref": "kotobank",
+      "locator": "「家督」詞條",
+      "href": "https://kotobank.jp/word/%E5%AE%B6%E7%9D%A3"
+    },
+    "g-myoseki": {
+      "kind": "cite",
+      "ref": "kotobank",
+      "locator": "「名跡」詞條",
+      "href": "https://kotobank.jp/word/%E5%90%8D%E8%B7%A1",
+      "text": "辭典的一般讀音是「めいせき」（指名勝古蹟）；歌舞伎與商家世襲名號的脈絡讀「みょうせき」。"
+    },
+    "g-mukoyoshi": {
+      "kind": "cite",
+      "ref": "kotobank",
+      "locator": "「婿養子」詞條",
+      "href": "https://kotobank.jp/word/%E5%A9%BF%E9%A4%8A%E5%AD%90"
+    },
+    "g-fufu-yoshi": {
+      "kind": "cite",
+      "ref": "kotobank",
+      "locator": "「夫婦養子」詞條",
+      "href": "https://kotobank.jp/word/%E5%A4%AB%E5%A9%A6%E9%A4%8A%E5%AD%90"
+    },
+    "g-ichinin-ryomei": {
+      "kind": "cite",
+      "ref": "kobe-u",
+      "locator": "尾脇秀和《壱人両名——江戸日本の知られざる二重身分》新刊紹介",
+      "href": "https://www.kobe-u.ac.jp/shindai-books/books/2019/05_22_01/"
+    },
+    "g-zongzu": {
+      "kind": "cite",
+      "ref": "kotobank",
+      "locator": "「宗族」詞條",
+      "href": "https://kotobank.jp/word/%E5%AE%97%E6%97%8F"
+    },
+    "g-hangbei": {
+      "kind": "cite",
+      "ref": "kotobank",
+      "locator": "「行輩」詞條",
+      "href": "https://kotobank.jp/word/%E8%A1%8C%E8%BC%A9"
+    },
+    "g-sakoku": {
+      "kind": "cite",
+      "ref": "kotobank",
+      "locator": "「鎖国」詞條",
+      "href": "https://kotobank.jp/word/%E9%8E%96%E5%9B%BD",
+      "text": "「鎖國」一詞出自志筑忠雄 1801 年譯稿《鎖国論》，譯自 Kaempfer《日本誌》荷蘭語版附錄；近年研究改稱「四口體制」。"
+    },
+    "g-dejima": {
+      "kind": "cite",
+      "ref": "kotobank",
+      "locator": "「出島」詞條",
+      "href": "https://kotobank.jp/word/%E5%87%BA%E5%B3%B6"
+    },
+    "g-voc": {
+      "kind": "cite",
+      "ref": "kotobank",
+      "locator": "「オランダ東インド会社」詞條",
+      "href": "https://kotobank.jp/word/%E3%82%AA%E3%83%A9%E3%83%B3%E3%83%80%E6%9D%B1%E3%82%A4%E3%83%B3%E3%83%89%E4%BC%9A%E7%A4%BE"
+    },
+    "g-rangaku": {
+      "kind": "cite",
+      "ref": "kotobank",
+      "locator": "「蘭学」詞條",
+      "href": "https://kotobank.jp/word/%E8%98%AD%E5%AD%A6"
+    },
+    "g-ryukyu": {
+      "kind": "cite",
+      "ref": "kotobank",
+      "locator": "「琉球王国」詞條",
+      "href": "https://kotobank.jp/word/%E7%90%89%E7%90%83%E7%8E%8B%E5%9B%BD"
+    },
+    "g-kurofune": {
+      "kind": "cite",
+      "ref": "kotobank",
+      "locator": "「黒船」詞條",
+      "href": "https://kotobank.jp/word/%E9%BB%92%E8%88%B9"
+    },
+    "g-joyaku": {
+      "kind": "cite",
+      "ref": "jpn-archives",
+      "locator": "「条約改正の完成」（明治 44 年）",
+      "href": "https://www.archives.go.jp/ayumi/kobetsu/m44_1911_01.html",
+      "text": "1911 年 2 月日美通商航海條約簽署、4 月生效，關稅自主權完全回復，為條約改正完成的公認終點。"
+    },
+    "g-shimonoseki": {
+      "kind": "cite",
+      "ref": "kotobank",
+      "locator": "「下関条約」詞條",
+      "href": "https://kotobank.jp/word/%E4%B8%8B%E9%96%A2%E6%9D%A1%E7%B4%84"
+    },
+    "g-taiheiyo": {
+      "kind": "cite",
+      "ref": "kotobank",
+      "locator": "「太平洋戦争」詞條",
+      "href": "https://kotobank.jp/word/%E5%A4%AA%E5%B9%B3%E6%B4%8B%E6%88%A6%E4%BA%89"
+    },
+    "c-onin": {
+      "kind": "cite",
+      "ref": "kotobank",
+      "locator": "「応仁の乱」詞條",
+      "href": "https://kotobank.jp/word/%E5%BF%9C%E4%BB%81%E3%81%AE%E4%B9%B1"
+    },
+    "c-teppo": {
+      "kind": "cite",
+      "ref": "kotobank",
+      "locator": "「鉄砲伝来」詞條",
+      "href": "https://kotobank.jp/word/%E9%89%84%E7%A0%B2%E4%BC%9D%E6%9D%A5",
+      "text": "西洋方面的紀錄多作 1542 年，日本方面依《鉄炮記》採 1543 年。"
+    },
+    "c-xavier": {
+      "kind": "cite",
+      "ref": "kotobank",
+      "locator": "「フランシスコ・ザビエル」詞條",
+      "href": "https://kotobank.jp/word/%E3%83%95%E3%83%A9%E3%83%B3%E3%82%B7%E3%82%B9%E3%82%B3%E3%83%BB%E3%82%B6%E3%83%93%E3%82%A8%E3%83%AB"
+    },
+    "c-hideyoshi": {
+      "kind": "cite",
+      "ref": "kotobank",
+      "locator": "「豊臣秀吉」詞條",
+      "href": "https://kotobank.jp/word/%E8%B1%8A%E8%87%A3%E7%A7%80%E5%90%89",
+      "text": "1590 年小田原征伐降伏北条氏，達成統一。"
+    },
+    "c-bunroku": {
+      "kind": "cite",
+      "ref": "kotobank",
+      "locator": "「文禄・慶長の役」詞條",
+      "href": "https://kotobank.jp/word/%E6%96%87%E7%A6%84%E3%83%BB%E6%85%B6%E9%95%B7%E3%81%AE%E5%BD%B9"
+    },
+    "c-sekigahara": {
+      "kind": "cite",
+      "ref": "kotobank",
+      "locator": "「関ヶ原の戦い」詞條",
+      "href": "https://kotobank.jp/word/%E9%96%A2%E3%83%B6%E5%8E%9F%E3%81%AE%E6%88%A6%E3%81%84"
+    },
+    "c-liefde": {
+      "kind": "cite",
+      "ref": "kotobank",
+      "locator": "「リーフデ号」詞條",
+      "href": "https://kotobank.jp/word/%E3%83%AA%E3%83%BC%E3%83%95%E3%83%87%E5%8F%B7",
+      "text": "1600 年 4 月荷蘭船 Liefde 號漂著豐後，家康用其船員為外交與貿易顧問。"
+    },
+    "c-edo-bakufu": {
+      "kind": "cite",
+      "ref": "kotobank",
+      "locator": "「江戸幕府」詞條",
+      "href": "https://kotobank.jp/word/%E6%B1%9F%E6%88%B8%E5%B9%95%E5%BA%9C"
+    },
+    "c-shimazu": {
+      "kind": "cite",
+      "ref": "kotobank",
+      "locator": "「島津侵入事件」詞條",
+      "href": "https://kotobank.jp/word/%E5%B3%B6%E6%B4%A5%E4%BE%B5%E5%85%A5%E4%BA%8B%E4%BB%B6"
+    },
+    "c-ryozoku": {
+      "kind": "cite",
+      "ref": "kotobank",
+      "locator": "「琉球帰属問題」詞條",
+      "href": "https://kotobank.jp/word/%E7%90%89%E7%90%83%E5%B8%B0%E5%B1%9E%E5%95%8F%E9%A1%8C-1607044"
+    },
+    "c-sakoku": {
+      "kind": "cite",
+      "ref": "kotobank",
+      "locator": "「鎖国」詞條",
+      "href": "https://kotobank.jp/word/%E9%8E%96%E5%9B%BD"
+    },
+    "c-kaitai": {
+      "kind": "cite",
+      "ref": "kotobank",
+      "locator": "「解体新書」詞條",
+      "href": "https://kotobank.jp/word/%E8%A7%A3%E4%BD%93%E6%96%B0%E6%9B%B8",
+      "text": "杉田玄白、前野良沢等譯自荷蘭語譯本《ターヘル・アナトミア》。"
+    },
+    "c-kurofune": {
+      "kind": "cite",
+      "ref": "kotobank",
+      "locator": "「黒船」詞條",
+      "href": "https://kotobank.jp/word/%E9%BB%92%E8%88%B9"
+    },
+    "c-washin": {
+      "kind": "cite",
+      "ref": "kotobank",
+      "locator": "「日米和親条約」詞條",
+      "href": "https://kotobank.jp/word/%E6%97%A5%E7%B1%B3%E5%92%8C%E8%A6%AA%E6%9D%A1%E7%B4%84"
+    },
+    "c-ansei": {
+      "kind": "cite",
+      "ref": "kotobank",
+      "locator": "「安政五カ国条約」詞條",
+      "href": "https://kotobank.jp/word/%E5%AE%89%E6%94%BF%E4%BA%94%E3%82%AB%E5%9B%BD%E6%9D%A1%E7%B4%84"
+    },
+    "c-joyaku-kaisei": {
+      "kind": "cite",
+      "ref": "jpn-archives",
+      "locator": "「条約改正の完成」（明治 44 年）",
+      "href": "https://www.archives.go.jp/ayumi/kobetsu/m44_1911_01.html",
+      "text": "1911 年 2 月簽署、4 月生效的日美通商航海條約回復關稅自主權，為條約改正完成之年。"
+    },
+    "c-taisei-hokan": {
+      "kind": "cite",
+      "ref": "kotobank",
+      "locator": "「大政奉還」詞條",
+      "href": "https://kotobank.jp/word/%E5%A4%A7%E6%94%BF%E5%A5%89%E9%82%84"
+    },
+    "c-haihan": {
+      "kind": "cite",
+      "ref": "kotobank",
+      "locator": "「廃藩置県」詞條",
+      "href": "https://kotobank.jp/word/%E5%BB%83%E8%97%A9%E7%BD%AE%E7%9C%8C"
+    },
+    "c-taiwan-shuppei": {
+      "kind": "cite",
+      "ref": "kotobank",
+      "locator": "「台湾出兵」詞條",
+      "href": "https://kotobank.jp/word/%E5%8F%B0%E6%B9%BE%E5%87%BA%E5%85%B5"
+    },
+    "c-ryukyu-shobun": {
+      "kind": "cite",
+      "ref": "okinawa-archives",
+      "locator": "「あの日の沖縄」1879 年 3 月 27 日",
+      "href": "https://www.archives.pref.okinawa.jp/news/that_day/4631",
+      "text": "1879 年 3 月 27 日宣告廢琉球藩，4 月 4 日布告設沖繩縣。"
+    },
+    "c-teikoku-kenpo": {
+      "kind": "cite",
+      "ref": "jpn-archives",
+      "locator": "「大日本帝国憲法の発布」（明治 22 年）",
+      "href": "https://www.archives.go.jp/ayumi/kobetsu/m22_1889_01.html"
+    },
+    "c-nisshin": {
+      "kind": "cite",
+      "ref": "kotobank",
+      "locator": "「日清戦争」詞條",
+      "href": "https://kotobank.jp/word/%E6%97%A5%E6%B8%85%E6%88%A6%E4%BA%89"
+    },
+    "c-shimonoseki": {
+      "kind": "cite",
+      "ref": "kotobank",
+      "locator": "「下関条約」詞條",
+      "href": "https://kotobank.jp/word/%E4%B8%8B%E9%96%A2%E6%9D%A1%E7%B4%84"
+    },
+    "c-nichiro": {
+      "kind": "cite",
+      "ref": "kotobank",
+      "locator": "「日露戦争」詞條",
+      "href": "https://kotobank.jp/word/%E6%97%A5%E9%9C%B2%E6%88%A6%E4%BA%89"
+    },
+    "c-kankoku": {
+      "kind": "cite",
+      "ref": "kotobank",
+      "locator": "「韓国併合」詞條",
+      "href": "https://kotobank.jp/word/%E9%9F%93%E5%9B%BD%E4%BD%B5%E5%90%88"
+    },
+    "c-wwi": {
+      "kind": "cite",
+      "ref": "kotobank",
+      "locator": "「第一次世界大戦」詞條",
+      "href": "https://kotobank.jp/word/%E7%AC%AC%E4%B8%80%E6%AC%A1%E4%B8%96%E7%95%8C%E5%A4%A7%E6%88%A6"
+    },
+    "c-manshu": {
+      "kind": "cite",
+      "ref": "kotobank",
+      "locator": "「満州事変」詞條",
+      "href": "https://kotobank.jp/word/%E6%BA%80%E5%B7%9E%E4%BA%8B%E5%A4%89"
+    },
+    "c-nicchu": {
+      "kind": "cite",
+      "ref": "kotobank",
+      "locator": "「日中戦争」詞條",
+      "href": "https://kotobank.jp/word/%E6%97%A5%E4%B8%AD%E6%88%A6%E4%BA%89"
+    },
+    "c-taiheiyo": {
+      "kind": "cite",
+      "ref": "kotobank",
+      "locator": "「太平洋戦争」詞條",
+      "href": "https://kotobank.jp/word/%E5%A4%AA%E5%B9%B3%E6%B4%8B%E6%88%A6%E4%BA%89"
+    },
+    "c-ranin": {
+      "kind": "cite",
+      "ref": "kotobank",
+      "locator": "「蘭印作戦」詞條",
+      "href": "https://kotobank.jp/word/%E8%98%AD%E5%8D%B0%E4%BD%9C%E6%88%A6"
+    },
+    "c-kazoku-seido": {
+      "kind": "cite",
+      "ref": "kotobank",
+      "locator": "「家制度」詞條",
+      "href": "https://kotobank.jp/word/%E5%AE%B6%E5%88%B6%E5%BA%A6",
+      "text": "1947 年民法親屬編、繼承編全面修正，戶主權與家督相續廢止。"
+    }
+  }
 }

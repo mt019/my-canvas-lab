@@ -67,15 +67,45 @@ const COVERAGE_RANGES = [
   [0xff00, 0xffef], // 半形與全形
 ];
 
-// 來源字型在 COVERAGE_RANGES 裡實際有字的碼位（字串陣列）。ttc 取第一個 face。
-export function comprehensiveChars(sourcePath, fontNumber = 0) {
+// 拉丁點綴字型（Erikas Farbband，font-accent）的固定覆蓋目標。2026-08-13 訂：原本的
+// 子集是隨網站文字產生的 124 字，只有 ASCII 與幾個重音字母，於是德川頁術語表的平文式
+// 羅馬字 daimyō、taishōgun、bushidō 裡的 ō 畫不出來，落到堆疊下一個字型（Huiwen），
+// 同一個詞裡半數字母是打字機體、長音那個是明體。缺字驗證看不見這種故障——ō 在 Huiwen
+// 有字，全站字元union照樣通過，壞的是字面一致性不是可讀性。改成固定覆蓋（來源字型在
+// 這些區段裡畫得出來的每一個碼位）之後，日後任何羅馬字、歐語人名都已經在子集裡。
+const LATIN_COVERAGE_RANGES = [
+  [0x0020, 0x007e], // ASCII 可見字元
+  [0x00a0, 0x00ff], // Latin-1 補充（· × ÷ 與西歐重音字母）
+  [0x0100, 0x017f], // Latin 擴充 A（ā ē ī ō ū 長音、č š ž）
+  [0x0180, 0x024f], // Latin 擴充 B（ǎ ǐ ǒ ǔ 漢語拼音聲調、ș ț）
+  [0x2000, 0x206f], // 一般標點（– — ' " …）
+  [0x20a0, 0x20bf], // 貨幣符號
+];
+
+// 來源字型在指定區段裡實際有字的碼位（字串陣列）。ttc 取第一個 face。
+export function comprehensiveChars(sourcePath, fontNumber = 0, ranges = COVERAGE_RANGES) {
   let font = fontkit.openSync(sourcePath);
   if (font.fonts) font = font.fonts[fontNumber];
   const out = [];
-  for (const [lo, hi] of COVERAGE_RANGES) {
+  for (const [lo, hi] of ranges) {
     for (let cp = lo; cp <= hi; cp++) {
       if (font.hasGlyphForCodePoint(cp)) out.push(String.fromCodePoint(cp));
     }
+  }
+  return out;
+}
+
+export function latinChars(sourcePath) {
+  return comprehensiveChars(sourcePath, 0, LATIN_COVERAGE_RANGES);
+}
+
+// 驗證端用：committed 子集必須畫得出來的拉丁字元。跟 latinChars 同一份區段，但不需要
+// 來源字型——取「常用且該有」的下限（ASCII ＋ 西歐重音 ＋ 長音字母），來源畫不出來的
+// 個別碼位列在 scripts/font-coverage-exceptions.txt。
+export function requiredLatinAccentChars() {
+  const out = [];
+  for (const [lo, hi] of [[0x0020, 0x007e], [0x00c0, 0x00ff], [0x0100, 0x017f]]) {
+    for (let cp = lo; cp <= hi; cp++) out.push(String.fromCodePoint(cp));
   }
   return out;
 }

@@ -20,6 +20,8 @@ export default function PageIdentity({ eyebrow, title, titleClassName = 'font-di
   const { pathname } = useLocation();
   const site = siteHomeFor(pathname); // 站內頁：眉標回站首頁；站首頁本身回 null
 
+  // 字重 400，與共用倉 PageIdentity（wealth 等站）同一個長相；節標也已是 400，層級靠字級分
+  // （2026-08-13 使用者兩度點名「字體層級怪怪的」）。大小已經分層，粗細也要同向。
   const titleEl = title ? (
     <h1 className={`${titleClassName} text-token-2xl leading-tight sm:text-token-3xl`}>{title}</h1>
   ) : null;

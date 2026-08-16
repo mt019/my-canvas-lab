@@ -99,7 +99,9 @@ export default function ArticleLayout({
           </details>
         ) : null}
 
-        <div ref={bodyRef}>{children}</div>
+        {/* prose-body：長文閱讀區的灰階平滑（index.css）由版型殼自己帶，頁面不必記得掛
+            ——2026-08-14 德川頁漏掛整頁筆畫偏重之後，站主明令修在共用層級。 */}
+        <div ref={bodyRef} className="prose-body">{children}</div>
       </article>
 
       {showToc ? (

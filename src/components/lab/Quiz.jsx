@@ -85,7 +85,7 @@ function QuizItem({ item, index, lang, answer, onAnswer }) {
                   <><X size={14} className="text-ink-muted" /><span className="text-ink-muted">{COPY[lang].wrong}</span></>
                 )}
               </p>
-              <p className="mt-1.5 text-token-sm leading-[1.75] text-ink-muted"><MathText>{loc.explain}</MathText></p>
+              <p className="mt-1.5 text-token-sm leading-[1.8] text-ink-muted"><MathText>{loc.explain}</MathText></p>
             </div>
           ) : null}
         </div>

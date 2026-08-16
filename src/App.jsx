@@ -9,6 +9,7 @@ import AccountControl from './components/AccountControl';
 import { AuthProvider } from './personal-state/AuthProvider';
 import { ZJH_BASE_SEO, ZJH_TABS_SEO } from './pages/_zhu-jiahua/seo';
 import { CHEN_BASE_SEO, CHEN_SELECTIONS_SEO } from './lib/chenYinkeSeo';
+import { TOKUGAWA_TITLE, TOKUGAWA_DESC, TOKUGAWA_KEYWORDS, tokugawaSchema } from './pages/_tokugawa/seo';
 import { GLCT_KEYWORDS, GLCT_TITLE, GLCT_DESC, glctSchema } from './pages/_law-classics/seo';
 import { VT_KEYWORDS, VT_TITLE, VT_DESC, vtSchema } from './pages/_vocal-training/seo';
 import { USERSCRIPTS_KEYWORDS, USERSCRIPTS_TITLE, USERSCRIPTS_DESC, userscriptsSchema, scriptSeo, scriptSchema } from './pages/_userscripts/seo';
@@ -338,14 +339,16 @@ const PAGE_META = { // token-exempt: per-page identity chip colors (data, not st
   },
   Tokugawa: {
     name: '德川日本入門',
-    title: '德川日本的統治與「家」：武士身分制、イエ與宗族的對照',
+    title: TOKUGAWA_TITLE,
     desc: '武士身分制、イエ與宗族的差別、三地時代對照帶，與從長崎出島到 1945 年的對外關係年表',
+    seoDesc: TOKUGAWA_DESC,
     Icon: Castle,
     accent: '#e8e0d4',
     accentText: '#7a5f42',
     group: 'humanities',
-    keywords: ['德川時代', '江戶時代', '武士', '幕府', '身分制', '宗族', '鎖國', '出島', '明治維新', '日本近世史'],
+    keywords: TOKUGAWA_KEYWORDS,
     type: 'Article',
+    buildSchema: tokugawaSchema,
   },
   ZhuJiahua: {
     name: '朱家驊研究室',
@@ -710,7 +713,9 @@ function PageRoute({ route }) {
   const page = route.meta ? {
     ...route.meta,
     name: localizedMeta?.name ?? route.meta.name,
-    title: localizedMeta?.title ?? `${localizedMeta?.name ?? route.meta.name}｜Phenom Canvas Lab`,
+    // meta.title（完整 SEO 標題）要在退到「名稱｜站名」之前先讀——原本這行跳過它，
+    // 中文路徑下每一頁自訂的 SEO 標題都被丟掉，搜尋結果只剩短名。
+    title: localizedMeta?.title ?? route.meta.title ?? `${localizedMeta?.name ?? route.meta.name}｜Phenom Canvas Lab`,
     // desc 是首頁卡片上的一行文案，seoDesc 是給搜尋與答案引擎的長描述（塞得下數字與涵蓋範圍）。
     // 兩者用途不同：卡片要一眼掃過，描述要能被整段引用。只寫 desc 時兩邊共用。
     description: localizedMeta?.seoDesc ?? localizedMeta?.desc ?? route.meta.seoDesc ?? route.meta.desc,

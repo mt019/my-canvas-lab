@@ -2,8 +2,12 @@ import { useEffect, useState } from 'react';
 import Eyebrow from '../components/Eyebrow';
 import { useFontScale } from '../components/FontSizeControl';
 import SiteHeader from '../components/SiteHeader';
+import AnnotatedText from '../components/lab/AnnotatedText';
 import ArticleLayout from '../components/lab/ArticleLayout';
+import NotesList from '../components/lab/NotesList';
+import NotesMarkdown from '../components/lab/NotesMarkdown';
 import { useTabParams } from '../components/lab/Tabs';
+import { buildNotes } from '../components/lab/textNotes';
 import { linearScale } from '../components/lab/chart/scale';
 import data from '../data/tokugawaBackground.json';
 
@@ -17,6 +21,7 @@ const TABS = [
   { id: 'order', label: '身分秩序與「家」' },
   { id: 'glossary', label: '術語表' },
   { id: 'qa', label: '背景問答' },
+  { id: 'author', label: '作者' },
   ...(PRIVATE ? [
     { id: 'reading', label: '對讀（本機）' },
     { id: 'notes', label: '筆記（本機）' },
@@ -33,7 +38,7 @@ function SectionHead({ id, toc, kicker, children, className = '' }) {
   return (
     <div className={className}>
       {kicker ? <Eyebrow>{kicker}</Eyebrow> : null}
-      <h2 id={id} data-toc={toc} className={`font-serif text-token-xl font-bold leading-snug ${kicker ? 'mt-2' : ''}`}>
+      <h2 id={id} data-toc={toc} className={`font-display text-token-xl leading-snug ${kicker ? 'mt-2' : ''}`}>
         {children}
       </h2>
     </div>
@@ -130,15 +135,21 @@ function EraBands() {
   );
 }
 
-/* 年表：一年一列。region 欄是資料母本給的分類字（日本／中國／對外／台灣…），照印。 */
-function Chronology({ items }) {
+/* 年表：一年一列。region 欄是資料母本給的分類字（日本／中國／對外／台灣…），照印。
+   事件句裡的 [^…] 註標由母本掛，編號在分頁層一次算好（見 ChronologyTab）。 */
+function Chronology({ items, numberOf, entries }) {
   return (
     <ol className="border-t border-line">
       {items.map((item) => (
         <li key={item.year + item.event.slice(0, 8)} className="grid gap-x-4 gap-y-1 border-b border-line-soft py-3.5 sm:grid-cols-[5.5rem_3.5rem_1fr]">
           <span className="text-token-sm font-bold tabular-nums text-ink">{item.year}</span>
           <span className="text-token-sm text-ink-faint">{item.region}</span>
-          <p className="text-token-sm leading-[1.85] text-ink-muted">{item.event}</p>
+          <AnnotatedText
+            text={item.event}
+            numberOf={numberOf}
+            notes={entries}
+            className="text-token-sm leading-[1.85] text-ink-muted"
+          />
         </li>
       ))}
     </ol>
@@ -149,7 +160,7 @@ function StatusOrder() {
   const { intro, layers } = data.statusOrder;
   return (
     <div>
-      <p className="mt-5 max-w-3xl text-token-body leading-[1.95] text-ink-muted">{intro}</p>
+      <p className="mt-5 max-w-3xl text-token-body leading-[1.85] text-ink-muted">{intro}</p>
       <div className="mt-6 max-w-3xl">
         {layers.map((layer, i) => {
           const ruled = i > 0 && layers[i - 1].side !== layer.side;
@@ -175,7 +186,7 @@ function IeVsZongzu() {
   const { intro, rows } = data.ieVsZongzu;
   return (
     <div>
-      <p className="mt-5 max-w-3xl text-token-body leading-[1.95] text-ink-muted">{intro}</p>
+      <p className="mt-5 max-w-3xl text-token-body leading-[1.85] text-ink-muted">{intro}</p>
       <div className="mt-6 border-y border-line">
         <div className="grid gap-x-5 border-b border-line pb-2 pt-3 sm:grid-cols-[5.5rem_1fr_1fr]">
           <span />
@@ -195,7 +206,11 @@ function IeVsZongzu() {
 }
 
 /* 讀音是純假名時用 HTML 原生 ruby 直接標在詞頭上（學日語用），羅馬字跟在詞後；
-   英文對譯、年代這類「reading」仍走詞下方的副行。ruby 標 lang="ja" 讓假名走日文字形。 */
+   英文對譯、年代這類「reading」仍走詞下方的副行。ruby 標 lang="ja" 讓假名走日文字形。
+   版面不走原生 ruby 佈局：Chromium 與 WebKit 都把整串假名靠左貼、註音比詞寬時還把詞
+   撐出字距（ruby-align 兩邊都推不動）。改法是詞照常排（欄位左緣才對得齊）、假名絕對
+   定位置中在詞頭正上方，比詞寬就左右對稱懸出；上內距替假名保留高度，避免疊到分隔線。
+   假名尾端的字距空隙用等量左內距抵掉，置中才不偏。 */
 const KANA_ONLY = /^[぀-ヿ・]+$/;
 
 function TermHead({ term, reading, roman }) {
@@ -203,7 +218,7 @@ function TermHead({ term, reading, roman }) {
   return (
     <>
       {kana ? (
-        <ruby lang="ja" className="[&>rt]:pb-1 [&>rt]:text-[0.52em] [&>rt]:font-normal [&>rt]:tracking-[0.14em] [&>rt]:text-ink-faint">
+        <ruby lang="ja" className="relative inline-block pt-[0.9em] [&>rt]:absolute [&>rt]:left-1/2 [&>rt]:top-0 [&>rt]:-translate-x-1/2 [&>rt]:whitespace-nowrap [&>rt]:pl-[0.14em] [&>rt]:text-[0.52em] [&>rt]:font-normal [&>rt]:tracking-[0.14em] [&>rt]:text-ink-faint">
           {term}<rt>{reading}</rt>
         </ruby>
       ) : term}
@@ -213,22 +228,26 @@ function TermHead({ term, reading, roman }) {
   );
 }
 
-function Glossary() {
+/* 術語表的每一條定義都掛著一條查核出處（母本的 [^g-…] 註標）。編號按整份術語表的出現
+   順序給，所以這裡先把全部定義依序交給 buildNotes，再逐條渲染，末尾放一份清單。 */
+function Glossary({ numberOf, entries }) {
   return (
     <div className="space-y-10">
       {data.glossary.map((group) => (
         <section key={group.group}>
-          <h3 className="font-serif text-token-lg font-bold">{group.group}</h3>
+          <h3 className="font-display text-token-lg">{group.group}</h3>
           <dl className="mt-4 divide-y divide-line-soft border-y border-line">
             {group.terms.map((item) => (
-              <div key={item.term} className="grid gap-x-5 gap-y-1 py-3.5 sm:grid-cols-[13rem_1fr]">
+              /* 詞欄照最長的詞訂寬（五字詞＋讀音），不多留：詞欄與釋義中間拉出一大塊
+                 空白是被使用者點名退回的長相。 */
+              <div key={item.term} className="grid gap-x-4 gap-y-1 py-3.5 sm:grid-cols-[10rem_1fr]">
                 <dt className="font-serif text-token-body font-bold leading-[2.2]">
                   <TermHead term={item.term} reading={item.reading} roman={item.roman} />
                 </dt>
                 <dd className="max-w-3xl text-token-sm leading-[1.85] text-ink-muted">
-                  {item.def}
+                  <AnnotatedText text={item.def} numberOf={numberOf} notes={entries} />
                   {(item.notes ?? []).map((n) => (
-                    <span key={n.slice(0, 12)} className="mt-2 block">{n}</span>
+                    <AnnotatedText key={n.slice(0, 12)} text={n} numberOf={numberOf} notes={entries} className="mt-2" />
                   ))}
                 </dd>
               </div>
@@ -240,12 +259,29 @@ function Glossary() {
   );
 }
 
+function GlossaryTab() {
+  const texts = data.glossary.flatMap((g) => g.terms.flatMap((t) => [t.def, ...(t.notes ?? [])]));
+  const { numberOf, entries } = buildNotes(texts, data.notes, data.refs);
+  return (
+    <section>
+      <SectionHead id="glossary" toc="術語表">術語表</SectionHead>
+      <p className="mt-5 max-w-3xl text-token-body leading-[1.85] text-ink-muted">
+        純假名讀音直接標在詞頭上，拉丁字是平文式羅馬字；英文對譯與年代寫在詞下方。每條定義後面的號碼是查核出處，滑過去看，點一下釘住。
+      </p>
+      <div className="mt-6">
+        <Glossary numberOf={numberOf} entries={entries} />
+      </div>
+      <NotesList entries={entries} title="出處" id="glossary-sources" />
+    </section>
+  );
+}
+
 function Overview() {
   return (
     <div>
       <section>
         <SectionHead id="periods" toc="時代對照">三段分期，與誰同時</SectionHead>
-        <p className="mt-5 max-w-3xl text-token-body leading-[1.95] text-ink-muted">
+        <p className="mt-5 max-w-3xl text-token-body leading-[1.85] text-ink-muted">
           讀日本近世的材料，分期只需要先記三段：戰國（15 世紀後半起約一世紀的內亂）、德川（又稱江戶時代，1600–1867，兩百六十多年大體和平）、明治以後。下圖把六條線擺在同一條年代帶上——德川一朝從明末橫跨到清末；琉球王國同時向北京與薩摩兩邊從屬；台灣在同一段時間裡經過荷治、明鄭、清治；歐洲那一列是「個人」概念史的幾個定點。
         </p>
         <div className="mt-6">
@@ -268,26 +304,49 @@ function Overview() {
 }
 
 function ChronologyTab() {
+  // 編號按整個分頁的出現順序：主年表四節依序，接著概念史年表。
+  const { numberOf, entries } = buildNotes(
+    [...data.chronologyMain.map((it) => it.event), ...data.chronologyConcept.map((it) => it.event)],
+    data.notes,
+    data.refs,
+  );
   return (
     <div>
       <section>
         <SectionHead id="chronology" toc="政治與對外">政治與對外年表：從種子島到 1945</SectionHead>
-        <p className="mt-5 max-w-3xl text-token-body leading-[1.95] text-ink-muted">
+        <p className="mt-5 max-w-3xl text-token-body leading-[1.85] text-ink-muted">
           「鎖國」兩百年、黑船一來就開國維新——這個常見的講法把中間的線都剪掉了。實際的線索一條一條看：所謂鎖國留著四個窗口（長崎、對馬、薩摩、松前），荷蘭東印度公司在長崎出島駐了兩百多年，蘭學從那裡進來；琉球同時向北京朝貢、向薩摩繳糧；培里來航之後是條約、維新、修約，再往後是台灣、朝鮮、滿洲，一路走到珍珠港與蘭印油田。
         </p>
-        <div className="mt-6">
-          <Chronology items={data.chronologyMain} />
-        </div>
+        {/* 分節渲染：節是母本 chronologySections 的編輯性分組，小標帶 id 進右欄目次。 */}
+        {data.chronologySections.map((s, i) => (
+          <div key={s.title} className="mt-8">
+            <h3 id={`chron-${i}`} data-toc={s.title} className="font-display text-token-lg leading-snug">
+              {s.title}
+              <span className="ml-3 font-accent text-token-xs font-normal tracking-[0.08em] text-ink-faint">{s.range}</span>
+            </h3>
+            <div className="mt-3">
+              <Chronology
+                numberOf={numberOf}
+                entries={entries}
+                items={data.chronologyMain.filter((it) => {
+                  const y = Number(String(it.year).slice(0, 4));
+                  return y >= s.from && y <= s.to;
+                })}
+              />
+            </div>
+          </div>
+        ))}
       </section>
       <section className="mt-12 border-t border-line pt-8">
         <SectionHead id="concept" toc="「個人」概念史">附：「個人」的概念史年表</SectionHead>
-        <p className="mt-5 max-w-3xl text-token-body leading-[1.95] text-ink-muted">
+        <p className="mt-5 max-w-3xl text-token-body leading-[1.85] text-ink-muted">
           individual 這個詞怎麼從歐洲走進日語和中文——幾個定點依年代排開。
         </p>
         <div className="mt-6">
-          <Chronology items={data.chronologyConcept} />
+          <Chronology items={data.chronologyConcept} numberOf={numberOf} entries={entries} />
         </div>
       </section>
+      <NotesList entries={entries} title="出處" id="chronology-sources" />
     </div>
   );
 }
@@ -307,22 +366,48 @@ function OrderTab() {
   );
 }
 
+function AuthorTab() {
+  const { name, kana, intro, works, note } = data.author;
+  return (
+    <div>
+      <SectionHead id="author" toc="作者">
+        <ruby lang="ja" className="relative inline-block pt-[0.8em] [&>rt]:absolute [&>rt]:left-1/2 [&>rt]:top-0 [&>rt]:-translate-x-1/2 [&>rt]:whitespace-nowrap [&>rt]:pl-[0.14em] [&>rt]:text-[0.45em] [&>rt]:font-normal [&>rt]:tracking-[0.14em] [&>rt]:text-ink-faint">
+          {name}<rt>{kana}</rt>
+        </ruby>
+      </SectionHead>
+      {intro.map((para) => (
+        <p key={para.slice(0, 16)} className="mt-5 max-w-3xl text-token-body leading-[1.85] text-ink-muted">{para}</p>
+      ))}
+      <h3 id="author-works" data-toc="主要著書" className="mt-10 font-serif text-token-lg font-bold">主要著書</h3>
+      <ul className="mt-4 max-w-3xl space-y-2">
+        {works.map((w) => (
+          <li key={w.title} className="text-token-sm leading-[1.8] text-ink-muted">
+            <span className="font-bold text-ink">《{w.title}》</span>，{w.publisher}，<span className="tabular-nums">{w.year}</span> 年{w.edition ? `（${w.edition}）` : ''}。
+            {w.desc ? <span className="mt-1 block leading-[1.85]">{w.desc}</span> : null}
+          </li>
+        ))}
+      </ul>
+      <p className="mt-6 max-w-3xl text-token-xs leading-[1.8] text-ink-faint">{note}</p>
+    </div>
+  );
+}
+
 function QaTab() {
   return (
     <div>
       <SectionHead id="qa" toc="背景問答">背景問答十二題</SectionHead>
-      <p className="mt-5 max-w-3xl text-token-body leading-[1.95] text-ink-muted">
-        讀日本近世史料時常見的背景疑問，逐題整理。內容限於通說層級的公開知識，帶年代的斷言逐條對照過權威辭書與官方站（查核紀錄在資料倉）。
+      <p className="mt-5 max-w-3xl text-token-body leading-[1.85] text-ink-muted">
+        讀日本近世史料時常見的背景疑問，逐題整理。內容限於通說層級的公開知識，帶年代的斷言逐條對照過權威辭書與官方站。
       </p>
       <div className="mt-8 space-y-10">
         {data.qa.map((item, i) => (
           <section key={item.q} className="max-w-3xl border-t border-line-soft pt-6 first:border-t-0 first:pt-0">
-            <h3 id={`qa-${i + 1}`} className="font-serif text-token-lg font-bold leading-snug">
+            <h3 id={`qa-${i + 1}`} className="font-display text-token-lg leading-snug">
               <span className="mr-2 tabular-nums text-ink-faint">{String(i + 1).padStart(2, '0')}</span>
               {item.q}
             </h3>
             {item.a.map((para) => (
-              <p key={para.slice(0, 16)} className="mt-4 text-token-body leading-[1.95] text-ink-muted">{para}</p>
+              <p key={para.slice(0, 16)} className="mt-4 text-token-body leading-[1.85] text-ink-muted">{para}</p>
             ))}
           </section>
         ))}
@@ -359,85 +444,26 @@ function ReadingTab() {
             onClick={() => setTextId(t.id)}
             className={`border px-3 py-1 text-token-sm transition-colors duration-fast ${t.id === textId ? 'border-accent font-bold text-ink' : 'border-line text-ink-muted hover:border-accent'}`}
           >
-            {t.title}
+            {t.short ?? t.title}
           </button>
         ))}
       </div>
       <article className="mt-8 max-w-3xl">
-        <h3 className="font-serif text-token-lg font-bold leading-snug">{text.title}</h3>
+        <h3 id="reading-text" data-toc={text.title} className="font-display text-token-lg leading-snug">{text.title}</h3>
         {text.paras.map((para, i) => (
           <div key={`${textId}-${i}`}>
-            <p className="mt-4 text-token-body leading-[2] text-ink">{para}</p>
+            <p className="mt-4 text-token-body leading-[1.85] text-ink">{para}</p>
             {(byPara.get(i) ?? []).map((a) => (
               <aside key={a.q} className="mt-3 border-l-2 border-accent bg-paper py-2 pl-4">
                 <p className="text-token-sm font-bold">{a.q}</p>
                 {a.a.map((s) => (
-                  <p key={s.slice(0, 16)} className="mt-2 text-token-sm leading-[1.9] text-ink-muted">{s}</p>
+                  <p key={s.slice(0, 16)} className="mt-2 text-token-sm leading-[1.8] text-ink-muted">{s}</p>
                 ))}
               </aside>
             ))}
           </div>
         ))}
       </article>
-    </div>
-  );
-}
-
-/* 筆記：極簡 markdown 渲染——標題、清單、表格列、**粗體**，夠自己讀就好。 */
-function mdInline(text) {
-  return text.split(/(\*\*[^*]+\*\*)/g).map((piece, i) =>
-    piece.startsWith('**') && piece.endsWith('**')
-      ? <strong key={i} className="font-bold text-ink">{piece.slice(2, -2)}</strong>
-      : piece,
-  );
-}
-
-function NotesBlock({ raw }) {
-  const blocks = [];
-  let buf = [];
-  const flush = (kind) => {
-    if (!buf.length) return;
-    blocks.push({ kind, lines: buf });
-    buf = [];
-  };
-  let mode = 'p';
-  for (const line of raw.split('\n')) {
-    const t = line.trimEnd();
-    if (!t.trim()) { flush(mode); mode = 'p'; continue; }
-    if (t.startsWith('# ')) { flush(mode); continue; }
-    if (t.startsWith('## ')) { flush(mode); blocks.push({ kind: 'h', lines: [t.slice(3)] }); continue; }
-    if (t.startsWith('- ')) { if (mode !== 'ul') flush(mode); mode = 'ul'; buf.push(t.slice(2)); continue; }
-    if (t.startsWith('|')) { if (mode !== 'table') flush(mode); mode = 'table'; buf.push(t); continue; }
-    if (mode !== 'p') { flush(mode); mode = 'p'; }
-    buf.push(t);
-  }
-  flush(mode);
-  return (
-    <div className="max-w-3xl">
-      {blocks.map((b, i) => {
-        if (b.kind === 'h') return <h3 key={i} className="mt-10 font-serif text-token-lg font-bold leading-snug">{b.lines[0]}</h3>;
-        if (b.kind === 'ul') return (
-          <ul key={i} className="mt-4 list-disc space-y-2 pl-5">
-            {b.lines.map((li) => <li key={li.slice(0, 16)} className="text-token-sm leading-[1.9] text-ink-muted">{mdInline(li)}</li>)}
-          </ul>
-        );
-        if (b.kind === 'table') return (
-          <div key={i} className="mt-4 overflow-x-auto">
-            <table className="border-collapse text-token-sm text-ink-muted">
-              <tbody>
-                {b.lines.filter((r) => !/^\|[\s:-]+\|/.test(r.replace(/\|/g, '|'))).filter((r) => !/^[|\s:-]+$/.test(r)).map((row) => (
-                  <tr key={row.slice(0, 24)} className="border-b border-line-soft">
-                    {row.split('|').slice(1, -1).map((cell, ci) => (
-                      <td key={ci} className="py-2 pr-5 align-top leading-[1.8]">{cell.trim()}</td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        );
-        return <p key={i} className="mt-4 text-token-sm leading-[1.95] text-ink-muted">{mdInline(b.lines.join(''))}</p>;
-      })}
     </div>
   );
 }
@@ -461,7 +487,7 @@ function NotesTab() {
           </button>
         ))}
       </div>
-      <div className="mt-6"><NotesBlock raw={note.raw} /></div>
+      <div className="mt-6"><NotesMarkdown raw={note.raw} /></div>
     </div>
   );
 }
@@ -483,6 +509,7 @@ export default function Tokugawa() {
         summary={data.meta.summary}
         tocLabel="本頁區塊"
         tocKey={active}
+        tocLevels={[2, 3, 4]}
         nav={
           <nav aria-label="頁內導覽" className="space-y-1 text-token-sm">
             {TABS.map((t) => (
@@ -497,19 +524,10 @@ export default function Tokugawa() {
         {active === 'chronology' ? <ChronologyTab /> : null}
         {active === 'order' ? <OrderTab /> : null}
         {active === 'qa' ? <QaTab /> : null}
+        {active === 'author' ? <AuthorTab /> : null}
         {PRIVATE && active === 'reading' ? <ReadingTab /> : null}
         {PRIVATE && active === 'notes' ? <NotesTab /> : null}
-        {active === 'glossary' ? (
-          <section>
-            <SectionHead id="glossary" toc="術語表">術語表</SectionHead>
-            <p className="mt-5 max-w-3xl text-token-body leading-[1.95] text-ink-muted">
-              純假名讀音直接標在詞頭上，拉丁字是平文式羅馬字；英文對譯與年代寫在詞下方。
-            </p>
-            <div className="mt-6">
-              <Glossary />
-            </div>
-          </section>
-        ) : null}
+        {active === 'glossary' ? <GlossaryTab /> : null}
       </ArticleLayout>
     </main>
   );
