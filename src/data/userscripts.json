@@ -60,11 +60,11 @@
       "id": "social-auto-expand",
       "name": "社群貼文自動展開",
       "latin": "Social Auto Expand",
-      "version": "2.1.1",
+      "version": "2.2.0",
       "file": "social-auto-expand.user.js",
       "install": "https://raw.githubusercontent.com/mt019/social-auto-expand-userscript/main/social-auto-expand.user.js",
-      "summary": "把 LinkedIn 與 Facebook 動態裡的「查看更多」自動按掉，貼文一次讀完。",
-      "targetLabel": "LinkedIn、Facebook",
+      "summary": "把 LinkedIn、Facebook 動態裡的「查看更多」自動按掉，Upwork 的工作列表自動載入下一頁。",
+      "targetLabel": "LinkedIn、Facebook、Upwork",
       "repo": "https://github.com/mt019/social-auto-expand-userscript",
       "body": [
         "社群動態把長貼文摺起來，讀完一段就要伸手點一次「查看更多」。這支腳本會偵測畫面上出現的展開控制項，出現就替你按下去。中英文的常見寫法都認得——see more、show more、查看更多、顯示更多、展開全文這些都在比對清單裡；各站另有自己的元件選擇器，先用選擇器認、認不出來才退回看按鈕上的字。",
@@ -91,11 +91,23 @@
         {
           "pattern": "https://m.facebook.com/*",
           "why": "Facebook 行動版"
+        },
+        {
+          "pattern": "https://www.upwork.com/nx/find-work/*",
+          "why": "Upwork 找工作頁的工作列表，自動按「Load More Jobs」載入後續頁"
         }
       ],
       "grants": [],
       "grantNote": "沒有宣告任何 GM_* 權限。腳本做的事是在上列頁面裡點畫面上已經存在的按鈕，不讀取貼文內容、不對外送出任何東西。",
       "changelog": [
+        {
+          "version": "2.2.0",
+          "date": "2026-08-16",
+          "notes": [
+            "加 Upwork 找工作頁：自動按「Load More Jobs」，工作列表一路載到底。",
+            "點擊標記加上時間與次數，站別設定可以宣告同一顆按鈕隔幾秒再按一次；LinkedIn 與 Facebook 維持原本的只按一次。"
+          ]
+        },
         {
           "version": "2.1.1",
           "date": "2026-08-06",
