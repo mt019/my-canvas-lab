@@ -49,6 +49,7 @@
     "@dagrejs/dagre": "^3.0.0",
     "@mdx-js/react": "^3.1.1",
     "@mdx-js/rollup": "^3.1.1",
+    "@phenomcanvas/ui": "https://github.com/mt019/phenom-ui/archive/refs/tags/v0.1.31.tar.gz",
     "@supabase/supabase-js": "^2.110.8",
     "@vercel/analytics": "^2.0.1",
     "@xyflow/react": "^12.11.1",

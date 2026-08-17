@@ -1,77 +1,16 @@
+import phenomPreset from '@phenomcanvas/ui/tailwind-preset';
+
 /** @type {import('tailwindcss').Config} */
 export default {
+  // 字體、色票、字級、圓角、陰影、動畫時長全部來自共用 preset（@phenomcanvas/ui 的
+  // tailwind-preset.js），值一律指向 CSS 變數，母本是該套件的 tokens.css；canvas 的
+  // src/styles/tokens.css 是同一份再加四個 --mark-* 槽。這裡先前抄了一份一模一樣的
+  // theme.extend，v0.1.31 接包時退掉。要改 token 就去改那兩處，不要在這裡加值。
+  presets: [phenomPreset],
   content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx,mdx}", // 這一行最關鍵，它告訴 Tailwind 去掃描 src 下所有的檔案
+    './index.html',
+    './src/**/*.{js,ts,jsx,tsx,mdx}',
+    './node_modules/@phenomcanvas/ui/src/**/*.{js,jsx}',
   ],
-  theme: {
-    extend: {
-      fontFamily: {
-        sans: ['var(--font-body)'],
-        serif: ['var(--font-body)'],
-        display: ['var(--font-display)'],
-        accent: ['var(--font-accent)'],
-        // Fenced code only. Erikas is a ribbon face, not a monospace one — indentation
-        // and column alignment are the whole point of a code block, so it gets a real
-        // monospace stack instead of the accent face used for inline code.
-        mono: ['var(--font-mono)'],
-      },
-      // All values reference src/styles/tokens.css — edit tokens there, not here.
-      colors: {
-        paper: 'var(--c-paper)',
-        surface: {
-          DEFAULT: 'var(--c-surface)',
-          raised: 'var(--c-surface-raised)',
-        },
-        ink: {
-          DEFAULT: 'var(--c-ink)',
-          muted: 'var(--c-ink-muted)',
-          faint: 'var(--c-ink-faint)',
-        },
-        line: {
-          DEFAULT: 'var(--c-line)',
-          soft: 'var(--c-line-soft)',
-        },
-        accent: {
-          DEFAULT: 'var(--c-accent)',
-          soft: 'var(--c-accent-soft)',
-        },
-        warn: 'var(--c-warn)',
-        danger: 'var(--c-danger)',
-        info: 'var(--c-info)',
-        pop: 'var(--c-pop)',
-      },
-      fontSize: {
-        'token-xs': 'var(--text-xs)',
-        'token-sm': 'var(--text-sm)',
-        'token-base': 'var(--text-base)',
-        'token-body': 'var(--text-body)',
-        'token-lg': 'var(--text-lg)',
-        'token-xl': 'var(--text-xl)',
-        'token-2xl': 'var(--text-2xl)',
-        'token-3xl': 'var(--text-3xl)',
-        // em-based: inherit from a .prose-scaled container so FontSizeControl
-        // (--fs multiplier) reaches them; use for reading text only.
-        'scaled-xs': '0.75em',
-        'scaled-sm': '0.875em',
-        'scaled-base': '1em',
-        'scaled-lg': '1.2em',
-      },
-      borderRadius: {
-        'token-sm': 'var(--radius-sm)',
-        'token-md': 'var(--radius-md)',
-        'token-lg': 'var(--radius-lg)',
-      },
-      boxShadow: {
-        'token-sm': 'var(--shadow-sm)',
-        'token-md': 'var(--shadow-md)',
-      },
-      transitionDuration: {
-        fast: 'var(--dur-fast)',
-        base: 'var(--dur-base)',
-        slow: 'var(--dur-slow)',
-      },
-    },
-  },
   plugins: [],
 }
