@@ -4,3 +4,12 @@
 /*
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
+
+# Pages production aliases serve static files before Functions. These absolute
+# rules keep Cloudflare's stable and immutable aliases out of search results
+# without applying noindex to canvas.phenomcanvas.com.
+https://phenom-canvas.pages.dev/*
+  X-Robots-Tag: noindex, nofollow
+
+https://:version.phenom-canvas.pages.dev/*
+  X-Robots-Tag: noindex, nofollow
