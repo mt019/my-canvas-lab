@@ -19,13 +19,21 @@ GitHub 頭像、使用者名稱與完整 Email 不得渲染到 Canvas。GitHub �
 3. 在 GitHub Settings > Developer settings > OAuth Apps 建立 OAuth App。
 4. Homepage URL 填 `https://phenomcanvas.com`；Authorization callback URL 填 Supabase GitHub provider 頁顯示的 `https://<project-ref>.supabase.co/auth/v1/callback`。GitHub OAuth App 只接受一個 callback URL，因此本機測試也沿用雲端 Supabase callback。
 5. 在 Supabase Authentication > Providers 啟用 GitHub，填入 client ID 與 client secret。
-6. 在 Authentication > URL Configuration：
-   - **Site URL** 填 `https://phenomcanvas.com`（只吃一個值、不能用萬用字元；沒指定落點或
-     落點不在允許清單裡時就用它，信件模板也引用它）。
+6. 在 [Authentication > URL Configuration](https://supabase.com/dashboard/project/kbbraozovnmdzuhwfskz/auth/url-configuration)：
+   - **Site URL** 填 `https://canvas.phenomcanvas.com`（只吃一個值、不能用萬用字元；沒指定
+     落點或落點不在允許清單裡時就用它，信件模板也引用它）。
    - **Redirect URLs** 每條都要帶 `/**`，否則只有首頁算合法落點，從 `/brief` 登入會被
      丟回 Site URL 而不是原頁（`signInWithOAuth` 傳的是 `window.location.href`）：
-     `https://phenomcanvas.com/**`、`https://www.phenomcanvas.com/**`、
-     `https://my-canvas-lab.vercel.app/**`（舊網址仍通，留著）、`http://localhost:5173/**`。
+     `https://canvas.phenomcanvas.com/**`、`https://phenomcanvas.com/**`、
+     `https://www.phenomcanvas.com/**`、`http://localhost:5173/**`。
+
+   這份清單按**來源**比對，`/**` 只管路徑不管主機，`canvas.phenomcanvas.com` 與
+   `phenomcanvas.com` 因此是兩條各自獨立的項目。2026-08-14 站台從 apex 搬到
+   `canvas.phenomcanvas.com`，這兩欄留在舊來源上，登入壞了三天：Supabase 把人送回 apex，
+   而 apex 現在是 phenom-home，那個站沒有 Supabase 客戶端，`?code=` 停在那裡沒有人拿去換
+   session，登入按鈕按下去之後沒有任何動靜。這批值同時抄一份在
+   `supabase/auth-url-configuration.json`，
+   `npm run validate:authurls` 比對抄本與各個部署來源，來源換了而清單沒跟著換就讓建置失敗。
 7. 兩個瀏覽器端變數要三個地方都有：本機 `.env.local`、Vercel Environment Variables、
    以及 **GitHub repo secrets**（建置跑在 Actions，見下一段）：
    - `VITE_SUPABASE_URL`

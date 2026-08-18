@@ -237,6 +237,23 @@ const cases = [
       ),
   },
   {
+    npmScript: 'validate:authurls',
+    script: 'scripts/validate-auth-origins.mjs',
+    // 把站台實際部署的那個來源從 Redirect URLs 拿掉，也就是 2026-08-17 登入壞掉的長相：
+    // 站台搬到 canvas.phenomcanvas.com，Supabase 那兩欄留在 apex 上。
+    setup: () =>
+      editedFile('supabase/auth-url-configuration.json', (src) => {
+        const data = JSON.parse(src);
+        const kept = data.redirectUrls.filter((entry) => !entry.startsWith('https://canvas.phenomcanvas.com'));
+        if (kept.length === data.redirectUrls.length) {
+          throw new Error('夾具失效：auth-url-configuration.json 裡沒有 canvas.phenomcanvas.com 那一項');
+        }
+        data.redirectUrls = kept;
+        data.siteUrl = 'https://phenomcanvas.com';
+        return `${JSON.stringify(data, null, 2)}\n`;
+      }),
+  },
+  {
     npmScript: 'validate:synced',
     script: 'scripts/validate-synced-content.mjs',
     // 陳寅恪資料的其中一個檔案改一個位元組，讓 sha256 跟 chenYinke.sync.json 記錄的對不上。

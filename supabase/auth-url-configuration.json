@@ -1,0 +1,12 @@
+{
+  "_comment": "Supabase dashboard 的 Authentication > URL Configuration 抄本。改 dashboard 就改這裡，checkedAt 記最後一次核對的日期。scripts/validate-auth-origins.mjs 拿它跟各個部署來源比對。",
+  "dashboard": "https://supabase.com/dashboard/project/kbbraozovnmdzuhwfskz/auth/url-configuration",
+  "checkedAt": "2026-08-17",
+  "siteUrl": "https://canvas.phenomcanvas.com",
+  "redirectUrls": [
+    "https://canvas.phenomcanvas.com/**",
+    "https://phenomcanvas.com/**",
+    "https://www.phenomcanvas.com/**",
+    "http://localhost:5173/**"
+  ]
+}

@@ -143,7 +143,7 @@ function Catalog() {
         <SectionHead id="catalog" toc="全書篇目" kicker="朱家驊先生言論集">
           全書 {TOC.itemCount} 篇，依原書篇次
         </SectionHead>
-        <p className="mt-4 max-w-3xl text-token-body leading-[1.9] text-ink-muted">
+        <p className="mt-4 max-w-3xl text-token-body leading-[1.85] text-ink-muted">
           篇名、日期與起頁依原書目次逐欄核對。{TOC.readableCount} 篇已完成逐頁人工校訂，篇名可點進全文；其餘只列篇目。{TOC.pageNote}
         </p>
       </section>
@@ -280,7 +280,7 @@ function LegalEducation() {
           <span>全文皆已逐頁校訂</span>
         </div>
         <SectionHead id="topic" toc="專題總覽" className="mt-4">法律教育如何成為民主政治的基礎</SectionHead>
-        <p className="mt-5 max-w-3xl text-token-body leading-[1.95] text-ink-muted">{section.introduction}</p>
+        <p className="mt-5 max-w-3xl text-token-body leading-[1.85] text-ink-muted">{section.introduction}</p>
       </section>
 
       <section className="mt-10 border-t border-line pt-8">
@@ -337,7 +337,7 @@ function OriginalText({ textId }) {
 
       {/* 字級由外殼的 reader-scale 統一縮放；這裡不再掛 text-scaled-*，兩者疊乘會失控。 */}
       {/* prose-body：校訂全文是整段連續閱讀的面，吃灰階字體平滑（見 index.css）。 */}
-      <div className="prose-body mt-9 text-justify text-token-body leading-[2.05] text-ink">
+      <div className="prose-body mt-9 text-justify text-token-body leading-[1.85] text-ink">
         {text.paragraphs.map((paragraph, i) => (
           <p key={i} className="mt-6 first:mt-0">{paragraph}</p>
         ))}
@@ -397,7 +397,7 @@ function TocEntry({ item }) {
 
       {item.note ? <p className="mt-5 text-token-sm leading-relaxed text-ink-muted">{item.note}</p> : null}
 
-      <p className="mt-8 text-token-body leading-[1.9] text-ink-muted">
+      <p className="mt-8 text-token-body leading-[1.85] text-ink-muted">
         本篇尚未校訂全文。篇名、日期與起頁依原書目次逐欄核對，正文仍只存在於原書影像；
         目前已完成逐頁人工校訂的是 {TOC.readableCount} 篇。{TOC.pageNote}
       </p>

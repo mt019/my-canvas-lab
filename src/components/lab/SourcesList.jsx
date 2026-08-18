@@ -50,7 +50,7 @@ export default function SourcesList({ sources, lang = 'zh' }) {
           const { author, title, year, container, url } = source;
           const locator = (en ? source.en?.locator : source.locator) ?? source.locator;
           return (
-            <li key={id} id={`source-${id}`} className="flex gap-2.5 text-token-sm leading-[1.75] text-ink-muted">
+            <li key={id} id={`source-${id}`} className="flex gap-2.5 text-token-sm leading-[1.8] text-ink-muted">
               <a
                 href={`#cite-${id}-1`}
                 title={en ? 'Back to the text' : '返回正文'}
