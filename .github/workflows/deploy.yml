@@ -8,9 +8,12 @@
 # 設定方式寫在 HANDOFF.md 的「部署」節。
 name: deploy
 
+# 2026-08-18 起只留手動觸發。canvas.phenomcanvas.com 已經由 Cloudflare Pages 服務，這支
+# workflow 送的是 Vercel；而 Vercel 專案在 phenom-ops/infra/provider-retirement.json 裡是
+# status: observing、retireNotBefore 2026-08-23。推送若還會叫起它，等於在觀察窗裡重新產出一份
+# production 部署把窗口作廢，而線上正本一動也不動。改成 wrangler 的那一步見
+# ~/.claude/plans/kuuu-frolicking-bachman.md 階段 3，屆時 push 觸發器一起加回來。
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 concurrency:
