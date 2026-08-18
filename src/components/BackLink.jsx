@@ -1,6 +1,10 @@
 import { useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { INDEX, resolveBack } from '../backNav';
+import { HOME, INDEX, resolveBack } from '../backNav';
+
+// 拆站之後單擊的落點在另一個 origin（apex 的門面），react-router 的 Link 只認站內路徑，
+// 所以絕對網址要走原生的 <a> 與 location.assign。
+const isExternal = (href) => /^https?:\/\//.test(href);
 
 /*
  * 全站唯一的返回鍵。三個殼（PageShell／DashboardLayout／SiteHeader）與所有自己刻版型的
@@ -75,7 +79,10 @@ export default function BackLink({ back, floating = false }) {
   if (!link) return null;
 
   const label = link.label || '';
-  const doubleClickable = link.href === '/' && INDEX.href !== link.href;
+  // 雙擊只掛在「回門面」那支箭頭上；主題站內頁的箭頭（「← 簡報」）一下就走。
+  // 已經站在清單上時也不掛，那是連到自己。
+  const doubleClickable = link.href === HOME.href && INDEX.href !== link.href && INDEX.href !== pathname;
+  const go = (href) => (isExternal(href) ? window.location.assign(href) : navigate(href));
   /*
    * **不掛 `title`。** 瀏覽器那個原生提示框是系統畫的，跟這個站的字體與顏色沒有任何關係，
    * 停在箭頭上一秒就跳出來一塊灰框（使用者 2026-07-28：「這個 hover 框框也太醜了」）。
@@ -93,23 +100,23 @@ export default function BackLink({ back, floating = false }) {
     e.preventDefault();
     if (e.detail >= 2) {
       clearTimeout(timer.current);
-      navigate(INDEX.href);
+      go(INDEX.href);
       return;
     }
     clearTimeout(timer.current);
-    timer.current = setTimeout(() => navigate(link.href), DOUBLE_MS);
+    timer.current = setTimeout(() => go(link.href), DOUBLE_MS);
   };
+
+  const className = `${HIDDEN} ${floating ? FLOATING_ARROW : ARROW}`;
+  const text = label ? `← ${label}` : '←';
 
   return (
     <span className={floating ? FLOATING_ZONE : ZONE}>
-      <Link
-        to={link.href}
-        aria-label={link.title || label_}
-        onClick={onClick}
-        className={`${HIDDEN} ${floating ? FLOATING_ARROW : ARROW}`}
-      >
-        {label ? `← ${label}` : '←'}
-      </Link>
+      {isExternal(link.href) ? (
+        <a href={link.href} aria-label={link.title || label_} onClick={onClick} className={className}>{text}</a>
+      ) : (
+        <Link to={link.href} aria-label={link.title || label_} onClick={onClick} className={className}>{text}</Link>
+      )}
     </span>
   );
 }

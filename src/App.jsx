@@ -6,9 +6,11 @@ import ScrollToTop from './components/ScrollToTop';
 import BackToTop from './components/BackToTop';
 import FrontDoor from './components/FrontDoor';
 import AccountControl from './components/AccountControl';
+import BackLink from './components/BackLink';
 import { AuthProvider } from './personal-state/AuthProvider';
 import { ZJH_BASE_SEO, ZJH_TABS_SEO } from './pages/_zhu-jiahua/seo';
 import { CHEN_BASE_SEO, CHEN_SELECTIONS_SEO } from './lib/chenYinkeSeo';
+import { TOKUGAWA_TITLE, TOKUGAWA_DESC, TOKUGAWA_KEYWORDS, tokugawaSchema } from './pages/_tokugawa/seo';
 import { GLCT_KEYWORDS, GLCT_TITLE, GLCT_DESC, glctSchema } from './pages/_law-classics/seo';
 import { VT_KEYWORDS, VT_TITLE, VT_DESC, vtSchema } from './pages/_vocal-training/seo';
 import { USERSCRIPTS_KEYWORDS, USERSCRIPTS_TITLE, USERSCRIPTS_DESC, userscriptsSchema, scriptSeo, scriptSchema } from './pages/_userscripts/seo';
@@ -338,14 +340,16 @@ const PAGE_META = { // token-exempt: per-page identity chip colors (data, not st
   },
   Tokugawa: {
     name: '德川日本入門',
-    title: '德川日本的統治與「家」：武士身分制、イエ與宗族的對照',
+    title: TOKUGAWA_TITLE,
     desc: '武士身分制、イエ與宗族的差別、三地時代對照帶，與從長崎出島到 1945 年的對外關係年表',
+    seoDesc: TOKUGAWA_DESC,
     Icon: Castle,
     accent: '#e8e0d4',
     accentText: '#7a5f42',
     group: 'humanities',
-    keywords: ['德川時代', '江戶時代', '武士', '幕府', '身分制', '宗族', '鎖國', '出島', '明治維新', '日本近世史'],
+    keywords: TOKUGAWA_KEYWORDS,
     type: 'Article',
+    buildSchema: tokugawaSchema,
   },
   ZhuJiahua: {
     name: '朱家驊研究室',
@@ -449,6 +453,24 @@ const PAGE_META = { // token-exempt: per-page identity chip colors (data, not st
     accentText: '#7a6440',
     group: 'corpus',
     externalUrl: 'https://judicial-translations.phenomcanvas.com/glossary/',
+  },
+  Clay: {
+    name: 'Clay｜紫砂與器物',
+    desc: '紫砂壺、泥料與器物文化的獨立研究站：逐件圖錄、作者與窯口',
+    Icon: Droplets,
+    accent: '#e6ddd6',
+    accentText: '#7c5c46',
+    group: 'humanities',
+    externalUrl: 'https://clay.phenomcanvas.com/',
+  },
+  MandarinDialogue: {
+    name: '私人中文對談',
+    desc: '為高階中文使用者提供的全中文一對一對談',
+    Icon: Mic,
+    accent: '#e3e0ea',
+    accentText: '#5f5a76',
+    group: 'service',
+    externalUrl: 'https://mandarin.phenomcanvas.com/',
   },
   FamilyWealth: {
     name: 'Patrimonia｜家族財富研究室',
@@ -573,6 +595,7 @@ const GROUPS = [
   { key: 'analysis', label: '議題解析', desc: '法律、財稅與制度議題的拆解' },
   { key: 'learn', label: '教學實驗室', desc: '方法本身的來歷與限制，配上可以親手轉動的模擬' },
   { key: 'tool', label: '即用工具', desc: '可直接操作的工具：音樂、聲音與設計' },
+  { key: 'service', label: '私人服務', desc: '對外承接的一對一服務' },
 ];
 
 export default function App() {
@@ -623,6 +646,20 @@ export default function App() {
         path: '/familywealth',
         component: null,
         meta: PAGE_META.FamilyWealth,
+      },
+      // Clay 與私人中文對談從來沒有在本倉有過頁面，先前只列在 apex 的 /all。那一頁
+      // 2026-08-17 轉址到這份清單，兩個站的落點因此改到這裡（外部連結，同上）。
+      {
+        name: 'Clay',
+        path: '/clay',
+        component: null,
+        meta: PAGE_META.Clay,
+      },
+      {
+        name: 'MandarinDialogue',
+        path: '/mandarindialogue',
+        component: null,
+        meta: PAGE_META.MandarinDialogue,
       },
     ];
   }, []);
@@ -710,7 +747,9 @@ function PageRoute({ route }) {
   const page = route.meta ? {
     ...route.meta,
     name: localizedMeta?.name ?? route.meta.name,
-    title: localizedMeta?.title ?? `${localizedMeta?.name ?? route.meta.name}｜Phenom Canvas Lab`,
+    // meta.title（完整 SEO 標題）要在退到「名稱｜站名」之前先讀——原本這行跳過它，
+    // 中文路徑下每一頁自訂的 SEO 標題都被丟掉，搜尋結果只剩短名。
+    title: localizedMeta?.title ?? route.meta.title ?? `${localizedMeta?.name ?? route.meta.name}｜Phenom Canvas Lab`,
     // desc 是首頁卡片上的一行文案，seoDesc 是給搜尋與答案引擎的長描述（塞得下數字與涵蓋範圍）。
     // 兩者用途不同：卡片要一眼掃過，描述要能被整段引用。只寫 desc 時兩邊共用。
     description: localizedMeta?.seoDesc ?? localizedMeta?.desc ?? route.meta.seoDesc ?? route.meta.desc,
@@ -792,7 +831,9 @@ function HomePage({ routes }) {
       <div className="mx-auto w-full max-w-5xl">
 
         <header className="mb-8 border-b border-[var(--home-line)] pb-7">
-          <div className="mb-4 flex justify-end">
+          {/* 清單頁自己的回頭路：箭頭回 apex 的門面。這一頁就是雙擊的落點，所以只有一層。 */}
+          <div className="mb-4 flex items-center justify-between gap-4">
+            <BackLink />
             <AccountControl />
           </div>
           <p className="mb-4 font-accent text-[10px] font-bold uppercase tracking-[0.28em] text-[var(--home-accent)]">

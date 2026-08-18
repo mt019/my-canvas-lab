@@ -26,13 +26,22 @@ export const BACK_NAV_ENABLED = true;
  * 想讓返回鍵直接回專案清單，把這行換成 INDEX 即可（`export const HOME = INDEX;`）——
  * 這是「我可以決定」的那一格，兩個落點都是現成的。
  */
-export const HOME = { href: '/', label: '', title: '回首頁' };
+const CANVAS_BUILD = typeof import.meta !== 'undefined' && import.meta.env?.VITE_DEPLOY_TARGET === 'canvas';
+
+export const HOME = CANVAS_BUILD
+  ? { href: 'https://phenomcanvas.com/', label: '', title: '回門面' }
+  : { href: '/', label: '', title: '回首頁' };
 
 /*
  * 專案清單。素首頁的隱藏入口進得去，專案頁上不掛它——清單是給我自己翻的，
  * 讀者從任何一頁往回走，看到的是素首頁那張紙。
+ *
+ * 2026-08-17 拆站之後的兩個落點：門面在 apex（phenomcanvas.com/），清單就是 canvas 的
+ * 根路徑（`App.jsx` 的 CANVAS_BUILD 讓 `/` 渲染 HomePage、不註冊 `/all`）。單擊回門面、
+ * 雙擊來這裡，兩件事的落點因此跨兩個 origin，寫法必須是絕對網址——先前這裡寫死相對的
+ * `/all`，canvas 上雙擊會落到自家 404，apex 的同名頁則是站主刪掉的那份六格卡片。
  */
-export const INDEX = { href: '/all', label: '全部' };
+export const INDEX = CANVAS_BUILD ? { href: '/', label: '全部' } : { href: '/all', label: '全部' };
 
 /*
  * 主題站登記表（自己有首頁與多個內頁的站）。**給眉標那顆按鈕用**：站內頁的眉標寫著站名，
@@ -65,8 +74,11 @@ const SITE_HOMES = [
 /*
  * 例外二：這幾條路徑不畫返回鍵。素首頁自己就是返回鍵的終點，清單頁往回只有素首頁
  * （而它的入口刻意藏著，見 FrontDoor），兩者都不掛。
+ *
+ * canvas 上沒有這種頁：門面在另一個 origin，連清單頁的箭頭都有去處（回門面），
+ * 所以那個建置的例外清單是空的。
  */
-const NO_BACK = new Set(['/', '/all']);
+const NO_BACK = CANVAS_BUILD ? new Set() : new Set(['/', '/all']);
 
 /*
  * 左上角那支箭頭該指向哪。回傳 `{ href, label }`，或 `null`＝這頁不畫。
