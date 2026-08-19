@@ -404,16 +404,18 @@ function ReadingDraft({ id }) {
       </p>
 
       <div className="prose-body mt-8 text-justify text-token-body leading-[1.85] text-ink">
-        {draft.pages.map((page, i) => (
-          <p key={i} className="mt-6 first:mt-0">
-            {page.bookPage ? (
-              <span className="mr-2 align-baseline text-token-xs tabular-nums text-ink-faint">
-                〔{page.bookPage}{page.bookPageStatus ? '推定' : ''}〕
-              </span>
-            ) : null}
-            {page.text}
-          </p>
-        ))}
+        {draft.pages.flatMap((page, i) =>
+          (page.paragraphs ?? [page.text]).map((para, j) => (
+            <p key={`${i}-${j}`} className="mt-6 first:mt-0">
+              {j === 0 && page.bookPage ? (
+                <span className="mr-2 align-baseline text-token-xs tabular-nums text-ink-faint">
+                  〔{page.bookPage}{page.bookPageStatus ? ' 推定' : ''}〕
+                </span>
+              ) : null}
+              {para}
+            </p>
+          )),
+        )}
       </div>
     </section>
   );
