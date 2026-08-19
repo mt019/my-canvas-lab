@@ -310,6 +310,9 @@ body {
 .prose-body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* 中西文之間的空隙由排版加，不由資料加——轉錄的正文要與原書逐字相同，複製走的也是原字。
+     與共用層 @phenomcanvas/ui 的 styles-base.css 同一條，說明寫在那邊。 */
+  text-autospace: normal;
 }
 
 .prose-body .font-accent {
