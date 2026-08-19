@@ -6,7 +6,6 @@
 import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { ROOT } from './site-config.mjs';
-import { ZJH_TAB_SLUGS } from '../src/pages/_zhu-jiahua/seo.js';
 import { localizedIndexRoutes } from '../src/lib/siteLanguages.js';
 
 const PAGES = join(ROOT, 'src', 'pages');
@@ -60,14 +59,6 @@ function tagSlugs() {
   }
 }
 
-function chenYinkeSelectionRoutes() {
-  try {
-    const d = JSON.parse(readFileSync(join(ROOT, 'src', 'data', 'chenYinke', 'liu-rushi-edition', 'reading-view.json'), 'utf8'));
-    return (d.selections || []).map((selection) => `/chenyinke/liu-rushi/${selection.id}`);
-  } catch {
-    return [];
-  }
-}
 
 export function collectRoutes() {
   const canvasBuild = process.env.VITE_DEPLOY_TARGET === 'canvas';
@@ -87,7 +78,5 @@ export function collectRoutes() {
       routes.add(route);
     }
   }
-  for (const slug of ZJH_TAB_SLUGS) routes.add(`/zhujiahua/${slug}`);
-  for (const route of chenYinkeSelectionRoutes()) routes.add(route);
   return localizedIndexRoutes([...routes]);
 }

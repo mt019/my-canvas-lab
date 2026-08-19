@@ -9,14 +9,6 @@
       "pastEvents": 99,
       "items": 243
     },
-    "src/data/chenYinke.json": {
-      "spotlight.questions": 4,
-      "spotlight.people": 4,
-      "spotlight.readingRoutes": 4,
-      "volumes": 7,
-      "methodPlan": 4,
-      "immediateNextWork": 4
-    },
     "src/data/ecfaResearch.json": {
       "datasets.timeline": 5,
       "datasets.eventTimeline": 14,
@@ -293,17 +285,6 @@
       "crossCheck.compare": 4,
       "crossCheck.synthesis": 3,
       "sources": 7
-    },
-    "src/data/zhuJiahua.json": {
-      "legalEducation.readingGuide": 5,
-      "legalEducation.items": 6,
-      "legalEducation.themes": 9,
-      "verifiedTexts": 7,
-      "initialResults": 3,
-      "researchQuestions": 3,
-      "tableOfContents.frontMatter": 3,
-      "tableOfContents.parts": 14,
-      "tableOfContents.items": 198
     }
   }
 }

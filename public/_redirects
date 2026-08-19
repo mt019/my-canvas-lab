@@ -1,0 +1,31 @@
+# 拆出去的站的舊網址。canvas 2026-08-16 起由 Cloudflare Pages 服務，vercel.json 的
+# routes 在這個平台上不生效——2026-08-20 實測 /constitutionalcourt 與 /familywealth
+# 都是 404，而那三個站的 308 在 vercel.json 裡寫得好好的。舊連結與搜尋結果因此一路
+# 掉到 404 頁。Pages 讀的是這一份。
+#
+# vercel.json 那幾條照舊留著：Vercel 專案在 provider-retirement.json 裡還是 observing。
+/constitutionalcourt      https://cc.phenomcanvas.com/constitutionalcourt/ 308
+/constitutionalcourt/*    https://cc.phenomcanvas.com/constitutionalcourt/:splat 308
+/familywealth             https://wealth.phenomcanvas.com/ 308
+/familywealth/*           https://wealth.phenomcanvas.com/ 308
+/jirsforeignlaw           https://judicial-translations.phenomcanvas.com/ 308
+/jirsforeignlaw/*         https://judicial-translations.phenomcanvas.com/ 308
+/legalglossary            https://judicial-translations.phenomcanvas.com/glossary/ 308
+/legalglossary/*          https://judicial-translations.phenomcanvas.com/glossary/ 308
+/clay                     https://clay.phenomcanvas.com/ 308
+/clay/*                   https://clay.phenomcanvas.com/:splat 308
+/mandarindialogue         https://mandarin.phenomcanvas.com/ 308
+/mandarindialogue/*       https://mandarin.phenomcanvas.com/:splat 308
+
+# 手記由 notes.phenomcanvas.com 服務，apex 的 /notes 走 apex worker 代理過去；
+# canvas 這個子網域上的舊連結轉到手記站自己的網址。
+/notes                    https://notes.phenomcanvas.com/notes/ 308
+/notes/*                  https://notes.phenomcanvas.com/notes/ 308
+
+# 2026-08-20 拆出去的三個 studies 專題。
+/zhujiahua                https://studies.phenomcanvas.com/zhujiahua/ 308
+/zhujiahua/*              https://studies.phenomcanvas.com/zhujiahua/ 308
+/chenyinke                https://studies.phenomcanvas.com/chenyinke/ 308
+/chenyinke/*              https://studies.phenomcanvas.com/chenyinke/ 308
+/tokugawa                 https://studies.phenomcanvas.com/tokugawa/ 308
+/tokugawa/*               https://studies.phenomcanvas.com/tokugawa/ 308

@@ -16,14 +16,8 @@ const body = routes.map((route) => {
   // encodeURI so justice routes (Chinese names) become valid, percent-encoded
   // URLs that match the canonical the app emits; ASCII routes pass through.
   const loc = `${SITE_URL}${route === '/' ? '/' : encodeURI(route)}`;
-  const priority = route === '/'
-    ? '1.0'
-    : route.startsWith('/zhujiahua/')
-      ? '0.9'
-      : route === '/zhujiahua'
-        ? '0.8'
-        : '0.7';
-  const changefreq = route.startsWith('/zhujiahua') ? 'monthly' : 'weekly';
+  const priority = route === '/' ? '1.0' : '0.7';
+  const changefreq = 'weekly';
   const alternates = languageAlternates(route)
     .filter((alternate) => alternate.hreflang !== 'x-default')
     .map((alternate) => `    <xhtml:link rel="alternate" hreflang="${alternate.hreflang}" href="${SITE_URL}${encodeURI(alternate.path)}" />`)

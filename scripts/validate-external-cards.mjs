@@ -9,9 +9,10 @@ import assert from 'node:assert/strict';
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { ROOT } from './site-config.mjs';
+import { readRedirects, redirectFor, deepRedirectFor } from './redirects.mjs';
 
 const app = readFileSync(join(ROOT, 'src', 'App.jsx'), 'utf8');
-const config = JSON.parse(readFileSync(join(ROOT, 'vercel.json'), 'utf8'));
+const redirects = readRedirects();
 
 const metaBlock = app.slice(app.indexOf('const PAGE_META'), app.indexOf('const HOME_VARS'));
 const withExternalUrl = new Map();
@@ -51,15 +52,17 @@ for (const name of stubs.keys()) {
   assert.equal(existsSync(file), false, `src/pages/${name}.jsx 又回到 canvas 了——現役副本在獨立站，改那邊`);
 }
 
-// 舊網址要有人接：不是 308 轉去獨立站，就是 rewrite 到現在的來源。
+// 舊網址要有人接：308 轉去獨立站。查的是 public/_redirects——Cloudflare Pages 讀那一份。
 for (const [name, path] of stubs) {
-  const rule = config.routes.find((r) => r.src === path);
-  assert.ok(rule, `vercel.json 沒有接住 ${path}（${name} 已經沒有本地頁面，舊連結會落到 index.html）`);
-  // Vercel 在 dest 自己不帶查詢字串時會保留原網址的 ?q=、?tab=，所以兩邊都要維持乾淨。
-  assert.equal(rule.dest.includes('?'), false, `${path} 的轉址目標帶了查詢字串，舊的 ?q= / ?tab= 會被吃掉`);
-  const deep = config.routes.find((r) => r.src === `${path}/(.*)`);
-  assert.ok(deep, `vercel.json 少了 ${path}/(.*)——內頁連結會落到 index.html`);
-  assert.equal(deep.dest.includes('?'), false, `${path}/(.*) 的轉址目標帶了查詢字串`);
+  const rule = redirectFor(redirects, path);
+  assert.ok(rule, `public/_redirects 沒有接住 ${path}（${name} 已經沒有本地頁面，舊連結會落到 404）`);
+  // 目的地自己不帶查詢字串時，原網址的 ?q=、?tab= 會被保留，所以兩邊都要維持乾淨。
+  assert.equal(rule.to.includes('?'), false, `${path} 的轉址目標帶了查詢字串，舊的 ?q= / ?tab= 會被吃掉`);
+  assert.equal(rule.status, '308', `${path} 應該是 308`);
+  const deep = deepRedirectFor(redirects, path);
+  assert.ok(deep, `public/_redirects 少了 ${path}/*——內頁連結會落到 404`);
+  assert.equal(deep.to.includes('?'), false, `${path}/* 的轉址目標帶了查詢字串`);
+  assert.equal(deep.status, '308', `${path}/* 應該是 308`);
 }
 
 console.log(

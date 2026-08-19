@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "prepare": "node scripts/install-git-hooks.mjs",
-    "verify:policy": "npm run validate:fonts && npm run validate:tokens && npm run validate:prose && npm run validate:colors && npm run validate:floating && npm run validate:copy && npm run validate:math && npm run validate:shell && npm run validate:publicpaths && npm run validate:abspaths && npm run validate:tabroutes && npm run validate:extcards && npm run validate:cachehdrs && npm run validate:cccutover && npm run validate:notescutover && npm run validate:userscripts && npm run validate:authurls && npm run validate:synced",
+    "verify:policy": "npm run validate:fonts && npm run validate:tokens && npm run validate:prose && npm run validate:colors && npm run validate:floating && npm run validate:copy && npm run validate:math && npm run validate:shell && npm run validate:publicpaths && npm run validate:abspaths && npm run validate:studiescutover && npm run validate:extcards && npm run validate:cachehdrs && npm run validate:cccutover && npm run validate:notescutover && npm run validate:userscripts && npm run validate:authurls && npm run validate:synced",
     "build": "npm run verify:policy && node scripts/build.mjs",
     "build:cloudflare": "node scripts/build-cloudflare.mjs",
     "verify:push": "npm run verify:policy",
@@ -35,7 +35,7 @@
     "preview": "vite preview",
     "validate:math": "node scripts/validate-math-notation.mjs",
     "check:brief": "node scripts/check-brief-pages.mjs",
-    "validate:tabroutes": "node scripts/validate-tab-routes.mjs",
+    "validate:studiescutover": "node scripts/validate-studies-cutover.mjs",
     "validate:extcards": "node scripts/validate-external-cards.mjs",
     "validate:cachehdrs": "node scripts/validate-vercel-cache-headers.mjs",
     "validate:cccutover": "node scripts/validate-constitutional-court-cutover.mjs",

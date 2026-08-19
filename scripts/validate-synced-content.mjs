@@ -40,16 +40,6 @@ const SMALL_ARRAY = 10;
 // 每條線：清單檔、它負責的正文目錄、以及前端檔案的行數上限。
 // 上限是「前端只負責畫」的可量化說法——真的需要更多行，那多半是有東西該搬回資料倉。
 const LINES = [
-  {
-    name: '陳寅恪研究室',
-    manifest: 'chenYinke.sync.json',
-    ownedDirs: [
-      { path: 'src/data/chenYinke', extensions: ['.json'] },
-      { path: 'public/chen-yinke/glyphs', extensions: ['.gif', '.png', '.webp'] },
-    ],
-    frontend: ['src/pages/ChenYinke.jsx', 'src/pages/_chen-yinke'],
-    maxFrontendLines: 650,
-  },
 ];
 
 const sha = (s) => createHash('sha256').update(s).digest('hex');

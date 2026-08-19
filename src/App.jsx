@@ -8,9 +8,6 @@ import FrontDoor from './components/FrontDoor';
 import AccountControl from './components/AccountControl';
 import BackLink from './components/BackLink';
 import { AuthProvider } from './personal-state/AuthProvider';
-import { ZJH_BASE_SEO, ZJH_TABS_SEO } from './pages/_zhu-jiahua/seo';
-import { CHEN_BASE_SEO, CHEN_SELECTIONS_SEO } from './lib/chenYinkeSeo';
-import { TOKUGAWA_TITLE, TOKUGAWA_DESC, TOKUGAWA_KEYWORDS, tokugawaSchema } from './pages/_tokugawa/seo';
 import { GLCT_KEYWORDS, GLCT_TITLE, GLCT_DESC, glctSchema } from './pages/_law-classics/seo';
 import { VT_KEYWORDS, VT_TITLE, VT_DESC, vtSchema } from './pages/_vocal-training/seo';
 import { USERSCRIPTS_KEYWORDS, USERSCRIPTS_TITLE, USERSCRIPTS_DESC, userscriptsSchema, scriptSeo, scriptSchema } from './pages/_userscripts/seo';
@@ -326,43 +323,6 @@ const PAGE_META = { // token-exempt: per-page identity chip colors (data, not st
     accentText: '#305878',
     group: 'analysis',
   },
-  ChenYinke: {
-    name: CHEN_BASE_SEO.name,
-    title: CHEN_BASE_SEO.title,
-    desc: CHEN_BASE_SEO.description,
-    Icon: BookMarked,
-    accent: '#eae4d6',
-    accentText: '#8a6d3b',
-    group: 'humanities',
-    keywords: CHEN_BASE_SEO.keywords,
-    type: CHEN_BASE_SEO.type,
-    buildSchema: CHEN_BASE_SEO.buildSchema,
-  },
-  Tokugawa: {
-    name: '德川日本入門',
-    title: TOKUGAWA_TITLE,
-    desc: '武士身分制、イエ與宗族的差別、三地時代對照帶，與從長崎出島到 1945 年的對外關係年表',
-    seoDesc: TOKUGAWA_DESC,
-    Icon: Castle,
-    accent: '#e8e0d4',
-    accentText: '#7a5f42',
-    group: 'humanities',
-    keywords: TOKUGAWA_KEYWORDS,
-    type: 'Article',
-    buildSchema: tokugawaSchema,
-  },
-  ZhuJiahua: {
-    name: '朱家驊研究室',
-    title: ZJH_BASE_SEO.title,
-    desc: ZJH_BASE_SEO.description,
-    Icon: ScrollText,
-    accent: '#e3edeb',
-    accentText: '#4c7971',
-    group: 'humanities',
-    keywords: ZJH_BASE_SEO.keywords,
-    type: ZJH_BASE_SEO.type,
-    buildSchema: ZJH_BASE_SEO.buildSchema,
-  },
   ManusMetaAcquisition: {
     name: 'Manus–Meta 跨境收購',
     desc: 'AI 新創退出、投資審查、技術管制與國際稅法案例剖析',
@@ -406,6 +366,33 @@ const PAGE_META = { // token-exempt: per-page identity chip colors (data, not st
     accentText: '#8f6071',
     group: 'empirical',
     externalUrl: 'https://cc.phenomcanvas.com/constitutionalcourt/',
+  },
+  ChenYinke: {
+    name: '陳寅恪《柳如是別傳》',
+    desc: '安靜的正文配按需顯影的解析，逐段細讀與人物、事件索引',
+    Icon: BookMarked,
+    accent: '#eae4d6',
+    accentText: '#8a6d3b',
+    group: 'humanities',
+    externalUrl: 'https://studies.phenomcanvas.com/chenyinke/',
+  },
+  Tokugawa: {
+    name: '德川日本入門',
+    desc: '武士身分制、イエ與宗族的差別、三地時代對照帶，與從長崎出島到 1945 年的對外關係年表',
+    Icon: Castle,
+    accent: '#e8e0d4',
+    accentText: '#7a5f42',
+    group: 'humanities',
+    externalUrl: 'https://studies.phenomcanvas.com/tokugawa/',
+  },
+  ZhuJiahua: {
+    name: '朱家驊研究室',
+    desc: '《朱家驊先生言論集》全書 198 篇篇目與讀稿，法律教育六篇附人工逐頁校訂全文',
+    Icon: ScrollText,
+    accent: '#e3edeb',
+    accentText: '#4c7971',
+    group: 'humanities',
+    externalUrl: 'https://studies.phenomcanvas.com/zhujiahua/',
   },
   IiasPublications: {
     name: '中研院法研所出版品',
@@ -629,6 +616,27 @@ export default function App() {
         component: null,
         meta: PAGE_META.Notes,
       },
+      // 2026-08-16 拆到 studies.phenomcanvas.com 的三個專題。本倉的頁面與資料
+      // 2026-08-20 刪除，舊網址的 308 在 public/_redirects，檔案不得回來由
+      // validate-studies-cutover.mjs 看守。
+      {
+        name: 'ChenYinke',
+        path: '/chenyinke',
+        component: null,
+        meta: PAGE_META.ChenYinke,
+      },
+      {
+        name: 'Tokugawa',
+        path: '/tokugawa',
+        component: null,
+        meta: PAGE_META.Tokugawa,
+      },
+      {
+        name: 'ZhuJiahua',
+        path: '/zhujiahua',
+        component: null,
+        meta: PAGE_META.ZhuJiahua,
+      },
       {
         name: 'JirsForeignLaw',
         path: '/jirsforeignlaw',
@@ -699,8 +707,6 @@ export default function App() {
               <Route key={path} path={path} element={<PageRoute route={route} />} />
             ))
           )}
-          <Route path="/zhujiahua/:zhuTab" element={<ZhuJiahuaTabRoute routes={routes} />} />
-          <Route path="/chenyinke/liu-rushi/:selectionId" element={<ChenYinkeSelectionRoute routes={routes} />} />
         </Routes>
         </Suspense>
         <BackToTop />
@@ -709,36 +715,7 @@ export default function App() {
   );
 }
 
-function ChenYinkeSelectionRoute({ routes }) {
-  const { selectionId } = useParams();
-  const seo = CHEN_SELECTIONS_SEO[selectionId];
-  const chen = routes.find((route) => route.name === 'ChenYinke');
-  if (!seo || !chen) return <Navigate to="/chenyinke" replace />;
-  const page = {
-    ...seo,
-    parent: { name: CHEN_BASE_SEO.name, path: '/chenyinke' },
-  };
-  const Page = chen.component;
-  return <><SeoHead page={page} /><Page forcedSelection={selectionId} /></>;
-}
 
-function ZhuJiahuaTabRoute({ routes }) {
-  const { zhuTab } = useParams();
-  const seo = ZJH_TABS_SEO[zhuTab];
-  const zhu = routes.find((route) => route.name === 'ZhuJiahua');
-  if (!seo || !zhu) return <Navigate to="/zhujiahua" replace />;
-  const page = {
-    name: seo.name,
-    title: seo.title,
-    description: seo.description,
-    type: seo.type,
-    keywords: seo.keywords,
-    buildSchema: seo.buildSchema,
-    parent: { name: '朱家驊研究室', path: '/zhujiahua' },
-  };
-  const Page = zhu.component;
-  return <><SeoHead page={page} /><Page forcedTab={seo.tab} forcedText={seo.textId} /></>;
-}
 
 function PageRoute({ route }) {
   const { pathname } = useLocation();

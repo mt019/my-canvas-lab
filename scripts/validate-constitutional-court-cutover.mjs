@@ -7,9 +7,10 @@ import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { ROOT } from './site-config.mjs';
 import { collectRoutes } from './routes.mjs';
+import { readRedirects, redirectFor, deepRedirectFor } from './redirects.mjs';
 
 const app = readFileSync(join(ROOT, 'src', 'App.jsx'), 'utf8');
-const config = JSON.parse(readFileSync(join(ROOT, 'vercel.json'), 'utf8'));
+const redirects = readRedirects();
 const routes = collectRoutes();
 
 assert.match(app, /externalUrl:\s*'https:\/\/cc\.phenomcanvas\.com\/constitutionalcourt\/'/);
@@ -38,31 +39,20 @@ for (const rel of 不得存在) {
   assert.equal(existsSync(join(ROOT, rel)), false, `${rel} 又回到 canvas 了——憲法法庭的現役副本在 phenom-court，改那邊`);
 }
 
-// 按 src 找，不按位置取。原本寫的是 `const [exact, deep] = config.routes`，於是 2026-08-02
-// 在前面插兩條設快取標頭的路由就把這支弄紅了——它報的是「第一條不是憲法法庭」，而那不是
-// 它要守的東西。位置是別人的自由，src 才是這支的契約。
-const byExactSrc = (src) => {
-  const found = config.routes.filter((route) => route.src === src);
-  assert.equal(found.length, 1, `vercel.json 裡 src 為 ${src} 的路由應該剛好一條，實際 ${found.length} 條`);
-  return found[0];
-};
-const exact = byExactSrc('/constitutionalcourt');
-const deep = byExactSrc('/constitutionalcourt/(.*)');
-assert.deepEqual(exact, {
-  src: '/constitutionalcourt',
-  dest: 'https://cc.phenomcanvas.com/constitutionalcourt/',
-  status: 308,
-});
-assert.deepEqual(deep, {
-  src: '/constitutionalcourt/(.*)',
-  dest: 'https://cc.phenomcanvas.com/constitutionalcourt/$1',
-  status: 308,
-});
+// 轉址查 public/_redirects：canvas 由 Cloudflare Pages 服務，Pages 讀的是那一份。
+// 先前這裡查的是 vercel.json，於是 2026-08-20 實測線上 /constitutionalcourt 回 404
+// 而這支照樣綠——它驗的設定檔在這個部署平台不生效。
+const exact = redirectFor(redirects, '/constitutionalcourt');
+const deep = deepRedirectFor(redirects, '/constitutionalcourt');
+assert.ok(exact, 'public/_redirects 少了 /constitutionalcourt');
+assert.ok(deep, 'public/_redirects 少了 /constitutionalcourt/*');
+assert.equal(exact.to, 'https://cc.phenomcanvas.com/constitutionalcourt/');
+assert.equal(exact.status, '308');
+assert.equal(deep.to, 'https://cc.phenomcanvas.com/constitutionalcourt/:splat');
+assert.equal(deep.status, '308');
 
-// Vercel preserves an incoming query string when a redirect destination does
-// not replace it. Keeping both destinations query-free is therefore part of the
-// contract for old search/filter links such as ?q= and ?tab=.
-assert.equal(exact.dest.includes('?'), false);
-assert.equal(deep.dest.includes('?'), false);
+// 目的地自己不帶查詢字串時，原網址的 ?q=、?tab= 會被保留，所以兩邊都要維持乾淨。
+assert.equal(exact.to.includes('?'), false);
+assert.equal(deep.to.includes('?'), false);
 
 console.log(`constitutional court cutover ok: /all → standalone; 0 local routes among ${routes.length}; ${不得存在.length} 個舊路徑確認不存在; exact/deep 308 redirects preserve query strings`);

@@ -12,7 +12,7 @@
 // 出非 0，會在這裡被看見而不是被吞掉。
 //
 // 每支閘的違規做法：能用「造一個全新的臨時檔」就不去動已入版控的檔案；不得不動
-// 既有檔案時（tokens.css 的色票、App.jsx 的 stub、ZhuJiahua.jsx 的連結、
+// 既有檔案時（tokens.css 的色票、App.jsx 的 stub、
 // userscripts.json 的版號……），一律先讀原始位元組存起來，跑完立刻寫回去，
 // try/finally 保證中途出例外也會還原。
 //
@@ -157,15 +157,6 @@ const cases = [
     setup: () =>
       editedFile('docs/domain-migration.md', (src) =>
         `${src}\n<!-- validator test: ${['', 'Users', 'testuser', 'Documents', 'example'].join('/')} -->\n`,
-      ),
-  },
-  {
-    npmScript: 'validate:tabroutes',
-    script: 'scripts/validate-tab-routes.mjs',
-    // 加一個 ZhuJiahua 頁面裡的 /zhujiahua/<slug> 字面連結，該 slug 在 SEO 表裡不存在。
-    setup: () =>
-      editedFile('src/pages/ZhuJiahua.jsx', (src) =>
-        `${src}\n// validator test literal: '/zhujiahua/__validator_bogus_slug'\n`,
       ),
   },
   {

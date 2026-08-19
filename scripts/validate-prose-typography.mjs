@@ -24,11 +24,6 @@ const SCALE = new Map([
 
 // 只此一處的例外：檔案 → 值 → 理由。
 const EXCEPTIONS = [
-  {
-    file: 'src/pages/Tokugawa.jsx',
-    value: '2.2',
-    why: '術語表的詞欄帶假名 ruby，行高要留得下標在字頭上的那一行',
-  },
 ];
 
 function walk(dir) {

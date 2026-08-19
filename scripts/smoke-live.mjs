@@ -42,7 +42,6 @@ const MISSING_PATH = '/__smoke_probe_this_route_does_not_exist';
 const PAGES = [
   { path: '/', marker: 'Phenom Canvas Lab', sameAsShell: true, why: '首頁本身就是那份外殼，只驗根節點有內容' },
   { path: '/taxlitigation', marker: '稅務訴訟計量研究' },
-  { path: '/chenyinke', marker: '柳如是別傳' },
   { path: '/vocaltraining', marker: 'Metastasio' },
   // 這條走 vercel.json 的代理，實際內容在 Cloudflare Pages 上（phenom-notes.pages.dev）。
   // 跨主機的依賴最容易在沒人注意的時候斷掉，所以放進來。
