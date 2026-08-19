@@ -18,8 +18,10 @@ export default function SearchField({
   return (
     <div className={`relative min-w-0 ${className}`}>
       <Search size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-faint" />
+      {/* type="search" 會讓 Safari 與 Chrome 各自畫一個清除鈕，和下面那顆疊成兩個叉。
+          清除鈕我們自己畫（要對得上站上的字級與顏色），所以這裡用 text。 */}
       <input
-        type="search"
+        type="text"
         value={value}
         onChange={(event) => onChange(event.target.value)}
         placeholder={placeholder}

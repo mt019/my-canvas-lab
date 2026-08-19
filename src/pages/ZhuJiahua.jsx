@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { Fragment, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import Eyebrow from '../components/Eyebrow';
@@ -376,8 +376,79 @@ function OriginalText({ textId }) {
   );
 }
 
-/* 未校讀稿：辨讀底稿切出來的正文，一頁一段並標原書頁碼。狀態、字錯率與缺頁寫在正文上方，
-   讀者一眼看得到手上這份是什麼。校訂完成的篇不走這裡，走 OriginalText。 */
+/* 原書的頁碼標在正文左側的溝裡。原書靠分頁換頁，不靠分頁分段，所以正文按原書自己的
+   段落連續排下去，頁碼只是這一頁從哪個字起的記號（資料層 pageBreaks 的字元位置）。
+   窄螢幕沒有溝，改成行間的小記號，不佔正文的寬度。 */
+function PageMark({ mark }) {
+  const label = `${mark.bookPage}${mark.status ? ' 推定' : ''}`;
+  return (
+    <>
+      <span data-page-anchor="">
+        {'\u200b'}
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute -left-14 hidden w-12 pr-2 text-right text-token-xs tabular-nums text-ink-faint lg:block"
+        >
+          {label}
+        </span>
+      </span>
+      <span className="mx-1 align-baseline text-token-xs tabular-nums text-ink-faint lg:hidden">〔{label}〕</span>
+    </>
+  );
+}
+
+function DraftBody({ draft }) {
+  const bodyRef = useRef(null);
+
+  const byPara = useMemo(() => {
+    const map = new Map();
+    for (const mark of draft.pageBreaks ?? []) {
+      map.set(mark.para, [...(map.get(mark.para) ?? []), mark]);
+    }
+    for (const list of map.values()) list.sort((a, b) => a.offset - b.offset);
+    return map;
+  }, [draft]);
+
+  /* 頁碼在段落裡的哪一行，取決於字級與欄寬，換行的位置算不出來——量了才知道。
+     段落是 relative，標記絕對定位在它的左外側，這裡只設垂直位置。 */
+  useLayoutEffect(() => {
+    const root = bodyRef.current;
+    if (!root) return undefined;
+    const place = () => {
+      for (const anchor of root.querySelectorAll('[data-page-anchor]')) {
+        const label = anchor.firstElementChild;
+        const paragraph = anchor.closest('p');
+        if (!label || !paragraph) continue;
+        label.style.top = `${anchor.getBoundingClientRect().top - paragraph.getBoundingClientRect().top}px`;
+      }
+    };
+    place();
+    const observer = new ResizeObserver(place);
+    observer.observe(root);
+    return () => observer.disconnect();
+  }, [draft]);
+
+  return (
+    <div ref={bodyRef} className="prose-body mt-8 text-justify text-token-body leading-[1.85] text-ink lg:pl-14">
+      {draft.paragraphs.map((text, index) => {
+        const marks = byPara.get(index) ?? [];
+        const parts = [];
+        let cut = 0;
+        marks.forEach((mark, k) => {
+          if (mark.offset > cut) parts.push(<Fragment key={`t${k}`}>{text.slice(cut, mark.offset)}</Fragment>);
+          parts.push(<PageMark key={`p${k}`} mark={mark} />);
+          cut = mark.offset;
+        });
+        parts.push(<Fragment key="tail">{text.slice(cut)}</Fragment>);
+        return <p key={index} className="relative mt-6 first:mt-0">{parts}</p>;
+      })}
+    </div>
+  );
+}
+
+/* 未校讀稿：辨讀底稿切出來的正文。狀態、字錯率與缺頁收成正文上方的一行小字，
+   要看細節才展開——讀者來這一頁是要讀言論，不是要讀這份稿的體例。
+   校訂完成的篇不走這裡，走 OriginalText。 */
 function ReadingDraft({ id }) {
   const [draft, setDraft] = useState(null);
   const [failed, setFailed] = useState(false);
@@ -398,27 +469,21 @@ function ReadingDraft({ id }) {
   if (!draft) return <p className="mt-10 text-token-sm text-ink-faint">讀稿載入中⋯</p>;
 
   return (
-    <section className="mt-10 border-t border-line pt-8">
-      <Eyebrow>未校辨讀稿</Eyebrow>
-      <p className="mt-2 max-w-2xl text-token-sm leading-relaxed text-ink-muted">
-        以下正文由全書掃描件的機器辨讀稿切出，未經逐字人工校訂。以複核過的七篇（32 頁、20,828 字）
-        為量尺，辨讀稿有 26 處與原書不符，合 0.125%；引用前請核對原書。{draft.missingNote ? `${draft.missingNote}` : ''}
-      </p>
+    <section className="mt-10 border-t border-line pt-6">
+      <details className="text-token-sm text-ink-faint">
+        <summary className="cursor-pointer list-none marker:content-none">
+          <span className="border-b border-line-soft pb-0.5 hover:border-accent hover:text-accent">
+            未校辨讀稿・字錯率 0.125%{draft.missingBookPages?.length ? `・缺原書第 ${draft.missingBookPages.join('、')} 頁` : ''}
+          </span>
+        </summary>
+        <p className="mt-3 max-w-2xl leading-relaxed text-ink-muted">
+          {draft.statusNote}
+          {draft.missingNote ? `${draft.missingNote}` : ''}
+          原書的分頁不分段：正文依原書自己的段落排，頁碼標在該頁起始的那一行左側。
+        </p>
+      </details>
 
-      <div className="prose-body mt-8 text-justify text-token-body leading-[1.85] text-ink">
-        {draft.pages.flatMap((page, i) =>
-          (page.paragraphs ?? [page.text]).map((para, j) => (
-            <p key={`${i}-${j}`} className="mt-6 first:mt-0">
-              {j === 0 && page.bookPage ? (
-                <span className="mr-2 align-baseline text-token-xs tabular-nums text-ink-faint">
-                  〔{page.bookPage}{page.bookPageStatus ? ' 推定' : ''}〕
-                </span>
-              ) : null}
-              {para}
-            </p>
-          )),
-        )}
-      </div>
+      <DraftBody draft={draft} />
     </section>
   );
 }
@@ -445,23 +510,32 @@ function TocEntry({ item }) {
   ];
 
   return (
-    /* 篇名、日期與出處由外殼的抬頭負責，這裡不重印一次（與 OriginalText 同）。 */
+    /* 篇名、日期與出處由外殼的抬頭負責，這裡不重印一次（與 OriginalText 同）。
+       出處與校訂狀態收進可展開的一行：讀者來這一頁是要讀正文，屬性表擺在正文之前
+       會把正文推到一屏以下。 */
     <article className="max-w-3xl">
-      <dl className="divide-y divide-line-soft border-y border-line">
-        {facts.map(([term, value]) => (
-          <div key={term} className="grid gap-1 py-3 sm:grid-cols-[7rem_1fr] sm:gap-6">
-            <dt className="text-token-sm text-ink-muted">{term}</dt>
-            <dd className="text-token-body tabular-nums">{value}</dd>
-          </div>
-        ))}
-      </dl>
-
-      {item.note ? <p className="mt-5 text-token-sm leading-relaxed text-ink-muted">{item.note}</p> : null}
-
-      <p className="mt-8 text-token-body leading-[1.85] text-ink-muted">
-        本篇的篇名、日期與起頁依原書目次逐欄核對；正文尚未逐頁人工校訂，下方是機器辨讀稿。
-        全書已完成逐頁校訂的是 {TOC.readableCount} 篇。{TOC.pageNote}
-      </p>
+      <details className="text-token-sm text-ink-faint">
+        <summary className="cursor-pointer list-none marker:content-none">
+          <span className="border-b border-line-soft pb-0.5 hover:border-accent hover:text-accent">
+            原書第 {item.bookEndPage && item.bookEndPage !== item.bookStartPage
+              ? `${item.bookStartPage}–${item.bookEndPage}`
+              : item.bookStartPage} 頁・{item.part}・第 {index + 1} 篇，共 {TOC.itemCount} 篇
+          </span>
+        </summary>
+        <dl className="mt-4 divide-y divide-line-soft border-y border-line">
+          {facts.map(([term, value]) => (
+            <div key={term} className="grid gap-1 py-3 sm:grid-cols-[7rem_1fr] sm:gap-6">
+              <dt className="text-ink-muted">{term}</dt>
+              <dd className="text-token-body tabular-nums text-ink">{value}</dd>
+            </div>
+          ))}
+        </dl>
+        {item.note ? <p className="mt-4 leading-relaxed text-ink-muted">{item.note}</p> : null}
+        <p className="mt-3 leading-relaxed text-ink-muted">
+          本篇的篇名、日期與起頁依原書目次逐欄核對；正文尚未逐頁人工校訂，下方是機器辨讀稿。
+          全書已完成逐頁校訂的是 {TOC.readableCount} 篇。{TOC.pageNote}
+        </p>
+      </details>
 
       <ReadingDraft id={item.id} />
 
