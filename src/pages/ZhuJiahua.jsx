@@ -350,7 +350,9 @@ function OriginalText({ textId }) {
 
       <footer className="mt-12 border-t border-line pt-6">
         <p className="text-token-sm leading-relaxed text-ink-muted">
-          本文依《朱家驊先生言論集》原頁校訂，保留原書用字。字形有疑之處與分段依據另有校訂記錄。
+          本文依《朱家驊先生言論集》原頁轉錄，保留原書用字。2026-08-19 以全書辨讀稿逐字對照，
+          已回原頁圖確認七處與原書不符（原書 305 頁「却又不多」此稿作「亦復不多」等），全部差異尚未複核完，
+          狀態列為待複核；引用前請核對原書。
         </p>
         <nav className="mt-8 grid gap-4 border-t border-line-soft pt-6 sm:grid-cols-2">
           {previous ? (
