@@ -27,6 +27,11 @@ const TEXT_PATH = Object.fromEntries(TEXTS.map(({ id, slug }) => [id, `/zhujiahu
 const TEXT_BY_ID = Object.fromEntries(data.verifiedTexts.map((text) => [text.id, text]));
 const ITEM_BY_ID = Object.fromEntries(data.legalEducation.items.map((item) => [item.id, item]));
 
+/* 198 篇未校讀稿一篇一檔，按需載入：全部塞進 bundle 會讓 /zhujiahua 一開就拉五十幾萬字。
+   來源是全書辨讀底稿（資料倉 build-reading-drafts.mjs），校訂完成的篇以校訂稿為準。 */
+const DRAFT_MODULES = import.meta.glob('../data/zhuJiahua/drafts/ZJH-*.json');
+const draftLoader = (id) => DRAFT_MODULES[`../data/zhuJiahua/drafts/${id}.json`];
+
 const TOC = data.tableOfContents;
 const TOC_ITEM_BY_ID = Object.fromEntries(TOC.items.map((item) => [item.id, item]));
 
@@ -144,7 +149,7 @@ function Catalog() {
           全書 {TOC.itemCount} 篇，依原書篇次
         </SectionHead>
         <p className="mt-4 max-w-3xl text-token-body leading-[1.85] text-ink-muted">
-          篇名、日期與起頁依原書目次逐欄核對。各篇題下的場合與訖頁另從全書辨讀稿抽出，尚未逐頁核對原頁圖，標為待核，印在單篇頁面上。{TOC.readableCount} 篇已完成逐頁人工校訂，篇名可點進全文；其餘只列篇目。{TOC.pageNote}
+          篇名、日期與起頁依原書目次逐欄核對。各篇題下的場合與訖頁另從全書辨讀稿抽出，尚未逐頁核對原頁圖，標為待核，印在單篇頁面上。{TOC.readableCount} 篇已完成逐頁人工校訂，篇名可點進全文；其餘各篇附機器辨讀稿，標為未校。{TOC.pageNote}
         </p>
       </section>
 
@@ -369,6 +374,51 @@ function OriginalText({ textId }) {
   );
 }
 
+/* 未校讀稿：辨讀底稿切出來的正文，一頁一段並標原書頁碼。狀態、字錯率與缺頁寫在正文上方，
+   讀者一眼看得到手上這份是什麼。校訂完成的篇不走這裡，走 OriginalText。 */
+function ReadingDraft({ id }) {
+  const [draft, setDraft] = useState(null);
+  const [failed, setFailed] = useState(false);
+
+  useEffect(() => {
+    let live = true;
+    const load = draftLoader(id);
+    if (!load) { setFailed(true); return undefined; }
+    setDraft(null);
+    setFailed(false);
+    load()
+      .then((mod) => { if (live) setDraft(mod.default ?? mod); })
+      .catch(() => { if (live) setFailed(true); });
+    return () => { live = false; };
+  }, [id]);
+
+  if (failed) return null;
+  if (!draft) return <p className="mt-10 text-token-sm text-ink-faint">讀稿載入中⋯</p>;
+
+  return (
+    <section className="mt-10 border-t border-line pt-8">
+      <Eyebrow>未校辨讀稿</Eyebrow>
+      <p className="mt-2 max-w-2xl text-token-sm leading-relaxed text-ink-muted">
+        以下正文由全書掃描件的機器辨讀稿切出，未經逐字人工校訂。量尺三頁上的總字錯率 0.70%、
+        認錯率 0.25%，引用前請核對原書。{draft.missingNote ? `${draft.missingNote}` : ''}
+      </p>
+
+      <div className="prose-body mt-8 text-justify text-token-body leading-[1.85] text-ink">
+        {draft.pages.map((page, i) => (
+          <p key={i} className="mt-6 first:mt-0">
+            {page.bookPage ? (
+              <span className="mr-2 align-baseline text-token-xs tabular-nums text-ink-faint">
+                〔{page.bookPage}{page.bookPageStatus ? '推定' : ''}〕
+              </span>
+            ) : null}
+            {page.text}
+          </p>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 /* 尚未校訂的 191 篇：目次知道的每一件事都在這裡，並直說全文還沒有。
    不給這些篇各自的網址（見下方 hrefOf 的說明），所以這一頁是 /zhujiahua?item=<id>。 */
 function TocEntry({ item }) {
@@ -405,9 +455,11 @@ function TocEntry({ item }) {
       {item.note ? <p className="mt-5 text-token-sm leading-relaxed text-ink-muted">{item.note}</p> : null}
 
       <p className="mt-8 text-token-body leading-[1.85] text-ink-muted">
-        本篇尚未校訂全文。篇名、日期與起頁依原書目次逐欄核對，正文仍只存在於原書影像；
-        目前已完成逐頁人工校訂的是 {TOC.readableCount} 篇。{TOC.pageNote}
+        本篇的篇名、日期與起頁依原書目次逐欄核對；正文尚未逐頁人工校訂，下方是機器辨讀稿。
+        全書已完成逐頁校訂的是 {TOC.readableCount} 篇。{TOC.pageNote}
       </p>
+
+      <ReadingDraft id={item.id} />
 
       <nav className="mt-10 grid gap-4 border-t border-line pt-6 sm:grid-cols-2">
         {previous ? (
