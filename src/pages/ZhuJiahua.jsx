@@ -351,8 +351,8 @@ function OriginalText({ textId }) {
       <footer className="mt-12 border-t border-line pt-6">
         <p className="text-token-sm leading-relaxed text-ink-muted">
           本文依《朱家驊先生言論集》原頁轉錄，保留原書用字。2026-08-19 以全書辨讀稿逐字對照，
-          已回原頁圖確認七處與原書不符（原書 305 頁「却又不多」此稿作「亦復不多」等），全部差異尚未複核完，
-          狀態列為待複核；引用前請核對原書。
+          差異逐處回原頁圖判讀，七篇合計改正十九處（原書 305 頁此稿舊作「亦復不多」，原書印的是「却又不多」），
+          各篇改了哪幾處記在單篇頁面的狀態說明裡。
         </p>
         <nav className="mt-8 grid gap-4 border-t border-line-soft pt-6 sm:grid-cols-2">
           {previous ? (
@@ -401,8 +401,8 @@ function ReadingDraft({ id }) {
     <section className="mt-10 border-t border-line pt-8">
       <Eyebrow>未校辨讀稿</Eyebrow>
       <p className="mt-2 max-w-2xl text-token-sm leading-relaxed text-ink-muted">
-        以下正文由全書掃描件的機器辨讀稿切出，未經逐字人工校訂。量尺三頁上的總字錯率 0.70%、
-        認錯率 0.25%，引用前請核對原書。{draft.missingNote ? `${draft.missingNote}` : ''}
+        以下正文由全書掃描件的機器辨讀稿切出，未經逐字人工校訂。以複核過的七篇（32 頁、20,828 字）
+        為量尺，辨讀稿有 26 處與原書不符，合 0.125%；引用前請核對原書。{draft.missingNote ? `${draft.missingNote}` : ''}
       </p>
 
       <div className="prose-body mt-8 text-justify text-token-body leading-[1.85] text-ink">
