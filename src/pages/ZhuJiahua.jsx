@@ -144,7 +144,7 @@ function Catalog() {
           全書 {TOC.itemCount} 篇，依原書篇次
         </SectionHead>
         <p className="mt-4 max-w-3xl text-token-body leading-[1.85] text-ink-muted">
-          篇名、日期與起頁依原書目次逐欄核對。{TOC.readableCount} 篇已完成逐頁人工校訂，篇名可點進全文；其餘只列篇目。{TOC.pageNote}
+          篇名、日期與起頁依原書目次逐欄核對。各篇題下的場合與訖頁另從全書辨讀稿抽出，尚未逐頁核對原頁圖，標為待核，印在單篇頁面上。{TOC.readableCount} 篇已完成逐頁人工校訂，篇名可點進全文；其餘只列篇目。{TOC.pageNote}
         </p>
       </section>
 
@@ -376,9 +376,16 @@ function TocEntry({ item }) {
   const previous = index > 0 ? TOC.items[index - 1] : null;
   const next = index >= 0 && index < TOC.items.length - 1 ? TOC.items[index + 1] : null;
 
+  /* 起訖頁與場合抽自辨讀稿、尚未逐頁核對原頁圖，值後面帶「待核」；共頁的篇在頁碼後註明，
+     否則兩篇各印同一個頁碼，讀者會以為其中一個是錯的。 */
+  const extent = item.bookEndPage && item.bookEndPage !== item.bookStartPage
+    ? `${item.bookStartPage}–${item.bookEndPage}${item.sharesEndPage ? '（末頁與次篇接排）' : ''}　待核`
+    : String(item.bookStartPage);
   const facts = [
-    ['原書起頁', String(item.bookStartPage)],
+    [item.bookEndPage ? '原書起訖頁' : '原書起頁', extent],
+    ...(item.occasion ? [['場合', `${item.occasion}　${item.occasionStatus || '待核'}`]] : []),
     ['原文日期', item.date || '原書未載'],
+    ...(item.dateInText ? [['正文題下日期', `${item.dateInText}　${item.dateInTextStatus || '待核'}`]] : []),
     ['所屬部次', [item.part, item.section, item.subsection].filter(Boolean).join('／')],
     ['全書篇次', `第 ${index + 1} 篇，共 ${TOC.itemCount} 篇`],
   ];
