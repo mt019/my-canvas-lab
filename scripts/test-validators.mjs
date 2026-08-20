@@ -189,6 +189,15 @@ const cases = [
       }),
   },
   {
+    npmScript: 'validate:extcards',
+    label: 'validate:extcards（拆走的資料檔回來了）',
+    script: 'scripts/validate-external-cards.mjs',
+    // 同一支閘的第二種故障：頁面刪乾淨了，資料檔卻回到本倉。資料倉的 sync 若還留著 canvas
+    // 這個落點，每次更新都寫一份進來，本倉的驗證照樣全綠，而讀者看到的獨立站一個字都沒動
+    // ——三個 studies 專題 2026-08-19 到 08-20 就是這樣掉的。
+    setup: () => tempFile('src/data/iiasPublications.json', '{}\n'),
+  },
+  {
     npmScript: 'validate:cachehdrs',
     script: 'scripts/validate-vercel-cache-headers.mjs',
     // 把死設定（頂層 headers）加回去。這正是 2026-08-02 掛了一整天沒人發現的那個長相：
