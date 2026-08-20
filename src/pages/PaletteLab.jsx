@@ -12,6 +12,8 @@ import {
   tokensSnippet,
 } from '../styles/palettes.js';
 import { POLLUTANT_TONES, SECTION_TONES, SEGMENT_FILLS } from '../styles/tone-candidates.js';
+import { BANDS, hexToOklch, oklchToHex, outOfBand } from '@phenomcanvas/ui/oklch';
+import Principles from './_palette-lab/Principles.jsx';
 import BackLink from '../components/BackLink';
 import SiteHomeEyebrow from '../components/SiteHomeEyebrow';
 
@@ -26,41 +28,6 @@ import SiteHomeEyebrow from '../components/SiteHomeEyebrow';
  * 標籤（淡底＋深墨色文字，不是實色色塊），never 一次擺三種色相互相撞色——pop／撞色在
  * 這個站的規矩本來就是「一畫面最多一處」，測驗不該逼使用者一次看三色打架。
  */
-
-// hex → OKLCH，正向轉換（跟下面 tagTones 用的反向轉換矩陣同源），只用來幫 PALETTES
-// 裡的真實色碼標色相角度/飽和度，好分組跟計分，不用來生成任何新顏色。
-function hexToOklch(hex) {
-  const h = hex.replace('#', '');
-  const [r, g, b] = [0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16) / 255);
-  const s2lin = (c) => (c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4);
-  const [rl, gl, bl] = [r, g, b].map(s2lin);
-  const l = Math.cbrt(0.4122214708 * rl + 0.5363325363 * gl + 0.0514459929 * bl);
-  const m = Math.cbrt(0.2119034982 * rl + 0.6806995451 * gl + 0.1073969566 * bl);
-  const s = Math.cbrt(0.0883024619 * rl + 0.2817188376 * gl + 0.6299787005 * bl);
-  const L = 0.2104542553 * l + 0.7936177850 * m - 0.0040720468 * s;
-  const a = 1.9779984951 * l - 2.4285922050 * m + 0.4505937099 * s;
-  const bb = 0.0259040371 * l + 0.7827717662 * m - 0.8086757660 * s;
-  const C = Math.hypot(a, bb);
-  const H = ((Math.atan2(bb, a) * 180) / Math.PI + 360) % 360;
-  return { L, C, H };
-}
-
-// OKLCH → sRGB hex（反向），只用來把某個真實色相的「淡底色」算出來——不生成 ink。
-function oklchToHex(L, C, hueDeg) {
-  const hr = (hueDeg * Math.PI) / 180;
-  const a = C * Math.cos(hr);
-  const b = C * Math.sin(hr);
-  const l_ = L + 0.3963377774 * a + 0.2158037573 * b;
-  const m_ = L - 0.1055613458 * a - 0.0638541728 * b;
-  const s_ = L - 0.0894841775 * a - 1.2914855480 * b;
-  const l = l_ ** 3, m = m_ ** 3, s = s_ ** 3;
-  const r = 4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s;
-  const g = -1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s;
-  const bl = -0.0041960863 * l - 0.7034186147 * m + 1.7076147010 * s;
-  const gamma = (c) => { const cc = Math.max(0, Math.min(1, c)); return cc <= 0.0031308 ? 12.92 * cc : 1.055 * cc ** (1 / 2.4) - 0.055; };
-  const toHex = (c) => Math.round(Math.max(0, Math.min(1, gamma(c))) * 255).toString(16).padStart(2, '0');
-  return `#${toHex(r)}${toHex(g)}${toHex(bl)}`;
-}
 
 // Notion 風格標籤色：ink 是真實色票原色（不動），bg 是同色相算出來的極淡底
 function tagTones(hex) {
@@ -426,11 +393,6 @@ function TasteQuiz() {
  * 算 OKLCH 並對照 validate-color-system.mjs 的帶寬，超標的直接標出來。沒有這一欄的話，
  * 「好不好看」與「進不進得了系統」會被混為一談：這 18 對好看，但有四處超標。
  */
-const BANDS = { txL: [0.46, 0.58], txC: [0.045, 0.13], bgL: [0.90, 0.97], bgC: [0, 0.035] };
-
-function outOfBand(v, [lo, hi]) {
-  return v < lo || v > hi;
-}
 
 function ToneRow({ name, bg, ink }) {
   const B = hexToOklch(bg);
@@ -591,7 +553,7 @@ export default function PaletteLab() {
         </p>
 
         <div className="mt-5 inline-flex rounded-md border p-0.5" style={{ borderColor: 'var(--pl-line)' }}>
-          {[['browse', '試穿色票'], ['tones', '分類色候選'], ['quiz', '品味測驗']].map(([id, label]) => (
+          {[['browse', '試穿色票'], ['tones', '分類色候選'], ['principles', '配色原理'], ['quiz', '品味測驗']].map(([id, label]) => (
             <button
               key={id}
               onClick={() => setMode(id)}
@@ -606,7 +568,11 @@ export default function PaletteLab() {
           ))}
         </div>
 
-        {mode === 'quiz' ? (
+        {mode === 'principles' ? (
+          <div className="mt-8">
+            <Principles />
+          </div>
+        ) : mode === 'quiz' ? (
           <div className="mt-8 rounded-lg border p-6 sm:p-8" style={{ borderColor: 'var(--pl-line)', background: 'var(--pl-surface)' }}>
             <TasteQuiz />
           </div>
