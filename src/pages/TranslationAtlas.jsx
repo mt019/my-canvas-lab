@@ -26,7 +26,7 @@ const TA_VARS = { // token-exempt
   '--ta-pdf-border': '#c9d9b4',
   '--ta-pdf-hover-bg': '#e7f0d8',
   '--ta-stat-icon-bg': '#f0e4ea',
-  '--ta-stat-icon': '#8f6071',
+  '--ta-stat-icon': 'var(--tone-rose-tx)',
 };
 
 function formatBytes(bytes) {

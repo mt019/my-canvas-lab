@@ -18,8 +18,8 @@ const DOOR_VARS = { // token-exempt: page-local identity, mirrors App.jsx HOME_V
   '--fd-soft': '#5c4b53',
   '--fd-faint': '#a98f9a',
   '--fd-accent': '#a77b89',
-  '--fd-plum': '#8f6071',   // --tone-plum-tx — one chromatic channel
-  '--fd-blue': '#4a6880',   // --c-info (misty blue) — the other channel
+  '--fd-plum': 'var(--tone-rose-tx)',   // --tone-plum-tx — one chromatic channel
+  '--fd-blue': 'var(--c-info)',   // --c-info (misty blue) — the other channel
   '--fd-glow': '#c9a9b4',
 };
 

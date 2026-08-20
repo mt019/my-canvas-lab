@@ -11,12 +11,12 @@ const MMA_VARS = { // token-exempt
   '--mma-bg': '#f2f4f8',
   '--mma-border': '#dde2ef',
   '--mma-primary': '#3b4f78',
-  '--mma-accent': '#b08060',
+  '--mma-accent': 'var(--c-accent)',
   '--mma-muted': '#8892a8',
   '--mma-faint': '#edf0f7',
   '--mma-update-bg': '#fff3e0',
   '--mma-update-border': '#dd8f78',
-  '--mma-update-dot': '#a44a4a',
+  '--mma-update-dot': 'var(--tone-red-tx)',
   '--mma-amber-label': '#45302f',
   '--mma-amber-body': '#5a4b48',
   '--mma-rq-banner-bg': '#eef1fa',
@@ -662,7 +662,7 @@ export default function ManusMetaAcquisition() {
               {FACTS.map((f, i) => {
                 const cfg = { // token-exempt: status lookup, colors looked up by key
                   confirmed: { Icon: CheckCircle, color: '#307050', bg: '#d0f0e0', border: '#90d0b0' },
-                  partial: { Icon: AlertCircle, color: '#7c5a43', bg: '#f0e0c0', border: '#b08060' },
+                  partial: { Icon: AlertCircle, color: '#7c5a43', bg: '#f0e0c0', border: 'var(--c-accent)' },
                   unknown: { Icon: XCircle, color: '#705030', bg: '#f0e0d0', border: '#d0a080' },
                 }[f.status];
                 return (
