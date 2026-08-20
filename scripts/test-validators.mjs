@@ -92,6 +92,18 @@ const cases = [
       ),
   },
   {
+    npmScript: 'validate:prose',
+    script: 'scripts/validate-prose-typography.mjs',
+    // 級距是 1.85／1.8／1.7；1.95 正是德川頁當初憑感覺填出來的那個值。
+    setup: () =>
+      tempFile(
+        'src/components/__validator_test_prose.jsx',
+        "export default function ValidatorTestProse() {\n"
+          + "  return <p className=\"leading-[1.95]\">test</p>;\n"
+          + "}\n",
+      ),
+  },
+  {
     npmScript: 'validate:colors',
     script: 'scripts/validate-color-system.mjs',
     // 把 --tone-slate-tx 的 L 拉到 0（純黑），band 是 0.46–0.58，穩穩出界。
@@ -158,6 +170,12 @@ const cases = [
       editedFile('docs/domain-migration.md', (src) =>
         `${src}\n<!-- validator test: ${['', 'Users', 'testuser', 'Documents', 'example'].join('/')} -->\n`,
       ),
+  },
+  {
+    npmScript: 'validate:studiescutover',
+    script: 'scripts/validate-studies-cutover.mjs',
+    // 德川的資料檔重新出現在 canvas，正是資料倉的 sync 寫回拆掉的那一份時的長相。
+    setup: () => tempFile('src/data/tokugawaBackground.json', '{}\n'),
   },
   {
     npmScript: 'validate:extcards',
@@ -243,12 +261,6 @@ const cases = [
         data.siteUrl = 'https://phenomcanvas.com';
         return `${JSON.stringify(data, null, 2)}\n`;
       }),
-  },
-  {
-    npmScript: 'validate:synced',
-    script: 'scripts/validate-synced-content.mjs',
-    // 陳寅恪資料的其中一個檔案改一個位元組，讓 sha256 跟 chenYinke.sync.json 記錄的對不上。
-    setup: () => editedFile('src/data/chenYinke.json', (src) => `${src} `),
   },
   {
     npmScript: 'validate:synced',
@@ -377,4 +389,4 @@ if (anyUnexpected) {
   process.exit(1);
 }
 
-console.log(`\n全部通過：${results.length} 支閘的基線與違規測試都符合預期，git status 前後一致。`);
+console.log(`\n全部通過：${covered.size} 支閘、${results.length} 個案例的基線與違規測試都符合預期，git status 前後一致。`);
