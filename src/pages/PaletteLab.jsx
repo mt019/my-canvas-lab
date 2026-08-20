@@ -10,7 +10,7 @@ import {
   setSitePalette,
   setSiteTexture,
   tokensSnippet,
-} from '../styles/palettes.js';
+} from '@phenomcanvas/ui/palettes';
 import { POLLUTANT_TONES, SECTION_TONES, SEGMENT_FILLS } from '../styles/tone-candidates.js';
 import { BANDS, hexToOklch, oklchToHex, outOfBand } from '@phenomcanvas/ui/oklch';
 import Principles from './_palette-lab/Principles.jsx';

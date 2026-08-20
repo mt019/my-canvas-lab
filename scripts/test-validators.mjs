@@ -96,9 +96,9 @@ const cases = [
     script: 'scripts/validate-color-system.mjs',
     // 把 --tone-slate-tx 的 L 拉到 0（純黑），band 是 0.46–0.58，穩穩出界。
     setup: () =>
-      editedFile('src/styles/tokens.css', (src) => {
+      editedFile('node_modules/@phenomcanvas/ui/src/styles/tokens.css', (src) => {
         const re = /(--tone-slate-tx:\s*)#[0-9a-fA-F]{6}/;
-        if (!re.test(src)) throw new Error('夾具失效：tokens.css 找不到 --tone-slate-tx');
+        if (!re.test(src)) throw new Error('夾具失效：套件的 tokens.css 找不到 --tone-slate-tx');
         return src.replace(re, '$1#000000');
       }),
   },

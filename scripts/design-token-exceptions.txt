@@ -1,4 +1,4 @@
-# Files not yet migrated to design tokens (src/styles/tokens.css).
+# Files not yet migrated to design tokens (@phenomcanvas/ui 的 src/styles/tokens.css).
 # This list may only shrink. Remove a file once migrated; never add one back.
 # Batch C (own isolated palettes; repoint values to tokens, keep architecture)
 src/pages/FiscalEnforcementRisk.jsx

@@ -7,7 +7,7 @@ import {
   setSitePalette,
   getSiteTextureId,
   setSiteTexture,
-} from '../styles/palettes.js';
+} from '@phenomcanvas/ui/palettes';
 import { setHoverCardsEnabled, useHoverCardsEnabled } from '../styles/hoverCards.js';
 
 /*

@@ -2,9 +2,9 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { Analytics } from '@vercel/analytics/react'
 import App from './App'
-import './styles/tokens.css'
+import '@phenomcanvas/ui/tokens.css'
 import './index.css'
-import { bootSitePalette } from './styles/palettes.js'
+import { bootSitePalette } from '@phenomcanvas/ui/palettes'
 
 bootSitePalette()
 
