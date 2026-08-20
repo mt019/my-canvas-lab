@@ -19,7 +19,6 @@
     "og:image": "node scripts/generate-og-image.mjs",
     "smoke:live": "node scripts/smoke-live.mjs --base https://phenomcanvas.com",
     "test:validators": "node scripts/test-validators.mjs",
-    "validate:pdfproxy": "node scripts/validate-pdf-proxy.mjs",
     "validate:prerender": "node scripts/validate-prerender.mjs",
     "validate:cloudflare": "node scripts/validate-cloudflare-artifact.mjs",
     "validate:shell": "node scripts/validate-shell-chrome.mjs",

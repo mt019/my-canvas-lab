@@ -52,6 +52,20 @@ for (const name of stubs.keys()) {
   assert.equal(existsSync(file), false, `src/pages/${name}.jsx 又回到 canvas 了——現役副本在獨立站，改那邊`);
 }
 
+// 資料檔同理，而且它的回來方式更安靜：資料倉的 sync 腳本若還留著 canvas 這個落點，
+// 每次更新都寫回這裡一份，本倉的驗證照樣全綠，而讀者看到的獨立站一個字都沒動
+// （2026-08-19 到 08-20 的三個 studies 專題就是這樣掉的）。名單只列真的搬走的資料檔——
+// Notes 的 notes.json 仍由本倉的 MDX 產線在用，不在此列。
+const 拆走的資料檔 = {
+  IiasPublications: ['src/data/iiasPublications.json'],
+};
+for (const [name, files] of Object.entries(拆走的資料檔)) {
+  assert.ok(stubs.has(name), `拆走的資料檔清單列了 ${name}，App() 卻沒有它的外站條目`);
+  for (const rel of files) {
+    assert.equal(existsSync(join(ROOT, rel)), false, `${rel} 又回到 canvas 了——現役副本在獨立站，sync 的落點要改那邊`);
+  }
+}
+
 // 舊網址要有人接：308 轉去獨立站。查的是 public/_redirects——Cloudflare Pages 讀那一份。
 for (const [name, path] of stubs) {
   const rule = redirectFor(redirects, path);

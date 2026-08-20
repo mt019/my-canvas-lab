@@ -401,6 +401,7 @@ const PAGE_META = { // token-exempt: per-page identity chip colors (data, not st
     accent: '#eae4d6',
     accentText: 'var(--tone-amber-tx)',
     group: 'corpus',
+    externalUrl: 'https://iias.phenomcanvas.com/',
   },
   GermanLawCourseTimeline: {
     name: '法學名著選讀時序',
@@ -636,6 +637,14 @@ export default function App() {
         path: '/zhujiahua',
         component: null,
         meta: PAGE_META.ZhuJiahua,
+      },
+      // 2026-08-20 拆到 iias.phenomcanvas.com。本倉的頁面與 362 KB 資料同日刪除，
+      // 舊網址的 308 在 public/_redirects。
+      {
+        name: 'IiasPublications',
+        path: '/iiaspublications',
+        component: null,
+        meta: PAGE_META.IiasPublications,
       },
       {
         name: 'JirsForeignLaw',

@@ -107,10 +107,6 @@
       "datasets.GLOSSARY": 20,
       "datasets.DEEP_ANALYSIS": 6
     },
-    "src/data/iiasPublications.json": {
-      "meta.分類": 4,
-      "publications": 87
-    },
     "src/data/statistics-about.json": {},
     "src/data/statistics-confidence-interval.json": {
       "meta.en.tags": 6,

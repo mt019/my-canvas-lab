@@ -29,3 +29,7 @@
 /chenyinke/*              https://studies.phenomcanvas.com/chenyinke/ 308
 /tokugawa                 https://studies.phenomcanvas.com/tokugawa/ 308
 /tokugawa/*               https://studies.phenomcanvas.com/tokugawa/ 308
+
+# 2026-08-20 拆出去的中研院法研所出版品。
+/iiaspublications         https://iias.phenomcanvas.com/ 308
+/iiaspublications/*       https://iias.phenomcanvas.com/ 308

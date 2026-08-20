@@ -257,13 +257,14 @@ const cases = [
     // 同一支閘的第二種故障：同步進來的資料無聲縮水。把一個陣列砍掉一半，模擬上游
     // 回了空清單或半份清單、把好產物覆寫掉（2026-07-29 那次的長相）。sha 那個夾具
     // 抓不到這種——它改的是內容，這裡少的是筆數。
+    // 原本指的是 iiasPublications.json，該頁與資料 2026-08-20 拆去 iias.phenomcanvas.com。
     setup: () =>
-      editedFile('src/data/iiasPublications.json', (src) => {
+      editedFile('src/data/taipeiffPrograms.json', (src) => {
         const data = JSON.parse(src);
-        if (!Array.isArray(data.publications) || data.publications.length < 20) {
-          throw new Error('夾具失效：iiasPublications.json 沒有夠長的 publications 陣列');
+        if (!Array.isArray(data.programs) || data.programs.length < 20) {
+          throw new Error('夾具失效：taipeiffPrograms.json 沒有夠長的 programs 陣列');
         }
-        data.publications = data.publications.slice(0, Math.floor(data.publications.length / 2));
+        data.programs = data.programs.slice(0, Math.floor(data.programs.length / 2));
         return `${JSON.stringify(data, null, 2)}\n`;
       }),
   },

@@ -24,13 +24,12 @@ assert.doesNotMatch(bundle, /\[REDACTED\]/, 'Cloudflare bundle contains a redact
 assert.match(bundle, /https:\/\/[a-z0-9-]+\.supabase\.co/, 'Cloudflare bundle lacks the Supabase browser URL');
 assert.match(bundle, /sb_publishable_[A-Za-z0-9_-]+/, 'Cloudflare bundle lacks the Supabase publishable key');
 const routes = JSON.parse(readFileSync(join(DIST, '_routes.json'), 'utf8'));
-assert.deepEqual(routes.include, ['/api/pdf', '/api/opentix/search', '/api/opentix-csm/*']);
+assert.deepEqual(routes.include, ['/api/opentix/search', '/api/opentix-csm/*']);
 assert.equal(routes.exclude.length, 0);
 
 for (const file of [
-  'functions/api/pdf.js',
   'functions/api/opentix/search.js',
   'functions/api/opentix-csm/[[path]].js',
 ]) assert.ok(existsSync(join(ROOT, file)), `missing Pages Function ${file}`);
 
-console.log(`Cloudflare Canvas artifact valid: ${collectRoutes().length} flat routes, explicit 404, 3 narrowly routed Function endpoints`);
+console.log(`Cloudflare Canvas artifact valid: ${collectRoutes().length} flat routes, explicit 404, 2 narrowly routed Function endpoints`);
