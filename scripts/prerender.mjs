@@ -124,17 +124,12 @@ async function main() {
 
   async function capture(page, route) {
     await waitSettled(page);
-    // 存檔前的兩道清理，都只動自己知道來歷的東西：
-    // 1. Vercel Analytics 的腳本標籤。<Analytics /> 是掛載時把它塞進 head 的，這裡抓的
-    //    是掛載後的 DOM，不移掉就烤進每一份靜態檔，線上 React 再插一次，一次造訪記成
-    //    兩個 page view。
-    // 2. 帶 data-prerender-stale 記號的 preload（renderWarm 跳板時打的）：那是同分頁
+    // 存檔前移除帶 data-prerender-stale 記號的 preload（renderWarm 跳板時打的）：那是同分頁
     //    先前訪過的頁載入的 chunk，不是這一頁的相依——留著會叫每個訪客白抓別頁的檔
     //    （手記一篇一個 mdx chunk，一片 32 頁能積出幾百 KB）。代價是片內後段的頁少了
     //    幾條共用模板 chunk 的預載提示（chunk 已載過就不會再注入連結，分不出誰的），
     //    那只是少暖身、不是壞掉；stylesheet 一律不剝，剝錯會閃樣式。
     const html = '<!doctype html>\n' + await page.evaluate(() => {
-      document.querySelectorAll('script[src*="/_vercel/insights/"]').forEach((s) => s.remove());
       document.querySelectorAll('link[data-prerender-stale]').forEach((l) => l.remove());
       return document.documentElement.outerHTML;
     });

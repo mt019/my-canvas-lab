@@ -5,7 +5,7 @@
 // symbols — see comprehensiveChars in font-chars.mjs), NOT to the exact text the
 // site currently uses. That is the whole point: an ordinary new article never
 // introduces a glyph outside common CJK, so the body subset never needs
-// rebuilding again, and a Vercel build (which has no source fonts) never has to.
+// rebuilding again, and a remote build (which has no source fonts) never has to.
 //
 // Two faces, stacked under one family name "Huiwen Mincho":
 //   - Huiwen Mincho carries the text (fixed comprehensive subset).

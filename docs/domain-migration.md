@@ -1,7 +1,9 @@
 # 自訂域名遷移
 
-**已完成。** `phenomcanvas.com` 於 2026-07-28 23:35:17 在 Cloudflare Registrar 註冊（買到
-2031-07-28，auto-renew 開著），同日接上 Vercel 並完成遷移。本檔留作紀錄與下次換域名的步驟書。
+**歷史紀錄，不是現役 runbook。** `phenomcanvas.com` 於 2026-07-28 先接上 Vercel；正式站於
+2026-08-16 切到 Cloudflare，Vercel project 與 deployments 於 2026-08-24 永久刪除。下文保留當時
+操作與量測供追溯，任何 Vercel DNS／部署步驟都不得再執行。現況以 `../phenom-ops/infra/sites.json`
+與 Canvas `README.md` 為準。
 
 當時一併查過、仍可註冊的備案：`ferneslicht.com`、`yixutang.com`。
 

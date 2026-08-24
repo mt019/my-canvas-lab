@@ -1,6 +1,6 @@
 # Phenom Canvas Lab
 
-一個互動實驗場：音樂工具、法律與財稅政策的研究地圖、教學用的統計模擬，收在同一個 React canvas 裡。線上版在 <https://my-canvas-lab.vercel.app>。
+一個互動實驗場：音樂工具、法律與財稅政策的研究地圖、教學用的統計模擬，收在同一個 React canvas 裡。線上版在 <https://canvas.phenomcanvas.com>。
 
 帳號與私人標記採可選登入：公共頁面不要求登入，GitHub 只驗證身分，個人狀態由 Supabase/PostgreSQL 保存。設定、資料邊界與備份方式見 [`docs/PERSONAL_STATE.md`](docs/PERSONAL_STATE.md)。
 
@@ -27,7 +27,7 @@
 - **路由**：React Router v6，檔案路徑即路由（`import.meta.glob` 掃 `src/pages/`）
 - **樣式**：Tailwind CSS + `src/styles/tokens.css` 設計系統
 - **圖示**：lucide-react
-- **部署**：Vercel
+- **部署**：Cloudflare Pages（由 `phenom-ops` 的 preview／production promotion workflow 發布）
 
 ## 本地開發
 
@@ -46,11 +46,11 @@ sitemap 失敗都會阻止推送。不得用 `--no-verify` 略過。
 
 `src/components/SeoHead.jsx` 統一產生每條路由的 title、description、canonical、Open Graph／Twitter 卡片與 JSON-LD（Organization、WebSite、WebPage／Article、breadcrumb）。首頁另帶一份 `ItemList`，內容就是畫面上實際列出的目錄。描述只寫頁面真的有的東西——不為了 rich result 捏造問答或評分。
 
-正式網址集中在 `.env.production` 的 `VITE_SITE_URL`（現為 `https://my-canvas-lab.vercel.app`）。build 時烤進 client bundle，node 腳本透過 `scripts/site-config.mjs` 讀同一個值，canonical、Open Graph、sitemap 全部指向同一處。網址搬家只改這一行。
+正式網址集中在 `.env.production` 的 `VITE_SITE_URL`（現為 `https://canvas.phenomcanvas.com`）。build 時烤進 client bundle，node 腳本透過 `scripts/site-config.mjs` 讀同一個值，canonical、Open Graph、sitemap 全部指向同一處。Cloudflare 專用建置由 `scripts/build-cloudflare.mjs` 鎖定同一 origin。
 
 **Build 期預渲染。** `scripts/prerender.mjs` 用 Playwright 起一個 headless Chromium，把 `dist/` 靜態服務起來，逐條可索引路由等 React 掛載完、`SeoHead` 寫好 `<head>` 後，抓完整 HTML 寫回 `dist/<route>/index.html`。不跑 JS 的爬蟲與答案引擎因此拿到真的內文與正確的 per-page metadata，而非空的 `#root`。路由由 `scripts/routes.mjs` 列出（與 `App.jsx` 同一套檔案路徑規則），`scripts/generate-sitemap.mjs` 用同一份清單產 `dist/sitemap.xml`。`public/robots.txt` 放行主要 AI 爬蟲（GPTBot、ClaudeBot、PerplexityBot、Google-Extended…）並指向 sitemap。Chromium 起不來時 fail-soft 跳過預渲染、保住 deploy；趕時間可 `PRERENDER=0 npm run build`。
 
-`public/og-default.png`（1200×630）只供首頁使用。單一研究頁、案例、分頁或大法官頁刻意不設大圖，只讓分享預覽顯示該頁標題與簡短描述。Vercel routing 必須先走 `filesystem`，才能把各頁的預渲染 HTML 交給不執行 JavaScript 的分享爬蟲。
+`public/og-default.png`（1200×630）只供首頁使用。單一研究頁刻意不設大圖，只讓分享預覽顯示該頁標題與簡短描述。Cloudflare artifact 將預渲染路由攤平成靜態 HTML，讓不執行 JavaScript 的分享爬蟲直接取得頁面內容。
 
 **憲法法庭案例庫：分頁、大法官、案件都有可索引網址。** 走 `?tab=` query 的頁面，爬蟲只看得到預設分頁。案例庫改成三層乾淨路由：每個分頁 `/constitutionalcourt/<tab>`、每位有實質參與的大法官 `/constitutionalcourt/justices/<姓名>`、精選長尾案件 `/constitutionalcourt/case/<字號>`，各帶鎖定關鍵字的 title／description 與結構化資料（整庫一個 schema.org `Dataset`、大法官頁 `Person`、案件頁 `Legislation`）。分頁列與大法官名都是真的 `<Link>`；`?tab=`／`?j=`／`?doc=` 舊深連結仍可用。
 
@@ -83,7 +83,7 @@ cd ../my-canvas-lab
 npm run build
 ```
 
-同步為手動觸發，不掛進 `build`——Vercel 等部署環境不一定有 sibling private repo。凡同步進 `src/data/` 並部署出去的都視為公開前端資料；各資料倉可依自身契約同步原文或研究內容。原始書檔、筆記、工程日誌與本機路徑仍留在 data repo。頁面只呈現讀者語言，不直接顯示檔名、欄位名、狀態碼、路徑或整理狀態；這類措辭必須在 React 頁面轉成自然的繁體中文。各研究頁的視覺規範見 `docs/DESIGN.md`。
+同步為手動觸發，不掛進 `build`——Cloudflare 建置環境沒有 sibling private repo。凡同步進 `src/data/` 並部署出去的都視為公開前端資料；各資料倉可依自身契約同步原文或研究內容。原始書檔、筆記、工程日誌與本機路徑仍留在 data repo。頁面只呈現讀者語言，不直接顯示檔名、欄位名、狀態碼、路徑或整理狀態；這類措辭必須在 React 頁面轉成自然的繁體中文。各研究頁的視覺規範見 `docs/DESIGN.md`。
 
 ## 新增頁面
 

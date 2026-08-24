@@ -2,7 +2,7 @@
 // (prerender, sitemap, og image). The client reads VITE_SITE_URL directly through
 // import.meta.env; these scripts run under plain node where import.meta.env is
 // empty, so they read the same value out of .env.production here. process.env wins
-// when set (Vercel build env / one-off overrides).
+// when set (Cloudflare build env / one-off overrides).
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';

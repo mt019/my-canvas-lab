@@ -39,9 +39,7 @@ for (const rel of 不得存在) {
   assert.equal(existsSync(join(ROOT, rel)), false, `${rel} 又回到 canvas 了——憲法法庭的現役副本在 phenom-court，改那邊`);
 }
 
-// 轉址查 public/_redirects：canvas 由 Cloudflare Pages 服務，Pages 讀的是那一份。
-// 先前這裡查的是 vercel.json，於是 2026-08-20 實測線上 /constitutionalcourt 回 404
-// 而這支照樣綠——它驗的設定檔在這個部署平台不生效。
+// 轉址查 public/_redirects：Canvas 只由 Cloudflare Pages 服務，Pages 讀的是這一份。
 const exact = redirectFor(redirects, '/constitutionalcourt');
 const deep = deepRedirectFor(redirects, '/constitutionalcourt');
 assert.ok(exact, 'public/_redirects 少了 /constitutionalcourt');

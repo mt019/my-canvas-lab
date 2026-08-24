@@ -1,7 +1,5 @@
-// public/_redirects 的讀取器。canvas 2026-08-16 起由 Cloudflare Pages 服務，Pages 讀的是
-// 這一份；vercel.json 的 routes 在這個平台不生效——2026-08-20 實測 /constitutionalcourt
-// 與 /familywealth 都回 404，而它們的 308 在 vercel.json 裡寫得好好的，三支閘也綠。
-// 所以驗轉址一律驗這一份，vercel.json 只當 Vercel 觀察期未過期間的備援。
+// public/_redirects 的讀取器。Canvas 只由 Cloudflare Pages 服務，Pages 讀的這一份
+// 是正式轉址的單一設定來源。
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { ROOT } from './site-config.mjs';

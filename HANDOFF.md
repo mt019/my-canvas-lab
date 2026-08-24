@@ -8,6 +8,17 @@ date-stacking once already; merged back down on 2026-07-04. Don't
 repeat that.) Check git history if you need the session-by-session
 blow-by-blow.
 
+## 現役部署與 Vercel 退役（2026-08-24）
+
+Vercel 已完全退役：`mt019s-projects/my-canvas-lab` project 與全部 deployments 已永久刪除，
+`my-canvas-lab.vercel.app` 與最後的 immutable deployment 都回 `DEPLOYMENT_NOT_FOUND`；本倉的
+Vercel workflow、三個 GitHub secrets、`vercel.json` 與 `@vercel/analytics` 亦已移除。
+
+正式入口是 Cloudflare 上的 `https://phenomcanvas.com`；Canvas 是
+`https://canvas.phenomcanvas.com`。部署控制面在 `../phenom-ops`，使用已核准 artifact 的
+Cloudflare preview／production promotion。下文凡提到 Vercel DNS、workflow、secret、Analytics、
+回滾 deployment 或「尚不可移除 Vercel」，均為遷移歷史，不是可執行的現況指示。
+
 ## Canvas-wide hard rule: no engineering language (2026-07-11 使用者裁定)
 
 Nothing engineering- or operations-flavoured may appear on the canvas —
@@ -27,15 +38,9 @@ copy. When writing digest/topic prose, narrate what a *reader* learns
 
 ## 自有域名：`phenomcanvas.com`（2026-07-28 23:35 註冊，已上線）
 
-站的正式網址是 `https://phenomcanvas.com`，`www` 與舊的 `my-canvas-lab.vercel.app` 都轉過來。
-域名在 **Cloudflare Registrar**（買到 2031-07-28，auto-renew 開著），DNS 也在 Cloudflare，
-兩筆 CNAME（`@` 與 `www`）都指向 Vercel 給的 `e22f8093d6f6ad5e.vercel-dns-017.com`。
-
-- **兩筆記錄的 Proxy status 必須是 DNS only（灰色雲）。** 開橘色雲的話 Cloudflare 擋在 Vercel
-  前面，Vercel 簽不到憑證（畫面永遠停在 Generating SSL Certificate，不報錯），HTTPS 轉址還會
-  兩邊互踢。Vercel 自己的 DNS 說明也寫 `Proxy: Disabled`。
-- **apex 用 CNAME 是靠 Cloudflare 的 CNAME flattening**（DNS 規範不准 apex 有 CNAME，
-  Cloudflare 對外會攤平成 A 記錄）。換 DNS 供應商時要確認新的那家也支援，否則 apex 得改 A。
+站的正式入口是 `https://phenomcanvas.com`，Canvas 是 `https://canvas.phenomcanvas.com`；兩者與
+`www` 都由 Cloudflare 服務。域名在 **Cloudflare Registrar**（買到 2031-07-28，auto-renew 開著），
+DNS 也在 Cloudflare。正式 route／custom hostname 的事實來源在 `../phenom-ops/infra/sites.json`。
 - 換域名時 repo 只有三處要改：`.env.production` 的 `VITE_SITE_URL`（canonical／OG／JSON-LD／
   sitemap 全部由它推導）、`public/robots.txt` 的 `Sitemap:` 行、`scripts/generate-og-image.mjs`
   的頁腳字樣。**`index.html` 裡的 `og:image` 與 `twitter:image` 是絕對網址，第一次掃殘留時漏掉，
@@ -113,10 +118,8 @@ production 只下載並 promotion，不 rebuild；production 與 DNS 是兩個�
 本機 Wrangler 雙站 smoke 已驗 Home／Canvas 路由、108 條精確舊路徑 308、真 404、Notes noindex/no-store、
 PDF SSRF 阻擋、OpenTix parity、Supabase config、canonical 與尾斜線，10/10 通過。
 
-仍未做且不得順手做：建立／公開 `phenom-home` GitHub repo、push 任一 checkpoint、Cloudflare preview、
-production promotion、custom-domain attach、DNS 切換、Vercel 移除。Vercel production 是切換後 7–14 天
-的回退目標；完成觀察窗前不可刪。`mandarin.phenomcanvas.com` 的內容由私有倉 `phenom-mandarin`
-提供，不由本倉輸出；本倉留著的 `Dialogue` 副本何時收，見上一節的待裁定。
+上述切換已完成；Vercel 觀察窗亦已結束並於 2026-08-24 退役。`mandarin.phenomcanvas.com` 的內容由
+私有倉 `phenom-mandarin` 提供，不由本倉輸出。
 
 ## 使用者腳本搬到自有域名（2026-07-29）
 

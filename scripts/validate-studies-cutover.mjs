@@ -3,9 +3,7 @@
 // 2026-08-19 到 08-20 的 198 篇讀稿全部落在拆掉的那一份上，線上的站一個字都沒動。
 //
 // 這支查兩件事：三個專題的檔案不在本倉、舊網址有 308 轉址。
-// 轉址查的是 public/_redirects——canvas 由 Cloudflare Pages 服務，vercel.json 的 routes
-// 在這個平台不生效（同日實測 /constitutionalcourt 與 /familywealth 都回 404，而它們的
-// 308 在 vercel.json 裡寫著）。
+// 轉址查的是 Cloudflare Pages 實際讀取的 public/_redirects。
 import assert from 'node:assert/strict';
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';

@@ -1,9 +1,5 @@
-# 拆出去的站的舊網址。canvas 2026-08-16 起由 Cloudflare Pages 服務，vercel.json 的
-# routes 在這個平台上不生效——2026-08-20 實測 /constitutionalcourt 與 /familywealth
-# 都是 404，而那三個站的 308 在 vercel.json 裡寫得好好的。舊連結與搜尋結果因此一路
-# 掉到 404 頁。Pages 讀的是這一份。
-#
-# vercel.json 那幾條照舊留著：Vercel 專案在 provider-retirement.json 裡還是 observing。
+# Canvas 自 2026-08-16 起只由 Cloudflare Pages 服務；本檔是正式轉址的單一設定來源。
+# Vercel project 已於 2026-08-24 永久退役，不再維護第二份 provider-specific routes。
 /constitutionalcourt      https://cc.phenomcanvas.com/constitutionalcourt/ 308
 /constitutionalcourt/*    https://cc.phenomcanvas.com/constitutionalcourt/:splat 308
 /familywealth             https://wealth.phenomcanvas.com/ 308

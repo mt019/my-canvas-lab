@@ -16,7 +16,6 @@ import { ROOT } from './site-config.mjs';
 const config = JSON.parse(readFileSync(join(ROOT, 'supabase', 'auth-url-configuration.json'), 'utf8'));
 const authProvider = readFileSync(join(ROOT, 'src', 'personal-state', 'AuthProvider.jsx'), 'utf8');
 const cloudflareBuild = readFileSync(join(ROOT, 'scripts', 'build-cloudflare.mjs'), 'utf8');
-const envProduction = readFileSync(join(ROOT, '.env.production'), 'utf8');
 
 const originOf = (value) => new URL(value).origin;
 const fail = (message) => {
@@ -34,13 +33,10 @@ const allowedOrigins = new Set(config.redirectUrls.map((entry) => {
 
 if (!allowedOrigins.has(originOf(config.siteUrl))) fail(`Site URL ${config.siteUrl} 不在 Redirect URLs 裡`);
 
-// 部署來源取自實際建置的兩個入口，不另外維護一份清單。
+// 部署來源取自唯一的 Cloudflare 建置入口，不另外維護一份清單。
 const cloudflareOrigin = cloudflareBuild.match(/VITE_SITE_URL:\s*'([^']+)'/)?.[1];
-const vercelOrigin = envProduction.split('\n').find((line) => line.startsWith('VITE_SITE_URL='))?.slice('VITE_SITE_URL='.length).trim();
 assert.ok(cloudflareOrigin, 'scripts/build-cloudflare.mjs 讀不到 VITE_SITE_URL');
-assert.ok(vercelOrigin, '.env.production 讀不到 VITE_SITE_URL');
-
-const deployOrigins = [...new Set([cloudflareOrigin, vercelOrigin].map(originOf))];
+const deployOrigins = [originOf(cloudflareOrigin)];
 for (const origin of deployOrigins) {
   if (!allowedOrigins.has(origin)) fail(`站台部署在 ${origin}，而 Supabase 的 Redirect URLs 沒有 ${origin}/**——從這個來源登入會被送去 Site URL ${config.siteUrl}`);
 }

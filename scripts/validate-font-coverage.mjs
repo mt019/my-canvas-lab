@@ -7,7 +7,7 @@ import { extractChars, requiredLatinAccentChars } from './font-chars.mjs';
  *
  * This only VALIDATES. It never rebuilds (2026-07-18): the rebuild needs the
  * licensed source fonts, which live on one machine and are deliberately not in
- * the repo, so a build server (Vercel) cannot run it — the old auto-rebuild
+ * the repo, so a remote build server cannot run it — the old auto-rebuild
  * crashed there on a missing source font. The body face is now a fixed,
  * comprehensive subset (see rebuild-font-subsets.mjs), so an ordinary new
  * paragraph is already covered and this passes without anyone doing anything.

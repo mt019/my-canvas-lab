@@ -1,15 +1,12 @@
 // 部署之後對真實網址發請求，確認線上那一份是對的。
 //
 // 來歷：現有的兩道檢查（deploy.yml 的 [REDACTED] 掃描與空殼檢查）查的都是「上傳前的
-// 產物」。產物對、上線的東西不對，這中間還有 CDN、vercel.json 的轉址與代理、以及
+// 產物」。產物對、上線的東西不對，中間還有 CDN、Cloudflare 轉址／代理、以及
 // 「部署根本沒送上去」三種故障，前面兩道一種都看不到——2026-07-30 免費方案上傳次數
 // 用完那次，症狀正是建置全綠而站沒更新。
 //
-// 這支查的是使用者真的會拿到的東西。判準一律看內容，不看狀態碼，理由是 vercel.json
-// 最後一條 `{"src": "/.*", "dest": "/index.html"}`：**不存在的網址在這個站回的是
-// 200 加首頁外殼**，狀態碼在這裡完全沒有鑑別力。所以本腳本開頭先去抓一個保證不存在
-// 的路徑，把那份外殼的長相記下來，之後每個要檢查的頁都必須跟它不一樣——一個頁如果
-// 哪天不再被預先渲染，它就會塌回那份外殼，這條檢查看得出來，狀態碼看不出來。
+// 這支查的是使用者真的會拿到的東西。除了狀態碼，也驗頁面專屬內容，避免路由錯誤時
+// 被某一份通用 HTML 掩蓋。
 //
 // 用法：
 //   node scripts/smoke-live.mjs --base https://phenomcanvas.com
@@ -43,8 +40,7 @@ const PAGES = [
   { path: '/', marker: 'Phenom Canvas Lab', sameAsShell: true, why: '首頁本身就是那份外殼，只驗根節點有內容' },
   { path: '/taxlitigation', marker: '稅務訴訟計量研究' },
   { path: '/vocaltraining', marker: 'Metastasio' },
-  // 這條走 vercel.json 的代理，實際內容在 Cloudflare Pages 上（phenom-notes.pages.dev）。
-  // 跨主機的依賴最容易在沒人注意的時候斷掉，所以放進來。
+  // 這條由 Cloudflare 轉址到 Notes 的正式 hostname；跨主機依賴最容易靜默斷掉。
   { path: '/notes/', marker: '手記' },
 ];
 
@@ -115,9 +111,7 @@ for (const page of PAGES) {
 
 // 二之二、線上實際回的快取標頭。
 //
-// 設定寫對了而線上沒送出去，是 2026-08-02 踩到的形狀：vercel.json 頂層的 headers 在這個
-// 部署裡完全不生效（有 routes 就不吃），設定看起來正確、部署不報錯，掛了一整天沒人發現。
-// scripts/validate-vercel-cache-headers.mjs 檢查設定，這裡檢查線上實際回來的標頭。
+// 設定檔正確不代表線上一定送出同樣標頭；這裡直接檢查使用者實際收到的回應。
 const assetPath = (shell.text.match(/\/assets\/[A-Za-z0-9._-]+\.js/) ?? [])[0];
 if (!assetPath) {
   failures.push('外殼裡找不到 /assets 底下的 js，無法驗資產的快取標頭');
@@ -132,7 +126,7 @@ if (!assetPath) {
     if (want.test(cacheControl)) {
       console.log(`${path} — Cache-Control: ${cacheControl} ✓`);
     } else {
-      failures.push(`${path} — Cache-Control 是「${cacheControl || '沒有'}」，${why}；設定在 vercel.json 的 routes 裡，改了要確認線上真的送出來`);
+      failures.push(`${path} — Cache-Control 是「${cacheControl || '沒有'}」，${why}；檢查 Cloudflare _headers／Worker 回應並重新驗線上結果`);
     }
   }
 }
