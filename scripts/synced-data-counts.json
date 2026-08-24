@@ -2,10 +2,10 @@
   "note": "同步進來的資料的筆數基線。由 npm run baseline:synced 產生。",
   "files": {
     "src/data/brief-events.json": {
-      "sources": 27,
+      "sources": 28,
       "followed": 15,
       "blindSpots": 11,
-      "events": 471,
+      "events": 363,
       "pastEvents": 99,
       "items": 243
     },
@@ -108,6 +108,32 @@
       "datasets.DEEP_ANALYSIS": 6
     },
     "src/data/statistics-about.json": {},
+    "src/data/statistics-card-shuffling.json": {
+      "meta.tags": 6,
+      "meta.en.tags": 6,
+      "meta.tagSlugs": 6,
+      "figures.split-example.params.order1": 52,
+      "figures.split-example.params.order2": 52,
+      "figures.split-example.params.order3": 52,
+      "figures.mixing-curve.params.decks": 7,
+      "figures.mixing-curve.params.totalVariation.25": 14,
+      "figures.mixing-curve.params.totalVariation.32": 14,
+      "figures.mixing-curve.params.totalVariation.52": 14,
+      "figures.mixing-curve.params.totalVariation.78": 14,
+      "figures.mixing-curve.params.totalVariation.104": 14,
+      "figures.mixing-curve.params.totalVariation.208": 14,
+      "figures.mixing-curve.params.totalVariation.312": 14,
+      "figures.guessing-game.params.k": 10,
+      "figures.guessing-game.params.noCut": 10,
+      "figures.guessing-game.params.cut": 10,
+      "figures.question-panel.params.k": 12,
+      "figures.question-panel.params.rows": 5,
+      "quiz": 3,
+      "statements.right": 3,
+      "statements.wrong": 4,
+      "misreadings": 4,
+      "timeline": 0
+    },
     "src/data/statistics-confidence-interval.json": {
       "meta.en.tags": 6,
       "meta.tags": 6,
@@ -129,6 +155,10 @@
       "timeline": 0
     },
     "src/data/statistics-glossary.json": {
+      "terms.birthday-problem.aliases": 3,
+      "terms.birthday-problem.related": 1,
+      "terms.birthday-problem.en.aliases": 1,
+      "terms.birthday-problem.usedIn": 1,
       "terms.confidence-interval.aliases": 3,
       "terms.confidence-interval.related": 3,
       "terms.confidence-interval.en.aliases": 1,
@@ -137,6 +167,10 @@
       "terms.credible-interval.related": 3,
       "terms.credible-interval.en.aliases": 2,
       "terms.credible-interval.usedIn": 1,
+      "terms.cutoff-phenomenon.aliases": 3,
+      "terms.cutoff-phenomenon.related": 2,
+      "terms.cutoff-phenomenon.en.aliases": 1,
+      "terms.cutoff-phenomenon.usedIn": 1,
       "terms.effect-size.aliases": 3,
       "terms.effect-size.related": 3,
       "terms.effect-size.en.aliases": 1,
@@ -181,6 +215,10 @@
       "terms.replication-crisis.related": 3,
       "terms.replication-crisis.en.aliases": 1,
       "terms.replication-crisis.usedIn": 1,
+      "terms.riffle-shuffle.aliases": 4,
+      "terms.riffle-shuffle.related": 2,
+      "terms.riffle-shuffle.en.aliases": 2,
+      "terms.riffle-shuffle.usedIn": 1,
       "terms.sampling-distribution.aliases": 3,
       "terms.sampling-distribution.related": 3,
       "terms.sampling-distribution.en.aliases": 1,
@@ -193,6 +231,10 @@
       "terms.statistical-power.related": 3,
       "terms.statistical-power.en.aliases": 1,
       "terms.statistical-power.usedIn": 2,
+      "terms.total-variation-distance.aliases": 3,
+      "terms.total-variation-distance.related": 3,
+      "terms.total-variation-distance.en.aliases": 2,
+      "terms.total-variation-distance.usedIn": 1,
       "terms.type-i-and-type-ii-error.aliases": 6,
       "terms.type-i-and-type-ii-error.related": 3,
       "terms.type-i-and-type-ii-error.en.aliases": 2,
@@ -234,11 +276,11 @@
       "timeline": 8
     },
     "src/data/statistics.json": {
-      "topics": 1,
-      "articles": 5,
-      "glossaryGroups": 4,
-      "glossary": 17,
-      "tags": 29
+      "topics": 2,
+      "articles": 6,
+      "glossaryGroups": 5,
+      "glossary": 21,
+      "tags": 35
     },
     "src/data/taipeiffPrograms.json": {
       "programs": 108
