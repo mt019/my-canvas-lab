@@ -3,10 +3,9 @@ set -eu
 
 # Policy validators only (~2.5s): fonts / tokens / colors / floating / copy / math / cases.
 # No compile here — `vite build` was ~11s of every push (80% of the gate) and is fully
-# redundant: Vercel re-runs the identical validators AND vite build on deploy, and the
-# dev server (HMR) surfaces compile breaks during work. The 467-page prerender is likewise
-# Vercel's job (it once made pushes take minutes and orphaned its headless-Chrome pool
-# into a race over the shared dist/). `npm run verify:gates` still does validators+compile
-# for a manual full check.
-echo "pre-push: UI policy validators (~2.5s; compile + prerender run on Vercel)..."
+# redundant: the Cloudflare preview workflow runs the identical validators and full build,
+# while the dev server surfaces compile breaks during work. Running prerender in this hook
+# also races over the shared dist/ when another local session is active. Use
+# `npm run build:cloudflare` for a manual full artifact check.
+echo "pre-push: UI policy validators (~2.5s; full build runs in Cloudflare preview)..."
 npm run verify:push
