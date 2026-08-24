@@ -8,6 +8,7 @@ import SourceFilter, { usePersistedFlag } from '../components/lab/SourceFilter';
 import DashboardLayout from '../components/lab/DashboardLayout';
 import MarkButton from './brief/_MarkButton';
 import EventRow from './brief/_EventRow';
+import MathText from './brief/_MathText';
 import { liveOf, snapshotItem, useGoing, useKept, useSeen, useWent } from './brief/marks';
 import {
   blindSpots,
@@ -142,8 +143,12 @@ function ClosingSoon({ today, going, went }) {
     const rows = events.filter(soon).map((e) => ({ e, left: closingIn(e, today) }));
     return {
       // 額滿為止：要報名、有報名表，一個日期都沒公告。沒有任何一天可以倒數，所以它排在
-      // 有截止日的前面——它比有截止日的更急，不是更鬆。
-      untilFull: events.filter((e) => entryOf(e) === 'untilFull' && inDefaultView(e)),
+      // 有截止日的前面。只收活動日在窗內的：元照那批講座場場都是額滿為止，不加這個
+      // 條件，一場 11 天後的講座會一直掛在「這 7 天關門的」裡，把真的要關門的沖掉
+      //（2026-08-24 站主點名）。
+      untilFull: events.filter(
+        (e) => entryOf(e) === 'untilFull' && inDefaultView(e) && dayDiff(today, e.date) <= URGENT_WINDOW
+      ),
       core: rows.filter(({ e }) => inDefaultView(e)).sort((a, b) => a.left - b.left),
       // 另置一塊的不是「售票的」，是「預設視圖以外的」——今天它剛好全是售票節目，但要是
       // 哪天某個沒追蹤的所有一場報名要截止，它得出現在這裡，不能被歸成戲票、也不能消失。
@@ -373,7 +378,7 @@ function ItemKindSection({ sec, today, first, pool, full, kept }) {
                 {/* 摘要可以是 null，而且那是事實（36/247：ECB 與 OECD 的登錄裡沒有 abstract，
                     Reddit 轉貼連結的貼文沒有內文）。空著就空著，不拿別的欄位去湊。 */}
                 {full && i.summary ? (
-                  <p className="mt-1 text-token-xs leading-relaxed text-ink-muted">{i.summary}</p>
+                  <p className="mt-1 text-token-xs leading-relaxed text-ink-muted"><MathText text={i.summary} /></p>
                 ) : null}
               </div>
             </div>

@@ -55,12 +55,10 @@ function When({ event, today, closesIn }) {
       <span className="whitespace-nowrap text-ink-faint">
         {isOngoing(event, today) ? '進行中' : inDays(dayDiff(today, event.date))}
       </span>
-      {closesIn !== undefined ? (
+      {closesIn != null ? (
         <div className="text-ink-muted">
-          {closesIn == null
-            ? '額滿為止，無公告截止日'
-            : `${md(event.closesAt)} ${event.closesAtKind}${event.mayCloseWhenFull ? '，可能更早' : ''}` +
-              ` · ${closesIn === 0 ? '今天最後一天' : `剩 ${closesIn} 天`}`}
+          {`${md(event.closesAt)} ${event.closesAtKind}${event.mayCloseWhenFull ? '，可能更早' : ''}` +
+            ` · ${closesIn === 0 ? '今天最後一天' : `剩 ${closesIn} 天`}`}
         </div>
       ) : null}
     </div>
@@ -70,7 +68,8 @@ function When({ event, today, closesIn }) {
 /*
  * event：來自公開投影或本機快照的一筆活動。
  * showSource：第二行要不要印來源（同一區已經寫明來源時就不必再印一次）。
- * closesIn：有值就是「這一區在講門什麼時候關」，null 代表額滿為止（沒有一天可以倒數）。
+ * closesIn：有值就是「這一區在講門什麼時候關」。null（額滿為止）不印——入場狀態那一行
+ *   已經寫著額滿為止，這裡再印一次就是同一列兩行同一句。
  * going／went：兩份標記；傳進來才畫得出按鈕。
  * ended：這場已經結束了。已結束又沒標過的不畫「我要去」——那顆按鈕對一場開完的活動沒有
  *   意義；已經標了要去卻沒去成的照畫，只是那個狀態叫待確認（不自動假定有到場）。

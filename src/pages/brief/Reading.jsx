@@ -6,6 +6,7 @@ import ArticleLayout from '../../components/lab/ArticleLayout';
 import SourceFilter, { usePersistedFlag } from '../../components/lab/SourceFilter';
 import { useTabParams } from '../../components/lab/Tabs';
 import MarkButton from './_MarkButton';
+import MathText from './_MathText';
 import { snapshotItem, useKept } from './marks';
 import {
   blindSpots,
@@ -66,7 +67,7 @@ function ItemRow({ item, today, kept }) {
           rel="noreferrer"
           className="text-token-sm leading-snug text-ink transition-colors duration-fast hover:text-accent"
         >
-          {item.title}
+          <MathText text={item.title} />
         </a>
         {item.pdfUrl ? (
           <a
@@ -84,7 +85,7 @@ function ItemRow({ item, today, kept }) {
           <MarkButton on={kept.has(item.id)} onToggle={() => kept.toggle(snapshotItem(item))} label="留著" />
         </div>
         {item.summary ? (
-          <p className="mt-1 text-token-xs leading-relaxed text-ink">{item.summary}</p>
+          <p className="mt-1 text-token-xs leading-relaxed text-ink"><MathText text={item.summary} /></p>
         ) : null}
       </div>
     </div>
