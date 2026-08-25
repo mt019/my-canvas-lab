@@ -165,7 +165,7 @@ const depth = (p) => p.split('/').filter(Boolean).length;
 
 for (const route of allRoutes) {
   // A locale prefix is routing infrastructure, not another level in the site's
-  // information architecture. /en/statisticslab is still the topic homepage.
+  // information architecture. /en/foo is still the topic homepage that /foo is.
   const inner = depth(splitLanguagePath(route).basePath) > 1;
   const back = backFor(route);
 
@@ -188,7 +188,7 @@ for (const route of allRoutes) {
         + '（前綴長的排前面），眉標才會變成那顆按鈕',
       );
     }
-    // 落點可以帶查詢字串（`/statisticslab?tab=glossary`＝實驗室的術語表分頁，沒有自己的路由），
+    // 落點可以帶查詢字串（某個站的分頁若沒有自己的路由，站首頁就寫成 `/foo?tab=bar`），
     // 所以比對路由存不存在之前先把 `?…` 切掉。
     if (site && !routeSet.has(site.href.split(/[?#]/)[0])) {
       failures.push(`${route}：站首頁 ${site.href} 不是真的路由。SITE_HOMES 的落點寫錯了`);

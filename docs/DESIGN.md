@@ -56,7 +56,7 @@
 
 | 這一塊是什麼 | 平滑 | 現在誰在用 |
 |---|---|---|
-| 整段連續讀完的正文（散文、譯文、校訂全文、長文 `.mdx`） | `.prose-body`（灰階） | `Prose` 元件（手記／統計站長文／術語頁）、`ZhuJiahua` 校訂全文、`LiuRushiEdition` 重排本正文 |
+| 整段連續讀完的正文（散文、譯文、校訂全文、長文 `.mdx`） | `.prose-body`（灰階） | `Prose` 元件（手記長文）、`ZhuJiahua` 校訂全文、`LiuRushiEdition` 重排本正文 |
 | 掃描式的一切（清單、目次、表格、徽章、工具列、側欄、說明短句） | 系統預設 | 其餘全部，含 `/brief` 兩個內頁、`IiasPublications` 的本站說明（`--text-sm`／`ink-muted`） |
 | accent 字體（Erikas 700） | 系統預設 | `.prose-body .font-accent` 明文設回 `auto`——油墨網點靠筆畫邊緣的顆粒，灰階會抹乾淨 |
 
@@ -158,10 +158,11 @@ flex `gap` 撐詞距；中文會退到 Huiwen 而 Huiwen 沒有 700 的字面，
 | `backFor(pathname)` | 一條路徑該有什麼返回鍵，回 `{ href, label }` 或 `null`。 |
 | `resolveBack(override, pathname)` | 殼共用的解析：頁面沒表示意見就照配置、明講 `null` 就不畫、傳物件就用它的。 |
 
-`SITE_HOMES` 是主題站的登記表（`/statistics/*` → 統計學實驗室、`/brief/*` → 簡報、
-`/notes/*` → 手記、`/constitutionalcourt/*` → 案件索引、`/zhujiahua/*` → 朱家驊研究室），
+`SITE_HOMES` 是主題站的登記表（`/brief/*` → 簡報、`/userscripts/*` → 使用者腳本），
 **只給眉標那顆按鈕用**（見下方「一頁只有兩條回頭路」）。箭頭不看這張表。
 新開一個有內頁的站要在這裡加一行，漏了 `validate:shell` 會逐條網址擋下來。
+搬去獨立站的站不留在這張表裡（憲法法庭 2026-08-01、三個 studies 專題 2026-08-20、
+統計站 2026-08-25），它們在本倉只剩 `_redirects` 的 308 與 `/all` 的一張卡片。
 
 **畫出來的實作只有一個**：`src/components/BackLink.jsx`。三個殼在自己的抬頭列放它，自己刻
 版型的頁直接放它。三個殼原本各寫一個 `<a>`，於是「安靜」這件事有三份定義；現在改一個地方
@@ -243,12 +244,12 @@ flex `gap` 撐詞距；中文會退到 Huiwen 而 Huiwen 沒有 700 的字面，
 不換網址），而這個站沒有內頁路由。日後真的長出 `/jirsforeignlaw/…` 的內頁，要先把那顆按鈕
 拆開再接眉標——`<a>` 不能包在 `<button>` 裡。
 
-**眉標可以回子清單，不必一路回站首頁。** `SITE_HOMES` 比對的是前綴、長的排前面，所以
-`/statistics/glossary/<term>` 回「術語表」、`/statistics/tags/<tag>` 回「所有標籤」，其餘
-`/statistics/…` 才回實驗室。這兩份清單是 `/statisticslab` 的分頁、沒有自己的路由，落點因此
-帶查詢字串（`/statisticslab?tab=glossary`）；`validate:shell` 比對路由存不存在時會先切掉
-`?…`，所以「那個分頁真的存在」只能靠人驗——加這種落點時**真的點那顆眉標看落到哪**
-（2026-07-28 的教訓：分頁按鈕連到一條查不到 slug 的路由，用 `?tab=` 進頁反而繞過了它）。
+**眉標可以回子清單，不必一路回站首頁。** `SITE_HOMES` 比對的是前綴、長的排前面，所以一個站
+的術語頁、標籤頁這種子清單可以各自登記，回到它們自己那份清單，其餘內頁才回站首頁。子清單
+若是站首頁的分頁、沒有自己的路由，落點就帶查詢字串（`/foo?tab=bar`）；`validate:shell` 比對
+路由存不存在時會先切掉 `?…`，所以「那個分頁真的存在」只能靠人驗——加這種落點時**真的點那顆
+眉標看落到哪**（2026-07-28 的教訓：分頁按鈕連到一條查不到 slug 的路由，用 `?tab=` 進頁反而
+繞過了它）。本倉目前沒有這種登記，寫法的範例在 `stat.phenomcanvas.com` 那個倉。
 
 ## 共用元件（`src/components/`）
 
@@ -257,7 +258,7 @@ flex `gap` 撐詞距；中文會退到 Huiwen 而 Huiwen 沒有 700 的字面，
 | `LangSwitch` ＋ `useLang` | `const { lang, setLang, t } = useLang(dict)`；字典以中文原文為 key，zh 零成本、漏譯自動回退。localStorage `canvaslab:lang`，同步 `document.documentElement.lang`。新頁一律用它，不再自造 lang state。 |
 | `FontSizeControl` ＋ `useFontScale` | `const [scale, setScale] = useFontScale()`；七檔 0.85–1.6，localStorage `canvaslab:fontScale`。scale 設在頁根 `--reader-scale`，由 `.reader-scale` 掛在外框內的內容 wrapper（見字級規則）。學術長文頁放 header 右側。 |
 | `PageShell` | 新頁與簡單長文頁的外殼：`--c-paper` 底、prose（~65ch）或 wide 寬度、document.title、header 右側 controls slot。自帶複雜外殼的儀表板頁（分頁導覽、側欄）不硬套。 |
-| `SiteHeader` | 主題站（統計站這類有自己首頁與多個子頁的站）內頁的頁首：返回鍵＋LangSwitch＋FontSizeControl。返回鍵指向該站自己的首頁，不是 canvas 根。`back` 曾經是必填、缺了就 throw——那是當年唯一擋得住「頁面忘了寫」的辦法。現在改成選填，因為 `src/backNav.js` 已經知道每個主題站的首頁，頁面什麼都不說也會拿到對的連結，而且總開關關得掉全站。傳 `back` 只為覆寫（雙語標籤那種）。內距用 `SHELL_PAD_X_RAIL`，跟底下 `ArticleLayout` 的三欄格線對齊——不對齊就會看到返回鍵與正文落在兩條左邊界上。曾經三頁各自手刻同一條頁首，其中一頁的返回鍵已經漂到 canvas 根。 |
+| `SiteHeader` | 主題站（有自己首頁與多個子頁的站）內頁的頁首：返回鍵＋LangSwitch＋FontSizeControl。返回鍵指向該站自己的首頁，不是 canvas 根。`back` 曾經是必填、缺了就 throw——那是當年唯一擋得住「頁面忘了寫」的辦法。現在改成選填，因為 `src/backNav.js` 已經知道每個主題站的首頁，頁面什麼都不說也會拿到對的連結，而且總開關關得掉全站。傳 `back` 只為覆寫（雙語標籤那種）。內距用 `SHELL_PAD_X_RAIL`，跟底下 `ArticleLayout` 的三欄格線對齊——不對齊就會看到返回鍵與正文落在兩條左邊界上。曾經三頁各自手刻同一條頁首，其中一頁的返回鍵已經漂到 canvas 根。 |
 | `AppearanceMenu` | 色票與紙紋，收在一顆「外觀」按鈕的下拉裡（不平鋪在工具列上——閱讀頁只付得起一排鉻件）。改的是全站設定（localStorage，開站時套用），與 `/palettelab` 同一組值；差別只在讀者不必離開正文就能換。色票圓點顯示的是 accent 不是 paper——每套票的 paper 依規則都近白，排出來會是一排白方塊。 |
 | `ScrollToTop` | 掛在 Router 內一次，全站生效：換 pathname 就回捲到頂。點連結是換一頁，新的一頁從頭開始；React Router 預設只換元件不動捲軸，於是從索引中段點進詞條會落在該詞條的中段。帶 `#hash` 的錨點導覽與瀏覽器上一頁不干預（那兩種情況讀者自己指定了落點）。 |
 | `Eyebrow` | 眉標 kicker。打字機 accent 字體（Erikas）唯一的預設允許位置。**必須 `font-bold`**——Erikas 的 400 是一支乾淨的細打字機體，色帶油墨的網點字面在 **700** 那一支；首頁那條「PHENOM · CANVAS LAB」一直是 bold，眉標元件曾經不是，於是同一個站有兩種眉標（2026-07-28 使用者連問兩次「油墨點點的字體呢」）。另外兩件也包在元件裡：**空格自己補**（Erikas 子集沒有空格字符，advance width＝0，詞距只剩 letter-spacing，字詞邊界會糊成一排等距字母——按空白切成一詞一個 span、flex `gap` 撐開，單獨成詞的間隔號改畫 CSS 圓點）；**`font-synthesis: none`**（中文眉標走 Huiwen fallback，而 Huiwen 沒有 700 的字面，不關掉會被畫一層假粗體）。現行值 `--text-xs`／700／`tracking .26em`／`ink-muted`。曾於 2026-07-07 短暫用於 h1–h3 拉丁面，同日因行內數字紋理過噪而改回 Radio Newsman；標題中文面維持 Huiwen Mincho。 |
@@ -275,7 +276,7 @@ flex `gap` 撐詞距；中文會退到 Huiwen 而 Huiwen 沒有 700 的字面，
 | `DashboardLayout` | 儀表板版兩欄殼（`/brief`、`TaxLitigation` 等用；與文章版 `ArticleLayout` 是姊妹不是同一個）。header 捲走＋吸頂 `dashboard` variant `Tabs`（`bg-surface` 膠囊裡的實心藥丸鈕，靠左對齊標題／內文邊界，不置中、不用毛玻璃）＋兩欄 `[1fr_13rem]`：滿寬內容欄、右欄 `TableOfContents`（h2+h3 全展開＋scroll-spy，可選 `leftRailTop` 放緊急提醒）。2026-07-20 由三欄改兩欄：左欄原本只列 h2，跟吸頂分頁列做的是同一件事。頁面提供抬頭／分頁項目／內容，殼負責版型與把 TOC 接到內容容器。文章要固定閱讀寬度就用 `ArticleLayout`，儀表板要滿寬密集列就用這個。**`padX` prop**：見下方「外殼的水平內距」——**預設已經是留白版**（`SHELL_PAD_X`），寬表格頁才傳 `SHELL_PAD_X_TIGHT` 換回貼邊。三個容器（header／吸頂分頁／內文 grid）吃同一個 `padX`，只縮內文會出現兩條左邊界的段差。**`reader-scale` 陷阱**：zoom 只能包最內層內容，`mx-auto`/`max-width`/padding 那層必須留在 zoom 外，否則字級放大時置中計算被一起縮放、位置會偏移（100% 時看不出來，160% 才顯形）。 |
 | `BookTree`（2026-07-28 建，`/zhujiahua` 用） | 整本書的目次，裝進 `ArticleLayout` 的 `nav` slot——書的導覽單位是它自己的目次，不是幾顆分頁標籤。契約是通用形狀 `{ id, title, href, group, subgroup?, lead?, badge?, hint? }`，元件不認識任何一本書的欄位名，呼叫端自己攤平（朱家驊：部次→`group`、分節＋再分節併成 `subgroup`、原書起頁→`lead`、有全文→`badge`）。items 必須已照書序排好，分組靠相鄰同名、不重排。含搜尋、依 `group` 收合（預設全開）、選中項自動捲進視野——**只設最近可捲祖先的 `scrollTop`，不用 `scrollIntoView`**，後者會連整個視窗一起捲、把讀者從正文拔走。搭配 `ArticleLayout` 的 `hideToc`：全書目次已經在左欄了，右欄再列一次部次就是同一件事講兩次。 |
 | `FilterBar`（2026-07-29 建，`/notes`＋`/zhujiahua` 用） | 清單頁上方那一列篩選控制：上下細線夾住一排控制項，底下一行 `note`（通常是「列出 N 筆」）。**控制項本身由各頁自己給**（`SearchField`、`Dropdown`、切換鈕，每頁需要的不一樣，元件不猜）。選配 `label` 是控制項前面的前綴字——只有一顆下拉時，孤零零一顆按鈕看不出它在篩什麼。抽的時候兩頁的 class 串一字不差。 |
-| `SectionLink`（2026-07-29 建，`/notes` 用兩次） | 通往同一個站另一區的入口：標題＋選配計數＋箭頭，底下一句話說明那裡有什麼。計數用等寬字（它會變）。**`Userscripts`、`StatisticsLab`、`statistics/TagPage` 還各自手刻著一份**，換過來時要各自驗一次。 |
+| `SectionLink`（2026-07-29 建，`/notes` 用兩次） | 通往同一個站另一區的入口：標題＋選配計數＋箭頭，底下一句話說明那裡有什麼。計數用等寬字（它會變）。**`Userscripts` 還手刻著一份**，換過來時要驗一次（`StatisticsLab` 與 `statistics/TagPage` 那兩份隨統計站 2026-08-25 退役刪除）。 |
 | `Badge` | `tone` 只吃語意色槽（danger/warning/success/info/neutral 或 cat-1…cat-8），不吃任意顏色。 |
 | `HoverCite` | 引註標記，hover/focus 顯示出處。出處物件來自資料倉，缺 locator 的引註在資料倉就 FAIL，前端不做把關。 |
 | `Math`（匯入時建議命名為 `Tex`，避免遮蔽全域 `Math`） | KaTeX 包裝，見下方例外。 |
@@ -672,11 +673,13 @@ arXiv 與 BIS（文章）之後，**沒有一條成立**：
 
 ## 例外：數學公式與 KaTeX（2026-07-13 使用者裁定）
 
-數學排版是內容，不是裝飾。統計教學站引入 KaTeX，連同它自帶的 KaTeX_* 字族。這是「不新增字體」的唯一例外，邊界如下：
+統計教學站引入 KaTeX，連同它自帶的 KaTeX_* 字族；那個站 2026-08-25 搬去
+stat.phenomcanvas.com，本倉的手記長文與 `src/components/lab/` 仍在用它。公式的排版屬於
+內容的一部分，不當裝飾看待，所以這是「不新增字體」的唯一例外，邊界如下：
 
 1. KaTeX 字型只准出現在 `.katex` 作用域內。不得指派給正文、標題、UI，不得寫進 `--font-*`，不得進 tokens.css。覆寫樣式一律寫在 `src/styles/katex.css`，只用 ink token，不寫裸 hex。
-2. **數學記號一律以 LaTeX 進場**：`.mdx` 用 `$…$` / `$$…$$`（remark-math ＋ rehype-katex 在建置時轉換），JSX 用 `<Math tex="…" />`。原始碼裡不得直接打 Unicode 數學字元。理由有二：同一個符號若一半走明體、一半走 KaTeX_Math，同一頁上會出現兩種字形；而且 Unicode 數學字元會被拖進字型子集掃描。`npm run validate:math` 在 build 時強制，範圍是統計站、`src/content/`、`src/data/statistics*` 與 `src/components/lab/`（舊頁把 `≥`、`≈` 當散文標點用，字型子集已覆蓋，不在此範圍）。
-3. KaTeX 只在統計站的 async chunk 載入（路由已是 `lazy()` 分包），不進全站 bundle。
+2. **數學記號一律以 LaTeX 進場**：`.mdx` 用 `$…$` / `$$…$$`（remark-math ＋ rehype-katex 在建置時轉換），JSX 用 `<Math tex="…" />`。原始碼裡不得直接打 Unicode 數學字元。理由有二：同一個符號若一半走明體、一半走 KaTeX_Math，同一頁上會出現兩種字形；而且 Unicode 數學字元會被拖進字型子集掃描。`npm run validate:math` 在 build 時強制，範圍是 `src/content/` 與 `src/components/lab/`（舊頁把 `≥`、`≈` 當散文標點用，字型子集已覆蓋，不在此範圍）；同一支的第二條規則掃整個 `src/data`，資料欄位帶 `$…$` 而沒有 `<MathText>` 渲染它就擋下建置。
+3. KaTeX 只在用得到它的頁面 async chunk 載入（路由已是 `lazy()` 分包），不進全站 bundle。
 4. 公式區塊仍受「正文區底色只准 `--c-paper`」約束：公式不做色塊、不做卡片、不加 accent 色。
 
 ## 遷移現況（2026-07-06）

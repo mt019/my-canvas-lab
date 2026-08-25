@@ -9,22 +9,26 @@
  * symbol ends up with two different shapes on one page. It also drags Greek and
  * math blocks into the font subset for no reason.
  *
- * Scope is deliberately narrow: the statistics site, synced statistics data,
- * and the shared lab components. Older pages use ">=", "~=" and similar as
- * ordinary prose punctuation, already covered by the font subsets — this gate
- * is not a site-wide typography sweep, and widening it would only create noise.
+ * Scope is deliberately narrow: the MDX under src/content and the shared lab
+ * components. Older pages use ">=", "~=" and similar as ordinary prose
+ * punctuation, already covered by the font subsets — this gate is not a
+ * site-wide typography sweep, and widening it would only create noise.
+ *
+ * 2026-08-25：統計站的頁面與資料檔隨獨立站退役刪除，掃描範圍與 src/data 那條
+ * 一併移除。手記的 MDX 與 src/components/lab 仍在範圍內，範圍不是空的。
  */
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 
 const ROOTS = [
-  'src/pages/statistics',
-  'src/pages/StatisticsLab.jsx',
   'src/content',
   'src/components/lab',
 ];
-const DATA_GLOB_DIR = 'src/data';
-const DATA_PREFIX = 'statistics';
+// 第二條規則（資料層的 $…$ 要有人渲染）掃的是整個 src/data。先前只掃 statistics
+// 前綴的九個檔，那九個檔 2026-08-25 隨統計站退役刪除，判準若不改就變成掃零個檔——
+// 一個永遠沒有對象的檢查與沒有檢查等價。Unicode 字元那條規則不套到 src/data：
+// 舊資料把 ≥、× 當散文標點用，字型子集已經涵蓋。
+const DATA_DIR = 'src/data';
 
 // Greek, super/subscripts, mathematical operators.
 const BANNED = /[Ͱ-Ͽ⁰-₟∀-⋿]/u;
@@ -43,12 +47,7 @@ function walk(path) {
     .flatMap((entry) => walk(join(path, entry.name)));
 }
 
-const files = [
-  ...ROOTS.flatMap(walk),
-  ...(existsSync(DATA_GLOB_DIR)
-    ? readdirSync(DATA_GLOB_DIR).filter((f) => f.startsWith(DATA_PREFIX)).map((f) => join(DATA_GLOB_DIR, f))
-    : []),
-];
+const files = ROOTS.flatMap(walk);
 
 const problems = [];
 for (const file of files) {
@@ -76,6 +75,7 @@ const MATH_RENDERED_FIELDS = new Set([
   // Written for the data repo's own docs and for figure components that pass
   // their own JSX captions; never printed as a bare string.
   'description', 'notes', 'source', 'title', 'label',
+  'summary',                        // Brief.jsx 的 <MathText text={i.summary} />
 ]);
 
 function fieldsWithLatex(value, key, out) {
@@ -121,8 +121,11 @@ if (inlineDisplay.length > 0) {
   process.exit(1);
 }
 
+const dataFiles = existsSync(DATA_DIR)
+  ? readdirSync(DATA_DIR).filter((f) => f.endsWith('.json')).map((f) => join(DATA_DIR, f))
+  : [];
 const unrendered = [];
-for (const file of files.filter((f) => f.endsWith('.json'))) {
+for (const file of [...files.filter((f) => f.endsWith('.json')), ...dataFiles]) {
   let parsed;
   try {
     parsed = JSON.parse(readFileSync(file, 'utf8'));
@@ -149,4 +152,4 @@ if (problems.length > 0) {
   process.exit(1);
 }
 
-console.log(`math notation ok — ${files.length} 個檔案，零 Unicode 數學字元`);
+console.log(`math notation ok — ${files.length} 個檔案掃字元、${dataFiles.length} 個資料檔掃未渲染的 $…$`);

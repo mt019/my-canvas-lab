@@ -704,93 +704,28 @@ kind 之間的順序＝它在 `sources.json` 裡第一次出現的順序（那�
 **標記層還沒做的**：標記只在這台瀏覽器裡，換一台機器就沒有（頁面有講出這件事，沒有假裝有同步）。
 沒有備註欄——按了留著之後想寫一句「為什麼留」，現在沒地方寫。兩件都還沒有人要求，別自己開工。
 
-### `StatisticsLab` ＋ `statistics/*`（統計學實驗室，2026-07-13 新建）
+### 統計學實驗室的退役
 
-站的形狀：hub（`/statisticslab`，依 topic 列文章，清單由資料驅動，加第二篇不用改它）＋每篇一
-個路由頁（`/statistics/null-hypothesis`）。路由來自 `App.jsx` 的巢狀 glob（`pages/**`；子目錄
-→ 命名空間網址；`_` 開頭的路徑段不進路由，所以 `_figures/`、`_lib/` 安全）。文章頁在 `PAGE_META`
-標 `listed: false`（要 SEO、不上首頁；首頁的 ungrouped fallback 會撿走沒有 group 的頁，所以省
-略 group 達不到這個效果）＋`type: 'Article'`。
+2026-07-13 在本倉新建，2026-08-25 退役。現役副本在獨立站 `stat.phenomcanvas.com`，倉是 `../phenom-statistics`（資料倉
+`../phenom-statistics-data`）。canvas 這邊 2026-08-25 刪掉 11 個路由頁、56 份正文、
+9 個資料檔與 `src/components/lab/ArticleMeta.jsx`，`/all` 剩一張指向獨立站的卡片
+（`PAGE_META.StatisticsLab` 的 `externalUrl` ＋ `App()` 的路由條目，兩者缺一就沒有卡片）。
 
-資料倉 `../statistics-lab-data`：正文 `article.mdx`、`figures.json`（互動元件參數與 seed）、
-`sources.json`（引文出處，缺 locator 就 validate FAIL）、`misreadings.json`、`timeline.json`、
-`quiz.json`。`npm run sync` 一次投影三個檔（兩個 JSON ＋ 一份 .mdx 正文）。
+舊網址的 308 在 `public/_redirects` 六條：`/statisticslab`、`/statisticslab/*`、`/statistics`、
+`/statistics/*`、`/en/statisticslab`、`/en/statistics/*`。獨立站的裸 `/statistics` 與
+`/statisticslab` 都沒有路徑，那個中樞是它的根路徑，所以那三條不帶 `:splat`；目的地不帶查詢
+字串，`?tab=glossary`／`?tab=tags` 因此會被保留。
 
-**這是全站唯一允許在瀏覽器算數的頁**（資料倉 `docs/simulation-policy.md` 明文例外）：教學需要
-讀者親手重跑一萬次。邊界四條——只算已投影參數的純函式；一律 seeded（seed 在 figures.json）；
-資料倉 `data/reference/` 存同一 seed 下的期望輸出，`npm run verify:sim` 重跑比對；**瀏覽器只
-生成分佈，不生成論點**（統計解釋、門檻、史料一律來自資料倉）。模擬引擎在 `_lib/`（mulberry32、
-Box-Muller、pooled-variance t 檢定、regularized incomplete beta）；實測校準：虛無為真時
-alpha=.05 的偽陽性率 5.1%，品茶精確分佈 [1,16,36,16,1]/70。
+檔案不得回來由 `validate-external-cards.mjs` 的「拆走的資料檔」與「拆走的目錄」兩份清單看守，
+兩者都有負向測試。同一輪跟著清掉的殘留：`scripts/routes.mjs` 的 `PARAM_ROUTES`、
+`glossarySlugs()`、`tagSlugs()` 與 `NOINDEX` 的兩個名字；`src/lib/siteLanguages.js` 的
+`ROUTE_LANGUAGES`（六條全是統計，現在是空 Map，站上沒有任何路由有英文版）；`src/backNav.js`
+的 `SITE_HOMES` 四條；`scripts/validate-math-notation.mjs` 的掃描範圍。`synced-data-counts.json`
+的筆數基線由 `npm run baseline:synced` 重產，20 個檔降到 11 個。
 
-六個互動 figure 全部實跑通過（零 console error）。刻意不做的圖：Fisher/Neyman 引用數逐年變化、
-誤讀出現頻率——沒有真實資料就不畫，見 `docs/DESIGN.md` 與資料倉的 figures 註記。
-
-### `statistics/judicial-ideal-points`（大法官理想點論文，2026-07-19 新建）
-
-定位＝**一篇剛好放在統計站的高水準論文草稿**（使用者 2026-07-19 拍板），非教學隨筆：出版結構
-（摘要＋1–8 編號節＋獨立文獻回顧＋參考文獻），深度優先、術語照學術慣例首次定義（非全面白話）。
-中文正文完稿；英文 `article.en.mdx` 是佔位（僅摘要＋兩圖英標），待譯。
-
-兩張互動圖在 `_figures/`：`BayesIdealPoints.jsx`（古典 MDS vs 貝氏 GRM θ 毛毛蟲，19 位＋90% CI，
-提名總統上色＝cat-1/cat-2 設計系統固定順序；tone 指派用純函數每次由資料重算，勿改回 module 層
-可變狀態——那會讓 re-render 後圖例色塊落空，已踩過）、`SameNomineeForest.jsx`（八算法勝算森林，
-1× 參考線＋淡底 ink 細框）。**圖資料是一次性硬拷**進資料倉 figures.json 的 params（抽自 CC 資料倉
-`立場表GRM.json`／`共同具名-TierB-{階層,穩健}.json` 與 `立場表分析.json` 的古典位置），**沒有 sync
-接回 CC 母本——CC 分析一重跑就靜默過期**（見 `.claude/CHECKPOINT.statistics.md` 待決）。
-
-sources.json 這篇新增 18 條精確書目（台灣六篇＋Hanretty 逐一手 PDF 核對，2026-07-19）；另有
-`references.bib`（22 條，citekey 與 sources.json 1:1，供未來 LaTeX/PDF 版）。用到四個 `<Term>` 連結：
-permutation-test、credible-interval、ideal-point、equivalence-test（各在首見處，摘要不連）。
-資料倉 validate 的工程語言檢查已改「ASCII 詞加詞邊界」（否則 "New Democracies" 的 "ocr" 會誤中）。
-四閘＋playwright 全綠、console 0；display 數學置中（`.katex-display` text-align center 實測）。
-
-**記號約定（2026-07-19 統一）**：假設義「虛無假設（$H_0$）」§4.2 首見、之後 $H_0$；結果義全 null（§4.2
-定義為推翻不了 $H_0$ 的結果）。摘要保留純詞不上符號。動這篇時沿用，勿再混寫裸 `H0` 或「虛無分布」。
-
-**術語表條目（2026-07-19）**：這篇替統計站 glossary 新增兩條範本——`credible-interval`（貝氏可信區間，
-**與既有 frequentist `confidence-interval` 是不同概念，勿互連**）與 `ideal-point`（引 NOMINATE／
-Martin-Quinn／Clinton-Jackman-Rivers）。`data/glossary-groups.json` 為此新增第 4 群 `measurement`
-「把行為估成位置」（收 ideal-point，未來 latent-trait/GRM 進此群）。剩餘術語（latent-trait、GRM、
-odds-ratio、specification-curve、dyad/MRQAP）待使用者過目範本後推廣。
-
-**兩層結論的分寸（2026-07-19 修，已推送 canvas `09e3508`／data `03ccaf8`）**：§6 與 quiz `two-layer` 原用「不同構念／更常加入不代表對齊」
-圓兩層分裂，把協作層（1949 以來上百人）與投票層（現任 19 人）當同一批「他們」——已改成靠「不同母體、
-不可通約，不相印證也不相矛盾」，代理疑慮交還 §7。**English 版仍是佔位，且記號約定（$H_0$/null）、四個 Term
-連結、這個兩層修正全只在 zh；寫 en 時以 zh 為準，勿把舊框架譯進去。** kuuu 已核投票層數字未過期（逐法官 θ
-對 CC 母本 `立場表GRM.json` 逐一相符、CI 寬 1.068／相關 0.967／p 0.34 全對得上）。
-
-**標籤系統（2026-07-19，canvas 已推送 `6a4c495`）**：每篇文章的主題標籤通往「談同一件事的所有文章」。
-`/statistics/tags` 是總覽頁（`Tags.jsx`），`/statistics/tags/:slug` 是單標籤頁（`TagPage.jsx`）。標籤索引在
-資料倉 `build-app-json.mjs` 產出，落進 `statistics-app.json` 的 `tags`（slug＋成員），sync 成 canvas
-`statistics.json` 的 `hub.tags`——**canvas 端不手改**。`routes.mjs` 新增 `tagSlugs()` 把每個標籤頁納入
-prerender＋sitemap（458 頁；`Tags` 總覽頁列 `NOINDEX`）。`ArticleMeta` 的 tag chip 由純文字改成 `<Link>`：
-`tags[i]` 配 `tagSlugs[i]`，**slug 以中文標籤為鍵、語言中性**，沒有 slug 的標籤仍以純文字渲染。標籤詞表已正規化
-（「虛無結果」→「非顯著結果」、"null results"→"non-significant result"），`validate-processed.mjs` 加了標籤
-slug 驗證。**資料倉這一半已推送 `statistics-lab-data` master `5d227b0`**（build 引擎＋驗證器＋meta 標籤＋
-processed＋LOG）；兩 repo 同步。
-
-### 統計站的長文外殼與排版（2026-07-13 補）
-
-`lab/ArticleLayout`＋`ArticleNav`＋`TableOfContents`＋`ArticleMeta`：左書目、中閱讀欄、右自動目次
-（rehype-slug 給標題 id，IntersectionObserver 標當前章節，`refreshKey` 讓它隨語言重讀——否則切成
-英文後仍列中文標題）。閱讀欄**不填色、不加材質、不畫邊界**；紙張顆粒鋪整頁（只鋪在 article 上會畫出
-一個看得見的矩形，那就是面板）。主題色只出現在「當前位置」的標記。
-
-雙語：文章走兩份 `.mdx`（字典式逐句翻譯對散文是錯的形狀），六個互動元件各自帶 zh/en 完整文案，
-引註卡讀資料倉的 `en` 欄位。
-
-**CJK 排版三條全域規則**（`src/index.css` body）：`line-break: strict`（行首不得為收尾標點）、
-`text-wrap: pretty`、`overflow-wrap: break-word`。**`HoverCite` 用 `<span role="button">` 而非
-`<button>`**：Chromium 把表單控制項當成不可分割的行內物件，其中文字不進入周圍文字流，斷行規則跨不
-過去，句號會被丟到下一行。卡片用 `createPortal` 掛到 body，否則 hover 時段落會位移。實測判準：
-全文行首孤立標點 0 處、hover 前後段落 boundingBox 相同。
-
-**標題內的間距要放進文字，不要靠 CSS margin（2026-07-19 修）**：`TableOfContents` 與 `SubOutline`
-的大綱／scroll-spy 是讀 h2/h3 的 `textContent` 生成的，**CSS margin 不進 textContent**。統計站術語表
-的組標題原本用 `<span className="ml-2">{n} 條</span>` 撐開組名與數量，頁面上有間距、但「本頁區塊」
-大綱顯示成「組成8 條」黏一起。改用 JSX `{' '}` 真實空格、拿掉 `ml-2`（`StatisticsLab.jsx`）。通則：
-凡標題會被 textContent-based 大綱消費，其內部間距一律用真實字元，兩個消費點已加行內註解。
+頁面規則寫在 `phenom-statistics/docs/頁面規則.md`；canvas 這邊那份同日刪除。統計站當年在本倉
+留下的設計裁定（術語表的分組維度、滑桿讀數要預留最寬值、KaTeX 的引入邊界）仍記在
+`docs/DESIGN.md`，那些規則管的是全站，不隨這個站搬走。
 
 ### `IiasPublications`（中研院法研所出版品，2026-07-11）
 
@@ -1766,14 +1701,13 @@ Google 收錄、可單獨分享，但拿到某個子站連結的人把網址砍�
   有 `<h1>` 就必須用 `SiteHomeEyebrow`），免除名單每條附理由；用故意寫壞的案例驗過會失敗。
   `JirsForeignLaw` 是唯一免除的：它的眉標與大標題整塊是「回本頁總覽」的按鈕，`<a>` 不能
   包進 `<button>`，而那個站沒有內頁路由。
-- **統計的術語頁與標籤頁回子清單，不是回實驗室門口**。原本各自寫死「← 術語表／← 所有
-  標籤」，寫死的落點在 07-29 那輪被全部收掉之後，眉標一律回 `/statisticslab`，少了一層
-  精確度。改法是把子清單也登記進 `SITE_HOMES`（前綴長的排前面）：
-  `/statistics/glossary/<term>` → 術語表、`/statistics/tags/<tag>` → 所有標籤。這兩份清單是
-  `/statisticslab` 的分頁、沒有自己的路由，落點因此帶查詢字串；`validate:shell` 比對路由
-  存不存在時先切掉 `?…`，所以「分頁真的存在」機器驗不到——**改用 headless 真的點那顆眉標**
-  確認落地後 tags 頁列出 29 個標籤、glossary 頁列出術語清單（2026-07-28 那次就是用
-  `?tab=` 進頁繞過了死掉的分頁按鈕，這次不重蹈）。
+- **統計的術語頁與標籤頁回子清單，不是回實驗室門口**（2026-08-25 隨統計站退役，本倉已無這
+  幾條登記；規則本身仍然適用於任何有子清單的站）。原本各自寫死「← 術語表／← 所有標籤」，
+  寫死的落點在 07-29 那輪被全部收掉之後，眉標一律回站首頁，少了一層精確度。改法是把子清單
+  也登記進 `SITE_HOMES`（前綴長的排前面），落點帶查詢字串指向站首頁的那個分頁；
+  `validate:shell` 比對路由存不存在時先切掉 `?…`，所以「分頁真的存在」機器驗不到——
+  **改用 headless 真的點那顆眉標**確認落地（2026-07-28 那次就是用 `?tab=` 進頁繞過了死掉的
+  分頁按鈕，這次不重蹈）。
 
 ## VocalTuner：單音/旋律引導線（2026-07-27）
 
@@ -2201,20 +2135,24 @@ radius for all points.
 Long-form articles are `.mdx`: plain markdown prose with interactive figures
 written inline (`<LadyTastingTea />`). `@mdx-js/rollup` runs `enforce: 'pre'` in
 `vite.config.ts`; `remark-math` + `rehype-katex` compile `$…$` at build time.
-The `.mdx` file imports nothing — the page shell (`src/pages/statistics/
-NullHypothesis.jsx`) injects the figure components and the `<Cite>` binding
-through `Prose`'s MDXProvider, so writing the next article is writing prose.
+The `.mdx` file imports nothing — the page shell injects the figure components
+and the `<Cite>` binding through `Prose`'s MDXProvider, so writing the next
+article is writing prose.
 
 **Math is LaTeX-only.** No Unicode math character (Greek, sub/superscripts,
-operators) may be typed into the statistics pages, `src/content/`,
-`src/data/statistics*`, or `src/components/lab/`; `npm run validate:math`
-(fourth build gate, `scripts/validate-math-notation.mjs`) fails the build on
-one. Reason: the same symbol would otherwise render in Mincho in one place and
-KaTeX_Math in another, on the same page. Older pages use `>=`-type characters as
-ordinary prose punctuation and are out of scope. KaTeX's own fonts are the one
-sanctioned exception to "no new fonts" (`docs/DESIGN.md`), confined to `.katex`,
-and land only in the statistics async chunk (verified: `dist/index.html` and the
-home chunk contain no katex).
+operators) may be typed into `src/content/` or `src/components/lab/`;
+`npm run validate:math` (`scripts/validate-math-notation.mjs`) fails the build on
+one. A second rule in the same gate reads every JSON under `src/data` and fails
+when a field carries `$…$` that no `<MathText>` renders. Reason: the same symbol
+would otherwise render in Mincho in one place and KaTeX_Math in another, on the
+same page. Older pages use `>=`-type characters as ordinary prose punctuation and
+are out of scope. KaTeX's own fonts are the one sanctioned exception to "no new
+fonts" (`docs/DESIGN.md`), confined to `.katex`.
+
+2026-08-25：掃描範圍原本寫死 `src/pages/statistics`、`src/pages/StatisticsLab.jsx` 與
+`src/data/statistics*`，那些檔隨統計站退役刪除。第一條規則改掃 `src/content` 與
+`src/components/lab`；第二條規則的判準若照舊只認 statistics 前綴，就會變成掃零個檔，
+所以改掃整個 `src/data`，`Brief.jsx` 的 `summary` 一併收進 `MATH_RENDERED_FIELDS`。
 
 **已修：`validate:math` 對中文刪節號誤報（2026-07-29 發現並修好）。**
 `⋯`（U+22EF）落在 Unicode 的數學運算子區段，所以上面那條規則抓它；但中文排版用的就是它當

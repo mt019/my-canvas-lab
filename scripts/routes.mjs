@@ -1,23 +1,19 @@
 // The site's indexable route list, enumerated the same way App.jsx routes files:
 // every .jsx/.tsx under src/pages (path segments starting with "_" are building
-// blocks, not routes), plus the one glossary param route expanded per term, minus
-// the routes App.jsx marks noindex. Shared by prerender and sitemap so they never
+// blocks, not routes), minus the routes App.jsx marks noindex, plus any param
+// route expanded per slug. Shared by prerender and sitemap so they never
 // disagree. Add a page and both pick it up with no edit here.
-import { readdirSync, readFileSync } from 'node:fs';
+import { readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { ROOT } from './site-config.mjs';
 import { localizedIndexRoutes } from '../src/lib/siteLanguages.js';
 
 const PAGES = join(ROOT, 'src', 'pages');
 const kebab = (s) => s.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();
-// Glossary: the standalone /statistics/glossary page was folded into the
-// Statistics Lab hub's 術語表 tab. The file stays only to redirect old links, so
-// it is kept out of prerender and the sitemap (no duplicate of the tab's content).
-const NOINDEX = new Set(['PaletteLab', 'TaipeiFilmFestival', 'Glossary', 'Tags', 'Notes']);
-const PARAM_ROUTES = {
-  GlossaryTerm: '/statistics/glossary/:slug',
-  TagPage: '/statistics/tags/:slug',
-};
+const NOINDEX = new Set(['PaletteLab', 'TaipeiFilmFestival', 'Notes']);
+// App.jsx 有同名的一份，加參數路由時兩邊都要寫。2026-08-25 起是空的：統計術語頁與
+// 標籤頁隨統計站退役刪除，現役副本在 stat.phenomcanvas.com。
+const PARAM_ROUTES = {};
 
 function walkPages(dir, rel = '') {
   const out = [];
@@ -40,25 +36,6 @@ function routeFor(rel) {
   return parts.length === 0 ? `/${name.toLowerCase()}` : `/${parts.map(kebab).join('/')}/${kebab(name)}`;
 }
 
-function glossarySlugs() {
-  try {
-    const g = JSON.parse(readFileSync(join(ROOT, 'src', 'data', 'statistics-glossary.json'), 'utf8'));
-    return Object.keys(g.terms || {});
-  } catch {
-    return [];
-  }
-}
-
-// One route per tag, from the same derived index the runtime uses (hub.tags).
-function tagSlugs() {
-  try {
-    const h = JSON.parse(readFileSync(join(ROOT, 'src', 'data', 'statistics.json'), 'utf8'));
-    return (h.tags || []).map((t) => t.slug);
-  } catch {
-    return [];
-  }
-}
-
 
 export function collectRoutes() {
   const canvasBuild = process.env.VITE_DEPLOY_TARGET === 'canvas';
@@ -69,14 +46,7 @@ export function collectRoutes() {
   for (const rel of walkPages(PAGES)) {
     const name = rel.replace(/\.(jsx|tsx)$/, '').split('/').pop();
     if (NOINDEX.has(name)) continue;
-    const route = routeFor(rel);
-    if (route === '/statistics/glossary/:slug') {
-      for (const slug of glossarySlugs()) routes.add(`/statistics/glossary/${slug}`);
-    } else if (route === '/statistics/tags/:slug') {
-      for (const slug of tagSlugs()) routes.add(`/statistics/tags/${slug}`);
-    } else {
-      routes.add(route);
-    }
+    routes.add(routeFor(rel));
   }
   return localizedIndexRoutes([...routes]);
 }

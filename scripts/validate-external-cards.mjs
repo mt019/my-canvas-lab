@@ -58,11 +58,35 @@ for (const name of stubs.keys()) {
 // Notes 的 notes.json 仍由本倉的 MDX 產線在用，不在此列。
 const 拆走的資料檔 = {
   IiasPublications: ['src/data/iiasPublications.json'],
+  StatisticsLab: [
+    'src/data/statistics.json',
+    'src/data/statistics-glossary.json',
+    'src/data/statistics-about.json',
+    'src/data/statistics-card-shuffling.json',
+    'src/data/statistics-confidence-interval.json',
+    'src/data/statistics-equivalence-testing.json',
+    'src/data/statistics-judicial-ideal-points.json',
+    'src/data/statistics-justice-partial-pooling.json',
+    'src/data/statistics-null-hypothesis.json',
+  ],
 };
 for (const [name, files] of Object.entries(拆走的資料檔)) {
   assert.ok(stubs.has(name), `拆走的資料檔清單列了 ${name}，App() 卻沒有它的外站條目`);
   for (const rel of files) {
     assert.equal(existsSync(join(ROOT, rel)), false, `${rel} 又回到 canvas 了——現役副本在獨立站，sync 的落點要改那邊`);
+  }
+}
+
+// 整個目錄搬走的情形，上面那兩段看不到：頁面檔的檢查只認 src/pages/<Name>.jsx，
+// 資料檔的清單只列得出單一檔案。統計站搬走的是 11 個頁面、56 份正文與 9 個資料檔，
+// 回來的方式是有人從 git 歷史還原一份來對照、或資料倉的 sync 帶了 canvas 落點。
+const 拆走的目錄 = {
+  StatisticsLab: ['src/pages/statistics', 'src/content/statistics'],
+};
+for (const [name, dirs] of Object.entries(拆走的目錄)) {
+  assert.ok(stubs.has(name), `拆走的目錄清單列了 ${name}，App() 卻沒有它的外站條目`);
+  for (const rel of dirs) {
+    assert.equal(existsSync(join(ROOT, rel)), false, `${rel}/ 又回到 canvas 了——現役副本在獨立站，改那邊`);
   }
 }
 

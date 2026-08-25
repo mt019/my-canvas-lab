@@ -1,14 +1,11 @@
 // Indexable language variants live here, once. Runtime routing, language
 // switches, sitemap generation, and SEO metadata all consume this manifest.
 // Chinese keeps the established URL; translated pages receive locale prefixes.
-const ROUTE_LANGUAGES = new Map([
-  ['/statisticslab', ['en']],
-  ['/statistics/about', ['en']],
-  ['/statistics/confidence-interval', ['en']],
-  ['/statistics/equivalence-testing', ['en']],
-  ['/statistics/justice-partial-pooling', ['en']],
-  ['/statistics/null-hypothesis', ['en']],
-]);
+//
+// 2026-08-25 起是空的：唯一有英文版的六條路由屬統計站，隨它退役刪除，
+// 現役副本在 stat.phenomcanvas.com。表空著時語言切換鈕不出現，sitemap 也不產
+// /en/ 那一組；某頁要有英文版就在這裡加一行。
+const ROUTE_LANGUAGES = new Map([]);
 
 export const DEFAULT_LANGUAGE = 'zh-Hant-TW';
 export const ENGLISH_LANGUAGE = 'en';

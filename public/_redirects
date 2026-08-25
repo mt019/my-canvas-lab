@@ -13,6 +13,16 @@
 /mandarindialogue         https://mandarin.phenomcanvas.com/ 308
 /mandarindialogue/*       https://mandarin.phenomcanvas.com/:splat 308
 
+# 統計站 2026-08-25 起只由 stat.phenomcanvas.com 服務。獨立站的裸 /statistics 與
+# /statisticslab 都沒有路徑，那個中樞是它的根路徑，所以這兩條不帶 :splat。
+# 目的地不帶查詢字串，舊網址的 ?tab=glossary / ?tab=tags 才會被保留。
+/statisticslab            https://stat.phenomcanvas.com/ 308
+/statisticslab/*          https://stat.phenomcanvas.com/ 308
+/statistics               https://stat.phenomcanvas.com/ 308
+/statistics/*             https://stat.phenomcanvas.com/statistics/:splat 308
+/en/statisticslab         https://stat.phenomcanvas.com/ 308
+/en/statistics/*          https://stat.phenomcanvas.com/en/statistics/:splat 308
+
 # 手記由 notes.phenomcanvas.com 服務，apex 的 /notes 走 apex worker 代理過去；
 # canvas 這個子網域上的舊連結轉到手記站自己的網址。
 /notes                    https://notes.phenomcanvas.com/notes/ 308

@@ -1,5 +1,5 @@
 import React, { Suspense, lazy, useMemo } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link, useLocation, useParams, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
 import { ArrowRight, AudioLines, BookMarked, CalendarDays, Castle, ChevronsDown, Coins, Droplets, FileSearch, Film, Gavel, Globe2, GraduationCap, Landmark, Languages, Mic, Music, Music2, NotebookPen, Palette, Piano, Puzzle, Receipt, Scale, ScrollText, ShieldAlert, Sigma, Wind } from 'lucide-react';
 import SeoHead from './components/SeoHead';
 import ScrollToTop from './components/ScrollToTop';
@@ -16,9 +16,9 @@ import { localizedPathsForRoute, splitLanguagePath } from './lib/siteLanguages';
 /*
  * Pages are routed by file path. A file directly under pages/ keeps the old flat
  * rule (AutoTuner.jsx -> /autotuner), so every existing URL is untouched; a file
- * in a sub-directory gets a namespaced route (statistics/NullHypothesis.jsx ->
- * /statistics/null-hypothesis), which is how a site with several articles under
- * one topic stays legible in the address bar. Anything under a path segment
+ * in a sub-directory gets a namespaced route (topic/SomeArticle.jsx ->
+ * /topic/some-article), which is how a site with several articles under one
+ * topic stays legible in the address bar. Anything under a path segment
  * starting with "_" is a building block, not a page — figures, simulation code —
  * and never becomes a route.
  */
@@ -39,13 +39,11 @@ const CANVAS_BUILD = import.meta.env.VITE_DEPLOY_TARGET === 'canvas';
 
 const kebab = (name) => name.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();
 
-/* The file-path rule cannot express a parameter, and one page needs one: the
-   glossary has a page per term and the term is in the URL. Rather than teach the
-   glob a syntax for it, the two or three pages like this name their own path. */
-const PARAM_ROUTES = {
-  GlossaryTerm: '/statistics/glossary/:slug',
-  TagPage: '/statistics/tags/:slug',
-};
+/* The file-path rule cannot express a parameter, so a page that needs one names
+   its own path here. 2026-08-25 起是空的：唯一的兩條（統計術語頁與標籤頁）隨統計站
+   退役刪除，現役副本在 stat.phenomcanvas.com。scripts/routes.mjs 有同名的一份，
+   加參數路由時兩邊都要寫。 */
+const PARAM_ROUTES = {};
 
 function routeFor(path) {
   const rel = path.replace('./pages/', '').replace(/\.(jsx|tsx)$/, '');
@@ -69,143 +67,7 @@ const PAGE_META = { // token-exempt: per-page identity chip colors (data, not st
       name: 'Statistics Lab',
       desc: 'Interactive, sourced essays on why statistical methods have the shape they do and where they break',
     },
-  },
-  // Articles carry meta for SEO (canonical, title, Article schema) but stay off
-  // the index: the hub lists them, the front page lists the hub.
-  Glossary: {
-    name: '統計術語表',
-    desc: '每個術語一句話定義、一個真實發生過的例子，以及它會在哪裡騙到你',
-    Icon: Sigma,
-    accent: '#dfe3ea',
-    accentText: '#6c7690',
-    group: 'learn',
-    listed: false,
-    type: 'WebPage',
-  },
-  GlossaryTerm: {
-    name: '統計術語',
-    desc: '單一術語的完整說明：定義、來歷、具體例子、常見誤讀',
-    Icon: Sigma,
-    accent: '#dfe3ea',
-    accentText: '#6c7690',
-    group: 'learn',
-    listed: false,
-    type: 'DefinedTerm',
-  },
-  Tags: {
-    name: '統計標籤',
-    desc: '文章的主題標籤總覽：每個標籤通往談同一件事的所有文章',
-    Icon: Sigma,
-    accent: '#dfe3ea',
-    accentText: '#6c7690',
-    group: 'learn',
-    listed: false,
-    type: 'CollectionPage',
-  },
-  TagPage: {
-    name: '統計標籤',
-    desc: '帶同一個標籤的所有文章；標籤剛好是術語時通往它的定義',
-    Icon: Sigma,
-    accent: '#dfe3ea',
-    accentText: '#6c7690',
-    group: 'learn',
-    listed: false,
-    type: 'CollectionPage',
-  },
-  NullHypothesis: {
-    name: '為什麼叫虛無假設',
-    desc: 'null 的語源、Fisher 與 Neyman-Pearson 的兩套邏輯，以及教科書把它們縫在一起之後',
-    Icon: Sigma,
-    accent: '#dfe3ea',
-    accentText: '#6c7690',
-    group: 'learn',
-    listed: false,
-    type: 'Article',
-    en: {
-      name: 'Why It Is Called the Null Hypothesis',
-      desc: 'The origins of null, Fisher and Neyman–Pearson, and what happened when textbooks stitched their logics together',
-    },
-  },
-  JusticePartialPooling: {
-    name: '大法官的差異有多大？',
-    desc: '用貝氏階層模型處理小樣本比例、部分匯聚與司法院資料的可比較性',
-    Icon: Sigma,
-    accent: '#dfe3ea',
-    accentText: '#6c7690',
-    group: 'learn',
-    listed: false,
-    type: 'Article',
-    en: {
-      name: 'How Large Are the Differences Between Justices?',
-      desc: 'Small-sample proportions, partial pooling, and comparability in Taiwan Judicial Yuan data',
-    },
-  },
-  EquivalenceTesting: {
-    name: '怎麼證明「沒有差別」',
-    desc: '檢定力與等價檢定：把「沒測到差異」變成「差異小到不重要」，用學名藥生體相等性當例子',
-    Icon: Sigma,
-    accent: '#dfe3ea',
-    accentText: '#6c7690',
-    group: 'learn',
-    listed: false,
-    type: 'Article',
-    en: {
-      name: 'How to Show There Is No Difference',
-      desc: 'Power and equivalence testing: separating an unimportant difference from a study that simply could not tell',
-    },
-  },
-  CardShuffling: {
-    name: '一副牌要洗幾次才算洗好',
-    desc: '七次這個答案，是拿哪一種距離量出來的',
-    seoDesc: '52 張牌洗到第七次，全變異距離是 0.334：拿洗過的牌和電腦排的隨機牌各一副擺在一起，最會挑毛病的檢查也只有 66.7% 的把握指出哪一副洗過。本文重算 Bayer–Diaconis 的精確表，把距離換成逐張猜牌能多猜中幾張，並說明改用資訊量或只看紅黑時，答案為什麼是五、六或十二。',
-    Icon: Sigma,
-    accent: '#dfe3ea',
-    accentText: '#6c7690',
-    group: 'learn',
-    listed: false,
-    type: 'Article',
-    en: {
-      name: 'How Many Shuffles Does a Deck Need',
-      desc: 'Which distance the seven-shuffle answer is measured in',
-    },
-  },
-  ConfidenceInterval: {
-    name: '到底什麼是信賴區間',
-    desc: '一則民調的「誤差 ±4 個百分點」，那句 95% 到底掛在誰身上——覆蓋率、潛艇、比值區間與六句自測',
-    Icon: Sigma,
-    accent: '#dfe3ea',
-    accentText: '#6c7690',
-    group: 'learn',
-    listed: false,
-    type: 'Article',
-    en: {
-      name: 'What a Confidence Interval Actually Is',
-      desc: 'A poll’s ±4 points, repeated-sampling coverage, and the question of whom that 95% is really about',
-    },
-  },
-  JudicialIdealPoints: {
-    name: '大法官站在哪裡：從投票估計理想點',
-    desc: '用貝氏分級反應模型把真投票變成違憲宣告傾向的軸——投票層測不到任命政治的有紀律 null，加一層測得到的共同具名訊號',
-    Icon: Sigma,
-    accent: '#dfe3ea',
-    accentText: '#6c7690',
-    group: 'learn',
-    listed: false,
-    type: 'Article',
-  },
-  About: {
-    name: '本站說明',
-    desc: '統計學實驗室在做什麼：方法、例子怎麼查證、模擬為何每次跑出同樣數字',
-    Icon: Sigma,
-    accent: '#dfe3ea',
-    accentText: '#6c7690',
-    group: 'learn',
-    listed: false,
-    type: 'WebPage',
-    en: {
-      name: 'About the Statistics Lab',
-      desc: 'How the Statistics Lab checks examples and sources, and why its interactive simulations reproduce exactly',
-    },
+    externalUrl: 'https://stat.phenomcanvas.com/',
   },
   AutoTuner: {
     name: '自動調音器',
@@ -605,6 +467,15 @@ export default function App() {
     // what actually puts the card on the page — PAGE_META alone renders nothing.
     return [
       ...localRoutes,
+      // 2026-08-25 拆到 stat.phenomcanvas.com 的統計站。本倉的 11 個頁面、56 份正文
+      // 與 9 個資料檔同日刪除，舊網址的 308 在 public/_redirects，檔案不得回來由
+      // validate-external-cards.mjs 的「拆走的資料檔」看守。
+      {
+        name: 'StatisticsLab',
+        path: '/statisticslab',
+        component: null,
+        meta: PAGE_META.StatisticsLab,
+      },
       {
         name: 'ConstitutionalCourt',
         path: '/constitutionalcourt',

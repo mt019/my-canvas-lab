@@ -51,20 +51,15 @@ export const INDEX = CANVAS_BUILD ? { href: '/', label: '全部' } : { href: '/a
  * 站就要在這裡加一行，否則那些內頁沒有回自己站的路——`validate:shell` 會逐條網址檢查，
  * 漏登記會擋下來。
  *
- * 落點可以帶查詢字串（統計的術語表與標籤總覽是 `/statisticslab` 的兩個分頁，沒有自己的路由）。
+ * 落點可以帶查詢字串（某個站的分頁沒有自己的路由時，站首頁就寫成 `/foo?tab=bar`）。
  * `validate:shell` 比對路由存不存在時會先把 `?…` 切掉，所以只有「?tab= 的分頁真的存在」這件事
  * 檢查不到——加一條這種落點時，要**真的點那顆眉標**看落到哪個分頁，別只看網址組得出來
  * （2026-07-28 的教訓：分頁按鈕連到一條查不到 slug 的路由，用 `?tab=` 進頁反而繞過了它）。
  */
 const SITE_HOMES = [
-  ['/en/statistics/', { href: '/en/statisticslab', label: 'Statistics Lab' }],
   // 憲法法庭三條已移除：那些內頁 2026-08-01 隨獨立站搬到 cc.phenomcanvas.com，
   // 本倉 /constitutionalcourt 只剩 308 轉址與 /all 的一張卡片，沒有內頁要回站首。
-  // 一個術語、一個標籤各自成頁，往回一層是那份清單，不是整個實驗室——回到「所有標籤」
-  // 比回到實驗室門口精確，讀者剛才就是從那裡點進來的。
-  ['/statistics/glossary/', { href: '/statisticslab?tab=glossary', label: '術語表' }],
-  ['/statistics/tags/', { href: '/statisticslab?tab=tags', label: '所有標籤' }],
-  ['/statistics/', { href: '/statisticslab', label: '統計學實驗室' }],
+  // 統計站四條 2026-08-25 同樣移除，現役副本在 stat.phenomcanvas.com。
   ['/brief/', { href: '/brief', label: '簡報' }],
   ['/userscripts/', { href: '/userscripts', label: '使用者腳本' }],
 ];
