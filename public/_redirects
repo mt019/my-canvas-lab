@@ -36,6 +36,10 @@
 /tokugawa                 https://studies.phenomcanvas.com/tokugawa/ 308
 /tokugawa/*               https://studies.phenomcanvas.com/tokugawa/ 308
 
+# 顧準研究室原生在 studies，本倉沒有過這個頁面；這兩條是給猜網址與舊筆記用的。
+/guzhun                   https://studies.phenomcanvas.com/guzhun/ 308
+/guzhun/*                 https://studies.phenomcanvas.com/guzhun/ 308
+
 # 2026-08-20 拆出去的中研院法研所出版品。
 /iiaspublications         https://iias.phenomcanvas.com/ 308
 /iiaspublications/*       https://iias.phenomcanvas.com/ 308

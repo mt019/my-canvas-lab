@@ -1,6 +1,6 @@
 import React, { Suspense, lazy, useMemo } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
-import { ArrowRight, AudioLines, BookMarked, CalendarDays, Castle, ChevronsDown, Coins, Droplets, FileSearch, Film, Gavel, Globe2, GraduationCap, Landmark, Languages, Mic, Music, Music2, NotebookPen, Palette, Piano, Puzzle, Receipt, Scale, ScrollText, ShieldAlert, Sigma, Wind } from 'lucide-react';
+import { ArrowRight, AudioLines, BookMarked, BookOpen, CalendarDays, Castle, ChevronsDown, Coins, Droplets, FileSearch, Film, Gavel, Globe2, GraduationCap, Landmark, Languages, Mic, Music, Music2, NotebookPen, Palette, Piano, Puzzle, Receipt, Scale, ScrollText, ShieldAlert, Sigma, Wind } from 'lucide-react';
 import SeoHead from './components/SeoHead';
 import ScrollToTop from './components/ScrollToTop';
 import BackToTop from './components/BackToTop';
@@ -256,6 +256,15 @@ const PAGE_META = { // token-exempt: per-page identity chip colors (data, not st
     group: 'humanities',
     externalUrl: 'https://studies.phenomcanvas.com/zhujiahua/',
   },
+  GuZhun: {
+    name: '顧準研究室',
+    desc: '《顧準文集》29 篇的來源、版本與校訂狀態逐篇釐清，附 49 條年表',
+    Icon: BookOpen,
+    accent: 'var(--tone-plum-bg)',
+    accentText: 'var(--tone-plum-tx)',
+    group: 'humanities',
+    externalUrl: 'https://studies.phenomcanvas.com/guzhun/',
+  },
   IiasPublications: {
     name: '中研院法研所出版品',
     desc: '中研院法律學研究所期刊、專書、叢書全集清單，797 篇章直達原文',
@@ -508,6 +517,14 @@ export default function App() {
         path: '/zhujiahua',
         component: null,
         meta: PAGE_META.ZhuJiahua,
+      },
+      // 顧準研究室原生在 studies.phenomcanvas.com，本倉沒有過這個頁面。這一條在的
+      // 理由與上面三個不同：/all 的卡片是從路由表長出來的，沒有它就沒有站內入口。
+      {
+        name: 'GuZhun',
+        path: '/guzhun',
+        component: null,
+        meta: PAGE_META.GuZhun,
       },
       // 2026-08-20 拆到 iias.phenomcanvas.com。本倉的頁面與 362 KB 資料同日刪除，
       // 舊網址的 308 在 public/_redirects。
