@@ -78,30 +78,6 @@
   text-decoration-line: none;
 }
 
-/*
- * 引註的點線標記。不用 text-decoration：那是逐盒畫的，KaTeX 公式內部每個子盒
- * 各有自己的字級與基線（下標 0.7em、\mathrm 又一種），每盒自畫一段的結果是點徑、
- * 間距、高度全都不齊，而且 .base 是 inline-block，父層的線根本進不去（2026-08-13
- * 站主四張截圖逐版退回的整段過程）。改成標記自己把一排點當背景畫在行底：一次畫、
- * 全程同一種點；背景在墨的後面，分數的分母壓過去自然蓋住點，沒有穿線；跨行靠
- * box-decoration-break: clone 讓每一行各畫各的。padding-bottom 在 inline 上不改
- * 行高，只把背景區往下伸，點因此落在基線下方固定深度。
- */
-.cite-mark {
-  --cite-dot: var(--c-ink-faint);
-  padding-bottom: 0.1em;
-  -webkit-box-decoration-break: clone;
-  box-decoration-break: clone;
-  background-image: radial-gradient(circle closest-side, var(--cite-dot) 92%, transparent);
-  background-size: 0.32em 0.09em;
-  background-repeat: repeat-x;
-  background-position: left bottom;
-}
-
-.cite-mark:hover {
-  --cite-dot: var(--c-accent);
-}
-
 /* 站內數值滑桿：避免瀏覽器／作業系統原生 thumb 跳離 Canvas 控制項語彙。 */
 .canvas-range {
   height: 1.25rem;
@@ -318,27 +294,6 @@ body {
 .prose-body .font-accent {
   -webkit-font-smoothing: auto;
   -moz-osx-font-smoothing: auto;
-}
-
-/* 編號註標（AnnotatedHtml／AnnotatedText 產生的 <sup class="fn-ref">）。
-   中文可在任兩字之間斷行，單一字元的標記會被孤立到下一行單獨站著，所以 nowrap 把它與
-   前一個字綁在一起；母本那邊負責把註標貼在標點之後。
-   顏色用 accent、字級縮到七成，滑過時整顆變實色——它是可以按的（點了釘住浮卡）。 */
-.fn-ref {
-  white-space: nowrap;
-  margin-left: 0.1em;
-  font-family: var(--font-accent);
-  font-size: 0.7em;
-  font-variant-numeric: tabular-nums;
-  line-height: 1;
-  vertical-align: super;
-  color: color-mix(in srgb, var(--c-accent) 72%, var(--c-ink));
-  cursor: pointer;
-}
-
-.fn-ref:hover,
-.fn-ref:focus-visible {
-  color: var(--c-accent);
 }
 
 /* 圍籬區塊裡的 <code> 會繼承行內那顆藥丸（細框＋左右內距＋accent 字面）。整段程式碼不需要

@@ -10,11 +10,7 @@
   font-size: 1.02em; /* KaTeX_Main runs small next to an 18px Ming face */
 }
 
-/* 行內公式不在中間被折行。引註的點線標記在 index.css 的 .cite-mark（背景畫點，
-   不用 text-decoration）：text-decoration 逐盒畫，KaTeX 子盒各有字級與基線，
-   點拼不齊，且 .base 是 inline-block、父層的線進不去——2026-08-13 連退四版
-   （border-bottom 穿分母、skip-ink auto 斷漢字、skip-ink none 公式下沒線、
-   .base 自畫 text-decoration 點徑高度不齊）之後定案。 */
+/* 行內公式不在中間被折行。 */
 .katex:not(.katex-display .katex) {
   white-space: nowrap;
 }
