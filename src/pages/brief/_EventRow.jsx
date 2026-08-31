@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { dateSegments, dayDiff, entryText, eventFacts, inDays, isOngoing, md, posterOf, sourceLabel } from './data';
 import MarkButton from './_MarkButton';
 import { eventRecord } from './marks';
@@ -20,9 +21,18 @@ import { eventRecord } from './marks';
  * 做的公告，直式橫式都有，硬裁會把講者的臉或日期切掉。
  */
 
+/*
+ * 載不到就整塊不畫，不留一個裂圖。
+ *
+ * 圖址有兩種來路會死掉：外站的活動圖（社群平台的 CDN 網址本來就會過期），以及站內路徑改名
+ * 而某個地方還留著舊的那一份（2026-08-26 就是這樣裂的，見 data.js 的 posterOf）。兩種都
+ * 修得掉，但修好之前讀者看到的不該是一個帶著 alt 文字的破圖框，那一列其餘的字都是好的。
+ */
 function Poster({ event }) {
   const src = posterOf(event);
-  if (!src) return null;
+  const [broken, setBroken] = useState(false);
+  useEffect(() => setBroken(false), [src]);
+  if (!src || broken) return null;
   return (
     <a
       href={src}
@@ -35,6 +45,7 @@ function Poster({ event }) {
         src={src}
         alt={`${event.title}活動圖`}
         loading="lazy"
+        onError={() => setBroken(true)}
         className="block h-auto w-full transition-opacity duration-fast group-hover:opacity-80"
       />
     </a>

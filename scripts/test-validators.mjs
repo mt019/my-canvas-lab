@@ -275,6 +275,19 @@ const cases = [
         return `${JSON.stringify(data, null, 2)}\n`;
       }),
   },
+  {
+    npmScript: 'validate:briefposters',
+    script: 'scripts/validate-brief-posters.mjs',
+    // 造的是 2026-08-26 那次的長相：路徑還在資料裡，檔案已經改到別的名字底下。
+    setup: () =>
+      editedFile('src/data/brief-events.json', (src) => {
+        const data = JSON.parse(src);
+        const id = Object.keys(data.posters ?? {})[0];
+        if (!id) throw new Error('夾具失效：brief-events.json 沒有 posters 對照表');
+        data.posters[id].poster = '/brief/posters/__validator_test.jpg';
+        return `${JSON.stringify(data)}\n`;
+      }),
+  },
 ];
 
 // ── 執行 ────────────────────────────────────────────────────────────────

@@ -71,6 +71,8 @@ export const liveOf = (id) => LIVE.get(id) ?? null;
  * 東西本身的日期（publishedAt／活動日）另存 date，兩個不能混——一篇 7/15 的論文我今天
  * 才留，「7/15」跟「今天留的」講的是兩件事。
  */
+const externalUrl = (u) => (typeof u === 'string' && /^https?:\/\//.test(u) ? u : null);
+
 export function snapshot(x, kind) {
   return {
     id: x.id,
@@ -84,7 +86,10 @@ export function snapshot(x, kind) {
     venue: kind === 'event' ? (x.venue ?? null) : null,
     speaker: kind === 'event' ? (x.speaker ?? null) : null,
     host: kind === 'event' ? (x.host ?? null) : null,
-    poster: kind === 'event' ? (x.poster ?? null) : null,
+    /* 站內路徑（/brief-posters/…）不進快照：那個路徑屬於這一次建置，不屬於這筆紀錄。
+       圖由 data.js 的對照表按活動編號供，目錄改過名照樣拿得到（見那裡 2026-08-26 的來歷）。
+       外站的絕對網址照存：活動輪替出去而對照表裡又沒有它時，那是唯一還指得到圖的東西。 */
+    poster: kind === 'event' ? externalUrl(x.poster) : null,
     posterSourceUrl: kind === 'event' ? (x.posterSourceUrl ?? null) : null,
     description: kind === 'event' ? (x.description ?? null) : null,
     source: x.source,
