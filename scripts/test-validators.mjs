@@ -29,7 +29,7 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const abs = (relPath) => join(ROOT, relPath);
 
 function run(scriptRelPath) {
-  const res = spawnSync('node', [scriptRelPath], { cwd: ROOT, encoding: 'utf8' });
+  const res = spawnSync('node', [scriptRelPath], { cwd: ROOT, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
   return { code: res.status, stderr: res.stderr ?? '', stdout: res.stdout ?? '' };
 }
 
