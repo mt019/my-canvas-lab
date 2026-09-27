@@ -56,6 +56,14 @@ function routeFor(path) {
 }
 
 const PAGE_META = { // token-exempt: per-page identity chip colors (data, not styling)
+  VintageRec: {
+    name: 'Vintage REC',
+    desc: '復古色調與動態漏光，可預覽、選片段並壓縮匯出影片',
+    Icon: Film,
+    accent: 'var(--c-line)',
+    accentText: 'var(--c-ink-faint)',
+    group: 'tool',
+  },
   StatisticsLab: {
     name: '統計學實驗室',
     desc: '把統計方法拆開來，用可以親手操作的模擬解釋它為什麼長這樣',

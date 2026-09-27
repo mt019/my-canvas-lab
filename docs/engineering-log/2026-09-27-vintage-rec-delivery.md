@@ -21,3 +21,14 @@ Acceptance: meaningful browser render/export test including audio and trim, canc
 - Official Mediabunny conversion/output documentation inspected for streaming decode/encode; avoid reading large input videos into one array buffer.
 - No production changes yet. Existing Canvas and Home rollback manifests/deployments must be captured before promotion.
 - Next action: implement reusable browser effect renderer and page, run local checks, then push and build the isolated preview.
+
+## Implementation and local evidence
+
+- User clarified the slow step is export. Desktop compression switched to hardware H.264 on macOS, tested and recorded in its own local repository at 44facc1.
+- Web page uses local BlobSource decoding, WebGL effect rendering and browser H.264 encoding; default 1080p bounds / 30 fps / 4 Mbps, smaller 2 Mbps, higher 8 Mbps. Settings persist locally. Optional trim and advanced controls are collapsed. SDR only; unsupported tracks produce an error rather than silently losing audio.
+- Large estimated outputs use origin-private disk storage; bounded OPFS branch test produced a 1,069,613-byte File and removed it afterward. This tests the storage path, not multi-gigabyte endurance.
+- Actual paired-source 4K input, 2 s → 1080p export: approximately 2.1 s in local Chrome, H.264 2.000 s and AAC 2.005 s. Desktop CPU pipeline measurement was 18.279 s; hardware encoding 11.646 s. Short samples only; no full-duration speed guarantee, and the browser shader is a visual approximation.
+- 0.25–1.25 s trim produced 1.000 s H.264 and 1.009 s AAC; cancel/retry returned to idle without a download; 390px layout has no overflow. Light UI visually inspected. Browser tests run with project Playwright because the in-app browser bootstrap is unavailable.
+- All policy checks and full Cloudflare build passed; committed fonts cover new copy without rebuilding subsets. Reusable synthetic fixture check: `node scripts/test-vintage-rec.mjs [origin]`.
+- Current production rollback deployments inspected successfully through read-only workflows: Canvas 420aef07-daa8-43ae-bed6-66b6df858aef (run 36299894138); Home 70beb0ec-3880-4418-aebb-a2682893e858 (run 36299896128). Existing source manifests: Canvas 6ae887191356383cf92f0ee199ce87f21c4630f8; Home 7f7e067cbc97d391c05acef4850eca53d839d8e6.
+- Next: push isolated feature branch, build immutable preview with the current Home source, verify preview, promote and verify custom domain. No production change at this checkpoint.
