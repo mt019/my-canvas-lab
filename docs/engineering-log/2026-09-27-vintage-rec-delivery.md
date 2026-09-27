@@ -32,3 +32,7 @@ Acceptance: meaningful browser render/export test including audio and trim, canc
 - All policy checks and full Cloudflare build passed; committed fonts cover new copy without rebuilding subsets. Reusable synthetic fixture check: `node scripts/test-vintage-rec.mjs [origin]`.
 - Current production rollback deployments inspected successfully through read-only workflows: Canvas 420aef07-daa8-43ae-bed6-66b6df858aef (run 36299894138); Home 70beb0ec-3880-4418-aebb-a2682893e858 (run 36299896128). Existing source manifests: Canvas 6ae887191356383cf92f0ee199ce87f21c4630f8; Home 7f7e067cbc97d391c05acef4850eca53d839d8e6.
 - Next: push isolated feature branch, build immutable preview with the current Home source, verify preview, promote and verify custom domain. No production change at this checkpoint.
+
+## Preview build recovery
+
+Preview run 36300047817 stopped before deployment: the existing /brief page exceeded the prerender navigation's 30 s `networkidle` wait. Local full builds passed. Cold navigation now waits for DOMContentLoaded, followed by the unchanged route-specific canonical/root/schema readiness and DOM settling checks; artifact validation remains mandatory. This removes the unrelated global network-silence condition rather than skipping prerender or its checks. Rebuild and rerun preview before promotion.

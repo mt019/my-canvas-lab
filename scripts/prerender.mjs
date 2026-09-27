@@ -143,7 +143,10 @@ async function main() {
   // them into a valid URL while leaving ASCII routes untouched. The output dir
   // keeps the decoded name so the deployed file path matches what's served.
   async function renderCold(page, route) {
-    await page.goto(`${base}${encodeURI(route)}`, { waitUntil: 'networkidle', timeout: 30000 });
+    // Remote images/account traffic can keep the network busy after the page is
+    // ready. The route-specific canonical/root/schema checks below determine
+    // readiness; waiting for unrelated network silence can stall CI builds.
+    await page.goto(`${base}${encodeURI(route)}`, { waitUntil: 'domcontentloaded', timeout: 30000 });
     try {
       await waitReady(page, route, 15000);
     } catch {
