@@ -12,9 +12,16 @@ execFileSync('ffmpeg', ['-v', 'error', '-f', 'lavfi', '-i', 'testsrc2=size=640x3
 const browser = await chromium.launch({ channel: 'chrome', headless: true });
 try {
   const page = await browser.newPage({ viewport: { width: 1280, height: 900 }, acceptDownloads: true });
-  const errors = [], uploads = [];
+  const errors = [], uploads = [], metrics = [];
   page.on('pageerror', e => errors.push(e.message));
-  page.on('request', r => { if (['POST', 'PUT'].includes(r.method())) uploads.push(r.url()); });
+  page.on('request', r => {
+    if (!['POST', 'PUT'].includes(r.method())) return;
+    // The production domain has existing Cloudflare performance telemetry.
+    // Inspect it separately from video upload traffic, rather than assuming
+    // every POST carries a media file.
+    if (new URL(r.url()).pathname === '/cdn-cgi/rum') metrics.push(r.postData() || '');
+    else uploads.push(r.url());
+  });
   await page.goto(`${process.argv[2] || 'http://127.0.0.1:5187'}/vintagerec`);
   await page.getByLabel('選擇影片檔案').setInputFiles(fixture);
   await page.getByRole('button', { name: '匯出影片', exact: true }).waitFor();
@@ -40,5 +47,9 @@ try {
   assert.equal(await page.getByRole('link', { name: '下載 MP4' }).count(), 0);
   assert.deepEqual(await page.getByRole('alert').allTextContents(), []);
   assert.deepEqual(errors, []); assert.deepEqual(uploads, []);
-  console.log(JSON.stringify({ status: 'passed', bytes: (await readFile(exported)).length, streams, mobileOverflow: false, cancel: true, uploads: 0 }, null, 2));
+  for (const body of metrics) {
+    assert.ok(body.length < 16000 && !body.includes('test.mp4'));
+    assert.equal(typeof JSON.parse(body), 'object');
+  }
+  console.log(JSON.stringify({ status: 'passed', bytes: (await readFile(exported)).length, streams, mobileOverflow: false, cancel: true, uploads: 0, performanceBeacons: metrics.length }, null, 2));
 } finally { await browser.close(); await rm(dir, { recursive: true, force: true }); }

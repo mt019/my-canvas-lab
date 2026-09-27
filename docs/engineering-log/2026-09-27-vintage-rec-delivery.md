@@ -14,7 +14,7 @@ Safe checkpoint: isolated branch codex/vintage-rec-web based on origin/main 6ae8
 
 Acceptance: meaningful browser render/export test including audio and trim, cancel handling, responsive UI, required repository checks, preview verification, production HTTPS/route/assets/canonical checks and recorded rollback target.
 
-## Current state
+## Initial inspection (superseded by delivery below)
 
 - Desktop 0.2 works locally. The native app cannot execute directly in a static website; browser renderer implementation is required.
 - Browser runtime connection failed before setup with a sandbox metadata error; use the project's existing Playwright test tooling as fallback for local development verification.
@@ -36,3 +36,19 @@ Acceptance: meaningful browser render/export test including audio and trim, canc
 ## Preview build recovery
 
 Preview run 36300047817 stopped before deployment: the existing /brief page exceeded the prerender navigation's 30 s `networkidle` wait. Local full builds passed. Cold navigation now waits for DOMContentLoaded, followed by the unchanged route-specific canonical/root/schema readiness and DOM settling checks; artifact validation remains mandatory. This removes the unrelated global network-silence condition rather than skipping prerender or its checks. Rebuild and rerun preview before promotion.
+
+## Delivered — 2026-09-27
+
+Usable now: https://canvas.phenomcanvas.com/vintagerec. The new tool is in the project catalog. Default automatic compression, independent strengths, single-frame effect preview, optional trim, elapsed/progress display, cancel and MP4 download are available. Desktop hardware-encoding update also completed.
+
+Preview run 36300200509 succeeded. Production promotion run 36300391599 succeeded, using exact preview artifacts from Canvas source 51cadf4e1c4685606094008f82a3f82c1e757b2b and unchanged Home source 7f7e067cbc97d391c05acef4850eca53d839d8e6 (its generated catalog now includes this tool). No DNS or provider changes. New Canvas deployment a99bc05d-61fc-4641-8305-dc18931dcd6c; Home 00645de9-b47f-43c3-8fea-a1c1fd2c57fb.
+
+Production verification: public DNS resolves; HTTPS returns 200 from Cloudflare; page, model and manifest hashes match the approved preview; all referenced initial JS/CSS assets return 200; canonical is the custom domain without a trailing slash; preview is noindex, production is indexable; unknown paths return 404. All existing cross-site route, redirect, proxy and account-config checks pass.
+
+The same synthetic-video browser test passed on the public production URL: downloaded H.264 + AAC, 1.000 s video / 1.009 s audio after trim, mobile layout without overflow, working cancellation. Existing Cloudflare performance telemetry was observed; the test now checks its small JSON payload separately (no fixture filename), instead of misclassifying every POST as a video upload. No media upload request occurred.
+
+Evidence and rollback IDs: 2026-09-27-vintage-rec-deployment.json. The legacy deployment-record schema requires historical Vercel fields; these are explicitly labeled retired/historical. Actual rollback basis is the inspected Cloudflare production deployments, not Vercel.
+
+Stop condition met: public tool usable and verified. Final commit after the deployed source only changes test classification and engineering records, so it does not require redeploying the identical runtime. Feature history is pushed to main and codex/vintage-rec-web without force. Original local main checkout, including its six unpublished commits and dirty App.jsx, remains untouched; reconcile it with origin/main only when that local work is ready. No required delivery work remains.
+
+Known limits: browser codec/GPU support varies; tested in Chrome on this Mac. SDR only. OPFS storage path was exercised with a bounded fixture, not multi-gigabyte endurance testing. Short export benchmarks are not a full-length speed guarantee. The visual effect remains an approximation of the supplied reference.

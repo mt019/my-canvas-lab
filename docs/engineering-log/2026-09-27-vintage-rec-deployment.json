@@ -1,0 +1,174 @@
+{
+  "schemaVersion": 1,
+  "state": "production-approved",
+  "generatedAt": "2026-09-27T06:30:55.060Z",
+  "previewRunId": 36300200509,
+  "candidate": {
+    "home": {
+      "repository": "mt019/phenom-home",
+      "commit": "7f7e067cbc97d391c05acef4850eca53d839d8e6",
+      "artifactSha256": "e8c4875120084090c7672777683bcf233c4f4505cbb498371d59217a54fffa9a",
+      "preview": {
+        "url": "https://8edeff32.phenom-home.pages.dev",
+        "deploymentId": "8edeff32-1b21-4c5b-a69d-d157143dd23f",
+        "verifiedAt": "2026-09-27T06:30:42.530Z"
+      }
+    },
+    "canvas": {
+      "repository": "mt019/my-canvas-lab",
+      "commit": "51cadf4e1c4685606094008f82a3f82c1e757b2b",
+      "artifactSha256": "3ef8be080c2f0adf0bac2d7418972b6ef200504b8b0fd1ea3d1f9c5f61f7e2fa",
+      "preview": {
+        "url": "https://51455e83.phenom-canvas.pages.dev",
+        "deploymentId": "51455e83-04bd-45d9-964c-d8322cab2713",
+        "verifiedAt": "2026-09-27T06:30:42.530Z"
+      }
+    }
+  },
+  "checks": {
+    "homeRoutes": true,
+    "canvasRoutes": true,
+    "canonicalOrigins": true,
+    "noTrailingSlashDrift": true,
+    "exactRedirects": true,
+    "unknown404": true,
+    "notesProxy": true,
+    "pdfProxy": true,
+    "opentixProxy": true,
+    "supabaseConfig": true
+  },
+  "rollback": {
+    "vercelProductionUrl": "https://my-canvas-cyavcofw3-mt019s-projects.vercel.app",
+    "vercelDeploymentId": "dpl_947zVwZ8boF48nwQwVMzc3JamWQc",
+    "capturedAt": "2026-09-27T06:32:21.356311+00:00",
+    "cloudflarePriorHomeDeploymentId": "70beb0ec-3880-4418-aebb-a2682893e858",
+    "cloudflarePriorCanvasDeploymentId": "420aef07-daa8-43ae-bed6-66b6df858aef",
+    "basis": "Cloudflare production deployments inspected in runs 36299896128 and 36299894138; manifests match current custom domains.",
+    "legacyVercelFields": "Historical evidence from 2026-08-16 retained for legacy schema compatibility only. Vercel is retired and is not the rollback target."
+  },
+  "approvals": {
+    "production": {
+      "approved": true,
+      "approvedBy": "mt019 (explicit request in this task to integrate, push and publish)",
+      "approvedAt": "2026-09-27T06:32:21.356418+00:00"
+    },
+    "dns": {
+      "approved": false
+    }
+  },
+  "featureChecks": {
+    "localAndPreviewBrowserExport": true,
+    "audioTrim": true,
+    "cancel": true,
+    "noVideoUpload": true,
+    "mobileLayout": true,
+    "opfsBoundedStoragePath": true
+  },
+  "delivery": {
+    "status": "complete",
+    "verifiedAt": "2026-09-27T12:04:35.954233+00:00",
+    "url": "https://canvas.phenomcanvas.com/vintagerec",
+    "productionRunId": 36300391599,
+    "canvasDeploymentId": "a99bc05d-61fc-4641-8305-dc18931dcd6c",
+    "homeDeploymentId": "00645de9-b47f-43c3-8fea-a1c1fd2c57fb",
+    "browser": {
+      "status": "passed",
+      "bytes": 523060,
+      "streams": [
+        {
+          "codec_name": "h264",
+          "width": 640,
+          "height": 360,
+          "duration": "1.000000"
+        },
+        {
+          "codec_name": "aac",
+          "duration": "1.008667"
+        }
+      ],
+      "mobileOverflow": false,
+      "cancel": true,
+      "uploads": 0,
+      "performanceBeacons": 1
+    },
+    "external": {
+      "dns": [
+        "104.21.89.101",
+        "172.67.140.18"
+      ],
+      "paths": {
+        "/vintagerec": {
+          "status": 200,
+          "url": "https://canvas.phenomcanvas.com/vintagerec",
+          "sha256": "5a29018b2c2f815b2952e7268fa9b8e0a5226c626888e836628d2c29e4d42432",
+          "server": "cloudflare",
+          "robots": null
+        },
+        "/vintage-rec/profile.json": {
+          "status": 200,
+          "url": "https://canvas.phenomcanvas.com/vintage-rec/profile.json",
+          "sha256": "89abef6fcd13827c4239d6f8edd14cd511a77c70b614421bfe94f565db500e9b",
+          "server": "cloudflare",
+          "robots": null
+        },
+        "/vintage-rec/light-coefficients.bin": {
+          "status": 200,
+          "url": "https://canvas.phenomcanvas.com/vintage-rec/light-coefficients.bin",
+          "sha256": "4816e62ecc697b04dfac3eece202b896bf253042890a67e83c020f1c9fc67212",
+          "server": "cloudflare",
+          "robots": null
+        },
+        "/deployment-manifest.json": {
+          "status": 200,
+          "url": "https://canvas.phenomcanvas.com/deployment-manifest.json",
+          "sha256": "6d246e70dcf661c39bcdf327ffe36317e203081e3103ba44650788c65ced77fc",
+          "server": "cloudflare",
+          "robots": null
+        }
+      },
+      "assets": [
+        {
+          "path": "/assets/index-BSFlry6j.js",
+          "status": 200
+        },
+        {
+          "path": "/assets/react-vendor-D4bihT4V.js",
+          "status": 200
+        },
+        {
+          "path": "/assets/index-BJIHaQWy.css",
+          "status": 200
+        },
+        {
+          "path": "/assets/VintageRec-JzSKLrlg.js",
+          "status": 200
+        },
+        {
+          "path": "/assets/PageShell-m9Yqa2kA.js",
+          "status": 200
+        },
+        {
+          "path": "/assets/PageIdentity-CBFvpCx4.js",
+          "status": 200
+        },
+        {
+          "path": "/assets/shellPadding-CEFAHTM3.js",
+          "status": 200
+        }
+      ],
+      "unknownStatus": 404
+    },
+    "crossSiteChecks": {
+      "homeRoutes": true,
+      "canvasRoutes": true,
+      "canonicalOrigins": true,
+      "noTrailingSlashDrift": true,
+      "exactRedirects": true,
+      "unknown404": true,
+      "notesProxy": true,
+      "pdfProxy": true,
+      "opentixProxy": true,
+      "supabaseConfig": true
+    }
+  }
+}
