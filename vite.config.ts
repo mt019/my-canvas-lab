@@ -6,7 +6,7 @@ import remarkGfm from 'remark-gfm'
 import rehypeKatex from 'rehype-katex'
 import rehypeSlug from 'rehype-slug'
 
-// https://vitejs.dev/config/
+// https://vite.dev/config/
 export default defineConfig({
   plugins: [
     // MDX must run before the React plugin (enforce: 'pre'): it turns .mdx into
@@ -34,6 +34,8 @@ export default defineConfig({
   // 這筆解析成本。代價是 JSON 不能用 named import——全站都是 default import，安全。
   json: { stringify: true },
   build: {
+    // Preserve the Vite 5 browser baseline when upgrading the toolchain.
+    target: ['es2020', 'edge88', 'firefox78', 'chrome87', 'safari14'],
     rollupOptions: {
       output: {
         // Pull the libraries every route loads (React, the router, the icon set)
