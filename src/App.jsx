@@ -330,15 +330,6 @@ const PAGE_META = { // token-exempt: per-page identity chip colors (data, not st
     group: 'humanities',
     externalUrl: 'https://clay.phenomcanvas.com/',
   },
-  MandarinDialogue: {
-    name: '私人中文對談',
-    desc: '為高階中文使用者提供的全中文一對一對談',
-    Icon: Mic,
-    accent: '#e3e0ea',
-    accentText: '#5f5a76',
-    group: 'service',
-    externalUrl: 'https://mandarin.phenomcanvas.com/',
-  },
   FamilyWealth: {
     name: 'Patrimonia｜家族財富研究室',
     desc: '家族財富的跨法域知識體系：信託、繼承、稅制平行法域檔案，逐條讀最新規範',
@@ -462,7 +453,6 @@ const GROUPS = [
   { key: 'analysis', label: '議題解析', desc: '法律、財稅與制度議題的拆解' },
   { key: 'learn', label: '教學實驗室', desc: '方法本身的來歷與限制，配上可以親手轉動的模擬' },
   { key: 'tool', label: '即用工具', desc: '可直接操作的工具：音樂、聲音與設計' },
-  { key: 'service', label: '私人服務', desc: '對外承接的一對一服務' },
 ];
 
 export default function App() {
@@ -560,19 +550,12 @@ export default function App() {
         component: null,
         meta: PAGE_META.FamilyWealth,
       },
-      // Clay 與私人中文對談從來沒有在本倉有過頁面，先前只列在 apex 的 /all。那一頁
-      // 2026-08-17 轉址到這份清單，兩個站的落點因此改到這裡（外部連結，同上）。
+      // Clay 的獨立站入口。
       {
         name: 'Clay',
         path: '/clay',
         component: null,
         meta: PAGE_META.Clay,
-      },
-      {
-        name: 'MandarinDialogue',
-        path: '/mandarindialogue',
-        component: null,
-        meta: PAGE_META.MandarinDialogue,
       },
     ];
   }, []);
