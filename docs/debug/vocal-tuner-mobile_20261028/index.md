@@ -51,6 +51,15 @@
 | 本機驗證 | Chromium 兩種順序通過；無頭 WebKit 的 `getUserMedia` 兩種要求都停在權限詢問，4 秒無回應（`gum-probe.mjs`），WebKit 本輪無法驗 |
 | 待站主回覆 | iPad 開 `/vocaltuner?debug&mic=plain` 唱幾秒，回報軌跡有無與讀數列；`?debug` 那一列的麥克風名稱也一併回報 |
 
+## 第五輪（同日）
+
+| 項目 | 內容 |
+| --- | --- |
+| 站主要求 | 測試入口做成頁面上的按鈕，不靠網址參數 |
+| 修改 | 畫布左下加「原始收音／預設收音」與「讀數」按鈕；收音中切換收音方式即重開麥克風；`?mic=plain`、`?debug` 仍作初始值 |
+| 本機驗證 | `switch.mjs`，Chromium iPhone SE 與 iPad Pro 11 視窗：原始 ec 0 ns 0 agc 0，切到預設後 ec 1 ns 1 agc 1，仍測得 A3；按鈕在琴鍵右側 47px、畫布底緣上方 9px；截圖 `switch-*.png` |
+| 待站主回覆 | iPad 上兩種收音各唱幾秒，回報軌跡有無與讀數列 |
+
 ## 檔案
 
 - `repro.mjs`：重現腳本，第一個參數是輸出目錄，該目錄內須有 `a3.wav`（220 Hz、48 kHz、單聲道）；dev server 開在 5288 埠，腳本須放在能解析 `playwright` 的位置執行。

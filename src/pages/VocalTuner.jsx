@@ -100,12 +100,12 @@ function autoCorrelate(buf, sr) {
   return sr / period;
 }
 
-async function requestMicStream() {
+async function requestMicStream(plain = false) {
   const md = navigator.mediaDevices;
   if (!md?.getUserMedia) throw new Error('unsupported');
-  // ?mic=plain asks for the browser's default processing. Diagnostic for iPad
+  // plain asks for the browser's default processing. Diagnostic for iPad
   // Safari, where the raw request below yields a live track at noise floor.
-  if (new URLSearchParams(window.location.search).get('mic') === 'plain') return md.getUserMedia({ audio: true });
+  if (plain) return md.getUserMedia({ audio: true });
   try {
     return await md.getUserMedia({ audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false } });
   } catch (err) {
@@ -347,9 +347,14 @@ export default function VocalTuner() {
   const analyserRef = useRef(null);
   const sourceRef = useRef(null);
   const sinkRef = useRef(null); // zero-gain node from the analyser to destination
-  // ?debug shows a one-line readout of the capture path, for diagnosing devices
-  // we cannot test (iPad Safari).
-  const debugOn = typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('debug');
+  // Diagnostic switches for devices we cannot test (iPad Safari): the mic
+  // request (raw / browser default) and a one-line readout of the capture
+  // path. ?mic=plain and ?debug set the initial values.
+  const params = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : new URLSearchParams();
+  const [micPlain, setMicPlain] = useState(params.get('mic') === 'plain');
+  const micPlainRef = useRef(micPlain);
+  const [readout, setReadout] = useState(params.has('debug'));
+  const readoutRef = useRef(readout);
   const [debugLine, setDebugLine] = useState('');
   const debugFrameRef = useRef(0);
   const streamRef = useRef(null);
@@ -606,7 +611,7 @@ export default function VocalTuner() {
     for (let i = 0; i < buf.length; i++) ss += buf[i] * buf[i];
     const rms = Math.sqrt(ss / buf.length);
     const now = Date.now();
-    if (debugOn && ++debugFrameRef.current % 15 === 0) {
+    if (readoutRef.current && ++debugFrameRef.current % 15 === 0) {
       const track = streamRef.current?.getAudioTracks()[0];
       const s = track?.getSettings?.() ?? {};
       setDebugLine(`ctx ${ctx.state} ${ctx.sampleRate} Hz · mic ${track?.readyState ?? '-'} ${track?.muted ? 'muted ' : ''}${s.sampleRate ?? '?'} Hz ec ${s.echoCancellation ? 1 : 0} ns ${s.noiseSuppression ? 1 : 0} agc ${s.autoGainControl ? 1 : 0} [${track?.label ?? ''}] · rms ${rms.toExponential(2)} · f0 ${autoCorrelate(buf, ctx.sampleRate).toFixed(1)}`);
@@ -674,7 +679,7 @@ export default function VocalTuner() {
 
     redrawCanvas();
     rafRef.current = requestAnimationFrame(updateLoop);
-  }, [resetDetection, redrawCanvas, debugOn]);
+  }, [resetDetection, redrawCanvas]);
 
   const startMic = useCallback(async () => {
     try {
@@ -684,7 +689,7 @@ export default function VocalTuner() {
       // MediaStreamSource silence when the context was created at a different
       // sample rate than the mic runs at, so a context left over from the
       // piano is closed and rebuilt when the two rates differ.
-      const stream = await requestMicStream();
+      const stream = await requestMicStream(micPlainRef.current);
       const micRate = stream.getAudioTracks()[0]?.getSettings?.().sampleRate;
       const old = audioCtxRef.current;
       if (old && micRate && old.sampleRate !== micRate) {
@@ -726,6 +731,19 @@ export default function VocalTuner() {
       stopAll();
     }
   }, [ensureCtx, resumeCtx, stopAll, resetDisplay, updateLoop]);
+
+  // Switching the mic request while listening reopens the mic with it.
+  const changeMicPlain = useCallback((plain) => {
+    micPlainRef.current = plain;
+    setMicPlain(plain);
+    if (streamRef.current) startMic();
+  }, [startMic]);
+
+  const toggleReadout = useCallback(() => {
+    readoutRef.current = !readoutRef.current;
+    setReadout(readoutRef.current);
+    if (!readoutRef.current) setDebugLine('');
+  }, []);
 
   // Size canvas to container with device pixel ratio
   useEffect(() => {
@@ -873,8 +891,8 @@ export default function VocalTuner() {
         >
           <canvas ref={canvasRef} className="w-full h-full block" />
 
-          {debugOn && debugLine && (
-            <div className="absolute inset-x-[46px] bottom-2 font-mono text-[10px] text-[#8a7a78] pointer-events-none">{debugLine}</div>
+          {readout && debugLine && (
+            <div className="absolute inset-x-[46px] bottom-12 font-mono text-[10px] text-[#8a7a78] pointer-events-none">{debugLine}</div>
           )}
 
           {error && (
@@ -910,6 +928,30 @@ export default function VocalTuner() {
               <X size={14} strokeWidth={2.5} />
             </button>
           )}
+
+          {/* Diagnostic switches: mic request and readout. */}
+          <div
+            onPointerDown={(e) => e.stopPropagation()}
+            className="absolute bottom-2 left-[46px] flex items-center gap-2"
+          >
+            <div className="flex overflow-hidden rounded-full border border-[#e8d3d1] bg-white/70 backdrop-blur-md">
+              {[[false, '原始收音'], [true, '預設收音']].map(([plain, label]) => (
+                <button
+                  key={label}
+                  onClick={() => changeMicPlain(plain)}
+                  className={`px-2.5 py-1 text-[10px] font-black whitespace-nowrap transition-colors ${micPlain === plain ? 'bg-[#b09e9c] text-white' : 'text-[#b09e9c] hover:bg-[#faf4f3]'}`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+            <button
+              onClick={toggleReadout}
+              className={`rounded-full border border-[#e8d3d1] px-2.5 py-1 text-[10px] font-black whitespace-nowrap transition-colors ${readout ? 'bg-[#b09e9c] text-white' : 'bg-white/70 text-[#b09e9c] backdrop-blur-md hover:bg-[#faf4f3]'}`}
+            >
+              讀數
+            </button>
+          </div>
         </div>
 
       </div>
