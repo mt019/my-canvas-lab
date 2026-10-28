@@ -60,6 +60,15 @@
 | 本機驗證 | `switch.mjs`，Chromium iPhone SE 與 iPad Pro 11 視窗：原始 ec 0 ns 0 agc 0，切到預設後 ec 1 ns 1 agc 1，仍測得 A3；按鈕在琴鍵右側 47px、畫布底緣上方 9px；截圖 `switch-*.png` |
 | 待站主回覆 | iPad 上兩種收音各唱幾秒，回報軌跡有無與讀數列 |
 
+## 第六輪：成因確定（同日）
+
+| 項目 | 內容 |
+| --- | --- |
+| 站主 iPad 結果 | 原始收音無軌跡；預設收音有軌跡，讀數 `ctx running 48000 Hz · mic live 48000 Hz ec 1 ns 0 agc 0 [iPad麥克風] · rms 2.07e-2`，測得 A3 219.2 Hz |
+| 成因 | Safari 只接受 `echoCancellation`，ns、agc 兩種要求下都回報 0；iPad Safari 在 `echoCancellation: false` 時交出底噪（rms 約 4e-5），開啟時音量正常。網站此要求自 6 月 25 日未改，7 月底起壞對應 iPadOS 的行為改變 |
+| 修改 | 預設改為預設收音（瀏覽器處理）；`?mic=raw` 或按鈕「原始收音」仍可比對 |
+| 未決 | 預設收音的軌跡在截圖中有大幅跳動；待站主以持續的單音確認是否為偵測問題。診斷按鈕與讀數列的去留待站主決定 |
+
 ## 檔案
 
 - `repro.mjs`：重現腳本，第一個參數是輸出目錄，該目錄內須有 `a3.wav`（220 Hz、48 kHz、單聲道）；dev server 開在 5288 埠，腳本須放在能解析 `playwright` 的位置執行。

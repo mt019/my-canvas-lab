@@ -349,9 +349,11 @@ export default function VocalTuner() {
   const sinkRef = useRef(null); // zero-gain node from the analyser to destination
   // Diagnostic switches for devices we cannot test (iPad Safari): the mic
   // request (raw / browser default) and a one-line readout of the capture
-  // path. ?mic=plain and ?debug set the initial values.
+  // path. Default is the browser's processing: iPad Safari with echoCancellation
+  // off delivers a live track at noise floor (rms ~4e-5, 2026-10-28). ?mic=raw
+  // and ?debug set the initial values.
   const params = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : new URLSearchParams();
-  const [micPlain, setMicPlain] = useState(params.get('mic') === 'plain');
+  const [micPlain, setMicPlain] = useState(params.get('mic') !== 'raw');
   const micPlainRef = useRef(micPlain);
   const [readout, setReadout] = useState(params.has('debug'));
   const readoutRef = useRef(readout);
