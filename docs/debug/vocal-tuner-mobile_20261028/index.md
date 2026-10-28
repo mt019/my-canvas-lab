@@ -65,7 +65,8 @@
 | 項目 | 內容 |
 | --- | --- |
 | 站主 iPad 結果 | 原始收音無軌跡；預設收音有軌跡，讀數 `ctx running 48000 Hz · mic live 48000 Hz ec 1 ns 0 agc 0 [iPad麥克風] · rms 2.07e-2`，測得 A3 219.2 Hz |
-| 成因 | Safari 只接受 `echoCancellation`，ns、agc 兩種要求下都回報 0；iPad Safari 在 `echoCancellation: false` 時交出底噪（rms 約 4e-5），開啟時音量正常。網站此要求自 6 月 25 日未改，7 月底起壞對應 iPadOS 的行為改變 |
+| 成因 | Safari 只接受 `echoCancellation`，ns、agc 兩種要求下都回報 0；iPad Safari 在 `echoCancellation: false` 時交出底噪（rms 約 4e-5），開啟時音量正常。網站此要求自 6 月 25 日未改 |
+| 外部紀錄 | jxlarrea/voice-satellite-card-integration issue #193（2026-10-08，iPad Pro 11、iPadOS 26.7.1）：Safari 中 echo cancellation 關閉時麥克風音量極低、開啟時正常；WebKit bug 267676（2024-01，iPad 17.2）：以 `echoCancellation: false` 重取串流為靜音，RESOLVED/CONFIGURATION CHANGED。未查得指向 7 月底特定 iPadOS 版本的紀錄；站主 iPad 的升級日期未核 |
 | 修改 | 預設改為預設收音（瀏覽器處理）；`?mic=raw` 或按鈕「原始收音」仍可比對 |
 | 未決 | 預設收音的軌跡在截圖中有大幅跳動；待站主以持續的單音確認是否為偵測問題。診斷按鈕與讀數列的去留待站主決定 |
 
