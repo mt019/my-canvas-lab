@@ -33,3 +33,4 @@
 
 - `repro.mjs`：重現腳本，第一個參數是輸出目錄，該目錄內須有 `a3.wav`（220 Hz、48 kHz、單聲道）；dev server 開在 5288 埠，腳本須放在能解析 `playwright` 的位置執行。
 - `desktop.png`、`mobile.png`、`mobile-slow.png`：三種視窗的截圖。
+- `apex-preview-smoke.json`：OpenTix 一項改為 `opentixRetired` 之後，以 preview 網址 `4be7ba94.phenom-home.pages.dev`、`ef4bfdfc.phenom-canvas.pages.dev` 實跑 `smoke-apex-preview.mjs` 的結果，十項全為 true。

@@ -1,0 +1,153 @@
+{
+  "schemaVersion": 1,
+  "checkedAt": "2026-10-28T03:31:53.067Z",
+  "home": "https://4be7ba94.phenom-home.pages.dev",
+  "canvas": "https://ef4bfdfc.phenom-canvas.pages.dev",
+  "observations": [
+    {
+      "base": "https://4be7ba94.phenom-home.pages.dev",
+      "path": "/",
+      "status": 200,
+      "location": null,
+      "contentType": "text/html; charset=utf-8"
+    },
+    {
+      "base": "https://ef4bfdfc.phenom-canvas.pages.dev",
+      "path": "/",
+      "status": 200,
+      "location": null,
+      "contentType": "text/html; charset=utf-8"
+    },
+    {
+      "base": "https://ef4bfdfc.phenom-canvas.pages.dev",
+      "path": "/vocaltraining",
+      "status": 200,
+      "location": null,
+      "contentType": "text/html; charset=utf-8"
+    },
+    {
+      "base": "https://ef4bfdfc.phenom-canvas.pages.dev",
+      "path": "/taxlitigation",
+      "status": 200,
+      "location": null,
+      "contentType": "text/html; charset=utf-8"
+    },
+    {
+      "base": "https://ef4bfdfc.phenom-canvas.pages.dev",
+      "path": "/vocaltraining/",
+      "status": 308,
+      "location": "/vocaltraining",
+      "contentType": null
+    },
+    {
+      "base": "https://4be7ba94.phenom-home.pages.dev",
+      "path": "/all",
+      "status": 308,
+      "location": "https://canvas.phenomcanvas.com/",
+      "contentType": null
+    },
+    {
+      "base": "https://4be7ba94.phenom-home.pages.dev",
+      "path": "/chenyinke",
+      "status": 308,
+      "location": "https://studies.phenomcanvas.com/chenyinke/",
+      "contentType": null
+    },
+    {
+      "base": "https://4be7ba94.phenom-home.pages.dev",
+      "path": "/zhujiahua",
+      "status": 308,
+      "location": "https://studies.phenomcanvas.com/zhujiahua/",
+      "contentType": null
+    },
+    {
+      "base": "https://4be7ba94.phenom-home.pages.dev",
+      "path": "/de/mandarin-dialogue",
+      "status": 308,
+      "location": "https://mandarin.phenomcanvas.com/de/",
+      "contentType": null
+    },
+    {
+      "base": "https://4be7ba94.phenom-home.pages.dev",
+      "path": "/mandarin-dialogue",
+      "status": 308,
+      "location": "https://mandarin.phenomcanvas.com/",
+      "contentType": null
+    },
+    {
+      "base": "https://4be7ba94.phenom-home.pages.dev",
+      "path": "/statistics/about",
+      "status": 308,
+      "location": "https://stat.phenomcanvas.com/statistics/about",
+      "contentType": null
+    },
+    {
+      "base": "https://4be7ba94.phenom-home.pages.dev",
+      "path": "/en/mandarin-dialogue",
+      "status": 308,
+      "location": "https://mandarin.phenomcanvas.com/en/",
+      "contentType": null
+    },
+    {
+      "base": "https://4be7ba94.phenom-home.pages.dev",
+      "path": "/__phenom_unknown_probe__",
+      "status": 404,
+      "location": null,
+      "contentType": "text/html; charset=utf-8"
+    },
+    {
+      "base": "https://ef4bfdfc.phenom-canvas.pages.dev",
+      "path": "/__phenom_unknown_probe__",
+      "status": 404,
+      "location": null,
+      "contentType": "text/html; charset=utf-8"
+    },
+    {
+      "base": "https://4be7ba94.phenom-home.pages.dev",
+      "path": "/notes/deployment-manifest.json",
+      "status": 200,
+      "location": null,
+      "contentType": "application/json"
+    },
+    {
+      "base": "https://4be7ba94.phenom-home.pages.dev",
+      "path": "/api/pdf?url=https%3A%2F%2Fevil.example%2Fx.pdf",
+      "status": 403,
+      "location": null,
+      "contentType": "text/plain;charset=UTF-8"
+    },
+    {
+      "base": "https://ef4bfdfc.phenom-canvas.pages.dev",
+      "path": "/api/pdf?url=https%3A%2F%2Fevil.example%2Fx.pdf",
+      "status": 404,
+      "location": null,
+      "contentType": "text/html; charset=utf-8"
+    },
+    {
+      "base": "https://4be7ba94.phenom-home.pages.dev",
+      "path": "/api/opentix-csm/foo",
+      "status": 404,
+      "location": null,
+      "contentType": "text/html; charset=utf-8"
+    },
+    {
+      "base": "https://ef4bfdfc.phenom-canvas.pages.dev",
+      "path": "/api/opentix-csm/foo",
+      "status": 404,
+      "location": null,
+      "contentType": "text/html; charset=utf-8"
+    }
+  ],
+  "checks": {
+    "homeRoutes": true,
+    "canvasRoutes": true,
+    "canonicalOrigins": true,
+    "noTrailingSlashDrift": true,
+    "exactRedirects": true,
+    "unknown404": true,
+    "notesProxy": true,
+    "pdfProxy": true,
+    "opentixRetired": true,
+    "supabaseConfig": true
+  }
+}
