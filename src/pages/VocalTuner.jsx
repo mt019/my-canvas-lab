@@ -343,6 +343,12 @@ export default function VocalTuner() {
   const audioCtxRef = useRef(null);
   const analyserRef = useRef(null);
   const sourceRef = useRef(null);
+  const sinkRef = useRef(null); // zero-gain node from the analyser to destination
+  // ?debug shows a one-line readout of the capture path, for diagnosing devices
+  // we cannot test (iPad Safari).
+  const debugOn = typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('debug');
+  const [debugLine, setDebugLine] = useState('');
+  const debugFrameRef = useRef(0);
   const streamRef = useRef(null);
   const rafRef = useRef(null);
   const mountedRef = useRef(true);
@@ -403,9 +409,8 @@ export default function VocalTuner() {
   // Shared output bus: a compressor tames transient peaks so notes can be
   // driven loud without the waveform clipping, then makeup gain brings the
   // overall level back up. Built on the first piano note only, so startMic
-  // opens the mic without an output chain wired to the speakers. The pitch
-  // trail stopped showing on iPad Safari after the bus moved into ensureCtx
-  // (2026-07-27); this split is the suspected fix, not yet confirmed on iPad.
+  // opens the mic without an output chain wired to the speakers. Splitting the
+  // bus out did not restore the iPad Safari trail (2026-10-28); see startMic.
   const ensureBus = useCallback((ctx) => {
     if (!masterBusRef.current) {
       const comp = ctx.createDynamicsCompressor();
@@ -444,6 +449,7 @@ export default function VocalTuner() {
   const stopAll = useCallback(() => {
     if (rafRef.current) { cancelAnimationFrame(rafRef.current); rafRef.current = null; }
     if (sourceRef.current) { try { sourceRef.current.disconnect(); } catch {} sourceRef.current = null; }
+    if (sinkRef.current) { try { sinkRef.current.disconnect(); } catch {} sinkRef.current = null; }
     if (streamRef.current) { streamRef.current.getTracks().forEach(t => t.stop()); streamRef.current = null; }
     analyserRef.current = null;
     setIsListening(false);
@@ -597,6 +603,11 @@ export default function VocalTuner() {
     for (let i = 0; i < buf.length; i++) ss += buf[i] * buf[i];
     const rms = Math.sqrt(ss / buf.length);
     const now = Date.now();
+    if (debugOn && ++debugFrameRef.current % 15 === 0) {
+      const track = streamRef.current?.getAudioTracks()[0];
+      const s = track?.getSettings?.() ?? {};
+      setDebugLine(`ctx ${ctx.state} ${ctx.sampleRate} Hz · mic ${track?.readyState ?? '-'} ${track?.muted ? 'muted ' : ''}${s.sampleRate ?? '?'} Hz · rms ${rms.toExponential(2)} · f0 ${autoCorrelate(buf, ctx.sampleRate).toFixed(1)}`);
+    }
     setInputLevel(prev => prev * 0.78 + clamp(rms * 260, 0, 1) * 0.22);
 
     if (rms < VOLUME_THRESHOLD) {
@@ -660,15 +671,27 @@ export default function VocalTuner() {
 
     redrawCanvas();
     rafRef.current = requestAnimationFrame(updateLoop);
-  }, [resetDetection, redrawCanvas]);
+  }, [resetDetection, redrawCanvas, debugOn]);
 
   const startMic = useCallback(async () => {
     try {
       setError('');
       stopAll();
+      // Open the mic before the AudioContext. WebKit can feed a
+      // MediaStreamSource silence when the context was created at a different
+      // sample rate than the mic runs at, so a context left over from the
+      // piano is closed and rebuilt when the two rates differ.
+      const stream = await requestMicStream();
+      const micRate = stream.getAudioTracks()[0]?.getSettings?.().sampleRate;
+      const old = audioCtxRef.current;
+      if (old && micRate && old.sampleRate !== micRate) {
+        audioCtxRef.current = null;
+        masterBusRef.current = null;
+        pianoGainRef.current = null;
+        old.close().catch(() => {});
+      }
       const ctx = await ensureCtx();
       await resumeCtx();
-      const stream = await requestMicStream();
 
       stream.getAudioTracks().forEach(t => {
         t.onended = () => {
@@ -684,6 +707,11 @@ export default function VocalTuner() {
       analyserRef.current.smoothingTimeConstant = 0.12;
       sourceRef.current = ctx.createMediaStreamSource(stream);
       sourceRef.current.connect(analyserRef.current);
+      // A muted path to destination keeps WebKit rendering the analyser.
+      sinkRef.current = ctx.createGain();
+      sinkRef.current.gain.value = 0;
+      analyserRef.current.connect(sinkRef.current);
+      sinkRef.current.connect(ctx.destination);
       await resumeCtx();
       lastNoteTimeRef.current = Date.now();
       setIsListening(true);
@@ -841,6 +869,10 @@ export default function VocalTuner() {
           onPointerCancel={() => { dragRef.current = null; }}
         >
           <canvas ref={canvasRef} className="w-full h-full block" />
+
+          {debugOn && debugLine && (
+            <div className="absolute inset-x-[46px] bottom-2 font-mono text-[10px] text-[#8a7a78] pointer-events-none">{debugLine}</div>
+          )}
 
           {error && (
             <div className="absolute inset-x-[46px] top-12 text-[10px] font-bold text-rose-400 pointer-events-none">{error}</div>

@@ -29,6 +29,17 @@
 | 版面驗證 | WebKit iPhone SE（320）、iPhone 13（390）、iPad Pro 11（834）：無橫向捲動，標題列按鈕兩兩不重疊；截圖 `layout-*.png`（標題列 120px 高） |
 | 推送 | Vite 8 升級在 origin 的 `1b9bcf7`（10-12）已提交；本機 main 落後 origin 8 個提交，工作樹那份升級檔是重複的。三個升級檔還原為 HEAD，本機 6 個未推提交 rebase 到 origin/main，本機 `npm run build` 以 Vite 8.3.4 通過，再提交本修正 |
 
+## 第三輪（同日）
+
+| 項目 | 內容 |
+| --- | --- |
+| 站主回報 | `116f99b` 上線後 iPad 仍無軌跡 |
+| 排除 | 7 月 27 日兩個提交未改收音路徑；程式無依 UA 分支；音量門檻 0.001，iPad 收音偏小不致低於門檻 |
+| 修改 | `startMic` 先 `getUserMedia` 再建 AudioContext，既有 ctx 的取樣率與麥克風 `getSettings().sampleRate` 不同時關閉重建；分析節點另經零增益節點接 destination |
+| 診斷讀數 | 網址加 `?debug`，畫布底部顯示 ctx 狀態與取樣率、麥克風軌道狀態與取樣率、rms、自相關基頻 |
+| 本機驗證 | `order.mjs`：Chromium（iPhone 13，220 Hz 假麥克風）與 WebKit（iPad Pro 11，內建假裝置）各跑直接 START、先彈琴再 START，四種情形都測得音高，無 JS 錯誤；模擬環境 ctx 與麥克風皆 44100 Hz，取樣率不一致的情形重現不出來 |
+| 待站主回覆 | 若仍無軌跡，iPad 開 `/vocaltuner?debug` 唱幾秒，回報畫布底部那一列 |
+
 ## 檔案
 
 - `repro.mjs`：重現腳本，第一個參數是輸出目錄，該目錄內須有 `a3.wav`（220 Hz、48 kHz、單聲道）；dev server 開在 5288 埠，腳本須放在能解析 `playwright` 的位置執行。
