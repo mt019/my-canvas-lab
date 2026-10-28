@@ -1,0 +1,11 @@
+import { webkit, devices } from 'playwright';
+const b = await webkit.launch({ headless: true });
+const ctx = await b.newContext({ ...devices['iPad Pro 11'] });
+const p = await ctx.newPage();
+p.on('console', m => console.log('console', m.type(), m.text().slice(0,200)));
+p.on('pageerror', e => console.log('pageerror', e.message));
+await p.goto('http://localhost:5288/vocaltuner?debug'); await p.waitForTimeout(2500);
+await p.getByRole('button', { name: /START/ }).click(); await p.waitForTimeout(5000);
+console.log('readout', await p.locator('.font-mono').first().textContent({timeout:1000}).catch(()=>'none'));
+console.log('error text', await p.locator('.text-rose-400').first().textContent({timeout:1000}).catch(()=>'none'));
+await b.close();

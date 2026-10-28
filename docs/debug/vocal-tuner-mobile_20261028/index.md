@@ -40,6 +40,17 @@
 | 本機驗證 | `order.mjs`：Chromium（iPhone 13，220 Hz 假麥克風）與 WebKit（iPad Pro 11，內建假裝置）各跑直接 START、先彈琴再 START，四種情形都測得音高，無 JS 錯誤；模擬環境 ctx 與麥克風皆 44100 Hz，取樣率不一致的情形重現不出來 |
 | 待站主回覆 | 若仍無軌跡，iPad 開 `/vocaltuner?debug` 唱幾秒，回報畫布底部那一列 |
 
+## 第四輪（同日）
+
+| 項目 | 內容 |
+| --- | --- |
+| 站主 iPad 讀數 | `ctx running 48000 Hz · mic live 48000 Hz · rms 4.02e-5 · f0 -1.0`，唱歌時仍無軌跡 |
+| 判斷 | 取樣率一致，第三輪的取樣率推測排除；軌道為 live、未 muted，rms 約 -88 dBFS，iPad 交出的是底噪 |
+| 時序 | `echoCancellation/noiseSuppression/autoGainControl: false` 自 `efb17bc`（6 月 25 日）即有，7 月未改；7 月 27 日起壞較可能對應 iPadOS 更新 |
+| 修改 | `?mic=plain` 改以 `{ audio: true }` 取麥克風；讀數列補麥克風名稱與實際生效的 ec／ns／agc |
+| 本機驗證 | Chromium 兩種順序通過；無頭 WebKit 的 `getUserMedia` 兩種要求都卡在權限詢問 4 秒無回應（`gum-probe.mjs`），WebKit 這一輪無法驗 |
+| 待站主回覆 | iPad 開 `/vocaltuner?debug&mic=plain` 唱幾秒，回報軌跡有無與讀數列；`?debug` 那一列的麥克風名稱也一併回報 |
+
 ## 檔案
 
 - `repro.mjs`：重現腳本，第一個參數是輸出目錄，該目錄內須有 `a3.wav`（220 Hz、48 kHz、單聲道）；dev server 開在 5288 埠，腳本須放在能解析 `playwright` 的位置執行。

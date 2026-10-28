@@ -103,6 +103,9 @@ function autoCorrelate(buf, sr) {
 async function requestMicStream() {
   const md = navigator.mediaDevices;
   if (!md?.getUserMedia) throw new Error('unsupported');
+  // ?mic=plain asks for the browser's default processing. Diagnostic for iPad
+  // Safari, where the raw request below yields a live track at noise floor.
+  if (new URLSearchParams(window.location.search).get('mic') === 'plain') return md.getUserMedia({ audio: true });
   try {
     return await md.getUserMedia({ audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false } });
   } catch (err) {
@@ -606,7 +609,7 @@ export default function VocalTuner() {
     if (debugOn && ++debugFrameRef.current % 15 === 0) {
       const track = streamRef.current?.getAudioTracks()[0];
       const s = track?.getSettings?.() ?? {};
-      setDebugLine(`ctx ${ctx.state} ${ctx.sampleRate} Hz · mic ${track?.readyState ?? '-'} ${track?.muted ? 'muted ' : ''}${s.sampleRate ?? '?'} Hz · rms ${rms.toExponential(2)} · f0 ${autoCorrelate(buf, ctx.sampleRate).toFixed(1)}`);
+      setDebugLine(`ctx ${ctx.state} ${ctx.sampleRate} Hz · mic ${track?.readyState ?? '-'} ${track?.muted ? 'muted ' : ''}${s.sampleRate ?? '?'} Hz ec ${s.echoCancellation ? 1 : 0} ns ${s.noiseSuppression ? 1 : 0} agc ${s.autoGainControl ? 1 : 0} [${track?.label ?? ''}] · rms ${rms.toExponential(2)} · f0 ${autoCorrelate(buf, ctx.sampleRate).toFixed(1)}`);
     }
     setInputLevel(prev => prev * 0.78 + clamp(rms * 260, 0, 1) * 0.22);
 
