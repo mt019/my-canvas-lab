@@ -48,7 +48,7 @@
 | 判斷 | 取樣率一致，第三輪的取樣率推測排除；軌道為 live、未 muted，rms 約 -88 dBFS，iPad 交出的是底噪 |
 | 時序 | `echoCancellation/noiseSuppression/autoGainControl: false` 自 `efb17bc`（6 月 25 日）即有，7 月未改；7 月 27 日起壞較可能對應 iPadOS 更新 |
 | 修改 | `?mic=plain` 改以 `{ audio: true }` 取麥克風；讀數列補麥克風名稱與實際生效的 ec／ns／agc |
-| 本機驗證 | Chromium 兩種順序通過；無頭 WebKit 的 `getUserMedia` 兩種要求都停在權限詢問，4 秒無回應（`gum-probe.mjs`），WebKit 這一輪無法驗 |
+| 本機驗證 | Chromium 兩種順序通過；無頭 WebKit 的 `getUserMedia` 兩種要求都停在權限詢問，4 秒無回應（`gum-probe.mjs`），WebKit 本輪無法驗 |
 | 待站主回覆 | iPad 開 `/vocaltuner?debug&mic=plain` 唱幾秒，回報軌跡有無與讀數列；`?debug` 那一列的麥克風名稱也一併回報 |
 
 ## 檔案
