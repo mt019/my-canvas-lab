@@ -397,9 +397,16 @@ export default function VocalTuner() {
     if (!audioCtxRef.current) audioCtxRef.current = new AC({ latencyHint: 'interactive' });
     const ctx = audioCtxRef.current;
     if (ctx.state === 'suspended') await ctx.resume();
-    // Shared output bus: a compressor tames transient peaks so notes can be
-    // driven loud without the waveform clipping, then makeup gain brings the
-    // overall level back up. Built once, reused for every note.
+    return ctx;
+  }, []);
+
+  // Shared output bus: a compressor tames transient peaks so notes can be
+  // driven loud without the waveform clipping, then makeup gain brings the
+  // overall level back up. Built on the first piano note only, so startMic
+  // opens the mic without an output chain wired to the speakers. The pitch
+  // trail stopped showing on iPad Safari after the bus moved into ensureCtx
+  // (2026-07-27); this split is the suspected fix, not yet confirmed on iPad.
+  const ensureBus = useCallback((ctx) => {
     if (!masterBusRef.current) {
       const comp = ctx.createDynamicsCompressor();
       comp.threshold.value = -20; // start compressing 20 dB below full scale
@@ -425,7 +432,7 @@ export default function VocalTuner() {
       softClip.connect(ctx.destination);
       masterBusRef.current = comp;
     }
-    return ctx;
+    return masterBusRef.current;
   }, []);
 
   const resumeCtx = useCallback(async () => {
@@ -457,7 +464,7 @@ export default function VocalTuner() {
 
       const freq = midiToFreq(midi);
       const now = ctx.currentTime;
-      const out = masterBusRef.current || ctx.destination;
+      const out = ensureBus(ctx);
       const gain = ctx.createGain();
 
       // Filter opens on the strike then closes as the note decays — the way a
@@ -508,7 +515,7 @@ export default function VocalTuner() {
       pianoOscRef.current = oscs;
       pianoGainRef.current = gain;
     } catch {}
-  }, [ensureCtx, resumeCtx]);
+  }, [ensureCtx, ensureBus, resumeCtx]);
 
   const handlePianoPress = useCallback((midi) => {
     if (midi < 28 || midi > 100) return;
@@ -763,11 +770,11 @@ export default function VocalTuner() {
   const isPerfect = !isTooQuiet && detectedNote && Math.abs(activeCents) < PERFECT_CENTS;
 
   return (
-    <div className="h-screen bg-[#f5eceb] flex flex-col items-center font-sans overflow-hidden">
-      <div className="w-full max-w-md sm:max-w-xl lg:max-w-3xl xl:max-w-4xl flex flex-col h-full sm:h-[calc(100vh-2rem)] sm:my-4 sm:rounded-[2.5rem] border-0 sm:border border-[#e8d3d1] bg-white/70 shadow-2xl shadow-rose-200/50 backdrop-blur-xl overflow-hidden">
+    <div className="h-screen supports-[height:100dvh]:h-dvh bg-[#f5eceb] flex flex-col items-center font-sans overflow-hidden">
+      <div className="w-full max-w-md sm:max-w-xl lg:max-w-3xl xl:max-w-4xl flex flex-col h-full sm:h-[calc(100vh-2rem)] sm:supports-[height:100dvh]:h-[calc(100dvh-2rem)] sm:my-4 sm:rounded-[2.5rem] border-0 sm:border border-[#e8d3d1] bg-white/70 shadow-2xl shadow-rose-200/50 backdrop-blur-xl overflow-hidden">
 
         {/* Compact header strip */}
-        <div className="flex items-center justify-between gap-2 px-5 pt-3 pb-1 shrink-0">
+        <div className="flex items-center justify-between gap-2 px-4 sm:px-5 pt-3 pb-2 shrink-0">
           <div className="flex min-w-0 items-center gap-2.5">
             <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#8a7a78] shrink-0">VOCAL TUNER</span>
             <span className={`h-1.5 w-1.5 rounded-full shrink-0 transition-all ${inputLevel > 0.08 ? 'bg-[#8d9e8c] shadow-[0_0_0_3px_rgba(141,158,140,0.22)]' : 'bg-[#d8c9c7]'}`} />
@@ -784,15 +791,26 @@ export default function VocalTuner() {
               ))}
             </div>
           </div>
-          <div className="flex items-center gap-3 shrink-0">
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
             {targetNotes.length > 0 && (
-              <span className="text-[9px] font-black text-[#8d9e8c] uppercase whitespace-nowrap">▶ {mode === 'single' ? `${targetNotes[0].name}${targetNotes[0].octave}` : `${targetNotes.length} 音`}</span>
+              <span className="hidden sm:inline text-[9px] font-black text-[#8d9e8c] uppercase whitespace-nowrap">▶ {mode === 'single' ? `${targetNotes[0].name}${targetNotes[0].octave}` : `${targetNotes.length} 音`}</span>
             )}
-            <div className="flex items-center gap-1">
+            {/* Octave only shifts the computer-keyboard shortcuts; no keyboard on phones. */}
+            <div className="hidden sm:flex items-center gap-1">
               <button onClick={() => setKeyOctave(o => Math.max(2, o - 1))} className="w-5 h-5 rounded-full border border-[#eadad8] text-[#b09e9c] text-xs flex items-center justify-center hover:bg-[#faf4f3]">‹</button>
               <span className="text-[9px] font-black text-[#b09e9c] w-8 text-center">Oct {keyOctave}</span>
               <button onClick={() => setKeyOctave(o => Math.min(5, o + 1))} className="w-5 h-5 rounded-full border border-[#eadad8] text-[#b09e9c] text-xs flex items-center justify-center hover:bg-[#faf4f3]">›</button>
             </div>
+            {/* START/STOP lives up here: iOS Safari's floating bottom bar covers the page's bottom edge. */}
+            <button
+              onClick={isListening ? stopAll : startMic}
+              className={`flex items-center gap-1.5 whitespace-nowrap rounded-full px-3 py-1.5 text-[10px] font-black tracking-[0.2em] transition-all ${
+                isListening ? 'bg-[#b09e9c] text-white shadow-inner' : 'border border-[#e8d3d1] bg-white text-[#8a7a78] shadow-sm hover:bg-[#fcf7f6]'
+              }`}
+            >
+              {isListening ? <MicOff size={12} /> : <Mic size={12} />}
+              {isListening ? 'STOP' : 'START'}
+            </button>
           </div>
         </div>
 
@@ -824,6 +842,10 @@ export default function VocalTuner() {
         >
           <canvas ref={canvasRef} className="w-full h-full block" />
 
+          {error && (
+            <div className="absolute inset-x-[46px] top-12 text-[10px] font-bold text-rose-400 pointer-events-none">{error}</div>
+          )}
+
           {/* Note overlay — top-right corner of canvas */}
           <div className="absolute top-2 right-3 text-right pointer-events-none select-none">
             <div className={`text-5xl font-black leading-none transition-all ${
@@ -841,32 +863,18 @@ export default function VocalTuner() {
             )}
           </div>
 
-          {/* Clear-all: a quiet circle, shown only while guide lines exist. */}
+          {/* Clear-all: a quiet circle, shown only while guide lines exist; top-left, clear of the bottom bar. */}
           {targetNotes.length > 0 && (
             <button
               onClick={clearTargets}
               onPointerDown={(e) => e.stopPropagation()}
               title="清空引導線"
               aria-label="清空引導線"
-              className="absolute bottom-3 right-3 flex h-8 w-8 items-center justify-center rounded-full border border-[#e8d3d1] bg-white/70 text-[#b09e9c] shadow-sm backdrop-blur-md transition-colors hover:bg-white hover:text-[#8a7a78]"
+              className="absolute top-2 left-[46px] flex h-8 w-8 items-center justify-center rounded-full border border-[#e8d3d1] bg-white/70 text-[#b09e9c] shadow-sm backdrop-blur-md transition-colors hover:bg-white hover:text-[#8a7a78]"
             >
               <X size={14} strokeWidth={2.5} />
             </button>
           )}
-        </div>
-
-        {/* Compact bottom strip */}
-        <div className="flex items-center gap-3 px-5 py-2.5 shrink-0">
-          <button
-            onClick={isListening ? stopAll : startMic}
-            className={`flex flex-1 items-center justify-center gap-2 rounded-[2rem] py-2.5 text-[10px] font-black tracking-[0.25em] transition-all ${
-              isListening ? 'bg-[#b09e9c] text-white shadow-inner' : 'border border-[#e8d3d1] bg-white text-[#8a7a78] shadow-lg hover:bg-[#fcf7f6]'
-            }`}
-          >
-            {isListening ? <MicOff size={13} /> : <Mic size={13} />}
-            {isListening ? 'STOP' : 'START'}
-          </button>
-          {error && <div className="text-[9px] font-bold text-rose-400 flex-1">{error}</div>}
         </div>
 
       </div>
